@@ -1,19 +1,18 @@
+;;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10; Package: asdf -*-
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          bard.lisp
-;;;; Project:       bard
-;;;; Purpose:       loading and building Bard
+;;;; Name:          Bard.lisp
+;;;; Project:       Bard - a modern Lisp
+;;;; Purpose:       build the Bard application image
 ;;;; Author:        mikel evins
-;;;; Requirements:  Clozure Common Lisp
+;;;; Copyright:     2009 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 (in-package :cl-user)
 
-;;; ----------------------------------------------------------------------
-;;; bard systems
-;;; ----------------------------------------------------------------------
+(require "OBJC-SUPPORT")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (let* ((load-path (ccl::loading-file-source-file))
@@ -22,12 +21,7 @@
 
 (defparameter $bard-src-files
   '("package"
-    "runtime"
-    "expressions"
-    "types"
-    "reader"
-    "printer"
-    "repl"
+    "ast"
     ))
 
 (defun compile-and-load (f)
@@ -39,7 +33,5 @@
 (defun load-bard ()
   (mapcar 'compile-and-load $bard-src-files))
 
-(defun build-vm ()
-  (load-bard)
-  (save-application "bard" :prepend-kernel t))
+
 
