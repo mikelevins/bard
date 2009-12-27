@@ -44,7 +44,7 @@
 (defmethod void? ((x void-expression)) t)
 
 (defmethod print-object ((obj void-expression) str)
-  (format str "<void>"))
+  (format str "<Void>"))
 
 ;;; Number
 
@@ -59,7 +59,7 @@
 (defmethod number? ((x number-expression)) t)
 
 (defmethod print-object ((obj number-expression) str)
-  (format str "<~d>" (value obj)))
+  (format str "<Number: ~d>" (value obj)))
 
 ;;; Character
 
@@ -74,7 +74,7 @@
 (defmethod character? ((x character-expression)) t)
 
 (defmethod print-object ((obj character-expression) str)
-  (format str "<~A>" (value obj)))
+  (format str "<Character: '~A'>" (value obj)))
 
 ;;; Symbol
 
@@ -89,7 +89,7 @@
 (defmethod symbol? ((x symbol-expression)) t)
 
 (defmethod print-object ((obj symbol-expression) str)
-  (format str "<~a>" (value obj)))
+  (format str "<Symbol: '~a'>" (value obj)))
 
 ;;; Keyword
 
@@ -104,7 +104,7 @@
 (defmethod keyword? ((x keyword-expression)) t)
 
 (defmethod print-object ((obj keyword-expression) str)
-  (format str "<~a:>" (value obj)))
+  (format str "<Keyword: '~a'>" (value obj)))
 
 ;;; Boolean
 
@@ -126,7 +126,7 @@
 (defmethod true? ((x true-expression)) t)
 
 (defmethod print-object ((obj true-expression) str)
-  (format str "<true>"))
+  (format str "<Boolean: true>"))
 
 ;;; False
 
@@ -140,7 +140,7 @@
 (defmethod false? ((x false-expression)) t)
 
 (defmethod print-object ((obj false-expression) str)
-  (format str "<false>"))
+  (format str "<Boolean: false>"))
 
 ;;; Text
 
@@ -155,7 +155,7 @@
 (defmethod text? ((x text-expression)) t)
 
 (defmethod print-object ((obj text-expression) str)
-  (format str "<\"~a\">" (value obj)))
+  (format str "<Text: \"~a\">" (value obj)))
 
 ;;; Sequence
 
@@ -193,7 +193,7 @@
 (defmethod sequence? ((x abstract-sequence-expression)) t)
 
 (defmethod print-object ((obj empty-sequence-expression) str)
-  (format str "<()>"))
+  (format str "<Empty Sequence>"))
 
 (defmethod %print-sequence-elements ((s empty-sequence-expression) str)
   (declare (ignore s str))
@@ -208,7 +208,7 @@
     (%print-sequence-elements tl str)))
 
 (defmethod print-object ((obj sequence-expression) str)
-  (format str "<(")
+  (format str "<Sequence: (")
   (%print-sequence-elements obj str)
   (format str ")>"))
 
@@ -259,7 +259,7 @@
 (defmethod map? ((x abstract-map-expression)) t)
 
 (defmethod print-object ((obj empty-map-expression) str)
-  (format str "<{}>"))
+  (format str "<Empty Map>"))
 
 (defmethod %print-map-elements ((s empty-map-expression) str)
   (declare (ignore s str))
@@ -283,6 +283,6 @@
   (%print-map-entries (entries s) str))
 
 (defmethod print-object ((obj map-expression) str)
-  (format str "<{")
+  (format str "<Map: {")
   (%print-map-elements obj str)
   (format str "}>"))

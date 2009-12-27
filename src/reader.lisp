@@ -304,7 +304,7 @@
 
 (defun read-test (s)
   (let ((x (read s)))
-    (format t "~%~a : ~a" x (cl:type-of x))))
+    (format t "~%~a" x)))
 
 (defparameter $test-expressions
   '(
