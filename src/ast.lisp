@@ -44,7 +44,7 @@
 (defmethod void? ((x void-expression)) t)
 
 (defmethod print-object ((obj void-expression) str)
-  (format str "<nil>"))
+  (format str "<void>"))
 
 ;;; Number
 
@@ -60,6 +60,21 @@
 
 (defmethod print-object ((obj number-expression) str)
   (format str "<~d>" (value obj)))
+
+;;; Character
+
+(defclass character-expression (value-expression)())
+
+(defmethod character ((n cl:character))
+  (make-instance 'character-expression :value n))
+
+(defmethod character? (x)
+  (declare (ignore x))
+  nil)
+(defmethod character? ((x character-expression)) t)
+
+(defmethod print-object ((obj character-expression) str)
+  (format str "<~A>" (value obj)))
 
 ;;; Symbol
 

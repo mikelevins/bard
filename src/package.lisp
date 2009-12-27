@@ -21,7 +21,7 @@
   (defpackage BARD-INTERNAL
     (:nicknames :bint)
     (:use common-lisp ccl)
-    (:shadow false first map number rest symbol true)))
+    (:shadow character false first map number read rest symbol true)))
 
 ;;; ------------------------------------------------------------
 ;;; Package BARD
@@ -30,5 +30,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage BARD 
-    (:use common-lisp ccl bint)))
+    (:use common-lisp ccl bint)
+    (:shadow read)))
 

@@ -22,6 +22,7 @@
 (defparameter $bard-src-files
   '("package"
     "ast"
+    "reader"
     ))
 
 (defun compile-and-load (f)
