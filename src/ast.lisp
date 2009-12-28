@@ -233,7 +233,7 @@
   (if (null keys-and-vals)
       (empty-map)
       (if (every 'expression? keys-and-vals)
-          (make-instance 'map-expression :entries (plist->alist keys-and-vals))
+          (make-instance 'map-expression :entries (util::plist->alist keys-and-vals))
           (error "Some arguments are not expressions: ~s" keys-and-vals))))
 
 (defmethod empty-map? (x) 

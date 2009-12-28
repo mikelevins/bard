@@ -23,3 +23,16 @@
                   (tl (cdr tl)))
               (cons (cons k v)
                     (plist->alist tl)))))))
+
+(defun range (start end)
+  (let ((result nil))
+    (dotimes (i (- end start))
+      (setf result (push (+ start i) result)))
+    (reverse result)))
+
+(defun filter (pred items &optional (acc nil))
+  (if (null items)
+      (reverse acc)
+      (if (funcall pred (car items))
+          (filter pred (cdr items) (cons (car items) acc))
+          (filter pred (cdr items) acc))))
