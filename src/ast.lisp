@@ -46,6 +46,8 @@
 (defmethod print-object ((obj void-expression) str)
   (format str "<Void>"))
 
+(defmethod equal? ((x void-expression)(y void-expression)) t)
+
 ;;; Number
 
 (defclass number-expression (value-expression)())
@@ -227,26 +229,12 @@
 (defun empty-map ()
   (make-instance 'empty-map-expression))
 
-(defun %plist->alist (plist)
-  (if (null plist)
-      plist
-      (let ((k (car plist))
-            (tl (cdr plist)))
-        (if (expression? k)
-            (if (null tl)
-                (error "Odd number of arguments to map constructor")
-                (let ((v (car tl))
-                      (tl (cdr tl)))
-                  (if (expression? v)
-                      (cons (cons k v)
-                            (%plist->alist tl))
-                      (error "Not an expression: ~S" v))))
-            (error "Not an expression: ~S" k)))))
-
 (defun map (&rest keys-and-vals)
   (if (null keys-and-vals)
       (empty-map)
-      (make-instance 'map-expression :entries (%plist->alist keys-and-vals))))
+      (if (every 'expression? keys-and-vals)
+          (make-instance 'map-expression :entries (plist->alist keys-and-vals))
+          (error "Some arguments are not expressions: ~s" keys-and-vals))))
 
 (defmethod empty-map? (x) 
   (declare (ignore x))

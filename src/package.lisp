@@ -13,6 +13,16 @@
 (in-package :cl-user)
 
 ;;; ------------------------------------------------------------
+;;; Package UTILITIES
+;;; ------------------------------------------------------------
+;;; Symbols for the use of users
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defpackage UTILITIES 
+    (:nicknames :util)
+    (:use common-lisp ccl)))
+
+;;; ------------------------------------------------------------
 ;;; Package BARD-INTERNALS
 ;;; ------------------------------------------------------------
 ;;; Private, internal symbols
@@ -31,5 +41,5 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage BARD 
     (:use common-lisp ccl bint)
-    (:shadow read)))
+    (:shadow compile read)))
 
