@@ -36,12 +36,12 @@
 
 (defclass void-expression (value-expression)())
 
-(defun void ()(make-instance 'void-expression))
+(defun void-expression ()(make-instance 'void-expression))
 
-(defmethod void? (x) 
+(defmethod void-expression? (x) 
   (declare (ignore x))
   nil)
-(defmethod void? ((x void-expression)) t)
+(defmethod void-expression? ((x void-expression)) t)
 
 (defmethod print-object ((obj void-expression) str)
   (format str "<Void>"))
@@ -165,34 +165,34 @@
 
 (defclass empty-sequence-expression (abstract-sequence-expression)())
 
-(defmethod first ((x empty-sequence-expression))(void))
-(defmethod rest ((x empty-sequence-expression))(void))
+(defmethod first ((x empty-sequence-expression))(void-expression))
+(defmethod rest ((x empty-sequence-expression))(void-expression))
 
 (defclass sequence-expression (abstract-sequence-expression)
   ((first :reader first :initarg :first)
    (rest :reader rest :initarg :rest)))
 
-(defun empty-sequence ()
+(defun empty-sequence-expression ()
   (make-instance 'empty-sequence-expression))
 
-(defun sequence (&rest vals)
+(defun sequence-expression (&rest vals)
   (if (null vals)
-      (empty-sequence)
+      (empty-sequence-expression)
       (if (expression? (cl:first vals))
           (make-instance 'sequence-expression
                          :first (cl:first vals)
                          :rest (apply 'sequence (cl:rest vals)))
           (error "Can't create a sequence; value is not an expression: ~S" (cl:first vals)))))
 
-(defmethod empty-sequence? (x) 
+(defmethod empty-sequence-expression? (x) 
   (declare (ignore x))
   nil)
-(defmethod empty-sequence? ((x empty-sequence-expression)) t)
+(defmethod empty-sequence-expression? ((x empty-sequence-expression)) t)
 
-(defmethod sequence? (x) 
+(defmethod sequence-expression? (x) 
   (declare (ignore x))
   nil)
-(defmethod sequence? ((x abstract-sequence-expression)) t)
+(defmethod sequence-expression? ((x abstract-sequence-expression)) t)
 
 (defmethod print-object ((obj empty-sequence-expression) str)
   (format str "<Empty Sequence>"))
@@ -205,7 +205,7 @@
   (let ((hd (first s))
         (tl (rest s)))
     (print-object hd str)
-    (unless (empty-sequence? tl)
+    (unless (empty-sequence-expression? tl)
         (format str " "))
     (%print-sequence-elements tl str)))
 
@@ -220,31 +220,31 @@
 
 (defclass empty-map-expression (abstract-map-expression)())
 
-(defmethod first ((x empty-map-expression))(void))
-(defmethod rest ((x empty-map-expression))(void))
+(defmethod first ((x empty-map-expression))(void-expression))
+(defmethod rest ((x empty-map-expression))(void-expression))
 
 (defclass map-expression (abstract-map-expression)
   ((entries :reader entries :initarg :entries)))
 
-(defun empty-map ()
+(defun empty-map-expression ()
   (make-instance 'empty-map-expression))
 
-(defun map (&rest keys-and-vals)
+(defun map-expression (&rest keys-and-vals)
   (if (null keys-and-vals)
-      (empty-map)
+      (empty-map-expression)
       (if (every 'expression? keys-and-vals)
           (make-instance 'map-expression :entries (util::plist->alist keys-and-vals))
           (error "Some arguments are not expressions: ~s" keys-and-vals))))
 
-(defmethod empty-map? (x) 
+(defmethod empty-map-expression? (x) 
   (declare (ignore x))
   nil)
-(defmethod empty-map? ((x empty-map-expression)) t)
+(defmethod empty-map-expression? ((x empty-map-expression)) t)
 
-(defmethod map? (x) 
+(defmethod map-expression? (x) 
   (declare (ignore x))
   nil)
-(defmethod map? ((x abstract-map-expression)) t)
+(defmethod map-expression? ((x abstract-map-expression)) t)
 
 (defmethod print-object ((obj empty-map-expression) str)
   (format str "<Empty Map>"))

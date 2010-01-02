@@ -41,5 +41,5 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage BARD 
     (:use common-lisp ccl bint)
-    (:shadow compile read)))
+    (:shadow compile first map read rest sequence)))
 

@@ -22,6 +22,7 @@
 (defparameter $bard-src-files
   '("package"
     "utils"
+    "runtime"
     "ast"
     "environments"
     "reader"

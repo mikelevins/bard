@@ -105,7 +105,7 @@
 
 ;;; (...) => sequence
 (defmethod reader-object->bard-expression ((c cl:list)) 
-  (apply 'sequence c))
+  (apply 'sequence-expression c))
 
 ;;; ----------------------------------------------------------------------
 ;;; the bard reader
@@ -156,7 +156,7 @@
                                   (cond
                                     ((eof? next-elt)(error "Unexpected end of input while reading a sequence"))
                                     ((end-of-sequence? next-elt) (return-from reading 
-                                                                   (apply 'sequence (reverse elements))))
+                                                                   (apply 'sequence-expression (reverse elements))))
                                     (t (progn
                                          (setf elements (cons next-elt elements))))))))))
                        nil +bard-read-table+))
@@ -181,7 +181,7 @@
                                   (cond
                                     ((eof? next-elt)(error "Unexpected end of input while reading a map"))
                                     ((end-of-map? next-elt) (return-from reading 
-                                                              (apply 'map (reverse elements))))
+                                                              (apply 'map-expression (reverse elements))))
                                     (t (progn
                                          (setf elements (cons next-elt elements))))))))))
                        nil +bard-read-table+))
