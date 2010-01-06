@@ -194,7 +194,7 @@ II. core language
        <Table>
        <Text>
        <vector>
-       <void> ; just one instance: nil
+       <void> ; just one instance: void
        <Word>
 
        More specialized types in the core are here presented grouped
