@@ -31,7 +31,7 @@
   (defpackage BARD-INTERNAL
     (:nicknames :bint)
     (:use common-lisp ccl)
-    (:shadow character false first map number read rest symbol true)))
+    (:shadow character false first fourth intern map number read rest second symbol third true)))
 
 ;;; ------------------------------------------------------------
 ;;; Package BARD
@@ -41,5 +41,5 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage BARD 
     (:use common-lisp ccl bint)
-    (:shadow compile first map read rest sequence)))
+    (:shadow compile first fourth intern map read rest second sequence third)))
 

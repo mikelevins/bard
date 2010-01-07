@@ -167,10 +167,20 @@
 
 (defmethod first ((x empty-sequence-expression))(void-expression))
 (defmethod rest ((x empty-sequence-expression))(void-expression))
+(defmethod second ((x empty-sequence-expression))(void-expression))
+(defmethod third ((x empty-sequence-expression))(void-expression))
+(defmethod fourth ((x empty-sequence-expression))(void-expression))
 
 (defclass sequence-expression (abstract-sequence-expression)
   ((first :reader first :initarg :first)
    (rest :reader rest :initarg :rest)))
+
+(defmethod second ((x sequence-expression))
+  (first (rest x)))
+(defmethod third ((x sequence-expression))
+  (first (rest (rest x))))
+(defmethod fourth ((x sequence-expression))
+  (first (rest (rest (rest x)))))
 
 (defun empty-sequence-expression ()
   (make-instance 'empty-sequence-expression))
@@ -181,7 +191,7 @@
       (if (expression? (cl:first vals))
           (make-instance 'sequence-expression
                          :first (cl:first vals)
-                         :rest (apply 'sequence (cl:rest vals)))
+                         :rest (apply 'sequence-expression (cl:rest vals)))
           (error "Can't create a sequence; value is not an expression: ~S" (cl:first vals)))))
 
 (defmethod empty-sequence-expression? (x) 
