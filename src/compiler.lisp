@@ -177,7 +177,7 @@
     ;; keywords
     ":foo" "foo:" ":foo:"
     ;; sequences
-    "()" "(foo)" "(+ (- 5 2)(- 4 3))"
+    "()" "(foo)" "(quote foo)" "(define foo 5)" "(if foo (quote yes) (quote no))" "(fn [x] (+ (- x 2)(- x 3)))"
     ;; maps
     "{}" "{name: foo}" "{first: {a b} second: {c d}}"
     ))
