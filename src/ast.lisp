@@ -93,6 +93,9 @@
 (defmethod print-object ((obj symbol-expression) str)
   (format str "<Symbol: '~a'>" (value obj)))
 
+(defmethod intern ((s symbol-expression))
+  (cl::intern (value s) (find-package :bard)))
+
 ;;; Keyword
 
 (defclass keyword-expression (value-expression)())

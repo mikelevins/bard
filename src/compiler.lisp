@@ -58,7 +58,7 @@
 
 ;;; Symbol -> CL::SYMBOL
 (defmethod compile ((exp bint::symbol-expression)(env bint::environment))
-  `(bint::lookup-variable-value (bint::intern ,exp ,env)
+  `(bint::lookup-variable-value (bint::intern ,exp)
                                 ,env))
 
 ;;; Sequences
@@ -159,7 +159,7 @@
 
 (defun compile-test (s)
   (let ((x (read s))
-        (env (bint::extend-environment nil)))
+        (env (bint::extend-environment nil nil)))
     (format t "~%~s" (compile x env))))
 
 (defparameter $test-expressions
