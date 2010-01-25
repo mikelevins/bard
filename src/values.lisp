@@ -2,31 +2,13 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          Bard.lisp
+;;;; Name:          values.lisp
 ;;;; Project:       Bard - a modern Lisp
-;;;; Purpose:       build the Bard application image
+;;;; Purpose:       definitions of bard base value types
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2009 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
-
-(in-package :cl-user)
-
-(require "OBJC-SUPPORT")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (let* ((load-path (ccl::loading-file-source-file))
-         (load-dir (make-pathname :directory (pathname-directory load-path)))) 
-    (defun base-directory () load-dir)))
-
-;;; ============================================================
-;;; Package BARD
-;;; ============================================================
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage BARD 
-    (:use common-lisp ccl)
-    (:shadow = boolean character compile false first fourth intern keyword map number read rest second sequence symbol third true text)))
 
 (in-package :bard)
 
@@ -312,34 +294,17 @@
 ;;; Sequences
 ;;; ------------------------------------------------------------
 
-(defclass sequence (bard-value)())
 (defmethod sequence? (x)(declare (ignore x)) nil)
-(defmethod sequence? ((x sequence))(declare (ignore x)) t)
+(defmethod sequence? ((x fset:seq))(declare (ignore x)) t)
 
-;;; cons-sequence
-;;; ------------------------------------------------------------
-
-(defclass cons-sequence (sequence)
-  ((items :reader items :initarg :items)))
+(defmethod prepend (item (seq fset:seq))
+  (fset:with-first seq item))
 
 (defun sequence (&rest items)
-  (make-instance 'cons-sequence :items items))
-
-(defmethod print-object ((cs cons-sequence)(s stream))
-  (format s "~S" (items cs)))
-
-(defmethod = ((x cons-sequence) y)
-  (declare (ignore y))
-  nil)
-
-(defmethod = (x (y cons-sequence))
-  (declare (ignore x))
-  nil)
-
-(defmethod = ((x cons-sequence) (y cons-sequence))
-  (every (lambda (i j)(= i j))
-         (items x)
-         (items y)))
+  (if (null items)
+    (fset:empty-seq)
+    (prepend (cl:car items)
+             (apply 'sequence (cl:cdr items)))))
 
 ;;; ------------------------------------------------------------
 ;;; Text
@@ -372,6 +337,60 @@
 (defmethod = ((x unicode-text) (y unicode-text))
   (cl:string= (value x)(value y)))
 
-;;; ============================================================
-;;; BARD reader
-;;; ============================================================
+;;; ------------------------------------------------------------
+;;; Maps
+;;; ------------------------------------------------------------
+
+(defclass map (sequence)())
+(defmethod map? (x)(declare (ignore x)) nil)
+(defmethod map? ((x map))(declare (ignore x)) t)
+
+;;; alist-map
+;;; ------------------------------------------------------------
+
+(defclass alist-map (map)
+  ((entries :reader entries :initarg :entries)))
+
+(defun map (&rest entries)
+  (make-instance 'alist-map :entries (plist->alist entries)))
+
+(defun %print-map-entries (entries s)
+  (if (null entries)
+    nil
+    (let ((e (cl:first entries))
+          (more (cl:rest entries)))
+      (print-object (car e) s)
+      (format s " ")
+      (print-object (cdr e) s)
+      (when more (format s " "))
+      (%print-map-entries more s))))
+
+(defmethod get-entry ((am alist-map) key)
+  (assoc key (entries am) :test '=))
+
+(defmethod get-key ((am alist-map) key &optional (default (void)))
+  (let ((entry (get-entry am key)))
+    (if entry
+      (cdr entry)
+      default)))
+
+(defmethod print-object ((am alist-map)(s stream))
+  (format s "{")
+  (%print-map-entries (entries am) s)
+  (format s "}"))
+
+(defmethod = ((x alist-map) y)
+  (declare (ignore y))
+  nil)
+
+(defmethod = (x (y alist-map))
+  (declare (ignore x))
+  nil)
+
+(defmethod = ((x alist-map) (y alist-map))
+  (every (lambda (entry)
+           (= (cdr entry)
+              (get-key y (car entry) (void))))
+         (entries x)))
+
+
