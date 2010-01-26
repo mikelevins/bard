@@ -60,12 +60,6 @@
         do (setf (slot-value c 'instance) nil)))
 
 
-;;; ------------------------------------------------------------
-;;; superclass for all Bard values
-;;; ------------------------------------------------------------
-
-(defclass bard-value ()())
-
 ;;; ============================================================
 ;;; base Bard types
 ;;; ============================================================
@@ -77,7 +71,7 @@
 ;;; Void
 ;;; ------------------------------------------------------------
 
-(defclass void (bard-value)()(:metaclass singleton-class))
+(defclass void ()()(:metaclass singleton-class))
 
 (defun void ()(make-instance 'void))
 
@@ -103,7 +97,7 @@
 ;;; Number
 ;;; ------------------------------------------------------------
 
-(defclass number (bard-value)
+(defclass number ()
   ((value :reader value :initarg :value :type 'cl:number)))
 
 (defmethod initialize-instance :before ((n number) &key (value 0) &allow-other-keys)
@@ -134,7 +128,7 @@
 ;;; Character
 ;;; ------------------------------------------------------------
 
-(defclass character (bard-value)
+(defclass character ()
   ((value :reader value :initarg :value :type 'cl:character)))
 
 (defmethod initialize-instance :before ((c character) &key (value #\null) &allow-other-keys)
@@ -161,19 +155,10 @@
 (defmethod = ((x character) (y character))
   (cl:char= (value x)(value y)))
 
-;;; ------------------------------------------------------------
-;;; Name
-;;; ------------------------------------------------------------
-
-(defclass name (bard-value)
-  ((name :reader name :initarg :name :type 'cl:symbol)))
-(defmethod name? (x)(declare (ignore x)) nil)
-(defmethod name? ((x name))(declare (ignore x)) t)
-
 ;;; Keyword
 ;;; ------------------------------------------------------------
 
-(defclass keyword (name)())
+(defclass keyword ()((name :reader name :initarg :name)))
 
 (defmethod initialize-instance :before ((k keyword) &key (name nil) &allow-other-keys)
   (assert (cl:symbolp name)()
@@ -205,7 +190,7 @@
 ;;; Symbol
 ;;; ------------------------------------------------------------
 
-(defclass symbol (name)())
+(defclass symbol ()((name :reader name :initarg :name)))
 
 (defmethod initialize-instance :before ((s symbol) &key (name nil) &allow-other-keys)
   (assert (cl:symbolp name)()
@@ -238,7 +223,7 @@
 ;;; Booleans
 ;;; ------------------------------------------------------------
 
-(defclass boolean (bard-value)())
+(defclass boolean ()())
 (defmethod boolean? (x)(declare (ignore x)) nil)
 (defmethod boolean? ((x boolean))(declare (ignore x)) t)
 
@@ -310,49 +295,35 @@
 ;;; Text
 ;;; ------------------------------------------------------------
 
-(defclass text (sequence)())
 (defmethod text? (x)(declare (ignore x)) nil)
-(defmethod text? ((x text))(declare (ignore x)) t)
+(defmethod text? ((x cl:string))(declare (ignore x)) t)
 
-;;; unicode-text
-;;; ------------------------------------------------------------
+(defmethod text ((s string)) s)
 
-(defclass unicode-text (text)
-  ((value :reader value :initarg :value)))
-
-(defmethod text ((s string))
-  (make-instance 'unicode-text :value s))
-
-(defmethod print-object ((tx unicode-text)(s stream))
-  (format s "\"~a\"" (value tx)))
-
-(defmethod = ((x unicode-text) y)
+(defmethod = ((x cl:string) y)
   (declare (ignore y))
   nil)
 
-(defmethod = (x (y unicode-text))
+(defmethod = (x (y cl:string))
   (declare (ignore x))
   nil)
 
-(defmethod = ((x unicode-text) (y unicode-text))
-  (cl:string= (value x)(value y)))
+(defmethod = ((x cl:string) (y cl:string))
+  (cl:string= x y))
 
 ;;; ------------------------------------------------------------
 ;;; Maps
 ;;; ------------------------------------------------------------
 
-(defclass map (sequence)())
 (defmethod map? (x)(declare (ignore x)) nil)
-(defmethod map? ((x map))(declare (ignore x)) t)
-
-;;; alist-map
-;;; ------------------------------------------------------------
-
-(defclass alist-map (map)
-  ((entries :reader entries :initarg :entries)))
+(defmethod map? ((x fset:map))(declare (ignore x)) t)
 
 (defun map (&rest entries)
-  (make-instance 'alist-map :entries (plist->alist entries)))
+  (if (null entries)
+    (fset:empty-map)
+    (fset:map-union (fset:with (fset:empty-map)
+                          (cl:first entries)(cl:second entries))
+               (apply 'map (nthcdr 2 entries)))))
 
 (defun %print-map-entries (entries s)
   (if (null entries)
@@ -365,32 +336,20 @@
       (when more (format s " "))
       (%print-map-entries more s))))
 
-(defmethod get-entry ((am alist-map) key)
-  (assoc key (entries am) :test '=))
+(defmethod get-key ((m fset:map) key &optional (default (void)))
+  (fset:lookup (fset:with-default m default) key))
 
-(defmethod get-key ((am alist-map) key &optional (default (void)))
-  (let ((entry (get-entry am key)))
-    (if entry
-      (cdr entry)
-      default)))
-
-(defmethod print-object ((am alist-map)(s stream))
-  (format s "{")
-  (%print-map-entries (entries am) s)
-  (format s "}"))
-
-(defmethod = ((x alist-map) y)
+(defmethod = ((x fset:map) y)
   (declare (ignore y))
   nil)
 
-(defmethod = (x (y alist-map))
+(defmethod = (x (y fset:map))
   (declare (ignore x))
   nil)
 
-(defmethod = ((x alist-map) (y alist-map))
-  (every (lambda (entry)
-           (= (cdr entry)
-              (get-key y (car entry) (void))))
-         (entries x)))
+(defmethod = ((x fset:map) (y fset:map))
+  (and (eql (fset:compare x y)
+            :equal)
+       t))
 
 
