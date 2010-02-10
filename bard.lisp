@@ -21,7 +21,7 @@
     "utils"
     "values"
     "lib"
-    ;;"reader"
+    "reader"
     ))
 
 (defun compile-and-load (f)

@@ -94,9 +94,6 @@
 (defmethod reader-object->bard-expression ((c cl:character)) 
   (character c))
 
-(defmethod reader-object->bard-expression ((c bard::character)) 
-  c)
-
 ;;; the Bard reader uses leading and trailing colons to recognize
 ;;; keywords, and the printer adds a colon to visually distinguish a keyword,
 ;;; but the leading and trailing colons are not part of the keyword's name
@@ -125,8 +122,12 @@
 (defmethod reader-object->bard-expression ((c cl:list)) 
   (apply 'sequence c))
 
-(defmethod reader-object->bard-expression ((c cons-sequence)) 
+(defmethod reader-object->bard-expression ((c fset:seq)) 
   c)
+
+(defmethod reader-object->bard-expression ((c fset:map)) 
+  c)
+
 
 ;;; ----------------------------------------------------------------------
 ;;; the bard reader
@@ -185,6 +186,34 @@
 ;;; end-of-sequence
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (set-macro-character #\)
+                       (lambda (stream char)
+                         (declare (ignore stream char))
+                         $end-of-sequence)
+                       nil +bard-read-table+))
+
+;; the sequence reader
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (set-macro-character #\[
+                       (lambda (stream char)
+                         (declare (ignore char))
+                         (let ((sequence-op (symbol "sequence"))
+                               (elements '()))
+                           (block reading
+                             (loop
+                                (let ((next-elt (bard::read stream)))
+                                  (cond
+                                    ((eof? next-elt)(error "Unexpected end of input while reading a sequence"))
+                                    ((end-of-sequence? next-elt) (return-from reading 
+                                                                   (prepend
+                                                                    sequence-op
+                                                                    (apply 'sequence (reverse elements)))))
+                                    (t (progn
+                                         (setf elements (cons next-elt elements))))))))))
+                       nil +bard-read-table+))
+
+;;; end-of-sequence
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (set-macro-character #\]
                        (lambda (stream char)
                          (declare (ignore stream char))
                          $end-of-sequence)
@@ -319,3 +348,28 @@
   (with-input-from-string (s in)
 	(read s)))
 
+#|
+
+(bard:read "void")
+(bard:read "10")
+(bard:read "12.34")
+(bard:read "\\space")
+(bard:read "\\A")
+(bard:read ":Foo")
+(bard:read "bar:")
+(bard:read "baZZ")
+(bard:read "true")
+(bard:read "false")
+(bard:read "()")
+(bard:read "[]")
+(bard:read "(0 1 2 3 4 5)")
+(bard:read "[0 1 2 3 4 5]")
+(bard:read "\"\"")
+(bard:read "\"Hello!\"")
+(bard:read "{ }")
+(bard:read "{ greeting \"Hello!\"}")
+
+
+
+
+|#

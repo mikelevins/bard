@@ -128,32 +128,21 @@
 ;;; Character
 ;;; ------------------------------------------------------------
 
-(defclass character ()
-  ((value :reader value :initarg :value :type 'cl:character)))
-
-(defmethod initialize-instance :before ((c character) &key (value #\null) &allow-other-keys)
-  (assert (cl:characterp value)()
-          "Invalid value for character: ~S" value))
-
-(defmethod character ((c cl:character))
-  (make-instance 'character :value c))
-
-(defmethod print-object ((c character)(s stream))
-  (format s "\\~a" (value c)))
+(defmethod character ((c cl:character)) c)
 
 (defmethod character? (x)(declare (ignore x)) nil)
-(defmethod character? ((x character))(declare (ignore x)) t)
+(defmethod character? ((x cl:character))(declare (ignore x)) t)
 
-(defmethod = ((x character) y)
+(defmethod = ((x cl:character) y)
   (declare (ignore y))
   nil)
 
-(defmethod = (x (y character))
+(defmethod = (x (y cl:character))
   (declare (ignore x))
   nil)
 
-(defmethod = ((x character) (y character))
-  (cl:char= (value x)(value y)))
+(defmethod = ((x cl:character) (y cl:character))
+  (cl:char= x y))
 
 ;;; Keyword
 ;;; ------------------------------------------------------------
@@ -291,25 +280,30 @@
     (prepend (cl:car items)
              (apply 'sequence (cl:cdr items)))))
 
+(defmethod = ((x fset:seq) y)
+  (declare (ignore y))
+  nil)
+
+(defmethod = (x (y fset:seq))
+  (declare (ignore x))
+  nil)
+
+(defmethod = ((x fset:seq) (y fset:seq))
+  (fset::every (lambda (i j) (= i j)) 
+               x y))
+
+
 ;;; ------------------------------------------------------------
 ;;; Text
 ;;; ------------------------------------------------------------
 
 (defmethod text? (x)(declare (ignore x)) nil)
-(defmethod text? ((x cl:string))(declare (ignore x)) t)
+(defmethod text? ((x fset:seq))
+  (fset::every (lambda (c) (cl:characterp c)) x))
 
-(defmethod text ((s string)) s)
+(defmethod text ((s string)) 
+  (apply 'sequence (coerce s 'list)))
 
-(defmethod = ((x cl:string) y)
-  (declare (ignore y))
-  nil)
-
-(defmethod = (x (y cl:string))
-  (declare (ignore x))
-  nil)
-
-(defmethod = ((x cl:string) (y cl:string))
-  (cl:string= x y))
 
 ;;; ------------------------------------------------------------
 ;;; Maps
@@ -353,3 +347,61 @@
        t))
 
 
+#| Testing
+
+(bard:void)
+(bard:= (bard:void)(bard:void))
+(bard:= cl:nil (bard:void))
+
+(bard:number 1)
+(bard:number 23.45)
+(bard:number? (bard:number 23.45))
+(bard:= (bard:number 1)(bard:number 1))
+(bard:= (bard:number 1)(bard:number 1.0))
+(bard:= (bard:number 1)(bard:number 1.1))
+
+(bard:character #\C)
+(bard:character? (bard:character #\C))
+(bard:= (bard:character #\c)(bard:character #\c))
+
+(bard:keyword "Foo")
+(bard:keyword? (bard:keyword "Foo"))
+(bard:= (bard:keyword '|Foo|)(bard:keyword "Foo"))
+
+(bard:symbol "Foo")
+(bard:symbol? (bard:symbol "Foo"))
+(bard:= (bard:symbol '|Foo|)(bard:symbol "Foo"))
+
+(bard:boolean? (bard:true))
+(bard:boolean? (bard:false))
+(bard:boolean? cl:nil)
+(bard:boolean? 0)
+(bard:= (bard:true)(bard:true))
+(bard:= (bard:false)(bard:true))
+(bard:true? (bard:true))
+(bard:false? (bard:true))
+(bard:false? (bard:false))
+
+(bard:sequence 0 1 2 3 4 5)
+(bard:prepend -1 (bard:sequence 0 1 2 3 4 5))
+(bard:= (bard:sequence 0 1 2 3 4 5)
+        (bard:prepend 0 (bard:sequence 1 2 3 4 5)))
+
+(bard:text "")
+(bard:text? (bard:text ""))
+(bard:text "foo bar baz")
+(bard:text? (bard:text "foo bar baz"))
+
+(bard:map)
+(bard:map "name" "Fred")
+(bard:get-key (bard:map "name" "Barney") "name")
+(bard:map "name" "Fred" (bard:keyword "age") (bard:number 101))
+(bard:get-key (bard:map "name" "Fred" (bard:keyword "age") (bard:number 101))
+              (bard:keyword "age"))
+;;; BUG: above should return 101, but returns void
+;;;      lookup is not matching keywords as intended
+
+(bard:= (bard:map "name" "Fred")
+        (bard:map "name" "Fred"))
+
+|#

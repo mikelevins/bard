@@ -19,4 +19,10 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage BARD 
     (:use common-lisp ccl)
-    (:shadow = boolean character compile false first fourth intern keyword map number read rest second sequence symbol third true text)))
+    (:shadow = boolean character compile false first fourth intern
+             keyword map number read rest second sequence 
+             symbol third true text)
+    (:export #:= #:boolean #:boolean? #:character #:character? #:false
+             #:false? #:get-key #:keyword #:keyword? #:map #:map? #:number
+             #:number? #:prepend #:read #:sequence #:sequence? #:symbol
+             #:symbol? #:text #:text? #:true #:true? #:void)))
