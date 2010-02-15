@@ -22,6 +22,8 @@
     "values"
     "lib"
     "reader"
+    "modules"
+    "compiler"
     ))
 
 (defun compile-and-load (f)
