@@ -93,6 +93,11 @@
   (declare (ignore x y))
   t)
 
+(defmethod fset:compare ((a void) (b void))
+  ':equal)
+
+(fset:define-cross-type-compare-methods void)
+
 ;;; ------------------------------------------------------------
 ;;; Number
 ;;; ------------------------------------------------------------
@@ -123,6 +128,12 @@
 
 (defmethod = ((x number) (y number))
   (cl:= (value x)(value y)))
+
+(defmethod fset:compare ((a number) (b number))
+  (fset:compare (value a)(value b)))
+
+(fset:define-cross-type-compare-methods number)
+
 
 ;;; ------------------------------------------------------------
 ;;; Character
@@ -176,6 +187,13 @@
 (defmethod = ((x keyword) (y keyword))
   (cl:eql (name x)(name y)))
 
+(defmethod fset:compare ((a keyword) (b keyword))
+  (fset::compare-lexicographically (cl:symbol-name (name a))
+                                   (cl:symbol-name (name b))))
+
+(fset:define-cross-type-compare-methods keyword)
+
+
 ;;; Symbol
 ;;; ------------------------------------------------------------
 
@@ -208,6 +226,12 @@
 (defmethod = ((x symbol) (y symbol))
   (cl:eql (name x)(name y)))
 
+(defmethod fset:compare ((a symbol) (b symbol))
+  (fset::compare-lexicographically (cl:symbol-name (name a))
+                                   (cl:symbol-name (name b))))
+
+(fset:define-cross-type-compare-methods symbol)
+
 ;;; ------------------------------------------------------------
 ;;; Booleans
 ;;; ------------------------------------------------------------
@@ -238,6 +262,11 @@
   (declare (ignore x y))
   t)
 
+(defmethod fset:compare ((a true) (b true))
+  ':equal)
+
+(fset:define-cross-type-compare-methods true)
+
 ;;; False
 ;;; ------------------------------------------------------------
 
@@ -263,6 +292,11 @@
 (defmethod = ((x false) (y false))
   (declare (ignore x y))
   t)
+
+(defmethod fset:compare ((a false) (b false))
+  ':equal)
+
+(fset:define-cross-type-compare-methods false)
 
 ;;; ------------------------------------------------------------
 ;;; Sequences
@@ -303,7 +337,6 @@
 
 (defmethod text ((s string)) 
   (apply 'sequence (coerce s 'list)))
-
 
 ;;; ------------------------------------------------------------
 ;;; Maps
@@ -391,15 +424,20 @@
 (bard:text? (bard:text ""))
 (bard:text "foo bar baz")
 (bard:text? (bard:text "foo bar baz"))
+(bard:= (bard:text "foo bar baz")
+        (bard:text "foo bar baz"))
+
 
 (bard:map)
-(bard:map "name" "Fred")
-(bard:get-key (bard:map "name" "Barney") "name")
-(bard:map "name" "Fred" (bard:keyword "age") (bard:number 101))
-(bard:get-key (bard:map "name" "Fred" (bard:keyword "age") (bard:number 101))
+(bard:map (bard:text "name") (bard:text "Fred"))
+(bard:get-key (bard:map (bard:text "name") (bard:text "Barney")
+                        (bard:text "age")(bard:number 45))
+              (bard:text "age"))
+(bard:map (bard:keyword "name") (bard:text "Fred")
+          (bard:keyword "age") (bard:number 101))
+(bard:get-key (bard:map (bard:text "name") (bard:text "Fred")
+                        (bard:keyword "age") (bard:number 101))
               (bard:keyword "age"))
-;;; BUG: above should return 101, but returns void
-;;;      lookup is not matching keywords as intended
 
 (bard:= (bard:map "name" "Fred")
         (bard:map "name" "Fred"))
