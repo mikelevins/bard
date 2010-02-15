@@ -1,0 +1,43 @@
+(module namer
+        (uses: bard.lang)
+        (from: bard.io
+               (import: read-lines)))
+
+(in-module namer)
+
+;;; ------------------------------------------------------------
+;;; building names
+;;; ------------------------------------------------------------
+
+(define-method collect-names ((trips <Sequence>)(count <Integer>))
+  )
+
+;;; ------------------------------------------------------------
+;;; output
+;;; ------------------------------------------------------------
+
+(define-method print-list ((s == [])) void)
+
+(define-method print-list ((s <Sequence>))
+  (print-line (first s))
+  (print-list (rest s)))
+
+;;; ------------------------------------------------------------
+;;; main program
+;;; ------------------------------------------------------------
+
+(define-method read-triples ((f <File>))
+  (let ((lines (read-lines f))
+        (filtered-lines (remove-comments lines))
+        (exploded-lines (map (compose (partial bookend "" "") explode)
+                             filtered-lines)))
+    (apply concat
+           (map triples exploded-lines))))
+
+(define-method main (& args)
+  (let ((namefile (args 0))
+        (count (args 1))
+        (trips (read-triples namefile))
+        (names (collect-names trips count)))
+    (print-list (sort names))))
+
