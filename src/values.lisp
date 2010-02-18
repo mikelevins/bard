@@ -299,6 +299,43 @@
 (fset:define-cross-type-compare-methods false)
 
 ;;; ------------------------------------------------------------
+;;; Pairs
+;;; ------------------------------------------------------------
+
+(defmethod pair? (x)(declare (ignore x)) nil)
+(defmethod pair? ((x cons))(declare (ignore x)) t)
+
+(defun pair (l r)
+  (cons l r))
+
+(defmethod left ((x cons))
+  (car x))
+
+(defmethod right ((x cons))
+  (cdr x))
+
+(defmethod = ((x cons) y)
+  (declare (ignore y))
+  nil)
+
+(defmethod = (x (y cons))
+  (declare (ignore x))
+  nil)
+
+(defmethod = ((x cons) (y cons))
+  (and (= (left x)(left y))
+       (= (right x)(right y))))
+
+(defmethod fset:compare ((a cons) (b cons))
+  (ecase (fset:compare (left a)(left b))
+    ((:less) :less)
+    ((:greater) :greater)
+    ((:equal :unequal) (fset:compare (right a)(right b)))))
+
+(fset:define-cross-type-compare-methods cons)
+
+
+;;; ------------------------------------------------------------
 ;;; Sequences
 ;;; ------------------------------------------------------------
 
@@ -414,6 +451,12 @@
 (bard:true? (bard:true))
 (bard:false? (bard:true))
 (bard:false? (bard:false))
+
+(bard:pair (bard:number 0) (bard:number 1))
+(bard:left (bard:pair (bard:number 0) (bard:number 1)))
+(bard:right (bard:pair (bard:number 0) (bard:number 1)))
+(bard:= (bard:pair (bard:number 0) (bard:number 1))
+        (bard:pair (bard:number 0) (bard:number 1)))
 
 (bard:sequence 0 1 2 3 4 5)
 (bard:prepend -1 (bard:sequence 0 1 2 3 4 5))

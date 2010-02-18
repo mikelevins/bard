@@ -1,0 +1,55 @@
+A protocol expression asserts a set of clauses, called "generic
+functions", or, more commonly, simply "functions":
+
+  (protocol Addable
+            (add <Term> <Term>)
+            (subtract <Term> <Term>))
+
+This protocol expression asserts two functions, named "add" and
+"subtract".
+
+The two functions are collected into a set called a "protocol"; the
+protocol here is named "Addable". 
+
+Protocols may also introduce type variables called "categories"; this
+example introduces the category "<Term>".
+
+Generic functions may be applied to arguments only when concrete
+functions called "methods" have been defined for them. For example:
+
+(define-method add ((x <unsigned-integer32>)(y <unsigned-integer32>))
+   (+ x y))
+
+This definition adds a method to the "add" generic function. The
+method body shows how to execute "add" when both arguments are of the
+concrete representation named <unsigned-integer32>.
+
+After this define-method, an expression like this will work, so long
+as the values passed are in fact instances of <unsigned-integer32>:
+
+  (add 3 5)
+
+When the define-method form is evaluated, the types given
+(<unsigned-integer32> in this case) are matched against the categories
+asserted for add, and thereafter the representation
+<unsigned-integer32> is considered a member of the category <Term>.
+
+It's also possible to define a method using categories instead of
+representations. For example, you could define this method:
+
+(define-method add ((x <Number>)(y <Number>))
+   (+ x y))
+
+The difference from defining a method on a representation, like
+<unsigned-integer32>, is that this method doesn't provide any way to
+unify <Term> with any concrete representation, so it doesn't enable
+Bard to decide whether a value is a <Term> unless some other
+definition *does* unify <Number> with a concrete representation.
+
+When a category has not been unified with any concrete representation,
+it is called an "unbound" category. The behavior of a program that
+contains unbound categories is undefined. Bard warns when compiling
+code in the presence of unbound categories, and it signals an error if
+a function that refers to unbound categories is invoked.
+
+

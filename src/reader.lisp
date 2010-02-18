@@ -34,6 +34,11 @@
 (defmethod eof? (x)(declare (ignore x)) nil)
 (defmethod eof? ((e eof))(declare (ignore e)) t)
 
+(defclass pair-constructor ()())
+(defparameter $comma (make-instance 'pair-constructor))
+(defmethod comma? (x)(declare (ignore x)) nil)
+(defmethod comma? ((e pair-constructor))(declare (ignore e)) t)
+
 (defclass end-of-sequence ()())
 (defparameter $end-of-sequence (make-instance 'end-of-sequence))
 (defmethod end-of-sequence? (x)(declare (ignore x)) nil)
@@ -83,6 +88,8 @@
 
 (defmethod reader-object->bard-expression ((x end-of-sequence)) x)
 
+(defmethod reader-object->bard-expression ((x pair-constructor)) x)
+
 ;;; bard expressions
 
 (defmethod reader-object->bard-expression ((s cl:string)) 
@@ -120,7 +127,9 @@
 
 ;;; (...) => sequence
 (defmethod reader-object->bard-expression ((c cl:list)) 
-  (apply 'sequence c))
+  (if (listp (cdr c))
+      (apply 'sequence c)
+      c))
 
 (defmethod reader-object->bard-expression ((c fset:seq)) 
   c)
@@ -171,16 +180,39 @@
   (set-macro-character #\(
                        (lambda (stream char)
                          (declare (ignore char))
-                         (let ((elements '()))
+                         (let ((elements '())
+                               (pending-pair nil))
                            (block reading
                              (loop
                                 (let ((next-elt (bard::read stream)))
                                   (cond
                                     ((eof? next-elt)(error "Unexpected end of input while reading a sequence"))
-                                    ((end-of-sequence? next-elt) (return-from reading 
-                                                                   (apply 'sequence (reverse elements))))
-                                    (t (progn
-                                         (setf elements (cons next-elt elements))))))))))
+                                    ((end-of-sequence? next-elt) 
+                                     (if pending-pair
+                                         (error "Unexpected end of input while reading a pair")
+                                         (return-from reading  (if (and (= 1 (length elements))
+                                                                        (consp (cl:first elements)))
+                                                                   (cl:first elements)
+                                                                   (apply 'sequence (reverse elements))))))
+                                    ((comma? next-elt) 
+                                     (if pending-pair
+                                         (error "Syntx error: duplicate commas")
+                                         (progn
+                                           (setf pending-pair (car elements))
+                                           (setf elements (cdr elements)))))
+                                    (t (if pending-pair
+                                           (progn
+                                             (setf elements (cons (pair pending-pair next-elt) elements))
+                                             (setf pending-pair nil))
+                                           (setf elements (cons next-elt elements))))))))))
+                       nil +bard-read-table+))
+
+;;; comma (pair-constructor)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (set-macro-character #\,
+                       (lambda (stream char)
+                         (declare (ignore stream char))
+                         $comma)
                        nil +bard-read-table+))
 
 ;;; end-of-sequence
@@ -229,6 +261,7 @@
                              (loop
                                 (let ((next-elt (bard::read stream)))
                                   (cond
+                                    ((comma? next-elt) nil)
                                     ((eof? next-elt)(error "Unexpected end of input while reading a map"))
                                     ((end-of-map? next-elt) (return-from reading 
                                                               (apply 'map (reverse elements))))

@@ -23,6 +23,6 @@
              keyword map number read rest second sequence 
              symbol third true text)
     (:export #:= #:boolean #:boolean? #:character #:character? #:false
-             #:false? #:get-key #:keyword #:keyword? #:map #:map? #:number
-             #:number? #:prepend #:read #:sequence #:sequence? #:symbol
+             #:false? #:get-key #:keyword #:keyword? #:left #:map #:map? #:number
+             #:number? #:pair #:pair? #:prepend #:read #:right #:sequence #:sequence? #:symbol
              #:symbol? #:text #:text? #:true #:true? #:void)))
