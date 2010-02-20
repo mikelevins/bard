@@ -32,7 +32,14 @@
     (get-key (element expression 0) (compile (element expression 1) env))))
 
 (defun compile-variable-reference (exp env)
-  "not yet implemented: compile-variable-reference")
+  (cond
+    ((unqualified-symbol? exp)
+     (lambda (expression env)
+       (lookup-variable (find-symbol-in-current-module exp env) env)))
+    ((module-qualified-symbol? exp) 
+     (lambda (expression env)
+       (lookup-variable (module-qualified-symbol exp) env)))
+    (t (error "unrecognized symbol syntax: ~a" exp))))
 
 (defun compile-sequence-expression (exp env)
   (let ((compiler (sequence-compiler (element exp 0) exp)))

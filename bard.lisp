@@ -19,9 +19,11 @@
 (defparameter $bard-src-files
   '("package"
     "utils"
+    "singletons"
     "values"
     "lib"
     "reader"
+    "environments"
     "modules"
     "compiler"
     ))
