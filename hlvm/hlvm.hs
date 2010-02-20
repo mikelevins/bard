@@ -14,104 +14,143 @@ import qualified Data.Sequence as S
 
 type Key = Value
 
-type Var = String
+type Name =  String
 
-type CategoryType = String
+type Var = Name
 
-type SignatureType =  [CategoryType]
+type Category = Name
 
-type FunctionType =  SignatureType
+type Signature =  [Category]
 
-type NamedFunctionType =  (String, FunctionType)
+data ReturnType = VoidType
+                | ValueType Value
+                | ValuesType [Value] deriving Show
 
-type CodeType = [Instruction] 
+data Function = Function Name Signature ReturnType deriving Show
 
-type MethodType = (SignatureType, CodeType)
+type Code = [Instruction] 
 
-type ProtocolType = (String, [NamedFunctionType])
+type Method = (Signature, Code)
 
-data Value = Void
-           | True
-           | False
-           | IntValue Integer
-           | Character Char
-           | Symbol String
-           | Keyword String
-           | Record [(String, Value)]
-           | Sequence (S.Seq Value)
-           | Map (M.Map Key Value)
-           | Category CategoryType
-           | Function FunctionType
-           | Method MethodType
-           | Protocol ProtocolType
+type Protocol = (String, [Function])
 
-data Env = Env (M.Map Var Value)
+data Value = VoidVal
+           | TrueVal
+           | FalseVal
+           | IntegerVal Integer
+           | CharacterVal Char
+           | SymbolVal Name
+           | KeywordVal Name
+           | RecordVal [(Name, Value)]
+           | PairVal (Value, Value)
+           | SequenceVal (S.Seq Value)
+           | MapVal (M.Map Key Value)
+           | CategoryVal Category
+           | FunctionVal Function
+           | MethodVal Method
+           | ProtocolVal Protocol deriving Show
+
+data Env = Env (M.Map Var Value) deriving Show
+nullEnv = Env M.empty
 
 -------------------------------------------------
 -- opcodes, instructions, operations
 -------------------------------------------------
--- opcode: an 8-bit identifier for a machine operation
-
--- instruction: a 64-bit value. The first 8 bits form an opcode. The
--- remaining 56 bits consist of a packed array of 8-, 16-, or 32-bit
--- values whose format is determined by the leading opcode. Each field
--- of the instruction may be empty, or another opcode, or an immediate
--- value, or an offset into vm memory
-
--- operation: a primitive vm routine that performs some basic function
--- of the vm, such as I/O or a Lisp primitive.
 
 -------------------------------------------------
 -- opcodes
 -------------------------------------------------
 
-type Opcode = Word8
-
--- basic lisp operations
-op_CONST = 0xF0 :: Opcode      -- reference to a constant
-op_VREF = 0xF1 :: Opcode       -- reference to a module variable
-op_MCALL = 0xF2 :: Opcode      -- a macro application
-op_QUOTE = 0xF3 :: Opcode      -- a quoted expression
-op_IF = 0xF4 :: Opcode         -- an 'if' expression
-op_DEF = 0xF5 :: Opcode        -- definition of a module variable
-op_LAMBDA = 0xF6 :: Opcode     -- calling a method constructor
-op_FCALL = 0xF7 :: Opcode      -- applying a function
-op_CMUT = 0xF8 :: Opcode       -- assigning a new value to a cell
-op_CC = 0xF9 :: Opcode         -- reference to the current continuation
-
--- constants
-op_VOID = 0xC0 :: Opcode       -- reference to void
-op_TRUE = 0xC1 :: Opcode       -- reference to true
-op_FALSE = 0xC2 :: Opcode      -- reference to false
-op_MINUSONE = 0xC3 :: Opcode   -- reference to -1
-op_ZERO = 0xC4 :: Opcode       -- reference to 0
-op_ONE = 0xC5 :: Opcode        -- reference to 1
-op_TWO = 0xC6 :: Opcode        -- reference to 2
+data Opcode = Foo
+    -- basic lisp operations
+            | OP_CONST -- reference to a constant
+            | OP_BYTE -- reference to a constant
+            | OP_VREF -- reference to a module variable
+            | OP_MCALL -- a macro application
+            | OP_QUOTE -- a quoted expression
+            | OP_IF -- an 'if' expression
+            | OP_DEF -- definition of a module variable
+            | OP_LAMBDA -- calling a method constructor
+            | OP_FCALL -- applying a function
+            | OP_CMUT -- assigning a new value to a cell
+            | OP_CC -- reference to the current continuation
+    -- arithmetic operations
+            | OP_MULT -- multiply
+    -- constants
+            | OP_VOID -- reference to void
+            | OP_TRUE -- reference to true
+            | OP_FALSE -- reference to false
+            | OP_MINUSONE -- reference to -1
+            | OP_ZERO -- reference to 0
+            | OP_ONE -- reference to 1
+            | OP_TWO -- reference to 2
+    -- I/O operations
+            | OP_SHOW -- print a value 
+    -- Control operations
+            | OP_HALT -- print a value 
+              deriving Show
 
 -------------------------------------------------
 -- instructions
 -------------------------------------------------
 
-type Instruction = Word64
-
-opcode :: Instruction -> Opcode
-opcode ins = fromIntegral (shiftR (ins .&. 0xFF00000000000000) 56)
+type Instruction = (Opcode, Args)
 
 -------------------------------------------------
--- operations
+-- the virtual machine
 -------------------------------------------------
 
--- basic lisp operations
+type VM = (Run, Code, CC, Env, NArgs, Args)
 
-op_const k = k
+type Run = Bool
+type CC = Code
+type NArgs = Int
+type Arg = Value
+type Args = [Arg]
 
-op_var_ref v env = lookup v env
+fetch :: VM -> Instruction
+fetch (run, code, cc, env, nargs, args) = (cc!!0)
 
+op_mult :: Args -> Value
+op_mult args =
+    let (IntegerVal m) = (args!!0)
+        (IntegerVal n) = (args!!1)
+    in
+      (IntegerVal (m*n))
 
+execute :: Instruction -> VM -> VM
+execute (OP_HALT,params) (run, code, cc, env, nargs, args)     = (False, code, cc, env, nargs, args)
+execute (OP_VOID,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), (VoidVal:args))
+execute (OP_TRUE,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), (TrueVal:args))
+execute (OP_FALSE,params) (run, code, cc, env, nargs, args)    = (run, code, (drop 1 cc), env, (1+(length args)), (FalseVal:args)) 
+execute (OP_MINUSONE,params) (run, code, cc, env, nargs, args) = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal (-1)):args))
+execute (OP_ZERO,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 0):args)) 
+execute (OP_ONE,params) (run, code, cc, env, nargs, args)      = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 1):args)) 
+execute (OP_TWO,params) (run, code, cc, env, nargs, args)      = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 2):args)) 
+execute (OP_CONST,params) (run, code, cc, env, nargs, args)    = (run, code, (drop 1 cc), env, (1+(length args)), ((params!!0):args)) 
+execute (OP_MULT,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+((length args)-2)), ((op_mult args):(drop 2 args)))
+
+hlvm :: VM -> VM
+hlvm (run, code, cc, env, nargs, args) =
+    if run
+    then let vm = (run, code, cc, env, nargs, args)
+         in hlvm (execute (fetch vm) vm)
+    else (run, code, cc, env, nargs, args)
 
 -------------------------------------------------
 -- main program
 -------------------------------------------------
 
+prog_mult_test = 
+    [
+     (OP_TWO,[]),
+     (OP_CONST,[(IntegerVal 3)]),
+     (OP_MULT,[]),
+     (OP_HALT,[])
+    ]
+
 main = do
        putStrLn "Bard VM v 1.0"
+       putStrLn (show result)
+       where
+         result  = hlvm (True, prog_mult_test, prog_mult_test, nullEnv, 0, [])
