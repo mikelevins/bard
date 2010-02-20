@@ -36,9 +36,6 @@
 
 (defun void ()(make-instance 'void))
 
-(defmethod print-object ((v void)(s stream))
-  (format s "void"))
-
 (defmethod void? (x)(declare (ignore x)) nil)
 (defmethod void? ((x void))(declare (ignore x)) t)
 
@@ -72,9 +69,6 @@
 
 (defmethod number ((n cl:number))
   (make-instance 'number :value n))
-
-(defmethod print-object ((n number)(s stream))
-  (format s "~d" (value n)))
 
 (defmethod number? (x)(declare (ignore x)) nil)
 (defmethod number? ((x number))(declare (ignore x)) t)
@@ -131,9 +125,6 @@
 (defmethod keyword ((s cl:string))
   (make-instance 'keyword :name (cl:intern s (find-package :bard))))
 
-(defmethod print-object ((k keyword)(s stream))
-  (format s "~a:" (name k)))
-
 (defmethod keyword? (x)(declare (ignore x)) nil)
 (defmethod keyword? ((x keyword))(declare (ignore x)) t)
 
@@ -174,9 +165,6 @@
 (defmethod symbol ((s cl:string))
   (make-instance 'symbol :name (cl:intern s (find-package :bard))))
 
-(defmethod print-object ((sym symbol)(s stream))
-  (format s "~a" (name sym)))
-
 (defmethod symbol? (x)(declare (ignore x)) nil)
 (defmethod symbol? ((x symbol))(declare (ignore x)) t)
 
@@ -212,9 +200,6 @@
 
 (defun true ()(make-instance 'true))
 
-(defmethod print-object ((tr true)(s stream))
-  (format s "true"))
-
 (defmethod = ((x true) y)
   (declare (ignore y))
   nil)
@@ -238,9 +223,6 @@
 (defclass false (boolean)()(:metaclass singleton-class))
 
 (defun false ()(make-instance 'false))
-
-(defmethod print-object ((f false)(s stream))
-  (format s "false"))
 
 (defmethod false? (x)(declare (ignore x)) nil)
 (defmethod false? ((x false))(declare (ignore x)) t)
@@ -332,7 +314,6 @@
   (fset::every (lambda (i j) (= i j)) 
                x y))
 
-
 ;;; ------------------------------------------------------------
 ;;; Text
 ;;; ------------------------------------------------------------
@@ -343,6 +324,7 @@
 
 (defmethod text ((s string)) 
   (apply 'sequence (coerce s 'list)))
+
 
 ;;; ------------------------------------------------------------
 ;;; Maps
@@ -357,17 +339,6 @@
     (fset:map-union (fset:with (fset:empty-map)
                           (cl:first entries)(cl:second entries))
                (apply 'map (nthcdr 2 entries)))))
-
-(defun %print-map-entries (entries s)
-  (if (null entries)
-    nil
-    (let ((e (cl:first entries))
-          (more (cl:rest entries)))
-      (print-object (car e) s)
-      (format s " ")
-      (print-object (cdr e) s)
-      (when more (format s " "))
-      (%print-map-entries more s))))
 
 (defmethod get-key ((m fset:map) key &optional (default (void)))
   (fset:lookup (fset:with-default m default) key))

@@ -22,7 +22,9 @@
     (:shadow = boolean character compile false find-symbol first fourth intern
              keyword map number read rest second sequence 
              symbol third true text unbound-variable)
-    (:export #:= #:boolean #:boolean? #:character #:character? #:compile #:element #:false
-             #:false? #:find-symbol #:get-key #:keyword #:keyword? #:left #:map #:map? #:number
-             #:number? #:pair #:pair? #:prepend #:read #:right #:sequence #:sequence? #:symbol
-             #:symbol? #:text #:text? #:true #:true? #:void)))
+    (:export #:= #:boolean #:boolean? #:character #:character?
+    #:compile #:element #:false #:false? #:find-symbol #:get-key
+    #:keyword #:keyword? #:left #:map #:map? #:number #:number? #:pair
+    #:pair? #:prepend #:read #:right #:sequence
+    #:sequence? #:symbol #:symbol? #:text #:text? #:true #:true?
+    #:void)))

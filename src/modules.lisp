@@ -27,6 +27,9 @@
    (modules-used :reader modules-used :initform nil)
    (modules-using :reader modules-using :initform nil)))
 
+(defmethod print-object ((m module)(s stream))
+  (format s "#<bard module ~A>" (ccl::sxhash m)))
+
 (defun find-module (modpath)
   (gethash modpath *module-table* nil))
 

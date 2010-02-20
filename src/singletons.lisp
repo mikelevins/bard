@@ -17,6 +17,8 @@
 ;;; http://www.tfeb.org/programs/lisp/singleton-class.lisp
 ;;; copyright 2002 by TIm Bradshaw
 
+(in-package :bard)
+
 (defclass singleton-class (standard-class)
   ((instance :initform nil)))
 

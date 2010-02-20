@@ -17,7 +17,7 @@
 ;;; ============================================================
 
 (defclass unbound-variable ()()(:metaclass singleton-class))
-(defun void ()(make-instance 'unbound-variable))
+(defun unbound-variable ()(make-instance 'unbound-variable))
 
 (defun null-environment () nil)
 
