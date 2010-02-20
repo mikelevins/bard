@@ -67,6 +67,11 @@
 (defmethod = (x y)
   (cl:= x y))
 
+(defmethod self-evaluating? (x)
+  (declare (ignore x))
+  t)
+
+
 ;;; ------------------------------------------------------------
 ;;; Void
 ;;; ------------------------------------------------------------
@@ -198,6 +203,10 @@
 ;;; ------------------------------------------------------------
 
 (defclass symbol ()((name :reader name :initarg :name)))
+
+(defmethod self-evaluating? ((x symbol))
+  (declare (ignore x))
+  nil)
 
 (defmethod initialize-instance :before ((s symbol) &key (name nil) &allow-other-keys)
   (assert (cl:symbolp name)()
@@ -341,6 +350,10 @@
 
 (defmethod sequence? (x)(declare (ignore x)) nil)
 (defmethod sequence? ((x fset:seq))(declare (ignore x)) t)
+
+(defmethod self-evaluating? ((x fset:seq))
+  (declare (ignore x))
+  nil)
 
 (defmethod prepend (item (seq fset:seq))
   (fset:with-first seq item))

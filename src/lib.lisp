@@ -19,6 +19,10 @@
 ;;; booleans
 ;;; numbers
 ;;; sequences
+
+(defun element (s n)
+  (fset:@ s n))
+
 ;;; text
 ;;; map
 
