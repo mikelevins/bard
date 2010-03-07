@@ -23,8 +23,9 @@
     "values"
     "lib"
     "reader"
-    "environments"
     "modules"
+    "printer"
+    "environments"
     "compiler"
     ))
 

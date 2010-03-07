@@ -1,16 +1,46 @@
-(module namer
+(module xg.namer
         (uses: bard.lang)
         (from: bard.io
                (import: read-lines)))
 
-(in-module namer)
+(in-module xg.namer)
+
+;;; ------------------------------------------------------------
+;;; parameters
+;;; ------------------------------------------------------------
+
+(define $maximum-name-length 128)
 
 ;;; ------------------------------------------------------------
 ;;; building names
 ;;; ------------------------------------------------------------
 
-(define-method collect-names ((trips <Sequence>)(count <Integer>))
-  )
+(define-method build-name ((trips <Sequence>) &optional acc)
+  (cond
+   ((>= (length acc) $maximum-name-length) acc)
+   ((is-end-triple? (last acc)) acc)
+   (else: (let ((next (choose-next-triple trips (last acc))))
+            (build-name trips (append acc next))))))
+
+(define-method assemble ((trips <Sequence>))
+  (apply cancat (unbookend (foldl merge-connecting-triples trips))))
+
+(define-method get-name ((trips <Sequence>))
+  (assemble (build-name trips)))
+
+(define-method get-names ((trips <Sequence>)(count <Integer>)
+                          &optional acc)
+  (if (<= count 0)
+      acc
+      (get-names trips
+                 (- count 1)
+                 (append acc (get-name trips)))))
+
+(define-method collect-names ((trips <Sequence>)(count <Integer>)
+                              &optional acc)
+  (if (>= (length trips) count)
+      acc
+      (unique (concat acc (get-names trips count)))))
 
 ;;; ------------------------------------------------------------
 ;;; output
