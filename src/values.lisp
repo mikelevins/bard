@@ -29,32 +29,33 @@
 
 
 ;;; ------------------------------------------------------------
-;;; Void
+;;; Nothing
 ;;; ------------------------------------------------------------
 
-(defclass void ()()(:metaclass singleton-class))
+(defclass nothing ()()(:metaclass singleton-class))
 
-(defun void ()(make-instance 'void))
+(defun nothing ()(make-instance 'nothing))
 
-(defmethod void? (x)(declare (ignore x)) nil)
-(defmethod void? ((x void))(declare (ignore x)) t)
+(defmethod nothing? (x)(declare (ignore x)) nil)
+(defmethod nothing? ((x nothing))(declare (ignore x)) t)
+(defun something? (x)(not (nothing? x)))
 
-(defmethod = ((x void) y)
+(defmethod = ((x nothing) y)
   (declare (ignore y))
   nil)
 
-(defmethod = (x (y void))
+(defmethod = (x (y nothing))
   (declare (ignore x))
   nil)
 
-(defmethod = ((x void) (y void))
+(defmethod = ((x nothing) (y nothing))
   (declare (ignore x y))
   t)
 
-(defmethod fset:compare ((a void) (b void))
+(defmethod fset:compare ((a nothing) (b nothing))
   ':equal)
 
-(fset:define-cross-type-compare-methods void)
+(fset:define-cross-type-compare-methods nothing)
 
 ;;; ------------------------------------------------------------
 ;;; Number
@@ -300,7 +301,7 @@
   (if (null items)
     (fset:empty-seq)
     (prepend (cl:car items)
-             (apply 'sequence (cl:cdr items)))))
+             (cl:apply 'sequence (cl:cdr items)))))
 
 (defmethod = ((x fset:seq) y)
   (declare (ignore y))
@@ -323,7 +324,7 @@
   (fset::every (lambda (c) (cl:characterp c)) x))
 
 (defmethod text ((s string)) 
-  (apply 'sequence (coerce s 'list)))
+  (cl:apply 'sequence (coerce s 'list)))
 
 
 ;;; ------------------------------------------------------------
@@ -338,9 +339,9 @@
     (fset:empty-map)
     (fset:map-union (fset:with (fset:empty-map)
                           (cl:first entries)(cl:second entries))
-               (apply 'map (nthcdr 2 entries)))))
+               (cl:apply 'map (nthcdr 2 entries)))))
 
-(defmethod get-key ((m fset:map) key &optional (default (void)))
+(defmethod get-key ((m fset:map) key &optional (default (nothing)))
   (fset:lookup (fset:with-default m default) key))
 
 (defmethod = ((x fset:map) y)
@@ -359,9 +360,9 @@
 
 #| Testing
 
-(bard:void)
-(bard:= (bard:void)(bard:void))
-(bard:= cl:nil (bard:void))
+(bard:nothing)
+(bard:= (bard:nothing)(bard:nothing))
+(bard:= cl:nil (bard:nothing))
 
 (bard:number 1)
 (bard:number 23.45)

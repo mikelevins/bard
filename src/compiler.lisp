@@ -21,10 +21,10 @@
   (error "unrecognized sequence expression-type: ~A" exp))
 
 (defmethod sequence-compiler ((x symbol) exp)
-  (declare (ignore x exp))
-  (lambda (expression env)
-    (declare (ignore expression env))
-    "not yet implemented: compiler for symbols in function position"))
+  (cond
+    ((eql (name x) 'bard::|quote|) (lambda (expression env) (element expression 1)))
+    (t (lambda (expression env) 
+         ))))
 
 (defmethod sequence-compiler ((x fset:seq) exp)
   (declare (ignore x exp))
@@ -35,7 +35,9 @@
 (defmethod sequence-compiler ((x fset:map) exp)
   (declare (ignore x exp))
   (lambda (expression env) 
-    (get-key (element expression 0) (compile (element expression 1) env))))
+    (apply (compile (element expression 0) env) 
+           (map-over (lambda (y)(compile y env))
+                     (fset:less-first expression)))))
 
 (defun compile-sequence-expression (exp env)
   (let ((compiler (sequence-compiler (element exp 0) exp)))
@@ -66,7 +68,7 @@
 
 ;;; simple expressions
 
-(bard:compile (bard:read "void") (bard::bard-toplevel-environment))
+(bard:compile (bard:read "nothing") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "2") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "123456789.123456789") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "\\A") (bard::bard-toplevel-environment))
@@ -85,6 +87,7 @@
 (bard:compile (bard:read "user.foo") (bard::bard-toplevel-environment))
 
 ;;; function calls, macros, and special forms
+(bard:compile (bard:read "(quote (+ 2 3))") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "(+ 2 3)") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "((method (x y) (* x y)) 2 3)") (bard::bard-toplevel-environment))
 (bard:compile (bard:read "({name: \"Fred\", age: 101} name:)") (bard::bard-toplevel-environment))
@@ -96,8 +99,9 @@
 (in-package :cl-user)
 
 (defparameter $test-exps
-  (list 
-   "void"
+  (list
+   ;; literal atoms
+   "nothing"
    "2"
    "123456789.123456789"
    "\\A"
@@ -106,10 +110,14 @@
    "bard.*module*"
    "true"
    "false"
+   ;; literal <Pair>
    "(Name: , \"Barney\")"
+   ;; literal <Map>
    "{ Name: \"Fred\", Age: 105}"
+   ;; <Sequence>
+   "(quote 2)"
+   "(quote (+ 2 3))"
    "(+ 2 3)"
-   "(Name: , \"Fred\")"
    "((method (x y) (* x y)) 2 3)"
    "({name: \"Fred\", age: 101} name:)"
    "({name: \"Fred\", age: 101} age:)"

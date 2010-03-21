@@ -26,8 +26,8 @@
   (print-object val out)
   (values))
 
-(defmethod print-value ((val void) (out stream))
-  (princ "void" out)
+(defmethod print-value ((val nothing) (out stream))
+  (princ "nothing" out)
   (values))
 
 (defmethod print-value ((val number) (out stream))

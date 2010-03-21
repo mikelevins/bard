@@ -28,8 +28,8 @@
     "123.45" "1" "#b101"
     ;; characters
     "\\c" "\\1" "\\space"
-    ;; boolean and void
-    "true" "false" "void"
+    ;; boolean and nothing
+    "true" "false" "nothing"
     ;; symbols
     "foo" "bard.lang/foo"
     ;; keywords

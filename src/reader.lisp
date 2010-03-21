@@ -81,8 +81,8 @@
          thing))
 
 ;;; special reader values
-(defmethod reader-object->bard-expression ((x (eql nil))) (void))
-(defmethod reader-object->bard-expression ((x (eql 'cl:nil))) (void))
+(defmethod reader-object->bard-expression ((x (eql nil))) (nothing))
+(defmethod reader-object->bard-expression ((x (eql 'cl:nil))) (nothing))
 
 (defmethod reader-object->bard-expression ((x end-of-map)) x)
 
@@ -122,13 +122,13 @@
       ((eql #\: (elt sname (1- slen))) (keyword (%strip-keyword-colons sname)))
       ((equal "true" (symbol-name s)) (true))
       ((equal "false" (symbol-name s)) (false))
-      ((equal "void" (symbol-name s)) (void))
+      ((equal "nothing" (symbol-name s)) (nothing))
       (t (symbol sname)))))
 
 ;;; (...) => sequence
 (defmethod reader-object->bard-expression ((c cl:list)) 
   (if (listp (cdr c))
-      (apply 'sequence c)
+      (cl:apply 'sequence c)
       c))
 
 (defmethod reader-object->bard-expression ((c fset:seq)) 
@@ -193,7 +193,7 @@
                                          (return-from reading  (if (and (= 1 (length elements))
                                                                         (consp (cl:first elements)))
                                                                    (cl:first elements)
-                                                                   (apply 'sequence (reverse elements))))))
+                                                                   (cl:apply 'sequence (reverse elements))))))
                                     ((comma? next-elt) 
                                      (if pending-pair
                                          (error "Syntx error: duplicate commas")
@@ -238,7 +238,7 @@
                                     ((end-of-sequence? next-elt) (return-from reading 
                                                                    (prepend
                                                                     sequence-op
-                                                                    (apply 'sequence (reverse elements)))))
+                                                                    (cl:apply 'sequence (reverse elements)))))
                                     (t (progn
                                          (setf elements (cons next-elt elements))))))))))
                        nil +bard-read-table+))
@@ -264,7 +264,7 @@
                                     ((comma? next-elt) nil)
                                     ((eof? next-elt)(error "Unexpected end of input while reading a map"))
                                     ((end-of-map? next-elt) (return-from reading 
-                                                              (apply 'map (reverse elements))))
+                                                              (cl:apply 'map (reverse elements))))
                                     (t (progn
                                          (setf elements (cons next-elt elements))))))))))
                        nil +bard-read-table+))
@@ -383,7 +383,7 @@
 
 #|
 
-(bard:read "void")
+(bard:read "nothing")
 (bard:read "10")
 (bard:read "12.34")
 (bard:read "\\space")

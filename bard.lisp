@@ -26,6 +26,7 @@
     "modules"
     "printer"
     "environments"
+    "apply"
     "compiler"
     ))
 

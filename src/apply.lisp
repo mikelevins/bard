@@ -2,36 +2,29 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          lib.lisp
+;;;; Name:          apply.lisp
 ;;;; Project:       Bard - a modern Lisp
-;;;; Purpose:       library APIs for Bard base types
+;;;; Purpose:       function-application
 ;;;; Author:        mikel evins
-;;;; Copyright:     2009 by mikel evins
+;;;; Copyright:     2010 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 (in-package :bard)
 
 ;;; ============================================================
-;;; Library APIs
+;;; 
 ;;; ============================================================
 
-;;; booleans
-;;; numbers
-;;; sequences
+(defmethod apply (thing other-things)
+  (error "Don't know how to apply ~a to ~a" thing other-things))
 
-(defmethod count ((x fset:seq))
-  (fset:size x))
+(defmethod apply ((f cl:function) args)
+  (cl:apply f args))
 
-(defmethod count ((x fset:map))
-  (fset:size x))
-
-(defun element (s n)
-  (fset:@ s n))
-
-(defmethod map-over ((f function)(s fset:seq))
-  (fset:image f s))
-
-;;; text
-;;; map
+(defmethod apply ((f fset:map) args)
+  (let ((default (if (> (count args) 1)
+                     (element args 1)
+                     (nothing))))
+    (get-key f (element args 0) default)))
 
