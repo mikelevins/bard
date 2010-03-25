@@ -33,6 +33,7 @@
         (unbound-variable))))
 
 (let ((toplevel-env nil))
+
   (defun alter-toplevel-environment! (new-env)
     (setf toplevel-env new-env)
     (values))

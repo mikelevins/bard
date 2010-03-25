@@ -19,8 +19,8 @@
 (defmethod apply (thing other-things)
   (error "Don't know how to apply ~a to ~a" thing other-things))
 
-(defmethod apply ((f cl:function) args)
-  (cl:apply f args))
+(defmethod apply ((f cl:function) (args fset:seq))
+  (cl:apply f (fset:convert 'cl:list args)))
 
 (defmethod apply ((f fset:map) args)
   (let ((default (if (> (count args) 1)

@@ -47,8 +47,10 @@
 
 (defun init-modules ()
   (setf *module-table* (make-hash-table :test #'equal))
+  ;; module bard
   (add-module "bard")
   (setf *bard-module* (find-module "bard"))
+  ;; var bard.*module*
   (setf *module* *bard-module*)
   (intern "*module*" (find-module "bard"))
   (alter-toplevel-environment! 
