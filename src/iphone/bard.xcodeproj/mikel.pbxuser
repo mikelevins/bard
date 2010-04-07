@@ -10,6 +10,9 @@
 		activeBuildConfigurationName = Debug;
 		activeExecutable = 97126047116C440600D89FDD /* bard */;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* bard */;
+		addToTargets = (
+			1D6058900D05DD3D006BFB54 /* bard */,
+		);
 		codeSenseManager = 9712605A116C440D00D89FDD /* Code sense */;
 		executables = (
 			97126047116C440600D89FDD /* bard */,
@@ -20,7 +23,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					337,
+					1469,
 					20,
 					52,
 					43,
