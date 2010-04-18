@@ -29,7 +29,13 @@
 (defun element (s n)
   (fset:@ s n))
 
-(defmethod map-over ((f function)(s fset:seq))
+(defmethod drop ((n integer)(s fset:seq))
+  (if (<= n 0)
+      s
+      (drop (1- n)
+            (fset:less-first s))))
+
+(defmethod map-over ((f cl:function)(s fset:seq))
   (fset:image f s))
 
 ;;; text

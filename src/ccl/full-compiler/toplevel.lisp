@@ -28,4 +28,12 @@
                          (number
                           (+ (value arg0)
                              (value arg1))))))
+    (intern "prim*" bard-module)
+    (setf bard-env
+          (add-binding bard-env
+                       (bard::module-qualified-symbol (bard:symbol "bard.prim*"))
+                       (lambda (arg0 arg1) 
+                         (number
+                          (* (value arg0)
+                             (value arg1))))))
     (alter-toplevel-environment! bard-env)))

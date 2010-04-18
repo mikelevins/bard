@@ -1,4 +1,3 @@
-;;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10; Package: asdf -*-
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -63,6 +62,9 @@
 
 (defclass number ()
   ((value :reader value :initarg :value :type 'cl:number)))
+
+(defmethod print-object ((n number)(str stream))
+  (format str "~A" (value n)))
 
 (defmethod initialize-instance :before ((n number) &key (value 0) &allow-other-keys)
   (assert (cl:numberp value)()
@@ -151,6 +153,9 @@
 ;;; ------------------------------------------------------------
 
 (defclass symbol ()((name :reader name :initarg :name)))
+
+(defmethod print-object ((s symbol)(str stream))
+  (format str "~A" (name s)))
 
 (defmethod self-evaluating? ((x symbol))
   (declare (ignore x))

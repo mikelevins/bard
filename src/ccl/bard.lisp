@@ -1,4 +1,3 @@
-;;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10; Package: asdf -*-
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -16,7 +15,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter $base-directory (asdf::determine-system-pathname nil nil)))
 
-(defparameter $bard-src-files
+(defparameter $bard-src-files-full-compiler
+  ;; in subdir full-compiler/
   '("package"
     "utils"
     "singletons"
@@ -28,7 +28,12 @@
     "environments"
     "toplevel"
     "apply"
-    "compiler"
+    "functions"
+    "compiler"))
+
+(defparameter $bard-src-files
+  '("package"
+    "bard"
     ))
 
 (defun compile-and-load (f)

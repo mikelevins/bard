@@ -23,6 +23,11 @@
 (defmethod sequence-compiler ((x symbol) exp)
   (cond
     ((eql (name x) 'bard::|quote|) (lambda (expression env) (element expression 1)))
+    ((eql (name x) 'bard::|begin|) (lambda (expression env)
+                                     (let ((vals (map-over (lambda (e) (compile e env))
+                                                           expression)))
+                                       (element vals (- (count vals) 1)))))
+    ((eql (name x) 'bard::|method|) (lambda (expression env) (make-method expression env)))
     (t (lambda (expression env) 
          (apply (compile (element expression 0) env)
                 (map-over (lambda (y) (compile y env))
@@ -31,8 +36,9 @@
 (defmethod sequence-compiler ((x fset:seq) exp)
   (declare (ignore x exp))
   (lambda (expression env)
-    (declare (ignore expression env))
-    "not yet implemented: compiler for sequence expressions in function position"))
+    (apply (compile (element expression 0) env)
+           (map-over (lambda (y) (compile y env))
+                     (fset:less-first expression)))))
 
 (defmethod sequence-compiler ((x fset:map) exp)
   (declare (ignore x exp))
@@ -121,7 +127,7 @@
    "(quote 2)"
    "(quote (+ 2 3))"
    "(bard.prim+ 2 3)"
-   "((method (x y) (* x y)) 2 3)"
+   "((method (x y) (bard.prim* x y)) 2 3)"
    "({name: \"Fred\", age: 101} name:)"
    "({name: \"Fred\", age: 101} age:)"
    "({name: \"Fred\", age: 101} missing:)"))

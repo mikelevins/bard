@@ -1,4 +1,3 @@
-;;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10; Package: asdf -*-
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -13,17 +12,22 @@
 (in-package :cl-user)
 
 ;;; ============================================================
-;;; Package BARD
+;;; Package bard-internal
 ;;; ============================================================
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage BARD 
+  (defpackage |bard-internal|
     (:use common-lisp ccl)
-    (:shadow = apply boolean character compile count false find-symbol first fourth intern
-             keyword map number read rest second sequence 
-             symbol third true text unbound-variable)
-    (:export #:= #:apply #:boolean #:boolean? #:character #:character?
-    #:compile #:element #:false #:false? #:find-symbol #:get-key
-    #:keyword #:keyword? #:left #:map #:map? #:number #:number? #:nothing #:pair
-    #:pair? #:prepend #:read #:right #:sequence
-    #:sequence? #:symbol #:symbol? #:text #:text? #:true #:true?)))
+    (:shadow = apply boolean compile count false find-symbol
+             first fourth function intern map method
+             read rest second sequence third true text
+             unbound-variable)
+    (:export #:= #:apply #:boolean #:boolean? #:character?  #:compile
+    #:element #:false #:false? #:find-symbol #:get-key #:keyword?
+    #:left #:map #:map? #:number? #:nothing #:prepend #:read #:right
+    #:sequence #:sequence? #:symbol? #:text #:text? #:true #:true?)))
+
+;;; ============================================================
+;;; Package bard
+;;; ============================================================
+

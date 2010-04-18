@@ -271,6 +271,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -294,7 +295,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>1 55 1920 1123 0 0 1920 1178 </string>
+						<string>2 55 1920 1123 0 0 1920 1178 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -331,7 +332,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1712, 888}}</string>
 								<key>RubberWindowFrame</key>
-								<string>1 55 1920 1123 0 0 1920 1178 </string>
+								<string>2 55 1920 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -351,7 +352,7 @@
 								<key>Frame</key>
 								<string>{{0, 893}, {1712, 189}}</string>
 								<key>RubberWindowFrame</key>
-								<string>1 55 1920 1123 0 0 1920 1178 </string>
+								<string>2 55 1920 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -521,7 +522,7 @@
 		<string>/Users/mikel/Valise/bywicket/git/bard/bard/src/iphone/bard.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>1 55 1920 1123 0 0 1920 1178 </string>
+	<string>2 55 1920 1123 0 0 1920 1178 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
