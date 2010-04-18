@@ -31,3 +31,8 @@
 ;;; Package bard
 ;;; ============================================================
 
+;;; Symbols defined in the bard package are in the bard module in bard.
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defpackage |bard|
+    (:use |bard-internal|)))

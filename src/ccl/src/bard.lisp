@@ -222,7 +222,7 @@
 (defun prepend (item seq)
   (cons item seq))
 
-(defun sequence (&rest items)
+(defun |sequence| (&rest items)
   (cl:apply #'cl:list items))
 
 (defmethod = ((x cl:cons) y)
@@ -308,6 +308,11 @@
 ;;; ============================================================
 ;;; Bard Modules
 ;;; ============================================================
+
+(in-package :|bard-internal|)
+
+(defun init-modules ()
+  )
 
 ;;; ============================================================
 ;;; Bard Reader
@@ -410,7 +415,7 @@
 ;;; (...) => sequence
 (defmethod reader-object->bard-expression ((c cl:list)) 
   (if (listp (cdr c))
-      (cl:apply 'sequence c)
+      (cl:apply '|sequence| c)
       c))
 
 (defmethod reader-object->bard-expression ((c fset:seq)) 
@@ -469,7 +474,7 @@
                                   (cond
                                     ((eof? next-elt)(error "Unexpected end of input while reading a sequence"))
                                     ((end-of-sequence? next-elt) 
-                                     (return-from reading  (cl:apply 'sequence (reverse elements))))
+                                     (return-from reading  (cl:apply '|sequence| (reverse elements))))
                                     (t (setf elements (cons next-elt elements)))))))))
                        nil +bard-read-table+))
 
@@ -496,7 +501,7 @@
                                     ((end-of-sequence? next-elt) (return-from reading 
                                                                    (prepend
                                                                     sequence-op
-                                                                    (cl:apply 'sequence (reverse elements)))))
+                                                                    (cl:apply '|sequence| (reverse elements)))))
                                     (t (progn
                                          (setf elements (cons next-elt elements))))))))))
                        nil +bard-read-table+))
@@ -620,17 +625,15 @@
                                 (%add-char-to-token char token))))))))))
       (values (or escapes multi-escaped) (if *read-suppress* nil explicit-package) nondots double-colon))))
 
-
-
-(in-package :|bard-internal|)
-
 ;;; ----------------------------------------------------------------------
 ;;; Bard's read function
 ;;; ----------------------------------------------------------------------
 
+(in-package :|bard-internal|)
+
 (defmethod read ((in stream))
   (let ((*readtable* |bard-internal|::+bard-read-table+)
-		(*package* (find-package :|bard-internal|)))
+        (*package* (find-package :|bard-internal|)))
 	(let ((obj (cl:read in nil |bard-internal|::$eof nil)))
       (|bard-internal|::reader-object->bard-expression obj))))
 
@@ -638,9 +641,20 @@
   (with-input-from-string (s in)
 	(read s)))
 
+(defun read-input (input)
+  (let ((source-map (make-hash-table :test #'eq :shared nil))
+        (*readtable* |bard-internal|::+bard-read-table+)
+        (*package* (find-package :|bard|)))
+    (with-input-from-string (input-stream input)
+      (multiple-value-bind (input-form env print-result)
+          (ccl::read-toplevel-form input-stream :eof-value |bard-internal|::$eof :map source-map)
+        (values input-form env)))))
+
 ;;; ============================================================
 ;;; Bard Printer
 ;;; ============================================================
+
+(in-package :|bard-internal|)
 
 (defmethod print-value (val stream)
   (cl:print-object val stream))
@@ -649,3 +663,47 @@
 ;;; Bard Toplevel
 ;;; ============================================================
 
+(in-package :|bard-internal|)
+
+(defparameter |bard|::|*module*| (find-package :|bard|))
+
+(defun |quit| ()
+  (throw 'quitting
+    (progn
+      (format *standard-output* "~%bard terminated" )
+      (values))))
+
+;;; when we read a map, we need to eval the keys and values
+(defun eval-input-map (imap env)
+  (let ((result (fset:empty-map)))
+    (fset:do-map (k v imap)
+      (let* ((kvals (ccl::toplevel-eval k env))
+             (k (if (null kvals)
+                    (nothing)
+                    (cl:first kvals)))
+             (vvals (ccl::toplevel-eval v env))
+             (v (if (null vvals)
+                    (nothing)
+                    (cl:first vvals))))
+        (if (something? v)
+            (if (something? k)
+                (setf (fset:@ result k) v)
+                (error "Attempt to associate nothing with a value in a map")))))
+    result))
+
+(defun repl ()
+  (init-modules)
+  (let ((*package* (find-package :|bard|)))
+    (catch 'quitting 
+      (loop
+         (format *standard-output* "~%bard> ")
+         (let ((input-string (read-line *standard-input* nil nil nil)))
+           (multiple-value-bind (input-form env)
+               (|bard-internal|::read-input input-string)
+             (let* ((input-form (if (map? input-form)
+                                        (eval-input-map input-form env)
+                                        input-form))
+                    (values (ccl::toplevel-eval input-form env)))
+               (dolist (v values)
+                 (format *standard-output* "~%")
+                 (|bard-internal|::print-value v *standard-output*)))))))))
