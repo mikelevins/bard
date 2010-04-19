@@ -11,7 +11,7 @@
 
 ;;; TODO:
 ;;; because Bard is a Lisp-1 and Common Lisp is a Lisp-2,
-;;; funciton calls will not quite work right if we just read
+;;; function calls will not quite work right if we just read
 ;;; Bard expressions and treat them as Lisp expressions.
 ;;; Bard therefore requires a preprocessor to be inserted
 ;;; between the read and eval steps to convert sequences
