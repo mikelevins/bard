@@ -15,25 +15,23 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter $base-directory (asdf::determine-system-pathname nil nil)))
 
-(defparameter $bard-src-files-full-compiler
+(defparameter $bard-src-files
   ;; in subdir full-compiler/
   '("package"
-    "utils"
     "singletons"
     "values"
-    "lib"
     "reader"
-    "modules"
     "printer"
+    #|
+    "utils"
+    "lib"
+    "modules"
     "environments"
     "toplevel"
     "apply"
     "functions"
-    "compiler"))
-
-(defparameter $bard-src-files
-  '("package"
-    "bard"
+    "compiler"
+    |#
     ))
 
 (defun compile-and-load (f)
@@ -43,9 +41,9 @@
       (load path))))
 
 (defun load-bard ()
-  (load (merge-pathnames "lib/misc-extensions_1.2.0/misc-extensions.asd" $base-directory))
-  (load (merge-pathnames "lib/fset_1.2.2/fset.asd" $base-directory))
-  (asdf:oos 'asdf:load-op :fset)
+  ;;(load (merge-pathnames "lib/misc-extensions_1.2.0/misc-extensions.asd" $base-directory))
+  ;;(load (merge-pathnames "lib/fset_1.2.2/fset.asd" $base-directory))
+  ;;(asdf:oos 'asdf:load-op :fset)
   (mapcar 'compile-and-load $bard-src-files))
 
 
