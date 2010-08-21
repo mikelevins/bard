@@ -1,0 +1,197 @@
+<html>
+ <head>
+     <title>CL Unifying Substitutions</title>
+     <link rel="stylesheet" href="main.css">
+ </head>
+	
+ <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#ffffff">
+
+ <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" vspace="0" hspace="0">
+  <tr>
+  <td colspan="3">
+   <div class="header"
+        style="font-family:=Verdana,Arial,Helvetica; font-size: 18px; color: #41286f;">
+    <strong><i>CL Extensions: UNIFYING SUBSTITUTIONS</i><string>
+    <div class="navigation">
+     <a href="index.html" class="navigation-link-selected">Home</a>
+      | <a href="downloads.html" class="navigation-link">Downloads</a>
+      |  <a href="links.html" class="navigation-link">Links</a>
+    </div>
+   </div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+   <div class="middle-bar"><img src="images/shim.gif" height="5" width="1"></div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+  </td>
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+
+  <h1>Unifying Substitutions</h1>
+
+  <p>The central notion of every unification machinery is that of
+  <em>unifying substitution</em>.  A unifying substitution - or
+  <em>environment</em> - is a
+  mapping from <em>variable names</em> (or <em>variables</em>) to
+  <em>values</em> (which can be variables themselves.)</p>
+
+  <p>The generic function UNIFY, and several other functions and macros
+  in the package accept unifying substitutions as parameters, and
+  return them as values.</p>
+
+  <p>There are several notations to describe such unifying
+  substitutions.  The one chosen here is simply the following:</p>
+
+  <p>
+  <pre>
+  {x<sub>1</sub> -> y<sub>1</sub>, x<sub>2</sub> -> y<sub>2</sub>, ..., x<sub>k</sub> -> y<sub>k</sub>}
+  </pre>
+  </p>
+
+  <p>The UNIFY library has a number of functions and data structures
+  that can be used to construct and manipulate unifying substitutions.</p>
+
+  <p>In order to facilitate the construction of interpreter-like
+  programs the UNIFICATION library provides data structures
+  representing <em>bindings</em>, <em>frames</em>, and
+  <em>environments</em> - i.e. the unifying substitions proper.</p>
+
+  <ul>
+  <li><em>Bindings</em>
+
+  <p>A <em>binding</em> simply represent the mapping between a variable and a
+  value.</p>
+
+  <p>
+  <pre>
+  <i>binding</i>: <i>variable</i> --> <i>value</i>
+  </pre>
+  </p>
+
+  <li><em>Frames</em>
+
+  <p>A <em>frame</em> is simply a collection of bindings.</p>
+
+  <p>
+  <pre>
+  <i>frame</i>: {<i>binding</i><sub>i</sub>}
+  </pre>
+  </p>
+  
+
+  <li><em>Environments</em>
+
+  <p>An <em>environment</em> is simply a stack of frames.</p>
+
+  <p>
+  <pre>
+  <i>environment</i>: &lt;<i>frame</i><sub>0</sub>, <i>frame</i><sub>1</sub>, ..., <i>frame</i><sub>k</sub>&gt;
+  </pre>
+  </p>
+  </ul>
+
+  <p>The collection of operators described hereafter manipulates these
+  opaque data structures.</p>
+
+  <h1>Unifying Substitutions Dictionary</h1>
+
+  <ul>
+  <li><a href="find-variable-value-function.html">FIND-VARIABLE-VALUE</a></li>
+  <li><a href="make-empty-environment-function.html">MAKE-EMTPY-ENVIRONMENT</a></li>
+  <li><a href="make-shared-environment-function.html">MAKE-SHARED-ENVIRONMENT</a></li>
+
+  </ul>
+  
+
+
+  <h1>Notes</h1>
+
+  <h2>Current Implementation Details</h2>
+
+  <p>The current implementation is rather straightforward. A binding
+  is a CONS, a frame is a wrapper around an A-LIST, and an environment
+  is a wrapper around a LIST (stack) of frames.</p>
+
+
+  <h2>Functional Style Unifying Substitutions</h2>
+
+  <p>There are very elegant implementations of unification and
+  substitutions based on curried functions.  A typical exercise in
+  functional programming using ML or a similar language is to write a
+  simplified Milner Type Checker.  Writing the unifying substitution
+  support can be achieved by using curried functions in that context.</p>
+
+
+<!--
+;;; Copyright (c) 2004 Marco Antoniotti, All rigths reserved.
+;;;
+;;; Permission to use, modify, and redistribute this code is hereby
+;;; granted.
+;;; The code is provided AS IS with NO warranty whatsoever. The author
+;;; will not be held liable etc etc etc etc etc.
+-->
+
+  <h2>Site Map</h2>
+
+
+  <p>Enjoy!</p>
+
+
+
+  <hr>
+  <p>Questions? Queries? Suggestions? Comments? Please direct them
+  at <a href="mailto:marcoxa_PROVA_A_SPAMMARME@alu.org">me</a>.
+  </p>
+
+  </div>
+  </div>
+						
+ </td>
+ 
+ <!--  <td height="100%">&nbsp;</td> -->
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+
+  <h1>News</h1>
+
+  <p>News in chronological order, most recent on top.
+  </p>
+
+  <ul>
+  <li><strong>2004-10-30</strong><br>
+      Document created
+  </li>
+  </ul>
+
+  </div>
+  </div>
+						
+ </td>
+ 
+ <td height="100%">&nbsp;</td>
+ </tr>
+
+
+
+ 
+ <tr>
+  <td colspan="3" valign="bottom" align="right">
+  <div class="copyright">
+  &copy; 2003-2004, Marco Antoniotti, all rights reserved.
+  </div>
+  </td>
+ </tr>
+ 
+ </table>
+ </body>
+</html>

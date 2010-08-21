@@ -1,0 +1,257 @@
+Latest notes
+August 17th, 2010
+
+Another round of attempted simplifications...
+
+;;; ---------------------------------------------------------------------
+;;; Base values and literals
+;;; ---------------------------------------------------------------------
+
+;;; null and undefined values
+
+nothing
+
+undefined
+
+;;; numbers
+
+0 1 101 1234567890123456
+0.1 #b1011 #o047 #xface
+
+;;; names
+
+'foo 'Bar :baz grault: :Wibble:
+
+'bard.lang:Foo
+
+;;; sequences
+
+()
+
+[0 1 2 3 5]
+
+[nothing :foo 17]
+
+;;; maps
+
+{}
+
+{:a 1 :b 2 :c 3}
+
+{"name" "Fred" "friends" ["barney" "betty"]}
+
+;;; methods
+
+#([x] (* x x))
+
+;;; ---------------------------------------------------------------------
+;;; Protocols
+;;; ---------------------------------------------------------------------
+
+;;; a protocol says what functions it defines, and gives the names of
+;;; their parameters' categories:
+
+(define-protocol Sequence
+  ((empty? <Sequence>) => <Boolean>)
+  ((first <Sequence>) => <Value>)
+  ((rest <Sequence>) => <Sequence>)
+  ((apply <Key> <Sequence>) => <Value>))
+
+(define-protocol Map
+  ((apply <Key> <Map>) => <Value>)
+  ((merge <Map> <Map>) => <Map>))
+
+;;; Protocols say nothing about how their functions are implemented, and
+;;; nothing about which representations their categories represent.
+;;; Protocol and category names are module variables.
+
+;;; ---------------------------------------------------------------------
+;;; Representations
+;;; ---------------------------------------------------------------------
+
+;;; structures are concrete maps defined as constructors with named
+;;; arguments. The argument names become the keys used to access the
+;;; structure fields. Constructor and accessor names are module variables.
+
+(define-structure <cons-cell>
+  (cons head tail))
+
+;;; we can specify the concrete representations of the fields.  if we
+;;; omit the qualification, then the fields are allowed to be
+;;; <anything>. Here's the above, but with the field
+;;; categories made explicit:
+
+(define-structure <cons-cell>
+    [(head <anything>)(tail <anything>)]
+  (cons head tail))
+
+;;; a structure may have variant definitions. Here's a tree:
+
+(define-structure <tree>
+  ([] nothing)
+  ([] (leaf val))
+  ([] (node left-tree right-tree)))
+
+;;; we can qualify the argument categories, as before:
+
+(define-structure <tree>
+  ([(nothing <nothing>)] nothing)
+  ([(val <anything>)] (leaf val))
+  ([(left-tree <tree>)(right-tree <tree>)] 
+    (node left-tree right-tree)))
+
+;;; the constructors become functions that create instances of the
+;;; structure. The argument names become accessors:
+
+(val (left-tree (node (leaf 1)(leaf 2)))) => 1
+
+;;; vectors are indexed structures:
+
+(define-vector <vector>)
+
+;;; this default form creates a vector representation that is allowed
+;;; to be of any length and contain any values.
+
+;;; you can restrict the number of elements that are allowed; the
+;;; following vector allows only 4 elements.
+
+(define-vector <4vector> [<anything> <anything> <anything> <anything>])
+
+;;; you can also restrict the elements by representation; following is
+;;; a vector representation that allows only 4 1-byte characters:
+
+(define-vector <ostype> [<char> <char> <char> <char>])
+
+;;; a few conveniences are provided for defining other restrictions:
+
+(define-vector <vector> [&]) ; any number of <anything>
+
+(define-vector <char-vector> [<char> *]) ; zero or more <char>
+
+(define-vector <at-least-1-char-vector> [<char> +]) ; one or more <char>
+
+(define-vector <another-vector> [<char> <float> *]) ; one <char>, then zero or more <float>
+
+;;; ---------------------------------------------------------------------
+;;; Implementing functions
+;;; ---------------------------------------------------------------------
+
+define-function can create a method definition without reference to any protocol:
+
+(define-function (list & args) 
+    (if (empty? args)
+        nothing
+        (cons (first args)
+              (apply list (rest args)))))
+
+Borrowing an idiom from clojure, it can also define more than one method, 
+overloaded on the number of parameters:
+
+(define-function
+  [(list) nothing] 
+  [(list & args) (if (empty? args)
+                   nothing
+                   (cons (first args)
+                         (apply list (rest args))))])
+
+;;; ---------------------------------------------------------------------
+;;; Implementing Protocols
+;;; ---------------------------------------------------------------------
+
+define-methods is designed for defining implementations of protocols. 
+It uses the same notation as define-function for defining
+multiple methods at once, but it can define methods for several
+different functions at the same time, as long as they are all
+members of the mentioned protocol.
+
+;;; if we omit a definition, define-methods automatically defines a
+;;; default one for the representations we've declared. the default
+;;; method signals an error if called. Bard warns us when defining
+;;; default methods.
+
+(define-methods Sequence [(c <cons-cell>) (n <Integer>)]
+  [(empty? c) => false]
+  [(first c) => (head c)]
+  [(rest c) => (tail c)]
+  [(apply n c) => (if (< n 0)
+                    (error "Index ~A is less than 0" n)
+                    (bind [nth (fn [p i]
+                                (if (= i n)
+                                    (head p)
+                                    (if (empty? (tail p))
+                                      (error "Index ~A is too large" n)
+                                      (nth (tail p) (+ i 1)))))]
+                      (nth c n)))])
+
+Why define method as simple as, for example, first, which just calls head? 
+Because head is a representation-specific accessor, whereas first is a 
+generic function that is defined for any member of the Sequence category.
+
+(define-methods Map [(k <Anything>)(c <nothing>)]
+  [(apply k c) => nothing])
+
+(define-methods Map [(key <Anything>)(c <cons-cell>)]
+  [(apply k c) => (bind [e (head c)
+                        k (head e)
+                        v (tail e)
+                        more (tail c)]
+                     (if (= k key)
+                         v
+                         (apply k more)))])
+
+;;; ---------------------------------------------------------------------
+;;; bind
+;;; ---------------------------------------------------------------------
+
+;;; bind does the work of let:
+
+(bind [x 2
+       y 3]
+   (* x y))
+=> 6
+
+;;; ...and also of let*:
+
+(bind [x 2
+       y (+ x 1)]
+   (* x y))
+=> 6
+
+;;; ...and also of multiple-value-bind
+
+(bind [[x y] (values 2 3)]
+   (* x y))
+=> 6
+
+;;; ---------------------------------------------------------------------
+;;; Using functions and data
+;;; ---------------------------------------------------------------------
+
+;;; defining a new protocol implementation pushes its category
+;;; assertions onto the front of the precedence list:
+
+(bind [s (list (cons 1 :one)
+               (cons 2 :two)
+               (cons 3 :three))]
+  (apply 1 s))
+=> :one
+
+(categories <cons-cell>) => (<Map> <Sequence>)
+
+;;; when a representation is in more than one category, and there are
+;;; methods defined on the same function for more than one protocol,
+;;; we can explicitly say which protocol to use:
+
+(bind [s (list (cons 1 :one)
+               (cons 2 :two)
+               (cons 3 :three))]
+  (list
+    (with Sequence (apply 1 s))
+    (with Map (apply 1 s))))
+=> (#<cons-cell>:[ 2 :two ] :one)
+
+;;; we can explicitly reorder categories:
+
+(categories <cons-cell> <Sequence> <Map>)
+
+(categories <cons-cell>) => (<Sequence> <Map>)

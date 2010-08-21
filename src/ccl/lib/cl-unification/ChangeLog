@@ -1,0 +1,502 @@
+2009-12-17  author  <author@paniscia.local>
+
+	* lib-dependent/cl-ppcre-template.asd: Initial checkin.
+
+	* lib-dependent/cl-ppcre-template.lisp:
+	Patched to use Cl-PPCRE:SCAN-TO-STRINGS (thanks to Pixel // pinterface [a] gmail dot com).
+
+	* unifier.lisp: Minor cosmetic changes.
+
+	* unification-package.lisp: Exported MATCHF-CASE.
+
+	* templates-hierarchy.lisp:
+	Fixed a couple of problems with some accessors in the NUMBER,
+	STRUCTURE-OBJECT and STANDARD-OBJECT templates.
+
+	* match-block.lisp: Added MATCHF* macros.
+
+2009-04-18  author  <author@paniscia.local>
+
+	* ChangeLog: ChangeLog updated.
+
+	* cl-unification.system, cl-unification.asd:
+	System definitions files (.asd and .system) modified in order to make
+	dependency form CL-PPCRE optional.
+
+	* lib-dependent/cl-ppcre-template.system: File added.
+
+	* lib-dependent/cl-ppcre-template.lisp:
+	Removed REQUIRE of CL-PPCRE.  Too brittle.
+
+	* cl-unification-lib.asd: File added.
+
+2009-04-18  author  <author@Macintosh-9.local>
+
+	* cl-unification.system, cl-unification.asd:
+	System definitions files (.asd and .system) modified in order to make
+	dependency form CL-PPCRE optional.
+
+	* lib-dependent/cl-ppcre-template.system: File added.
+
+	* lib-dependent/cl-ppcre-template.lisp:
+	Removed REQUIRE of CL-PPCRE.  Too brittle.
+
+	* cl-unification-lib.asd: File added.
+
+2009-04-17  author  <author@Macintosh-9.local>
+
+	* unification-package.lisp:
+	Added a few exports and changed the actual package name (i.e., I put
+	my money where my mouth is; the "published" package name is now a
+	nickname).
+
+	* apply-substitution.lisp:
+	Fixed a couple of snags.  APPLY-SUBSTITUTION was not applied
+	recursively and it was barfing on numbers.
+	Current version is still incomplete, but it serves as a template for
+	further development.
+
+2009-04-15  author  <author@Macintosh-9.local>
+
+	* ChangeLog: ChangeLog updated.
+
+	* lib-dependent/cl-ppcre-template.lisp, test/unification-tests.lisp:
+	Modified Files:
+	 	test/unification-tests.lisp
+	Added Files:
+	 	lib-dependent/cl-ppcre-template.lisp
+
+	The cl-ppcre-template reuses E. Weitz's wonderful CL-PPCRE library
+	to provide a seamless (YMMV) reuse of regular expressions within
+	CL-UNIFICATION.
+
+	* templates-hierarchy.lisp: Added LAMBDA-TEMPLATE.
+
+	* substitutions.lisp:
+	Added some functionality to extract all variables and/or all values
+	from an environment or a frame.
+
+	* match-block.lisp:
+	Added MATCHF (whose name may change) to simplify the
+	'destructuring-bind'-like syntax and behavior of the matching
+	facilities.
+
+	* COPYING: Dates updated.
+
+	* unifier.lisp:
+	Major API change to 'unify'.  It now accepts keywords.  Old code
+	shouls not be affected, but new code is now more flexible.  Look the
+	the STRING and (new) CHARACTER methods to see how this change is
+	affecting the code.
+
+	* variables.lisp: Some 'diff' unfathomable change happened.
+
+	* unification-package.lisp: Added exports of a few symbols.
+
+	* cl-unification.system, cl-unification.asd:
+	Fixed a few snags and added "lib-dependent" module.
+
+	* apply-substitution.lisp: Added some functionality and comments.
+
+2009-04-15  author  <author@paniscia.pd.disco.unimib.it>
+
+	* lib-dependent/cl-ppcre-template.lisp, test/unification-tests.lisp:
+	Modified Files:
+	 	test/unification-tests.lisp
+	Added Files:
+	 	lib-dependent/cl-ppcre-template.lisp
+
+	The cl-ppcre-template reuses E. Weitz's wonderful CL-PPCRE library
+	to provide a seamless (YMMV) reuse of regular expressions within
+	CL-UNIFICATION.
+
+	* templates-hierarchy.lisp: Added LAMBDA-TEMPLATE.
+
+	* substitutions.lisp:
+	Added some functionality to extract all variables and/or all values
+	from an environment or a frame.
+
+	* match-block.lisp:
+	Added MATCHF (whose name may change) to simplify the
+	'destructuring-bind'-like syntax and behavior of the matching
+	facilities.
+
+	* COPYING: Dates updated.
+
+	* unifier.lisp:
+	Major API change to 'unify'.  It now accepts keywords.  Old code
+	shouls not be affected, but new code is now more flexible.  Look the
+	the STRING and (new) CHARACTER methods to see how this change is
+	affecting the code.
+
+	* variables.lisp: Some 'diff' unfathomable change happened.
+
+	* unification-package.lisp: Added exports of a few symbols.
+
+	* cl-unification.system, cl-unification.asd:
+	Fixed a few snags and added "lib-dependent" module.
+
+	* apply-substitution.lisp: Added some functionality and comments.
+
+2008-07-13  author  <author@paniscia.pd.disco.unimib.it>
+
+	* ChangeLog: Changelog updated.
+
+	* ACKNOWLEDGEMENTS:
+	Added credits to a few people.   Missing ones should bug the maintainer :)
+
+	* README: Copyright dates updated.
+
+	* unification.asd, unification.system: Cleaning up.
+	Committing in .
+
+	Removed Files:
+	 	unification.asd unification.system
+
+	* templates-hierarchy-saved.lisp: Clenaing up.
+	Committing in .
+
+	Removed Files:
+	 	templates-hierarchy-saved.lisp
+
+	* INSTALLATION: Instructions updated.
+
+	* COPYING: Copyright dates updated.
+
+	* test/unification-tests.lisp: Added file.
+
+	* substitutions.lisp, templates-hierarchy.lisp, unification-package.lisp, variables.lisp:
+	Some modification added.  Exported symbols and reverted
+	reader macro #T to construct template instances at read time.
+	Added MAKE-LOAD-FORM method for templates which should fix problem with
+	SBCL.
+
+	Committing in .
+
+	 Modified Files:
+	 	substitutions.lisp templates-hierarchy.lisp
+	 	unification-package.lisp variables.lisp
+
+	* cl-unification.system:
+	Added explicit :source-extension to accomodate Allegro CL.
+
+2008-07-13  author  <author@Macintosh.local>
+
+	* ACKNOWLEDGEMENTS:
+	Added credits to a few people.   Missing ones should bug the maintainer :)
+
+	* README: Copyright dates updated.
+
+	* unification.asd, unification.system: Cleaning up.
+	Committing in .
+
+	Removed Files:
+	 	unification.asd unification.system
+
+	* templates-hierarchy-saved.lisp: Cleaning up.
+	Committing in .
+
+	Removed Files:
+	 	templates-hierarchy-saved.lisp
+
+	* INSTALLATION: Instructions updated.
+
+	* COPYING: Copyright dates updated.
+
+	* test/unification-tests.lisp: Added file.
+
+	* substitutions.lisp, templates-hierarchy.lisp, unification-package.lisp, variables.lisp:
+	Some modification added.  Exported symbols and reverted
+	reader macro #T to construct template instances at read time.
+	Added MAKE-LOAD-FORM method for templates which should fix problem with
+	SBCL.
+
+	Committing in .
+
+	 Modified Files:
+	 	substitutions.lisp templates-hierarchy.lisp
+	 	unification-package.lisp variables.lisp
+
+	* cl-unification.system:
+	Added explicit :source-extension to accomodate Allegro CL.
+
+2008-07-10  author  <author@Macintosh.local>
+
+	* apply-substitution.lisp:
+	Removed EXPORT of APPLY-SUBSTITUTION as it is already in the DEFPACKAGE.
+
+2007-11-09  author  <author@Macintosh.local>
+
+	* docs/html/index.html: Changed the position of the disclaimer.
+
+	* ChangeLog: ChangeLog updated.
+
+	* match-block.lisp:
+	Made several changes to improve MATCH-CASE (following a note from Ivan
+	Boldyrev from a long time ago), MATCHING and MATCH.
+
+	Else-clauses are now handled correctly (AFAICT).
+
+	Single variable templates in MATCH, MATCH-CASE and MATCHING clauses do
+	not need to be quoted.
+
+	MATCHING was generating one gensym'ed variable per clause without
+	creating an appropriate enclosing LET.  This is now fixed.
+
+	* substitutions.lisp:
+	Changed the top comment and added a (:copier nil) option to the
+	ENVIRONMENT defstruct, as COPY-ENVIRONMENT is defined later in the
+	file.
+
+	* cl-unification.system, cl-unification.asd:
+	Added the new system building files with more meaningful names
+	w.r.t. the name of the library.
+
+	* unification.asd, unification.system:
+	Marked the two system building files as 'obsolete', before removing
+	them from the repository.  The new files are prefixed by 'cl-'.
+
+2007-11-09  author  <author@papadopoulou-2.ydras.offices.>
+
+	* match-block.lisp:
+	Made several changes to improve MATCH-CASE (following a note from Ivan
+	Boldyrev from a long time ago), MATCHING and MATCH.
+
+	Else-clauses are now handled correctly (AFAICT).
+
+	Single variable templates in MATCH, MATCH-CASE and MATCHING clauses do
+	not need to be quoted.
+
+	MATCHING was generating one gensym'ed variable per clause without
+	creating an appropriate enclosing LET.  This is now fixed.
+
+	* substitutions.lisp:
+	Changed the top comment and added a (:copier nil) option to the
+	ENVIRONMENT defstruct, as COPY-ENVIRONMENT is defined later in the
+	file.
+
+	* cl-unification.system, cl-unification.asd:
+	Added the new system building files with more meaningful names
+	w.r.t. the name of the library.
+
+	* unification.asd, unification.system:
+	Marked the two system building files as 'obsolete', before removing
+	them from the repository.  The new files are prefixed by 'cl-'.
+
+2007-05-21  author  <author@papadopoulou-2.ydras.offices.>
+
+	* ChangeLog: ChangeLog updated.
+
+	* README, ACKNOWLEDGEMENTS, COPYING, INSTALLATION:
+	Updated copyrights dates and changed a few instructions in the
+	INSTALLATION file.
+
+	* docs/html/index.html: Updated copyrights dates.
+
+	* ChangeLog: ChangeLog updated.
+
+	* unification-package.lisp, unification.asd, apply-substitution.lisp, match-block.lisp, substitutions.lisp:
+	See previous message.
+
+	* unification.system:
+	Added file 'apply-substitition.lisp' with a few new functions that are
+	a start for the variable substitition operation.
+
+	New fixes to the MATCH and MATCH-CASE macros.  They should now work as
+	advertised.
+
+	Minor changes to other files: added exports to package file, fixed
+	.system and .asd files.
+
+2007-05-21  author  <author@Paniscia-di-Marco-Antoniotti.local>
+
+	* README, ACKNOWLEDGEMENTS, COPYING, INSTALLATION:
+	Updated copyrights dates and changed a few instructions in the
+	INSTALLATION file.
+
+	* docs/html/index.html: Updated copyrights dates.
+
+	* ChangeLog: ChangeLog updated.
+
+	* unification-package.lisp, unification.asd, apply-substitution.lisp, match-block.lisp, substitutions.lisp:
+	See previous message.
+
+	* unification.system:
+	Added file 'apply-substitition.lisp' with a few new functions that are
+	a start for the variable substitition operation.
+
+	New fixes to the MATCH and MATCH-CASE macros.  They should now work as
+	advertised.
+
+	Minor changes to other files: added exports to package file, fixed
+	.system and .asd files.
+
+2007-05-21  author  <author@paniscia.disco.unimib.it>
+
+	* unification.system:
+	Added file 'apply-substitition.lisp' with a few new functions that are
+	a start for the variable substitition operation.
+
+	New fixes to the MATCH and MATCH-CASE macros.  They should now work as
+	advertised.
+
+	Minor changes to other files: added exports to package file, fixed
+	.system and .asd files.
+
+2006-07-19  author  <author@paniscia.disco.unimib.it>
+
+	* templates-hierarchy.lisp, unifier.lisp:
+	Fixed two problems with the unifier machinery.
+
+	The first one had to do with the matching of NIL against SYMBOL and LIST
+	in several places: essentially, the problem is incongruencies in the
+	results of COMPUTE-APPLICABLE-METHODS in these cases.  I think I caught
+	most of them: unification of lists and the occur-check were the obvious
+	places where things went awry.
+
+	The second problem had to do with the reader macro #T.  The original
+	code generated an object at read time, which is not such a good idea.
+	Now the code generates a call to MAKE-TEMPLATE with is evaluated later.
+	Incidentally, the reader macro function is now called |sharp-T-reader|, in
+	order to placate Emacs fontification.
+
+	Modified Files:
+	 	templates-hierarchy.lisp unifier.lisp
+
+	* unification-package.lisp: Added missing export.
+
+2005-10-25  author  <author@paniscia.disco.unimib.it>
+
+	* unifier.lisp: Fixed problem with the unification of a list with a
+	SEQUENCE-TEMPLATE.  The implementation was not checking that the
+	length of the list was compatible with the length of the required
+	elements in the template.
+
+	Apart from that, keyword matching is still unimplemented.
+
+	* match-block.lisp:
+	Fixed problem with checking the presence of T and OTHERWISE clauses in
+	MATCHING.
+
+2005-07-25  author  <author@paniscia.disco.unimib.it>
+
+	* docs/html/downloads.html: Minor cleanup.
+
+2005-05-20  author  <author@paniscia.disco.unimib.it>
+
+	* docs/html/links.html: Fixed typos.
+
+	* docs/html/nil-template-class.html: Fixed bug in documentation.
+
+	* docs/html/links.html: Page updated.
+
+	* docs/html/unification-dictionary.html: Incremental change to page.
+
+	* docs/html/number-template-class.html: Fixed a documentation bug.
+	Thanks to Norman Werner for spotting it.
+
+	* docs/html/index.html: Added link to "Mailing Lists" page.
+
+	* docs/html/mailing-lists.html: File added.
+
+	* unifier.lisp:
+	Fixed two major bugs reported by Norman Werver.  Unification of
+	strings and symbols and of numers and symbols was not recurring on
+	VAR-UNIFY, as required; thus
+
+		(unify '(?x ?x) '("asd" "qweert"))
+	and
+		(unify '(foo ?x baz) '(foo 42 ?x))
+
+	would succed.
+	The two cases are now fixed.
+
+2005-05-19  author  <author@paniscia.disco.unimib.it>
+
+	* README: Year updated.
+
+	* ACKNOWLEDGEMENTS: File added.
+
+	* ChangeLog: ChangeLog updated.
+
+	* COPYING: Updated copyright notice.
+
+	* docs/html/downloads.html, docs/html/index.html:
+	Changed the DISCLAIMER parts in the files, in order to clarify the licensing
+	of the code.
+
+2005-05-19  mantoniotti  <mantoniotti@vault>
+
+	* COPYING: Updated copyright notice.
+
+	* docs/html/downloads.html, docs/html/index.html:
+	Changed the DISCLAIMER parts in the files, in order to clarify the licensing
+	of the code.
+
+2005-04-27  mantoniotti  <mantoniotti@vault>
+
+	* docs/html/control-flow.html: Fixed factorial example.
+
+	* match-block.lisp:
+	Added IGNORABLE declaration to MATCH macro expansion.
+	This is useful in quieting various compilers.
+
+	* match-block.lisp: Added acknowledgement to Peter Scott.
+
+	* match-block.lisp: Fixed bug in condition signaling within MATCH-CASE.
+
+	* templates-hierarchy.lisp:
+	Fixed bugs in COLLECT-TEMPLATE-VARS for NUMBER-TEMPLATEs.
+	If a variable was present, then the method was not returning a list.
+	The treatment of constants like PI was also incorrect, as the numeric
+	value was returned.  Retunrning () seems the right thing to do
+	instead.
+
+	* match-block.lisp:
+	Added MATCH-CASE macro.  Slightly modified from the version provided
+	by Peter Scott.
+
+	* unification.asd: Added unification.asd file.
+
+2005-04-21  mantoniotti  <mantoniotti@vault>
+
+	* docs/html/links.html: Fixed, but not completed, the page.
+
+2005-01-28  mantoniotti  <mantoniotti@vault>
+
+	* docs/html/downloads.html: Added file `downloads.html'.
+
+	* docs/html/index.html:
+	Minor changes to text.  Fixed `download.html' link.
+
+	* lambda-list-parsing.lisp, unifier.lisp:
+	Fixed minor problem in Lambda List parsing.
+	Also VALID-TEMPLATE-P was expanded, and it looks like it should become
+	a generic function.
+
+2004-11-17  mantoniotti  <mantoniotti@vault>
+
+	* docs/html/images/unif-templ-hier.pcl, docs/html/images/unif-templ-hier.ps:
+	Initial import.
+
+	* docs/html/images/unif-templ-hier.pcl, docs/html/images/unif-templ-hier.ps:
+	New file.
+
+	* docs/html/images/Thumbs.db, docs/html/images/Thumbs.db:encryptable, docs/html/images/header_bg.gif, docs/html/images/header_bg_1.gif, docs/html/images/shim.gif, docs/html/images/unif-templ-hier.gif, docs/html/images/unif-templ-hier.pdf, docs/html/images/unif-templ-hier.sxd, docs/html/make-shared-environment-function.html, docs/html/match-case-macro.html, docs/html/standard-object-template-class.html, docs/html/string-template-class.html, docs/html/structure-object-template-class.html, docs/html/subseq-template-class.html:
+	Initial import.
+
+	* docs/html/images/Thumbs.db, docs/html/images/Thumbs.db:encryptable, docs/html/images/header_bg.gif, docs/html/images/header_bg_1.gif, docs/html/images/shim.gif, docs/html/images/unif-templ-hier.gif, docs/html/images/unif-templ-hier.pdf, docs/html/images/unif-templ-hier.sxd, docs/html/make-shared-environment-function.html, docs/html/match-case-macro.html, docs/html/standard-object-template-class.html, docs/html/string-template-class.html, docs/html/structure-object-template-class.html, docs/html/subseq-template-class.html:
+	New file.
+
+	* docs/html/.DS_Store, docs/html/aref-template-class.html, docs/html/array-template-class.html, docs/html/control-flow.html, docs/html/dictionary.html, docs/html/element-template-class.html, docs/html/elt-template-class.html, docs/html/expression-template-class.html, docs/html/find-variable-value-function.html, docs/html/hash-t-read-macro.html, docs/html/index.html, docs/html/links.html, docs/html/list-template-class.html, docs/html/main.css, docs/html/make-empty-environment-function.html, docs/html/match-macro.html, docs/html/matching-macro.html, docs/html/nil-template-class.html, docs/html/nth-template-class.html, docs/html/nthcdr-template-class.html, docs/html/number-template-class.html, docs/html/sequence-template-class.html, docs/html/symbol-template-class.html, docs/html/template-class.html, docs/html/template-p-function.html, docs/html/template-spec-accessor.html, docs/html/templates.html, docs/html/type-template-class.html, docs/html/unification-dictionary.html, docs/html/unify-function.html, docs/html/unify-package.html, docs/html/unifying-substitutions.html, docs/html/usci-variable.html, docs/html/vector-template-class.html, unification-package.lisp, unification.system, unifier.lisp, variables.lisp:
+	Initial import.
+
+	* docs/html/.DS_Store, docs/html/aref-template-class.html, docs/html/array-template-class.html, docs/html/control-flow.html, docs/html/dictionary.html, docs/html/element-template-class.html, docs/html/elt-template-class.html, docs/html/expression-template-class.html, docs/html/find-variable-value-function.html, docs/html/hash-t-read-macro.html, docs/html/index.html, docs/html/links.html, docs/html/list-template-class.html, docs/html/main.css, docs/html/make-empty-environment-function.html, docs/html/match-macro.html, docs/html/matching-macro.html, docs/html/nil-template-class.html, docs/html/nth-template-class.html, docs/html/nthcdr-template-class.html, docs/html/number-template-class.html, docs/html/sequence-template-class.html, docs/html/symbol-template-class.html, docs/html/template-class.html, docs/html/template-p-function.html, docs/html/template-spec-accessor.html, docs/html/templates.html, docs/html/type-template-class.html, docs/html/unification-dictionary.html, docs/html/unify-function.html, docs/html/unify-package.html, docs/html/unifying-substitutions.html, docs/html/usci-variable.html, docs/html/vector-template-class.html, unification-package.lisp, unification.system, unifier.lisp, variables.lisp:
+	New file.
+
+	* COPYING, INSTALLATION, README, lambda-list-parsing.lisp, match-block.lisp, substitutions.lisp, templates-hierarchy-saved.lisp, templates-hierarchy.lisp:
+	Initial import.
+
+	* COPYING, INSTALLATION, README, lambda-list-parsing.lisp, match-block.lisp, substitutions.lisp, templates-hierarchy-saved.lisp, templates-hierarchy.lisp:
+	New file.
+

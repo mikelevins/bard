@@ -1,0 +1,205 @@
+<html>
+ <head>
+     <title>CL Unification: Class STRUCTURE-OBJECT-TEMPLATE</title>
+     <link rel="stylesheet" href="main.css">
+ </head>
+	
+ <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#ffffff">
+
+ <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" vspace="0" hspace="0">
+  <tr>
+  <td colspan="3">
+   <div class="header"
+        style="font-family:=Verdana,Arial,Helvetica; font-size: 18px; color: #41286f;">
+    <strong><i>CL Unification: Class STRUCTURE-OBJECT-TEMPLATE</title></i></strong>
+    <div class="navigation">
+     <a href="index.html" class="navigation-link">Home</a>
+      | <a href="unification-package.html" class="navigation-link">Previous</a>
+      | <a href="index.html" class="navigation-link">Next</a>
+      | <a href="downloads.html" class="navigation-link">Downloads</a>
+      |  <a href="links.html" class="navigation-link">Links</a>
+    </div>
+   </div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+   <div class="middle-bar"><img src="images/shim.gif" height="5" width="1"></div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+  </td>
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+	
+  <h1><i>Class</i> <strong>STRUCTURE-OBJECT-TEMPLATE</strong></h1>
+
+  <h2>Package:</h2>
+
+  <p><code>COMMON-LISP.EXTENSIONS.DATA-AND-CONTROL-FLOW.UNIFICATION</code></p>
+
+
+  <h2>Class Precedence List:</h2>
+
+  <p>
+  STRUCTURE-OBJECT-TEMPLATE, TYPE-TEMPLATE, TEMPLATE, STRUCTURE-OBJECT, T.
+  </p>
+
+  <h2>Known Subclasses:</h2>
+
+  <p>
+  None.
+  </p>
+
+
+  <h2>Slots:</h2>
+
+  <p>None.</p>
+
+
+  <h2>Description:</h2>
+
+  <p>The STRUCTURE-OBJECT-TEMPLATE class denotes those object that are used
+  to unify against any STRUCTURE-OBJECT.</p>
+
+
+  <h3>Template Syntax:</h3>
+
+  <p>
+  <pre>
+  #T(<i>&lt;<strong>CL</strong> structure class designator&gt;</i> [<i>&lt;reader function&gt;</i> <i>&lt;object&gt;</i>]*)
+  </pre>
+  </p>
+
+  <p>The STRUCTURE-OBJECT-TEMPLATE syntax denotes any
+  <strong>CL</strong> object that is an instance of a
+  STRUCTURE-OBJECT.  The syntax is such that the <i>&lt;reader
+  function&gt;</i> gets called against the instance against
+  which the STRUCTURE-OBJECT-TEMPLATE is being UNIFYed.
+  <i>&lt;object&gt;</i> can be any <strong>CL</strong> object,
+  including a TEMPLATE (in which case the unification machinery
+  proceeds recursively.)</p>
+  
+
+  <h2>Examples:</h2>
+
+  <p>
+  <pre>
+  cl-prompt> (defstruct foo () (a 42))
+  FOO
+
+  cl-prompt> (defstruct (baz (:include foo)) (b 33))
+  BAZ
+
+  cl-prompt> (setf e (unify (make-foo) #T(<em>foo</em> <em>foo-a</em> 42)))
+  #&lt;ENVIRONMENT xxx&gt;
+
+  cl-prompt> (setf e (unify (make-baz) #T(<em>foo</em> <em>foo-a</em> 42)))
+  #&lt;ENVIRONMENT xxx&gt;
+
+  cl-prompt> (find-variable-value '?x e)
+  42
+  T
+
+  cl-prompt> (setf e (unify (make-instance 'bar) #T(<em>foo</em> <em>foo-a</em> 42)))
+  #&lt;ENVIRONMENT xxx&gt;
+
+  cl-prompt> (find-variable-value '?x e)
+  42
+  T
+
+  cl-prompt> (setf e (unify (make-instance 'baz) #T(<em>baz</em> <em>the-a-in-baz</em> 42)))
+  #&lt;ENVIRONMENT xxx&gt;
+
+  cl-prompt> (find-variable-value '?x e)
+  42
+  T
+
+  cl-prompt> (setf e (unify (make-instance 'baz :b '?e) #T(<em>baz</em> <em>bazb</em> 42)))
+  #&lt;ENVIRONMENT xxx&gt;
+
+  cl-prompt> (find-variable-value '?x e)
+  42
+  T
+
+  cl-prompt> (setf e (unify (make-instance 'bar) #T(<em>baz</em> <em>foo-a</em> 42)))
+  --> Error: UNIFICATION-FAILURE
+  </pre>
+  </p>
+
+
+  <h2>Affected By:</h2>
+
+  <p>None.</p>
+
+
+  <h2>Exceptional Situations:</h2>
+
+  <p>Unifying a STRUCTURE-OBJECT-TEMPLATE against a non-STRUCTURE-OBJECT object results in
+  an UNIFICATION-FAILURE error being signaled.</p>
+
+  <p>Unifying a STRUCTURE-OBJECT-TEMPLATE denoting an instance of structure
+  S1 against an instance of structure S2, results in
+  an UNIFICATION-FAILURE error being signaled, when S1 is not in the
+  class precedence list of S2.</p>
+
+
+  <h2>See Also:</h2>
+
+  <p>UNIFY</p>
+
+
+  <h2>Notes:</h2>
+
+  <p>None.</p>
+
+
+ </td>
+ 
+ <!--  <td height="100%">&nbsp;</td> -->
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+
+  <h1>News</h1>
+
+  <p>News in chronological order, most recent on top.
+  </p>
+
+  <ul>
+  <li><strong>2004-10-30</strong><br>
+      Completed description.
+  </li>
+
+  </ul>
+
+  </div>
+  </div>
+						
+ </td>
+ 
+ <td height="100%">&nbsp;</td>
+ </tr>
+
+
+
+ 
+ <tr>
+  <td colspan="3" valign="bottom" align="right">
+  <div class="copyright">
+  &copy; 2003-2004, Marco Antoniotti, all rights reserved.
+  </div>
+  </td>
+ </tr>
+ 
+ </table>
+ </body>
+</html>
+
+<!-- end of file -- expression-template-class.html -->

@@ -1,0 +1,139 @@
+<html>
+ <head>
+     <title>CL Unification: #T Reader Macro</title>
+     <link rel="stylesheet" href="main.css">
+ </head>
+	
+ <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#ffffff">
+
+ <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" vspace="0" hspace="0">
+  <tr>
+  <td colspan="3">
+   <div class="header"
+        style="font-family:=Verdana,Arial,Helvetica; font-size: 18px; color: #41286f;">
+    <strong><i>CL Unification: Standard Generic Function TEMPLATE-SPEC</title></i></strong>
+    <div class="navigation">
+     <a href="index.html" class="navigation-link">Home</a>
+      | <a href="unification-package.html" class="navigation-link">Previous</a>
+      | <a href="index.html" class="navigation-link">Next</a>
+      | <a href="downloads.html" class="navigation-link">Downloads</a>
+      |  <a href="links.html" class="navigation-link">Links</a>
+    </div>
+   </div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+   <div class="middle-bar"><img src="images/shim.gif" height="5" width="1"></div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+  </td>
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+	
+  <h1><i>Reader Macro</i> <strong>#T</strong></h1>
+
+  <h2>Package:</h2>
+
+  <p><code>COMMON-LISP.EXTENSIONS.DATA-AND-CONTROL-FLOW.UNIFICATION</code></p>
+
+
+  <h2>Syntax:</h2>
+
+  <p>
+  <pre>
+  <b>#T</b><i>spec</i>
+  -> <i>template</i>
+  </pre>
+  </p>
+
+
+  <h2>Description:</h2>
+
+  <p><b>#T</b><i>spec</i> expands to <code>(make-template
+  <i>template-kind</i> <i>spec</i>)</code>.
+
+
+  <h2>Examples:</h2>
+
+  <p>
+  <pre>
+  <b>#T</b>foo ==> #&lt;SYMBOL-TEMPLATE FOO xxxxxx&gt;
+  </pre>
+  </p>
+
+
+  <p>
+  <pre>
+  <b>#T</b>(vector 1 2 &amp;rest ?x) ==> #&lt;VECTOR-TEMPLATE xxxxx&gt;
+  </pre>
+  </p>
+  
+
+  <h2>Affected By:</h2>
+
+  <p>None.</p>
+
+
+  <h2>Exceptional Situations:</h2>
+
+  <p>None.</p>
+
+
+  <h2>See Also:</h2>
+
+  <p>TEMPLATE, the "Template Sub-language" section.</p>
+
+
+  <h2>Notes:</h2>
+
+  <p>None.</p>
+
+ </td>
+ 
+ <!--  <td height="100%">&nbsp;</td> -->
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+
+  <h1>News</h1>
+
+  <p>News in chronological order, most recent on top.
+  </p>
+
+  <ul>
+  <li><strong>2004-10-09</strong><br>
+      Completed description.
+  </li>
+
+  </ul>
+
+  </div>
+  </div>
+						
+ </td>
+ 
+ <td height="100%">&nbsp;</td>
+ </tr>
+
+
+
+ 
+ <tr>
+  <td colspan="3" valign="bottom" align="right">
+  <div class="copyright">
+  &copy; 2003-2004, Marco Antoniotti, all rights reserved.
+  </div>
+  </td>
+ </tr>
+ 
+ </table>
+ </body>
+</html>

@@ -1,0 +1,400 @@
+<html>
+ <head>
+     <title>CL Unification: Standard Generic Function UNIFY</title>
+     <link rel="stylesheet" href="main.css">
+ </head>
+	
+ <body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#ffffff">
+
+ <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" vspace="0" hspace="0">
+  <tr>
+  <td colspan="3">
+   <div class="header"
+        style="font-family:=Verdana,Arial,Helvetica; font-size: 18px; color: #41286f;">
+    <strong><i>CL Unification: Standard Generic Function UNIFY</title></i></strong>
+    <div class="navigation">
+     <a href="index.html" class="navigation-link">Home</a>
+      | <a href="unification-package.html" class="navigation-link">Previous</a>
+      | <a href="index.html" class="navigation-link">Next</a>
+      | <a href="downloads.html" class="navigation-link">Downloads</a>
+      |  <a href="links.html" class="navigation-link">Links</a>
+    </div>
+   </div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+   <div class="middle-bar"><img src="images/shim.gif" height="5" width="1"></div>
+   <div class="black-line"><img src="images/shim.gif" height="1" width="1"></div>
+  </td>
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+	
+  <h1><i>Generic function</i> <strong>UNIFY</strong></h1>
+
+  <h2>Package:</h2>
+
+  <p><code>COMMON-LISP.EXTENSIONS.DATA-AND-CONTROL-FLOW.UNIFICATION</code></p>
+
+
+  <h2>Syntax:</h2>
+
+  <p>
+  <pre>
+  <b>unify</b> <i>object1</i> <i>object2</i> &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <h3>Arguments and Values:</h3>
+
+  <p><i><code>object1</code></i>---an <i>object</i>
+  <p><i><code>object2</code></i>---an <i>object</i>
+  <p><i><code>substitution</code></i>---a <i>substitution</i>
+
+
+
+
+  <h2>Description:</h2>
+
+  <p>The generic function UNIFY is the entry point in the unification
+  machinery.  It takes two <strong>CL</strong> objects, <i>object1</i>
+  and <i>object2</i> and checks whether they can be <em>unified</em>
+  by constructing a (possibly empty) consistent substitution assigning
+  appropriate values to the <em>unification variables</em> appearing
+  each object.  The rules by which the unification process is carried
+  on are dependent on the types of the two objects.  The known rules
+  are described in the <a href="#known_methods">"known methods"</a>
+  section.</p>
+
+  <p>UNIFY takes a <em>substitution</em> as an optional argument.  The
+  default value is a <em>fresh</em> empty substitution obtained by
+  calling MAKE-EMPTY-ENVIRONMENT.</p>
+
+  <h3><a name="known_methods">Known Methods</a>:</h3>
+
+  <p>Note that UNIFY is commutative in its two required arguments. Each
+  method listed exists also with <i>object1</i> and <i>object2</i>
+  reversed.</p>
+
+  <p>First, the methods defined on standard <strong>CL</strong> types
+  are described, and then all the methods involving <em>unification
+  templates</em> are described.</p>
+
+
+  <p>
+  <ul>
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>s1</i> symbol) (<i>s2</i> symbol) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+  
+  <p>The unification of two symbols depends on whether one (or both)
+  of them is a unification variable (i.e. either the symbol with name
+  <code>"_"</code>, or a symbol with name starting with the character
+  <code>#\?</code>.)</p>
+
+  <p>If neither object is an unification variable, then UNIFY succeds
+  if and only if the two symbols <i>s1</i> and <i>s2</i> are EQ.</p>
+
+  <p>If <i>s1</i> is an unification variable, and either <i>s1</i> is not
+  bound in <i>substitution</i>, or <i>s1</i> is bound to <i>s2</i>
+  then UNIFY succeds.  If <i>s1</i> was not bound in the
+  <i>substitution</i>, then a new binding for <i>s1</i> to <i>s2</i>
+  is created.</p>
+
+  <p>The symmetric case holds if <i>s1</i> is not an unification
+  variable but <i>s2</i> is.</p>
+
+  <p>Otherwise an error of type UNIFICATION-FAILURE is signaled.</p>
+  </li>
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>v</i> symbol) (<i>object</i> t) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>The symbol <i>v</i> must be an unification variable. If not, an
+  error of type UNIFICATION-FAILURE will be signaled.
+  Otherwise, the a new binding for the variable <i>v</i> with value
+  <i>object</i> will be created in the <i>substitution</i>.<p>
+
+  <p>The creation of the new binding for <i>v</i> in the
+  <i>substitution</i> is dependent on the <em>occur check</em>
+  implemented by the generic function OCCURS-IN-P.  OCCURS-IN-P is
+  called by the unification machinery if the variable
+  *OCCURRENCE-CHECK-P* is non-NIL (the default.)  If
+  *OCCURENCE-CHECK-P* is non-NIL, and if the variable
+  <i>v</i> <em>occurs</em> in the <i>object</i> (i.e. OCCURS-IN-P
+  returns a non-NIL value,) then an error of type UNIFICATION-FAILURE
+  is signaled.</p>
+  </li>
+
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>n1</i> number) (<i>n2</i> number) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>Two numbers unify if and only if they are =, in which case
+  <i>substitution</i> is returned unmodified.  Otherwise, an error of
+  type UNIFICATION-FAILURE is signaled.</p>
+  </li>
+
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>s1</i> string) (<i>s2</i> string) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>Two strings unify only is they are "equal", under the following
+  condition. If the variable *UNIFY-STRING-CASE-INSENSITIVE-P* is NIL
+  (the default) then the two strings <i>s1</i> and <i>s2</i> are
+  compared using STRING=, otherwise they are compared using STRING-EQUAL.
+  </p>
+
+  <p>If the two strings <i>s1</i> and <i>s2</i> are equal then
+  <i>substitution</i> is returned unchanged, otherwise an error of type
+  UNIFICATION-FAILURE is signaled.</p>
+  </li>
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>v1</i> vector) (<i>v2</i> vector) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>
+  <pre>
+  <b>unify</b> (<i>l1</i> list) (<i>l2</i> list) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>
+  <pre>
+  <b>unify</b> (<i>s1</i> sequence) (<i>s2</i> sequence) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>The "sequence" methods (and the specialized ones, mostly for
+  efficiency) extend the <i>substitution</i> by calling UNIFY
+  recursively on each element of the two sequences, <i>s1</i> and
+  <i>s2</i> (respectively, <i>l1</i> and <i>l2</i>, <i>v1</i> and
+  <i>v2</i>.)
+  </p>
+
+  <p>An error of type UNIFICATION-FAILURE is signaled if the two
+  sequences are of different LENGTH or if any call to
+  UNIFY fails.</p>
+  </li>
+
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>a1</i> array) (<i>a2</i> array) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>Two arrays <i>a1</i> and <i>a2</i> UNIFY if and only if each of
+  the respective elements does.  The two arrays are traversed using
+  ROW-MAJOR-AREF. Otherwise an error of type UNIFICATION-FAILURE is
+  signaled.</p>
+
+  <p>An error of type UNIFICATION-FAILURE is also signaled if the two
+  arrays have different total size (as returned by ARRAY-TOTAL-SIZE.)</p>
+  </li>
+
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>object1</i> t) (<i>object2</i> t) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>This is the catch all method that is called as a last resort.
+  No recursive call to UNIFY is attempted, and the call succeeds if and
+  only if <i>object1</i> and <i>object2</i> are EQUALP.  Otherwise, an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+  </li>
+  
+  </ul>
+  </p>
+
+  <p>The next methods all involve a <em>unification template</em>.
+  Again all these methods are commutative in their required
+  arguments.</p>
+
+  <p>
+  <ul>
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>s</i> structure-object) (<i>st</i> structure-object-template) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>This method UNIFYs a <i>s</i> against a STRUCTURE-OBJECT-TEMPLATE
+  <i>st</i>. <i>st</i> has the following (general) structure.</p>
+  <pre>
+     (<i>&lt;structure-class specifier&gt;</i> [ (<i>&lt;reader&gt;</i> <i>&lt;value&gt;</i>) ]* )
+  </pre></p>
+
+  <p>The <i>structure-class specifier</i> is a symbol naming a
+  structure class, <i>reader</i> is one of the DEFSTRUCT-generated
+  accessors, and <i>value</i> is a regular <strong>CL</strong> object,
+  a unification variable, or a <em>unification template</em>.</p>
+
+  <p>The class of <i>s</i> must be a subclass of <i>structure-class
+  specifier</i>. Otherwise, an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+
+  <p>UNIFY
+  is called recursively on each <i>value</i> and the result of
+  applying <i>reader</i> to <i>s</i>.</p>
+
+  <p>If all the (recursive) calls to UNIFY succeed, then a possibly
+  augmented <i>substitution</i> is returned. Otherwise, an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+  </li>
+
+
+  <li>
+  <p>
+  <pre>
+  <b>unify</b> (<i>s</i> standard-object) (<i>st</i> standard-object-template) &amp;optional <i>substitution</i>
+  => <i>substitution</i>
+  </pre>
+  </p>
+
+  <p>This method UNIFYs a <i>s</i> against a STANDARD-OBJECT-TEMPLATE
+  <i>st</i>. <i>st</i> has the following (general) structure.</p>
+  <pre>
+     (<i>&lt;standard-class specifier&gt;</i> [ ([slot-value | slot-accessor] <i>&lt;slot-spec&gt;</i> <i>&lt;value&gt;</i>) ]* )
+  </pre></p>
+
+  <p>The <i>standard-class specifier</i> is a symbol naming a
+  class, <i>slot-spec</i> is a valid slot accessor when
+  <code>slot-value</code> is specified, or a valid slot name for the
+  class, when <code>slot-value</code> is specified, and <i>value</i>
+  is a regular <strong>CL</strong> object,
+  a unification variable, or a <em>unification template</em>.</p>
+
+  <p>The class of <i>s</i> must be a subclass of <i>standard-class
+  specifier</i>. Otherwise, an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+
+  <p>UNIFY
+  is called recursively on each <i>value</i> and the result of
+  extracting the slot value from <i>s</i> using either the accessor
+  supplied, or SLOT-VALUE.</p>
+
+  <p>If all the (recursive) calls to UNIFY succeed, then a possibly
+  augmented <i>substitution</i> is returned. Otherwise, an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+  </li>
+
+  </ul>
+  </p>
+  
+
+  <h2>Affected By:</h2>
+
+  <p>None.</p>
+
+
+  <h2>Exceptional Situations:</h2>
+
+  <p>If <i>object1</i> and <i>object2</i> cannot be unified, then an
+  error of type UNIFICATION-FAILURE is signaled.</p>
+
+
+  <h2>See Also:</h2>
+
+  <p>MAKE-EMPTY-ENVIRONMENT, UNIFICATION-FAILURE,
+  *UNIFY-STRING-CASE-INSENSITIVE-P*, OCCURS-IN-P,
+  *OCCURENCE-CHECK-P*.</p>
+
+  <h2>Notes:</h2>
+
+  <p>The unification algorithm implemented is very flexible and
+  provides many hooks for customization.  However, it is not
+  necessarily asymptotically efficient (it has a worst case
+  exponential time complexity.)</p>
+
+  <p>It would be interesting to reimplement the kernel of the system
+  using a linear unification algorithm like the one described in<p>
+
+  <p>[MM82] A. Martelli and U. Montanari, <i>An Efficient Unification
+  Algorithm</i>, ACM Transactions on Programming Languages and
+  Systems, Vol. 4, No. 2, April 1982, Pages 258--282.</p>
+
+ </td>
+ 
+ <!--  <td height="100%">&nbsp;</td> -->
+ </tr>
+
+ <tr height="100%">
+  <td height="100%">&nbsp;</td>
+  <td valign="top" width="80%" height="100%">
+
+  <div class="content">
+  <div class="text" style="padding-top: 10px;">
+
+  <h1>News</h1>
+
+  <p>News in chronological order, most recent on top.
+  </p>
+
+  <ul>
+  <li><strong>2004-04-12</strong><br>
+      Completed description.
+  </li>
+
+  </ul>
+
+  </div>
+  </div>
+						
+ </td>
+ 
+ <td height="100%">&nbsp;</td>
+ </tr>
+
+
+
+ 
+ <tr>
+  <td colspan="3" valign="bottom" align="right">
+  <div class="copyright">
+  &copy; 2003-2004, Marco Antoniotti, all rights reserved.
+  </div>
+  </td>
+ </tr>
+ 
+ </table>
+ </body>
+</html>

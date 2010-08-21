@@ -1,0 +1,24 @@
+;;;; -*- Mode: Lisp -*-
+
+;;;; cl-unification.system --
+;;;; MK:DEFSYSTEM system file.
+
+(mk:defsystem "CL-UNIFICATION"
+  :source-extension "lisp"
+  :components ("unification-package"
+               "variables"
+               "substitutions"
+               "lambda-list-parsing"
+               "templates-hierarchy"
+               "unifier"
+               "match-block"
+               "apply-substitution"
+               (:module "lib-dependent"
+                :depends-on ("templates-hierarchy" "unifier")
+                :components ((:subsystem "cl-ppcre-template"
+                              :non-required-p t
+                              )
+                             ))
+               ))
+   
+;;; end of file -- cl-unification.system --

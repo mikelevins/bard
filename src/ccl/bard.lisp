@@ -10,22 +10,28 @@
 ;;;; ***********************************************************************
 
 (in-package :cl-user)
-(require "ASDF")
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defparameter $base-directory (asdf::determine-system-pathname nil nil)))
+(require :asdf)
+
+(let ((fpath *load-truename*))
+  (defun bard-root () (make-pathname :directory (pathname-directory fpath))))
 
 (defparameter $bard-src-files
-  ;; in subdir full-compiler/
-  '("package"
-    "singletons"
-    "values"
-    "reader"
-    "printer"
+  '(
+    "src/packages"
+    "src/singleton"
+    "src/values"
+    "src/cells"
+    "src/names"
+    "src/sequences"
+    "src/maps"
+    "src/modules"
+    "src/protocols"
     #|
+    "src/reader"
+    "src/printer"
+    "src/test-suite"
     "utils"
-    "lib"
-    "modules"
     "environments"
     "toplevel"
     "apply"
@@ -36,15 +42,27 @@
 
 (defun compile-and-load (f)
   (with-compilation-unit ()
-    (let ((path (make-pathname :name f :defaults (merge-pathnames "src/" $base-directory))))
+    (let ((path (merge-pathnames f (bard-root))))
       (compile-file path)
       (load path))))
 
+(defun asdf-load (sys)
+  (funcall (intern "OOS" (find-package "ASDF")) 
+           (intern "LOAD-OP" (find-package "ASDF"))
+           sys))
+
 (defun load-bard ()
-  ;;(load (merge-pathnames "lib/misc-extensions_1.2.0/misc-extensions.asd" $base-directory))
-  ;;(load (merge-pathnames "lib/fset_1.2.2/fset.asd" $base-directory))
-  ;;(asdf:oos 'asdf:load-op :fset)
+  (load (merge-pathnames "lib/misc-extensions_1.2.0/misc-extensions.asd" (bard-root)))
+  (asdf-load 'misc-extensions)
+  (load (merge-pathnames "lib/fset_1.2.2/fset.asd" (bard-root)))
+  (asdf-load 'FSet)
+  (load (merge-pathnames "lib/cl-unification/cl-unification.asd" (bard-root)))
+  (asdf-load 'cl-unification)
   (mapcar 'compile-and-load $bard-src-files))
 
 
+#|
 
+(load-bard)
+
+|#

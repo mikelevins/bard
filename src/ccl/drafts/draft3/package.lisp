@@ -19,7 +19,7 @@
   (defpackage |bard-internal|
     (:use common-lisp ccl)
     (:shadow #:= #:boolean #:false #:read #:true)
-    (:export #:= #:boolean #:false #:read #:true)))
+    (:export #:= #:boolean #:false #:read #:nothing #:true)))
 
 ;;; ============================================================
 ;;; Package bard
@@ -29,5 +29,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage |bard|
-    (:use |bard-internal|)))
+    (:use |bard-internal|)
+    (:export #:= #:boolean #:false #:read #:nothing #:true)))
 
