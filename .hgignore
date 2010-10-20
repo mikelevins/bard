@@ -1,0 +1,4 @@
+docs/.DS_Store
+src/ghc/hlvm/hlvm.hi
+src/ghc/hlvm/hlvm.hs~
+src/ghc/hlvm/hlvm.o
