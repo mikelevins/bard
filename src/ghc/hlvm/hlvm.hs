@@ -20,11 +20,9 @@ type Var = Name
 
 type Category = Name
 
-type Signature =  [Category]
+type Signature = [Category]
 
-data ReturnType = VoidType
-                | ValueType Value
-                | ValuesType [Value] deriving Show
+type ReturnType = [Category] 
 
 data Function = Function Name Signature ReturnType deriving Show
 
@@ -39,10 +37,8 @@ data Value = VoidVal
            | FalseVal
            | IntegerVal Integer
            | CharacterVal Char
-           | SymbolVal Name
-           | KeywordVal Name
-           | RecordVal [(Name, Value)]
-           | PairVal (Value, Value)
+           | NameVal Name
+           | StructureVal [(Name, Value)]
            | SequenceVal (S.Seq Value)
            | MapVal (M.Map Key Value)
            | CategoryVal Category
@@ -60,6 +56,10 @@ nullEnv = Env M.empty
 -------------------------------------------------
 -- opcodes
 -------------------------------------------------
+-- TODO: redefine the opcodes with explicit
+--       numeric values, so that we can guarantee
+--       the compiled code is identical across
+--       architectures
 
 data Opcode = Foo
     -- basic lisp operations
@@ -87,7 +87,7 @@ data Opcode = Foo
     -- I/O operations
             | OP_SHOW -- print a value 
     -- Control operations
-            | OP_HALT -- print a value 
+            | OP_HALT -- halt execution
               deriving Show
 
 -------------------------------------------------
@@ -111,6 +111,8 @@ type Args = [Arg]
 fetch :: VM -> Instruction
 fetch (run, code, cc, env, nargs, args) = (cc!!0)
 
+-- primitives
+
 op_mult :: Args -> Value
 op_mult args =
     let (IntegerVal m) = (args!!0)
@@ -118,17 +120,31 @@ op_mult args =
     in
       (IntegerVal (m*n))
 
+-- instruction execution
+
 execute :: Instruction -> VM -> VM
-execute (OP_HALT,params) (run, code, cc, env, nargs, args)     = (False, code, cc, env, nargs, args)
-execute (OP_VOID,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), (VoidVal:args))
-execute (OP_TRUE,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), (TrueVal:args))
-execute (OP_FALSE,params) (run, code, cc, env, nargs, args)    = (run, code, (drop 1 cc), env, (1+(length args)), (FalseVal:args)) 
-execute (OP_MINUSONE,params) (run, code, cc, env, nargs, args) = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal (-1)):args))
-execute (OP_ZERO,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 0):args)) 
-execute (OP_ONE,params) (run, code, cc, env, nargs, args)      = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 1):args)) 
-execute (OP_TWO,params) (run, code, cc, env, nargs, args)      = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 2):args)) 
-execute (OP_CONST,params) (run, code, cc, env, nargs, args)    = (run, code, (drop 1 cc), env, (1+(length args)), ((params!!0):args)) 
-execute (OP_MULT,params) (run, code, cc, env, nargs, args)     = (run, code, (drop 1 cc), env, (1+((length args)-2)), ((op_mult args):(drop 2 args)))
+execute (OP_HALT,params) (run, code, cc, env, nargs, args)     
+    = (False, code, cc, env, nargs, args)
+execute (OP_VOID,params) (run, code, cc, env, nargs, args)     
+    = (run, code, (drop 1 cc), env, (1+(length args)), (VoidVal:args))
+execute (OP_TRUE,params) (run, code, cc, env, nargs, args)     
+    = (run, code, (drop 1 cc), env, (1+(length args)), (TrueVal:args))
+execute (OP_FALSE,params) (run, code, cc, env, nargs, args)    
+    = (run, code, (drop 1 cc), env, (1+(length args)), (FalseVal:args)) 
+execute (OP_MINUSONE,params) (run, code, cc, env, nargs, args) 
+    = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal (-1)):args))
+execute (OP_ZERO,params) (run, code, cc, env, nargs, args)     
+    = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 0):args)) 
+execute (OP_ONE,params) (run, code, cc, env, nargs, args)      
+    = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 1):args)) 
+execute (OP_TWO,params) (run, code, cc, env, nargs, args)      
+    = (run, code, (drop 1 cc), env, (1+(length args)), ((IntegerVal 2):args)) 
+execute (OP_CONST,params) (run, code, cc, env, nargs, args)    
+    = (run, code, (drop 1 cc), env, (1+(length args)), ((params!!0):args)) 
+execute (OP_MULT,params) (run, code, cc, env, nargs, args)     
+    = (run, code, (drop 1 cc), env, (1+((length args)-2)), ((op_mult args):(drop 2 args)))
+
+-- VM execution 
 
 hlvm :: VM -> VM
 hlvm (run, code, cc, env, nargs, args) =
@@ -137,9 +153,7 @@ hlvm (run, code, cc, env, nargs, args) =
          in hlvm (execute (fetch vm) vm)
     else (run, code, cc, env, nargs, args)
 
--------------------------------------------------
--- main program
--------------------------------------------------
+-- test programs
 
 prog_mult_test = 
     [
@@ -148,6 +162,10 @@ prog_mult_test =
      (OP_MULT,[]),
      (OP_HALT,[])
     ]
+
+-------------------------------------------------
+-- main program
+-------------------------------------------------
 
 main = do
        putStrLn "Bard VM v 1.0"
