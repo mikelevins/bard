@@ -32,6 +32,8 @@ type Method = (Signature, Code)
 
 type Protocol = (String, [Function])
 
+type Module = (M.Map Var Value)
+
 data Value = VoidVal
            | CellVal Value
            | TrueVal
@@ -45,7 +47,8 @@ data Value = VoidVal
            | CategoryVal Category
            | FunctionVal Function
            | MethodVal Method
-           | ProtocolVal Protocol deriving Show
+           | ProtocolVal Protocol 
+           | ModuleVal Module deriving Show
 
 data Env = Env (M.Map Var Value) deriving Show
 nullEnv = Env M.empty
@@ -66,6 +69,7 @@ data Opcode = Foo
     -- basic lisp operations
             | OP_CONST -- reference to a constant
             | OP_BYTE -- reference to a constant
+            | OP_MREF -- reference to a module
             | OP_VREF -- reference to a module variable
             | OP_MCALL -- a macro application
             | OP_QUOTE -- a quoted expression
