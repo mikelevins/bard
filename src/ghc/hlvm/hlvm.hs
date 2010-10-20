@@ -33,6 +33,7 @@ type Method = (Signature, Code)
 type Protocol = (String, [Function])
 
 data Value = VoidVal
+           | CellVal Value
            | TrueVal
            | FalseVal
            | IntegerVal Integer
