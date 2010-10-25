@@ -1,6 +1,9 @@
 module Main
   where
 
+import Data.Bits
+import Data.Word
+
 import qualified Data.Map as M
 import qualified Data.Sequence as S
 
@@ -8,76 +11,47 @@ import qualified Data.Sequence as S
 -- bard values
 -------------------------------------------------
 
-type Key = Value
+-------------------------------------------------
+-- hlvm operations
+-------------------------------------------------
 
-type Name =  String
+type OPCODE = Word8
+type Instruction = [Word8]
 
-type Var = Name
+-- VM opcodes
 
-type Category = Name
+op_HALT = 0::Word8
+op_CC = 1::Word8
+op_SETCC = 2::Word8
+op_APPLY = 3::Word8
+op_EVAL = 4::Word8
+op_CONST = 5::Word8
+op_VARREF = 6::Word8
+op_QUOTE = 7::Word8
+op_ALTERCELL = 8::Word8
+op_COND = 9::Word8
+op_MAKEMETHOD = 10::Word8
 
-type Signature = [Category]
-
-type ReturnType = [Category] 
-
-data Function = Function Name Signature ReturnType deriving Show
-
-type Method = (Signature, Value)
-
-type Protocol = (String, [Function])
-
-type Module = (M.Map Var Value)
-
-data Value = NothingVal
-           | CellVal Value
-           | TrueVal
-           | FalseVal
-           | IntegerVal Integer
-           | CharVal Char
-           | NameVal Name
-           | StructureVal [(Name, Value)]
-           | SequenceVal (S.Seq Value)
-           | MapVal (M.Map Key Value)
-           | CategoryVal Category
-           | FunctionVal Function
-           | MethodVal Method
-           | ProtocolVal Protocol 
-           | ModuleVal Module deriving Show
 
 -------------------------------------------------
 -- the virtual machine
 -------------------------------------------------
 
-type VM = (Run, Exp, Env, Values)
+--type VM = (Run, Code, Environment, Values)
 
-type Run = Bool
-type Exp = Value
-data Env = Env (M.Map Var Value) deriving Show
-nullEnv = Env M.empty
 
-type Values = [Value]
+--transition :: VM -> VM
+--transition (False, code, env, vals) = (False, code, env, vals)
+--transition (True, [], env, vals) = (False, code, env, vals)
+-- TODO: add transitions for nonempty code
 
--- VM execution 
-
-getop :: Exp -> Env -> Value
-getop exp env = NothingVal -- TODO: implement this properly
-
-apply :: Value -> VM -> VM
-apply fn vm = vm -- TODO: implement this properly
-
-hlvm :: VM -> VM
-hlvm (run, exp, env, outvals) =
-    if run
-    then let vm = (run, exp, env, outvals)
-         in hlvm (apply (getop exp env) vm)
-    else (run, exp, env, outvals)
-
+--runVM :: Code -> Values
+--runVM code = vals
+--    where (_, _, _, vals) = transition (True, code, standardEnvironment, [])
+    
 -------------------------------------------------
 -- main program
 -------------------------------------------------
 
 main = do
        putStrLn "Bard VM v 1.0"
-       putStrLn (show result)
-       where
-         result  = hlvm (True, NothingVal, nullEnv, [])
