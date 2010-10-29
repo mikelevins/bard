@@ -24,7 +24,8 @@
   :serial t
   :depends-on ()
   :components
-  ((:file "reader")))
+  ((:file "package")
+   (:file "reader")))
 
 (in-package :cl-user)
 
