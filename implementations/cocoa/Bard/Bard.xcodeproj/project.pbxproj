@@ -1,0 +1,283 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		972F9857127FC1EF00B215B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972F9856127FC1EF00B215B3 /* Cocoa.framework */; };
+		972F985C127FC1EF00B215B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 972F985A127FC1EF00B215B3 /* InfoPlist.strings */; };
+		972F985E127FC1EF00B215B3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 972F985D127FC1EF00B215B3 /* main.m */; };
+		972F9861127FC1EF00B215B3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 972F985F127FC1EF00B215B3 /* MainMenu.xib */; };
+		972F9864127FC1EF00B215B3 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 972F9862127FC1EF00B215B3 /* Credits.rtf */; };
+		972F9867127FC1EF00B215B3 /* BardAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 972F9866127FC1EF00B215B3 /* BardAppDelegate.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		972F9853127FC1EF00B215B3 /* Bard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		972F9856127FC1EF00B215B3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		972F9858127FC1EF00B215B3 /* Bard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Bard-Info.plist"; sourceTree = "<group>"; };
+		972F9859127FC1EF00B215B3 /* Bard_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bard_Prefix.pch; sourceTree = "<group>"; };
+		972F985B127FC1EF00B215B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		972F985D127FC1EF00B215B3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		972F9860127FC1EF00B215B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		972F9863127FC1EF00B215B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		972F9865127FC1EF00B215B3 /* BardAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BardAppDelegate.h; sourceTree = "<group>"; };
+		972F9866127FC1EF00B215B3 /* BardAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BardAppDelegate.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		972F9850127FC1EF00B215B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				972F9857127FC1EF00B215B3 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		972F9844127FC1EF00B215B3 = {
+			isa = PBXGroup;
+			children = (
+				972F984B127FC1EF00B215B3 /* Classes */,
+				972F984C127FC1EF00B215B3 /* Other Sources */,
+				972F984D127FC1EF00B215B3 /* Resources */,
+				972F984E127FC1EF00B215B3 /* Frameworks */,
+				972F9854127FC1EF00B215B3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		972F984B127FC1EF00B215B3 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				972F9865127FC1EF00B215B3 /* BardAppDelegate.h */,
+				972F9866127FC1EF00B215B3 /* BardAppDelegate.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		972F984C127FC1EF00B215B3 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				972F9859127FC1EF00B215B3 /* Bard_Prefix.pch */,
+				972F985D127FC1EF00B215B3 /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		972F984D127FC1EF00B215B3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				972F9858127FC1EF00B215B3 /* Bard-Info.plist */,
+				972F985A127FC1EF00B215B3 /* InfoPlist.strings */,
+				972F985F127FC1EF00B215B3 /* MainMenu.xib */,
+				972F9862127FC1EF00B215B3 /* Credits.rtf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		972F984E127FC1EF00B215B3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				972F9856127FC1EF00B215B3 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		972F9854127FC1EF00B215B3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				972F9853127FC1EF00B215B3 /* Bard.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		972F9852127FC1EF00B215B3 /* Bard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 972F986A127FC1EF00B215B3 /* Build configuration list for PBXNativeTarget "Bard" */;
+			buildPhases = (
+				972F984F127FC1EF00B215B3 /* Sources */,
+				972F9850127FC1EF00B215B3 /* Frameworks */,
+				972F9851127FC1EF00B215B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Bard;
+			productName = Bard;
+			productReference = 972F9853127FC1EF00B215B3 /* Bard.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		972F9846127FC1EF00B215B3 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 972F9849127FC1EF00B215B3 /* Build configuration list for PBXProject "Bard" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 972F9844127FC1EF00B215B3;
+			productRefGroup = 972F9854127FC1EF00B215B3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				972F9852127FC1EF00B215B3 /* Bard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		972F9851127FC1EF00B215B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				972F985C127FC1EF00B215B3 /* InfoPlist.strings in Resources */,
+				972F9861127FC1EF00B215B3 /* MainMenu.xib in Resources */,
+				972F9864127FC1EF00B215B3 /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		972F984F127FC1EF00B215B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				972F985E127FC1EF00B215B3 /* main.m in Sources */,
+				972F9867127FC1EF00B215B3 /* BardAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		972F985A127FC1EF00B215B3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				972F985B127FC1EF00B215B3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		972F985F127FC1EF00B215B3 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				972F9860127FC1EF00B215B3 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		972F9862127FC1EF00B215B3 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				972F9863127FC1EF00B215B3 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		972F9868127FC1EF00B215B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		972F9869127FC1EF00B215B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		972F986B127FC1EF00B215B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Bard_Prefix.pch;
+				INFOPLIST_FILE = "Bard-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		972F986C127FC1EF00B215B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Bard_Prefix.pch;
+				INFOPLIST_FILE = "Bard-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		972F9849127FC1EF00B215B3 /* Build configuration list for PBXProject "Bard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				972F9868127FC1EF00B215B3 /* Debug */,
+				972F9869127FC1EF00B215B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		972F986A127FC1EF00B215B3 /* Build configuration list for PBXNativeTarget "Bard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				972F986B127FC1EF00B215B3 /* Debug */,
+				972F986C127FC1EF00B215B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 972F9846127FC1EF00B215B3 /* Project object */;
+}
