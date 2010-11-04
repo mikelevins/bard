@@ -31,9 +31,13 @@ transition (True, [], env, vals) = (False, [], env, vals)
 transition (True, (HALT:instrs), env, vals) = (False, (HALT:instrs), env, vals)
 
 
-runVM :: Code -> [Value]
-runVM code = vals
-    where (_, _, _, vals) = transition (True, code, standardEnvironment, [])
+runVM :: VM -> VM
+runVM (run, code, env, vals) =
+    if run
+    then let vm = (run, code, env, vals)
+         in runVM (transition vm)
+    else (run, code, env, vals)
+
     
 -------------------------------------------------
 -- main program
