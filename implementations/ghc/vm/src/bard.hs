@@ -1,43 +1,27 @@
 module Main
   where
 
-import Data.Bits
-import Data.Word
-
 import qualified Data.Map as M
-import qualified Data.Sequence as S
 
-import Instructions
-import Values
-import Primitives
-import Registers
-
--------------------------------------------------
--- standard environment
--------------------------------------------------
-
-nullEnvironment = Env M.empty
-standardEnvironment = nullEnvironment
+import Expressions
+import Environment
 
 -------------------------------------------------
 -- the virtual machine
 -------------------------------------------------
 
-type VM = (Run, Code, Environment, [Value])
+type VM = (Expression, Environment)
 
 transition :: VM -> VM
-transition (False, code, env, vals) = (False, code, env, vals)
-transition (True, [], env, vals) = (False, [], env, vals)
-transition (True, (HALT:instrs), env, vals) = (False, (HALT:instrs), env, vals)
-
+transition (ExpNothing, nullEnvironment) = (ExpNothing, nullEnvironment)
 
 runVM :: VM -> VM
-runVM (run, code, env, vals) =
-    if run
-    then let vm = (run, code, env, vals)
-         in runVM (transition vm)
-    else (run, code, env, vals)
-
+runVM (exp, env) =
+    let (exp', env') = transition (exp, env)
+    in if (exp', env') == (exp, env)
+       then (exp',env')
+       else runVM (exp', env')
+    
     
 -------------------------------------------------
 -- main program
