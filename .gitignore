@@ -6,3 +6,11 @@ implementations/ghc/vm/src/Registers.hi
 implementations/ghc/vm/src/Values.hi
 implementations/ghc/vm/src/bard
 implementations/ghc/vm/src/bard.hi
+implementations/ghc/vm/dist/build/autogen/Paths_bard.hs
+implementations/ghc/vm/dist/build/autogen/cabal_macros.h
+implementations/ghc/vm/dist/build/bard/bard
+implementations/ghc/vm/dist/build/bard/bard-tmp/Environment.hi
+implementations/ghc/vm/dist/build/bard/bard-tmp/Expressions.hi
+implementations/ghc/vm/dist/build/bard/bard-tmp/Main.hi
+implementations/ghc/vm/dist/package.conf.inplace
+implementations/ghc/vm/dist/setup-config

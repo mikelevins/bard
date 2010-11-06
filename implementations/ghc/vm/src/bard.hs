@@ -29,3 +29,4 @@ runVM (exp, env) =
 
 main = do
        putStrLn "Bard VM v 1.0"
+       putStrLn (show (runVM (ExpNothing, nullEnvironment)))

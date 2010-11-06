@@ -9,7 +9,7 @@ import Expressions
 -- environment
 -------------------------------------------------
 
-data Environment = Env (M.Map Expression Expression) deriving Eq
+data Environment = Env (M.Map Expression Expression) deriving (Show, Eq)
 
 -------------------------------------------------
 -- standard environment
