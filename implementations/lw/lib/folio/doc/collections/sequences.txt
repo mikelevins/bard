@@ -1,0 +1,382 @@
+
+AS (class-name val &key &allow-other-keys) => new-val
+  generic function
+
+  The sequences subsystem provides the following AS methods for
+  conversions:
+
+  AS 'cl:vector fset:seq => cl:vector
+  AS 'fset:seq cl:vector => fset:seq
+  AS 'cl:list fset:seq => cl:list
+  AS 'fset:seq cl:list => fset:seq
+  AS 'cl:string fset:seq => cl:string
+  AS 'fset:seq cl:string => fset:seq
+  AS 'fset:seq fset:seq => fset:seq
+
+
+ADD-FIRST (x s) => new-s
+  generic function
+
+  ADD-FIRST returns a new sequence whose length is one greater than
+  that of the input sequence, and whose first element is X.
+
+ADD-LAST (s x) => new-s
+  generic function
+
+  ADD-LAST returns a new sequence whose length is one greater than
+  that of the input sequence, and whose last element is X.
+
+CHOOSE-ANY (s) => val
+  generic function
+
+  CHOOSE-ANY returns a randomly-chosen element of S.
+
+CONCAT (s1 s2) => new-s
+  generic function
+
+  CONCAT returns a new sequence of the same class as (or a superclass
+  of) S1, whose elements are the elements of S1 followed by the
+  elements of S2.
+
+
+CONTAINS? (s1 x &key (test 'eql)) => boolean
+  generic function
+
+  CONTAINS? returns a true value if the sequence S1 contains a value
+  that is equivalent to X in the sense of TEST.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent. When S1 is
+  an instance of fset:seq, the TEST argument is not used.
+
+DIFFERENCE (s0 s1 x &key (test 'eql)) => new-s
+  generic function
+
+  DIFFERENCE returns a sequence that contains only those members of
+  S0 that are not in S2.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent. When S0 is
+  an instance of fset:seq, the TEST argument is not used.
+
+DROP (n s) => val
+  generic function
+
+  DROP returns a new sequence of the same class as (or a superclass
+  of) S, whose elements are the elements of S with the first N
+  elements omitted.
+
+DROP-WHILE (pred s) => val
+  generic function
+
+  DROP-WHILE returns a new sequence of the same class as (or a
+  superclass of) S, whose elements are the elements of S, beginning
+  with the first element for which PRED returns false.
+
+  PRED is a function of one argument that returns a true or false
+  value.
+
+ELEMENT (s n) => val
+  generic function
+
+  ELEMENT returns the element of S whose (zero-based) index is N.
+
+EMPTY? (s1) => boolean
+  generic function
+
+  EMPTY? returns a true value if the sequence S1 contains no elements,
+  and a false value otherwise.
+
+EVERY? (pred seq &rest more-seqs) => boolean
+  generic function
+
+  EVERY? returns a true value if the function PRED returns a true
+  value each time it is applied to elements of seq and more-seqs, and
+  a false value otherwise.
+
+  PRED must be a function that accepts the same number of arguments as
+  the number of sequences passed to EVERY?. EVERY? applies PRED to the
+  first element of seq and the first element of each of more-seqs, and
+  then to the second element, and so on, returning a false value if
+  PRED every returns false, and a true value otherwise.
+
+FILTER (pred s) => new-seq
+  generic function
+
+  FILTER returns a new sequence of the same class as (or a superclass
+  of) S. FILTER applies PRED to each element of S, including in
+  NEW-SEQ only those values for which PRED returns true.
+
+FIND (pred s &key (from-end? nil)) => val
+  generic function
+
+  FIND applies PRED to each element in turn of S, returning the first
+  one for which PRED returns true. If FROM-END? is true, then FIND
+  begins the search at the end of the sequence and searches toward the
+  beginning.
+
+HEAD (s) => val
+  generic function
+
+  HEAD returns the first element of S.
+
+IMAGE (fn s &rest more-seqs) => new-seq
+  generic function
+
+  IMAGE returns a new sequence of the same class as (or a superclass
+  of) S, constructed by applying FN to each element in turn of each of
+  the input sequences.
+
+  FN must be a function that accepts the same number of arguments as
+  the number of sequences passed to IMAGE. IMAGE applies FN to the
+  first element of seq and the first element of each of more-seqs, and
+  then to the second element, and so on, collecting the output values
+  in turn in a sequence of the same class as (or a superclass of) s.
+
+INTERLEAVE (s1 s2) => new-seq
+  generic function
+
+  INTERLEAVE returns a new sequence of the same class as (or a
+  superclass of) S1, constructed by enumerating the first element of
+  s1, followed by the first element of s2, follwoed by the second
+  element of s1 and the second element of s2, and so on until the end
+  of the shorter of the two sequences.
+
+INTERPOSE (elem s) => new-seq
+  generic function
+
+  INTERPOSE returns a new sequence of the same class as (or a
+  superclass of) S, constructed by enumerating the first element of S,
+  followed by ELEM, followed by the second element of S, followed by
+  ELEM, and so on until S is exhausted. The final element of NEW-SEQ
+  is the final element of S.
+
+INTERSECTION (s1 s2 &key (test 'eql)) => new-seq
+  generic function
+
+  INTERSECTION returns a sequence of the same class as (or a
+  superclass of) S1, that contains only those members of S1 that are
+  also in S2.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent. When S1 is
+  an instance of fset:seq, the TEST argument is not used.
+
+JOIN (&rest seqs) => new-seq
+  generic function
+
+  JOIN returns a new sequence of the same class as (or a superclass
+  of) the first element of SEQS, constructed by concatenating all the
+  sequences in SEQS. Functions like JOIN in many libraries accept an
+  element to be interposed between joined sequences. The same effect
+  can be achieved with the Folio sequences library by calling
+    (apply 'join (interpose elem sequences))
+  where ELEM is the element to be used to join the sequences. For
+  example:
+    (apply 'join (interpose ", " '("apples" "bananas" "cherries")))
+    => "apples, bananas, cherries"
+
+LAST (s) => val
+  generic function
+
+  LAST returns the LAST element of S. Note that it differs from
+  COMMON-LISP:LAST, which returns the last cons of a list.
+
+LENGTH (s) => integer generic function
+
+  LENGTH returns the count of elements in S.
+
+MAKE (&rest elems) => new-seq
+  generic function
+
+  MAKE returns a new sequence of an arbitrary class whose elements are
+  the elements of ELEMS in the same order.
+
+MAKE-AS (class-name &rest elems) => new-seq
+  generic function
+
+  MAKE-AS returns a new sequence of the class named CLASS-NAME, whose
+  elements are the elements of ELEMS in the same order.
+
+PARTITION (n s &key step) => new-seq
+  generic function
+
+  PARTITION returns a new sequence whose elements are subsequences of
+  S. Each element of NEW-SEQ has a length of N, except when the total
+  count of elements in S is not a whole multiple of N; in that case,
+  the last element of NEW-SEQ contains fewer than N elements. If STEP
+  is supplied, then each subsequence is constructed beginning STEP
+  elements after the previous one. If STEP is not supplied then it
+  defaults to N.
+
+POSITION (pred s) => integer
+  generic function
+
+  POSITION returns the index of the first element of S for which PRED
+  returns true, or nil if there is no such element. PRED is a function
+  of one argument that returns true or false. POSITION applies PRED to
+  each element of S in turn, returning the first element for which
+  PRED returns true.
+
+RANGE (start end) => list-of-integers
+
+  RANGE returns a monotonically-increasing sequence of integers,
+  beginning with START, increasing by 1, and ending with (END - 1).
+
+REDUCE (fn s &key (initial-value nil)) => val
+
+  REDUCE accepts a function of two arguments and a sequence. It
+  computes a result value by applying FN to INITIAL-VALUE and the
+  first element of S, then applying FN to the result of that operation
+  and the second value of S, then to the result of that and the third
+  value of S, and so on until S is exhausted, returning the final
+  value. A sum of a sequence of integers can be obtained thusly:
+    (reduce '+ (range 0 10) :initial-value 0)
+
+REPEAT (n item) => new-seq
+
+  REPEAT returns a sequence of an arbitrary type whose elements are N
+  copies of the value ITEM. The copies of ITEM may be eq to each
+  other.
+
+REVERSE (s) => new-seq
+
+  REVERSE returns a new sequence of the same class as (or a superclass
+  of) S, with the same elements as S but in reverse order.
+
+SEQUENCE? (s) => boolean
+
+  SEQUENCE? returns true if and only if S in an instance of a class
+  that is supported by the folio Sequences protocol. Currently,
+  SEQUENCE? returns true for instances of cl:list, cl:vector,
+  cl:string and fset:seq.
+
+SHUFFLE (s) => new-seq
+
+  SHUFFLE returns a new sequence of the same class as (or a superclass
+  of) S, with the same elements as S but in arbitrary order.
+
+SLICE (s start &optional end) => new-seq
+
+  SLICE returns a new sequence of the same class as (or a superclass
+  of) S, with some of the same elements as S, in the same order. The
+  elements included in NEW-SEQ start at the index START, and continue
+  to index END, if it's supplied, or to the end of S if END is not
+  supplied.
+
+SOME? (pred s &rest more-seqs) => boolean
+
+  SOME? returns the first true value returned by applying PRED in turn
+  to each element of the input sequences. PRED is a function that
+  returns a true or false value, and that accepts the same number of
+  arguments as the count of the input sequences. In other words, if S
+  and MORE-SEQS amount to three sequences, then PRED must accept 3
+  arguments, and will be applied to the first element of each of the
+  three input sequences, then the second element of each, and so on.
+
+  SOME? returns the first true value returned by PRED.
+
+SORT (pred s) => new-seq
+
+  SORT returns a new sequence of the same class as (or a superclass
+  of) S, with the same elements as S but possibly in a different
+  order. The order of elements in NEW-SEQ is determined by the values
+  returned by PRED when comparing elements: when PRED returns a true
+  value, its first argument will appear to the left of its second, and
+  when it returns a false value, the first argument will appear to the
+  right.
+
+  Example:
+    (sort '< '(5 2 8 4 9 1 0)) => (0 1 2 4 5 8 9)
+
+SPLIT (s sub &key (test 'eql)) => new-seq
+
+  SPLIT returns a new sequence of the same class as (or a superclass
+  of) S, unless S is a string, in which case it may return a list of
+  strings. The elements of NEW-SEQ are subsequences of S, separated by
+  SUB. For example:
+    (split "apple,banana,cherry" ",") => ("apple" "banana" "cherry")
+
+  The TEST function should accept two arguments. SPLIT compares each
+  element of SUB to a successive element of S to determine whether a
+  given position in S matches SUB. When a match is found, that
+  position becomes the boundary of a subsequence to be returned in
+  NEW-SEQ.
+
+  Another example:
+    (split "apple::banana::cherry" "::") => ("apple" "banana" "cherry")
+
+TAIL (s) => new-seq
+
+  TAIL returns a new sequence that is the same as S with the first
+  element removed. NEW-SEQ may share structure with S.
+
+TAILS (s) => new-seq
+
+  TAILS returns a new sequence of the same class as (or a superclass
+  of) S. The elements of NEW-SEQ are sub-sequences of S, such that the
+  first element of NEW-SEQ is equal to S, the second is equal to S
+  minus its first element, the third is equal to S minus its first two
+  elements, and so on until the last element of NEW-SEQ, which is the
+  empty sequence of the same class as S.
+
+  If S is a string, then NEW-SEQ is a list of substrings.
+
+TAKE (n s) => new-seq
+
+  TAKE returns a new sequence that is the same class as (or a
+  superclass of) S, and whose elements are the first N elements of S.
+
+TAKE-WHILE (pred s &key (from-end? nil)) => new-seq
+
+  TAKE-WHILE returns a new sequence that is the same class as (or a
+  superclass of) S, and whose elements are the first several elements
+  of S for which PRED returns true. TAKE-WHILE applies PRED to each
+  element of S and, if PRED returns true, adds it in order to the
+  result of TAKE-WHILE. If PRED returns a false value, no further
+  elements of S are added and the accumulated result is returned.
+
+  PRED is a function of one argument that returns true or false.
+
+UNION (s1 s2 &key (test 'eql)) => new-seq
+  generic function
+
+  UNION returns a new sequence that is the same class as (or a
+  superclass of) S, and that contains all the elements of S1 and all
+  the elements of S2.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent. When S1 is
+  an instance of fset:set, the TEST argument is not used.
+
+UNIQUE (s &key (test 'eql)) => new-seq
+
+  UNIQUE returns a new sequence that is the same class as (or a
+  superclass of) S, and whose elements are the elements of S with any
+  duplicates removed. A duplicate is any value X such that (funcall X
+  Y) returns true for some value Y that is also a member of S. In that
+  case, either X or Y, but not both, are in NEW-SEQ.
+
+UNZIP (s) => new-seq1, new-seq2
+
+  UNZIP returns two values, each a sequence that is the same class as
+  (or a superclass of) S. S should be a sequence of pairs; the first
+  value returned by UNZIP is a sequence of the heads of those paris;
+  the second value is a sequence of the tails of those pairs in the
+  same order.
+
+ZIP (s1 s2) => new-seq
+
+  ZIP returns a sequence that is the same class as (or a superclass
+  of) S, unless S1 is a string, in which case it returns a list. The
+  elements of NEW-SEQ are pairs in which the head of each is a value
+  from S1, and the tail of each is a corresponding value from S2. If
+  S1 and S2 are of different lengths, then the length of NEW-SEQ is
+  equal to the lesser length, and any elements with higher indexes are
+  omitted from the output.
+
+

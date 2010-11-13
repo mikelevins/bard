@@ -1,0 +1,96 @@
+
+AS (class-name val &key &allow-other-keys) => new-val
+  generic function
+
+  The sets subsystem provides the following AS methods for
+  conversions:
+
+  AS 'fset:set fset:seq => fset:seq
+  AS 'fset:seq fset:set => fset:seq
+  AS 'fset:set cl:list => fset:set
+  AS 'cl:list fset:set => cl:list
+  AS 'fset:set cl:vector => fset:set
+  AS 'cl:vector fset:set => cl:vector
+  AS 'fset:set cl:string => fset:set
+  AS 'cl:string fset:set => cl:string
+
+ADJOIN (x set &key (test 'eql)) => new-set
+  generic function
+
+  ADJOIN returns a set that includes X as a member. If X was already a
+  member of the input SET, then NEW-SET may be eq to SET.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.
+
+CONTAINS? (set x &key (test 'eql)) => boolean
+  generic function
+
+  CONTAINS? returns a true value if the value X is found in the set
+  SET.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.
+
+DIFFERENCE (set1 set2 &key (test 'eql)) => new-set
+  generic function
+
+  DIFFERENCE returns a set that contains only those members of SET1
+  that are not in SET2.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.
+
+INTERSECTION (set1 set2 &key (test 'eql)) => new-set
+  generic function
+
+  INTERSECTION returns a set that contains only those members of SET1
+  that are also in SET2.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.
+
+MAKE (&rest args) => new-set
+  generic function
+
+  MAKE returns a new set that contains the elements of args. The
+  representation of NEW-SET is an instance of an arbitrary type that
+  is supported by the Sets API.
+
+SUBSET? (set1 set2 &key (test 'eql)) => boolean
+  generic function
+
+  SUBSET? returns true if and only if SET1 is a subset of SET2. To put
+  it another way, if SUBSET? returns a true value, then every element
+  of SET1 is equivalent to some member of SET2, in the sense of TEST.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.
+
+UNION (set1 set2 &key (test 'eql)) => new-set
+  generic function
+
+  UNION returns a new set that contains all the elements of SET1 and
+  all the elements of SET2. Duplicates, in the sense of TEST, are
+  removed before NEW-SET is returned.
+
+  The TEST keyword argument supplies a comparison function. The
+  comparison function accepts two arguments, and should return a true
+  value if its arguments are to be considered equivalent for the
+  purpose of membership in the set. When SET is an instance of
+  fset:set, the TEST argument is not used.

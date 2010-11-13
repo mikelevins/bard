@@ -1,0 +1,18 @@
+
+AS (class-name val &key &allow-other-keys) => new-val
+  generic function
+
+  AS returns a new value that is an instance of class CLASS-NAME, and
+  that is in some sense equivalent to the input VAL. NEW-VAL may be an
+  instance of a subclass of CLASS-NAME, rather than a direct
+  instance. The sense in which NEW-VAL is equivalent to VAL is up to
+  the discretion of the implementor of the applicable AS method.
+
+  AS is intended to be extended with new methods for the convenience
+  of its users. Its package exports only the symbol AS:AS, so that
+  users can conveniently USE-PACKAGE the AS package, making it
+  convenient to use AS without package qualification.
+
+  EXAMPLE: 
+    (as 'list #(0 1 2 3 4)) => (0 1 2 3 4)
+

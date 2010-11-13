@@ -1,0 +1,199 @@
+// !$*UTF8*$!
+{
+	1D3623250D0F684500981E51 /* BardAppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {967, 1170}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 291}";
+		};
+	};
+	1D6058900D05DD3D006BFB54 /* Bard */ = {
+		activeExec = 0;
+		executables = (
+			97A856371289C85B0061F201 /* Bard */,
+		);
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 97A856371289C85B0061F201 /* Bard */;
+		activeSDKPreference = iphoneos4.2;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* Bard */;
+		addToTargets = (
+			9724F27C1289EBE200BD7148 /* Haskell */,
+		);
+		codeSenseManager = 97A856491289C8650061F201 /* Code sense */;
+		executables = (
+			97A856371289C85B0061F201 /* Bard */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					534,
+					20,
+					52,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					494,
+					60,
+					20,
+					52,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 311028282;
+			PBXWorkspaceStateSaveDate = 311028282;
+		};
+		perUserProjectItems = {
+			9724F2851289EBFD00BD7148 /* PBXTargetBookmark */ = 9724F2851289EBFD00BD7148 /* PBXTargetBookmark */;
+			9724F28B1289EBFD00BD7148 /* PBXTargetBookmark */ = 9724F28B1289EBFD00BD7148 /* PBXTargetBookmark */;
+			9724F2C81289EE6A00BD7148 /* PBXTextBookmark */ = 9724F2C81289EE6A00BD7148 /* PBXTextBookmark */;
+			9724F2CF1289F53700BD7148 /* PBXTargetBookmark */ = 9724F2CF1289F53700BD7148 /* PBXTargetBookmark */;
+			9724F2D01289F53700BD7148 /* PBXTextBookmark */ = 9724F2D01289F53700BD7148 /* PBXTextBookmark */;
+			9724F2D21289F53700BD7148 /* PBXTargetBookmark */ = 9724F2D21289F53700BD7148 /* PBXTargetBookmark */;
+		};
+		sourceControlManager = 97A856481289C8650061F201 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	9724F27C1289EBE200BD7148 /* Haskell */ = {
+		activeExec = 0;
+	};
+	9724F2851289EBFD00BD7148 /* PBXTargetBookmark */ = {
+		isa = PBXTargetBookmark;
+		trg = 9724F27C1289EBE200BD7148 /* Haskell */;
+	};
+	9724F28B1289EBFD00BD7148 /* PBXTargetBookmark */ = {
+		isa = PBXTargetBookmark;
+		trg = 9724F27C1289EBE200BD7148 /* Haskell */;
+	};
+	9724F2C81289EE6A00BD7148 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9724F2C91289EE6A00BD7148 /* BuildLog_2010-11-09_14-00-44.txt */;
+		rLen = 0;
+		rLoc = 9223372036854775807;
+		rType = 0;
+	};
+	9724F2C91289EE6A00BD7148 /* BuildLog_2010-11-09_14-00-44.txt */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = file;
+		path = "BuildLog_2010-11-09_14-00-44.txt";
+		sourceTree = "<group>";
+	};
+	9724F2CF1289F53700BD7148 /* PBXTargetBookmark */ = {
+		isa = PBXTargetBookmark;
+		trg = 9724F27C1289EBE200BD7148 /* Haskell */;
+		uiCtxt = {
+			TOCViewDetailVisibleRect = "{{0, 0}, {528, 231}}";
+			TOCViewExpandedItems = (
+				"com.apple.target-editor-pane.settings",
+			);
+			TOCViewMasterVisibleRect = "{{0, 0}, {208, 362}}";
+			TOCViewSelectedItems = (
+				PBXBuildSettingsLegacyModule,
+			);
+		};
+	};
+	9724F2D01289F53700BD7148 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9724F2D11289F53700BD7148 /* BuildLog_2010-11-09_14-00-44.txt */;
+		name = "BuildLog_2010-11-09_14-00-44.txt: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 3772;
+		vrLoc = 9486;
+	};
+	9724F2D11289F53700BD7148 /* BuildLog_2010-11-09_14-00-44.txt */ = {
+		isa = PBXFileReference;
+		path = "BuildLog_2010-11-09_14-00-44.txt";
+		sourceTree = "<group>";
+	};
+	9724F2D21289F53700BD7148 /* PBXTargetBookmark */ = {
+		isa = PBXTargetBookmark;
+		trg = 9724F27C1289EBE200BD7148 /* Haskell */;
+		uiCtxt = {
+			TOCViewDetailVisibleRect = "{{0, 0}, {1261, 491}}";
+			TOCViewExpandedItems = (
+				"com.apple.target-editor-pane.settings",
+			);
+			TOCViewMasterVisibleRect = "{{0, 0}, {513, 697}}";
+			TOCViewSelectedItems = (
+				"com.apple.target-editor-pane.settings",
+			);
+		};
+	};
+	97A856371289C85B0061F201 /* Bard */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = Bard;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	97A856481289C8650061F201 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	97A856491289C8650061F201 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+}

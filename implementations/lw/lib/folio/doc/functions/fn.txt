@@ -1,0 +1,26 @@
+
+$ (f &rest args) => vals
+  macro
+
+  $ is a synonym for FUNCALL whose sole purpose is to make FUNCALLing
+  function values more compact and convenient in functional
+  code. Recommended use is in expressions where passing functions as
+  values is natural, but where the use of FUNCALL makes the code read
+  awkwardly, or where it seems unnecessarily verbose. Use $ sparingly.
+
+  EXAMPLE: 
+    (some (fn (v) ($ test v x)) 
+          seq)
+
+FN (args &body body) => vals
+  macro
+
+  FN is shorthand for LAMBDA, and simply expands into a LAMBDA
+  expression. Like $, it's intended only to make functional code more
+  compact in cases where otherwise LAMBDA and FUNCALL tend to make it
+  grow to unwieldy shapes. Use sparingly.
+
+  EXAMPLE: 
+    (filter (fn (it) (member it test-list))
+            items)
+
