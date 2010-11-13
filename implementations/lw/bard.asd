@@ -30,6 +30,8 @@
   (pushnew (truename (merge-pathnames path (path-base)))
            asdf:*central-registry* :test 'equalp))
 
+(add-to-asdf "lib/folio/lib/misc-extensions_1.2.0")
+(add-to-asdf "lib/folio/lib/fset_1.2.2")
 (add-to-asdf "lib/folio/as/")
 (add-to-asdf "lib/folio/boxes/")
 (add-to-asdf "lib/folio/functions/")
@@ -69,7 +71,6 @@
 (in-package :cl-user)
 
 (defun load-bard ()
-  (asdf:oos 'asdf:load-op :bard)
-  (init-bard-reader))
+  (asdf:oos 'asdf:load-op :bard))
 
 ;;; (load-bard)
