@@ -1,0 +1,24 @@
+wacky bard ideas
+
+vector-map =
+	Λ proc,vec . 
+		list->vector
+			map proc
+				vector->list vec
+				
+(define vector-map
+	(Λ (proc vec)
+	  (list->vector
+		(map proc
+			(vector->list vec)))))
+  
+vector-map proc vec =
+  list->vector (map proc (vector->list vec))
+
+(define (vector-map proc vec)
+  (list->vector (map proc (vector->list vec))))
+
+vector-map proc vec = list->vector outvec 
+  where outvec = map proc invec 
+    where invec = vector->list vec
+

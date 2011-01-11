@@ -1,27 +1,37 @@
 module Values
     where
 
-import qualified Data.Map as M
+import Data.Sequence as S
+import Data.Map as M
 
 -------------------------------------------------
 -- bard values
 -------------------------------------------------
 
+-- supporting types
+
+data Env = Env (M.Map Name Value) deriving (Show, Eq)
+data Module = Module Env deriving (Show, Eq)
+
+type Character = Char
+
+type Text = S.Seq Char
+
 type Name = String
 
-type Arglist = [Name]
+type Sequence = S.Seq Value
 
-type Names = [Name]
-type ModuleName = Name
-type ExportedNames = [Name]
-type ImportedNames = (M.Map ModuleName Names)
+type Map = M.Map Value Value
 
-data Value = NothingVal
-           | IntegerVal Int
-           | FloatVal Float
-           | CharVal Char
-           | NameVal String
-           | SeqVal [Value]
-           | MapVal (M.Map Value Value)
-           | ModuleVal Names ExportedNames ImportedNames deriving Show
+data Value = ValNothing
+           | ValBoolean Bool
+           | ValInteger Integer
+           | ValFloat Float
+           | ValCharacter Character
+           | ValText Text
+           | ValName Name
+           | ValModule Module
+           | ValSequence Sequence
+           | ValMap Values.Map
+             deriving (Show, Eq)
 
