@@ -14,3 +14,4 @@ implementations/ghc/vm/dist/build/bard/bard-tmp/Expressions.hi
 implementations/ghc/vm/dist/build/bard/bard-tmp/Main.hi
 implementations/ghc/vm/dist/package.conf.inplace
 implementations/ghc/vm/dist/setup-config
+/implementations/ghc/vm/dist/
