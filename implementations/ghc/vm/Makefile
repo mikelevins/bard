@@ -1,5 +1,8 @@
-all:
+build: configure
 	runghc Setup.hs build
+
+run:
+	./dist/build/bard/bard
 
 configure:
 	runghc Setup.hs configure

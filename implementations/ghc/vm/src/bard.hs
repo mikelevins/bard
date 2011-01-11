@@ -19,10 +19,16 @@ main = do
   args <- getArgs
   let programFile = (read (args!!0))::String
       program = readProgram programFile
-      vm = (makeVM program)
-      result = runVM vm
+      (halt, code, pc, env, nargs, stack, st_depth) = (makeVM program)
+      (halt', code', pc', env', nargs', stack', st_depth') = runVM (halt, code, pc, env, nargs, stack, st_depth)
+  putStrLn ""
   putStrLn "Bard VM v 1.0"
-  putStrLn ("start: "++(show vm))
   putStrLn ("program: "++(show program))
-  putStrLn ("stop: "++(show result))
+  putStrLn ("start: ")
+  putStrLn ("     pc: "++(show pc))
+  putStrLn ("  stack: "++(show stack))
+  putStrLn ("stop: ")
+  putStrLn ("     pc: "++(show pc'))
+  putStrLn ("  stack: "++(show stack'))
+  putStrLn ""
 
