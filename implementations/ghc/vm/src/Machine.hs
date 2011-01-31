@@ -2,77 +2,69 @@ module Machine
     where
 
 import Data.Map as M
+import Data.Sequence as S
 
 import Values
-import Instructions
-import Stack
 
 -------------------------------------------------
--- register types
+-- the Environment
 -------------------------------------------------
-                 
-type Code = [Instruction]
-type PC = Int
-type ArgCount = Int
+
+lookupVariableValue :: Value -> Env -> Value
+-- TODO: implement variable lookup
+lookupVariableValue exp env = ValNothing
 
 -------------------------------------------------
 -- the virtual machine
 -------------------------------------------------
 
-type VM = (Bool, Code, PC, Env, ArgCount, Stack, StackDepth)
+type VM = (Value, Env)
 
-executeInstruction :: Instruction -> VM -> VM 
+-- apply
 
--- opcodes: constants
+apply :: Value -> Value -> Env -> (Value, Env)
+-- TODO: implement apply
+apply op args env = (args,env)
 
-executeInstruction NOOP (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, stack, st_depth)
+-- eval
 
-executeInstruction HALT (halt, code, pc, env, nargs, stack, st_depth) =
-    (True, code, pc, env, nargs, stack, st_depth)
+evalConstant :: VM -> VM
+evalConstant (exp,env) = (exp,env)
 
-executeInstruction NOTHING (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, (ValNothing : stack), st_depth)
+evalVariable :: VM -> VM
+evalVariable (exp,env) = ((lookupVariableValue exp env), env)
 
-executeInstruction TRUE (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, ((ValBoolean True) : stack), st_depth)
+evalSequence :: VM -> VM
+evalSequence (exp,env) = 
+    let opform = S.index exp 0
+        args = S.drop 1 exp
+        (op, env') = eval opform env
+    in apply op args env'
 
-executeInstruction FALSE (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, ((ValBoolean False) : stack), st_depth)
-
-executeInstruction MINUS_ONE (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, ((ValInteger (-1)) : stack), st_depth)
-
-executeInstruction ONE (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, ((ValInteger 1) : stack), st_depth)
-
-executeInstruction TWO (halt, code, pc, env, nargs, stack, st_depth) =
-    (halt, code, (pc+1), env, nargs, ((ValInteger 2) : stack), st_depth)
-
--- opcodes: branching
--- opcodes: function calls
--- opcodes: variables
--- opcodes: stack operations
--- opcodes: continuations
-
--- execution: step
-
-stepVM :: VM -> VM
-stepVM (halt, code, pc, env, nargs, stack, st_depth) =
-    executeInstruction (code!!pc) (halt, code, pc, env, nargs, stack, st_depth)
+evaluator :: Value -> (VM -> VM)
+evaluator val = 
+    case val of
+      ValNothing -> evalConstant
+      ValBoolean b -> evalConstant
+      ValInteger n -> evalConstant
+      ValFloat f -> evalConstant
+      ValCharacter c -> evalConstant
+      ValText t -> evalConstant
+      ValName n -> evalVariable
+      ValModule m -> evalConstant
+      ValSequence s ->evalSequence
+      ValMap m -> evalConstant
 
 -- execution: run
 
-runVM :: VM -> VM
-runVM (halt, code, pc, env, nargs, stack, st_depth) =
-    if halt
-       then (halt, code, pc, env, nargs, stack, st_depth)
-       else
-           runVM (stepVM (halt, code, pc, env, nargs, stack, st_depth))
+eval :: VM -> VM
+eval (exp,env) =
+    let eval' = evaluator(exp)
+    in eval'(exp, env)
 
 -- initialization
 
 makeStandardEnvironment = Env (M.empty)
 
-makeVM :: Code -> VM
-makeVM program = (False, program, 0, (makeStandardEnvironment), 0, [], 0)
+makeVM :: Value -> VM
+makeVM program = (program,(makeStandardEnvironment))

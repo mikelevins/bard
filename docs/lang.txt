@@ -1,333 +1,86 @@
-The Bard Language
-
-I. requirements
-
-- small, fast, portable kernel
-- proper SMP
-- small kernel language
-- Categories built in
-- FFI and alien pointers, a la Dylan
-- save-image and starting up from images, a la Smalltalk
-- mainly immutable data structures, with a few safe mutable ones, 
-  a la Clojure
-- built-in graphics and windowing system, a la Smalltalk
-- optional "headless" operation, without the graphics/windowing system
-- modules a la Dylan
-- surface syntax based on s-expressions
-- surface syntax is case-sensitive
-- underlying ASTs are independent of surface syntax, per Moon's PLOT
-- built-in ASTs are very simple, with a macro system for extending the
-  syntax
-- vm runs a pool of evaluators, each in its own thread, so each
-  can have its own CPU core
-- handle shared memory like Clojure; distributed processes like Termite.
-
-II. core language
-
-    A. lexical syntax
-
-       1. Literal constants
-
-          - text: "foo bar"
-          - numbers: 1 2.1 -0.004 #x1F #b1010
-          - characters \a \newline \x20
-          - void: nil
-          - booleans: true false
-          - keywords: :a-keyword a-keyword:
-            The two examples are different ways to write the same keyword.
-          
-      2. Symbols
-
-         foo Bar a-longer-symbol
-         bard.examples/a-module-qualified-symbol
-
-      3. Sequences
-
-         - ordered sequences
-           - generic
-             ()
-             (1 2 3)
-             - using "cons" syntax:
-               (1 : (2 : (3 : ())))
-
-           - type-qualified
-             - pair (list)
-               #p()
-               #p(1 : 2) ; a "dotted pair"
-               #p(1 2 3)
-               #p(1 2 : 3) ; an improper list
-
-             - vector
-               #v()
-               #v(1 2 3)
-
-             - bitvector
-               #b()
-               #b(1 0 1)
-
-             - wordvector
-               #w8()
-               #w8(0 4 255)
-               #w16(0 512 65535)
-               #w32(0 65535 4294967295)
-
-         - unordered sequences
-           - generic
-             - set
-               [] ; the empty set
-               [1 foo "bar"]
-
-           - type-qualified
-             - bitset
-               #b[0 1 0]
-
-             - object set
-               #o[1 foo "bar"]
-
-         - maps
-           - generic
-             {name: "Foo" group: "Bar"}
-
-           - type-qualified
-             - hashtable
-               #h{name: "Foo" group: "Bar"}
-
-             - hash trie
-               #t{name: "Foo" group: "Bar"}
-
-             - vector map
-               #v{name: "Foo" group: "Bar"}
-
-             - pair map (alist)
-               #p{name: "Foo" group: "Bar"}
-
-         - text
-           - generic
-             ""
-             "foo bar baz"
-
-           - type-qualified
-             - ascii text
-               #a""
-               #a"foo bar baz"
-
-             - unicode text
-               #u""
-               #u"foo bar baz"
-
-      4. Reader macros
-
-         - quotation
-           - quote: '
-           - unquote ,
-           - unquote-splicing ,@
-
-         - character: \
-
-         - line comment: ;
-
-         - block comment: #| |#
-
-         - reader dispatch macro: #
-
-      5. Naming conventions
-
-         - modules: bard/a-symbol bard.lang/a-symbol bard.lang.examples/a-symbol
-
-         - domains: -c3- -pred- -my-domain-
-
-         - types:
-           - Abstract types: <Integer> <Text> <Table>
-             Abstract types cannot be instantiated, and are defined as
-             categories that compose other, concrete, types.
-
-           - concrete types: <float> <unicode-text> <vector-table>
-
-         - module variables: *windows* *debug*
-
-         - module constants: $maximum-integer $pi
-
-         - predicates: odd? visible?
-
-         - setters: set-visible! reverse!
-           note: setters work only on <Cells>
-
-    B. Core operations
-
-       add-method!
-       apply
-       begin
-       bind
-       bound?
-       category
-       datatype
-       define
-       define-function
-       domain
-       dynamic-wind
-       function
-       if
-       initialize
-       make
-       quote
-       remove-method!              
-       set!   ; set and setter are defined only on <Cell>
-       setter
-       structure
-       type-synonym
-       unquote
-       unquote-splicing
-       values
-
-    C. Core types
-
-       <Boolean>
-       <Cell> ; a thread-safe mutable value container
-       <Character>
-       <keyword>
-       <Number>
-       <pair>
-       <Sequence>
-       <Set>
-       <structure>
-       <symbol>
-       <Table>
-       <Text>
-       <vector>
-       <void> ; just one instance: void
-       <Word>
-
-       More specialized types in the core are here presented grouped
-       into subtypes, as they are arranged in the default (-c3-)
-       domain:
-
-       - booleans
-
-         <Boolean>
-           <false> ; just one instance: false
-           <true>  ; just one instance: true
-
-       - characters
-
-         <Character>
-           <ascii-character>
-           <unicode-character>
-
-       - cells ; thread-safe mutable storage
-               ; all mutable state in Bard is represented by cells
-         <Cell>
-           <parameter> ; per-thread dynamically rebindable
-           <reference> ; shared mutable store with STM and synchronous update
-           <agent> ; shared mutable state with asynchronous update
-           <atom> ; shared mutable state with synchronous update
-           
-       - names
-
-         <Name>
-           <keyword>
-           <symbol>
-
-       - numbers
-
-         <Number>
-           <complex>
-           <Integer>
-             <small-integer>
-             <unlimited-integer>
-           <fixed-point>
-           <Floating-Point>
-             <float>
-             <double-float>
-           <ratio>
-             
-       - bytes (machine words)
-
-           <Word>
-             <signed-8>
-             <signed-16>
-             <signed-32>
-             <signed-64>
-             <unsigned-8>
-             <unsigned-16>
-             <unsigned-32>
-             <unsigned-64>
-
-       - sequences
-
-         <Sequence>
-           <Ordered-Sequence>
-             <pair> ; includes linked lists
-             <Vector>
-               <object-vector>
-               <bitvector>
-               <word-vector>
-           <Unordered-Sequence>
-             <Set>
-               <bitset>
-               <object-set>
-           <Map>
-             <hash-table>
-             <hash-trie>
-             <vector-map> ; alternating keys and values
-             <pair-map> ; alist
-           <Text>
-             <ascii-text>
-             <unicode-text>
-
-    D. Categories
-       
-       - testing the types of values
-
-         (type 5) => <small-integer>
-
-         (type? 5 <Integer>) => true
-
-       - type synonyms
-
-         (define <username> (type-synonym <ascii-text>))
-
-         (type? "foo" <username>) => true
-
-       - defining categories
-
-         (define <identifier> 
-           (category <symbol> <keyword> <ascii-text> <unicode-text>))
-
-         (type? "foo" <identifier>) => true
-
-         (type? 'foo <identifier>) => true
-       
-         (type? foo: <identifier>) => true
-       
-       - using structures
-
-         (define <cartesian-point> 
-           (structure () 
-             (x get: get-x default: 100) 
-             (y get: get-y default: 100)))
-
-         (define *my-point* (make <cartesian-point> y: 1001))
-
-         (get-x *my-point*) => 100
-         (get-y *my-point*) => 1001
-
-         (define <3D-point> 
-           (structure (<cartesian-point>) 
-             (z get: get-z default: 100)))
-
-         (define *my-3d-point* (make <3D-point> y: 1001))
-
-         (get-x *my-point*) => 100
-         (get-y *my-point*) => 1001
-         (get-z *my-point*) => 100
-
-       - defining functions (in the default domain)
-
-         (define-function get-distance ((p1 <cartesian-point>)(p2 <cartesian-point>))
-           (bind ((x1 (get-x p1))
-                  (y1 (get-y p1))
-                  (x2 (get-x p2))
-                  (y2 (get-y p2)))
-             (sqrt (+ (square (- x2 x1))
-                      (square (- y2 y1))))))
+Types
+
+object
+  atom
+    nothing
+    boolean
+    number
+  sequence
+    vector
+      text
+      bitvector
+      bytevector
+      object-vector
+    map
+      structure
+        name
+        category
+        protocol
+      method
+      function
+      dictionary
+      module
+
+Variable-naming conventions
+
+  instance
+  function
+  method
+  <type>
+  Category
+  Protocol
+
+Base types
+
+  <nothing>
+  <boolean>
+  <uint-8>
+  <uint-16>
+  <uint-32>
+  <uint-64>
+  <sint-8>
+  <sint-16>
+  <sint-32>
+  <sint-64>
+  <unicode-string>
+  <bitvector>
+  <uint-8-vector>
+  <uint-16-vector>
+  <uint-32-vector>
+  <uint-64-vector>
+  <sint-8-vector>
+  <sint-16-vector>
+  <sint-32-vector>
+  <sint-64-vector>
+  <object-vector>
+  <name>
+  <category>
+  <protocol>
+  <method>
+  <function>
+  <module>
+  <base-type>
+  <vector-type>
+  <structure-type>
+
+Built-in Categories
+
+  Nothing
+  Anything
+   Atom
+     Boolean
+     Number
+   Sequence
+     Vector
+       Text
+     Map
+       Dictionary
+       Module
+       Structure
+         Name
+         Category
+         Protocol
+       Function
+         Method
+  Nothing
 

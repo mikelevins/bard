@@ -1,18 +1,12 @@
 module IO
     where
 
+import Data.Sequence as S
+
 import Values
-import Instructions
 
 -------------------------------------------------
 -- serialization and I/O
 -------------------------------------------------
 
-readProgram programFile =  [NOOP,
-                            NOTHING,
-                            TRUE,
-                            FALSE,
-                            MINUS_ONE,
-                            ONE,
-                            TWO,
-                            HALT]
+readProgram programFile =  ValSequence (S.fromList [])
