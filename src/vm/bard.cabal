@@ -1,0 +1,12 @@
+Name:           bard
+Version:        0.8
+Cabal-Version:  >= 1.2
+License:        Apache2
+Author:         mikel evins
+Synopsis:       the Bard High-Level VM
+Build-Type:     Simple
+
+Executable bard
+  Build-Depends:  base, haskell98, containers
+  Main-Is:        bard.hs
+  Hs-Source-Dirs: src

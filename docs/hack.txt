@@ -1,0 +1,213 @@
+hack: an under-Bard
+
+hack is an idea for a lower-level system language that can be used to
+define the base Bard VM. The basic idea of hack is to provide a
+Bard-like low-level system-programming language roughly equivalent to
+C in its expressive power, and lacking any features that require a
+nontrivial runtime system. Hack looks like Bard, but without the more
+dynamic features, and can be used to implement base data types, GC,
+and generally the Bard VM.
+
+1. Lexical syntax
+
+The lexical syntax of hack is basically the same as for Bard.
+
+  Numbers
+  
+  0 1 101 1234567890123456
+  0.1 #b1011 #o047 #xface
+
+  Characters
+
+  \a \B #x\FF #u\65
+
+  Booleans
+
+  true false
+
+  Names
+
+  foo
+
+  $foo
+
+  *foo*
+
+  <foo>
+
+  Sequences
+
+    Bitvectors
+
+    #bit [0 1 1 0 1 0 0 1]
+
+    Bytevectors
+
+    #byte [1 2 4 8 16 32 64 128]
+
+    Object-vectors
+
+    #obj [1 "foo" nothing]
+    [1 "foo" nothing]
+
+    Text
+
+    "Foo"
+
+  Sequences as function applications
+
+  (+ 2 3)
+
+  (get $foo 3)
+
+  (define *foo* 5)
+
+2. Built-in data types
+
+  <nothing>
+  <boolean>
+  <uint-8>
+  <uint-16>
+  <uint-32>
+  <uint-64>
+  <sint-8>
+  <sint-16>
+  <sint-32>
+  <sint-64>
+  <unicode-string>
+  <bitvector>
+  <uint-8-vector>
+  <uint-16-vector>
+  <uint-32-vector>
+  <uint-64-vector>
+  <sint-8-vector>
+  <sint-16-vector>
+  <sint-32-vector>
+  <sint-64-vector>
+  <object-vector>
+  <name>
+  <function>
+  <method>
+  <base-type>
+  <structure-type>
+
+3. Defining data types
+
+   Structure types
+
+   (define-type <table> ()
+     (columns type: <object-vector> accessor: true init: columns: default: #obj[])
+     (rows type: <object-vector> accessor: true init: rows: default: #obj[]))
+
+   (define-type <filtered-table> (<table>)
+     (filter-text type: (maybe <unicode-string>) accessor: true init: filter-text: default: nothing))
+
+   Note that <filtered-table> includes <table>, but does not inherit
+   from it. Hack does not support inheritance. Inclusion simply means
+   that the slot definitions from the included type are also part of
+   the derived type. In other words, the above definition of
+   <filtered-table> means the same thing as the following:
+
+   (define-type <filtered-table> ()
+     (columns type: <object-vector> accessor: true init: columns: default: #obj[])
+     (rows type: <object-vector> accessor: true init: rows: default: #obj[])
+     (filter-text type: (maybe <unicode-string>) accessor: true init: filter-text: default: nothing))
+
+   Enumeration types
+
+   (define-enumeration <color> 
+     RED ORANGE YELLOW GREEN BLUE
+     INDIGO VIOLET)
+
+   The listed members of an enumeration are defined as read-only
+   module variables with compiler-assigned values. By convention, they
+   are written all-uppercase.
+
+   It is possible to specify integer values for the members of an
+   enumeration, like so:
+
+   (define-enumeration <day>
+     (SUNDAY 0)
+     (MONDAY 1)
+     (TUESDAY 2)
+     (WEDNESDAY 3)
+     (THURSDAY 4)
+     (FRIDAY 5)
+     (SATURDAY 6))
+
+   You don't have to define all the integer values if you just want a
+   contiguous range; it's sufficient to specify the first:
+
+   (define-enumeration <day>
+     (SUNDAY 0)
+      MONDAY
+      TUESDAY
+      WEDNESDAY
+      THURSDAY
+      FRIDAY
+      SATURDAY)
+
+   Vector types
+
+   (define-vector <os-type>
+     type: <uint-8> 
+     minimum-length: 4
+     maximum-length: 4
+     initial-element: 0)
+
+4. Defining functions
+
+   (define-function (value-at (tbl <table>)(col <unicode-string>)(ix <uint32>))
+     (get (get (rows tbl) ix) 
+          (column-index tbl col)))
+
+   hack functions are polymorphic in a flat type space. In other
+   words, you can define different methods on a function by defining
+   them on different types, but there is no runtime
+   dispatch. Functions are statically typed and parameters either
+   match a defined signature (in which case the corresponding method
+   is executed) or they do not (in which case the compiler complains
+   of a type error).
+
+5. Managing memory
+
+   hack is a low-level language, suitable for building system features
+   such as garbage collection. It is not itself a garbage-collected
+   language; all memory used in hack is either statically allocated,
+   or manually heap-allocated and manually freed.
+
+   Type constructors reflect this nature in how they work.
+
+   Static allocation:
+
+   (define-static $my-columns <object-vector>
+     initial-contents: ["Name" "Address"])
+
+   (define-static $my-rows <object-vector>
+     count: 4 initial-element: nothing)
+
+   (define-static $my-table <table>
+     rows: $my-rows
+     columns: $my-columns)
+
+     Variables mentioned in static allocations must already be defined
+     and their values statically computable at compile time.
+
+   Stack allocation:
+
+   (stack-let ((columns <object-vector>
+                        initial-contents: ["Name" "Address"])
+               (rows <object-vector>
+                     count: 4
+                     initial-element: nothing)
+               (tbl <table>
+                    rows: my-rows
+                    columns: my-columns))
+     (do-stuff-with tbl))
+
+   Dynamic allocation:
+
+   (define $my-table (make <table>))
+   ...
+   (free! $my-table)
+

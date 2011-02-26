@@ -1,0 +1,91 @@
+(define-module com.bywicket.delectus
+  :import bard.domain ; so we can say (Default Sequence) instead of (bard.domain:Default Sequence)
+  )
+
+(in-module com.bywicket.delectus)
+
+(define $delectus-format-version "1.0")
+
+;;; ----------------------------------------------------------------------
+;;; types
+;;; ----------------------------------------------------------------------
+
+(define-type <table> ()
+  constructor: make-table
+  slots:
+    (columns type: (Default Sequence) accessor: true init: columns: default: ())
+    (rows type: (Default Sequence) accessor: true init: rows: default: ()))
+
+(define-type <document> (<table>) ; included, not inherited
+  constructor: make-document
+  slots:
+    (format-version type: (Default Text) default: $delectus-format-version)
+    (deleted-columns type: (Default Sequence) default: ())
+    (deleted-rows type: (Default Sequence) default: ())
+    (include-deleted? type: (Default Boolean) accessor: true default: false)
+    (sort-column type: (maybe (Delectus ColumnLabel)) accessor: true default: nothing)
+    (sort-order type: (maybe (Delectus SortOrder)) accessor: true default: nothing)
+    (sort-type type: (maybe (Delectus SortType)) accessor: true default: nothing))
+
+(define-type <presentation> (<document>)
+  constructor: make-presentation
+  slots:
+    (filter-text type: (maybe (Default Text)) accessor: true default: nothing)
+    (view type: (maybe (Delectus Table)) accessor: true default: nothing)
+    (view-valid? type: (Default Boolean) accessor: true default: false))
+
+(define-enumeration <sort-order>
+  SORT_ASCENDING SORT_DESCENDING)
+
+(define-enumeration <sort-type>
+  SORT_ALPHABETICAL SORT_NUMERIC)
+
+;;; ----------------------------------------------------------------------
+;;; Domain
+;;; ----------------------------------------------------------------------
+
+(define-domain Delectus)
+
+(define-protocol (Delectus Table)
+  (value-at Table ColumnLabel RowIndex) -> Value
+  (put-value-at! Table ColumnLabel RowIndex Value) -> Table
+  (add-column! Table ColumnLabel) -> Table
+  (add-row! Table) -> Table
+  (mark-column-deleted! Document ColumnLabel) -> Table
+  (mark-row-deleted! Document RowIndex) -> Table
+  (compact! Table) -> Table
+  (sort-column Document) -> ColumnLabel
+  (sort-order Document) -> SortOrder
+  (sort-type Document) -> SortType
+  (filter-text Presentation) -> (Default Text)
+  (set-filter-text! Presentation (Default Text)) -> Presentation)
+
+(with-domain Delectus
+  (define-category <table> (Table))
+  (define-category <document> (Document))
+  (define-category Document (Table))
+  (define-category <presentation> (Presentation))
+  (define-category Presentation (Document))
+
+  (define-category <anything> (Value))
+  (define-category <unicode-string> (ColumnLabel))
+  (define-category RowIndex ((Default Integer)))
+
+  (define-category <sort-order> (SortOrder))
+  (define-category <sort-type> (SortType)))
+
+;;; ----------------------------------------------------------------------
+;;; methods
+;;; ----------------------------------------------------------------------
+
+(define-method (value-at (tbl Table)(lbl ColumnLabel)(ix RowIndex))
+  (get (get (rows tbl) ix)
+       (column-index tbl lbl)))
+
+(define-method (value-at (pres Presentation)(lbl ColumnLabel)(ix RowIndex))
+  (update-view! pres)
+  (get (get (view pres) ix)
+       (column-index pres lbl)))
+
+
+
