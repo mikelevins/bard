@@ -9,3 +9,4 @@ configure:
 
 clean:
 	rm -f src/*.o src/*.hi src/bard
+	rm -rf dist

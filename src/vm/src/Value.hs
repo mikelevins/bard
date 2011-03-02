@@ -5,9 +5,13 @@ import Data.List as L
 import Data.Map as M
 import Data.Sequence as S
 
+import Module
+
 -------------------------------------------------
 -- Values
 -------------------------------------------------
+
+data Name = Name ModuleName String deriving (Show, Eq, Ord)
 
 data BardValue = BardUndefined
            | BardNothing
@@ -15,9 +19,10 @@ data BardValue = BardUndefined
            | BardInteger Integer
            | BardFloat Double
            | BardCharacter Char
-           | BardName String
+           | BardName Name
            | BardSequence (S.Seq BardValue)
            | BardMap (M.Map BardValue BardValue)
+           | BardModule Module
              deriving (Eq, Ord)
 
 -- constructors
@@ -27,7 +32,7 @@ bool b = BardBoolean b
 int n = BardInteger n
 float f = BardFloat f
 char ch = BardCharacter ch
-name nm = BardName nm
+name m nm = BardName (Name m nm)
 
 emptyMap = BardMap M.empty
 
@@ -59,7 +64,7 @@ instance Show BardValue where
     show (BardInteger n) = (show n)
     show (BardFloat f) = (show f)
     show (BardCharacter ch) = ['\\',ch]
-    show (BardName s) = s
+    show (BardName (Name m n)) = m ++ ":" ++ n
     show (BardMap m) = "{" ++ (expand m) ++ "}"
         where expand m = concat (L.intersperse " " (Prelude.map showPair (M.assocs m)))
               showPair (k, v) = (show k) ++ " " ++ (show v)

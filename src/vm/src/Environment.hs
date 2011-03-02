@@ -10,11 +10,14 @@ import Value
 -- Environments
 -------------------------------------------------
 
-data Environment = Env (M.Map String BardValue)
+data Environment = Env (M.Map Name BardValue)
 
 emptyEnvironment = Env (M.empty)
+standardEnvironment = extendEnvironment emptyEnvironment (Name "bard.core" "*bard-version*") (BardFloat 1.0)
+
+extendEnvironment :: Environment -> Name -> BardValue -> Environment
+extendEnvironment (Env env) k v = (Env (M.insert k v env))
 
 instance Show Environment where
-    show (Env m) = "{" ++ (expand m) ++ "}"
-        where expand m = concat (L.intersperse " " (Prelude.map showPair (M.assocs m)))
-              showPair (k, v) = (show k) ++ " " ++ (show v)
+    show (Env m) = "#<Bard Environment>"
+
