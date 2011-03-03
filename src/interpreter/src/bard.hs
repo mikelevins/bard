@@ -36,6 +36,15 @@ parseInteger = liftM (BardInteger . read) $ many1 digit
 parseSequence :: Parser BardValue
 parseSequence = liftM BardValue.sequence $ sepBy parseExpr spaces 
 
+chunkByTwo :: [BardValue] -> [(BardValue,BardValue)]
+chunkByTwo [] = []
+chunkByTwo (x:y:vals) = [(x,y)] ++ (chunkByTwo vals)
+
+parseMap :: Parser BardValue
+parseMap = do items <- (sepBy parseExpr spaces)
+              let pairs = (chunkByTwo items)
+              return (BardValue.map pairs)
+              
 parseQuoted :: Parser BardValue
 parseQuoted = do
   char '\''
@@ -56,6 +65,10 @@ parseExpr = parseName
                char ']'
                let op = (BardName "sequence")
                return (BardValue.append (BardValue.sequence [op]) x)
+        <|> do char '{'
+               x <- parseMap
+               char '}'
+               return x
 
 readExpr :: String -> String
 readExpr input = case parse parseExpr "bard" input of

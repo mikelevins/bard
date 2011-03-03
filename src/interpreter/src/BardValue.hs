@@ -1,6 +1,7 @@
 module BardValue
     where
 
+import Data.Foldable as F
 import Data.List as L
 import Data.Map as M
 import Data.Sequence as S
@@ -45,7 +46,7 @@ sequence vals = BardSequence (S.fromList vals)
 
 append :: BardValue -> BardValue -> BardValue
 append (BardSequence s1) (BardSequence s2) = (BardSequence (s1 >< s2))
-appedn _ _ = BardUndefined
+append _ _ = BardUndefined
 
 -- accessors
 
@@ -67,9 +68,9 @@ instance Show BardValue where
     show (BardCharacter ch) = ['\\',ch]
     show (BardName n) =  n
     show (BardMap m) = "{" ++ (expand m) ++ "}"
-        where expand m = concat (L.intersperse " " (Prelude.map showPair (M.assocs m)))
+        where expand m = L.concat (L.intersperse " " (Prelude.map showPair (M.assocs m)))
               showPair (k, v) = (show k) ++ " " ++ (show v)
     show (BardSequence s) = "(" ++ (expand s) ++ ")"
-        where expand s = concat (L.intersperse " " (Prelude.map showNth (Prelude.take (S.length s) [0 ..])))
+        where expand s = L.concat (L.intersperse " " (Prelude.map showNth (Prelude.take (S.length s) [0 ..])))
               showNth i = (show (index s i))
 
