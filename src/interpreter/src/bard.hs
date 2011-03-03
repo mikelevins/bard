@@ -2,10 +2,15 @@ module Main
   where
 
 import Control.Monad
+import Data.List as L
 import System
 import Text.ParserCombinators.Parsec hiding (spaces)
 
 import BardValue
+
+-------------------------------------------------
+-- Parsers
+-------------------------------------------------
 
 punctuation :: Parser Char
 punctuation = oneOf "!#$%&|*+_?:<=>?@^_~" 
@@ -36,15 +41,6 @@ parseInteger = liftM (BardInteger . read) $ many1 digit
 parseSequence :: Parser BardValue
 parseSequence = liftM BardValue.sequence $ sepBy parseExpr spaces 
 
-chunkByTwo :: [BardValue] -> [(BardValue,BardValue)]
-chunkByTwo [] = []
-chunkByTwo (x:y:vals) = [(x,y)] ++ (chunkByTwo vals)
-
-parseMap :: Parser BardValue
-parseMap = do items <- (sepBy parseExpr spaces)
-              let pairs = (chunkByTwo items)
-              return (BardValue.map pairs)
-              
 parseQuoted :: Parser BardValue
 parseQuoted = do
   char '\''
@@ -66,9 +62,11 @@ parseExpr = parseName
                let op = (BardName "sequence")
                return (BardValue.append (BardValue.sequence [op]) x)
         <|> do char '{'
-               x <- parseMap
+               plist <- parseSequence
                char '}'
-               return x
+               let iop = (BardName "sequence")
+               let oop = (BardName "sequence->map")
+               return (BardValue.cons oop (BardValue.sequence [(BardValue.cons iop plist)]))
 
 readExpr :: String -> String
 readExpr input = case parse parseExpr "bard" input of
@@ -76,8 +74,17 @@ readExpr input = case parse parseExpr "bard" input of
   Right val -> "Found value: " ++ (show val)
 
 -------------------------------------------------
--- 
+-- evaluator
 -------------------------------------------------
+
+eval :: BardValue -> BardValue 
+eval BardUndefined = BardUndefined
+eval BardNothing = BardNothing
+eval val@(BardBoolean _) = val
+eval val@(BardInteger _) = val
+eval val@(BardFloat _) = val
+eval val@(BardCharacter _) = val
+eval val@(BardText _) = val
 
 -------------------------------------------------
 -- main program

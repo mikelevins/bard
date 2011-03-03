@@ -48,6 +48,10 @@ append :: BardValue -> BardValue -> BardValue
 append (BardSequence s1) (BardSequence s2) = (BardSequence (s1 >< s2))
 append _ _ = BardUndefined
 
+cons :: BardValue -> BardValue -> BardValue
+cons val (BardSequence s2) = (BardSequence (val <| s2))
+cons _ _ = BardUndefined
+
 -- accessors
 
 first (BardSequence s) = S.index s 0
