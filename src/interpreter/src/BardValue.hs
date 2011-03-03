@@ -71,6 +71,7 @@ instance Show BardValue where
     show (BardInteger n) = (show n)
     show (BardFloat f) = (show f)
     show (BardCharacter ch) = ['\\',ch]
+    show (BardText tx) = ['"']++tx++['"']
     show (BardName "" n) = n
     show (BardName "bard.keyword" n) = ":"++n
     show (BardName m n) = m++":"++n

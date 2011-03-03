@@ -30,5 +30,11 @@ main = do
        putStrLn "Bard v 1.0"
        putStrLn ""
        args <- getArgs
-       putStrLn (readExpr (args !! 0))
+       let inp = (args !! 0)
+       putStrLn ("Reading: " ++ inp)
+       let expr = readExpr inp
+       putStrLn ("Evaluating: " ++ (show expr))
+       let val = eval expr
+       putStrLn ("Result: " ++ (show val))
+       putStrLn ""
 

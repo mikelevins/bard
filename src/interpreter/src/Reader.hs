@@ -64,7 +64,12 @@ parseKeyword = do colon
                  
 parseUnqualifiedName :: Parser BardValue
 parseUnqualifiedName = do name <- unqualifiedName 
-                          return (BardName "" name)
+                          case name of
+                            "undefined" -> return BardUndefined
+                            "nothing" -> return BardNothing
+                            "true" -> return (BardBoolean True)
+                            "false" -> return (BardBoolean False)
+                            _ -> return (BardName "" name)
                  
 parseName :: Parser BardValue
 parseName = try parseKeyword 
@@ -115,8 +120,8 @@ parseExpr = parseName
                let oop = (BardName "bard.core" "sequence->map")
                return (BardValue.cons oop (BardValue.sequence [(BardValue.cons iop plist)]))
 
-readExpr :: String -> String
+readExpr :: String -> BardValue
 readExpr input = case parse parseExpr "bard" input of
-  Left err -> "No match:" ++ show err
-  Right val -> "Found value: " ++ (show val)
+  Left err -> BardText ("No match:" ++ show err)
+  Right val -> val
 
