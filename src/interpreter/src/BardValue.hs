@@ -11,6 +11,7 @@ import Data.Sequence as S
 -------------------------------------------------
 
 type Name = String
+type ModuleName = String
 
 data BardValue = BardUndefined
            | BardNothing
@@ -19,7 +20,7 @@ data BardValue = BardUndefined
            | BardFloat Double
            | BardCharacter Char
            | BardText String
-           | BardName Name
+           | BardName ModuleName Name
            | BardSequence (S.Seq BardValue)
            | BardMap (M.Map BardValue BardValue)
              deriving (Eq, Ord)
@@ -30,7 +31,7 @@ nothing = BardNothing
 bool b = BardBoolean b
 int n = BardInteger n
 float f = BardFloat f
-name nm = BardName nm
+name m nm = BardName m nm
 
 emptyMap = BardMap M.empty
 
@@ -70,7 +71,9 @@ instance Show BardValue where
     show (BardInteger n) = (show n)
     show (BardFloat f) = (show f)
     show (BardCharacter ch) = ['\\',ch]
-    show (BardName n) =  n
+    show (BardName "" n) = n
+    show (BardName "bard.keyword" n) = ":"++n
+    show (BardName m n) = m++":"++n
     show (BardMap m) = "{" ++ (expand m) ++ "}"
         where expand m = L.concat (L.intersperse " " (Prelude.map showPair (M.assocs m)))
               showPair (k, v) = (show k) ++ " " ++ (show v)
