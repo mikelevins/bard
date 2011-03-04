@@ -1,12 +1,14 @@
-module Reader
+module Read
   where
 
+import Control.Concurrent.MVar
 import Control.Monad
 import Data.List as L
+import Data.Map as M
 import System
 import Text.ParserCombinators.Parsec hiding (spaces)
 
-import BardValue
+import Value
 
 -------------------------------------------------
 -- Parsers
@@ -55,12 +57,12 @@ unqualifiedName = do first <- letter <|> punctuation
 parseQualifiedName :: Parser BardValue
 parseQualifiedName = do mname <- modulename 
                         name <- unqualifiedName
-                        return (BardName mname name)
+                        return (BardName name)
                  
 parseKeyword :: Parser BardValue
 parseKeyword = do colon
                   nm <- unqualifiedName
-                  return (BardName "bard.keyword" nm)
+                  return (BardName nm)
                  
 parseUnqualifiedName :: Parser BardValue
 parseUnqualifiedName = do name <- unqualifiedName 
@@ -69,7 +71,7 @@ parseUnqualifiedName = do name <- unqualifiedName
                             "nothing" -> return BardNothing
                             "true" -> return (BardBoolean True)
                             "false" -> return (BardBoolean False)
-                            _ -> return (BardName "" name)
+                            _ -> return (BardName name)
                  
 parseName :: Parser BardValue
 parseName = try parseKeyword 
@@ -90,13 +92,13 @@ parseNumber = do n <- try parseFloat  <|> parseInteger
                  return n
 
 parseSequence :: Parser BardValue
-parseSequence = liftM BardValue.sequence $ sepBy parseExpr spaces 
+parseSequence = liftM Value.sequence $ sepBy parseExpr spaces 
 
 parseQuoted :: Parser BardValue
 parseQuoted = do
   char '\''
   x <- parseExpr
-  return (BardValue.sequence [(BardName "bard.lang" "quote"), x])
+  return (Value.sequence [(BardName "quote"), x])
 
 parseExpr :: Parser BardValue
 parseExpr = parseName
@@ -111,14 +113,14 @@ parseExpr = parseName
         <|> do char '['
                x <- parseSequence
                char ']'
-               let op = (BardName "bard.core" "sequence")
-               return (BardValue.append (BardValue.sequence [op]) x)
+               let op = (BardName "sequence")
+               return (Value.append (Value.sequence [op]) x)
         <|> do char '{'
                plist <- parseSequence
                char '}'
-               let iop = (BardName "bard.core" "sequence")
-               let oop = (BardName "bard.core" "sequence->map")
-               return (BardValue.cons oop (BardValue.sequence [(BardValue.cons iop plist)]))
+               let iop = (BardName "sequence")
+               let oop = (BardName "sequence->map")
+               return (Value.cons oop (Value.sequence [(Value.cons iop plist)]))
 
 readExpr :: String -> BardValue
 readExpr input = case parse parseExpr "bard" input of
