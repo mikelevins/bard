@@ -8,15 +8,13 @@ import Data.Map as M
 import Data.Maybe
 import Data.Sequence as S
 
+import Box
 import Value
+import Name
 
 data ModuleManager = ModMgr (TVar ModuleMap) (TVar ModuleName)
 type ModuleMap = M.Map ModuleName Module
-type ModuleName = String
 type Module = M.Map VariableName (STM Box)
-type VariableName = String
-type Box = TVar BardValue
-
 newModuleMap :: ModuleMap
 newModuleMap = M.empty
 
@@ -55,11 +53,28 @@ findModule mmgr mname = do
 makeModule :: [(VariableName, BardValue)] -> Module
 makeModule vnames = M.fromList (L.map (\(nm,val) -> (nm,(makeBox val))) vnames)
 
-makeBox :: BardValue -> STM Box
-makeBox val = newTVar val
+ensureVar :: ModuleManager -> ModuleName -> VariableName -> STM ()
+ensureVar mmgr mname vname = do
+  mmap <- getModuleMap mmgr
+  let m = fromJust (M.lookup mname mmap)
+  case (M.lookup vname m) of
+    Nothing -> setModuleMap mmgr (M.insert mname (M.insert vname (makeBox BardUndefined) m) mmap)
+    Just v -> return ()
 
-get :: Box -> STM BardValue
-get box = readTVar box
+getVar :: ModuleManager -> ModuleName -> VariableName -> STM Box
+getVar mmgr mname vname = do
+  mmap <- getModuleMap mmgr
+  let m = fromJust (M.lookup mname mmap)
+  fromJust (M.lookup vname m)
 
-set :: Box -> BardValue -> STM ()
-set box val = writeTVar box val
+setVar :: ModuleManager -> ModuleName -> VariableName -> BardValue -> STM ()
+setVar mmgr mname vname val = do
+  ensureVar mmgr mname vname
+  v <- getVar mmgr mname vname
+  set v val
+  
+intern :: (VariableName,ModuleName) -> ModuleManager -> STM BardValue
+intern (vname,mname) mmgr = do
+  ensureVar mmgr mname vname
+  return (BardName (vname, mname))
+

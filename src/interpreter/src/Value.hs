@@ -1,6 +1,8 @@
 module Value
     where
 
+import Control.Concurrent.STM
+import Control.Monad.STM
 import Data.Foldable as F
 import Data.List as L
 import Data.Map as M
@@ -20,9 +22,15 @@ data BardValue = BardUndefined
                | BardCharacter Char
                | BardText String
                | BardName Name
+               | BardBox Box
                | BardSequence (S.Seq BardValue)
                | BardMap (M.Map BardValue BardValue)
                  deriving (Eq, Ord)
+
+type Box = TVar BardValue
+
+-- make it possible to derive Ord for Box
+instance Ord a => Ord (TVar a)
 
 -- constructors
 
@@ -54,11 +62,11 @@ cons _ _ = BardUndefined
 
 -- accessors
 
+getKey (BardMap m) k = M.lookup k m
+
 first (BardSequence s) = S.index s 0
 second (BardSequence s) = S.index s 1
 third (BardSequence s) = S.index s 2
-
-get (BardMap m) k = M.lookup k m
 
 
 

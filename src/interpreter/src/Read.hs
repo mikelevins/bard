@@ -1,13 +1,15 @@
 module Read
   where
 
-import Control.Concurrent.MVar
+import Control.Concurrent.STM
 import Control.Monad
 import Data.List as L
 import Data.Map as M
 import System
 import Text.ParserCombinators.Parsec hiding (spaces)
 
+import Module
+import Name
 import Value
 
 -------------------------------------------------
@@ -122,8 +124,18 @@ parseExpr = parseName
                let oop = (BardName ("sequence->map","bard.core"))
                return (Value.cons oop (Value.sequence [(Value.cons iop plist)]))
 
-readExpr :: String -> BardValue
-readExpr input = case parse parseExpr "bard" input of
-  Left err -> BardText ("Invalid input:" ++ show err)
-  Right val -> val
+readExpr :: String -> ModuleManager -> STM BardValue
+readExpr input mmgr = do
+  case parse parseExpr "bard" input of
+    Left err -> return (BardText ("Invalid input:" ++ show err))
+    Right val -> case val of 
+                   (BardName nm) -> readName nm mmgr 
+                   _ -> return val
 
+readName :: Name -> ModuleManager -> STM BardValue
+readName (vname,mname) mmgr = do
+  case mname of
+    "" -> do currmname <- getCurrentModule mmgr
+             intern (vname,currmname) mmgr
+    "bard.keyword" -> return (BardName (vname,mname))
+    _ -> intern (vname,mname) mmgr

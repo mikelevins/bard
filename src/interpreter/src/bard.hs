@@ -33,7 +33,7 @@ main = do
   putStrLn "Bard v 1.0"
   putStrLn ""
   putStrLn ("Reading: " ++ inp)
-  let expr = readExpr inp
+  expr <- atomically (readExpr inp mmgr)
   putStrLn ("Evaluating: " ++ (show expr))
   --let val = eval expr
   --putStrLn ("Result: " ++ (show val))
