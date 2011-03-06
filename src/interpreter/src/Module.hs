@@ -58,7 +58,12 @@ ensureVar mmgr mname vname = do
   mmap <- getModuleMap mmgr
   let m = fromJust (M.lookup mname mmap)
   case (M.lookup vname m) of
-    Nothing -> setModuleMap mmgr (M.insert mname (M.insert vname (makeBox BardUndefined) m) mmap)
+    Nothing -> setModuleMap mmgr 
+                            (M.insert mname 
+                                      (M.insert vname 
+                                                (makeBox BardUndefined) 
+                                                m)
+                                      mmap)
     Just v -> return ()
 
 getVar :: ModuleManager -> ModuleName -> VariableName -> STM Box

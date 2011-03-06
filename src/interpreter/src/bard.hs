@@ -27,7 +27,7 @@ testModules mtable = do
 
 main = do
   mmgr <- atomically initModules
-  testModules mmgr
+  --testModules mmgr
   args <- getArgs
   let inp = (args !! 0)
   putStrLn "Bard v 1.0"
@@ -35,7 +35,7 @@ main = do
   putStrLn ("Reading: " ++ inp)
   expr <- atomically (readExpr inp mmgr)
   putStrLn ("Evaluating: " ++ (show expr))
-  --let val = eval expr
-  --putStrLn ("Result: " ++ (show val))
+  val <- atomically (eval expr mmgr)
+  putStrLn ("Result: " ++ (show val))
   putStrLn ""
 
