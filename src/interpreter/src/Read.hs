@@ -57,12 +57,12 @@ unqualifiedName = do first <- letter <|> punctuation
 parseQualifiedName :: Parser BardValue
 parseQualifiedName = do mname <- modulename 
                         name <- unqualifiedName
-                        return (BardName name)
+                        return (BardName (name,mname))
                  
 parseKeyword :: Parser BardValue
 parseKeyword = do colon
                   nm <- unqualifiedName
-                  return (BardName nm)
+                  return (BardName (nm,"bard.keyword"))
                  
 parseUnqualifiedName :: Parser BardValue
 parseUnqualifiedName = do name <- unqualifiedName 
@@ -71,7 +71,7 @@ parseUnqualifiedName = do name <- unqualifiedName
                             "nothing" -> return BardNothing
                             "true" -> return (BardBoolean True)
                             "false" -> return (BardBoolean False)
-                            _ -> return (BardName name)
+                            _ -> return (BardName (name,""))
                  
 parseName :: Parser BardValue
 parseName = try parseKeyword 
@@ -98,7 +98,7 @@ parseQuoted :: Parser BardValue
 parseQuoted = do
   char '\''
   x <- parseExpr
-  return (Value.sequence [(BardName "quote"), x])
+  return (Value.sequence [(BardName ("quote","bard.core")), x])
 
 parseExpr :: Parser BardValue
 parseExpr = parseName
@@ -113,17 +113,17 @@ parseExpr = parseName
         <|> do char '['
                x <- parseSequence
                char ']'
-               let op = (BardName "sequence")
+               let op = (BardName ("sequence","bard.core"))
                return (Value.append (Value.sequence [op]) x)
         <|> do char '{'
                plist <- parseSequence
                char '}'
-               let iop = (BardName "sequence")
-               let oop = (BardName "sequence->map")
+               let iop = (BardName ("sequence","bard.core"))
+               let oop = (BardName ("sequence->map","bard.core"))
                return (Value.cons oop (Value.sequence [(Value.cons iop plist)]))
 
 readExpr :: String -> BardValue
 readExpr input = case parse parseExpr "bard" input of
-  Left err -> BardText ("No match:" ++ show err)
+  Left err -> BardText ("Invalid input:" ++ show err)
   Right val -> val
 

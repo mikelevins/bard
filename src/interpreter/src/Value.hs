@@ -6,11 +6,11 @@ import Data.List as L
 import Data.Map as M
 import Data.Sequence as S
 
+import Name
+
 -------------------------------------------------
 -- Values
 -------------------------------------------------
-
-type Name = String
 
 data BardValue = BardUndefined
                | BardNothing
