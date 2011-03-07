@@ -33,9 +33,11 @@ eval var@(BVName (BName mname vname)) env mmgr = do
 eval (BVSequence (BSequence s)) env mmgr = do 
   let op = (S.index s 0)
   let args = (S.drop 1 s)
-  f <- eval op env mmgr
-  parms <- T.mapM (\a -> eval a env mmgr) args
-  (apply f parms)
+  case op of
+    (BVName (BName "bard.core" "quote")) -> return (S.index s 1)
+    _ -> do f <- eval op env mmgr
+            parms <- T.mapM (\a -> eval a env mmgr) args
+            (apply f parms)
 
 -- self-evaluating
 eval val@(BVUndefined _) _ _ = do return val

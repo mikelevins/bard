@@ -23,13 +23,18 @@ initModules :: STM ModuleManager
 initModules = do
   mtable <- newTVar newModuleMap
   let mmgr = ModMgr mtable
+  let primmodule = makeModule [("int+", primIntAdd),
+                               ("int*", primIntMul),
+                               ("int-", primIntSub),
+                               ("float+", primFloatAdd),
+                               ("float*", primFloatMul),
+                               ("float-", primFloatSub),
+                               ("make-sequence", primMakeSeq),
+                               ("make-map", primMakeMap)
+                              ]
+  addModule mmgr "bard.prim" primmodule
   let coremodule = makeModule [("*module*", (text "bard.core")),
-                               ("*version*", (BVText (BText "1.0"))),
-                               ("+", primAdd),
-                               ("*", primMul),
-                               ("-", primSub),
-                               ("sequence", primSeq),
-                               ("sequence->map", primSeqToMap)
+                               ("*version*", (BVText (BText "1.0")))
                               ]
   addModule mmgr "bard.core" coremodule
   setCurrentModule mmgr (text "bard.core")

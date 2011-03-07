@@ -115,14 +115,13 @@ parseExpr = parseName
         <|> do Parse.char '['
                x <- parseSequence
                Parse.char ']'
-               let op = (name "bard.core" "sequence")
+               let op = (name "bard.prim" "make-sequence")
                return (Value.append (Value.makeSequence [op]) x)
         <|> do Parse.char '{'
-               plist <- parseSequence
+               x <- parseSequence
                Parse.char '}'
-               let iop = (name "bard.core" "sequence")
-               let oop = (name "bard.core" "sequence->map")
-               return (Value.cons oop (Value.makeSequence [(Value.cons iop plist)]))
+               let op = (name "bard.prim" "make-map")
+               return (Value.append (Value.makeSequence [op]) x)
 
 readExpr :: String -> ModuleManager -> STM BardValue
 readExpr input mmgr = do

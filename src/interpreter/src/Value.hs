@@ -23,15 +23,15 @@ type Box = TVar BardValue
 type PrimName = String
 type Primop = ([BardValue] -> BardValue)
 
-data BUndefined = BUndefined deriving (Eq, Ord)
-data BNothing = BNothing deriving (Eq, Ord)
+data BUndefined = BUndefined deriving (Eq, Ord, Show)
+data BNothing = BNothing deriving (Eq, Ord, Show)
 data BBoolean = BTrue
-	      | BFalse deriving (Eq, Ord)
-data BInteger = BInteger Integer deriving (Eq, Ord)
-data BFloat = BFloat Double deriving (Eq, Ord)
-data BCharacter = BCharacter Char deriving (Eq, Ord)
-data BText = BText String deriving (Eq, Ord)
-data BName = BName ModuleName VariableName deriving (Eq, Ord)
+	      | BFalse deriving (Eq, Ord, Show)
+data BInteger = BInteger Integer deriving (Eq, Ord, Show)
+data BFloat = BFloat Double deriving (Eq, Ord, Show)
+data BCharacter = BCharacter Char deriving (Eq, Ord, Show)
+data BText = BText String deriving (Eq, Ord, Show)
+data BName = BName ModuleName VariableName deriving (Eq, Ord, Show)
 data BBox = BBox Box deriving (Eq, Ord)
 data BSequence = BSequence (S.Seq BardValue) deriving (Eq, Ord)
 data BMap = BMap (M.Map BardValue BardValue) deriving (Eq, Ord)

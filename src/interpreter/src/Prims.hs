@@ -7,101 +7,82 @@ import Data.Sequence as S
 
 import Value
 
+----------------------------------------------------------------------
+-- Prim constructor
+----------------------------------------------------------------------
+
 makePrim :: String -> ([BardValue] -> BardValue) -> BardValue
 makePrim pname f = BVPrim (BPrim pname f)
 
-primAdd = makePrim "+" primitiveAdd
-
 ----------------------------------------------------------------------
--- +
+-- int+
 ----------------------------------------------------------------------
 
-primitiveAdd :: [BardValue] -> BardValue
-
-primitiveAdd [] = (int 0)
-
-primitiveAdd [(BVInteger (BInteger n))] = (int n)
-primitiveAdd [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m+n))
-
-primitiveAdd [(BVFloat (BFloat n))] = (float n)
-primitiveAdd [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m+n))
-
-primitiveAdd [(BVInteger (BInteger m)),(BVFloat (BFloat n))] = 
-    let fm = fromIntegral m
-    in (float (fm+n))
-
-primitiveAdd [(BVFloat (BFloat m)),(BVInteger (BInteger n))] = 
-    let fn = fromIntegral n
-    in (float (m+fn))
+primIntAdd = makePrim "int+" primitiveIntAdd
+primitiveIntAdd :: [BardValue] -> BardValue
+primitiveIntAdd [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m+n))
 
 ----------------------------------------------------------------------
--- *
+-- float+
 ----------------------------------------------------------------------
 
-primMul = makePrim "*" primitiveMul
-
-primitiveMul :: [BardValue] -> BardValue
-
-primitiveMul [] = (int 1)
-
-primitiveMul [(BVInteger (BInteger n))] = (int n)
-primitiveMul [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m*n))
-
-primitiveMul [(BVFloat (BFloat n))] = (float n)
-primitiveMul [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m*n))
-
-primitiveMul [(BVInteger (BInteger m)),(BVFloat (BFloat n))] = 
-    let fm = fromIntegral m
-    in (float (fm*n))
-
-primitiveMul [(BVFloat (BFloat m)),(BVInteger (BInteger n))] = 
-    let fn = fromIntegral n
-    in (float (m*fn))
+primFloatAdd = makePrim "float+" primitiveFloatAdd
+primitiveFloatAdd :: [BardValue] -> BardValue
+primitiveFloatAdd [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m+n))
 
 ----------------------------------------------------------------------
--- -
+-- int*
 ----------------------------------------------------------------------
 
-primSub = makePrim "-" primitiveSub
-
-primitiveSub :: [BardValue] -> BardValue
-
-primitiveSub [] = (int 0)
-
-primitiveSub [(BVInteger (BInteger n))] = (int (0 - n))
-primitiveSub [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m-n))
-
-primitiveSub [(BVFloat (BFloat n))] = (float (0.0 - n))
-primitiveSub [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m-n))
-
-primitiveSub [(BVInteger (BInteger m)),(BVFloat (BFloat n))] = 
-    let fm = fromIntegral m
-    in (float (fm-n))
-
-primitiveSub [(BVFloat (BFloat m)),(BVInteger (BInteger n))] = 
-    let fn = fromIntegral n
-    in (float (m-fn))
+primIntMul = makePrim "int*" primitiveIntMul
+primitiveIntMul :: [BardValue] -> BardValue
+primitiveIntMul [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m*n))
 
 ----------------------------------------------------------------------
--- sequence
+-- float*
 ----------------------------------------------------------------------
 
-primSeq = makePrim "sequence" primitiveSequence
-
-primitiveSequence :: [BardValue] -> BardValue
-
-primitiveSequence [] = (BVSequence (BSequence S.empty))
-primitiveSequence vals = (BVSequence (BSequence (S.fromList vals)))
+primFloatMul = makePrim "float*" primitiveFloatMul
+primitiveFloatMul :: [BardValue] -> BardValue
+primitiveFloatMul [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m*n))
 
 ----------------------------------------------------------------------
--- sequence->map
+-- int-
 ----------------------------------------------------------------------
 
-primSeqToMap = makePrim "sequence->map" primitiveSeqToMap
+primIntSub = makePrim "int-" primitiveIntSub
+primitiveIntSub :: [BardValue] -> BardValue
+primitiveIntSub [(BVInteger (BInteger m)),(BVInteger (BInteger n))] = (int (m-n))
 
-primitiveSeqToMap :: [BardValue] -> BardValue
+----------------------------------------------------------------------
+-- float-
+----------------------------------------------------------------------
 
-primitiveSeqToMap [(BVSequence (BSequence s))] = (BVMap (BMap (M.fromList (plistToAlist (F.toList s)))))
+primFloatSub = makePrim "float-" primitiveFloatSub
+primitiveFloatSub :: [BardValue] -> BardValue
+primitiveFloatSub [(BVFloat (BFloat m)),(BVFloat (BFloat n))] = (float (m-n))
+
+----------------------------------------------------------------------
+-- make-sequence
+----------------------------------------------------------------------
+
+primMakeSeq = makePrim "make-sequence" primitiveMakeSequence
+
+primitiveMakeSequence :: [BardValue] -> BardValue
+
+primitiveMakeSequence [] = (BVSequence (BSequence S.empty))
+primitiveMakeSequence vals = (BVSequence (BSequence (S.fromList vals)))
+
+----------------------------------------------------------------------
+-- make-map
+----------------------------------------------------------------------
+
+primMakeMap = makePrim "make-map" primitiveMakeMap
+
+primitiveMakeMap :: [BardValue] -> BardValue
+
+primitiveMakeMap [] = (BVMap (BMap M.empty))
+primitiveMakeMap vals = (BVMap (BMap (M.fromList (plistToAlist vals))))
 
 plistToAlist [] = []
 plistToAlist (a:b:rest) = (a,b):(plistToAlist rest)
