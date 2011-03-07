@@ -14,15 +14,19 @@ import Name
 -- Values
 -------------------------------------------------
 
-type Box = TVar BardValue
-
--- make it possible to derive Ord for Box
+-- make some derivations possible
 instance Ord a => Ord (TVar a)
+instance Ord BPrim where (BPrim pname _) <= (BPrim pname' _) = pname <= pname'
+instance Eq BPrim where (BPrim pname _) == (BPrim pname' _) = pname == pname'
+
+type Box = TVar BardValue
+type PrimName = String
+type Primop = ([BardValue] -> BardValue)
 
 data BUndefined = BUndefined deriving (Eq, Ord)
 data BNothing = BNothing deriving (Eq, Ord)
 data BBoolean = BTrue
-			  | BFalse deriving (Eq, Ord)
+	      | BFalse deriving (Eq, Ord)
 data BInteger = BInteger Integer deriving (Eq, Ord)
 data BFloat = BFloat Double deriving (Eq, Ord)
 data BCharacter = BCharacter Char deriving (Eq, Ord)
@@ -31,6 +35,7 @@ data BName = BName ModuleName VariableName deriving (Eq, Ord)
 data BBox = BBox Box deriving (Eq, Ord)
 data BSequence = BSequence (S.Seq BardValue) deriving (Eq, Ord)
 data BMap = BMap (M.Map BardValue BardValue) deriving (Eq, Ord)
+data BPrim = BPrim PrimName Primop
 
 data BardValue = BVUndefined BUndefined
                | BVNothing BNothing
@@ -43,6 +48,7 @@ data BardValue = BVUndefined BUndefined
                | BVBox BBox
                | BVSequence BSequence
                | BVMap BMap
+               | BVPrim BPrim
                  deriving (Eq, Ord)
 
 -- constructors

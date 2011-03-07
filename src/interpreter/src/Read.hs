@@ -17,7 +17,7 @@ import Value
 -------------------------------------------------
 
 punctuation :: Parser Char
-punctuation = oneOf "!#$%&|*+_?<=>?@^_~" 
+punctuation = oneOf "!#$%&|*+-?<=>?@^_~" 
 
 dot :: Parser Char
 dot = Parse.char '.'

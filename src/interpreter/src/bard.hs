@@ -19,17 +19,9 @@ import Read
 -- main program
 -------------------------------------------------
 
-testModules mtable = do
-  putStrLn ""
-  m <- atomically (findModule mtable "bard.core")
-  putStrLn "Testing modules:" 
-  putStrLn ("  found module \"bard.core\" == " ++ "#<bard module>")
-  putStrLn ""
-
 main = do
   mmgr <- atomically initModules
   let env = standardEnv
-  --testModules mmgr
   args <- getArgs
   let inp = (args !! 0)
   putStrLn "Bard v 1.0"

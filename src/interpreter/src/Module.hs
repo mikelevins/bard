@@ -11,6 +11,7 @@ import Data.Sequence as S
 import Box
 import Value
 import Name
+import Prims
 
 data ModuleManager = ModMgr (TVar ModuleMap)
 type ModuleMap = M.Map ModuleName Module
@@ -21,13 +22,15 @@ newModuleMap = M.empty
 initModules :: STM ModuleManager
 initModules = do
   mtable <- newTVar newModuleMap
-  let mname = "bard.core"
-  m <- newTVar mname
   let mmgr = ModMgr mtable
-  let bardcore = makeModule [("*module*", (text mname)),
-                             ("*version*", (BVText (BText "1.0")))]
-  addModule mmgr mname bardcore
-  setCurrentModule mmgr (text mname)
+  let coremodule = makeModule [("*module*", (text "bard.core")),
+                               ("*version*", (BVText (BText "1.0"))),
+                               ("+", primAdd),
+                               ("*", primMul),
+                               ("-", primSub)
+                              ]
+  addModule mmgr "bard.core" coremodule
+  setCurrentModule mmgr (text "bard.core")
   return mmgr
 
 getModuleMap :: ModuleManager -> STM ModuleMap
