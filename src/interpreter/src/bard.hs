@@ -9,6 +9,7 @@ import System
 import Text.ParserCombinators.Parsec hiding (spaces)
 
 import Value
+import Env
 import Eval
 import Module
 import Print
@@ -27,6 +28,7 @@ testModules mtable = do
 
 main = do
   mmgr <- atomically initModules
+  let env = standardEnv
   --testModules mmgr
   args <- getArgs
   let inp = (args !! 0)
@@ -35,7 +37,7 @@ main = do
   putStrLn ("Reading: " ++ inp)
   expr <- atomically (readExpr inp mmgr)
   putStrLn ("Evaluating: " ++ (show expr))
-  val <- atomically (eval expr mmgr)
+  val <- atomically (eval expr env mmgr)
   putStrLn ("Result: " ++ (show val))
   putStrLn ""
 

@@ -12,7 +12,7 @@ import Box
 import Value
 import Name
 
-data ModuleManager = ModMgr (TVar ModuleMap) (TVar ModuleName)
+data ModuleManager = ModMgr (TVar ModuleMap)
 type ModuleMap = M.Map ModuleName Module
 type Module = M.Map VariableName (STM Box)
 newModuleMap :: ModuleMap
@@ -23,22 +23,28 @@ initModules = do
   mtable <- newTVar newModuleMap
   let mname = "bard.core"
   m <- newTVar mname
-  let mmgr = ModMgr mtable m 
-  addModule mmgr mname (makeModule [("*version*", (BardText "1.0"))])
-  setCurrentModule mmgr mname
+  let mmgr = ModMgr mtable
+  let bardcore = makeModule [("*module*", (text mname)),
+                             ("*version*", (BVText (BText "1.0")))]
+  addModule mmgr mname bardcore
+  setCurrentModule mmgr (text mname)
   return mmgr
 
 getModuleMap :: ModuleManager -> STM ModuleMap
-getModuleMap (ModMgr mtable _) = readTVar mtable
-
-getCurrentModule :: ModuleManager -> STM ModuleName
-getCurrentModule (ModMgr _ mname) = readTVar mname
+getModuleMap (ModMgr mtable) = readTVar mtable
 
 setModuleMap :: ModuleManager -> ModuleMap -> STM ()
-setModuleMap (ModMgr mtable _) mmap = writeTVar mtable mmap
+setModuleMap (ModMgr mtable) mmap = writeTVar mtable mmap
 
-setCurrentModule :: ModuleManager -> ModuleName -> STM ()
-setCurrentModule (ModMgr _ mname) name = writeTVar mname name
+getCurrentModule :: ModuleManager -> STM BardValue
+getCurrentModule mmgr = do
+    v <- getVar mmgr "bard.core" "*module*"
+    get v
+
+setCurrentModule :: ModuleManager -> BardValue -> STM ()
+setCurrentModule mmgr mname = do
+    v <- getVar mmgr "bard.core" "*module*"
+    set v mname
 
 addModule :: ModuleManager -> ModuleName -> Module -> STM ()
 addModule mmgr mname m = do
@@ -61,7 +67,7 @@ ensureVar mmgr mname vname = do
     Nothing -> setModuleMap mmgr 
                             (M.insert mname 
                                       (M.insert vname 
-                                                (makeBox BardUndefined) 
+                                                (makeBox (BVUndefined BUndefined)) 
                                                 m)
                                       mmap)
     Just v -> return ()
@@ -78,8 +84,8 @@ setVar mmgr mname vname val = do
   v <- getVar mmgr mname vname
   set v val
   
-intern :: (VariableName,ModuleName) -> ModuleManager -> STM BardValue
-intern (vname,mname) mmgr = do
+intern :: VariableName -> ModuleName -> ModuleManager -> STM BardValue
+intern vname mname mmgr = do
   ensureVar mmgr mname vname
-  return (BardName (vname, mname))
+  return (BVName (BName mname vname))
 

@@ -6,7 +6,7 @@ import Control.Monad
 import Data.List as L
 import Data.Map as M
 import System
-import Text.ParserCombinators.Parsec hiding (spaces)
+import Text.ParserCombinators.Parsec as Parse hiding (spaces)
 
 import Module
 import Name
@@ -20,10 +20,10 @@ punctuation :: Parser Char
 punctuation = oneOf "!#$%&|*+_?<=>?@^_~" 
 
 dot :: Parser Char
-dot = char '.'
+dot = Parse.char '.'
 
 colon :: Parser Char
-colon = char ':'
+colon = Parse.char ':'
 
 spaces :: Parser ()
 spaces = skipMany1 space
@@ -32,7 +32,7 @@ modulenamepart :: Parser Char
 modulenamepart = oneOf "abcdefghijklmnopqrstuvwxyz.-_1234567890"
 
 modulenameend :: Parser Char
-modulenameend = char ':'
+modulenameend = Parse.char ':'
 
 modulename :: Parser String
 modulename = do start <-letter
@@ -41,15 +41,15 @@ modulename = do start <-letter
                 return (start:body)
 
 parseCharacter :: Parser BardValue
-parseCharacter = do char '\\'
+parseCharacter = do Parse.char '\\'
                     x <- anyChar
-                    return (BardCharacter x)
+                    return (Value.char x)
                  
 parseString :: Parser BardValue
-parseString = do char '"'
+parseString = do Parse.char '"'
                  x <- many (noneOf "\"")
-                 char '"'
-                 return (BardText x)
+                 Parse.char '"'
+                 return (text x)
                  
 unqualifiedName :: Parser String
 unqualifiedName = do first <- letter <|> punctuation
@@ -58,22 +58,22 @@ unqualifiedName = do first <- letter <|> punctuation
 
 parseQualifiedName :: Parser BardValue
 parseQualifiedName = do mname <- modulename 
-                        name <- unqualifiedName
-                        return (BardName (name,mname))
+                        nm <- unqualifiedName
+                        return (name mname nm)
                  
 parseKeyword :: Parser BardValue
 parseKeyword = do colon
                   nm <- unqualifiedName
-                  return (BardName (nm,"bard.keyword"))
+                  return (name "bard.keyword" nm)
                  
 parseUnqualifiedName :: Parser BardValue
-parseUnqualifiedName = do name <- unqualifiedName 
-                          case name of
-                            "undefined" -> return BardUndefined
-                            "nothing" -> return BardNothing
-                            "true" -> return (BardBoolean True)
-                            "false" -> return (BardBoolean False)
-                            _ -> return (BardName (name,""))
+parseUnqualifiedName = do nm <- unqualifiedName 
+                          case nm of
+                            "undefined" -> return Value.undefined
+                            "nothing" -> return nothing
+                            "true" -> return (boolean True)
+                            "false" -> return (boolean False)
+                            _ -> return (name "" nm)
                  
 parseName :: Parser BardValue
 parseName = try parseKeyword 
@@ -81,26 +81,26 @@ parseName = try parseKeyword
         <|> try parseUnqualifiedName
 
 parseInteger :: Parser BardValue
-parseInteger = liftM (BardInteger . read) $ many1 digit
+parseInteger = liftM (int . read) $ many1 digit
 
 parseFloat :: Parser BardValue
 parseFloat = do m <- many digit
-                char '.'
+                Parse.char '.'
                 n <- many digit
-                return (BardFloat (read (m ++ "." ++ n)))
+                return (float (read (m ++ "." ++ n)))
 
 parseNumber :: Parser BardValue
 parseNumber = do n <- try parseFloat  <|> parseInteger
                  return n
 
 parseSequence :: Parser BardValue
-parseSequence = liftM Value.sequence $ sepBy parseExpr spaces 
+parseSequence = liftM Value.makeSequence $ sepBy parseExpr spaces 
 
 parseQuoted :: Parser BardValue
 parseQuoted = do
-  char '\''
+  Parse.char '\''
   x <- parseExpr
-  return (Value.sequence [(BardName ("quote","bard.core")), x])
+  return (Value.makeSequence [(name "bard.core" "quote"), x])
 
 parseExpr :: Parser BardValue
 parseExpr = parseName
@@ -108,34 +108,35 @@ parseExpr = parseName
         <|> parseString
         <|> parseNumber
         <|> parseQuoted
-        <|> do char '('
+        <|> do Parse.char '('
                x <- parseSequence
-               char ')'
+               Parse.char ')'
                return x
-        <|> do char '['
+        <|> do Parse.char '['
                x <- parseSequence
-               char ']'
-               let op = (BardName ("sequence","bard.core"))
-               return (Value.append (Value.sequence [op]) x)
-        <|> do char '{'
+               Parse.char ']'
+               let op = (name "bard.core" "sequence")
+               return (Value.append (Value.makeSequence [op]) x)
+        <|> do Parse.char '{'
                plist <- parseSequence
-               char '}'
-               let iop = (BardName ("sequence","bard.core"))
-               let oop = (BardName ("sequence->map","bard.core"))
-               return (Value.cons oop (Value.sequence [(Value.cons iop plist)]))
+               Parse.char '}'
+               let iop = (name "bard.core" "sequence")
+               let oop = (name "bard.core" "sequence->map")
+               return (Value.cons oop (Value.makeSequence [(Value.cons iop plist)]))
 
 readExpr :: String -> ModuleManager -> STM BardValue
 readExpr input mmgr = do
   case parse parseExpr "bard" input of
-    Left err -> return (BardText ("Invalid input:" ++ show err))
+    Left err -> return (text ("Invalid input:" ++ show err))
     Right val -> case val of 
-                   (BardName nm) -> readName nm mmgr 
+                   (BVName _) -> readName val mmgr 
                    _ -> return val
 
-readName :: Name -> ModuleManager -> STM BardValue
-readName (vname,mname) mmgr = do
+readName :: BardValue -> ModuleManager -> STM BardValue
+readName (BVName (BName mname vname)) mmgr = do
   case mname of
     "" -> do currmname <- getCurrentModule mmgr
-             intern (vname,currmname) mmgr
-    "bard.keyword" -> return (BardName (vname,mname))
-    _ -> intern (vname,mname) mmgr
+             let (BVText (BText mname)) = currmname
+             intern vname mname mmgr
+    "bard.keyword" -> return (name mname vname)
+    _ -> intern vname mname mmgr

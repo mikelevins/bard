@@ -14,59 +14,52 @@ import Name
 -- Values
 -------------------------------------------------
 
-data BardValue = BardUndefined
-               | BardNothing
-               | BardBoolean Bool
-               | BardInteger Integer
-               | BardFloat Double
-               | BardCharacter Char
-               | BardText String
-               | BardName Name
-               | BardBox Box
-               | BardSequence (S.Seq BardValue)
-               | BardMap (M.Map BardValue BardValue)
-                 deriving (Eq, Ord)
-
 type Box = TVar BardValue
 
 -- make it possible to derive Ord for Box
 instance Ord a => Ord (TVar a)
 
+data BUndefined = BUndefined deriving (Eq, Ord)
+data BNothing = BNothing deriving (Eq, Ord)
+data BBoolean = BTrue
+			  | BFalse deriving (Eq, Ord)
+data BInteger = BInteger Integer deriving (Eq, Ord)
+data BFloat = BFloat Double deriving (Eq, Ord)
+data BCharacter = BCharacter Char deriving (Eq, Ord)
+data BText = BText String deriving (Eq, Ord)
+data BName = BName ModuleName VariableName deriving (Eq, Ord)
+data BBox = BBox Box deriving (Eq, Ord)
+data BSequence = BSequence (S.Seq BardValue) deriving (Eq, Ord)
+data BMap = BMap (M.Map BardValue BardValue) deriving (Eq, Ord)
+
+data BardValue = BVUndefined BUndefined
+               | BVNothing BNothing
+               | BVBoolean BBoolean
+               | BVInteger BInteger
+               | BVFloat BFloat
+               | BVCharacter BCharacter
+               | BVText BText
+               | BVName BName
+               | BVBox BBox
+               | BVSequence BSequence
+               | BVMap BMap
+                 deriving (Eq, Ord)
+
 -- constructors
 
-nothing = BardNothing
-bool b = BardBoolean b
-int n = BardInteger n
-float f = BardFloat f
-name nm = BardName nm
+undefined = BVUndefined BUndefined
+nothing = BVNothing BNothing
+boolean True = BVBoolean BTrue
+boolean False = BVBoolean BFalse
+int n = BVInteger (BInteger n)
+float f = BVFloat (BFloat f)
+char ch = BVCharacter (BCharacter ch)
+text tx = BVText (BText tx)
+name mnm nm = BVName (BName mnm nm)
+box v = BVBox (BBox v)
+makeSequence vs = BVSequence (BSequence (S.fromList vs))
+makeMap inits =  BVMap (BMap (M.fromList inits))
 
-emptyMap = BardMap M.empty
-
-map :: [(BardValue,BardValue)] -> BardValue
-map [] = BardMap M.empty
-map vals = BardMap (M.fromList vals)
-
-emptySequence = BardSequence S.empty
-
-sequence :: [BardValue] -> BardValue
-sequence [] = BardSequence S.empty
-sequence vals = BardSequence (S.fromList vals)
-
-append :: BardValue -> BardValue -> BardValue
-append (BardSequence s1) (BardSequence s2) = (BardSequence (s1 >< s2))
-append _ _ = BardUndefined
-
-cons :: BardValue -> BardValue -> BardValue
-cons val (BardSequence s2) = (BardSequence (val <| s2))
-cons _ _ = BardUndefined
-
--- accessors
-
-getKey (BardMap m) k = M.lookup k m
-
-first (BardSequence s) = S.index s 0
-second (BardSequence s) = S.index s 1
-third (BardSequence s) = S.index s 2
-
-
-
+cons bval (BVSequence (BSequence bseq)) = BVSequence (BSequence (bval <| bseq))
+append (BVSequence (BSequence bseq1))
+       (BVSequence (BSequence bseq2)) = BVSequence (BSequence (bseq1 >< bseq2))
