@@ -24,12 +24,12 @@ main = do
   let env = standardEnv
   args <- getArgs
   let inp = (args !! 0)
-  putStrLn "Bard v 1.0"
-  putStrLn ""
-  putStrLn ("Reading: " ++ inp)
+  --putStrLn "Bard v 1.0"
+  --putStrLn ""
+  --putStrLn ("Reading: " ++ inp)
   expr <- atomically (readExpr inp mmgr)
-  putStrLn ("Evaluating: " ++ (show expr))
+  --putStrLn ("Evaluating: " ++ (show expr))
   val <- atomically (eval expr env mmgr)
-  putStrLn ("Result: " ++ (show val))
+  putStrLn ("  => " ++ (show val))
   putStrLn ""
 
