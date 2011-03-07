@@ -26,4 +26,4 @@ instance Show BardValue where
     show (BVSequence (BSequence s)) = "(" ++ (expand s) ++ ")"
         where expand s = L.concat (L.intersperse " " (Prelude.map showNth (Prelude.take (S.length s) [0 ..])))
               showNth i = (show (index s i))
-    show (BVPrim (BPrim pname _)) = "#<bard primitive "++pname++" >"
+    show (BVPrim (BPrim pname _)) = "#<bard primitive \""++pname++"\">"

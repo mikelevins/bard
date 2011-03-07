@@ -27,7 +27,9 @@ initModules = do
                                ("*version*", (BVText (BText "1.0"))),
                                ("+", primAdd),
                                ("*", primMul),
-                               ("-", primSub)
+                               ("-", primSub),
+                               ("sequence", primSeq),
+                               ("sequence->map", primSeqToMap)
                               ]
   addModule mmgr "bard.core" coremodule
   setCurrentModule mmgr (text "bard.core")

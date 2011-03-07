@@ -1,6 +1,10 @@
 module Prims
     where
 
+import Data.Foldable as F
+import Data.Map as M
+import Data.Sequence as S
+
 import Value
 
 makePrim :: String -> ([BardValue] -> BardValue) -> BardValue
@@ -78,3 +82,26 @@ primitiveSub [(BVFloat (BFloat m)),(BVInteger (BInteger n))] =
     let fn = fromIntegral n
     in (float (m-fn))
 
+----------------------------------------------------------------------
+-- sequence
+----------------------------------------------------------------------
+
+primSeq = makePrim "sequence" primitiveSequence
+
+primitiveSequence :: [BardValue] -> BardValue
+
+primitiveSequence [] = (BVSequence (BSequence S.empty))
+primitiveSequence vals = (BVSequence (BSequence (S.fromList vals)))
+
+----------------------------------------------------------------------
+-- sequence->map
+----------------------------------------------------------------------
+
+primSeqToMap = makePrim "sequence->map" primitiveSeqToMap
+
+primitiveSeqToMap :: [BardValue] -> BardValue
+
+primitiveSeqToMap [(BVSequence (BSequence s))] = (BVMap (BMap (M.fromList (plistToAlist (F.toList s)))))
+
+plistToAlist [] = []
+plistToAlist (a:b:rest) = (a,b):(plistToAlist rest)

@@ -1,7 +1,7 @@
 Name:           bard
 Version:        0.9
 Cabal-Version:  >= 1.2
-License:        Apache2
+License:        BSD4
 Author:         mikel evins
 Synopsis:       Bard interpreter
 Build-Type:     Simple
