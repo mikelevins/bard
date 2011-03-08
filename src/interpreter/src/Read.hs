@@ -5,9 +5,12 @@ import Control.Concurrent.STM
 import Control.Monad
 import Data.List as L
 import Data.Map as M
+import Data.Sequence as S
+import Data.Traversable as T
 import System
 import Text.ParserCombinators.Parsec as Parse hiding (spaces)
 
+import Env
 import Module
 import Name
 import Value
@@ -123,16 +126,23 @@ parseExpr = parseName
                let op = (name "bard.prim" "make-map")
                return (Value.append (Value.makeSequence [op]) x)
 
-readExpr :: String -> ModuleManager -> STM BardValue
-readExpr input mmgr = do
+readExpr :: String -> Env -> ModuleManager -> STM BardValue
+readExpr input env mmgr = do
   case parse parseExpr "bard" input of
     Left err -> return (text ("Invalid input:" ++ show err))
-    Right val -> case val of 
-                   (BVName _) -> readName val mmgr 
-                   _ -> return val
+    Right val -> readVal val env mmgr 
 
-readName :: BardValue -> ModuleManager -> STM BardValue
-readName (BVName (BName mname vname)) mmgr = do
+readVal :: BardValue -> Env -> ModuleManager -> STM BardValue
+readVal val env mmgr = do
+    case val of 
+      (BVName _) -> readName val env mmgr 
+      (BVSequence (BSequence s)) -> do s' <- T.traverse (\e -> readVal e env mmgr) s
+                                       return (BVSequence (BSequence s'))
+      _ -> return val
+
+
+readName :: BardValue -> Env -> ModuleManager -> STM BardValue
+readName (BVName (BName mname vname)) env mmgr = do
   case mname of
     "" -> do currmname <- getCurrentModule mmgr
              let (BVText (BText mname)) = currmname

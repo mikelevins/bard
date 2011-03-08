@@ -1,4 +1,4 @@
-module Main
+module Bard
   where
 
 import Control.Monad
@@ -23,7 +23,7 @@ import Read
 runBatch inp = do
   mmgr <- atomically initModules
   let env = standardEnv
-  expr <- atomically (readExpr inp mmgr)
+  expr <- atomically (readExpr inp env mmgr)
   val <- atomically (eval expr env mmgr)
   putStrLn ("=> " ++ (show val))
   putStrLn ""
@@ -40,7 +40,7 @@ repl env mmgr = do
   case inp of
     ":q" -> exit
     ":quit" -> exit
-    _ -> do expr <- atomically (readExpr inp mmgr)
+    _ -> do expr <- atomically (readExpr inp env mmgr)
             val <- atomically (eval expr env mmgr)
             putStrLn ("=> " ++ (show val))
             putStrLn ""
@@ -49,13 +49,4 @@ repl env mmgr = do
 exit = do
   putStrLn ""
 
-main = do
-  mmgr <- atomically initModules
-  let env = standardEnv
-  args <- getArgs
-  case (length args) of
-    0 -> runRepl
-    1 -> let inp = (args !! 0)
-         in runBatch inp
-    _ -> putStrLn "Bard v 1.0: ERROR: Too many arguments"
 
