@@ -5,7 +5,6 @@ import Data.List as L
 import Data.Map as M
 import Data.Sequence as S
 
-import Name
 import Value
 
 instance Show BardValue where

@@ -1,18 +1,16 @@
 module Read
   where
 
-import Control.Concurrent.STM
 import Control.Monad
 import Data.List as L
+import Data.Functor as F
 import Data.Map as M
 import Data.Sequence as S
 import Data.Traversable as T
 import System
 import Text.ParserCombinators.Parsec as Parse hiding (spaces)
 
-import Env
-import Module
-import Name
+import Runtime
 import Value
 
 -------------------------------------------------
@@ -97,7 +95,7 @@ parseNumber = do n <- try parseFloat  <|> parseInteger
                  return n
 
 parseSequence :: Parser BardValue
-parseSequence = liftM Value.makeSequence $ sepBy parseExpr spaces 
+parseSequence = liftM Value.makeSequence $ endBy parseExpr spaces 
 
 parseQuoted :: Parser BardValue
 parseQuoted = do
@@ -126,26 +124,32 @@ parseExpr = parseName
                let op = (name "bard.prim" "make-map")
                return (Value.append (Value.makeSequence [op]) x)
 
-readExpr :: String -> Env -> ModuleManager -> STM BardValue
-readExpr input env mmgr = do
+readExpr :: String -> BardRuntime -> (BardValue, BardRuntime)
+readExpr input bard =
   case parse parseExpr "bard" input of
-    Left err -> return (text ("Invalid input:" ++ show err))
-    Right val -> readVal val env mmgr 
+    Left err -> ((text ("Invalid input:" ++ show err)), bard)
+    Right val -> 
+        case val of
+          (BVName _) -> intern val bard
+          (BVSequence (BSequence s)) -> let (_,s',bard') = readSequence s (S.empty) bard
+                                        in ((BVSequence (BSequence s')),bard')
+          _ -> (val, bard) 
 
-readVal :: BardValue -> Env -> ModuleManager -> STM BardValue
-readVal val env mmgr = do
-    case val of 
-      (BVName _) -> readName val env mmgr 
-      (BVSequence (BSequence s)) -> do s' <- T.traverse (\e -> readVal e env mmgr) s
-                                       return (BVSequence (BSequence s'))
-      _ -> return val
+intern :: BardValue -> BardRuntime -> (BardValue, BardRuntime)
+intern val@(BVName (BName mname vname)) bard = 
+    case mname of
+      "" -> let mname = (getCurrentModuleName bard)
+            in ((BVName (BName mname vname)),bard)
+      "bard.keyword" -> (val, bard)
+      _ -> (val,bard)
 
+intern val bard = (val,bard)
 
-readName :: BardValue -> Env -> ModuleManager -> STM BardValue
-readName (BVName (BName mname vname)) env mmgr = do
-  case mname of
-    "" -> do currmname <- getCurrentModule mmgr
-             let (BVText (BText mname)) = currmname
-             intern vname mname mmgr
-    "bard.keyword" -> return (name mname vname)
-    _ -> intern vname mname mmgr
+readSequence inseq outseq bard =
+    if (S.null inseq) 
+       then (inseq,outseq,bard)
+       else let inseq' = S.drop 1 inseq
+                item = S.index inseq 0
+                (item',bard') = intern item bard
+                outseq' = outseq |> item'
+            in readSequence inseq' outseq' bard'
