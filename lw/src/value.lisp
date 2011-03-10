@@ -91,22 +91,56 @@
 ;;; sequences and maps
 ;;; ---------------------------------------------------------------------
 
-(defclass sequence ()(elements))
+(defclass sequence ()((elements :reader elements :initarg :elements)))
 
-(defclass text ()((data :reader data)))
-(defmethod initialize-instance ((tx text) &rest initargs &key data &allow-other-keys)
-  (assert (and data (stringp data))()
-          "You must supply string data to create a new text object")
-  (setf (slot-value tx 'data)
-        (fset:convert 'fset:seq data)))
+(defmethod print-object ((seq sequence)(s stream))
+  (let* ((elts (elements seq))
+         (slen (fset:size elts)))
+    (princ #\( s)
+    (when (> slen 0)
+      (print-object (fset:@ elts 0) s)
+      (when (> slen 1)
+        (loop for i from 1 below slen
+           do (progn
+                (princ " " s)
+                (print-object (fset:@ elts i) s)))))
+    (princ #\) s)))
+
+(defclass application (sequence)())
+
+(defclass text (sequence)())
+(defmethod initialize-instance ((tx text) &rest initargs &key elements &allow-other-keys)
+  (if (or (stringp elements)
+          (and (or (listp elements)
+                   (vectorp elements))
+               (every #'characterp elements)))
+      (setf (slot-value tx 'elements)
+            (fset:convert 'fset:seq elements))
+      (error "Text init data missing or malformed: ~s" elements)))
 
 (defmethod print-object ((tx text)(s stream))
   (princ #\" s)
-  (fset:do-seq (ch (data tx))
+  (fset:do-seq (ch (elements tx))
     (princ ch s))
   (princ #\" s))
 
-(defclass map ()(entries))
+(defclass map ()((entries :reader entries)))
+(defmethod initialize-instance ((m map) &rest initargs &key entries &allow-other-keys)
+  (if (evenp (length entries))
+      (let ((entries (loop for (k v . rest) on entries by 'cddr collect (cons k v))))
+        (setf (slot-value m 'entries)
+              (fset:convert 'fset:map entries)))
+      (error "Text init data missing or malformed: ~s" elements)))
+
+(defmethod print-object ((m map)(s stream))
+  (princ #\{ s)
+  (fset:do-map (k v (entries m))
+    (princ " " s)
+    (print-object k s)
+    (princ " " s)
+    (print-object v s))
+  (princ " " s)
+  (princ #\} s))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions

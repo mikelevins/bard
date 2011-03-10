@@ -81,11 +81,13 @@
 (defun parse-expr (str)
   (bard-parser (make-bard-lexer str)))
 
+;;; (parse-expr "{1 2}")
+
 (defun construct-character (parse-params bard)
   (make-instance 'character :data (find-character-data (first parse-params))))
 
 (defun construct-text (parse-params)
-  (make-instance 'text :data (first parse-params)))
+  (make-instance 'text :elements (first parse-params)))
 
 (defun parse-as-float (tok)
   (let* ((lexer (with-input-from-string (inp tok)
@@ -185,13 +187,21 @@
            (t (parse-as-name tok bard)))))))
 
 (defun parse-vals (parse-params bard)
-  )
+  (let* ((vals (mapcar #'(lambda (p)(construct-value p bard))
+                       parse-params)))
+    (make-instance 'sequence :elements (fset:convert 'fset:seq vals))))
 
 (defun parse-map (parse-params bard)
-  )
+  (if (evenp (length parse-params))
+      (let* ((vals (mapcar #'(lambda (p)(construct-value p bard))
+                           parse-params)))
+        (make-instance 'map :entries vals))
+      (error "Invalid init data for a map: ~S" parse-params)))
 
 (defun parse-app (parse-params bard)
-  )
+  (let* ((vals (mapcar #'(lambda (p)(construct-value p bard))
+                       parse-params)))
+    (make-instance 'application :elements (fset:convert 'fset:seq vals))))
 
 ;;; possible parse-tree outputs:
 ;;; :character
@@ -201,9 +211,8 @@
 ;;; :map
 ;;; :app
 
-(defun read-expr (str bard)
-  (let* ((parse-tree (parse-expr str))
-         (parse-class (first parse-tree))
+(defun construct-value (parse-tree bard)
+  (let* ((parse-class (first parse-tree))
          (parse-params (rest parse-tree)))
     (ecase parse-class
       ((:character)(construct-character parse-params bard))
@@ -213,5 +222,10 @@
       ((:map)(parse-map parse-params bard))
       ((:app)(parse-app parse-params bard)))))
 
+(defun read-expr (str bard)
+  (let ((parse-tree (parse-expr str)))
+    (construct-value parse-tree bard)))
+
 ;;; (setq $bard (make-instance 'bard-runtime))
 ;;; (read-expr "undefined" $bard)
+;;; (read-expr "\"foo bar\"" $bard)
