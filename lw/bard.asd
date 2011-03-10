@@ -55,7 +55,7 @@
   :version "0.9a"
   :author "mikel evins"
   :description "The Bard Programming Language"
-  :depends-on (:fset :graylex)
+  :depends-on (:split-sequence :fset :graylex)
   :serial t
   :components ((:module src :serial t
                         :components

@@ -12,7 +12,7 @@
 (in-package :cl-user)
 
 (defpackage "BARD"
-  (:use :cl :graylex :parsergen)
+  (:use :cl :split-sequence :graylex :parsergen)
   (:shadow #:boolean #:character #:eval #:float #:function #:integer #:map #:method #:number #:sequence)
   (:export  #:print-usage #:run-batch #:run-repl))
 

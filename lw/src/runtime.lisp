@@ -13,10 +13,25 @@
 
 (defclass bard-runtime ()())
 
+(defmethod find-module ((bard bard-runtime) (mname string))
+  mname)
+
+(defmethod find-module ((bard bard-runtime) (mname null))
+  "bard.core")
+
+(defmethod current-module-name ((bard bard-runtime))
+  "bard.core")
+
 (defparameter *bard-character-name-table*
   `(("space" . #\space)
     ("newline" . #\newline)
+    ("tab" . #\tab)
     ))
+
+(defmethod print-name-for (thing)(format nil "~S" thing))
+(defmethod print-name-for ((thing cl:character))
+  (let ((chstr (format nil "~S" thing)))
+    (subseq chstr 2)))
 
 (defmethod character-data-for-name (charname)(error "Unknown character name: ~A" charname))
 (defmethod character-data-for-name ((charname string))
