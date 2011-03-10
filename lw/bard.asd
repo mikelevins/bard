@@ -64,6 +64,7 @@
                          (:file "value")
                          (:file "runtime")
                          (:file "read")
+                         (:file "eval")
                          (:file "bard")
                          (:file "main")))))
 

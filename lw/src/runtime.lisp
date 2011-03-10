@@ -13,6 +13,8 @@
 
 (defclass bard-runtime ()())
 
+(defun init-bard ()(make-instance 'bard-runtime))
+
 (defmethod find-module ((bard bard-runtime) (mname string))
   mname)
 

@@ -13,7 +13,7 @@
 
 (defun run-batch (exp-string)
   (let* ((bard (init-bard))
-         (expr (read-expr expr-string bard))
+         (expr (read-expr exp-string bard))
          (val (eval expr bard)))
     (format t "~%=> ~S~%" val)))
 
