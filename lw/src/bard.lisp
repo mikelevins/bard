@@ -43,3 +43,4 @@
   (format t "~%")
   (format t "  USAGE: bard [expression]~%")
   (format t "~%"))
+

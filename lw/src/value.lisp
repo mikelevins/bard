@@ -21,6 +21,9 @@
 (defmethod print-object ((obj undefined)(s stream))
   (princ "undefined" s))
 
+(defmethod defined? (thing) t)
+(defmethod defined? ((thing undefined)) nil)
+
 ;;; ---------------------------------------------------------------------
 ;;; nothing
 ;;; ---------------------------------------------------------------------
@@ -125,6 +128,12 @@
 (defmethod set-module-variable! ((m module)(nm string) val)
   (set-box! (fset:@ (variables m) nm) val))
 
+(defmethod getvar ((m module)(var name))
+  (get-module-variable m (variable-name var)))
+
+(defmethod setvar! ((m module)(var name) val)
+  (set-module-variable! m (variable-name var) val))
+
 ;;; ---------------------------------------------------------------------
 ;;; names
 ;;; ---------------------------------------------------------------------
@@ -150,6 +159,21 @@
 (defmethod print-object ((seq sequence)(s stream))
   (let* ((elts (elements seq))
          (slen (fset:size elts)))
+    (princ #\[ s)
+    (when (> slen 0)
+      (print-object (fset:@ elts 0) s)
+      (when (> slen 1)
+        (loop for i from 1 below slen
+           do (progn
+                (princ " " s)
+                (print-object (fset:@ elts i) s)))))
+    (princ #\] s)))
+
+(defclass application (sequence)())
+
+(defmethod print-object ((seq application)(s stream))
+  (let* ((elts (elements seq))
+         (slen (fset:size elts)))
     (princ #\( s)
     (when (> slen 0)
       (print-object (fset:@ elts 0) s)
@@ -159,8 +183,6 @@
                 (princ " " s)
                 (print-object (fset:@ elts i) s)))))
     (princ #\) s)))
-
-(defclass application (sequence)())
 
 (defclass text (sequence)())
 (defmethod initialize-instance ((tx text) &rest initargs &key elements &allow-other-keys)

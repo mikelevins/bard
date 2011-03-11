@@ -62,6 +62,7 @@
                         ((:file "package")
                          (:file "singleton")
                          (:file "value")
+                         (:file "env")
                          (:file "runtime")
                          (:file "read")
                          (:file "eval")

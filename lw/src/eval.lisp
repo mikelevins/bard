@@ -11,33 +11,43 @@
 
 (in-package :bard)
 
-(defmethod eval (expr (bard bard-runtime))
+(defmethod eval (expr (env environment)(bard bard-runtime))
   (error "Unrecognized expression for evaluation: ~S" expr))
 
 ;;; ---------------------------------------------------------------------
 ;;; self-evaluating
 ;;; ---------------------------------------------------------------------
 
-(defmethod eval ((expr undefined) (bard bard-runtime)) expr)
-(defmethod eval ((expr nothing) (bard bard-runtime)) expr)
-(defmethod eval ((expr true) (bard bard-runtime)) expr)
-(defmethod eval ((expr false) (bard bard-runtime)) expr)
-(defmethod eval ((expr integer) (bard bard-runtime)) expr)
-(defmethod eval ((expr float) (bard bard-runtime)) expr)
-(defmethod eval ((expr character) (bard bard-runtime)) expr)
-(defmethod eval ((expr sequence) (bard bard-runtime)) expr)
-(defmethod eval ((expr map) (bard bard-runtime)) expr)
+(defmethod eval ((expr undefined) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr nothing) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr true) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr false) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr integer) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr float) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr character) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr sequence) (env environment) (bard bard-runtime)) expr)
+(defmethod eval ((expr map) (env environment) (bard bard-runtime)) expr)
 
 ;;; ---------------------------------------------------------------------
 ;;; variables
 ;;; ---------------------------------------------------------------------
 
-(defmethod eval ((expr name) (bard bard-runtime)) 
-  (error "Variable evaluation is not yet implemented"))
+(defmethod eval ((expr name) (env environment) (bard bard-runtime)) 
+  (let* ((mname (module-name expr))
+         (module (find-module bard mname))
+         (env-val (getvar env expr)))
+    (if (defined? env-val)
+        env-val
+        (if module
+            (let ((mval (getvar module expr)))
+              (if (defined? mval)
+                  mval
+                  (error "Undefined variable:" expr)))
+            (error "Undefined variable:" expr)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; applications
 ;;; ---------------------------------------------------------------------
 
-(defmethod eval ((expr application) (bard bard-runtime)) 
+(defmethod eval ((expr application) (env environment) (bard bard-runtime)) 
   (error "Function application is not yet implemented"))
