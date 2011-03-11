@@ -62,6 +62,7 @@
                         ((:file "package")
                          (:file "singleton")
                          (:file "value")
+                         (:file "module")
                          (:file "sequence-protocol")
                          (:file "env")
                          (:file "prims")

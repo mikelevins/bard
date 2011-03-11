@@ -15,20 +15,16 @@
   (make-instance 'primitive :debug-name debug-name :code code :arg-count arg-count))
 
 (defun init-modules ()
-  (let* ((bard.prim 
-          (make-module "bard.prim" 
-                       :exports '("+" "-" "*" "/")
-                       :variables `(("+" ,(%primitive "+" #'%primitive-add))
-                                    ("-" ,(%primitive "-" #'%primitive-subtract))
-                                    ("*" ,(%primitive "*" #'%primitive-multiply))
-                                    ("/" ,(%primitive "/" #'%primitive-divide)))))
-         (bard.core (make-module "bard.core" 
-                                 :exports '("version")
-                                 :variables `(("*version*" ,(read-expr "\"1.0\"" nil))
-                                              ("*module*"))))
+  (let* ((bard.prim (make-module "bard.prim"))
+         (bard.core (make-module "bard.core"))
          (modules (fset:convert 'fset:map `(("bard.prim" . ,bard.prim)
                                             ("bard.core" . ,bard.core)))))
-    (set-module-variable! bard.core "*module*" bard.core)
+    (define-variable! bard.prim "+" :value (%primitive "+" #'%primitive-add) :export t)
+    (define-variable! bard.prim "*" :value (%primitive "*" #'%primitive-multiply) :export t)
+    (define-variable! bard.prim "-" :value (%primitive "-" #'%primitive-subtract) :export t)
+    (define-variable! bard.prim "/" :value (%primitive "/" #'%primitive-divide) :export t)
+    (define-variable! bard.core "*version*" :value (read-expr "\"1.0\"" nil) :export t)
+    (define-variable! bard.core "*module*" :value bard.core :export t)
     modules))
 
 (defclass bard-runtime ()

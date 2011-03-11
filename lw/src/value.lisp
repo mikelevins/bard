@@ -92,57 +92,8 @@
   (princ #\> s))
 
 ;;; ---------------------------------------------------------------------
-;;; modules
-;;; ---------------------------------------------------------------------
-
-(defun parse-variable-list (vars)
-  (let* ((vars1 (mapcar (lambda (v)(if (listp v) (cons (car v)(box (cadr v))) (cons v (box)))) 
-                    vars))
-         (vars2 (delete-duplicates vars1 :test (lambda (x y)(string= (car x)(car y))))))
-    (fset:convert 'fset:map vars2)))
-
-(defun parse-export-list (varnames)
-  (let ((valid-varnames (delete-duplicates varnames :test #'string=)))
-    (if (equalp varnames valid-varnames)
-        (fset:convert 'fset:seq (sort valid-varnames #'string<))
-        (error "Duplicate variable names in ~S" varnames))))
-
-(defclass module ()
-  ((module-name :reader module-name :initarg :name)
-   (exports :accessor exports :initarg :exports)
-   (variables :accessor variables :initarg :variables)))
-
-(defmethod print-object ((m module)(s stream))
-  (princ "#<module " s)
-  (princ (module-name m) s)
-  (princ ">" s))
-
-(defun make-module (name &key exports variables)
-  (let ((name (validate-module-name name)))
-    (if name
-        (let ((variables (parse-variable-list (append exports variables)))
-              (exports (parse-export-list exports)))
-          (make-instance 'module :name name :exports exports :variables variables))
-        (error "Invalid module name: ~S" name))))
-
-;;; (setq $m (make-module "test.module" :exports '("foo" "bar") :variables `(("bar" ,(read-expr "5" nil))("baz" ,(read-expr ":baz" nil)))))
-
-(defmethod get-module-variable ((m module)(nm string))
-  (get-box (fset:@ (variables m) nm)))
-
-(defmethod set-module-variable! ((m module)(nm string) val)
-  (set-box! (fset:@ (variables m) nm) val))
-
-(defmethod getvar ((m module)(var name))
-  (get-module-variable m (variable-name var)))
-
-(defmethod setvar! ((m module)(var name) val)
-  (set-module-variable! m (variable-name var) val))
-
-;;; ---------------------------------------------------------------------
 ;;; names
 ;;; ---------------------------------------------------------------------
-
 
 (defclass name ()
   ((module-name :reader module-name :initarg :module-name)
