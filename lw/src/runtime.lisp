@@ -11,12 +11,23 @@
 
 (in-package :bard)
 
+(defun %primitive (debug-name code &key (arg-count nil))
+  (make-instance 'primitive :debug-name debug-name :code code :arg-count arg-count))
+
 (defun init-modules ()
-  (let* ((bard.core (make-module "bard.core" 
+  (let* ((bard.prim 
+          (make-module "bard.prim" 
+                       :exports '("+" "-" "*" "/")
+                       :variables `(("+" ,(%primitive "+" #'%primitive-add))
+                                    ("-" ,(%primitive "-" #'%primitive-subtract))
+                                    ("*" ,(%primitive "*" #'%primitive-multiply))
+                                    ("/" ,(%primitive "/" #'%primitive-divide)))))
+         (bard.core (make-module "bard.core" 
                                  :exports '("version")
                                  :variables `(("*version*" ,(read-expr "\"1.0\"" nil))
                                               ("*module*"))))
-         (modules (fset:convert 'fset:map `(("bard.core" . ,bard.core)))))
+         (modules (fset:convert 'fset:map `(("bard.prim" . ,bard.prim)
+                                            ("bard.core" . ,bard.core)))))
     (set-module-variable! bard.core "*module*" bard.core)
     modules))
 

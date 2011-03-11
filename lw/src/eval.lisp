@@ -49,5 +49,46 @@
 ;;; applications
 ;;; ---------------------------------------------------------------------
 
+(defun special-form? (op) 
+  (warn "special-form? is not yet implemented")
+  nil)
+
+(defun apply-special-form (op args env bard)
+  )
+
+(defun macro? (op bard)
+  (warn "macro? is not yet implemented")
+  nil)
+
+(defun apply-macro (op args env bard)
+  )
+
+(defmethod apply ((op primitive) args env bard)
+  (when (arg-count op)
+    (unless (= (length args)(arg-count op))
+      (error "Primitive ~A requires ~A arguments, but received ~A"
+             (debug-name op)(arg-count op)(length args))))
+  (funcall (code op) args))
+
+(defmethod apply ((fn function) args env bard)
+  (warn "apply function is not yet implemented"))
+
+(defmethod apply ((m method) args env bard)
+  (warn "apply method is not yet implemented"))
+
+(defmethod apply ((m map) args env bard)
+  (warn "apply map is not yet implemented"))
+
 (defmethod eval ((expr application) (env environment) (bard bard-runtime)) 
-  (error "Function application is not yet implemented"))
+  (if (zerop (length expr))
+      (empty-sequence)
+      (let ((op (first expr))
+            (args (rest expr)))
+        (cond
+          ((special-form? op)(apply-special-form op args env bard))
+          ((macro? op bard)(apply-macro op args env bard))
+          (t (let ((op (eval op env bard))
+                   (args (map-over (lambda (a)(eval a env bard))
+                                   args)))
+               (apply op args env bard)))))))
+

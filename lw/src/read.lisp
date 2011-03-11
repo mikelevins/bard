@@ -37,12 +37,12 @@
   ((exps exp) (list $1))
   ((exps exp exps) (cons $1 $2))
   ;; text
-  ((exp :text) (list :text (subseq $1 1 (1- (length $1)))))
+  ((exp :text) (list :text (string-trim '(#\space #\tab #\") $1)))
   ;; characters
-  ((exp character) (list :character $1))
-  ((character :backslash :token) $2)
+  ((exp character) (list :character (string-trim '(#\space #\tab) $1)))
+  ((character :backslash :token) (string-trim '(#\space #\tab) $2))
   ;; tokens
-  ((exp :token) (list :token $1)))
+  ((exp :token) (list :token (string-trim '(#\space #\tab) $1))))
 
 ;;; (bard::test-parse)
 
@@ -84,10 +84,10 @@
 ;;; (parse-expr "{1 2}")
 
 (defun construct-character (parse-params bard)
-  (make-instance 'character :data (find-character-data (first parse-params))))
+  (make-instance 'character :data (find-character-data (cl:first parse-params))))
 
 (defun construct-text (parse-params)
-  (make-instance 'text :elements (first parse-params)))
+  (make-instance 'text :elements (cl:first parse-params)))
 
 (defun parse-as-float (tok)
   (let* ((lexer (with-input-from-string (inp tok)
@@ -115,7 +115,7 @@
 
 (defun module-name-start? (s)
   (and (stringp s)
-       (not (zerop (length s)))
+       (not (zerop (cl:length s)))
        (every #'alpha-char-p s)
        (every #'lower-case-p s)))
 
@@ -123,7 +123,7 @@
 
 (defun module-name-extension? (s)
   (and (stringp s)
-       (not (zerop (length s)))
+       (not (zerop (cl:length s)))
        (every #'alphanumericp s)
        (every #'lower-case-p s)))
 
@@ -133,29 +133,29 @@
    (let ((name-parts (split-sequence #\. mnm)))
      (if (null name-parts)
          nil
-         (and (module-name-start? (first name-parts))
-              (every #'module-name-extension? (rest name-parts))
+         (and (module-name-start? (cl:first name-parts))
+              (every #'module-name-extension? (cl:rest name-parts))
               mnm)))))
 
 ;;; (validate-module-name "foo")
 
 (defun parse-name-token (tok)
   (let* ((name-parts (split-sequence #\: tok))
-         (part-count (length name-parts)))
+         (part-count (cl:length name-parts)))
     (cond
       ((= part-count 1)
        (let ((mname nil)
-             (vname (first name-parts)))
-         (if (zerop (length vname))
+             (vname (cl:first name-parts)))
+         (if (zerop (cl:length vname))
              (error "Malformed name: ~S" tok)
              (list :name nil vname))))
       ((= part-count 2)
-       (let ((mname (validate-module-name (first name-parts)))
-             (vname (second name-parts)))
+       (let ((mname (validate-module-name (cl:first name-parts)))
+             (vname (cl:second name-parts)))
          (if mname
-             (if (zerop (length vname))
+             (if (zerop (cl:length vname))
                  (error "Malformed name: ~S" tok)
-                 (if (zerop (length mname))
+                 (if (zerop (cl:length mname))
                      (list :name "bard.keyword" vname)
                      (list :name mname vname)))
              (error "Malformed name: ~S" tok))))
@@ -163,8 +163,8 @@
 
 (defun parse-as-name (tok bard)
   (let* ((name-spec (parse-name-token tok))
-         (vname (third name-spec))
-         (mname (second name-spec)))
+         (vname (cl:third name-spec))
+         (mname (cl:second name-spec)))
     (make-instance 'name :module-name mname :variable-name vname)))
 
 ;;;(setq $lex (make-name-lexer "foo"))
@@ -192,7 +192,7 @@
     (make-instance 'sequence :elements (fset:convert 'fset:seq vals))))
 
 (defun parse-map (parse-params bard)
-  (if (evenp (length parse-params))
+  (if (evenp (cl:length parse-params))
       (let* ((vals (mapcar #'(lambda (p)(construct-value p bard))
                            parse-params)))
         (make-instance 'map :entries vals))
@@ -212,12 +212,12 @@
 ;;; :app
 
 (defun construct-value (parse-tree bard)
-  (let* ((parse-class (first parse-tree))
-         (parse-params (rest parse-tree)))
+  (let* ((parse-class (cl:first parse-tree))
+         (parse-params (cl:rest parse-tree)))
     (ecase parse-class
       ((:character)(construct-character parse-params bard))
       ((:text)(construct-text parse-params))
-      ((:token)(parse-token (first parse-params) bard))
+      ((:token)(parse-token (cl:first parse-params) bard))
       ((:vals)(parse-vals parse-params bard))
       ((:map)(parse-map parse-params bard))
       ((:app)(parse-app parse-params bard)))))

@@ -156,6 +156,8 @@
 
 (defclass sequence ()((elements :reader elements :initarg :elements)))
 
+(defun empty-sequence ()(make-instance 'sequence :elements (fset:empty-seq)))
+
 (defmethod print-object ((seq sequence)(s stream))
   (let* ((elts (elements seq))
          (slen (fset:size elts)))
@@ -202,7 +204,7 @@
 
 (defclass map ()((entries :reader entries)))
 (defmethod initialize-instance ((m map) &rest initargs &key entries &allow-other-keys)
-  (if (evenp (length entries))
+  (if (evenp (cl:length entries))
       (let ((entries (loop for (k v . rest) on entries by 'cddr collect (cons k v))))
         (setf (slot-value m 'entries)
               (fset:convert 'fset:map entries)))
@@ -222,7 +224,10 @@
 ;;; functions
 ;;; ---------------------------------------------------------------------
 
-(defclass primitive ()(debug-name arg-count code))
+(defclass primitive ()
+  ((debug-name :reader debug-name :initarg :debug-name)
+   (arg-count :reader arg-count :initform nil :initarg :arg-count)
+   (code :reader code :initarg :code)))
 
 (defclass method ()(debug-name signature code))
 
