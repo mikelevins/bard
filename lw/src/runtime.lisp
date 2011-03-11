@@ -11,15 +11,27 @@
 
 (in-package :bard)
 
-(defclass bard-runtime ()())
+(defun init-modules ()
+  (let* ((bard.core (make-module "bard.core" 
+                                 :exports '("version")
+                                 :variables `(("*version*" ,(read-expr "\"1.0\"" nil))
+                                              ("*module*"))))
+         (modules (fset:convert 'fset:map `(("bard.core" . ,bard.core)))))
+    (set-module-variable! bard.core "*module*" bard.core)
+    modules))
+
+(defclass bard-runtime ()
+  ((modules :reader modules :initform (init-modules))))
 
 (defun init-bard ()(make-instance 'bard-runtime))
 
+;;; (setq $bard (init-bard))
+
 (defmethod find-module ((bard bard-runtime) (mname string))
-  mname)
+  (fset:@ (modules bard) mname))
 
 (defmethod find-module ((bard bard-runtime) (mname null))
-  "bard.core")
+  (fset:@ (modules bard) "bard.core"))
 
 (defmethod current-module-name ((bard bard-runtime))
   "bard.core")
