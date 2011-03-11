@@ -112,6 +112,11 @@
    (exports :accessor exports :initarg :exports)
    (variables :accessor variables :initarg :variables)))
 
+(defmethod print-object ((m module)(s stream))
+  (princ "#<module " s)
+  (princ (module-name m) s)
+  (princ ">" s))
+
 (defun make-module (name &key exports variables)
   (let ((name (validate-module-name name)))
     (if name
@@ -228,6 +233,11 @@
   ((debug-name :reader debug-name :initarg :debug-name)
    (arg-count :reader arg-count :initform nil :initarg :arg-count)
    (code :reader code :initarg :code)))
+
+(defmethod print-object ((p primitive)(s stream))
+  (princ "#<primitive " s)
+  (princ (debug-name p) s)
+  (princ ">" s))
 
 (defclass method ()(debug-name signature code))
 

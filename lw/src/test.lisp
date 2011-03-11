@@ -57,4 +57,6 @@
 
 ;;; (test-read-eval)
 ;;; (eval (read-expr "(bard.prim:/ 24 3 2)" nil) (standard-environment) (init-bard))
+;;; (eval (read-expr "bard.prim:*" nil) (standard-environment) (init-bard))
+;;; (eval (read-expr "bard.core:*module*" nil) (standard-environment) (init-bard))
 
