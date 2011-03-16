@@ -34,6 +34,24 @@
     (when export
       (pushnew name (exports m) :test #'string=))))
 
+(defmethod import-variable! ((src-module module)(name string)(dest-module module) 
+                             &key (as nil)(export nil)(replace nil))
+  (if (member name (exports src-module) :test #'string=)
+      (let ((varbox (fset:@ (variables src-module) name))
+            (varname (if as as name))
+            (already (fset:@ (variables dest-module) varname)))
+        (if (and already (not replace))
+            (error "Variable ~A already exists in module ~A" name (module-name dest-module))
+            (progn
+              (setf (variables dest-module)
+                    (fset:with (variables dest-module) name varbox))
+              (if export
+                  (pushnew name (exports dest-module) :test #'string=)
+                  (setf (exports dest-module)
+                        (remove name (exports dest-module) :test #'string=)))))
+        name)
+      (error "Variable ~A is not exported by module ~A" name (module-name src-module))))
+
 (defmethod get-module-variable ((m module)(nm string))
   (get-box (fset:@ (variables m) nm)))
 
