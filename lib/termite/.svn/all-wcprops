@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 22
+/svn/!svn/ver/20/trunk
+END
+tsi
+K 25
+svn:wc:ra_dav:version-url
+V 25
+/svn/!svn/ver/5/trunk/tsi
+END
+recv.scm
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/5/trunk/recv.scm
+END
+deftype.scm
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/19/trunk/deftype.scm
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/5/trunk/LICENSE
+END
+VERSION
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/20/trunk/VERSION
+END
+INSTALL
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/17/trunk/INSTALL
+END
+uuid.scm
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/6/trunk/uuid.scm
+END
+CHANGELOG
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/20/trunk/CHANGELOG
+END
+match-support.scm
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/5/trunk/match-support.scm
+END
+data.scm
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/19/trunk/data.scm
+END
+termite.scm
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/19/trunk/termite.scm
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 28
+/svn/!svn/ver/5/trunk/README
+END
+termite#.scm
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/16/trunk/termite%23.scm
+END
+match.scm
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/5/trunk/match.scm
+END

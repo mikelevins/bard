@@ -1,0 +1,14 @@
+# These are the installation instructions for Termite
+
+#1 Install the latest version of Gambit-C
+
+#2 Get the latest Termite and put it in Gambit's lib/ directory
+
+$ cd /usr/local/Gambit-C/current/lib
+$ svn checkout http://termite.googlecode.com/svn/trunk/ termite
+
+#3 Copy the tsi script to Gambit's bin directory (optional) 
+# That's for convenience so you can start a console that acts 
+# like gsi but has Termite already loaded
+
+# All done!
