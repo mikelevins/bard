@@ -34,20 +34,9 @@
           "src/utils/strings.scm")
    (paths $bard-root 
           "lib/wt-tree.scm"
-          "src/lib/vals/singletons.scm"
-          "src/lib/vals/numbers.scm"
-          "src/lib/vals/characters.scm"
-          "src/lib/vals/comparisons.scm"
-          "src/lib/vals/sequences.scm")))
-
-(define $reader-files
-  (append
-   (paths $ymir-root
-          "src/utils/lists.scm"
-          "src/utils/strings.scm")
-   (paths $bard-root 
-          "src/reader/ast.scm"
-          "src/reader/reader.scm")))
+          "src/ast.scm"
+          "src/reader.scm"
+          )))
 
 ;;; load Scheme files
 ;;; ----------------------------------------------------------------------
@@ -56,10 +45,5 @@
   (for-each (lambda (f)(load f))
             $vm-files))
 
-(define (load-reader)
-  (for-each (lambda (f)(load f))
-            $reader-files))
-
 ;;; (load-vm)
-;;; (load-reader)
 
