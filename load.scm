@@ -34,6 +34,7 @@
           "src/utils/strings.scm")
    (paths $bard-root 
           "lib/wt-tree.scm"
+          "src/values.scm"
           "src/ast.scm"
           "src/reader.scm"
           )))

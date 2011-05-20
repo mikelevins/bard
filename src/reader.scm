@@ -180,16 +180,16 @@
   (let ((original-readtable (input-port-readtable port)))
     (dynamic-wind
         (lambda ()(input-port-readtable-set! port (bard:make-readtable)))
-        (lambda ()(let* ((read-output (read port))
-                         (items (cdr read-output)))
+        (lambda ()(let ((read-output (read port)))
                     (if (pair? read-output)
-                        (case (car read-output)
-                          ((ast:sequence) (ast:sequence items))
-                          ((ast:application) (ast:application (car items)(cdr items)))
-                          ((ast:record) (ast:record (map (lambda (kv)
-                                                           (ast:record-field (car kv)(cdr kv)))
-                                                         (plist->alist items))))
-                          (else (error "invalid syntax" read-output)))
+                        (let ((items (cdr read-output)))
+                          (case (car read-output)
+                            ((ast:sequence) (ast:sequence items))
+                            ((ast:application) (ast:application (car items)(cdr items)))
+                            ((ast:record) (ast:record (map (lambda (kv)
+                                                             (ast:record-field (car kv)(cdr kv)))
+                                                           (plist->alist items))))
+                            (else (error "invalid syntax" read-output))))
                         read-output)))
         (lambda ()(input-port-readtable-set! port original-readtable)))))
 
@@ -244,3 +244,30 @@
 ;;; $x14
 ;;;(define $x15 (bard:%read-syntax (open-input-string "{:name \"fred\" :size :large}")))
 ;;; $x15
+
+(define (bard:%syntax->object ast)
+  (cond
+   ((ast:undefined? ast)(bard:undefined))
+   ((ast:nothing? ast)(bard:nothing))
+   ((ast:boolean? ast)(if (ast:boolean-value ast)(bard:true)(bard:false)))
+   ((ast:character? ast)(ast:character-value ast))
+   ((ast:number? ast)(ast:number-value ast))
+   (else (error "Invalid syntax" ast))))
+
+(define (bard:read port)
+  (let ((ast (bard:%read-syntax port)))
+    (bard:%syntax->object ast)))
+
+(define (bard:read-from-string s)
+  (call-with-input-string s (lambda (in)(bard:read in))))
+
+;;; (bard:read-from-string "undefined")
+;;; (bard:read-from-string "nothing")
+;;; (bard:read-from-string "true")
+;;; (bard:read-from-string "false")
+;;; (bard:read-from-string "\\c")
+;;; (bard:read-from-string "\\tab")
+;;; (bard:read-from-string "0")
+;;; (bard:read-from-string "123.45")
+;;; (bard:read-from-string "4/6")
+
