@@ -252,6 +252,11 @@
    ((ast:boolean? ast)(if (ast:boolean-value ast)(bard:true)(bard:false)))
    ((ast:character? ast)(ast:character-value ast))
    ((ast:number? ast)(ast:number-value ast))
+   ;;((ast:name? ast) )
+   ((ast:text? ast)(ast:text-value ast))
+   ((ast:sequence? ast)(bard:sequence (ast:sequence-elements ast)))
+   ;;((ast:application? ast) )
+   ;;((ast:record? ast) )
    (else (error "Invalid syntax" ast))))
 
 (define (bard:read port)
@@ -270,4 +275,5 @@
 ;;; (bard:read-from-string "0")
 ;;; (bard:read-from-string "123.45")
 ;;; (bard:read-from-string "4/6")
+;;; (bard:read-from-string "\"foo!\"")
 
