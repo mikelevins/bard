@@ -34,6 +34,7 @@
           "src/utils/strings.scm")
    (paths $bard-root 
           "lib/wt-tree.scm"
+          "lib/srfi101.scm"
           "src/cells.scm"
           "src/values.scm"
           "src/ast.scm"
@@ -48,4 +49,5 @@
             $vm-files))
 
 ;;; (load-vm)
+
 
