@@ -33,3 +33,4 @@ src/vm/dist/package.conf.inplace
 src/vm/dist/setup-config
 /src/interpreter/dist/
 /src/_termite.log
+/_termite.log

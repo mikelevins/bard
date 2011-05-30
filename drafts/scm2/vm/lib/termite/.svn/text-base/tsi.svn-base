@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gsi -:dar -e "(##include \"~~/lib/gambit#.scm\")(##include \"~~/lib/termite/termite#.scm\")(load \"~~/lib/termite/termite\")" $@ - 

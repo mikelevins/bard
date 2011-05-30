@@ -1,0 +1,179 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/9/trunk/benchmarks
+END
+ring.erl
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/5/trunk/benchmarks/ring.erl
+END
+ring.scm
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/9/trunk/benchmarks/ring.scm
+END
+fib.erl
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/5/trunk/benchmarks/fib.erl
+END
+fib.scm
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/9/trunk/benchmarks/fib.scm
+END
+pingpong2.scm
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/9/trunk/benchmarks/pingpong2.scm
+END
+pingpong_gambit.scm
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/9/trunk/benchmarks/pingpong_gambit.scm
+END
+config.scm
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/5/trunk/benchmarks/config.scm
+END
+config-single-node.scm
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/5/trunk/benchmarks/config-single-node.scm
+END
+qsort.erl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/5/trunk/benchmarks/qsort.erl
+END
+qsort.scm
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/9/trunk/benchmarks/qsort.scm
+END
+nrev.scm
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/9/trunk/benchmarks/nrev.scm
+END
+nrev.erl
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/5/trunk/benchmarks/nrev.erl
+END
+spawn_gambit.scm
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/5/trunk/benchmarks/spawn_gambit.scm
+END
+self_gambit.scm
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/9/trunk/benchmarks/self_gambit.scm
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/5/trunk/benchmarks/README
+END
+tak.erl
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/5/trunk/benchmarks/tak.erl
+END
+tak.scm
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/9/trunk/benchmarks/tak.scm
+END
+config-dinos.scm
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/5/trunk/benchmarks/config-dinos.scm
+END
+bench.scm
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/5/trunk/benchmarks/bench.scm
+END
+pingpong.scm
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/5/trunk/benchmarks/pingpong.scm
+END
+pingpong.erl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/5/trunk/benchmarks/pingpong.erl
+END
+ring_gambit.scm
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/9/trunk/benchmarks/ring_gambit.scm
+END
+smith.scm
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/9/trunk/benchmarks/smith.scm
+END
+smith.erl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/5/trunk/benchmarks/smith.erl
+END
+migrate.scm
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/5/trunk/benchmarks/migrate.scm
+END
+spawn.erl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/5/trunk/benchmarks/spawn.erl
+END
+spawn.scm
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/9/trunk/benchmarks/spawn.scm
+END
+self.erl
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/5/trunk/benchmarks/self.erl
+END
+self.scm
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/9/trunk/benchmarks/self.scm
+END
