@@ -19,6 +19,5 @@
 
 (define (bard:compile exp env)
   (if (bard:%self-evaluating? exp)
-      (let ((code (bard:%gen-CONST exp)))
-        (append code (list (list op_HALT))))
+      (bard:%gen-CONST exp)
       (error "compilation of non-self-evaluating expressions not yet implemented")))

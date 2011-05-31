@@ -14,10 +14,11 @@
          (env (make-standard-environment))
          (code (bard:compile expr env))
          (vm (bard:make-vm code env)))
-    (vm:%next vm)
+    (vm:%step vm)
     (bard:print-vm vm)
     (vm:print-values vm)))
 
+#|
 ;;; ----------------------------------------
 ;;; singletons
 ;;; ----------------------------------------
@@ -42,3 +43,4 @@
 ;;; numbers
 ;;; ----------------------------------------
 
+|#

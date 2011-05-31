@@ -8,19 +8,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define HALT
-  (lambda (vm) vm))
+(define HALT (lambda (vm) vm))
 
-(define NOOP
-  (lambda (vm)
-    (vm:%incpc vm)
-    (vm:%next vm)))
+(define NOOP (lambda (vm)(values)))
 
-(define CONST 
-  (lambda (vm k)
-    (vm:%push vm k)
-    (vm:%incpc vm)
-    (vm:%next vm)))
+(define CONST (lambda (vm k)(vm:%push vm k)))
 
 
 (define $instructions (make-table))
