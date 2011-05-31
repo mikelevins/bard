@@ -35,6 +35,7 @@
          "src/reader.scm"
          "src/environment.scm"
          "src/opcodes.scm"
+         "src/instructions.scm"
          "src/compiler.scm"
          "src/vm.scm"
          "src/printer.scm"

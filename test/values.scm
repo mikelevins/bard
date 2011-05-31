@@ -8,62 +8,37 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define (test-constant str)
+  (let* ((in (open-input-string str))
+         (expr (bard:%read-syntax in))
+         (env (make-standard-environment))
+         (code (bard:compile expr env))
+         (vm (bard:make-vm code env)))
+    (vm:%next vm)
+    (bard:print-vm vm)
+    (vm:print-values vm)))
+
 ;;; ----------------------------------------
 ;;; singletons
 ;;; ----------------------------------------
 
 ;;; undefined
-
-(define $undefined-string "undefined")
-(define $in (open-input-string $undefined-string))
-(define $expr (bard:%read-syntax $in))
-(close-input-port $in)
-(define $env (make-standard-environment))
-(define $code (bard:compile $expr $env))
-(define $vm (bard:make-vm $code $env))
-(vm:%next $vm)
-(vm:print-values $vm)
+(test-constant "undefined")
 
 ;;; nothing
-
-(define $nothing-string "nothing")
-(define $in (open-input-string $nothing-string))
-(define $expr (bard:%read-syntax $in))
-(close-input-port $in)
-(define $env (make-standard-environment))
-(define $code (bard:compile $expr $env))
-(define $vm (bard:make-vm $code $env))
-(vm:%next $vm)
-(vm:print-values $vm)
+(test-constant "nothing")
 
 ;;; ----------------------------------------
 ;;; booleans
 ;;; ----------------------------------------
 
 ;;; true
-
-(define $true-string "true")
-(define $in (open-input-string $true-string))
-(define $expr (bard:%read-syntax $in))
-(close-input-port $in)
-(define $env (make-standard-environment))
-(define $code (bard:compile $expr $env))
-(define $vm (bard:make-vm $code $env))
-(vm:%next $vm)
-(vm:print-values $vm)
+(test-constant "true")
 
 ;;; false
-
-(define $false-string "false")
-(define $in (open-input-string $false-string))
-(define $expr (bard:%read-syntax $in))
-(close-input-port $in)
-(define $env (make-standard-environment))
-(define $code (bard:compile $expr $env))
-(define $vm (bard:make-vm $code $env))
-(vm:%next $vm)
-(vm:print-values $vm)
+(test-constant "false")
 
 ;;; ----------------------------------------
 ;;; numbers
 ;;; ----------------------------------------
+

@@ -31,3 +31,11 @@
 (definstruction op_HALT HALT)
 (definstruction op_NOOP NOOP)
 (definstruction op_CONST CONST)
+
+
+(define (instr:%print-instruction instr)
+  (cond
+   ((= op_HALT (car instr)) (display "HALT"))
+   ((= op_NOOP (car instr)) (display "NOOP"))
+   ((= op_CONST (car instr)) (display "CONST ")(bard:print-object (cadr instr)))
+   (else (error "unrecognized instruction while printing" instr))))
