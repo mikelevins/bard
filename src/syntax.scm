@@ -31,3 +31,15 @@
 
 (define (bard:%syntax-false)
   (bard:%make-syntax-atom 'bard:boolean #f))
+
+(define (bard:%syntax-integer val)
+  (bard:%make-syntax-atom 'bard:integer val))
+
+(define (bard:%syntax-float val)
+  (bard:%make-syntax-atom 'bard:float val))
+
+(define (bard:%syntax-ratio val)
+  (bard:%make-syntax-atom 'bard:ratio val))
+
+(define (bard:%syntax-character val)
+  (bard:%make-syntax-atom 'bard:character val))

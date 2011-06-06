@@ -1,23 +1,19 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          values.scm
+;;;; Name:          reader.scm
 ;;;; Project:       bard
-;;;; Purpose:       test simple self-evaluating expressions
+;;;; Purpose:       test the reader
 ;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(define (test-constant str)
+(define (test-read str)
   (let* ((in (open-input-string str))
-         (expr (bard:%read-syntax in))
-         (env (make-standard-environment))
-         (code (bard:compile expr env))
-         (vm (bard:make-vm code env)))
+         (expr (bard:%read-syntax in)))
     (close-port in)
-    (vm:%step vm)
-    (bard:print-vm vm)
-    (vm:print-values vm)))
+    (bard:print-object expr)
+    (newline)))
 
 #|
 ;;; ----------------------------------------
@@ -25,34 +21,34 @@
 ;;; ----------------------------------------
 
 ;;; undefined
-(test-constant "undefined")
+(test-read "undefined")
 
 ;;; nothing
-(test-constant "nothing")
+(test-read "nothing")
 
 ;;; ----------------------------------------
 ;;; booleans
 ;;; ----------------------------------------
 
 ;;; true
-(test-constant "true")
+(test-read "true")
 
 ;;; false
-(test-constant "false")
+(test-read "false")
 
 ;;; ----------------------------------------
 ;;; numbers
 ;;; ----------------------------------------
 
-(test-constant "5")
-(test-constant "1.5")
-(test-constant "5/2")
+(test-read "5")
+(test-read "1.5")
+(test-read "5/2")
 
 ;;; ----------------------------------------
 ;;; characters
 ;;; ----------------------------------------
 
-(test-constant "\\c")
-(test-constant "\\space")
+(test-read "\\c")
+(test-read "\\space")
 
 |#

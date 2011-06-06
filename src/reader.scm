@@ -55,20 +55,20 @@
                                  (macro-readtable-named-char-table
                                   (macro-readenv-readtable re)))))
                    (if x
-                       (macro-readenv-wrap re (ast:character (cdr x)))
+                       (macro-readenv-wrap re (bard:%syntax-character (cdr x)))
                        (if (= 1 (string-length name))
-                           (macro-readenv-wrap re (ast:character (string-ref name 0)))
+                           (macro-readenv-wrap re (bard:%syntax-character (string-ref name 0)))
                            (error "unknown character name" name)))))
                (if (and (= 6 (string-length name))
                         (char=? (string-ref name 0) #\u)
                         (char=? (string-ref name 1) #\+))
                    (let ((n (string->number (substring name 2 6) 16)))
                      (if n
-                         (macro-readenv-wrap re (ast:character (integer->char n)))
+                         (macro-readenv-wrap re (bard:%syntax-character (integer->char n)))
                          (not-hex)))
                    (not-hex))))
             (else
-             (macro-readenv-wrap re (ast:character c)))))))
+             (macro-readenv-wrap re (bard:%syntax-character c)))))))
 
 (define (bard:read-number/keyword/symbol re c)
   (let ((start-pos (##readenv-current-filepos re)))
@@ -81,9 +81,9 @@
        ((eqv? obj 'true) (macro-readenv-wrap re (bard:%syntax-true)))
        ((eqv? obj 'false) (macro-readenv-wrap re (bard:%syntax-false)))
        ((symbol? obj)(macro-readenv-wrap re (%syntax-for-name obj)))
-       ((integer? obj)(macro-readenv-wrap re (ast:number obj)))
-       ((flonum? obj)(macro-readenv-wrap re (ast:number obj)))
-       ((##ratnum? obj)(macro-readenv-wrap re (ast:number obj)))
+       ((integer? obj)(macro-readenv-wrap re (bard:%syntax-integer obj)))
+       ((flonum? obj)(macro-readenv-wrap re (bard:%syntax-float obj)))
+       ((##ratnum? obj)(macro-readenv-wrap re (bard:%syntax-ratio obj)))
        (else (macro-readenv-wrap re (list 'literal obj)))))))
 
 (define $constituent-chars

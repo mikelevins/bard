@@ -10,9 +10,9 @@
 
 (define HALT (lambda (vm) vm))
 
-(define NOOP (lambda (vm)(values)))
+(define NOOP (lambda (vm)(values)(vm:%incpc vm)))
 
-(define CONST (lambda (vm k)(vm:%push vm k)))
+(define CONST (lambda (vm k)(vm:%push vm k)(vm:%incpc vm)))
 
 
 (define $instructions (make-table))
