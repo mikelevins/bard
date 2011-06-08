@@ -29,6 +29,7 @@
 (define $bard-files
   (paths $bard-root 
          "src/list-utils.scm"
+         "src/string-utils.scm"
          "lib/wt-tree.scm"
          "lib/srfi101.scm"
          "src/syntax.scm"

@@ -51,4 +51,12 @@
 (test-read "\\c")
 (test-read "\\space")
 
+;;; ----------------------------------------
+;;; names
+;;; ----------------------------------------
+
+(test-read "Foo")
+(test-read ":Foo")
+(test-read "bard.core:Foo")
+
 |#

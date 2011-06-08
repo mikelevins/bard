@@ -20,3 +20,10 @@
                               (cadr plist))
                         result))))))
 
+(define (every? pred ls)
+  (if (null? ls)
+      #t
+      (if (pred (car ls))
+          (every? pred (cdr ls))
+          #f)))
+

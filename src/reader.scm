@@ -165,10 +165,10 @@
           (cond 
            (bad-colon-pos (error "Too many colons in a name" namesym))
            ((not (%valid-variable-name? vname))(error "Invalid variable name" vname))
-           ((< (string-length mname) 1)(ast:name vname "bard.keyword"))
+           ((< (string-length mname) 1)(bard:%syntax-name 'bard.keyword (string->symbol vname)))
            ((not (%valid-module-name? mname))(error "Invalid module name" mname))
-           (else (ast:name vname mname))))
-        (ast:name namestr #f))))
+           (else (bard:%syntax-name (string->symbol mname) (string->symbol vname)))))
+        (bard:%syntax-name #f (string->symbol namestr)))))
 
 (define (bard:%read-syntax port)
   (let ((original-readtable (input-port-readtable port)))
