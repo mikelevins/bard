@@ -95,7 +95,7 @@
 
 (define (bard:read-escaped-string re c)
   (let ((s (##read-escaped-string re c)))
-    (ast:text s)))
+    (bard:%syntax-text s)))
 
 (define (bard:make-readtable)
   (let ((rt (##make-standard-readtable)))

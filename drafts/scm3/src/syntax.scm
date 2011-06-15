@@ -46,3 +46,6 @@
 
 (define (bard:%syntax-name mname vname)
   (bard:%make-syntax-atom 'bard:name (cons mname vname)))
+
+(define (bard:%syntax-text str)
+  (bard:%make-syntax-atom 'bard:text str))

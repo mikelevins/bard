@@ -33,14 +33,6 @@
          "lib/wt-tree.scm"
          "lib/srfi101.scm"
          "src/syntax.scm"
-         "src/reader.scm"
-         "src/environment.scm"
-         "src/opcodes.scm"
-         "src/instructions.scm"
-         "src/compiler.scm"
-         "src/vm.scm"
-         "src/printer.scm"
-         ;;"test/values.scm"
          ))
 
 ;;; load sources

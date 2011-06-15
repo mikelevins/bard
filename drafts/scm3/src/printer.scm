@@ -49,6 +49,7 @@
                                          (string-append ":" (symbol->string vname))
                                          (string-append (symbol->string mname) ":" (symbol->string vname)))
                                      (symbol->string vname))))
+                   ((bard:text)(string-append "\""(bard:%syntax-atom-value x) "\""))
                    (else (error "Unrecognized syntax atom" x)))))
     (string-append "#<syntax [" (symbol->string type) "]: " valstr ">")))
 
