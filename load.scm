@@ -32,6 +32,9 @@
          "src/string-utils.scm"
          "lib/wt-tree.scm"
          "lib/srfi101.scm"
+         "src/values.scm"
+         "src/prototypes.scm"
+         "src/make.scm"
          "src/syntax.scm"
          ))
 
