@@ -8,5 +8,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define <syntax-element> 
-  #f)
+(define <syntax>
+  (frame:plist->frame 
+   `(built-in-type: bard:syntax)))
+
+(define (bard:syntax type value)
+  (frame:%merge <syntax>
+                (make-frame type: type
+                            value: value)))
+
