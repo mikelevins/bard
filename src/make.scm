@@ -61,13 +61,30 @@
            (else (error "Invalid initial elements for sequence" val)))
           (error "You must specify some the elements when making a sequence value")))))
 
+(define make:%make-cell
+  (lambda (proto initframe)
+    (let ((val (frame:get initframe value:)))
+      (if (bard:defined? val)
+          (bard:make-cell val)
+          (error "You must specify an initial value when making a cell")))))
+
+(define make:%make-slot
+  (lambda (proto initframe)
+    (let ((key (frame:get initframe key:))
+          (val (frame:get initframe value:)))
+      (if (bard:defined? key)
+          (if (bard:defined? val)
+              (bard:slot key val)
+              (error "You must specify a key and a value when making a slot"))
+          (error "You must specify a key and a value when making a slot")))))
+
 (define make:%make-frame
   (lambda (proto initframe)
-    (error "make:%make-frame not yet implemented")))
+    (frame:%merge initframe (make-frame prototype: proto))))
 
-(define make:%make-process
+(define make:%make-port
   (lambda (proto initframe)
-    (error "make:%make-process not yet implemented")))
+    (error "make:%make-port not yet implemented")))
 
 (make:define-init-function <undefined> make:%make-undefined)
 (make:define-init-function <nothing> make:%make-nothing)
@@ -75,6 +92,8 @@
 (make:define-init-function <number> make:%make-number)
 (make:define-init-function <text> make:%make-text)
 (make:define-init-function <sequence> make:%make-sequence)
+(make:define-init-function <cell> make:%make-cell)
+(make:define-init-function <slot> make:%make-slot)
 (make:define-init-function <frame> make:%make-frame)
 (make:define-init-function <process> make:%make-process)
 

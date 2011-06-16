@@ -32,11 +32,19 @@
   (frame:plist->frame 
    `(built-in-type: bard:sequence)))
 
+(define <cell>
+  (frame:plist->frame 
+   `(built-in-type: bard:cell)))
+
+(define <slot>
+  (frame:plist->frame 
+   `(built-in-type: bard:slot)))
+
 (define <frame>
   (frame:plist->frame 
    `(built-in-type: bard:frame)))
 
-(define <process>
+(define <port>
   (frame:plist->frame 
-   `(built-in-type: bard:process)))
+   `(built-in-type: bard:port)))
 

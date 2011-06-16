@@ -8,6 +8,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "~~/lib/gambit#.scm")
+(##include "~~/lib/termite/termite#.scm")
+(##include "~~/lib/termite/data.scm")
+
 ;;; ---------------------------------------------------------------------
 ;;; eof
 ;;; ---------------------------------------------------------------------
@@ -72,6 +76,43 @@
 (define seq:image ra:map)
 
 ;;; ---------------------------------------------------------------------
+;;; cells
+;;; ---------------------------------------------------------------------
+
+(define (bard:make-cell value)
+  (make-cell value))
+
+(define (bard:cell? thing)
+  (thread? $c))
+
+(define (bard:get-cell cell)
+  (cell-ref cell))
+
+(define (bard:put-cell! cell val)
+  (cell-set! cell val))
+
+(define (bard:cell-empty? cell)
+  (cell-empty? cell))
+
+;;; ---------------------------------------------------------------------
+;;; slots
+;;; ---------------------------------------------------------------------
+;;; we normally never see bare slots; instead we see them as the
+;;; output of accessing a frame as a sequence. frames are not
+;;; necessarily represented as sequences of slots, but when treated as
+;;; sequences, they are *logically* sequences of slots, and fetching
+;;; an individual element of a frame returns a slot
+
+(define-type bard:slot
+  id: CD0F8C5C-BF98-4824-B9B9-28B0B72228AD
+  constructor: %make-slot
+  (key bard:slot-key)
+  (value bard:slot-value))
+
+(define (bard:slot key value) 
+  (%make-slot key value))
+
+;;; ---------------------------------------------------------------------
 ;;; frames
 ;;; ---------------------------------------------------------------------
 
@@ -82,9 +123,17 @@
    ((bard:undefined? x) 'undefined)
    ((bard:nothing? x) 'nothing)
    ((or (eqv? x (bard:true))(eqv? x (bard:false))) 'boolean)
-   ((or (bard:integer? x)(bard:float? x)(bard:ratio? x)) 'number)
-   ((bard:character? x) 'character)
+   ((or (integer? x)(flonum? x)(##ratnum? x)) 'number)
+   ((char? x) 'character)
+   ((or (symbol? x)(keyword? x)) 'name)
+   ((string? x) 'text)
    ((bard:sequence? x) 'sequence)))
+
+(define (%name->string x)
+  (cond
+   ((symbol? x)(symbol->string x))
+   ((keyword? x)(keyword->string x))
+   (else (error "not a name" x))))
 
 (define (bard:comparison-for-type tp)
   (case tp
@@ -97,6 +146,9 @@
                                #f)))
     ((number)(lambda (x y)(< x y)))
     ((character)(lambda (x y)(char<? x y)))
+    ((text)(lambda (x y)(string<? x y)))
+    ((name)(lambda (x y)(string<? (%name->string x)
+                                  (%name->string y))))
     ((sequence)(lambda (x y)(cond
                              ((< (count x)(count y)) #t)
                              ((= (count x)(count y))(bard:every? bard:value<? x y))
@@ -165,5 +217,8 @@
           (reverse result)))))
 
 ;;; later key/val pairs override earlier ones
-(define (frame:merge m1 m2)
-  (error "frame:merge is not yet implemented"))
+(define (frame:%merge m1 m2)
+  (wt-tree/union m1 m2))
+
+(define (make-frame . inits)
+  (frame:plist->frame inits))
