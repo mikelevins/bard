@@ -15,7 +15,8 @@
     (display " type: ")(display (debug-name (frame:get expr type:)))
     (newline)
     (display "value: ")(display (object->string (frame:get expr value:)))
-    (newline)))
+    (newline)
+    expr))
 
 #|
 ;;; ----------------------------------------
@@ -70,6 +71,10 @@
 ;;; ----------------------------------------
 ;;; sequences
 ;;; ----------------------------------------
+
+(test-read "(0 1 2 3)")
+(test-read "[0 1 2 3]")
+(test-read "{0 1 2 3}")
 
 ;;; ----------------------------------------
 ;;; maps
