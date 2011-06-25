@@ -12,11 +12,8 @@
   (let* ((in (open-input-string str))
          (expr (bard:%read-syntax in)))
     (close-port in)
-    (display " type: ")(display (debug-name (frame:get expr type:)))
-    (newline)
-    (display "value: ")(display (object->string (frame:get expr value:)))
-    (newline)
-    expr))
+    (bard:print-object expr)
+    (newline)))
 
 #|
 ;;; ----------------------------------------

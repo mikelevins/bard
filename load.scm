@@ -36,6 +36,7 @@
          "src/prototypes.scm"
          "src/make.scm"
          "src/syntax.scm"
+         "src/reader.scm"
          ))
 
 ;;; load sources

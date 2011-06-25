@@ -83,7 +83,7 @@
   (make-cell value))
 
 (define (bard:cell? thing)
-  (thread? $c))
+  (thread? thing))
 
 (define (bard:get-cell cell)
   (cell-ref cell))
@@ -180,9 +180,10 @@
   (set! frame:empty (lambda () fr))
   (set! frame:empty? (lambda (x) (eq? x fr))))
 
-(define (frame:map? x)
+(define (frame:frame? x)
   (and (wt-tree? x)
        (eq? frame:frame (wt-tree-type x))))
+(define bard:frame? frame:frame?)
 
 (define (frame:alist->frame alist)
   (alist->wt-tree frame:frame alist))

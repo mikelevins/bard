@@ -76,14 +76,14 @@
     (macro-readenv-filepos-set! re start-pos) ;; set pos to start of datum
     (let ((obj (##build-delimited-number/keyword/symbol re c #t)))
       (cond 
-       ((eqv? obj 'undefined) (macro-readenv-wrap re (bard:syntax <undefined> 'undefined)))
-       ((eqv? obj 'nothing) (macro-readenv-wrap re (bard:syntax <nothing> 'nothing)))
-       ((eqv? obj 'true) (macro-readenv-wrap re (bard:syntax <boolean> 'true)))
-       ((eqv? obj 'false) (macro-readenv-wrap re (bard:syntax <boolean> 'false)))
+       ((eqv? obj 'undefined) (macro-readenv-wrap re (bard:syntax 'undefined 'undefined)))
+       ((eqv? obj 'nothing) (macro-readenv-wrap re (bard:syntax 'nothing 'nothing)))
+       ((eqv? obj 'true) (macro-readenv-wrap re (bard:syntax 'boolean #t)))
+       ((eqv? obj 'false) (macro-readenv-wrap re (bard:syntax 'boolean #f)))
        ((symbol? obj)(macro-readenv-wrap re (%syntax-for-name obj)))
-       ((integer? obj)(macro-readenv-wrap re (bard:syntax <integer> obj)))
-       ((flonum? obj)(macro-readenv-wrap re (bard:syntax <flonum> obj)))
-       ((##ratnum? obj)(macro-readenv-wrap re (bard:syntax <ratnum> obj)))
+       ((integer? obj)(macro-readenv-wrap re (bard:syntax 'integer obj)))
+       ((flonum? obj)(macro-readenv-wrap re (bard:syntax 'flonum obj)))
+       ((##ratnum? obj)(macro-readenv-wrap re (bard:syntax 'ratnum obj)))
        (else (error "Unrecognized atom" c))))))
 
 (define $constituent-chars
