@@ -37,6 +37,7 @@
          "src/make.scm"
          "src/syntax.scm"
          "src/reader.scm"
+         "src/printer.scm"
          ))
 
 ;;; load sources
