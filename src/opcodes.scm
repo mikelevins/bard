@@ -20,3 +20,5 @@
 (define $op_TWO #x09)
 (define $op_UNDEFINED #x0A)
 (define $op_NOTHING #x0B)
+(define $op_LVAR #x0C)
+(define $op_MVAR #x0D)

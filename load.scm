@@ -38,7 +38,9 @@
          "src/syntax.scm"
          "src/reader.scm"
          "src/printer.scm"
+         "src/opcodes.scm"
          "src/codegen.scm"
+         "src/environments.scm"
          "src/compiler.scm"
          ))
 

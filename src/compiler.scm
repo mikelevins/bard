@@ -25,7 +25,11 @@
       ((flonum) syntax-value)
       ((ratnum) syntax-value)
       ((character) syntax-value)
-      ((name)(string->symbol (string-append (frame:get obj module-name:) ":" syntax-value)))
+      ((name)(let ((mname (frame:get expr module-name:))
+                   (vname syntax-value))
+               (if mname
+                   (string->symbol (string-append (object->string mname) ":" (object->string vname)))
+                   vname)))
       ((text) syntax-value)
       ((sequence)(seq:make-sequence (map comp:syntax-value->bard-value syntax-value)))
       ((application)(seq:make-sequence (map comp:syntax-value->bard-value syntax-value)))
@@ -64,15 +68,22 @@
       (eqv? (bard:nothing) val)))
 
 (define (bard:compile-constant expr val? more?)
-  (let* ((val (comp:syntax-value->bard-value expr))
-         (epilogue (if more? '() (comp:gen 'RETURN)))
-         (body (if (comp:special-constant? val)
-                   (comp:gen-special-constant val)
-                   (comp:gen 'CONSTANT val))))
-    (append body epilogue)))
+  (if val?
+      (let* ((val (comp:syntax-value->bard-value expr))
+             (epilogue (if more? '() (comp:gen 'RETURN)))
+             (body (if (comp:special-constant? val)
+                       (comp:gen-special-constant val)
+                       (comp:gen 'CONSTANT val))))
+        (append body epilogue))
+      '()))
 
 (define (bard:compile-name-expression expr env val? more?)
-  '())
+  (if val?
+      (let* ((nm (comp:syntax-value->bard-value expr))
+             (epilogue (if more? '() (comp:gen 'RETURN)))
+             (body (comp:gen-variable-reference nm env)))
+        (append body epilogue))
+      '()))
 
 (define (bard:compile-sequence-expression expr env val? more?)
   '())

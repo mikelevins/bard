@@ -21,6 +21,8 @@
     ((TWO)(list $op_TWO))
     ((UNDEFINED)(list $op_UNDEFINED))
     ((NOTHING)(list $op_NOTHING))
+    ((LVAR)(list $op_LVAR (car args)))
+    ((MVAR)(list $op_MVAR (car args)))
     (else (error "Unrecognized operator in code generation" op))))
 
 (define (comp:gen-special-constant val)
@@ -34,3 +36,9 @@
    ((eqv? (bard:undefined) val)(comp:gen 'UNDEFINED))
    ((eqv? (bard:nothing) val)(comp:gen 'NOTHING))
    (else (error "Unrecognized special constant in code generation" val))))
+
+(define (comp:gen-variable-reference expr env)
+  (let ((found (env:get-binding expr env)))
+    (if found
+        (comp:gen 'LVAR expr)
+        (comp:gen 'MVAR expr))))
