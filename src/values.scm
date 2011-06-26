@@ -60,7 +60,7 @@
 
 (define (seq:add-first x s)(ra:cons x s))
 (define (seq:sequence . args)(apply ra:list args))
-(define (seq:make-sequence k . rest)(apply ra:make-list `(,k . ,@rest)))
+(define (seq:make-sequence elts)(ra:make-list elts))
 (define (seq:first s)(ra:car s))
 (define (seq:rest s)(ra:cdr s))
 (define (seq:second s)(ra:caar s))

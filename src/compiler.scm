@@ -9,6 +9,30 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
+;;; syntax->value
+;;; ---------------------------------------------------------------------
+
+(define (comp:syntax-value->bard-value expr)
+  (let* ((syntax-type (frame:get expr type:))
+         (syntax-value (frame:get expr value:)))
+    (case syntax-type
+      ((undefined)(bard:undefined))
+      ((nothing)(bard:nothing))
+      ((boolean)(if syntax-value
+                    (bard:true)
+                    (bard:false)))
+      ((integer) syntax-value)
+      ((flonum) syntax-value)
+      ((ratnum) syntax-value)
+      ((character) syntax-value)
+      ((name)(string->symbol (string-append (frame:get obj module-name:) ":" syntax-value)))
+      ((text) syntax-value)
+      ((sequence)(seq:make-sequence (map comp:syntax-value->bard-value syntax-value)))
+      ((application)(seq:make-sequence (map comp:syntax-value->bard-value syntax-value)))
+      ((frame)(frame:plist->frame (map comp:syntax-value->bard-value syntax-value)))
+      (else (error "Unknown type of syntax object" obj)))))
+
+;;; ---------------------------------------------------------------------
 ;;; application-expression compilers
 ;;; ---------------------------------------------------------------------
 
@@ -22,12 +46,30 @@
 (define (bard:compile-value-application expr env val? more?)
   '())
 
+(define (comp:application-type expr)
+  '())
+
 ;;; ---------------------------------------------------------------------
 ;;; typed expression compilers
 ;;; ---------------------------------------------------------------------
 
+(define (comp:special-constant? val)
+  (or (eqv? #t val)
+      (eqv? #f val)
+      (eqv? -1 val)
+      (eqv? 0 val)
+      (eqv? 1 val)
+      (eqv? 2 val)
+      (eqv? (bard:undefined) val)
+      (eqv? (bard:nothing) val)))
+
 (define (bard:compile-constant expr val? more?)
-  '())
+  (let* ((val (comp:syntax-value->bard-value expr))
+         (epilogue (if more? '() (comp:gen 'RETURN)))
+         (body (if (comp:special-constant? val)
+                   (comp:gen-special-constant val)
+                   (comp:gen 'CONSTANT val))))
+    (append body epilogue)))
 
 (define (bard:compile-name-expression expr env val? more?)
   '())
@@ -66,3 +108,4 @@
       ((application)(bard:compile-application expr env val? more?))
       ((frame)(bard:compile-frame-expression expr env val? more?))
       (else (error "Unknown type of syntax object" obj)))))
+

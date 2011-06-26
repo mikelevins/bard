@@ -38,6 +38,8 @@
          "src/syntax.scm"
          "src/reader.scm"
          "src/printer.scm"
+         "src/codegen.scm"
+         "src/compiler.scm"
          ))
 
 ;;; load sources
