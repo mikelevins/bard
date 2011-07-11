@@ -175,9 +175,11 @@
 
 (define (bard:value<? x y)
   (let ((x (if (<cell>:cell? x)
-               (<cell>:get x)))
+               (<cell>:get x)
+               x))
         (y (if (<cell>:cell? y)
-               (<cell>:get y))))
+               (<cell>:get y)
+               y)))
     (cond
      ((<undefined>:undefined? x)(if (<undefined>:undefined? y) #f #t))
      ((<nothing>:nothing? x)(cond
@@ -312,7 +314,7 @@
   (set! <frame>:empty? (lambda (x) (eq? x fr))))
 
 (define (<frame>:frame? x)
-  (and (wt-tree? x)
+  (and (wttree? x)
        (eq? <frame>:frame (wt-tree-type x))))
 
 (define (<frame>:alist->frame alist)
@@ -321,7 +323,7 @@
 (define (<frame>:plist->frame plist)
   (<frame>:alist->frame (plist->alist plist)))
 
-(define (<frame>:get m k #!key (default (bard:undefined)))
+(define (<frame>:get m k #!key (default (<undefined>:undefined)))
   (wt-tree/lookup m k default))
 
 (define (<frame>:put m k val)

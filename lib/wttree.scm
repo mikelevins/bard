@@ -85,6 +85,8 @@
 (define string-wt-type #f)
 ;@
 (define make-wt-tree #f)
+(define wttree? #f) ;;; added to API mle -- 2011-07-11
+(define wt-tree-type #f) ;;; added to API mle -- 2011-07-11
 (define singleton-wt-tree #f)
 (define alist->wt-tree #f)
 (define wt-tree/empty? #f)
@@ -654,6 +656,14 @@
   (set! make-wt-tree
         (lambda (tree-type)
           (%make-wt-tree tree-type empty)))
+
+  (set! wttree?
+        (lambda (x)
+          (wt-tree? x)))
+
+  (set! wt-tree-type
+        (lambda (x)
+          (tree/type x)))
 
   (set! singleton-wt-tree
         (lambda (type key value)
