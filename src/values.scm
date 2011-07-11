@@ -3,99 +3,141 @@
 ;;;;
 ;;;; Name:          values.scm
 ;;;; Project:       bard
-;;;; Purpose:       representation of built-in Bard types
+;;;; Purpose:       built-in Bard types
 ;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(##include "~~/lib/gambit#.scm")
+;;; ---------------------------------------------------------------------
+;;; ABOUT
+;;; ---------------------------------------------------------------------
+;;; functions defined in this file are representation-specific; they're
+;;; named with prefixes that identify their representations.
+;;; The normal programmer API uses generic functions, which resolve
+;;; to the representation-specific functions through dispatch.
+;;; each representation's Category in the standard Bard type graph is 
+;;; listed in the following form:
+;;; <representation>->Category
+
 (##include "~~/lib/termite/termite#.scm")
-(##include "~~/lib/termite/data.scm")
 
 ;;; ---------------------------------------------------------------------
-;;; eof
+;;; <eof>->Eof
 ;;; ---------------------------------------------------------------------
 
-(define (bard:eof) #!eof)
-(define (bard:eof? x) (eqv? x #!eof))
+(define (<eof>:make) #!eof)
+(define (<eof>:eof? x) (eqv? x #!eof))
 
 ;;; ---------------------------------------------------------------------
-;;; undefined
+;;; <undefined>->Undefined
 ;;; ---------------------------------------------------------------------
 
-(define (bard:undefined) #!unbound)
-(define (bard:undefined? x) (eqv? x #!unbound))
-(define (bard:defined? x)(not (bard:undefined? x)))
+(define (<undefined>:undefined) #!unbound)
+(define (<undefined>:undefined? x) (eqv? x #!unbound))
+(define (<undefined>:defined? x)(not (<undefined>:undefined? x)))
 
 ;;; ---------------------------------------------------------------------
-;;; nothing
+;;; <nothing>->Nothing
 ;;; ---------------------------------------------------------------------
 
-(define bard:nothing #f)
-(define bard:nothing? #f)
+(define <nothing>:make #f)
+(define <nothing>:nothing? #f)
 (let ((%nothing (cons '() '())))
-  (set! bard:nothing (lambda () %nothing))
-  (set! bard:nothing? (lambda (x) (eq? x %nothing))))
-(define (bard:something? x)(not (bard:nothing? x)))
+  (set! <nothing>:make (lambda () %nothing))
+  (set! <nothing>:nothing? (lambda (x) (eq? x %nothing))))
+(define (<nothing>:something? x)(not (<nothing>:nothing? x)))
 
 ;;; ---------------------------------------------------------------------
-;;; true and false
+;;; <boolean>->Boolean
 ;;; ---------------------------------------------------------------------
 
-(define (bard:false) #f)
-(define (bard:false? x) 
-  (or (eqv? x (bard:false))
-      (bard:nothing? x)))
+(define (<boolean>:false) #f)
+(define (<boolean>:false? x) 
+  (or (eqv? x (<boolean>:false))
+      (<nothing>:nothing? x)))
 
-(define (bard:true) #t)
-(define (bard:true? x) (not (bard:false? x)))
+(define (<boolean>:true) #t)
+(define (<boolean>:true? x) (not (<boolean>:false? x)))
 
-;;; ---------------------------------------------------------------------
-;;; sequences
-;;; ---------------------------------------------------------------------
-
-(define (bard:empty-sequence)(ra:null))
-(define bard:empty-sequence? ra:null?)
-(define bard:sequence? ra:list?)
-
-(define (seq:add-first x s)(ra:cons x s))
-(define (seq:sequence . args)(apply ra:list args))
-(define (seq:make-sequence elts)(ra:make-list elts))
-(define (seq:first s)(ra:car s))
-(define (seq:rest s)(ra:cdr s))
-(define (seq:second s)(ra:caar s))
-(define (seq:third s)(ra:caaar s))
-(define (seq:fourth s)(ra:caaaar s))
-(define (seq:length s)(ra:length s))
-(define seq:fold-left fold-left)
-(define seq:fold-right fold-right)
-(define seq:append ra:append)
-(define seq:reverse ra:reverse)
-(define (seq:drop n s)(ra:list-tail s n))
-(define seq:element ra:list-ref)
-(define seq:image ra:map)
+(define (<boolean>:boolean? x)
+  (or (eqv? x (<boolean>:false))
+      (eqv? x (<boolean>:true))))
 
 ;;; ---------------------------------------------------------------------
-;;; cells
+;;; <ralist>->Sequence
 ;;; ---------------------------------------------------------------------
 
-(define (bard:make-cell value)
-  (make-cell value))
+(define (<ralist>:empty) ra:null)
+(define <ralist>:empty? ra:null?)
+(define <ralist>:ralist? ra:list?)
 
-(define (bard:cell? thing)
-  (thread? thing))
-
-(define (bard:get-cell cell)
-  (cell-ref cell))
-
-(define (bard:put-cell! cell val)
-  (cell-set! cell val))
-
-(define (bard:cell-empty? cell)
-  (cell-empty? cell))
+(define (<ralist>:add-first x s)(ra:cons x s))
+(define (<ralist>:ralist . args)(apply ra:list args))
+(define (<ralist>:make elts)(ra:make-list elts))
+(define (<ralist>:first s)(ra:car s))
+(define (<ralist>:rest s)(ra:cdr s))
+(define (<ralist>:second s)(ra:caar s))
+(define (<ralist>:third s)(ra:caaar s))
+(define (<ralist>:fourth s)(ra:caaaar s))
+(define (<ralist>:length s)(ra:length s))
+(define <ralist>:fold-left fold-left)
+(define <ralist>:fold-right fold-right)
+(define <ralist>:append ra:append)
+(define <ralist>:reverse ra:reverse)
+(define (<ralist>:drop n s)(ra:list-tail s n))
+(define <ralist>:element ra:list-ref)
+(define <ralist>:image ra:map)
 
 ;;; ---------------------------------------------------------------------
-;;; slots
+;;; <cell>->Cell
+;;; ---------------------------------------------------------------------
+
+(define (%data-make-process-name type)
+  (string->symbol 
+    (string-append 
+      (symbol->string 
+        (thread-name 
+          (current-thread))) 
+      "-"
+      (symbol->string type))))
+
+;; ----------------------------------------------------------------------------
+;; Cells
+
+(define (<cell>:make #!key (name (%data-make-process-name 'cell))
+                     #!rest content)
+  (spawn
+    (lambda ()
+      (let loop ((content (if (pair? content)
+                              (car content)
+                              (void))))
+        (recv
+          ((from tag 'empty?)
+           (! from (list tag (eq? (void) content)))
+           (loop content))
+
+          ((from tag 'ref)
+           (! from (list tag content))
+           (loop content))
+
+          (('set! content)
+           (loop content)))))
+    name: name))
+
+(define (<cell>:get cell)
+  (!? cell 'ref))
+
+(define (<cell>:put! cell value)
+  (! cell (list 'set! value)))
+
+(define (<cell>:empty? cell)
+  (!? cell 'empty?))
+
+(define (<cell>:cell? x)
+  (thread? x))
+
+;;; ---------------------------------------------------------------------
+;;; <slot>->Slot
 ;;; ---------------------------------------------------------------------
 ;;; we normally never see bare slots; instead we see them as the
 ;;; output of accessing a frame as a sequence. frames are not
@@ -109,95 +151,183 @@
   (key bard:slot-key)
   (value bard:slot-value))
 
-(define (bard:slot key value) 
+(define (<slot>:make key value) 
   (%make-slot key value))
 
+(define (<slot>:slot? x)
+  (bard:slot? x))
+
+(define (<slot>:key x)
+  (bard:slot-key x))
+
+(define (<slot>:value x)
+  (bard:slot-value x))
+
 ;;; ---------------------------------------------------------------------
-;;; frames
+;;; <frame>->Map
 ;;; ---------------------------------------------------------------------
+
+(define <frame>:frame? #f)
 
 ;;; - comparisons -------------------------------------------------------
 
-(define (bard:comparison-type x)
-  (cond
-   ((bard:undefined? x) 'undefined)
-   ((bard:nothing? x) 'nothing)
-   ((or (eqv? x (bard:true))(eqv? x (bard:false))) 'boolean)
-   ((or (integer? x)(flonum? x)(##ratnum? x)) 'number)
-   ((char? x) 'character)
-   ((or (symbol? x)(keyword? x)) 'name)
-   ((string? x) 'text)
-   ((bard:sequence? x) 'sequence)))
-
-(define (%name->string x)
-  (cond
-   ((symbol? x)(symbol->string x))
-   ((keyword? x)(keyword->string x))
-   (else (error "not a name" x))))
-
-(define (bard:comparison-for-type tp)
-  (case tp
-    ((undefined)(lambda (x y) #f))
-    ((nothing)(lambda (x y) #f))
-    ((boolean)(lambda (x y)(if (eqv? x (bard:false))
-                               (if (eqv? y (bard:true))
-                                   #t
-                                   #f)
-                               #f)))
-    ((number)(lambda (x y)(< x y)))
-    ((character)(lambda (x y)(char<? x y)))
-    ((text)(lambda (x y)(string<? x y)))
-    ((name)(lambda (x y)(string<? (%name->string x)
-                                  (%name->string y))))
-    ((sequence)(lambda (x y)(cond
-                             ((< (count x)(count y)) #t)
-                             ((= (count x)(count y))(bard:every? bard:value<? x y))
-                             (else #f))))))
-
-(define $bard-type-comparison-order
-  '(undefined nothing boolean number character sequence))
-
-(define (bard:compare-by-type x y)
-  (< (position x $bard-type-comparison-order eqv?)
-     (position y $bard-type-comparison-order eqv?)))
-
-(define (bard:same-type? x y)
-  (eqv? (bard:comparison-type x)
-        (bard:comparison-type y)))
+;;; TODO: extend this and make it generic once we have generic functions
 
 (define (bard:value<? x y)
-  (if (bard:same-type? x y)
-      ((bard:comparison-for-type (bard:comparison-type x)) x y)
-      (bard:compare-by-type x y)))
+  (let ((x (if (<cell>:cell? x)
+               (<cell>:get x)))
+        (y (if (<cell>:cell? y)
+               (<cell>:get y))))
+    (cond
+     ((<undefined>:undefined? x)(if (<undefined>:undefined? y) #f #t))
+     ((<nothing>:nothing? x)(cond
+                             ((<undefined>:undefined? y) #f)
+                             ((<nothing>:nothing? y) #f)
+                             (else #t)))
+     ((<eof>:eof? x)(cond
+                     ((<undefined>:undefined? y) #f)
+                     ((<nothing>:nothing? y) #f)
+                     ((<eof>:eof? y) #f)
+                     (else #t)))
+     ((<boolean>:boolean? x)(cond
+                             ((<undefined>:undefined? y) #f)
+                             ((<nothing>:nothing? y) #f)
+                             ((<eof>:eof? y) #f)
+                             ((<boolean>:boolean? y)(if (<boolean>:false? x)
+                                                        (if (<boolean>:false? y)
+                                                            #f
+                                                            #t)
+                                                        #f))
+                             (else #t)))
+     ((char? x)(cond
+                ((<undefined>:undefined? y) #f)
+                ((<nothing>:nothing? y) #f)
+                ((<eof>:eof? y) #f)
+                ((<boolean>:boolean? y) #f)
+                ((char? y)(char<? x y))
+                (else #t)))
+     ((number? x)(cond
+                  ((<undefined>:undefined? y) #f)
+                  ((<nothing>:nothing? y) #f)
+                  ((<eof>:eof? y) #f)
+                  ((<boolean>:boolean? y) #f)
+                  ((char? y) #f)
+                  ((number? y)(< x y))
+                  (else #t)))
+     ((symbol? x)(cond
+                  ((<undefined>:undefined? y) #f)
+                  ((<nothing>:nothing? y) #f)
+                  ((<eof>:eof? y) #f)
+                  ((<boolean>:boolean? y) #f)
+                  ((char? y) #f)
+                  ((number? y) #f)
+                  ((symbol? y)(string<? (symbol->string x)(symbol->string y)))
+                  (else #t)))
+     ((keyword? x)(cond
+                   ((<undefined>:undefined? y) #f)
+                   ((<nothing>:nothing? y) #f)
+                   ((<eof>:eof? y) #f)
+                   ((<boolean>:boolean? y) #f)
+                   ((char? y) #f)
+                   ((number? y) #f)
+                   ((symbol? y) #f)
+                   ((keyword? y)(string<? (keyword->string x)(keyword->string y)))
+                   (else #t)))
+     ((string? x)(cond
+                   ((<undefined>:undefined? y) #f)
+                   ((<nothing>:nothing? y) #f)
+                   ((<eof>:eof? y) #f)
+                   ((<boolean>:boolean? y) #f)
+                   ((char? y) #f)
+                   ((number? y) #f)
+                   ((symbol? y) #f)
+                   ((keyword? y) #f)
+                   ((string? y)(string<? x y))
+                   (else #t)))
+     ((<slot>:slot? x)(cond
+                       ((<undefined>:undefined? y) #f)
+                       ((<nothing>:nothing? y) #f)
+                       ((<eof>:eof? y) #f)
+                       ((<boolean>:boolean? y) #f)
+                       ((char? y) #f)
+                       ((number? y) #f)
+                       ((symbol? y) #f)
+                       ((keyword? y) #f)
+                       ((string? y) #f)
+                       ((<slot>:slot? y)(bard:value<? (<slot>:key x)(<slot>:key y)))
+                       (else #t)))
+     ((<ralist>:ralist? x)(cond
+                           ((<undefined>:undefined? y) #f)
+                           ((<nothing>:nothing? y) #f)
+                           ((<eof>:eof? y) #f)
+                           ((<boolean>:boolean? y) #f)
+                           ((char? y) #f)
+                           ((number? y) #f)
+                           ((symbol? y) #f)
+                           ((keyword? y) #f)
+                           ((string? y) #f)
+                           ((<slot>:slot? y) #f)
+                           ((<ralist>:ralist? y)(cond
+                                                 ((< (<ralist>:length x)
+                                                     (<ralist>:length y)) #t)
+                                                 ((> (<ralist>:length x)
+                                                     (<ralist>:length y)) #f)
+                                                 (else (let loop ((xs x)
+                                                                  (ys y))
+                                                         (if (<ralist>:empty? xs)
+                                                             #f
+                                                             (let ((x0 (<ralist>:first xs))
+                                                                   (y0 (<ralist>:first ys)))
+                                                               (if (bard:value<? x0 y0)
+                                                                   #t
+                                                                   (loop (<ralist>:rest xs)
+                                                                         (<ralist>:rest ys)))))))))
+                           (else #t)))
+     ((<frame>:frame? x)(cond
+                         ((<undefined>:undefined? y) #f)
+                         ((<nothing>:nothing? y) #f)
+                         ((<eof>:eof? y) #f)
+                         ((<boolean>:boolean? y) #f)
+                         ((char? y) #f)
+                         ((number? y) #f)
+                         ((symbol? y) #f)
+                         ((keyword? y) #f)
+                         ((string? y) #f)
+                         ((<slot>:slot? y) #f)
+                         ((<ralist>:ralist? y) #f)
+                         ((<frame>:frame? y)(let ((xkeys (<frame>:keys x))
+                                                  (ykeys (<frame>:keys y)))
+                                              (bard:value<? xkeys ykeys)))
+                         (else (error "Comparison is not defined for values of this type" y))))
+     (else (error "Comparison is not defined for values of this type" x)))))
 
 ;;; - frames -------------------------------------------------------------
 
-(define frame:frame (make-wt-tree-type bard:value<?))
+(define <frame>:frame (make-wt-tree-type bard:value<?))
 
-(define frame:empty #f)
-(define frame:empty? #f)
-(let ((fr (alist->wt-tree frame:frame '())))
-  (set! frame:empty (lambda () fr))
-  (set! frame:empty? (lambda (x) (eq? x fr))))
+(define <frame>:empty #f)
+(define <frame>:empty? #f)
+(let ((fr (alist->wt-tree <frame>:frame '())))
+  (set! <frame>:empty (lambda () fr))
+  (set! <frame>:empty? (lambda (x) (eq? x fr))))
 
-(define (frame:frame? x)
+(define (<frame>:frame? x)
   (and (wt-tree? x)
-       (eq? frame:frame (wt-tree-type x))))
-(define bard:frame? frame:frame?)
+       (eq? <frame>:frame (wt-tree-type x))))
 
-(define (frame:alist->frame alist)
-  (alist->wt-tree frame:frame alist))
+(define (<frame>:alist->frame alist)
+  (alist->wt-tree <frame>:frame alist))
 
-(define (frame:plist->frame plist)
-  (frame:alist->frame (plist->alist plist)))
+(define (<frame>:plist->frame plist)
+  (<frame>:alist->frame (plist->alist plist)))
 
-(define (frame:get m k #!key (default (bard:undefined)))
+(define (<frame>:get m k #!key (default (bard:undefined)))
   (wt-tree/lookup m k default))
 
-(define (frame:put m k val)
+(define (<frame>:put m k val)
   (wt-tree/add m k val))
 
-(define (frame:keys m)
+(define (<frame>:keys m)
   (let ((keycount (wt-tree/size m)))
     (let loop ((i 0)
                (result '()))
@@ -205,9 +335,9 @@
           (loop (+ i 1)
                 (cons (wt-tree/index m i)
                       result))
-          (reverse result)))))
+          (apply <ralist>:ralist (reverse result))))))
 
-(define (frame:vals m)
+(define (<frame>:vals m)
   (let ((keycount (wt-tree/size m)))
     (let loop ((i 0)
                (result '()))
@@ -215,11 +345,11 @@
           (loop (+ i 1)
                 (cons (wt-tree/index-datum m i)
                       result))
-          (reverse result)))))
+          (apply <ralist>:ralist (reverse result))))))
 
 ;;; later key/val pairs override earlier ones
-(define (frame:%merge m1 m2)
+(define (<frame>:%merge m1 m2)
   (wt-tree/union m1 m2))
 
 (define (make-frame . inits)
-  (frame:plist->frame inits))
+  (<frame>:plist->frame inits))

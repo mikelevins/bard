@@ -15,10 +15,9 @@
 ;;; termite includes and loads
 ;;; ----------------------------------------------------------------------
 
-(##include "~~lib/gambit#.scm")
+(##include "~~/lib/gambit#.scm")
 (##include "~~/lib/termite/termite#.scm")
 (load "~~/lib/termite/termite")
-
 
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
@@ -31,9 +30,18 @@
   (paths $bard-root 
          "src/list-utils.scm"
          "src/string-utils.scm"
-         "lib/wttree.scm"
+         "lib/wt-tree.scm"
          "lib/srfi101.scm"
          "src/values.scm"
+         "src/prototypes.scm"
+         "src/make.scm"
+         "src/syntax.scm"
+         "src/reader.scm"
+         "src/printer.scm"
+         "src/opcodes.scm"
+         "src/codegen.scm"
+         "src/environments.scm"
+         "src/compiler.scm"
          ))
 
 ;;; load sources
