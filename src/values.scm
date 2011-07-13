@@ -25,7 +25,7 @@
 ;;; <eof>->Eof
 ;;; ---------------------------------------------------------------------
 
-(define (<eof>:make) #!eof)
+(define (<eof>:eof) #!eof)
 (define (<eof>:eof? x) (eqv? x #!eof))
 
 ;;; ---------------------------------------------------------------------
@@ -40,10 +40,10 @@
 ;;; <nothing>->Nothing
 ;;; ---------------------------------------------------------------------
 
-(define <nothing>:make #f)
+(define <nothing>:nothing #f)
 (define <nothing>:nothing? #f)
 (let ((%nothing (cons '() '())))
-  (set! <nothing>:make (lambda () %nothing))
+  (set! <nothing>:nothing (lambda () %nothing))
   (set! <nothing>:nothing? (lambda (x) (eq? x %nothing))))
 (define (<nothing>:something? x)(not (<nothing>:nothing? x)))
 
@@ -87,6 +87,14 @@
 (define (<ralist>:drop n s)(ra:list-tail s n))
 (define <ralist>:element ra:list-ref)
 (define <ralist>:image ra:map)
+(define (<ralist>->list ral)
+  (let loop ((ral ral)
+             (result '()))
+    (if (<ralist>:empty? ral)
+        (reverse result)
+        (loop (<ralist>:rest ral)
+              (cons (<ralist>:first ral)
+                    result)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; <cell>->Cell
@@ -355,3 +363,4 @@
 
 (define (make-frame . inits)
   (<frame>:plist->frame inits))
+

@@ -34,6 +34,8 @@
          "lib/wttree.scm"
          "lib/srfi101.scm"
          "src/values.scm"
+         "src/syntax.scm"
+         "src/reader.scm"
          ))
 
 ;;; load sources
