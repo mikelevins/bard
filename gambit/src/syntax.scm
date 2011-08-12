@@ -11,6 +11,20 @@
 (define (<syntax-atom>:make #!key syntax-type value)
   (make-frame type: '<syntax-atom> syntax-type: syntax-type value: value))
 
+(define (<syntax-atom>:syntax-atom? x)
+  (and (<frame>:frame? x)
+       (eq? '<syntax-atom>
+            (<frame>:get x type:))))
+
+(define (<syntax-atom>:format s)
+  (let* ((prefix "#<| ")
+         (stype (<frame>:get s syntax-type:))
+         (sval (<frame>:get s value:))
+         (suffix " |>"))
+    (if (<nothing>:something? sval)
+        (string-append prefix (object->string stype) " " (object->string sval) suffix)
+        (string-append prefix (object->string stype) suffix))))
+
 (define (<syntax-sequence>:empty)
   (make-frame type: '<empty-syntax-sequence>))
 
@@ -140,7 +154,7 @@
   (if (<frame>:frame? s)
       (if (<syntax-sequence>:syntax-sequence? s)
           (<syntax-sequence>:format s)
-          (<frame>:format s))
+          (<syntax-atom>:format s))
       (object->string s)))
 
 (define (<syntax>:display s)
