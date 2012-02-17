@@ -1,340 +1,0 @@
-TBard
-v7
-r0
-t311029244.667044
-cCheck dependencies
-cCpResource build/Debug-iphoneos/Bard.app/ResourceRules.plist /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist
-cProcessInfoPlistFile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Info.plist Bard-Info.plist
-cCompileXIB /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib
-cCompileXIB /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib
-cProcessPCH /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch.gch Bard_Prefix.pch normal armv7 objective-c com.apple.compilers.gcc.4_2
-cCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/main.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-cCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardAppDelegate.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-cCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardViewController.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-cLd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard normal armv7
-cGenerateDSYMFile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app.dSYM /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard
-cProcessProductPackaging "/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision" /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision
-cTouch /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-cProcessProductPackaging /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent
-cCodeSign /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk
-c000000004CC7DC9E0000000000000110
-t1288166558
-s272
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist
-c000000004CB3DFCF00000000000001A7
-t1286856655
-s423
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist
-c000000004CB3DFCF00000000000001E5
-t1286856655
-s485
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-c000000004CC10EF500000000003532B0
-t1287720693
-s3486384
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-c000000004CC10F4700000000003E1F20
-t1287720775
-s4071200
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
-c000000004CC10F1C0000000000001466
-t1287720732
-s5222
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
-c000000004CC11AE60000000000000AA1
-t1287723750
-s2721
-
-N/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework/UIKit
-c000000004CC11B750000000000C769F0
-t1287723893
-s13068784
-
-N/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision
-c000000004CD98FE10000000000002717
-t1289326561
-s10007
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib
-c000000004CD990DB0000000000003ED5
-t1289326811
-s16085
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard_Prefix.pch
-c000000004CD990DB00000000000000B1
-t1289326811
-s177
-i<Foundation/Foundation.h>
-i<UIKit/UIKit.h>
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.h
-c000000004CD990DB00000000000001C6
-t1289326811
-s454
-i<UIKit/UIKit.h>
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m
-c000000004CD990DB000000000000079E
-t1289326811
-s1950
-i"BardAppDelegate.h"
-i"BardViewController.h"
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.h
-c000000004CD990DB00000000000000DE
-t1289326811
-s222
-i<UIKit/UIKit.h>
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m
-c000000004CD990DB0000000000000545
-t1289326811
-s1349
-i"BardViewController.h"
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib
-c000000004CD990DB0000000000004CEB
-t1289326811
-s19691
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent
-t1289326826
-s414
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/Bard.LinkFileList
-c000000004CD990E10000000000000199
-t1289326817
-s409
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardAppDelegate.o
-t1289336088
-s50012
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardViewController.o
-t1289336088
-s38028
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/main.o
-t1289336088
-s6540
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-t1289336245
-s374
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app.dSYM
-t1289336089
-s102
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard
-t1289336089
-s22768
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/BardViewController.nib
-t1289326825
-s764
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Info.plist
-t1289326818
-s976
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/MainWindow.nib
-t1289326825
-s1117
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/PkgInfo
-t1289326818
-s8
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/ResourceRules.plist
-t1289326818
-s485
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision
-t1289326826
-s10007
-
-N/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m
-c000000004CD990DB000000000000015F
-t1289326811
-s351
-i<UIKit/UIKit.h>
-
-N/var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-cqzqtlmnghybreguekmznilyyydl/Bard_Prefix.pch.gch
-t1289326825
-s10446552
-
-N/var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch.gch
-t1289336088
-s10442456
-
-NBard-Info.plist
-c000000004CD990DB00000000000004D6
-t1289326811
-s1238
-
-CCheck dependencies
-r0
-lSLF07#2@18"Check dependencies311029244#311029244#0(0"0(0#1#0"8620661088#0"0#
-
-CCodeSign /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-s311029244.468196
-e311029244.667008
-r1
-xCodeSign
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-o/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app: replacing existing signature
-lSLF07#2@38"CodeSign build/Debug-iphoneos/Bard.app311029244#311029244#0(117"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app: replacing existing signature0(0#0#86"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app8617381600#704"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    setenv _CODESIGN_ALLOCATE_ /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate    /usr/bin/codesign -f -s "iPhone Developer: Mikel evins (73A86P6CQ5)" --resource-rules=/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/ResourceRules.plist --entitlements /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app0#
-
-CCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardAppDelegate.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-s311028888.653202
-e311028888.830897
-r1
-xCompileC
-xbuild/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardAppDelegate.o
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@90"Compile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m311028888#311028888#0(0"0(0#0#82"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m8617065920#1895"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch armv7 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -fvisibility=hidden -gdwarf-2 -mno-thumb -miphoneos-version-min=4.2 -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-generated-files.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-own-target-headers.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-all-target-headers.hmap -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-project-headers.hmap -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/include -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources/armv7 -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources -include /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardAppDelegate.m -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardAppDelegate.o0#
-
-CCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardViewController.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-s311028888.829964
-e311028888.883246
-r1
-xCompileC
-xbuild/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardViewController.o
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@93"Compile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m311028888#311028888#0(0"0(0#0#85"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m8618036768#1901"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch armv7 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -fvisibility=hidden -gdwarf-2 -mno-thumb -miphoneos-version-min=4.2 -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-generated-files.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-own-target-headers.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-all-target-headers.hmap -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-project-headers.hmap -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/include -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources/armv7 -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources -include /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Classes/BardViewController.m -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/BardViewController.o0#
-
-CCompileC build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/main.o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m normal armv7 objective-c com.apple.compilers.gcc.4_2
-s311028888.652275
-e311028888.829847
-r1
-xCompileC
-xbuild/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/main.o
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@71"Compile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m311028888#311028888#0(0"0(0#0#63"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m8618101376#1865"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch armv7 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -fvisibility=hidden -gdwarf-2 -mno-thumb -miphoneos-version-min=4.2 -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-generated-files.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-own-target-headers.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-all-target-headers.hmap -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-project-headers.hmap -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/include -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources/armv7 -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources -include /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/main.m -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/main.o0#
-
-CCompileXIB /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib
-s311019618.148409
-e311019625.062211
-r1
-xCompileXIB
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib
-lSLF07#2@33"CompileXIB BardViewController.xib311019618#311019625#0(0"0(0#0#79"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib8613722880#609"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.2    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/BardViewController.nib /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/BardViewController.xib --sdk /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk0#
-
-CCompileXIB /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib
-s311019618.147776
-e311019625.062002
-r1
-xCompileXIB
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib
-lSLF07#2@25"CompileXIB MainWindow.xib311019618#311019625#0(0"0(0#0#71"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib8613965920#593"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.2    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/MainWindow.nib /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/MainWindow.xib --sdk /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk0#
-
-CCpResource build/Debug-iphoneos/Bard.app/ResourceRules.plist /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist
-s311019617.807880
-e311019618.147705
-r1
-xCpResource
-xbuild/Debug-iphoneos/Bard.app/ResourceRules.plist
-x/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist
-lSLF07#2@94"Copy /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist311019618#311019618#0(0"0(0#0#89"/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist8531300039613640704#527"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -resolve-src-symlinks /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/ResourceRules.plist /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app0#
-
-CGenerateDSYMFile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app.dSYM /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard
-s311028889.165887
-e311028889.326401
-r1
-xGenerateDSYMFile
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app.dSYM
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard
-lSLF07#2@86"GenerateDSYMFile build/Debug-iphoneos/Bard.app.dSYM build/Debug-iphoneos/Bard.app/Bard311028889#311028889#0(0"0(0#0#91"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard8618609216#407"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app.dSYM0#
-
-CLd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard normal armv7
-s311028888.883336
-e311028889.165743
-r1
-xLd
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard
-xnormal
-xarmv7
-lSLF07#2@96"Link /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard311028888#311028889#0(0"0(0#0#0"8615620384#897"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv IPHONEOS_DEPLOYMENT_TARGET 4.2    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -arch armv7 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -L/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -filelist /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Objects-normal/armv7/Bard.LinkFileList -dead_strip -miphoneos-version-min=4.2 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Bard0#
-
-CProcessInfoPlistFile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Info.plist Bard-Info.plist
-s311019618.062662
-e311019618.066313
-r1
-xProcessInfoPlistFile
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Info.plist
-xBard-Info.plist
-lSLF07#2@23"Process Bard-Info.plist311019618#311019618#0(0"0(0#0#72"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard-Info.plist8612544512#622"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility Bard-Info.plist -genpkginfo /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -resourcerulesfile /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/ResourceRules.plist -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/Info.plist0#
-
-CProcessPCH /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-cqzqtlmnghybreguekmznilyyydl/Bard_Prefix.pch.gch Bard_Prefix.pch normal armv7 objective-c com.apple.compilers.gcc.4_2
-s311019625.062408
-e311019625.822385
-r1
-xProcessPCH
-x/var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-cqzqtlmnghybreguekmznilyyydl/Bard_Prefix.pch.gch
-xBard_Prefix.pch
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@26"Precompile Bard_Prefix.pch311019625#311019625#0(0"0(0#0#72"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard_Prefix.pch8613650176#1745"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch armv7 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -fvisibility=hidden -gdwarf-2 -mthumb -miphoneos-version-min=4.2 -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-generated-files.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-own-target-headers.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-all-target-headers.hmap -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-project-headers.hmap -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/include -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources/armv7 -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard_Prefix.pch -o /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-cqzqtlmnghybreguekmznilyyydl/Bard_Prefix.pch.gch0#
-
-CProcessPCH /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch.gch Bard_Prefix.pch normal armv7 objective-c com.apple.compilers.gcc.4_2
-s311028887.558288
-e311028888.652188
-r1
-xProcessPCH
-x/var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch.gch
-xBard_Prefix.pch
-xnormal
-xarmv7
-xobjective-c
-xcom.apple.compilers.gcc.4_2
-lSLF07#2@26"Precompile Bard_Prefix.pch311028887#311028888#0(0"0(0#0#72"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard_Prefix.pch8617147520#1748"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2 -x objective-c-header -arch armv7 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk -fvisibility=hidden -gdwarf-2 -mno-thumb -miphoneos-version-min=4.2 -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-generated-files.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-own-target-headers.hmap -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-all-target-headers.hmap -iquote /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard-project-headers.hmap -F/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/include -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources/armv7 -I/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/DerivedSources -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/Bard_Prefix.pch -o /var/folders/6r/6rDpY9CfEAOBLrIbLcACj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/Bard_Prefix-hdwutnikuvgnzrecpkqmagfcfevl/Bard_Prefix.pch.gch0#
-
-CProcessProductPackaging "/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision" /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision
-s311019626.504013
-e311019626.505205
-r1
-xProcessProductPackaging
-x/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision
-lSLF07#2@189"ProcessProductPackaging "/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision" build/Debug-iphoneos/Bard.app/embedded.mobileprovision311019626#311019626#0(0"0(0#0#111"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision8613684448#456"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    <com.apple.tools.product-pkg-utility> "/Users/mikel/Library/MobileDevice/Provisioning Profiles/52607062-CF3F-490D-91A1-31F3FDDB6C15.mobileprovision" -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app/embedded.mobileprovision0#
-
-CProcessProductPackaging /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent
-s311019626.552858
-e311019626.563866
-r1
-xProcessProductPackaging
-x/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent
-lSLF07#2@166"ProcessProductPackaging /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent311019626#311019626#0(0"0(0#0#110"/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent8611568416#459"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    <com.apple.tools.product-pkg-utility> /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Entitlements.plist -entitlements -format xml -o /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Bard.build/Debug-iphoneos/Bard.build/Bard.xcent0#
-
-CTouch /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-s311028889.326560
-e311028889.328744
-r1
-xTouch
-x/Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app
-lSLF07#2@92"Touch /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app311028889#311028889#0(0"0(0#0#0"8616757312#297"    cd /Users/mikel/Projects/bard/bard/implementations/iOS/Bard    setenv PATH "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/mikel/Projects/bard/bard/implementations/iOS/Bard/build/Debug-iphoneos/Bard.app0#
-
