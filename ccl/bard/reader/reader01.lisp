@@ -40,8 +40,8 @@
   (set-macro-character #\\
                        (lambda (stream char)
                          (declare (ignore char))
-                         (let ((item (bard::read stream)))
-                           `(:character ,item)))
+                         (let ((item (bard::%primitive-read stream)))
+                           `(:character ,(format nil "~S" item))))
                        nil +bard-read-table+))
 
 ;; the sequence reader
