@@ -2,5 +2,5 @@
 
 (defpackage #:bard
   (:use #:cl #:folio.as)
-  (:shadow #:read))
+  (:shadow #:print #:read))
 
