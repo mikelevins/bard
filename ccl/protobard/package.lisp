@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
 (defpackage #:bard
-  (:use #:cl)
+  (:use #:cl #:folio.as)
   (:shadow #:print #:read))
 

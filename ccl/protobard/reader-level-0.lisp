@@ -23,12 +23,12 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %left-paren-macro-char (stream macro-char) 
     (declare (ignore macro-char)) 
-    (let ((elts (read-delimited-list #\) stream t))) 
+    (let ((elts (read-delimited-list #\] stream t))) 
       (fset:convert 'fset:seq elts)))) 
 
 ;; the sequence reader
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (set-macro-character #\(
+  (set-macro-character #\[
                        #'%left-paren-macro-char
                        nil +bard-read-table+))
 
