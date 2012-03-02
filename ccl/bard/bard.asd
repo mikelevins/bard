@@ -25,6 +25,9 @@
                                      (:file "reader02")))
                (:module "printer"
                         :serial t
-                        :components ((:file "printer")))))
+                        :components ((:file "printer")))
+               (:module "repl"
+                        :serial t
+                        :components ((:file "repl")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
