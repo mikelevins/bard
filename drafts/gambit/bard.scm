@@ -31,6 +31,9 @@
                 (table-set! tbl (car kvs)(cadr kvs))
                 (loop (cddr kvs))))))))
 
+(define (not-yet-implemented . args)
+  (error "Not yet implemented" args))
+
 ;;;---------------------------------------------------------------------
 ;;; bard values
 ;;;---------------------------------------------------------------------
@@ -48,6 +51,11 @@
    ((##ratnum? thing) 'ratio)
    ((pair? thing) 'pair)
    (else 'unknown)))
+
+(define (undefined) #!void)
+(define (nothing) '())
+(define (true) #t)
+(define (false) #f)
 
 ;;;---------------------------------------------------------------------
 ;;; bard reader
@@ -90,7 +98,40 @@
   (table-set! $bard-primitives name (bard:make-prim name argcount primfun)))
 
 (bard:defprim '+ #f (lambda args (apply + args)))
+(bard:defprim '- #f (lambda args (apply - args)))
 (bard:defprim '* #f (lambda args (apply * args)))
+(bard:defprim '/ #f (lambda args (apply / args)))
+(bard:defprim '> #f (lambda args (apply > args)))
+(bard:defprim '< #f (lambda args (apply < args)))
+
+;;;---------------------------------------------------------------------
+;;; special forms
+;;;---------------------------------------------------------------------
+
+(define (bard:eval-define exp env)
+  (not-yet-implemented))
+
+(define (bard:eval-if exp env)
+  (not-yet-implemented))
+
+(define (bard:eval-method exp env)
+  (not-yet-implemented))
+
+(define $special-form-table
+  (plist->table
+   'define bard:eval-define
+   'if bard:eval-if
+   'method bard:eval-method))
+
+(define (bard:lookup-printer x)
+  (table-ref $printer-table x))
+
+(define (bard:value->printer thing)
+  (bard:lookup-printer (bard:value->type thing)))
+
+(define (bard:print thing)
+  (let ((printer (bard:value->printer thing)))
+    (printer thing)))
 
 ;;;---------------------------------------------------------------------
 ;;; bard evaluator
@@ -102,17 +143,17 @@
                       (set! env
                             (cons (cons k v) env)))
                     $bard-primitives)
-    env))
+    (box env)))
 
 (define (%find-entry env var)
-  (assq var env))
+  (assq var (unbox env)))
 
 (define (bard:lookup var env)
-  (let ((ent (%find-entry env var)))
+  (let ((ent (%find-entry (unbox env) var)))
     (if ent (cdr ent) #!void)))
 
 (define (bard:add-variable env var val)
-  (cons (cons var val) env))
+  (box (cons (cons var val) (unbox env))))
 
 (define $bard-initial-environment
   (bard:make-initial-environment))
@@ -128,15 +169,31 @@
       ((primitive)(apply (bard:%prim-fun op) args))
       (else (error "Invalid operator" op)))))
 
+(define (special-form? symbol)
+  (not-yet-implemented 'special-form?))
+
+(define (macro-name? symbol)
+  (not-yet-implemented 'macro-name?))
+
+(define (bard:eval-special-form exp env)
+  (not-yet-implemented 'bard:eval-special-form))
+
+(define (bard:eval-macro-form exp env)
+  (not-yet-implemented 'bard:eval-macro-form))
+
 (define (bard:eval exp env)
   (let ((exp-type (bard:value->type exp)))
     (case exp-type
       ((undefined null true false keyword integer float ratio) exp)
       ((symbol)(bard:lookup exp env))
-      ((pair)(let ((op (bard:eval (car exp) env))
-                   (args (map (lambda (x)(bard:eval x env))
-                              (cdr exp))))
-               (bard:apply op args)))
+      ((pair)(cond
+              ((null? exp)(nothing))
+              ((special-form? (car exp))(bard:eval-special-form exp env))
+              ((macro-name? (car exp))(bard:eval-macro-form exp env))
+              (else (let ((op (bard:eval (car exp) env))
+                          (args (map (lambda (x)(bard:eval x env))
+                                     (cdr exp))))
+                      (bard:apply op args)))))
       (else (error "Invalid expression syntax" exp)))))
 
 ;;;---------------------------------------------------------------------
