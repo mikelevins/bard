@@ -130,8 +130,9 @@
                 (bard:get-cell _env))))))
 
 (define (define-variable! var val)
-  (bard:put-cell! (toplevel-environment)
-                  (extend-environment (toplevel-environment))))
+  (set-toplevel-environment!
+   (add-binding (toplevel-environment)
+                var val)))
 
 (define (lookup-variable-value var env)
   (let* ((top-env (toplevel-environment))
@@ -209,6 +210,7 @@
 
 ;;; (bard:eval '+ (toplevel-environment))
 ;;; (bard:eval '- (toplevel-environment))
+;;; (bard:eval '(define x 3) (toplevel-environment))
 ;;; (bard:eval 'x (toplevel-environment))
 
 
