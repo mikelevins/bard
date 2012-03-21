@@ -30,10 +30,13 @@
 
 (define $bard-files
   (paths $bard-root 
+         "lib/uuid.scm"
          "lib/srfi101.scm"
          "lib/wttree.scm"
          "src/utils.scm"
-         "src/values/cell.scm"
+         "src/values/types.scm"
+         ;;"src/gf/c3.scm"
+         ;;"src/gf/functions.scm"
          "src/values/undefined.scm"
          "src/values/nothing.scm"
          "src/values/boolean.scm"
@@ -48,4 +51,5 @@
   (for-each (lambda (f)(load f))
             $bard-files))
 
+;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)

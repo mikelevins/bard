@@ -10,13 +10,17 @@
 ;;;; ***********************************************************************
 
 ;;;---------------------------------------------------------------------
+;;; private
+;;;---------------------------------------------------------------------
+
+(define (%object->text thing)
+  (object->string thing))
+
+;;;---------------------------------------------------------------------
 ;;; API
 ;;;---------------------------------------------------------------------
 
 (define bard:text? string?)
 
-(define (bard:make-text characters)
-  (list->string characters))
-
-(define (text . characters)
-  (bard:make-text characters))
+(define (bard:text thing)
+  (%object->text thing))
