@@ -9,6 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; representation of functions
+;;; ---------------------------------------------------------------------
+
 (define-type bard:%function-metadata
   id: 9BAAB52D-2A7F-482D-8BED-1F5CD677A335
   constructor: bard:%make-function-metadata
@@ -30,7 +34,19 @@
    (else (error "function expected"))))
 
 (define (%dispatch-function args metadata)
-  'function-dispatched)
+  (let ((f-argcount (length (bard:%function-signature metadata))))
+    (if (= f-argcount (length args))
+        (let* ((mtable (bard:%function-method-table (%function-metadata fun)))
+               (mtypes (map %method-param-type (bard:%method-signature (%function-metadata meth))))
+               (method (table-ref mtable mtypes)))
+          (if method
+              (%apply-method args metadata method)
+              (let ((fname (or (bard:%function-debug-name metadata)
+                               "an anonymous function")))
+                (error "no applicable method for function with arguments" fname args))))
+        (let ((fname (or (bard:%function-debug-name metadata)
+                         "an anonymous function")))
+          (error "wrong number of arguments to function" fname)))))
 
 (define (%validate-function-name name)
   (cond
@@ -120,3 +136,9 @@
           (table-set! mtable mtypes meth))
         (error "can't add method to function: mismatched argument lists"))))
 
+;;; ---------------------------------------------------------------------
+;;; type support
+;;; ---------------------------------------------------------------------
+
+(define bard:type
+  )
