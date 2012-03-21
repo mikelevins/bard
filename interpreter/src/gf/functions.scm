@@ -56,6 +56,13 @@
       p
       (error "invalid method parameter p")))
 
+(define (%method-param-type p)
+  (if (symbol? p)
+      Anything
+      (if (list? p)
+          (cadr p)
+          (error "malformed method parameter" p))))
+
 (define (%validate-method-signature signature)
   (and (every? %validate-method-param signature)
        signature))
@@ -72,8 +79,20 @@
 (define (%undefined-method-body . args)
   (error "No definition supplied for method with args" args))
 
+(define (%function-argcount f)
+  (length (bard:%function-signature (%function-metadata f))))
+
+(define (%method-argcount m)
+  (length (bard:%method-signature (%function-metadata m))))
+
+;;; (%function-argcount (%make-function))
+;;; (%method-argcount (%make-method))
+
 (define (%apply-method args metadata method-function)
-  (apply method-function args))
+  (if (= (length args)
+         (length (bard:%method-signature metadata)))
+      (apply method-function args)
+      (error "wrong number of arguments to method")))
 
 (define (%make-method #!key (name #f)(signature '())(method-function %undefined-method-body))
   (let* ((valid-name (%validate-function-name name))
@@ -89,5 +108,15 @@
 (define (%method? x)
   (bard:%method-metadata? (%function-metadata x)))
 
-;;; (%function? (%make-function))
-;;; (%method? (%make-method))
+;;; (define $m (%make-method signature: '(x y) method-function: (lambda (x y)(cons x y))))
+;;; ($m 1 2)
+
+(define (%add-method! fun meth)
+  (let ((m-argcount (%method-argcount m))
+        (f-argcount (%function-argcount fun)))
+    (if (= m-argcount f-argcount)
+        (let* ((mtable (bard:%function-method-table (%function-metadata fun)))
+               (mtypes (map %method-param-type (bard:%method-signature (%function-metadata meth)))))
+          (table-set! mtable mtypes meth))
+        (error "can't add method to function: mismatched argument lists"))))
+
