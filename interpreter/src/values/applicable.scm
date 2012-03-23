@@ -50,6 +50,8 @@
 (define <frame> (bard:%make-type '<frame> tags:$frame))
 (table-set! $bard-type-table tags:$frame <frame>)
 
+;;; ForeignFrame <- <ObjCFrame>
+
 ;;; ---------------------------------------------------------------------
 ;;; function
 ;;; ---------------------------------------------------------------------
@@ -120,6 +122,8 @@
 (define bard:member? (%make-function name: 'take signature: '(k ls test)))
 (define bard:assoc (%make-function name: 'take signature: '(k ls test)))
 
+;;; ForeignList <- <NSArray>
+;;; ForeignText <- <NSString>
 
 ;;; ---------------------------------------------------------------------
 ;;; Applicable protocol
