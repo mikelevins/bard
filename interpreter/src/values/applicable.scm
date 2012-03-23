@@ -87,6 +87,40 @@
 
 (define bard:list list)
 
+(define bard:empty? (%make-function name: 'empty? signature: '(ls)))
+(define bard:length (%make-function name: 'empty? signature: '(ls)))
+
+(define bard:first (%make-function name: 'first signature: '(ls)))
+(define bard:rest (%make-function name: 'rest signature: '(ls)))
+(define bard:last (%make-function name: 'rest signature: '(ls)))
+(define bard:nth (%make-function name: 'rest signature: '(ls n)))
+(define bard:second (%make-function name: 'second signature: '(ls)))
+(define bard:third (%make-function name: 'third signature: '(ls)))
+(define bard:tails (%make-function name: 'third signature: '(ls)))
+
+(define bard:take (%make-function name: 'take signature: '(n ls)))
+(define bard:drop (%make-function name: 'drop signature: '(n ls)))
+
+(define bard:filter (%make-function name: 'filter signature: '(fn ls)))
+(define bard:any? (%make-function name: 'any? signature: '(fn ls)))
+(define bard:every? (%make-function name: 'every? signature: '(fn ls)))
+(define bard:iota (%make-function name: 'iota signature: '(count start step)))
+
+(define bard:add-first (%make-function name: 'add-first signature: '(x ls)))
+(define bard:add-last (%make-function name: 'add-last signature: '(ls x)))
+
+(define bard:append (%make-function name: 'add-last signature: '(ls1 ls2)))
+(define bard:reverse (%make-function name: 'reverse signature: '(ls1 ls2)))
+
+(define bard:map (%make-function name: 'map signature: '(fn ls)))
+(define bard:fold-left (%make-function name: 'fold-left signature: '(op init ls)))
+(define bard:fold-right (%make-function name: 'fold-right signature: '(op init ls)))
+(define bard:reduce (%make-function name: 'reduce signature: '(op init ls)))
+
+(define bard:member? (%make-function name: 'take signature: '(k ls test)))
+(define bard:assoc (%make-function name: 'take signature: '(k ls test)))
+
+
 ;;; ---------------------------------------------------------------------
 ;;; Applicable protocol
 ;;; ---------------------------------------------------------------------
@@ -102,8 +136,10 @@
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<ratio>)) method-function: (lambda (x) #f)))
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<fixnum>)) method-function: (lambda (x) #f)))
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<bignum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<closure>)) method-function: (lambda (x) #f)))
+(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<closure>)) method-function: (lambda (x) #t)))
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<cons>)) method-function: (lambda (x) #f)))
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<text>)) method-function: (lambda (x) #f)))
 (%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<frame>)) method-function: (lambda (x) #t)))
+
+(define bard:apply (%make-function name: 'apply signature: '(app arg)))
 
