@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          number.scm
+;;;; Name:          character.scm
 ;;;; Project:       Bard
-;;;; Purpose:       number values
+;;;; Purpose:       character values
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -13,21 +13,6 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define bard:fixnum? ##fixnum?)
-(define bard:fixnum? ##bignum?)
+(define bard:character? char?)
 
-(define (bard:integer? x)
-  (or (##fixnum? x)
-      (##bignum? x)))
-
-(define (bard:float? x)
-  (##flonum? x))
-
-(define (bard:ratio? x)
-  (##ratnum? x))
-
-(define (bard:number? x) 
-  (or (bard:integer? x)
-      (bard:float? x)
-      (bard:ratio? x)))
 

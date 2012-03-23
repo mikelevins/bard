@@ -1,26 +1,21 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          text.scm
+;;;; Name:          name.scm
 ;;;; Project:       Bard
-;;;; Purpose:       text values
+;;;; Purpose:       name types
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 ;;;---------------------------------------------------------------------
-;;; private
-;;;---------------------------------------------------------------------
-
-(define (%object->text thing)
-  (object->string thing))
-
-;;;---------------------------------------------------------------------
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define bard:text? string?)
+(define bard:symbol? symbol?)
+(define bard:keyword? keyword?)
+(define (bard:name? x) 
+  (or (bard:symbol? x)
+      (bard:keyword? x)))
 
-(define (bard:text thing)
-  (%object->text thing))

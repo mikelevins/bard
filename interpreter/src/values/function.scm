@@ -36,11 +36,11 @@
 (define (%dispatch-function args metadata)
   (let ((f-argcount (length (bard:%function-signature metadata))))
     (if (= f-argcount (length args))
-        (let* ((mtable (bard:%function-method-table (%function-metadata fun)))
-               (mtypes (map %method-param-type (bard:%method-signature (%function-metadata meth))))
-               (method (table-ref mtable mtypes)))
+        (let* ((mtable (bard:%function-method-table metadata))
+               (argtypes (map bard:type args))
+               (method (table-ref mtable argtypes #f)))
           (if method
-              (%apply-method args metadata method)
+              (apply method args)
               (let ((fname (or (bard:%function-debug-name metadata)
                                "an anonymous function")))
                 (error "no applicable method for function with arguments" fname args))))
@@ -64,24 +64,29 @@
        signature))
 
 (define (%validate-method-param p)
-  (if (or (symbol? p)
-          (and (list? p)
-               (= 2 (length p))
-               (symbol? (car p))
-               (bard:type? (cadr p))))
+  (if (and (list? p)
+           (= 2 (length p))
+           (symbol? (car p))
+           (bard:type? (cadr p)))
       p
       (error "invalid method parameter p")))
-
-(define (%method-param-type p)
-  (if (symbol? p)
-      Anything
-      (if (list? p)
-          (cadr p)
-          (error "malformed method parameter" p))))
 
 (define (%validate-method-signature signature)
   (and (every? %validate-method-param signature)
        signature))
+
+(define (%method-signature-matches? s1 s2)
+  (if (null? s1)
+      (if (null? s2)
+          #t
+          #f)
+      (let ((a (car s1))
+            (b (car s2)))
+        (if (equal? b Anything) 
+            (%method-signature-matches? (cdr s1) (cdr s2))
+            (if (equal? a b)
+                (%method-signature-matches? (cdr s1) (cdr s2))
+                #f)))))
 
 (define (%make-function #!key (name #f)(signature '()))
   (let* ((valid-name (%validate-function-name name))
@@ -127,8 +132,11 @@
 ;;; (define $m (%make-method signature: '(x y) method-function: (lambda (x y)(cons x y))))
 ;;; ($m 1 2)
 
+(define (%method-param-type p)
+  (cadr p))
+
 (define (%add-method! fun meth)
-  (let ((m-argcount (%method-argcount m))
+  (let ((m-argcount (%method-argcount meth))
         (f-argcount (%function-argcount fun)))
     (if (= m-argcount f-argcount)
         (let* ((mtable (bard:%function-method-table (%function-metadata fun)))
@@ -140,5 +148,3 @@
 ;;; type support
 ;;; ---------------------------------------------------------------------
 
-(define bard:type
-  )
