@@ -51,9 +51,6 @@
 (define tags:$frame 4)
 (bard:define-type <frame> tags:$frame)
 
-;;;(define <frame> (bard:%make-type '<frame> tags:$frame))
-;;;(table-set! $bard-type-table tags:$frame <frame>)
-
 ;;; ForeignFrame <- <ObjCFrame>
 
 ;;; ---------------------------------------------------------------------
@@ -94,7 +91,15 @@
 (define bard:list list)
 
 (bard:define-function bard:empty? (ls))
+(bard:define-method bard:empty? ((thing <null>)) #t)
+(bard:define-method bard:empty? ((thing <cons>)) #f)
+(bard:define-method bard:empty? ((thing <text>))
+  (<= (string-length thing) 0))
+
 (bard:define-function bard:length (ls))
+(bard:define-method bard:length ((thing <null>)) 0)
+(bard:define-method bard:length ((thing <cons>)) (length thing))
+(bard:define-method bard:length ((thing <text>)) (string-length thing))
 
 (bard:define-function bard:first (ls))
 (bard:define-function bard:rest (ls))
