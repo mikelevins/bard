@@ -73,7 +73,7 @@
 
 (bard:define-function bard:list? (thing))
 (bard:define-method bard:list? ((thing <undefined>)) #f)
-(bard:define-method bard:list? ((thing <null>)) #f)
+(bard:define-method bard:list? ((thing <null>)) #t)
 (bard:define-method bard:list? ((thing <character>)) #f)
 (bard:define-method bard:list? ((thing <boolean>)) #f)
 (bard:define-method bard:list? ((thing <symbol>)) #f)
@@ -102,15 +102,64 @@
 (bard:define-method bard:length ((thing <text>)) (string-length thing))
 
 (bard:define-function bard:first (ls))
+(bard:define-method bard:first ((thing <cons>)) (car thing))
+(bard:define-method bard:first ((thing <text>)) (string-ref thing 0))
+
 (bard:define-function bard:rest (ls))
+(bard:define-method bard:rest ((thing <cons>)) (cdr thing))
+(bard:define-method bard:rest ((thing <text>)) (substring thing 1 (string-length thing)))
+
 (bard:define-function bard:last (ls))
+(bard:define-method bard:last ((thing <cons>)) (list-ref thing (- (length thing) 1)))
+(bard:define-method bard:last ((thing <text>)) (string-ref thing (- (string-length thing) 1)))
+
 (bard:define-function bard:nth (ls n))
+(bard:define-method bard:nth ((thing <cons>)(n <fixnum>)) (list-ref thing n))
+(bard:define-method bard:nth ((thing <text>)(n <fixnum>)) (string-ref thing n))
+
 (bard:define-function bard:second (ls))
+(bard:define-method bard:second ((thing <cons>)) (list-ref thing 1))
+(bard:define-method bard:second ((thing <text>)) (string-ref thing 1))
+
 (bard:define-function bard:third (ls))
+(bard:define-method bard:third ((thing <cons>)) (list-ref thing 2))
+(bard:define-method bard:third ((thing <text>)) (string-ref thing 2))
+
 (bard:define-function bard:tails (ls))
+(bard:define-method bard:tails ((thing <null>)) '(()))
+(bard:define-method bard:tails ((thing <cons>)) (cons thing (bard:tails (cdr thing))))
+(bard:define-method bard:tails ((thing <text>)) 
+                    (if (<= (string-length thing) 0)
+                        '("")
+                        (cons thing (bard:tails (bard:rest thing)))))
 
 (bard:define-function bard:take (n ls))
+(bard:define-method bard:take ((n <fixnum>)(thing <null>))(if (zero? n) '() (error "can't take that many elements" n)))
+(bard:define-method bard:take ((count <fixnum>)(thing <cons>)) 
+                    (let loop ((n count)
+                               (ls thing))
+                      (if (<= n 0)
+                          '()
+                          (if (null? ls)
+                              (error "can't take that many elements" count)
+                              (cons (car ls)
+                                    (loop (- n 1) (cdr ls)))))))
+
+(bard:define-method bard:take ((n <fixnum>)(thing <text>))
+                    (substring thing 0 n))
+
 (bard:define-function bard:drop (n ls))
+(bard:define-method bard:drop ((n <fixnum>)(thing <null>)) (if (zero? n) '() (error "can't drop that many elements" n)))
+
+(bard:define-method bard:drop ((count <fixnum>)(thing <cons>)) 
+                    (let loop ((n count)
+                               (ls thing))
+                      (if (<= n 0)
+                          ls
+                          (loop (- n 1)(cdr ls)))))
+
+(bard:define-method bard:drop ((n <fixnum>)(thing <text>)) 
+                    (substring thing n (string-length thing)))
 
 (bard:define-function bard:filter (fn ls))
 (bard:define-function bard:any? (fn ls))
