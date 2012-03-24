@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (include "~~lib/_gambit#.scm")
+(##include "type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; primitive types
@@ -62,44 +63,20 @@
 
 (define $bard-type-table (make-table test: eqv?))
 
-(define <undefined> (bard:%make-type '<undefined> tags:$undefined))
-(table-set! $bard-type-table tags:$undefined <undefined>)
+(bard:define-type <undefined> tags:$undefined)
 
-(define <null> (bard:%make-type '<null> tags:$null))
-(table-set! $bard-type-table tags:$null <null>)
-
-(define <character> (bard:%make-type '<character> tags:$character))
-(table-set! $bard-type-table tags:$character <character>)
-
-(define <boolean>  (bard:%make-type '<boolean> tags:$boolean))
-(table-set! $bard-type-table tags:$boolean <boolean>)
-
-(define <symbol> (bard:%make-type '<symbol> tags:$symbol))
-(table-set! $bard-type-table tags:$symbol <symbol>)
-
-(define <keyword> (bard:%make-type '<keyword> tags:$keyword))
-(table-set! $bard-type-table tags:$keyword <keyword>)
-
-(define <flonum> (bard:%make-type '<flonum> tags:$flonum))
-(table-set! $bard-type-table tags:$flonum <flonum>)
-
-(define <ratio> (bard:%make-type '<ratio> tags:$ratio))
-(table-set! $bard-type-table tags:$ratio <ratio>)
-
-(define <fixnum> (bard:%make-type '<fixnum> tags:$fixnum))
-(table-set! $bard-type-table tags:$fixnum <fixnum>)
-
-(define <bignum> (bard:%make-type '<bignum> tags:$bignum))
-(table-set! $bard-type-table tags:$bignum <bignum>)
-
-(define <closure> (bard:%make-type '<closure> tags:$closure))
-(table-set! $bard-type-table tags:$closure <closure>)
-
-(define <cons> (bard:%make-type '<cons> tags:$pair))
-(table-set! $bard-type-table tags:$pair <cons>)
-
-(define <text> (bard:%make-type '<text> tags:$text))
-(table-set! $bard-type-table tags:$text <text>)
+(bard:define-type <null> tags:$null)
+(bard:define-type <character> tags:$character)
+(bard:define-type <boolean> tags:$boolean)
+(bard:define-type <symbol> tags:$symbol)
+(bard:define-type <keyword> tags:$keyword)
+(bard:define-type <flonum> tags:$flonum)
+(bard:define-type <ratio> tags:$ratio)
+(bard:define-type <fixnum> tags:$fixnum)
+(bard:define-type <bignum> tags:$bignum)
+(bard:define-type <closure> tags:$closure)
+(bard:define-type <cons> tags:$pair)
+(bard:define-type <text> tags:$text)
 
 ;;; ---------------------------------------------------------------------
 ;;; API

@@ -10,12 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "function-macros.scm")
-
-(define-function add (x y))
-(define-method add ((x <fixnum>)(y <fixnum>))
-  (+ x y))
-(define-method add ((x <text>)(y <text>))
-  (string-append x y))
+(##include "type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; cons
@@ -54,8 +49,10 @@
   (bard:make-frame kvs))
 
 (define tags:$frame 4)
-(define <frame> (bard:%make-type '<frame> tags:$frame))
-(table-set! $bard-type-table tags:$frame <frame>)
+(bard:define-type <frame> tags:$frame)
+
+;;;(define <frame> (bard:%make-type '<frame> tags:$frame))
+;;;(table-set! $bard-type-table tags:$frame <frame>)
 
 ;;; ForeignFrame <- <ObjCFrame>
 
@@ -75,59 +72,59 @@
 ;;; List protocol
 ;;; ---------------------------------------------------------------------
 
-(define bard:list? (%make-function name: 'list? signature: '(thing)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<undefined>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<null>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<character>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<boolean>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<symbol>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<keyword>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<flonum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<ratio>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<fixnum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<bignum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<closure>)) method-function: (lambda (x) #f)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<cons>)) method-function: (lambda (x) #t)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<text>)) method-function: (lambda (x) #t)))
-(%add-method! bard:list? (%make-method name: 'list? signature: `((thing ,<frame>)) method-function: (lambda (x) #f)))
+;;;(define bard:list? (%make-function name: 'list? signature: '(thing)))
 
-;;; (bard:list? 1)
-;;; (bard:list? '(1 2))
+(bard:define-function bard:list? (thing))
+(bard:define-method bard:list? ((thing <undefined>)) #f)
+(bard:define-method bard:list? ((thing <null>)) #f)
+(bard:define-method bard:list? ((thing <character>)) #f)
+(bard:define-method bard:list? ((thing <boolean>)) #f)
+(bard:define-method bard:list? ((thing <symbol>)) #f)
+(bard:define-method bard:list? ((thing <keyword>)) #f)
+(bard:define-method bard:list? ((thing <flonum>)) #f)
+(bard:define-method bard:list? ((thing <ratio>)) #f)
+(bard:define-method bard:list? ((thing <fixnum>)) #f)
+(bard:define-method bard:list? ((thing <bignum>)) #f)
+(bard:define-method bard:list? ((thing <closure>)) #f)
+(bard:define-method bard:list? ((thing <cons>)) #t)
+(bard:define-method bard:list? ((thing <text>)) #t)
+(bard:define-method bard:list? ((thing <frame>)) #f)
+
 
 (define bard:list list)
 
-(define bard:empty? (%make-function name: 'empty? signature: '(ls)))
-(define bard:length (%make-function name: 'empty? signature: '(ls)))
+(bard:define-function bard:empty? (ls))
+(bard:define-function bard:length (ls))
 
-(define bard:first (%make-function name: 'first signature: '(ls)))
-(define bard:rest (%make-function name: 'rest signature: '(ls)))
-(define bard:last (%make-function name: 'rest signature: '(ls)))
-(define bard:nth (%make-function name: 'rest signature: '(ls n)))
-(define bard:second (%make-function name: 'second signature: '(ls)))
-(define bard:third (%make-function name: 'third signature: '(ls)))
-(define bard:tails (%make-function name: 'third signature: '(ls)))
+(bard:define-function bard:first (ls))
+(bard:define-function bard:rest (ls))
+(bard:define-function bard:last (ls))
+(bard:define-function bard:nth (ls n))
+(bard:define-function bard:second (ls))
+(bard:define-function bard:third (ls))
+(bard:define-function bard:tails (ls))
 
-(define bard:take (%make-function name: 'take signature: '(n ls)))
-(define bard:drop (%make-function name: 'drop signature: '(n ls)))
+(bard:define-function bard:take (n ls))
+(bard:define-function bard:drop (n ls))
 
-(define bard:filter (%make-function name: 'filter signature: '(fn ls)))
-(define bard:any? (%make-function name: 'any? signature: '(fn ls)))
-(define bard:every? (%make-function name: 'every? signature: '(fn ls)))
-(define bard:iota (%make-function name: 'iota signature: '(count start step)))
+(bard:define-function bard:filter (fn ls))
+(bard:define-function bard:any? (fn ls))
+(bard:define-function bard:every? (fn ls))
+(bard:define-function bard:iota (count start step))
 
-(define bard:add-first (%make-function name: 'add-first signature: '(x ls)))
-(define bard:add-last (%make-function name: 'add-last signature: '(ls x)))
+(bard:define-function bard:add-first (x ls))
+(bard:define-function bard:add-last (ls x))
 
-(define bard:append (%make-function name: 'add-last signature: '(ls1 ls2)))
-(define bard:reverse (%make-function name: 'reverse signature: '(ls1 ls2)))
+(bard:define-function bard:append (ls1 ls2))
+(bard:define-function bard:reverse (ls1 ls2))
 
-(define bard:map (%make-function name: 'map signature: '(fn ls)))
-(define bard:fold-left (%make-function name: 'fold-left signature: '(op init ls)))
-(define bard:fold-right (%make-function name: 'fold-right signature: '(op init ls)))
-(define bard:reduce (%make-function name: 'reduce signature: '(op init ls)))
+(bard:define-function bard:map (fn ls))
+(bard:define-function bard:fold-left (op init ls))
+(bard:define-function bard:fold-right (op init ls))
+(bard:define-function bard:reduce (op init ls))
 
-(define bard:member? (%make-function name: 'take signature: '(k ls test)))
-(define bard:assoc (%make-function name: 'take signature: '(k ls test)))
+(bard:define-function bard:member? (k ls test))
+(bard:define-function bard:assoc (k ls test))
 
 ;;; ForeignList <- <NSArray>
 ;;; ForeignText <- <NSString>
@@ -136,21 +133,21 @@
 ;;; Applicable protocol
 ;;; ---------------------------------------------------------------------
 
-(define bard:applicable? (%make-function name: 'applicable? signature: '(thing)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<undefined>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<null>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<character>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<boolean>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<symbol>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<keyword>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<flonum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<ratio>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<fixnum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<bignum>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<closure>)) method-function: (lambda (x) #t)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<cons>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<text>)) method-function: (lambda (x) #f)))
-(%add-method! bard:applicable? (%make-method name: 'applicable? signature: `((thing ,<frame>)) method-function: (lambda (x) #t)))
+(bard:define-function bard:applicable? (thing))
+(bard:define-method bard:applicable? ((thing <undefined>)) #f)
+(bard:define-method bard:applicable? ((thing <null>)) #f)
+(bard:define-method bard:applicable? ((thing <character>)) #f)
+(bard:define-method bard:applicable? ((thing <boolean>)) #f)
+(bard:define-method bard:applicable? ((thing <symbol>)) #f)
+(bard:define-method bard:applicable? ((thing <keyword>)) #f)
+(bard:define-method bard:applicable? ((thing <flonum>)) #f)
+(bard:define-method bard:applicable? ((thing <ratio>)) #f)
+(bard:define-method bard:applicable? ((thing <fixnum>)) #f)
+(bard:define-method bard:applicable? ((thing <bignum>)) #f)
+(bard:define-method bard:applicable? ((thing <closure>)) #t)
+(bard:define-method bard:applicable? ((thing <cons>)) #f)
+(bard:define-method bard:applicable? ((thing <text>)) #f)
+(bard:define-method bard:applicable? ((thing <frame>)) #t)
 
-(define bard:apply (%make-function name: 'apply signature: '(app arg)))
+(bard:define-function bard:apply (app arg))
 
