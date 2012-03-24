@@ -9,6 +9,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "function-macros.scm")
+
+(define-function add (x y))
+(define-method add ((x <fixnum>)(y <fixnum>))
+  (+ x y))
+(define-method add ((x <text>)(y <text>))
+  (string-append x y))
 
 ;;; ---------------------------------------------------------------------
 ;;; cons
