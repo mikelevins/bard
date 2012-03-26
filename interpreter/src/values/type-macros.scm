@@ -9,9 +9,14 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define-macro (bard:define-type name tag)
+(define-macro (bard:define-primitive-type name tag)
   `(begin
-     (define ,name (bard:%make-type ',name ,tag))
-     (table-set! $bard-type-table ,tag ,name)))
+     (define ,name (bard:%make-primitive-type ',name ,tag))
+     (table-set! $bard-primitive-type-table ,tag ,name)))
+
+(define-macro (bard:define-structure-type name predicate)
+  `(begin
+     (define ,name (%def-structure-type ',name ,predicate))
+     ',name))
 
 

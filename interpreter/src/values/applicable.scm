@@ -49,7 +49,8 @@
   (bard:make-frame kvs))
 
 (define tags:$frame 4)
-(bard:define-type <frame> tags:$frame)
+(bard:define-structure-type <frame> bard:frame?)
+(bard:define-method bard:type ((thing <frame>))(%object->bard-type thing))
 
 ;;; ForeignFrame <- <ObjCFrame>
 
@@ -189,7 +190,7 @@
 
 (bard:define-function bard:applicable? (thing))
 (bard:define-method bard:applicable? ((thing <undefined>)) #f)
-(bard:define-method bard:applicable? ((thing <null>)) #f)
+(bard:define-method bard:applicable? ((thing <null>)) #t)
 (bard:define-method bard:applicable? ((thing <character>)) #f)
 (bard:define-method bard:applicable? ((thing <boolean>)) #f)
 (bard:define-method bard:applicable? ((thing <symbol>)) #f)

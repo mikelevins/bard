@@ -36,12 +36,14 @@
          "src/utils.scm"
          "src/values/type.scm"
          "src/values/function.scm"
+         "src/values/type-functions.scm"
          "src/values/undefined.scm"
          "src/values/nothing.scm"
          "src/values/character.scm"
          "src/values/boolean.scm"
          "src/values/number.scm"
          "src/values/applicable.scm"
+         "src/values/stream.scm"
          ))
 
 ;;; load sources

@@ -48,44 +48,85 @@
 (define tags:$keyword (%primitive-type-tag foo:))
 (define tags:$vector (%primitive-type-tag (vector 0 1)))
 (define tags:$closure (%primitive-type-tag (let ((x '()))(lambda () x))))
+(define tags:$structure (%primitive-type-tag (current-input-port)))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard types
 ;;; ---------------------------------------------------------------------
 
-(define-type bard:type
+;;; concrete types
+
+(define-type bard:primitive-type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
-  constructor: bard:%make-type
+  constructor: bard:%make-primitive-type
   (name bard:%type-name)
   (tag bard:%type-tag))
 
-;;; concrete types
+(define $bard-primitive-type-table (make-table test: eqv?))
 
-(define $bard-type-table (make-table test: eqv?))
+(bard:define-primitive-type <undefined> tags:$undefined)
 
-(bard:define-type <undefined> tags:$undefined)
+(bard:define-primitive-type <null> tags:$null)
+(bard:define-primitive-type <character> tags:$character)
+(bard:define-primitive-type <boolean> tags:$boolean)
+(bard:define-primitive-type <symbol> tags:$symbol)
+(bard:define-primitive-type <keyword> tags:$keyword)
+(bard:define-primitive-type <flonum> tags:$flonum)
+(bard:define-primitive-type <ratio> tags:$ratio)
+(bard:define-primitive-type <fixnum> tags:$fixnum)
+(bard:define-primitive-type <bignum> tags:$bignum)
+(bard:define-primitive-type <closure> tags:$closure)
+(bard:define-primitive-type <cons> tags:$pair)
+(bard:define-primitive-type <text> tags:$text)
+(bard:define-primitive-type <structure> tags:$structure)
 
-(bard:define-type <null> tags:$null)
-(bard:define-type <character> tags:$character)
-(bard:define-type <boolean> tags:$boolean)
-(bard:define-type <symbol> tags:$symbol)
-(bard:define-type <keyword> tags:$keyword)
-(bard:define-type <flonum> tags:$flonum)
-(bard:define-type <ratio> tags:$ratio)
-(bard:define-type <fixnum> tags:$fixnum)
-(bard:define-type <bignum> tags:$bignum)
-(bard:define-type <closure> tags:$closure)
-(bard:define-type <cons> tags:$pair)
-(bard:define-type <text> tags:$text)
+;;; structure types
+
+(define-type bard:structure-type
+  id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
+  constructor: bard:%make-structure-type
+  (name bard:%structure-type-name)
+  (predicate bard:%structure-type-predicate))
+
+(define $bard-structure-types '())
+
+(define (%def-structure-type name pred)
+  (let ((tp (bard:%make-structure-type name pred)))
+    (set! $bard-structure-types
+          (cons (cons pred tp)
+                $bard-structure-types))
+    tp))
+
+(define (%obj->structure-type obj)
+  (let loop ((entries $bard-structure-types))
+    (if (null? entries)
+        #f
+        (let* ((entry (car entries))
+               (more (cdr entries))
+               (pred (car entry))
+               (type (cdr entry)))
+          (if (pred obj)
+              type
+              (loop more))))))
+
+(bard:define-structure-type <input-stream> input-port?)
+(bard:define-structure-type <output-stream> output-port?)
 
 ;;; ---------------------------------------------------------------------
-;;; API
+;;; type accessors
 ;;; ---------------------------------------------------------------------
 
-(define (bard:representation? thing)
-  (and (bard:type? thing)
-       (bard:%type-tag thing)))
+(define (%primitive-type thing)
+  (table-ref $bard-primitive-type-table (%primitive-type-tag thing)))
 
-(define (bard:type thing)
-  (or (table-ref $bard-type-table (%primitive-type-tag thing))
-      (error "unknown type" thing)))
+(define (%structure-type thing)
+  (%obj->structure-type thing))
+
+(define (%object->bard-type thing)
+  (if (##structure? thing)
+      (%structure-type thing)
+      (%primitive-type thing)))
+
+(define (bard:type? thing)
+  (or (bard:primitive-type? thing)
+      (bard:structure-type? thing)))

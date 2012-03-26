@@ -37,7 +37,7 @@
   (let ((f-argcount (length (bard:%function-signature metadata))))
     (if (= f-argcount (length args))
         (let* ((mtable (bard:%function-method-table metadata))
-               (argtypes (map bard:type args))
+               (argtypes (map %object->bard-type args))
                (method (table-ref mtable argtypes #f)))
           (if method
               (apply method args)
