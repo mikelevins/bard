@@ -355,12 +355,41 @@
               (cons n result)))))
 
 (bard:define-function bard:map (fn ls))
-(bard:define-function bard:fold-left (op init ls))
-(bard:define-function bard:fold-right (op init ls))
+(bard:define-method bard:map ((fn <closure>)(thing <null>)) thing)
+(bard:define-method bard:map ((fn <closure>)(thing <cons>)) (map fn thing))
+(bard:define-method bard:map ((fn <closure>)(thing <text>)) (map fn (string->list thing)))
+
 (bard:define-function bard:reduce (op init ls))
+(bard:define-method bard:reduce ((op <closure>)(init Anything)(ls <null>)) init)
+(bard:define-method bard:reduce ((op <closure>)(init Anything)(ls <cons>)) #f)
+(bard:define-method bard:reduce ((op <closure>)(init Anything)(ls <text>)) #f)
 
 (bard:define-function bard:member? (k ls test))
+(bard:define-method bard:member? ((k Anything)(ls <null>)(test <closure>)) (bard:false))
+
+(bard:define-method bard:member? ((k Anything)(ls <cons>)(test <closure>)) 
+                    (if (test k (car ls))
+                        ls
+                        (bard:member? k (cdr ls) test)))
+
+(bard:define-method bard:member? ((k <character>)(ls <text>)(test <closure>)) 
+                    (let ((len (string-length ls)))
+                      (if (<= len 0)
+                          #f
+                          (let loop ((i 0))
+                            (if (>= i len)
+                                #f
+                                (let ((ch (string-ref ls i)))
+                                  (if (test k ch)
+                                      (substring ls i len)
+                                      (loop (+ i 1)))))))))
+
 (bard:define-function bard:assoc (k ls test))
+(bard:define-method bard:assoc ((k Anything)(ls <null>)(test <closure>)) (bard:false))
+(bard:define-method bard:assoc ((k Anything)(ls <cons>)(test <closure>)) 
+                    (if (test k (caar ls))
+                        (car ls)
+                        (bard:assoc k (cdr ls) test)))
 
 ;;; ForeignList <- <NSArray>
 ;;; ForeignText <- <NSString>
