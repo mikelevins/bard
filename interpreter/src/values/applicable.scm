@@ -140,7 +140,9 @@
                     (%frame-add-slots (%ensure-frame-for-nonframe-value! <text>)
                                       value: val))
 
-;;; API
+;;; ---------------------------------------------------------------------
+;;; frame API
+;;; ---------------------------------------------------------------------
 
 (bard:define-function bard:keys (frame))
 (bard:define-method bard:keys ((frame Anything))(bard:keys (%frame-for-nonframe-value frame)))
@@ -273,7 +275,20 @@
 (bard:define-method bard:drop ((n <fixnum>)(thing <text>)) 
                     (substring thing n (string-length thing)))
 
-(bard:define-function bard:filter (fn ls))
+(bard:define-function bard:filter (pred ls))
+(bard:define-method bard:filter ((pred <closure>)(thing <null>)) '())
+(bard:define-method bard:filter ((pred <closure>)(thing <cons>)) 
+                    (let loop ((items thing))
+                      (if (null? items)
+                          '()
+                          (if (pred (car items))
+                              (cons (car items)
+                                    (loop (cdr items)))
+                              (loop (cdr items))))))
+
+(bard:define-method bard:filter ((pred <closure>)(thing <text>))
+                    (list->string (bard:filter pred (string->list thing))))
+
 (bard:define-function bard:any? (fn ls))
 (bard:define-function bard:every? (fn ls))
 (bard:define-function bard:iota (count start step))
