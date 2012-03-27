@@ -16,6 +16,12 @@
 ;;; primitive types
 ;;; ---------------------------------------------------------------------
 
+(define-type bard:primitive-type
+  id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
+  constructor: bard:%make-primitive-type
+  (name bard:%type-name)
+  (tag bard:%type-tag))
+
 (define (%primitive-type-tag obj)
  (let ((t (##type obj)))
    (cond ((fx= t (macro-type-fixnum))
@@ -55,12 +61,6 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; concrete types
-
-(define-type bard:primitive-type
-  id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
-  constructor: bard:%make-primitive-type
-  (name bard:%type-name)
-  (tag bard:%type-tag))
 
 (define $bard-primitive-type-table (make-table test: eqv?))
 
@@ -112,6 +112,24 @@
 (bard:define-structure-type <input-stream> input-port?)
 (bard:define-structure-type <output-stream> output-port?)
 
+;;; category types
+
+(define-type bard:category
+  id: 47065A1E-5CB4-4DD0-A304-312F3B052316
+  constructor: bard:%make-category
+  (name bard:%category-name))
+
+(define $bard-categories '())
+
+(define (%def-category name)
+  (let ((tp (bard:%make-category name)))
+    (set! $bard-categories
+          (cons (cons name tp)
+                $bard-categories))
+    tp))
+
+(bard:define-category Anything)
+
 ;;; ---------------------------------------------------------------------
 ;;; type accessors
 ;;; ---------------------------------------------------------------------
@@ -129,4 +147,5 @@
 
 (define (bard:type? thing)
   (or (bard:primitive-type? thing)
-      (bard:structure-type? thing)))
+      (bard:structure-type? thing)
+      (bard:category? thing)))

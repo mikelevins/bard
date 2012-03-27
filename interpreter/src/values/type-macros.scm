@@ -19,4 +19,9 @@
      (define ,name (%def-structure-type ',name ,predicate))
      ',name))
 
+(define-macro (bard:define-category name)
+  `(begin
+     (define ,name (%def-category ',name))
+     ',name))
+
 

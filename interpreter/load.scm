@@ -33,6 +33,7 @@
          "lib/uuid.scm"
          "lib/srfi101.scm"
          "lib/wttree.scm"
+         "lib/Sort.scm"
          "src/utils.scm"
          "src/values/type.scm"
          "src/values/function.scm"

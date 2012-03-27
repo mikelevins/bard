@@ -15,10 +15,16 @@
 
 (define (identity x) x)
 
-(define (every? pred ls)
-  (or (null? ls)
-      (and (pred (car ls))
-           (every? pred (cdr ls)))))
+(define (constantly x) (lambda args x))
+
+(define (every? pred . lss)
+  (if (null? lss)
+      #t
+      (if (any? null? lss)
+          #t
+          (if (apply pred (map car lss))
+              (apply every? (cons pred (map cdr lss)))
+              #f))))
 
 (define (any? pred ls)
   (if (null? ls)

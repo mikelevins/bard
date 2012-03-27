@@ -33,12 +33,57 @@
    ((##closure? proc)(##closure-ref proc 1))
    (else (error "function expected"))))
 
+(define (%make-matching-signatures argtypes)
+  (if (null? argtypes)
+      (list argtypes)
+      (if (null? (cdr argtypes))
+          (list argtypes
+                (map (constantly Anything) argtypes))
+          (let* ((argtype (car argtypes))
+                 (alt Anything)
+                 (tails (%make-matching-signatures (cdr argtypes)))
+                 (argtails (map (lambda (tl)(cons argtype tl)) tails))
+                 (alttails (map (lambda (tl)(cons alt tl)) tails)))
+            (append argtails alttails)))))
+
+(define (%type-order tp1 tp2)
+  (if (eq? tp1 tp2)
+      'equal
+      (if (eq? tp2 Anything)
+          'ascending
+          (if (eq? tp1 Anything)
+              'descending
+              'equal))))
+
+(define (%sig-more-specific? sig1 sig2)
+  (if (null? sig2)
+      #t
+      (if (null? sig1)
+          #f
+          (case (%type-order (car sig1)(car sig2))
+            ((ascending) #t)
+            ((descending) #f)
+            (else (%sig-more-specific? (cdr sig1) (cdr sig2)))))))
+
+(define (%order-signatures sigs)
+  (sort sigs %sig-more-specific?))
+
+;;; pick the most specific method
+(define (%find-best-method mtable argtypes)
+  (let ((perfect-match (table-ref mtable argtypes #f)))
+    (or perfect-match
+        (let* ((signatures (%order-signatures (%make-matching-signatures argtypes)))
+               (methods (filter identity (map (lambda (sig)(table-ref mtable sig #f)) signatures))))
+          (if (null? methods)
+              #f
+              (car methods))))))
+
 (define (%dispatch-function args metadata)
   (let ((f-argcount (length (bard:%function-signature metadata))))
     (if (= f-argcount (length args))
         (let* ((mtable (bard:%function-method-table metadata))
                (argtypes (map %object->bard-type args))
-               (method (table-ref mtable argtypes #f)))
+               (method (%find-best-method mtable argtypes)))
           (if method
               (apply method args)
               (let ((fname (or (bard:%function-debug-name metadata)
@@ -69,7 +114,7 @@
            (symbol? (car p))
            (bard:type? (cadr p)))
       p
-      (error "invalid method parameter p")))
+      (error "invalid method parameter" p)))
 
 (define (%validate-method-signature signature)
   (and (every? %validate-method-param signature)
