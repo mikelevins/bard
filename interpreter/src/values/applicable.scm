@@ -290,14 +290,69 @@
                     (list->string (bard:filter pred (string->list thing))))
 
 (bard:define-function bard:any? (fn ls))
+(bard:define-method bard:any? ((pred <closure>)(thing <null>)) bard:nothing)
+(bard:define-method bard:any? ((pred <closure>)(items <cons>))
+                    (if (pred (car items))
+                          (car items)
+                          (any? pred (cdr items))))
+
+(bard:define-method bard:any? ((pred <closure>)(thing <text>)) 
+                    (let ((len (string-length thing)))
+                      (let loop ((i 0))
+                        (if (>= i len)
+                            bard:nothing
+                            (let ((ch (string-ref thing i)))
+                              (if (pred ch)
+                                  ch
+                                  (loop (+ i 1))))))))
+
+
 (bard:define-function bard:every? (fn ls))
-(bard:define-function bard:iota (count start step))
+(bard:define-method bard:every? ((pred <closure>)(thing <null>)) (bard:true))
+
+(bard:define-method bard:every? ((pred <closure>)(thing <cons>)) 
+                    (if (pred (bard:first thing))
+                        (bard:every? pred (bard:rest thing))
+                        #f))
+
+(bard:define-method bard:every? ((pred <closure>)(thing <text>)) 
+                    (bard:every? pred (string->list thing)))
+
 
 (bard:define-function bard:add-first (x ls))
+
+(bard:define-method bard:add-first ((x Anything)(ls <null>)) (cons x ls))
+(bard:define-method bard:add-first ((x Anything)(ls <cons>)) (cons x ls))
+(bard:define-method bard:add-first ((ch <character>)(ls <text>))(string-append (string ch) ls))
+
 (bard:define-function bard:add-last (ls x))
 
+(bard:define-method bard:add-last ((ls <null>)(x Anything)) (append ls (list x)))
+(bard:define-method bard:add-last ((ls <cons>)(x Anything)) (append ls (list x)))
+(bard:define-method bard:add-last ((ls <text>)(ch <character>))(string-append ls (string ch)))
+
 (bard:define-function bard:append (ls1 ls2))
-(bard:define-function bard:reverse (ls1 ls2))
+
+(bard:define-method bard:append ((ls1 <null>)(ls2 <null>)) '())
+(bard:define-method bard:append ((ls1 <cons>)(ls2 <null>)) ls1)
+(bard:define-method bard:append ((ls1 <null>)(ls2 <cons>)) ls2)
+(bard:define-method bard:append ((ls1 <cons>)(ls2 <cons>)) (append ls1 ls2))
+(bard:define-method bard:append ((ls1 <text>)(ls2 <text>))(string-append ls1 ls2))
+
+(bard:define-function bard:reverse (ls))
+(bard:define-method bard:reverse ((thing <null>)) thing)
+(bard:define-method bard:reverse ((thing <cons>)) (reverse thing))
+(bard:define-method bard:reverse ((thing <text>)) (list->string (reverse (string->list thing))))
+
+(define (bard:iota count start step)
+  (let loop ((i 0)
+             (n start)
+             (result '()))
+    (if (>= i count)
+        (reverse result)
+        (loop (+ i 1)
+              (+ n step)
+              (cons n result)))))
 
 (bard:define-function bard:map (fn ls))
 (bard:define-function bard:fold-left (op init ls))
