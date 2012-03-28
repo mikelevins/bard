@@ -97,8 +97,8 @@
     (macro-readtable-keywords-allowed?-set! rt #t)
     (##readtable-char-class-set! rt #\\ #t bard:read-character)
     (##readtable-char-class-set! rt #\" #t bard:read-escaped-string)
-    (macro-readtable-bracket-keyword-set! rt 'bard:list)
-    (macro-readtable-brace-keyword-set! rt 'bard:frame)
+    (macro-readtable-bracket-keyword-set! rt 'list)
+    (macro-readtable-brace-keyword-set! rt 'frame)
     rt))
 
 (define +bard-readtable+ (bard:make-readtable))
@@ -137,3 +137,4 @@
 ;;; (show (bard:read-from-string "(0 1 2 3)"))
 ;;; (show (bard:read-from-string "[0 1 2 3]"))
 ;;; (show (bard:read-from-string "{0 1 2 3}"))
+
