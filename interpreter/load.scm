@@ -47,6 +47,8 @@
          "src/values/number.scm"
          "src/values/applicable.scm"
          "src/values/stream.scm"
+         "src/print/print.scm"
+         "src/read/read.scm"
          ))
 
 ;;; load sources

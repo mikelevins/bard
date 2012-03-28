@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          bard.scm
+;;;; Name:          read.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       bard reader
 ;;;; Author:        mikel evins
@@ -39,27 +39,20 @@
                                                (macro-readtable-named-char-table
                                                 (macro-readenv-readtable re)))))
                                  (if x
-                                     (macro-readenv-wrap re 
-                                                         (<syntax-atom>:make syntax-type: 'character
-                                                                             value: (cdr x)))
+                                     (macro-readenv-wrap re (cdr x))
                                      (if (= 1 (string-length name))
-                                         (macro-readenv-wrap re 
-                                                             (<syntax-atom>:make syntax-type: 'character
-                                                                                 value: (string-ref name 0)))
+                                         (macro-readenv-wrap re (string-ref name 0))
                                          (error "unknown character name" name)))))))
                (if (and (= 6 (string-length name))
                         (char=? (string-ref name 0) #\u)
                         (char=? (string-ref name 1) #\+))
                    (let ((n (string->number (substring name 2 6) 16)))
                      (if n
-                         (macro-readenv-wrap re 
-                                             (<syntax-atom>:make syntax-type: 'character
-                                                                 value: (integer->char n)))
+                         (macro-readenv-wrap re (integer->char n))
                          (not-hex)))
                    (not-hex))))
             (else
-             (macro-readenv-wrap re (<syntax-atom>:make syntax-type: 'character
-                                                        value: c)))))))
+             (macro-readenv-wrap re c))))))
 
 (define (bard:read-number/keyword/symbol re c)
   (let ((start-pos (##readenv-current-filepos re)))
@@ -76,6 +69,8 @@
        ((eqv? obj 'false)
         (macro-readenv-wrap re #f))
        ((symbol? obj)
+        (macro-readenv-wrap re obj))
+       ((keyword? obj)
         (macro-readenv-wrap re obj))
        ((integer? obj)
         (macro-readenv-wrap re obj))
@@ -102,31 +97,43 @@
     (macro-readtable-keywords-allowed?-set! rt #t)
     (##readtable-char-class-set! rt #\\ #t bard:read-character)
     (##readtable-char-class-set! rt #\" #t bard:read-escaped-string)
-    (macro-readtable-paren-keyword-set! rt 'application)
-    (macro-readtable-bracket-keyword-set! rt 'list)
-    (macro-readtable-brace-keyword-set! rt 'frame)
+    (macro-readtable-bracket-keyword-set! rt 'bard:list)
+    (macro-readtable-brace-keyword-set! rt 'bard:frame)
     rt))
+
+(define +bard-readtable+ (bard:make-readtable))
 
 ;;; ----------------------------------------------------------------------
 ;;; the reader
 ;;; ----------------------------------------------------------------------
 
-(define (bard:read port)
+(define (bard:read #!optional (port (current-input-port)))
   (let ((original-readtable (input-port-readtable port)))
     (dynamic-wind
-        (lambda ()(input-port-readtable-set! port (bard:make-readtable)))
-        (lambda ()(let ((s (read port)))
-                    (cond
-                     ((<eof>:eof? s)(<syntax-atom>:make syntax-type: 'eof value: (<nothing>:nothing)))
-                     ((list? s)(let ((tag (car s))
-                                     (s (cdr s)))
-                                 (cond
-                                  ((eq? 'application tag) s)
-                                  ((eq? 'sequence tag) (cons 'bard:list s))
-                                  ((eq? 'frame tag) (cons 'bard:frame s))
-                                  (else (error "Unrecognized syntax" s)))))
-                     (else s))))
+        (lambda ()(input-port-readtable-set! port +bard-readtable+))
+        (lambda ()(read port))
         (lambda ()(input-port-readtable-set! port original-readtable)))))
 
 (define (bard:read-from-string s)
-  (call-with-input-string))
+  (call-with-input-string s
+                          (lambda (in)
+                            (bard:read in))))
+
+;;; (bard:read-from-string "")
+;;; (show (bard:read-from-string "undefined"))
+;;; (show (bard:read-from-string "nothing"))
+;;; (show (bard:read-from-string "true"))
+;;; (show (bard:read-from-string "false"))
+;;; (show (bard:read-from-string "5"))
+;;; (show (bard:read-from-string "5.4"))
+;;; (show (bard:read-from-string "5/4"))
+;;; (show (bard:read-from-string "888888888"))
+;;; (show (bard:read-from-string "\\C"))
+;;; (show (bard:read-from-string "\\space"))
+;;; (show (bard:read-from-string "\\u+0041"))
+;;; (show (bard:read-from-string "\"Fred and Barney\""))
+;;; (show (bard:read-from-string "Fred"))
+;;; (show (bard:read-from-string "name:"))
+;;; (show (bard:read-from-string "(0 1 2 3)"))
+;;; (show (bard:read-from-string "[0 1 2 3]"))
+;;; (show (bard:read-from-string "{0 1 2 3}"))
