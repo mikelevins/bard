@@ -39,6 +39,8 @@
          "src/values/function.scm"
          "src/values/type-functions.scm"
          "src/values/undefined.scm"
+         "src/values/make.scm"
+         "src/values/as.scm"
          "src/values/nothing.scm"
          "src/values/character.scm"
          "src/values/boolean.scm"
