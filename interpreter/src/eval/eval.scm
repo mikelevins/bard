@@ -9,6 +9,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define (bard:initial-environment)
+  (bard:extend-environment 
+   (bard:null-environment)
+   '+ (%make-method name: '+ signature: `((x ,<fixnum>) (y ,<fixnum>)) method-function: (lambda (x y)(+ x y)))))
+
 (define (bard:eval-variable var env)
   (let ((binding (bard:find-binding env var)))
     (if binding
@@ -44,19 +49,20 @@
 (define (%test-eval str #!optional (env '()))
   (show (bard:eval (bard:read-from-string str) env)))
 
-;;; (%test-eval "undefined")
-;;; (%test-eval "nothing")
-;;; (%test-eval "true")
-;;; (%test-eval "false")
-;;; (%test-eval "1")
-;;; (%test-eval "888888888")
-;;; (%test-eval "-888888888")
-;;; (%test-eval "1.23")
-;;; (%test-eval "-1.23")
-;;; (%test-eval "-1/23")
-;;; (%test-eval "\\c")
-;;; (%test-eval "\\space")
-;;; (%test-eval "Name:")
-;;; (%test-eval "()")
-;;; (%test-eval "\"foo Bar Baz\"")
-;;; (let ((env (bard:add-binding '() 'Foo "Foo!")))(%test-eval "Foo" env))
+;;; (%test-eval "undefined" (bard:initial-environment))
+;;; (%test-eval "nothing" (bard:initial-environment))
+;;; (%test-eval "true" (bard:initial-environment))
+;;; (%test-eval "false" (bard:initial-environment))
+;;; (%test-eval "1" (bard:initial-environment))
+;;; (%test-eval "888888888" (bard:initial-environment))
+;;; (%test-eval "-888888888" (bard:initial-environment))
+;;; (%test-eval "1.23" (bard:initial-environment))
+;;; (%test-eval "-1.23" (bard:initial-environment))
+;;; (%test-eval "-1/23" (bard:initial-environment))
+;;; (%test-eval "\\c" (bard:initial-environment))
+;;; (%test-eval "\\space" (bard:initial-environment))
+;;; (%test-eval "Name:" (bard:initial-environment))
+;;; (%test-eval "()" (bard:initial-environment))
+;;; (%test-eval "\"foo Bar Baz\"" (bard:initial-environment))
+;;; (%test-eval "+" (bard:initial-environment))
+;;; (%test-eval "(+ 2 3)" (bard:initial-environment))

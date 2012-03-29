@@ -405,6 +405,3 @@
 (bard:define-method bard:applicable? ((thing <frame>)) #t)
 
 (bard:define-function bard:apply (app arg))
-
-
-

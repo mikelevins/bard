@@ -46,7 +46,7 @@
                                                              "an anonymous function")))
                                               (string-append "#<function " name ">")))
                          ((%method? thing)(let* ((meta (%function-metadata thing))
-                                                 (debug-name (bard:%function-debug-name meta))
+                                                 (debug-name (bard:%method-debug-name meta))
                                                  (name (or (and debug-name (object->string debug-name))
                                                            "an anonymous method")))
                                             (string-append "#<method " name ">")))
