@@ -45,10 +45,16 @@
          "src/values/character.scm"
          "src/values/boolean.scm"
          "src/values/number.scm"
+         "src/values/name.scm"
          "src/values/applicable.scm"
          "src/values/stream.scm"
+         "src/values/make.scm"
+         "src/values/as.scm"
          "src/print/print.scm"
          "src/read/read.scm"
+         "src/eval/special.scm"
+         "src/eval/macro.scm"
+         "src/eval/eval.scm"
          ))
 
 ;;; load sources
