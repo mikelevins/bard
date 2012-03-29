@@ -26,6 +26,13 @@
   (debug-name bard:%method-debug-name)
   (signature bard:%method-signature))
 
+(define-type bard:%interpreted-method-metadata
+  id: FE3CCB2B-8A69-41D1-807E-AE97E3DE5D2F
+  constructor: bard:%make-interpreted-method-metadata
+  (debug-name bard:%interpreted-method-debug-name)
+  (signature bard:%interpreted-method-signature)
+  (body bard:%interpreted-method-body))
+
 (define (%function-metadata proc)
   (cond
    ((##interp-procedure? proc) (if (vector? (##interp-procedure-rte proc))
@@ -151,13 +158,18 @@
 (define (%method-argcount m)
   (length (bard:%method-signature (%function-metadata m))))
 
-;;; (%function-argcount (%make-function))
-;;; (%method-argcount (%make-method))
-
 (define (%apply-method args metadata method-function)
   (if (= (length args)
          (length (bard:%method-signature metadata)))
       (apply method-function args)
+      (error "wrong number of arguments to method")))
+
+(define (%apply-interpreted-method args metadata method-body)
+  (if (= (length args)
+         (length (bard:%method-signature metadata)))
+      (let* ((sig (bard:%method-signature metadata))
+             (env (zip sig args)))
+        (bard:eval method-body env))
       (error "wrong number of arguments to method")))
 
 (define (%make-method #!key (name #f)(signature '())(method-function %undefined-method-body))
@@ -167,6 +179,14 @@
     (let ((metadata meta))
       (lambda args
         (%apply-method args metadata method-function)))))
+
+(define (%make-interpreted-method #!key (name #f)(signature '())(method-body '()))
+  (let* ((valid-name (%validate-function-name name))
+         (valid-signature (%validate-method-signature signature))
+         (meta (bard:%make-interpreted-method-metadata valid-name valid-signature (cons 'begin method-body))))
+    (let ((metadata meta))
+      (lambda args
+        (%apply-interpreted-method args metadata method-body)))))
 
 (define (%function? x)
   (bard:%function-metadata? (%function-metadata x)))
