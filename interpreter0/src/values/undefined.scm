@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          nothing.scm
+;;;; Name:          undefined.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the null value
+;;;; Purpose:       the undefined value
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -13,8 +13,7 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:nothing) '())
-(define bard:nothing? null?)
-(define bard:null? null?)
-(define (bard:something? x)(not (bard:nothing? x)))
+(define (bard:undefined) #!unbound)
+(define (bard:undefined? x) (eqv? x #!unbound))
+(define (bard:defined? x)(not (bard:undefined? x)))
 

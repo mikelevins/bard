@@ -18,6 +18,8 @@
 
 (##include "~~lib/gambit#.scm")
 (##include "~~lib/_gambit#.scm")
+(##include "~~/lib/termite/termite#.scm")
+(load "~~/lib/termite/termite")
 
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
@@ -31,28 +33,28 @@
          "lib/uuid.scm"
          "lib/srfi101.scm"
          "lib/wttree.scm"
-         "src/util/general.scm"
-         "src/util/list.scm"
-         "src/util/sort.scm"
+         "lib/Sort.scm"
+         "src/utils.scm"
          "src/values/type.scm"
          "src/values/function.scm"
+         "src/values/type-functions.scm"
          "src/values/undefined.scm"
+         "src/values/make.scm"
+         "src/values/as.scm"
          "src/values/nothing.scm"
          "src/values/character.scm"
          "src/values/boolean.scm"
          "src/values/number.scm"
          "src/values/name.scm"
-         "src/values/string.scm"
-         "src/values/cons.scm"
-         "src/values/primitive-procedure.scm"
-         "src/values/frame.scm"
-         ;;"src/values/applicable.scm"
-         ;;"src/values/stream.scm"
-         ;;"src/print/print.scm"
-         ;;"src/read/read.scm"
-         ;;"src/eval/special.scm"
-         ;;"src/eval/macro.scm"
-         ;;"src/eval/eval.scm"
+         "src/values/applicable.scm"
+         "src/values/stream.scm"
+         "src/values/make.scm"
+         "src/values/as.scm"
+         "src/print/print.scm"
+         "src/read/read.scm"
+         "src/eval/special.scm"
+         "src/eval/macro.scm"
+         "src/eval/eval.scm"
          ))
 
 ;;; load sources

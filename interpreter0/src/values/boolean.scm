@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          nothing.scm
+;;;; Name:          boolean.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the null value
+;;;; Purpose:       boolean values
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -13,8 +13,16 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:nothing) '())
-(define bard:nothing? null?)
-(define bard:null? null?)
-(define (bard:something? x)(not (bard:nothing? x)))
+(define (bard:false) #f)
+
+(define (bard:false? x) 
+  (or (eqv? x (bard:false))
+      (bard:nothing? x)))
+
+(define (bard:true) #t)
+(define (bard:true? x) (not (bard:false? x)))
+
+(define (bard:boolean? x)
+  (or (eqv? x (bard:false))
+      (eqv? x (bard:true))))
 

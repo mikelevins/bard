@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          nothing.scm
+;;;; Name:          number.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the null value
+;;;; Purpose:       number values
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -13,8 +13,21 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:nothing) '())
-(define bard:nothing? null?)
-(define bard:null? null?)
-(define (bard:something? x)(not (bard:nothing? x)))
+(define bard:fixnum? ##fixnum?)
+(define bard:fixnum? ##bignum?)
+
+(define (bard:integer? x)
+  (or (##fixnum? x)
+      (##bignum? x)))
+
+(define (bard:float? x)
+  (##flonum? x))
+
+(define (bard:ratio? x)
+  (##ratnum? x))
+
+(define (bard:number? x) 
+  (or (bard:integer? x)
+      (bard:float? x)
+      (bard:ratio? x)))
 

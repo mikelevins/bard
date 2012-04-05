@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          nothing.scm
+;;;; Name:          name.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the null value
+;;;; Purpose:       name types
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -13,8 +13,9 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:nothing) '())
-(define bard:nothing? null?)
-(define bard:null? null?)
-(define (bard:something? x)(not (bard:nothing? x)))
+(define bard:symbol? symbol?)
+(define bard:keyword? keyword?)
+(define (bard:name? x) 
+  (or (bard:symbol? x)
+      (bard:keyword? x)))
 

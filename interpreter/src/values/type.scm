@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          types.scm
+;;;; Name:          type.scm
 ;;;; Project:       Bard
-;;;; Purpose:       reresentation of types in Bard
+;;;; Purpose:       representation of Bard types
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -15,12 +15,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; primitive types
 ;;; ---------------------------------------------------------------------
-
-(define-type bard:primitive-type
-  id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
-  constructor: bard:%make-primitive-type
-  (name bard:%type-name)
-  (tag bard:%type-tag))
 
 (define (%primitive-type-tag obj)
  (let ((t (##type obj)))
@@ -47,51 +41,38 @@
 (define tags:$fixnum (%primitive-type-tag 1))
 (define tags:$bignum (%primitive-type-tag (%find-bignum)))
 (define tags:$flonum (%primitive-type-tag 1.2))
-(define tags:$ratio (%primitive-type-tag 2/3))
-(define tags:$text (%primitive-type-tag "foo"))
+(define tags:$ratnum (%primitive-type-tag 2/3))
+(define tags:$string (%primitive-type-tag "foo"))
 (define tags:$pair (%primitive-type-tag '(a . b)))
 (define tags:$symbol (%primitive-type-tag 'foo))
 (define tags:$keyword (%primitive-type-tag foo:))
-(define tags:$vector (%primitive-type-tag (vector 0 1)))
-(define tags:$closure (%primitive-type-tag (let ((x '()))(lambda () x))))
+(define tags:$procedure (%primitive-type-tag (lambda () x)))
 (define tags:$structure (%primitive-type-tag (current-input-port)))
+
+(define-type %primitive-type
+  id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
+  constructor: %make-primitive-type
+  (name %primitive-type-name)
+  (tag %primitive-type-tag))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard types
 ;;; ---------------------------------------------------------------------
 
-;;; concrete types
-
 (define $bard-primitive-type-table (make-table test: eqv?))
-
-(bard:define-primitive-type <undefined> tags:$undefined)
-
-(bard:define-primitive-type <null> tags:$null)
-(bard:define-primitive-type <character> tags:$character)
-(bard:define-primitive-type <boolean> tags:$boolean)
-(bard:define-primitive-type <symbol> tags:$symbol)
-(bard:define-primitive-type <keyword> tags:$keyword)
-(bard:define-primitive-type <flonum> tags:$flonum)
-(bard:define-primitive-type <ratio> tags:$ratio)
-(bard:define-primitive-type <fixnum> tags:$fixnum)
-(bard:define-primitive-type <bignum> tags:$bignum)
-(bard:define-primitive-type <closure> tags:$closure)
-(bard:define-primitive-type <cons> tags:$pair)
-(bard:define-primitive-type <text> tags:$text)
-(bard:define-primitive-type <structure> tags:$structure)
 
 ;;; structure types
 
-(define-type bard:structure-type
+(define-type %structure-type
   id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
-  constructor: bard:%make-structure-type
-  (name bard:%structure-type-name)
-  (predicate bard:%structure-type-predicate))
+  constructor: %private-make-structure-type
+  (name %structure-type-name)
+  (predicate %structure-type-predicate))
 
 (define $bard-structure-types '())
 
-(define (%def-structure-type name pred)
-  (let ((tp (bard:%make-structure-type name pred)))
+(define (%make-structure-type name pred)
+  (let ((tp (%private-make-structure-type name pred)))
     (set! $bard-structure-types
           (cons (cons pred tp)
                 $bard-structure-types))
@@ -109,26 +90,28 @@
               type
               (loop more))))))
 
-(bard:define-structure-type <input-stream> input-port?)
-(bard:define-structure-type <output-stream> output-port?)
+;;; protocol types
 
-;;; category types
-
-(define-type bard:category
+(define-type %protocol
   id: 47065A1E-5CB4-4DD0-A304-312F3B052316
-  constructor: bard:%make-category
-  (name bard:%category-name))
+  constructor: %private-make-protocol
+  (name %protocol-name))
 
-(define $bard-categories '())
+(define $bard-protocols '())
 
-(define (%def-category name)
-  (let ((tp (bard:%make-category name)))
-    (set! $bard-categories
+(define (%make-protocol name)
+  (let ((tp (%private-make-protocol name)))
+    (set! $bard-protocols
           (cons (cons name tp)
-                $bard-categories))
+                $bard-protocols))
     tp))
 
-(bard:define-category Anything)
+;;; singletons
+
+(define-type %singleton
+  id: F735A1E4-9D1C-4FB2-8E22-BA4FD08B637C
+  constructor: %singleton
+  (value %singleton-value))
 
 ;;; ---------------------------------------------------------------------
 ;;; type accessors
@@ -141,11 +124,85 @@
   (%obj->structure-type thing))
 
 (define (%object->bard-type thing)
-  (if (##structure? thing)
-      (%structure-type thing)
-      (%primitive-type thing)))
+  (if (%singleton? thing)
+      (%object->bard-type (%singleton-value thing))
+      (if (##structure? thing)
+          (%structure-type thing)
+          (%primitive-type thing))))
 
-(define (bard:type? thing)
-  (or (bard:primitive-type? thing)
-      (bard:structure-type? thing)
-      (bard:category? thing)))
+(define (%type? thing)
+  (or (%singleton? thing)
+      (%primitive-type? thing)
+      (%structure-type? thing)
+      (%protocol? thing)))
+
+;;; ---------------------------------------------------------------------
+;;; define the base bard types
+;;; ---------------------------------------------------------------------
+
+;;; primitive types
+
+(%define-primitive-type <undefined> tags:$undefined)
+(%define-primitive-type <null> tags:$null)
+(%define-primitive-type <character> tags:$character)
+(%define-primitive-type <boolean> tags:$boolean)
+(%define-primitive-type <symbol> tags:$symbol)
+(%define-primitive-type <keyword> tags:$keyword)
+(%define-primitive-type <flonum> tags:$flonum)
+(%define-primitive-type <ratnum> tags:$ratnum)
+(%define-primitive-type <fixnum> tags:$fixnum)
+(%define-primitive-type <bignum> tags:$bignum)
+(%define-primitive-type <primitive-procedure> tags:$procedure)
+(%define-primitive-type <cons> tags:$pair)
+(%define-primitive-type <string> tags:$string)
+
+;;; gambit structure types
+
+(%define-structure-type <input-stream> input-port?)
+(%define-structure-type <output-stream> output-port?)
+
+;;; Bard structure types
+
+(define-type %frame
+  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
+  constructor: %make-frame
+  (slots %frame-slots %set-frame-slots!))
+
+(%define-structure-type <frame> %frame?)
+
+(define-type %function
+  id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
+  constructor: %make-function
+  (name %function-name)
+  (method-table %function-method-table %set-function-method-table!))
+
+(%define-structure-type <function> %function?)
+
+(define-type %method
+  id: 86F8548C-056C-4369-ADF3-1657D7E83649
+  constructor: %private-make-method
+  (name %method-name)
+  (parameters %method-parameters)
+  (body %method-body))
+
+(%define-structure-type <method> %method?)
+
+;;; protocol types
+
+(%define-protocol Anything)
+
+;;; ---------------------------------------------------------------------
+;;; type taxonomy
+;;; ---------------------------------------------------------------------
+
+(define (%subtype? t1 t2)
+  (if (equal? t1 t2)
+      #t
+      (if (%singleton? t2)
+          #f
+          (if (%singleton? t1)
+              (%subtype? (%singleton-value t1) t2)
+              (if (equal? t2 Anything)
+                  #t
+                  #f)))))
+
