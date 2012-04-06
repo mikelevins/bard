@@ -35,3 +35,6 @@
               (begin
                 (table-set! tbl (car kvs)(cadr kvs))
                 (loop (cddr kvs))))))))
+
+(define (bound? name)
+  (not (##unbound? (##global-var-ref (##make-global-var name)))))

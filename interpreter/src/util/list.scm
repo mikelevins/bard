@@ -47,6 +47,14 @@
       (cons (car ls)
             (take (- n 1)(cdr ls)))))
 
+(define (take-before pred ls)
+  (if (null? ls)
+      '()
+      (if (pred (car ls))
+          '()
+          (cons (car ls)
+            (take-before pred (cdr ls))))))
+
 (define (position-if pred ls)
   (letrec ((aux (lambda (pred ls i)
                   (if (null? ls)

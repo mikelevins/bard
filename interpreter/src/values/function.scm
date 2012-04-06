@@ -13,6 +13,34 @@
 ;;; utils
 ;;; ---------------------------------------------------------------------
 
+(define (%function-param->formal-argument param)
+  (cond
+   ((symbol? param) param)
+   ((list? param) (car param))
+   (else (error "invalid parameter spec" param))))
+
+(define (%function-param->signature-type param)
+  (cond
+   ((symbol? param) Anything)
+   ((list? param) (let ((type-spec (cadr param)))
+                    (if (%type? type-spec)
+                        type-spec
+                        (error "invalid type" type-spec))))
+   (else (error "invalid parameter spec" param))))
+
+(define (%function-param-list->formal-arguments params)
+  (map %function-param->formal-argument params))
+
+(define (%function-param-list->method-signature params)
+  (let ((required-params (take-before (lambda (p)(eq? p '&))
+                                      params))
+        (tail (if (position-if (lambda (x) (eq? x '&)) params)
+                  '(&)
+                  '())))
+    (append (map %function-param->signature-type required-params)
+            tail)))
+
+
 (define (%method-entry< e1 e2)
   (if (null? e2)
       #t
@@ -21,6 +49,13 @@
           (if (%subtype? e1 e2)
               #t
               (%method-entry< (cdr e1) (cdr e2))))))
+
+;;; ---------------------------------------------------------------------
+;;; macros
+;;; ---------------------------------------------------------------------
+
+(include "~~lib/_gambit#.scm")
+(##include "function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; method tables
@@ -69,15 +104,6 @@
                                     (cons (cons (copy-tree signature) 
                                                 method)
                                           (%method-table-entries mtable))))))
-
-(define (%method-signature-rest-arg? msig)
-  (and (not (null? msig))
-       (eq? '& (list-ref msig (- (length msig) 1)))))
-
-(define (%method-signature-sans-rest-arg msig)
-  (if (%method-signature-rest-arg? msig)
-      (take (- (length msig) 1) msig)
-      msig))
 
 (define (%types-match-method-signature? argtypes msig)
   (let* ((rest? (%method-signature-rest-arg? msig))
@@ -130,7 +156,7 @@
 (define (%make-function #!key (name #f))
   (let* ((valid-name (%validate-function-name name))
          (method-table (%make-method-table '())))
-    (%private-make-function valid-name valid-signature body)))
+    (%private-make-function valid-name method-table)))
 
 (define (%function-add-method! fn signature method)
   (let ((mtable (%function-method-table fn)))
@@ -142,3 +168,4 @@
          (ordered-entries (sort entries %method-entry<)))
     (map cdr ordered-entries)))
 
+;;(%define-function (quux a b & more) #f)

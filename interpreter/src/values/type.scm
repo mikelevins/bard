@@ -172,7 +172,7 @@
 
 (define-type %function
   id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
-  constructor: %make-function
+  constructor: %private-make-function
   (name %function-name)
   (method-table %function-method-table %set-function-method-table!))
 
