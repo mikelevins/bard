@@ -36,16 +36,34 @@
     (if (not (pair? x)) x
         (cons (recur (car x)) (recur (cdr x))))))
 
+(define (interleave l1 l2)
+  (if (null? l1)
+      '()
+      (if (null? l2)
+          '()
+          (cons (car l1)(cons (car l2) (interleave (cdr l1)(cdr l2)))))))
+
 (define (drop n ls)
   (if (<= n 0)
       ls
-      (drop (- n 1) (cdr ls))))
+      (if (null? ls)
+          (error "index out of range" n)
+          (drop (- n 1) (cdr ls)))))
+
+(define (drop-before pred ls)
+  (if (null? ls)
+      '()
+      (if (pred (car ls))
+          ls
+          (drop-before pred (cdr ls)))))
 
 (define (take n ls)
   (if (<= n 0)
       '()
-      (cons (car ls)
-            (take (- n 1)(cdr ls)))))
+      (if (null? ls)
+          (error "index out of range" n)
+          (cons (car ls)
+                (take (- n 1)(cdr ls))))))
 
 (define (take-before pred ls)
   (if (null? ls)

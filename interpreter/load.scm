@@ -69,11 +69,12 @@
          "src/protocols/Integer.scm"
          "src/protocols/Ratio.scm"
          ;;"src/values/stream.scm"
-         ;;"src/print/print.scm"
-         ;;"src/read/read.scm"
-         ;;"src/eval/special.scm"
-         ;;"src/eval/macro.scm"
-         ;;"src/eval/eval.scm"
+         "src/print.scm"
+         "src/read.scm"
+         "src/eval/special.scm"
+         "src/eval/macro.scm"
+         "src/eval/env.scm"
+         "src/eval/eval.scm"
          ))
 
 ;;; load sources

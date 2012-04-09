@@ -41,14 +41,16 @@
             tail)))
 
 
-(define (%method-entry< e1 e2)
-  (if (null? e2)
-      #t
-      (if (null? e1)
-          #f
-          (if (%subtype? e1 e2)
-              #t
-              (%method-entry< (cdr e1) (cdr e2))))))
+(define (%method-entry< cons1 cons2)
+  (let loop ((e1 (car cons1))
+             (e2 (car cons2)))
+    (if (null? e2)
+        #t
+        (if (null? e1)
+            #f
+            (if (%subtype? e1 e2)
+                #t
+                (loop (cdr e1) (cdr e2)))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; macros
@@ -106,8 +108,9 @@
                                           (%method-table-entries mtable))))))
 
 (define (%types-match-method-signature? argtypes msig)
-  (let* ((rest? (%method-signature-rest-arg? msig))
-         (required-args (%method-signature-sans-rest-arg msig))
+  (let* ((ampersand? (lambda (x)(eq? x '&)))
+         (rest? (any? ampersand? msig))
+         (required-args (take-before ampersand? msig))
          (required-argcount (length required-args))
          (supplied-argcount (length argtypes)))
     (and
@@ -164,7 +167,8 @@
     fn))
 
 (define (%function-ordered-methods fn types)
-  (let* ((entries (%method-entries-matching-types mtable types))
+  (let* ((mtable (%function-method-table fn))
+         (entries (%method-entries-matching-types mtable types))
          (ordered-entries (sort entries %method-entry<)))
     (map cdr ordered-entries)))
 

@@ -16,7 +16,7 @@
 ;;; primitive types
 ;;; ---------------------------------------------------------------------
 
-(define (%primitive-type-tag obj)
+(define (%type-tag obj)
  (let ((t (##type obj)))
    (cond ((fx= t (macro-type-fixnum))
           32)
@@ -34,20 +34,20 @@
         i
         (loop (* i i)))))
 
-(define tags:$undefined (%primitive-type-tag #!unbound))
-(define tags:$null (%primitive-type-tag '()))
-(define tags:$boolean (%primitive-type-tag #t))
-(define tags:$character (%primitive-type-tag #\c))
-(define tags:$fixnum (%primitive-type-tag 1))
-(define tags:$bignum (%primitive-type-tag (%find-bignum)))
-(define tags:$flonum (%primitive-type-tag 1.2))
-(define tags:$ratnum (%primitive-type-tag 2/3))
-(define tags:$string (%primitive-type-tag "foo"))
-(define tags:$pair (%primitive-type-tag '(a . b)))
-(define tags:$symbol (%primitive-type-tag 'foo))
-(define tags:$keyword (%primitive-type-tag foo:))
-(define tags:$procedure (%primitive-type-tag (lambda () x)))
-(define tags:$structure (%primitive-type-tag (current-input-port)))
+(define tags:$undefined (%type-tag #!unbound))
+(define tags:$null (%type-tag '()))
+(define tags:$boolean (%type-tag #t))
+(define tags:$character (%type-tag #\c))
+(define tags:$fixnum (%type-tag 1))
+(define tags:$bignum (%type-tag (%find-bignum)))
+(define tags:$flonum (%type-tag 1.2))
+(define tags:$ratnum (%type-tag 2/3))
+(define tags:$string (%type-tag "foo"))
+(define tags:$pair (%type-tag '(a . b)))
+(define tags:$symbol (%type-tag 'foo))
+(define tags:$keyword (%type-tag foo:))
+(define tags:$procedure (%type-tag (lambda () x)))
+(define tags:$structure (%type-tag (current-input-port)))
 
 (define-type %primitive-type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
@@ -118,7 +118,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define (%primitive-type thing)
-  (table-ref $bard-primitive-type-table (%primitive-type-tag thing)))
+  (table-ref $bard-primitive-type-table (%type-tag thing)))
 
 (define (%structure-type thing)
   (%obj->structure-type thing))

@@ -15,11 +15,6 @@
 ;;; <frame>
 ;;; ---------------------------------------------------------------------
 
-(define-type %frame
-  id: 08C172EF-8046-4ADC-BC26-86E4244C9F5A
-  constructor: %private-make-frame
-  (slots %frame-slots %set-frame-slots!))
-
 (define (%make-frame key-val-plist)
   (let loop ((kvs key-val-plist)
              (slots '()))
@@ -37,8 +32,8 @@
 (%define-structure-type <frame> %frame?)
 
 (define (%frame-add-slot fr key val)
-  (%make-frame (cons (cons key val) 
-                     (%frame-slots fr))))
+  (%private-make-frame (cons (cons key val) 
+                             (%frame-slots fr))))
 
 (define (%frame-add-slots fr . kv-plist)
   (let loop ((kvs kv-plist)
@@ -61,3 +56,21 @@
                (fr (%make-frame kvs)))
           (table-set! $frame-for-nonframe-value-table tp fr)
           fr))))
+
+(define (%frame-find-slot fr key)
+  (assoc key (%frame-slots fr)))
+
+(define (%frame-get fr key)
+  (let ((slot (%frame-find-slot fr key)))
+    (if slot
+        (cdr slot)
+        (bard:nothing))))
+
+(define (%frame-put fr key val)
+  (let ((slot (%frame-find-slot fr key)))
+    (if slot
+        fr
+        (%frame-add-slot fr key val))))
+
+(define bard:frame? %frame?)
+
