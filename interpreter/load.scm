@@ -73,6 +73,7 @@
          "src/read.scm"
          "src/eval/special.scm"
          "src/eval/macro.scm"
+         "src/eval/apply.scm"
          "src/eval/env.scm"
          "src/eval/eval.scm"
          ))

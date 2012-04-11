@@ -29,7 +29,7 @@
           (error "Odd number of arguments to extend-environment" plist)
           (let* ((var (car plist))
                  (val (cadr plist)))
-            (%extend-environment-aux (%add-binding env var val) (cddr plist))))))
+            (%extend-environment (%add-binding env var val) (cddr plist))))))
 
 (define (%set-binding! env var val)
   (%environment-set-bindings! env 
