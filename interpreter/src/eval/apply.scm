@@ -49,8 +49,7 @@
         (%apply-bard-method (car methods) args))))
 
 (define (%apply applicable args #!optional (env (%top-level-environment)))
-  (let ((applicable (%eval applicable env))
-        (args (map (lambda (arg)(%eval arg env)) args)))
+  (let ((applicable (%eval applicable env)))
     (cond
      ((null? applicable) (bard:nothing))
      ((string? applicable)(if (null? args)

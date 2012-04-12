@@ -106,6 +106,8 @@
                 $bard-protocols))
     tp))
 
+(%define-structure-type <protocol> %protocol?)
+
 ;;; singletons
 
 (define-type %singleton
@@ -113,28 +115,7 @@
   constructor: %singleton
   (value %singleton-value))
 
-;;; ---------------------------------------------------------------------
-;;; type accessors
-;;; ---------------------------------------------------------------------
-
-(define (%primitive-type thing)
-  (table-ref $bard-primitive-type-table (%type-tag thing)))
-
-(define (%structure-type thing)
-  (%obj->structure-type thing))
-
-(define (%object->bard-type thing)
-  (if (%singleton? thing)
-      (%object->bard-type (%singleton-value thing))
-      (if (##structure? thing)
-          (%structure-type thing)
-          (%primitive-type thing))))
-
-(define (%type? thing)
-  (or (%singleton? thing)
-      (%primitive-type? thing)
-      (%structure-type? thing)
-      (%protocol? thing)))
+(%define-structure-type <singleton> %singleton?)
 
 ;;; ---------------------------------------------------------------------
 ;;; define the base bard types
@@ -165,7 +146,7 @@
 
 (define-type %frame
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
-  constructor: %make-frame
+  constructor: %private-make-frame
   (slots %frame-slots %set-frame-slots!))
 
 (%define-structure-type <frame> %frame?)
@@ -190,6 +171,27 @@
 ;;; protocol types
 
 (%define-protocol Anything)
+
+;;; ---------------------------------------------------------------------
+;;; type accessors
+;;; ---------------------------------------------------------------------
+
+(define (%primitive-type thing)
+  (table-ref $bard-primitive-type-table (%type-tag thing)))
+
+(define (%structure-type thing)
+  (%obj->structure-type thing))
+
+(define (%object->bard-type thing)
+  (if (##structure? thing)
+              (%structure-type thing)
+              (%primitive-type thing)))
+
+(define (%type? thing)
+  (or (%singleton? thing)
+      (%primitive-type? thing)
+      (%structure-type? thing)
+      (%protocol? thing)))
 
 ;;; ---------------------------------------------------------------------
 ;;; type taxonomy

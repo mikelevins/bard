@@ -74,3 +74,5 @@
 
 (define bard:frame? %frame?)
 
+(define (bard:keys frame)
+  (nub (map car (%frame-slots frame))))

@@ -12,29 +12,78 @@
 (##include "values/function-macros.scm")
 (##include "values/type-macros.scm")
 
-(define $bard-printer-table (make-table test: equal?))
 
-(define (%defprinter type printer-function)
-  (table-set! $bard-printer-table type printer-function))
+(define as-string (%make-function name: 'as-string))
+
+(define (%defprinter type printer)
+  (%function-add-method! as-string `(,type) printer))
+
+(define (%as-string thing)
+  (%apply as-string (list thing)))
 
 (%defprinter Anything (lambda (val)(object->string val)))
 (%defprinter <undefined> (lambda (val) "undefined"))
 (%defprinter <null> (lambda (val) "nothing"))
 (%defprinter <character> (lambda (val) (string-append "\\" (string val))))
+(%defprinter <boolean> (lambda (val) (if val "true" "false")))
+(%defprinter <keyword> (lambda (val) (string-append (keyword->string val) ":")))
 
-(define (%as-string thing)
-  (let* ((value (if (%singleton? thing)
-                    (%singleton-value thing)
-                    thing))
-         (type (%object->bard-type value))
-         (found-printer (table-ref $bard-printer-table type #f))
-         (default-printer (table-ref $bard-printer-table Anything))
-         (thing-string (if found-printer
-                           (found-printer value)
-                           (default-printer value))))
-    (if (%singleton? thing)
-        (string-append "#< singleton (" thing-string ")>")
-        thing-string)))
+(%defprinter <primitive-procedure>
+             (lambda (val)
+               (string-append "#<primitive-procedure "
+                              (number->string (object->serial-number val)) ">")))
+
+(%defprinter <input-stream>
+             (lambda (val)
+               (string-append "#<input-stream "
+                              (number->string (object->serial-number val)) ">")))
+
+(%defprinter <output-stream>
+             (lambda (val)
+               (string-append "#<output-stream "
+                              (number->string (object->serial-number val)) ">")))
+
+(%defprinter <frame>
+             (lambda (val)
+               (let loop ((keys (bard:keys val))
+                          (outstr "{"))
+                 (if (null? keys)
+                     (string-append outstr "}")
+                     (loop (cdr keys)
+                           (let* ((val (%frame-get val (car keys))))
+                             (string-append outstr " " (%as-string (car keys)) " " (%as-string val))))))))
+
+(%defprinter <function>
+             (lambda (val)
+               (let ((fname (%function-name val)))
+                 (if fname
+                     (string-append "#<function "
+                                    (object->string fname)
+                                    " "
+                                    (number->string (object->serial-number val))
+                                    ">")
+                     (string-append "#<an anonymous function " (number->string (object->serial-number val)) ">")))))
+
+(%defprinter <method>
+             (lambda (val)
+               (let ((mname (%method-name val)))
+                 (if mname
+                     (string-append "#<method "
+                                    (object->string mname)
+                                    " "
+                                    (number->string (object->serial-number val))
+                                    ">")
+                     (string-append "#<an anonymous method " (number->string (object->serial-number val)) ">")))))
+
+(%defprinter <protocol>
+             (lambda (val)
+               (object->string (%protocol-name val))))
+
+(%defprinter <singleton>
+             (lambda (val)
+               (string-append "#<singleton "
+                              (%as-string (%singleton-value val))
+                               ">")))
 
 (define (bard:print object #!optional (out (current-output-port)))
   (print port: out (%as-string thing)))
@@ -48,3 +97,19 @@
 ;;; (show (bard:undefined))
 ;;; (show '())
 ;;; (show #\C)
+;;; (show (bard:true))
+;;; (show (bard:false))
+;;; (show 'Foo)
+;;; (show FooBar:)
+;;; (show +)
+;;; (show *)
+;;; (show (current-input-port))
+;;; (show (current-output-port))
+;;; (show (%make-frame '()))
+;;; (show (%make-frame '(name: "Fred" age: 101)))
+;;; (show as-string)
+;;; (show (%make-function))
+;;; (show Anything)
+;;; (show (%singleton 5))
+
+
