@@ -12,22 +12,23 @@
 (define (%initial-bard-environment)
   (%extend-environment 
    (%null-environment)
-   `(;; generic comparison
-     = ,bard:=
-     ;; numbers
-     + ,prim:+
-     - ,prim:-
-     * ,prim:*
-     / ,prim:/
-     > ,prim:>
-     < ,prim:<
-     >= ,prim:>=
-     <= ,prim:<=
-     ;; List
-     list ,prim:list
-     ;; Frame
-     frame ,prim:frame
-     )))
+   (list
+    ;; generic comparison
+    '= bard:=
+    ;; numbers
+    '+ prim:+
+    '- prim:-
+    '* prim:*
+    '/ prim:/
+    '> prim:>
+    '< prim:<
+    '>= prim:>=
+    '<= prim:<=
+    ;; List
+    'list prim:list
+    ;; Frame
+    'frame prim:frame
+    )))
 
 
 (define *bard-banner* "Bard 0.1")
