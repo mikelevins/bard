@@ -9,13 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (%initial-bard-environment)
-  (%extend-environment 
-   (%null-environment)
-   `(+ ,(lambda args (apply + args))
-     - ,(lambda args (apply - args))
-     * ,(lambda args (apply * args)))))
-
 (define (%eval-variable var env)
   (let ((binding (%find-binding env var)))
     (if binding

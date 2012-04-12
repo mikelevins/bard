@@ -36,7 +36,13 @@
 
 ;;; Number
 
-(define (prim:+) )
-(define (prim:-) )
-(define (prim:*) )
-(define (prim:/) )
+(define (prim:+ . args) (apply + args))
+(define (prim:- . args) (apply - args))
+(define (prim:* . args) (apply * args))
+(define (prim:/ . args) (apply / args))
+(define (prim:= . args) (apply = args))
+(define (prim:> . args) (apply > args))
+(define (prim:< . args) (apply < args))
+(define (prim:>= . args) (apply >= args))
+(define (prim:<= . args) (apply <= args))
+

@@ -68,6 +68,7 @@
          "src/protocols/Float.scm"
          "src/protocols/Integer.scm"
          "src/protocols/Ratio.scm"
+         "src/protocols/Equal.scm"
          ;;"src/values/stream.scm"
          "src/prims.scm"
          "src/eval/special.scm"
@@ -77,6 +78,7 @@
          "src/eval/eval.scm"
          "src/print.scm"
          "src/read.scm"
+         "src/repl/repl.scm"
          ))
 
 ;;; load sources

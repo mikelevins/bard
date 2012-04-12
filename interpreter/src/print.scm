@@ -86,7 +86,7 @@
                                ">")))
 
 (define (bard:print object #!optional (out (current-output-port)))
-  (print port: out (%as-string thing)))
+  (print port: out (%as-string object)))
 
 (define (show x)
   (newline)
