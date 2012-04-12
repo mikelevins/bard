@@ -46,3 +46,11 @@
 (define (prim:>= . args) (apply >= args))
 (define (prim:<= . args) (apply <= args))
 
+;;; List
+
+(define (prim:list . args) args)
+
+;;; Frame
+
+(define (prim:frame . args) (%make-frame args))
+

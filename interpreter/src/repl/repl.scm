@@ -23,6 +23,10 @@
      < ,prim:<
      >= ,prim:>=
      <= ,prim:<=
+     ;; List
+     list ,prim:list
+     ;; Frame
+     frame ,prim:frame
      )))
 
 
@@ -55,49 +59,3 @@
                 (loop)))))))
 
 
-(define (bard:repl)
-  (set! $bard-toplevel-environment (%initial-bard-environment))
-  (newline)
-  (display *bard-banner*)
-  (read-line)
-  (let loop ()
-    (newline)
-    (display *bard-prompt*)
-    (let* ((line-reader (lambda ()(read-line)))
-           (reader-handler (lambda (err)
-                             (newline)
-                             (display "ERROR: reader error ")
-                             (display err)
-                             (newline)
-                             (loop)))
-           (eval-handler (lambda (err)
-                           (newline)
-                           (display "ERROR: eval error ")
-                           (display err)
-                           (newline)
-                           (loop)))
-           (printer-handler (lambda (err)
-                              (newline)
-                              (display "ERROR: print error ")
-                              (display err)
-                              (newline)
-                              (loop)))
-           (input (with-exception-catcher reader-handler line-reader))
-           (expr-reader (lambda ()(bard:read-from-string input)))
-           (expr (with-exception-catcher reader-handler expr-reader))
-           (evaluator (lambda ()(%eval expr $bard-toplevel-environment))))
-      (if (or (eq? expr quit:)
-              (eq? expr q:))
-          (begin
-            (newline)
-            (display "Bard terminated")
-            (newline))
-          (if (eq? expr #!eof)
-              (loop)
-              (let* ((val (with-exception-catcher eval-handler evaluator))
-                     (printer (lambda ()(%as-string val)))
-                     (valstr (with-exception-catcher printer-handler printer)))
-                (newline)
-                (display valstr)
-                (newline)
-                (loop)))))))
