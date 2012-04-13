@@ -168,6 +168,8 @@
 
 (%define-structure-type <method> %method?)
 
+
+
 ;;; protocol types
 
 (%define-protocol Anything)
@@ -184,14 +186,16 @@
 
 (define (%object->bard-type thing)
   (if (##structure? thing)
-              (%structure-type thing)
-              (%primitive-type thing)))
+      (%structure-type thing)
+      (%primitive-type thing)))
 
 (define (%type? thing)
   (or (%singleton? thing)
       (%primitive-type? thing)
       (%structure-type? thing)
       (%protocol? thing)))
+
+(%define-structure-type <type> %type?)
 
 ;;; ---------------------------------------------------------------------
 ;;; type taxonomy

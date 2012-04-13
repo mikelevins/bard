@@ -28,6 +28,27 @@
     'list prim:list
     ;; Frame
     'frame prim:frame
+    ;; representations
+    '<undefined> <undefined>
+    '<null> <null>
+    '<character> <character>
+    '<boolean> <boolean>
+    '<symbol> <symbol>
+    '<keyword> <keyword>
+    '<flonum> <flonum>
+    '<ratnum> <ratnum>
+    '<fixnum> <fixnum>
+    '<bignum> <bignum>
+    '<primitive-procedure> <primitive-procedure>
+    '<cons> <cons>
+    '<string> <string>
+    '<input-stream> <input-stream>
+    '<output-stream> <output-stream>
+    '<frame> <frame>
+    '<function> <function>
+    '<method> <method>
+    ;; protocols
+    'Anything Anything
     )))
 
 
