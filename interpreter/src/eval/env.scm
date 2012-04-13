@@ -32,7 +32,7 @@
             (%extend-environment (%add-binding env var val) (cddr plist))))))
 
 (define (%set-binding! env var val)
-  (%environment-set-bindings! env 
+  (%set-environment-bindings! env 
                               (cons (cons var val)
                                     (%environment-bindings env))))
 
@@ -52,7 +52,8 @@
   $bard-toplevel-environment)
 
 (define (%define-variable var val #!optional (env (%top-level-environment)))
-  (%set-binding! env var val))
+  (%set-binding! env var val)
+  val)
 
 (define (%set-variable! var val #!optional (env (%top-level-environment)))
   (let ((binding (%find-binding env var)))
