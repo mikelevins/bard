@@ -81,3 +81,4 @@
                 (loop)))))))
 
 
+;;; (%eval '((method (x)(+ x 1)) 2) (%initial-bard-environment))

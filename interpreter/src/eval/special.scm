@@ -29,7 +29,7 @@
                (if alt?
                    (%eval (list-ref expr 3) env)
                    (bard:nothing)))))
-   'method (lambda (expr env) (%make-method name: #f params: (list-ref expr 1) body: (drop 2 expr)))
+   'method (lambda (expr env) (%make-method name: #f params: (list-ref expr 1) body: (cons 'begin (drop 2 expr))))
    'function (lambda (expr env) (%make-function name: #f))
    'set! (lambda (expr env) (%set-variable! env (list-ref expr 1) (%eval (list-ref expr 2) env)))
    ))

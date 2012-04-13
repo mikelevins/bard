@@ -45,7 +45,7 @@
    (else (error "unrecognized expression" expr))))
 
 (define (%test-eval str #!optional (env '()))
-  (show (%eval (bard:read-from-string str) env)))
+  (%eval (bard:read-from-string str) env))
 
 ;;; (%test-eval "undefined" (%initial-bard-environment))
 ;;; (%test-eval "nothing" (%initial-bard-environment))
@@ -65,3 +65,4 @@
 ;;; (%test-eval "+" (%initial-bard-environment))
 ;;; (%test-eval "(+ 2 3)" (%initial-bard-environment))
 ;;; (%test-eval "(* (- 4 2)(+ 1 2))" (%initial-bard-environment))
+;;; (%test-eval "(method (x)(+ x 1))" (%initial-bard-environment))
