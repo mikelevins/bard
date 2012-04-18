@@ -9,18 +9,29 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (%expand-quotation expr env)
-  (if (null? (cdr expr))
-      (error "malformed quotation" expr)
-      (let ((args (cdr expr)))
-        (if (null? (cdr args))
-            (car args)
-            (error "malformed quotation" expr)))))
+(define (%ensure-valid-quotation x)
+  (if (and (list? x)
+           (not (null? (cdr x)))
+           (null? (cddr x)))
+      x
+      (error "invalid quote form")))
 
-;;; (%expand-quotation '(quote (unquote x))(%initial-bard-environment))
+(define (%expand-quotation expr env)
+  (cadr expr))
+
+;;; (%expand-quotation '(quote *)(%initial-bard-environment))
 
 (define $special-forms-table
   (->table 
+   'and (lambda (expr env)
+          (let loop ((expr (cdr expr))
+                     (val '()))
+            (if (null? expr)
+                val
+                (let ((v (%eval (car expr) env)))
+                  (if v
+                      (loop (cdr expr) v)
+                      #f)))))
    'begin (lambda (expr env) 
             (let loop ((forms (cdr expr))
                        (val '()))
@@ -41,7 +52,15 @@
                    (%eval (list-ref expr 3) env)
                    (bard:nothing)))))
    'method (lambda (expr env) (%make-method name: #f params: (list-ref expr 1) body: (cons 'begin (drop 2 expr))))
-   'quote (lambda (expr env) (%expand-quotation expr env))
+   'or (lambda (expr env)
+         (let loop ((expr (cdr expr)))
+           (if (null? expr)
+               #f
+               (let ((v (%eval (car expr) env)))
+                 (if v
+                     v
+                     (loop (cdr expr)))))))
+   'quote (lambda (expr env) (%expand-quotation (%ensure-valid-quotation expr) env))
    'set! (lambda (expr env) (%set-variable! (list-ref expr 1) (%eval (list-ref expr 2) env)  env))
    ))
 
