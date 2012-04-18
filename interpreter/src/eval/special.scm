@@ -41,6 +41,7 @@
                     (loop (cdr forms)
                           (%eval form env))))))
    'define (lambda (expr env) (%define-variable (list-ref expr 1) (%eval (list-ref expr 2) env)))
+   'define-function (lambda (expr env) (%define-function (cadr expr) (drop 2 expr)))
    'function (lambda (expr env) (%make-function name: #f))
    'if (lambda (expr env)
          (let ((test (list-ref expr 1))
