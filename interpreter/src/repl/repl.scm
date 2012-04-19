@@ -52,8 +52,9 @@
     'List List
     'add-first bard:add-first
     'add-last bard:add-last
-    'choose-any bard:choose-any
-    'concatenate bard:concatenate
+    'any bard:any
+    'append bard:append
+    'contains? bard:contains?
     )))
 
 
