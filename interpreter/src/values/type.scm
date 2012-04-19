@@ -173,6 +173,7 @@
 ;;; protocol types
 
 (%define-protocol Anything)
+(%define-protocol List)
 
 ;;; ---------------------------------------------------------------------
 ;;; type accessors

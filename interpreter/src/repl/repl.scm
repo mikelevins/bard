@@ -49,6 +49,11 @@
     '<method> <method>
     ;; protocols
     'Anything Anything
+    'List List
+    'add-first bard:add-first
+    'add-last bard:add-last
+    'choose-any bard:choose-any
+    'concatenate bard:concatenate
     )))
 
 

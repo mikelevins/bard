@@ -14,26 +14,43 @@
 ;;; ---------------------------------------------------------------------
 ;;; <frame>
 ;;; ---------------------------------------------------------------------
+;;; NOTE: this implementation of frames is known to be inefficient
+;;; Known issues:
+;;; - slots are represented as alists, which means key lookup is linear
+;;; - because key order is required to be stable, adding slots
+;;;   requires linear traversals and reversals
 
 (define (%make-frame key-val-plist)
   (let loop ((kvs key-val-plist)
-             (slots '()))
+             (slots '())
+             (keys '()))
     (if (null? kvs)
-        (%private-make-frame slots)
+        (%private-make-frame (reverse slots))
         (if (null? (cdr kvs))
             (error "malformed inputs to make-frame" key-val-plist)
             (let ((k (car kvs))
                   (v (cadr kvs))
                   (more (cddr kvs)))
-              (loop more (cons (cons k v) slots)))))))
+              (if (member k keys)
+                  (error "duplicate keys in frame description" key-val-plist)
+                  (loop more (cons (cons k v) slots) (cons k keys))))))))
 
 (define (->frame . kvs)(%make-frame kvs))
 
 (%define-structure-type <frame> %frame?)
 
 (define (%frame-add-slot fr key val)
-  (%private-make-frame (cons (cons key val) 
-                             (%frame-slots fr))))
+  (let ((keys (map car (%frame-slots fr))))
+    (if (member key keys)
+        (let* ((matching-key? (lambda (i x)(equal? i (car x))))
+               (slots (reverse (cons (cons key val)(reverse (remove key (%frame-slots fr) matching-key?))))))
+          (%private-make-frame slots))
+        (%private-make-frame (reverse (cons (cons key val) (reverse (%frame-slots fr))))))))
+
+(define (%frame-remove-slot fr key)
+  (let* ((matching-key? (lambda (i x)(equal? i (car x))))
+         (slots (remove key (%frame-slots fr) matching-key?)))
+    (%private-make-frame slots)))
 
 (define (%frame-add-slots fr . kv-plist)
   (let loop ((kvs kv-plist)
@@ -71,6 +88,14 @@
     (if slot
         fr
         (%frame-add-slot fr key val))))
+
+(define (%frame-merge fr1 fr2)
+  (let* ((slots1 (%frame-slots fr1))
+         (slots2 (%frame-slots fr2))
+         (key= (lambda (s1 s2)(equal? (car s1)(car s2))))
+         (new-slots1 (filter (lambda (s1)(not (any? (lambda (s2)(key= s1 s2)) slots2)))
+                             slots1)))
+    (%private-make-frame (append new-slots1 slots2))))
 
 (define bard:frame? %frame?)
 
