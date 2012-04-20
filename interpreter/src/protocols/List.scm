@@ -102,6 +102,20 @@
 (%function-add-method! bard:append `(,<frame> ,<frame>) (lambda (ls1 ls2) (%frame-merge ls1 ls2)))
 (%function-add-method! bard:append `(,<null> ,<cons>) (lambda (ls1 ls2) ls2))
 (%function-add-method! bard:append `(,<cons> ,<null>) (lambda (ls1 ls2) ls1))
+(%function-add-method! bard:append `(,<null> ,<string>) (lambda (ls1 ls2) ls2))
+(%function-add-method! bard:append `(,<string> ,<null>) (lambda (ls1 ls2) ls1))
+(%function-add-method! bard:append `(,<null> ,<frame>) (lambda (ls1 ls2) ls2))
+(%function-add-method! bard:append `(,<frame> ,<null>) (lambda (ls1 ls2) ls1))
+(%function-add-method! bard:append `(,<cons> ,<string>) (lambda (ls1 ls2) (append ls1 (string->list ls2))))
+
+(%function-add-method! bard:append `(,<string> ,<cons>) 
+                       (lambda (ls1 ls2)
+                         (if (every? char? ls2)
+                             (string-append ls1 (list->string ls2))
+                             (append (string->list) ls2))))
+
+(%function-add-method! bard:append `(,<cons> ,<frame>) (lambda (ls1 ls2) (append ls1 (%frame->list ls2))))
+(%function-add-method! bard:append `(,<frame> ,<cons>) (lambda (ls1 ls2) (%frame-merge ls1 (%list->frame ls2))))
 
 ;;; contains?
 ;;; ---------------------------------------------------------------------
@@ -205,3 +219,111 @@
                                (%apply test
                                        (list (list k v)
                                              (list k (%frame-get ls k))))))))
+
+;;; difference
+;;; ---------------------------------------------------------------------
+
+(define bard:difference (%make-function name: 'difference))
+
+;;; <null>
+
+(%function-add-method! bard:difference `(,<null> ,<null> ,<primitive-procedure>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<null> ,<function>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<null> ,<method>) (lambda (ls thing test) '()))
+
+(%function-add-method! bard:difference `(,<null> ,<cons> ,<primitive-procedure>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<cons> ,<function>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<cons> ,<method>) (lambda (ls thing test) '()))
+
+(%function-add-method! bard:difference `(,<null> ,<string> ,<primitive-procedure>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<string> ,<function>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<string> ,<method>) (lambda (ls thing test) '()))
+
+(%function-add-method! bard:difference `(,<null> ,<frame> ,<primitive-procedure>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<frame> ,<function>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<null> ,<frame> ,<method>) (lambda (ls thing test) '()))
+
+;;; <cons>
+
+(%function-add-method! bard:difference `(,<cons> ,<null> ,<primitive-procedure>) (lambda (ls thing test) ls))
+(%function-add-method! bard:difference `(,<cons> ,<null> ,<function>) (lambda (ls thing test) ls))
+(%function-add-method! bard:difference `(,<cons> ,<null> ,<method>) (lambda (ls thing test) ls))
+
+(%function-add-method! bard:difference `(,<cons> ,<cons> ,<primitive-procedure>)
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (let ((x (car items))
+                                     (more (cdr items)))
+                                 (if (any? (lambda (y)(test x y)) ls2)
+                                     (loop more result)
+                                     (loop more (cons x result))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<cons> ,<function>)
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (let ((x (car items))
+                                     (more (cdr items)))
+                                 (if (any? (lambda (y)(%apply test (list x y))) ls2)
+                                     (loop more result)
+                                     (loop more (cons x result))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<cons> ,<method>)
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (let ((x (car items))
+                                     (more (cdr items)))
+                                 (if (any? (lambda (y)(%apply test (list x y))) ls2)
+                                     (loop more result)
+                                     (loop more (cons x result))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<string> ,<primitive-procedure>)
+                       (lambda (ls1 str test)
+                         (let ((ls2 (string->list str)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (reverse result)
+                                 (let ((x (car items))
+                                       (more (cdr items)))
+                                   (if (any? (lambda (y)(test x y)) ls2)
+                                       (loop more result)
+                                       (loop more (cons x result)))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<string> ,<function>) 
+                       (lambda (ls1 str test)
+                         (let ((ls2 (string->list str)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (reverse result)
+                                 (let ((x (car items))
+                                       (more (cdr items)))
+                                   (if (any? (lambda (y)(%apply test (list x y))) ls2)
+                                       (loop more result)
+                                       (loop more (cons x result)))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<string> ,<method>)
+                       (lambda (ls1 str test)
+                         (let ((ls2 (string->list str)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (reverse result)
+                                 (let ((x (car items))
+                                       (more (cdr items)))
+                                   (if (any? (lambda (y)(%apply test (list x y))) ls2)
+                                       (loop more result)
+                                       (loop more (cons x result)))))))))
+
+(%function-add-method! bard:difference `(,<cons> ,<frame> ,<primitive-procedure>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<cons> ,<frame> ,<function>) (lambda (ls thing test) '()))
+(%function-add-method! bard:difference `(,<cons> ,<frame> ,<method>) (lambda (ls thing test) '()))

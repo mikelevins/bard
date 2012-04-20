@@ -37,6 +37,28 @@
 
 (define (->frame . kvs)(%make-frame kvs))
 
+(define (%list->frame ls)
+  (let ((slots (let loop ((items ls)
+                          (result '()))
+                 (if (null? items)
+                     (reverse result)
+                     (let* ((item (car items))
+                            (more (cdr items)))
+                       (if (and (list? item)
+                                (not (null? item))
+                                (not (null? (cdr item)))
+                                (null? (cddr item)))
+                           (let ((k (car item))
+                                 (v (cadr item)))
+                             (loop more (cons (cons k v) result)))
+                           (error "invalid slot description" item)))))))
+    (%private-make-frame slots)))
+
+(define (%frame->list fr)
+  (let* ((keys (map car (%frame-slots fr)))
+         (vals (map cdr (%frame-slots fr))))
+    (map (lambda (k v) (list k v)) keys vals)))
+
 (%define-structure-type <frame> %frame?)
 
 (define (%frame-add-slot fr key val)

@@ -55,6 +55,7 @@
     'any bard:any
     'append bard:append
     'contains? bard:contains?
+    'difference bard:difference
     )))
 
 
