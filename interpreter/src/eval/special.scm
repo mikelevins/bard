@@ -9,6 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(include "~~lib/_gambit#.scm")
+(##include "../values/function-macros.scm")
+
+
 (define (%ensure-valid-quotation x)
   (if (and (list? x)
            (not (null? (cdr x)))
@@ -41,7 +45,21 @@
                     (loop (cdr forms)
                           (%eval form env))))))
    'define (lambda (expr env) (%define-variable (list-ref expr 1) (%eval (list-ref expr 2) env)))
-   'define-function (lambda (expr env) (%define-function (cadr expr) (drop 2 expr)))
+   'define-function (lambda (expr env) 
+                      (let* ((proto (cadr expr))
+                             (body (cons 'begin (drop 2 expr)))
+                             (fname (car proto))
+                             (params (cdr proto))
+                             (sig (%function-param-list->method-signature params))
+                             (formal-params (%function-param-list->formal-arguments params))
+                             (fn-binding (%find-binding env fname))
+                             (fn (if fn-binding
+                                     (%binding-value fn-binding)
+                                     (let ((f (%make-function name: fname)))
+                                       (%set-binding! env fname f)
+                                       f)))
+                             (meth (%make-method name: fname params: formal-params body: body)))
+                        (%function-add-method! fn sig meth)))
    'function (lambda (expr env) (%make-function name: #f))
    'if (lambda (expr env)
          (let ((test (list-ref expr 1))

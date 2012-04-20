@@ -22,6 +22,12 @@
   (%private-make-environment (cons (cons var val)
                                    (%environment-bindings env))))
 
+(define (%find-binding env var)
+  (assq var (%environment-bindings env)))
+
+(define (%binding-value binding)(cdr binding))
+(define (%set-binding-value! binding val)(set-cdr! binding val))
+
 (define (%extend-environment env plist)
   (if (null? plist)
       env
@@ -31,10 +37,14 @@
                  (val (cadr plist)))
             (%extend-environment (%add-binding env var val) (cddr plist))))))
 
+
 (define (%set-binding! env var val)
-  (%set-environment-bindings! env 
-                              (cons (cons var val)
-                                    (%environment-bindings env))))
+  (let ((binding (%find-binding env var)))
+    (if binding
+        (%set-binding-value! binding val)
+        (%set-environment-bindings! env 
+                                    (cons (cons var val)
+                                          (%environment-bindings env))))))
 
 (define (%set-bindings! env plist)
   (if (null? plist)
@@ -44,9 +54,6 @@
           (let* ((var (car plist))
                  (val (cadr plist)))
             (%set-bindings-aux! (%set-binding! env var val) (cddr plist))))))
-
-(define (%find-binding env var)
-  (assq var (%environment-bindings env)))
 
 (define (%top-level-environment)
   $bard-toplevel-environment)

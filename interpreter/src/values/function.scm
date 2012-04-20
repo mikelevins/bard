@@ -172,4 +172,4 @@
          (ordered-entries (sort entries %method-entry<)))
     (map cdr ordered-entries)))
 
-;;(%define-function (quux a b & more) #f)
+
