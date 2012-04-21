@@ -19,10 +19,10 @@
    ((list? param) (car param))
    (else (error "invalid parameter spec" param))))
 
-(define (%function-param->signature-type param)
+(define (%function-param->signature-type param env)
   (cond
    ((symbol? param) Anything)
-   ((list? param) (let ((type-spec (cadr param)))
+   ((list? param) (let ((type-spec (%eval (cadr param) env)))
                     (if (%type? type-spec)
                         type-spec
                         (error "invalid type" type-spec))))
@@ -31,13 +31,14 @@
 (define (%function-param-list->formal-arguments params)
   (map %function-param->formal-argument params))
 
-(define (%function-param-list->method-signature params)
+(define (%function-param-list->method-signature params env)
   (let ((required-params (take-before (lambda (p)(eq? p '&))
                                       params))
         (tail (if (position-if (lambda (x) (eq? x '&)) params)
                   '(&)
                   '())))
-    (append (map %function-param->signature-type required-params)
+    (append (map (lambda (p) (%function-param->signature-type p env)) 
+                 required-params)
             tail)))
 
 
@@ -52,12 +53,6 @@
                 #t
                 (loop (cdr e1) (cdr e2)))))))
 
-;;; ---------------------------------------------------------------------
-;;; macros
-;;; ---------------------------------------------------------------------
-
-(include "~~lib/_gambit#.scm")
-(##include "function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; method tables

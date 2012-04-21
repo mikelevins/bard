@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(##include "../values/function-macros.scm")
 (##include "../values/type-macros.scm")
 
 (define bard:= (%make-function name: '=))

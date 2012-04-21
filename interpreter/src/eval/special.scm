@@ -9,9 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
-(##include "../values/function-macros.scm")
-
 
 (define (%ensure-valid-quotation x)
   (if (and (list? x)
@@ -50,7 +47,7 @@
                              (body (cons 'begin (drop 2 expr)))
                              (fname (car proto))
                              (params (cdr proto))
-                             (sig (%function-param-list->method-signature params))
+                             (sig (%function-param-list->method-signature params env))
                              (formal-params (%function-param-list->formal-arguments params))
                              (fn-binding (%find-binding env fname))
                              (fn (if fn-binding
