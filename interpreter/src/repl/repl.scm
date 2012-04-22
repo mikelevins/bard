@@ -24,6 +24,8 @@
     '< prim:<
     '>= prim:>=
     '<= prim:<=
+    'odd? odd?
+    'even? even?
     ;; List
     'list prim:list
     ;; Frame
@@ -56,6 +58,11 @@
     'append bard:append
     'contains? bard:contains?
     'difference bard:difference
+    'drop bard:drop
+    'drop-before bard:drop-before
+    'element bard:element
+    'empty? bard:empty?
+    'every? bard:every?
     )))
 
 

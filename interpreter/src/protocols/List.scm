@@ -538,3 +538,270 @@
                                                    slots1)))
                            (%list->frame new-slots))))
 
+;;; drop
+;;; ---------------------------------------------------------------------
+
+(define bard:drop (%make-function name: 'drop))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<null>) (lambda (n ls)(if (zero? n) ls (error "count out of range" n))))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<cons>)
+                       (lambda (n ls)
+                         (let loop ((i n)
+                                    (items ls))
+                           (if (<= i 0)
+                               items
+                               (if (null? items)
+                                   (error "count out of range" n)
+                                   (loop (- i 1)(cdr items)))))))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<string>)
+                       (lambda (n str)
+                         (let loop ((i n)
+                                    (items (string->list str)))
+                           (if (<= i 0)
+                               (list->string items)
+                               (if (null? items)
+                                   (error "count out of range" n)
+                                   (loop (- i 1)(cdr items)))))))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<frame>)
+                       (lambda (n fr)
+                         (let loop ((i n)
+                                    (items (%frame->list fr)))
+                           (if (<= i 0)
+                               (%list->frame items)
+                               (if (null? items)
+                                   (error "count out of range" n)
+                                   (loop (- i 1)(cdr items)))))))
+
+
+;;; drop-before
+;;; ---------------------------------------------------------------------
+
+(define bard:drop-before (%make-function name: 'drop-before))
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<null>) 
+                       (lambda (test ls) ls))
+
+(%function-add-method! bard:drop-before `(,<function> ,<null>) 
+                       (lambda (test ls) ls))
+
+(%function-add-method! bard:drop-before `(,<method> ,<null>) 
+                       (lambda (test ls) ls))
+
+
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               items
+                               (if (test (car items))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               items
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<method> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               items
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (list->string items)
+                               (if (test (car items))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (list->string items)
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<method> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (list->string items)
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+
+
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               (%list->frame items)
+                               (if (test (car items))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               (%list->frame items)
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:drop-before `(,<method> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               (%list->frame items)
+                               (if (%apply test (list (car items)))
+                                   items
+                                   (loop (cdr items)))))))
+
+;;; element
+;;; ---------------------------------------------------------------------
+
+(define bard:element (%make-function name: 'element))
+
+(%function-add-method! bard:element `(,<null> ,<fixnum>) (lambda (ls n)(error "index out of range" n)))
+
+(%function-add-method! bard:element `(,<cons> ,<fixnum>)
+                       (lambda (ls n)(list-ref ls n)))
+
+(%function-add-method! bard:element `(,<string> ,<fixnum>)
+                       (lambda (str n)(string-ref str n)))
+
+(%function-add-method! bard:element `(,<frame> ,<fixnum>)
+                       (lambda (fr n)
+                         (let ((ls (%frame->list fr)))
+                           (if (null? ls)
+                               (error "index out of range" n)
+                               (list-ref ls n)))))
+
+;;; empty?
+;;; ---------------------------------------------------------------------
+
+(define bard:empty? (%make-function name: 'empty?))
+
+(%function-add-method! bard:empty? `(,<null>) (lambda (ls)(bard:true)))
+(%function-add-method! bard:empty? `(,<cons>)(lambda (ls)(null? ls)))
+(%function-add-method! bard:empty? `(,<string>)(lambda (str)(<= (string-length str) 0)))
+(%function-add-method! bard:empty? `(,<frame>)(lambda (fr)(null? (bard:keys fr))))
+
+;;; every?
+;;; ---------------------------------------------------------------------
+
+(define bard:every? (%make-function name: 'every?))
+
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<null>) (lambda (test ls) #t))
+(%function-add-method! bard:every? `(,<function> ,<null>) (lambda (test ls) #t))
+(%function-add-method! bard:every? `(,<method> ,<null>) (lambda (test ls) #t))
+
+
+
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               #t
+                               (if (test (car items))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<function> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<method> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+
+
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (test (car items))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<function> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<method> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+
+
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (test (car items))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<function> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+(%function-add-method! bard:every? `(,<method> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls)))
+                           (if (null? items)
+                               #t
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items))
+                                   #f)))))
+
+
