@@ -805,3 +805,205 @@
                                    #f)))))
 
 
+
+;;; filter
+;;; ---------------------------------------------------------------------
+
+(define bard:filter (%make-function name: 'filter))
+
+(%function-add-method! bard:filter `(,<primitive-procedure> ,<null>) (lambda (test ls) '()))
+(%function-add-method! bard:filter `(,<function> ,<null>) (lambda (test ls) '()))
+(%function-add-method! bard:filter `(,<method> ,<null>) (lambda (test ls) '()))
+
+
+(%function-add-method! bard:filter `(,<primitive-procedure> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (test (car items))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<function> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<method> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+
+
+(%function-add-method! bard:filter `(,<primitive-procedure> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (list->string (reverse result))
+                               (if (test (car items))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<function> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (list->string (reverse result))
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<method> ,<string>)
+                       (lambda (test ls)
+                         (let loop ((items (string->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (list->string (reverse result))
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+
+
+(%function-add-method! bard:filter `(,<primitive-procedure> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (%list->frame (reverse result))
+                               (if (test (car items))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<function> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (%list->frame (reverse result))
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:filter `(,<method> ,<frame>)
+                       (lambda (test ls)
+                         (let loop ((items (%frame->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (%list->frame (reverse result))
+                               (if (%apply test (list (car items)))
+                                   (loop (cdr items)(cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+
+;;; find
+;;; ---------------------------------------------------------------------
+
+(define bard:find (%make-function name: 'find))
+
+(%function-add-method! bard:find `(,<primitive-procedure> ,<null>) (lambda (test ls) (bard:nothing)))
+(%function-add-method! bard:find `(,<function> ,<null>) (lambda (test ls) (bard:nothing)))
+(%function-add-method! bard:find `(,<method> ,<null>) (lambda (test ls) (bard:nothing)))
+
+
+(%function-add-method! bard:find `(,<primitive-procedure> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (test (car items))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:find `(,<function> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:find `(,<method> ,<cons>)
+                       (lambda (test ls)
+                         (let loop ((items ls))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+
+
+(%function-add-method! bard:find `(,<primitive-procedure> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (test (car items))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:find `(,<function> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:find `(,<method> ,<string>)
+                       (lambda (test str)
+                         (let loop ((items (string->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+
+
+(%function-add-method! bard:find `(,<primitive-procedure> ,<frame>)
+                       (lambda (test str)
+                         (let loop ((items (%frame->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (test (car items))
+                                   (car items)
+                                   (loop (cdr items))))))                       )
+
+(%function-add-method! bard:find `(,<function> ,<frame>)
+                       (lambda (test str)
+                         (let loop ((items (%frame->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+(%function-add-method! bard:find `(,<method> ,<frame>)
+                       (lambda (test str)
+                         (let loop ((items (%frame->list str)))
+                           (if (null? items)
+                               (bard:nothing)
+                               (if (%apply test (list (car items)))
+                                   (car items)
+                                   (loop (cdr items)))))))
+
+

@@ -63,6 +63,8 @@
     'element bard:element
     'empty? bard:empty?
     'every? bard:every?
+    'filter bard:filter
+    'find bard:find
     )))
 
 
