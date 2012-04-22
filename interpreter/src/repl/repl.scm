@@ -13,6 +13,8 @@
   (%extend-environment 
    (%null-environment)
    (list
+    ;; general
+    'id (lambda (x) x)
     ;; generic comparison
     '= bard:=
     ;; numbers
@@ -65,6 +67,9 @@
     'every? bard:every?
     'filter bard:filter
     'find bard:find
+    'interleave bard:interleave
+
+    'map bard:map
     )))
 
 

@@ -37,6 +37,12 @@
 
 (define (->frame . kvs)(%make-frame kvs))
 
+(define (%frame-slot? x)
+  (and (list? x)
+       (not (null? x))
+       (not (null? (cdr x)))
+       (null? (cddr x))))
+
 (define (%list->frame ls)
   (let ((slots (let loop ((items ls)
                           (result '()))
