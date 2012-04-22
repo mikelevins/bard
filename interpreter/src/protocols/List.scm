@@ -1163,6 +1163,216 @@
                                                  result)))))))
 
 
+;;; interpose
+;;; ---------------------------------------------------------------------
+
+(define bard:interpose (%make-function name: 'interpose))
+
+;;; <null>
+
+(%function-add-method! bard:interpose `(,Anything ,<null>) (lambda (fn ls) '()))
+
+(%function-add-method! bard:interpose `(,Anything ,<cons>)
+                       (lambda (thing ls)
+                         (let loop ((items ls)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (null? result)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) (cons (car items) (cons thing result))))))))
+
+(%function-add-method! bard:interpose `(,Anything ,<string>)
+                       (lambda (thing ls)
+                         (let loop ((items (string->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (if (every? char? result)
+                                   (list->string (reverse result))
+                                   (reverse result))
+                               (if (null? result)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) (cons (car items) (cons thing result))))))))
+
+(%function-add-method! bard:interpose `(,Anything ,<frame>)
+                       (lambda (thing ls)
+                         (let loop ((items (%frame->list ls))
+                                    (result '()))
+                           (if (null? items)
+                               (if (every? %frame-slot? result)
+                                   (%list->frame (reverse result))
+                                   (reverse result))
+                               (if (null? result)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) (cons (car items) (cons thing result))))))))
+
+;;; intersection
+;;; ---------------------------------------------------------------------
+
+(define bard:intersection (%make-function name: 'intersection))
+
+;;; <null>
+
+(%function-add-method! bard:intersection `(,<null> ,<null> ,<primitive-procedure>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<null> ,<function>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<null> ,<method>) (lambda (ls1 ls2 test) '()))
+
+(%function-add-method! bard:intersection `(,<null> ,<cons> ,<primitive-procedure>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<cons> ,<function>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<cons> ,<method>) (lambda (ls1 ls2 test) '()))
+
+(%function-add-method! bard:intersection `(,<null> ,<string> ,<primitive-procedure>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<string> ,<function>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<string> ,<method>) (lambda (ls1 ls2 test) '()))
+
+(%function-add-method! bard:intersection `(,<null> ,<frame> ,<primitive-procedure>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<frame> ,<function>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<null> ,<frame> ,<method>) (lambda (ls1 ls2 test) '()))
+
+;;; <cons>
+
+(%function-add-method! bard:intersection `(,<cons> ,<null> ,<primitive-procedure>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<cons> ,<null> ,<function>) (lambda (ls1 ls2 test) '()))
+(%function-add-method! bard:intersection `(,<cons> ,<null> ,<method>) (lambda (ls1 ls2 test) '()))
+
+
+(%function-add-method! bard:intersection `(,<cons> ,<cons> ,<primitive-procedure>) 
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (any? (lambda (x)(test (car items) x)) ls2)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<cons> ,<function>) 
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<cons> ,<method>) 
+                       (lambda (ls1 ls2 test)
+                         (let loop ((items ls1)
+                                    (result '()))
+                           (if (null? items)
+                               (reverse result)
+                               (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                   (loop (cdr items) (cons (car items) result))
+                                   (loop (cdr items) result))))))
+
+
+(%function-add-method! bard:intersection `(,<cons> ,<string> ,<primitive-procedure>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (string->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? char? result)
+                                     (list->string (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(test (car items) x)) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<string> ,<function>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (string->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? char? result)
+                                     (list->string (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<string> ,<method>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (string->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? char? result)
+                                     (list->string (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+
+(%function-add-method! bard:intersection `(,<cons> ,<frame> ,<primitive-procedure>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (%frame->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? %frame-slot? result)
+                                     (%list->frame (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(test (car items) x)) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<frame> ,<function>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (%frame->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? %frame-slot? result)
+                                     (%list->frame (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+(%function-add-method! bard:intersection `(,<cons> ,<frame> ,<method>) 
+                       (lambda (ls1 ls2 test)
+                         (let ((ls2 (%frame->list ls2)))
+                           (let loop ((items ls1)
+                                      (result '()))
+                             (if (null? items)
+                                 (if (every? %frame-slot? result)
+                                     (%list->frame (reverse result))
+                                     (reverse result))
+                                 (if (any? (lambda (x)(%apply test (list (car items) x))) ls2)
+                                     (loop (cdr items) (cons (car items) result))
+                                     (loop (cdr items) result)))))))
+
+;;; last
+;;; ---------------------------------------------------------------------
+
+(define bard:last (%make-function name: 'last))
+
+(%function-add-method! bard:last `(,<null>)(lambda (ls)(bard:nothing)))
+(%function-add-method! bard:last `(,<cons>) (lambda (ls)(list-ref ls (- (length ls) 1))))
+(%function-add-method! bard:last `(,<string>)(lambda (str)(string-ref str (- (string-length str) 1))))
+
+(%function-add-method! bard:last `(,<frame>) 
+                       (lambda (fr)
+                         (let ((ls (%frame->list fr)))
+                           (if (null? ls)
+                               (bard:nothing)
+                               (list-ref ls (- (length ls) 1))))))
+
+;;; length
+;;; ---------------------------------------------------------------------
+
+(define bard:length (%make-function name: 'length))
+
+(%function-add-method! bard:length `(,<null>)(lambda (ls) 0))
+(%function-add-method! bard:length `(,<cons>) (lambda (ls)(length ls)))
+(%function-add-method! bard:length `(,<string>)(lambda (str)(string-length str)))
+(%function-add-method! bard:length `(,<frame>)(lambda (fr)(length (bard:keys fr))))
+
+
 ;;; map
 ;;; ---------------------------------------------------------------------
 

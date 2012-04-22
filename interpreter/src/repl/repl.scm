@@ -28,6 +28,7 @@
     '<= prim:<=
     'odd? odd?
     'even? even?
+    'random (lambda (n)(random-integer n))
     ;; List
     'list prim:list
     ;; Frame
@@ -68,6 +69,10 @@
     'filter bard:filter
     'find bard:find
     'interleave bard:interleave
+    'interpose bard:interpose
+    'intersection bard:intersection
+    'last bard:last
+    'length bard:length
 
     'map bard:map
     )))

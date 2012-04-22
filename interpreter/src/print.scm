@@ -42,15 +42,32 @@
                (string-append "#<output-stream "
                               (number->string (object->serial-number val)) ">")))
 
+(%defprinter <cons> 
+             (lambda (val)
+               (let loop ((items val)
+                          (outstr "("))
+                 (if (null? items)
+                     (string-append outstr ")")
+                     (if (equal? items val)
+                         (loop (cdr items)(string-append outstr (%as-string (car items))))
+                         (loop (cdr items)(string-append outstr " " (%as-string (car items)))))))))
+
 (%defprinter <frame>
              (lambda (val)
-               (let loop ((keys (bard:keys val))
-                          (outstr "{"))
-                 (if (null? keys)
-                     (string-append outstr "}")
-                     (loop (cdr keys)
-                           (let* ((val (%frame-get val (car keys))))
-                             (string-append outstr " " (%as-string (car keys)) " " (%as-string val))))))))
+               (let ((all-keys (bard:keys val)))
+                 (let loop ((keys all-keys)
+                            (outstr "{"))
+                   (if (null? keys)
+                       (string-append outstr "}")
+                       (if (equal? keys all-keys)
+                           (loop (cdr keys)
+                                 (let* ((val (%frame-get val (car keys))))
+                                   (string-append outstr (%as-string (car keys)) " " (%as-string val))))
+                           (loop (cdr keys)
+                                 (let* ((val (%frame-get val (car keys))))
+                                   (string-append outstr " " (%as-string (car keys)) " " (%as-string val))))))))))
+
+
 
 (%defprinter <function>
              (lambda (val)
