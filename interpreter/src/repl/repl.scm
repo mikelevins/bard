@@ -73,8 +73,9 @@
     'intersection bard:intersection
     'last bard:last
     'length bard:length
-
+    'list? bard:list?
     'map bard:map
+    'position bard:position
     )))
 
 
