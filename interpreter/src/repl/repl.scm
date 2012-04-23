@@ -80,6 +80,13 @@
     'reduce bard:reduce
     'repeat bard:repeat
     'reverse bard:reverse
+    'select bard:select
+    'shuffle bard:shuffle
+    'slice bard:slice
+    'some? bard:some?
+    'sort bard:sort
+    'tail bard:tail
+    'tails bard:tails
     )))
 
 

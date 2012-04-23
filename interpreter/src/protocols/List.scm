@@ -1711,3 +1711,155 @@
 (%function-add-method! bard:reverse `(,<string>) %bard-reverse)
 (%function-add-method! bard:reverse `(,<frame>) %bard-reverse)
 
+;;; select
+;;; ---------------------------------------------------------------------
+
+(define bard:select (%make-function name: 'select))
+
+(define (%bard-select indexes ls)
+  (let* ((tp (%object->bard-type ls))
+         (items (%as-list ls)))
+    (%to-type tp (map (lambda (i)(list-ref items i)) indexes))))
+
+(%function-add-method! bard:select `(,<null> ,Anything) (lambda (indexes ls)(bard:nothing)))
+(%function-add-method! bard:select `(,<cons> ,<cons>) %bard-select)
+(%function-add-method! bard:select `(,<cons> ,<string>) %bard-select)
+(%function-add-method! bard:select `(,<cons> ,<frame>) %bard-select)
+
+
+;;; shuffle
+;;; ---------------------------------------------------------------------
+
+(define bard:shuffle (%make-function name: 'shuffle))
+
+(define (%bard-shuffle ls)
+  (let* ((tp (%object->bard-type ls))
+         (items (%as-list ls))
+         (whatever (lambda (x y)(if (even? (random-integer 1000)) #t #f)))
+         (result (sort items whatever)))
+    (%to-type tp result)))
+
+(%function-add-method! bard:shuffle `(,<null>) %bard-shuffle)
+(%function-add-method! bard:shuffle `(,<cons>) %bard-shuffle)
+(%function-add-method! bard:shuffle `(,<string>) %bard-shuffle)
+(%function-add-method! bard:shuffle `(,<frame>) %bard-shuffle)
+
+;;; slice
+;;; ---------------------------------------------------------------------
+
+(define bard:slice (%make-function name: 'slice))
+
+(define (%bard-slice ls start end)
+  (let* ((tp (%object->bard-type ls))
+         (items (%as-list ls))
+         (result (drop start (take end items))))
+    (%to-type tp result)))
+
+(%function-add-method! bard:slice `(,<null> ,<fixnum> ,<fixnum>) %bard-slice)
+(%function-add-method! bard:slice `(,<cons> ,<fixnum> ,<fixnum>) %bard-slice)
+(%function-add-method! bard:slice `(,<string> ,<fixnum> ,<fixnum>) %bard-slice)
+(%function-add-method! bard:slice `(,<frame> ,<fixnum> ,<fixnum>) %bard-slice)
+
+;;; some?
+;;; ---------------------------------------------------------------------
+
+(define bard:some? (%make-function name: 'some?))
+
+(define (%bard-some? test ls)
+  (let loop ((items (%as-list ls)))
+    (if (null? items)
+        (bard:nothing)
+        (if (%apply test (list (car items)))
+            (car items)
+            (loop (cdr items))))))
+
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<null>) %bard-some?)
+(%function-add-method! bard:some? `(,<function> ,<null>) %bard-some?)
+(%function-add-method! bard:some? `(,<method> ,<null>) %bard-some?)
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<cons>) %bard-some?)
+(%function-add-method! bard:some? `(,<function> ,<cons>) %bard-some?)
+(%function-add-method! bard:some? `(,<method> ,<cons>) %bard-some?)
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<string>) %bard-some?)
+(%function-add-method! bard:some? `(,<function> ,<string>) %bard-some?)
+(%function-add-method! bard:some? `(,<method> ,<string>) %bard-some?)
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<frame>) %bard-some?)
+(%function-add-method! bard:some? `(,<function> ,<frame>) %bard-some?)
+(%function-add-method! bard:some? `(,<method> ,<frame>) %bard-some?)
+
+
+;;; sort
+;;; ---------------------------------------------------------------------
+
+(define bard:sort (%make-function name: 'sort))
+
+(define (%bard-sort test ls)
+  (let* ((tp (%object->bard-type ls))
+         (items (%as-list ls))
+         (test (lambda (x y)(%apply test (list x y))))
+         (result (sort items test)))
+    (%to-type tp result)))
+
+(%function-add-method! bard:sort `(,<primitive-procedure> ,<null>) %bard-sort)
+(%function-add-method! bard:sort `(,<function> ,<null>) %bard-sort)
+(%function-add-method! bard:sort `(,<method> ,<null>) %bard-sort)
+
+(%function-add-method! bard:sort `(,<primitive-procedure> ,<cons>) %bard-sort)
+(%function-add-method! bard:sort `(,<function> ,<cons>) %bard-sort)
+(%function-add-method! bard:sort `(,<method> ,<cons>) %bard-sort)
+
+(%function-add-method! bard:sort `(,<primitive-procedure> ,<string>) %bard-sort)
+(%function-add-method! bard:sort `(,<function> ,<string>) %bard-sort)
+(%function-add-method! bard:sort `(,<method> ,<string>) %bard-sort)
+
+(%function-add-method! bard:sort `(,<primitive-procedure> ,<frame>) %bard-sort)
+(%function-add-method! bard:sort `(,<function> ,<frame>) %bard-sort)
+(%function-add-method! bard:sort `(,<method> ,<frame>) %bard-sort)
+
+;;; tail
+;;; ---------------------------------------------------------------------
+
+(define bard:tail (%make-function name: 'tail))
+
+(%function-add-method! bard:tail `(,<null>) (lambda (ls)(bard:nothing)))
+(%function-add-method! bard:tail `(,<cons>) (lambda (ls)(cdr ls)))
+
+(%function-add-method! bard:tail `(,<string>) 
+                       (lambda (ls)
+                         (if (> (string-length ls) 0)
+                             (substring ls 1 (string-length ls))
+                             "")))
+
+(%function-add-method! bard:tail `(,<frame>) 
+                       (lambda (fr)
+                         (let ((items (%as-list fr)))
+                           (if (null? items)
+                               (%to-type <frame> '())
+                               (%to-type <frame> (cdr items))))))
+
+
+;;; tails
+;;; ---------------------------------------------------------------------
+
+(define bard:tails (%make-function name: 'tails))
+
+(define (%bard-tails ls)
+  (let ((tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (result '()))
+      (if (null? items)
+          (reverse result)
+          (loop (cdr items)
+                (cons (%to-type tp items) result))))))
+
+
+
+(%function-add-method! bard:tails `(,<null>) %bard-tails)
+(%function-add-method! bard:tails `(,<cons>) %bard-tails)
+(%function-add-method! bard:tails `(,<string>) %bard-tails)
+(%function-add-method! bard:tails `(,<frame>) %bard-tails)
+
+
