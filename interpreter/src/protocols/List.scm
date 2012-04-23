@@ -9,13 +9,36 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define bard:list? (%make-function name: 'list?))
+;;; ---------------------------------------------------------------------
+;;; private utilitiess
+;;; ---------------------------------------------------------------------
 
-(%function-add-method! bard:list? `(,Anything) (lambda (x) #f))
-(%function-add-method! bard:list? `(,<null>) (lambda (x) #t))
-(%function-add-method! bard:list? `(,<cons>) (lambda (x) #t))
-(%function-add-method! bard:list? `(,<string>) (lambda (x) #t))
-(%function-add-method! bard:list? `(,<frame>) (lambda (x) #t))
+(define (%maybe-as-string ls)
+  (if (every? char? ls)
+      (list->string ls)
+      ls))
+
+(define (%maybe-as-frame ls)
+  (if (every? %frame-slot? ls)
+      (%list->frame ls)
+      ls))
+
+(define (%to-type tp ls)
+  (cond
+   ((equal? tp <string>)(%maybe-as-string ls))
+   ((equal? tp <frame>)(%maybe-as-frame ls))
+   (else ls)))
+
+(define (%as-list ls)
+  (let ((tp (%object->bard-type ls)))
+    (cond
+     ((equal? tp <string>)(string->list ls))
+     ((equal? tp <frame>)(%frame->list ls))
+     (else ls))))
+
+;;; ---------------------------------------------------------------------
+;;; The Protocol
+;;; ---------------------------------------------------------------------
 
 ;;; add-first
 ;;; ---------------------------------------------------------------------
@@ -1599,3 +1622,92 @@
                                (if (%apply test (list (car items)))
                                    i
                                    (loop (+ i 1)(cdr items)))))))
+
+;;; range
+;;; ---------------------------------------------------------------------
+
+(define bard:range (%make-function name: 'range))
+
+(define (%bard-range start end step)
+  (if (and (> end start)
+           (<= step 0))
+      (error "bad range"))
+  (if (and (< end start)
+           (>= step 0))
+      (error "bad range"))
+  (let ((test (if (< step 0) <= >=)))
+    (let loop ((i start)
+               (result '()))
+      (if (test i end)
+          (reverse result)
+          (loop (+ i step)(cons i result))))))
+
+(%function-add-method! bard:range `(,<fixnum> ,<fixnum> ,<fixnum>) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<fixnum> ,<fixnum>) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<bignum> ,<fixnum>) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<fixnum> ,<bignum>) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<fixnum> ,<bignum>) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<bignum> ,<fixnum>) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<bignum> ,<bignum>) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<bignum> ,<bignum>) %bard-range)
+
+;;; reduce
+;;; ---------------------------------------------------------------------
+
+(define bard:reduce (%make-function name: 'reduce))
+
+(define (%bard-reduce fn ls init)
+  (let ((tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (result init))
+      (if (null? items)
+          (%to-type tp result)
+          (loop (cdr items) 
+                (%apply fn (list result (car items))))))))
+
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,<null> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,<null> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,<null> ,Anything) %bard-reduce)
+
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,<cons> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,<cons> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,<cons> ,Anything) %bard-reduce)
+
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,<string> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,<string> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,<string> ,Anything) %bard-reduce)
+
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,<frame> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,<frame> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,<frame> ,Anything) %bard-reduce)
+
+;;; repeat
+;;; ---------------------------------------------------------------------
+
+(define bard:repeat (%make-function name: 'repeat))
+
+(define (%bard-repeat n thing)
+  (let loop ((i n)
+             (result '()))
+    (if (<= i 0)
+        result
+        (loop (- i 1)
+              (cons thing result)))))
+
+(%function-add-method! bard:repeat `(,<fixnum> ,Anything) %bard-repeat)
+(%function-add-method! bard:repeat `(,<bignum> ,Anything) %bard-repeat)
+
+;;; reverse
+;;; ---------------------------------------------------------------------
+
+(define bard:reverse (%make-function name: 'reverse))
+
+(define (%bard-reverse ls)
+  (%to-type (%object->bard-type ls)
+            (reverse (%as-list ls))))
+
+(%function-add-method! bard:reverse `(,<null>) %bard-reverse)
+(%function-add-method! bard:reverse `(,<cons>) %bard-reverse)
+(%function-add-method! bard:reverse `(,<string>) %bard-reverse)
+(%function-add-method! bard:reverse `(,<frame>) %bard-reverse)
+

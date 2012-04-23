@@ -76,6 +76,10 @@
     'list? bard:list?
     'map bard:map
     'position bard:position
+    'range bard:range
+    'reduce bard:reduce
+    'repeat bard:repeat
+    'reverse bard:reverse
     )))
 
 
