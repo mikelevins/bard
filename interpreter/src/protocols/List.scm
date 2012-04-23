@@ -1856,10 +1856,40 @@
                 (cons (%to-type tp items) result))))))
 
 
-
 (%function-add-method! bard:tails `(,<null>) %bard-tails)
 (%function-add-method! bard:tails `(,<cons>) %bard-tails)
 (%function-add-method! bard:tails `(,<string>) %bard-tails)
 (%function-add-method! bard:tails `(,<frame>) %bard-tails)
 
+
+;;; take
+;;; ---------------------------------------------------------------------
+
+(define bard:take (%make-function name: 'take))
+
+(define (%bard-take n ls)
+  (let ((tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (i n)
+               (result '()))
+      (if (<= i 0)
+          (%to-type tp (reverse result))
+          (if (null? items)
+              (error "count out of range" n)
+              (loop (cdr items)
+                    (- i 1)
+                    (cons (car items) result)))))))
+
+
+(%function-add-method! bard:take `(,<fixnum> ,<null>) %bard-take)
+(%function-add-method! bard:take `(,<bignum> ,<null>) %bard-take)
+
+(%function-add-method! bard:take `(,<fixnum> ,<cons>) %bard-take)
+(%function-add-method! bard:take `(,<bignum> ,<cons>) %bard-take)
+
+(%function-add-method! bard:take `(,<fixnum> ,<string>) %bard-take)
+(%function-add-method! bard:take `(,<bignum> ,<string>) %bard-take)
+
+(%function-add-method! bard:take `(,<fixnum> ,<frame>) %bard-take)
+(%function-add-method! bard:take `(,<bignum> ,<frame>) %bard-take)
 

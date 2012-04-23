@@ -87,6 +87,7 @@
     'sort bard:sort
     'tail bard:tail
     'tails bard:tails
+    'take bard:take
     )))
 
 
