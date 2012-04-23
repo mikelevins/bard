@@ -36,6 +36,7 @@
      ((equal? tp <frame>)(%frame->list ls))
      (else ls))))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
 ;;; ---------------------------------------------------------------------
@@ -45,19 +46,13 @@
 
 (define bard:add-first (%make-function name: 'add-first))
 
-(%function-add-method! bard:add-first `(,Anything ,<null>) 
-                       (lambda (x ls)(cons x ls)))
-
-(%function-add-method! bard:add-first `(,Anything ,<cons>) 
-                       (lambda (x ls)(cons x ls)))
-
-(%function-add-method! bard:add-first `(,<character> ,<string>) 
-                       (lambda (ch str)(string-append (string ch) str)))
+(%function-add-method! bard:add-first `(,Anything ,<null>) (lambda (x ls)(cons x ls)))
+(%function-add-method! bard:add-first `(,Anything ,<cons>) (lambda (x ls)(cons x ls)))
+(%function-add-method! bard:add-first `(,<character> ,<string>) (lambda (ch str)(string-append (string ch) str)))
 
 (%function-add-method! bard:add-first `(,<cons> ,<frame>) 
                        (lambda (kv fr)
-                         (if (and (not (null? (cdr kv)))
-                                  (null? (cddr kv)))
+                         (if (%frame-slot? kv)
                              (let* ((matching-key? (lambda (i x)(equal? i (car x))))
                                     (k (car kv))
                                     (v (cadr kv))
@@ -73,20 +68,13 @@
 
 (define bard:add-last (%make-function name: 'add-last))
 
-(%function-add-method! bard:add-last `(,<null> ,Anything) 
-                       (lambda (ls x)(list x)))
-
-(%function-add-method! bard:add-last `(,<cons> ,Anything) 
-                       (lambda (ls x)(reverse (cons x (reverse ls)))))
-
-(%function-add-method! bard:add-last `(,<string> ,<character>) 
-                       (lambda (ls x)(string-append ls (string x))))
-
+(%function-add-method! bard:add-last `(,<null> ,Anything) (lambda (ls x)(list x)))
+(%function-add-method! bard:add-last `(,<cons> ,Anything) (lambda (ls x)(reverse (cons x (reverse ls)))))
+(%function-add-method! bard:add-last `(,<string> ,<character>) (lambda (ls x)(string-append ls (string x))))
 
 (%function-add-method! bard:add-last `(,<frame> ,<cons>) 
                        (lambda (fr kv)
-                         (if (and (not (null? (cdr kv)))
-                                  (null? (cddr kv)))
+                         (if (%frame-slot? kv)
                              (let* ((matching-key? (lambda (i x)(equal? i (car x))))
                                     (k (car kv))
                                     (v (cadr kv))
@@ -101,18 +89,16 @@
 
 (define bard:any (%make-function name: 'any))
 
+(define (%bard-any ls)
+  (let ((items (%as-list ls)))
+    (if (null? items)
+        (bard:nothing)
+        (list-ref items (random-integer (length items))))))
+
 (%function-add-method! bard:any `(,<null>) (lambda (ls)(bard:nothing)))
-(%function-add-method! bard:any `(,<cons>) (lambda (ls)(list-ref ls (random-integer (length ls)))))
-(%function-add-method! bard:any `(,<string>) 
-                       (lambda (ls)
-                         (if (> (string-length ls) 0)
-                             (string-ref ls (random-integer (string-length ls)))
-                             (bard:nothing))))
-(%function-add-method! bard:any `(,<frame>) 
-                       (lambda (fr)
-                         (let* ((ls (%frame-slots fr))
-                                (slot (list-ref ls (random-integer (length ls)))))
-                           (list (car slot)(cdr slot)))))
+(%function-add-method! bard:any `(,<cons>) %bard-any)
+(%function-add-method! bard:any `(,<string>) %bard-any)
+(%function-add-method! bard:any `(,<frame>) %bard-any)
 
 ;;; append
 ;;; ---------------------------------------------------------------------
@@ -145,458 +131,81 @@
 
 (define bard:contains? (%make-function name: 'contains?))
 
-;;; <null>
+(define (%bard-contains? ls thing . args)
+  (let ((test (if (null? args)
+                  bard:=
+                  (car args)))
+        (items (%as-list ls)))
+    (if (any? (lambda (i) (%apply test (list i thing))) items)
+        (bard:true)
+        (bard:false))))
 
-(%function-add-method! bard:contains? `(,<null> ,Anything ,<primitive-procedure>) (lambda (ls thing test) #f))
-(%function-add-method! bard:contains? `(,<null> ,Anything ,<function>) (lambda (ls thing test) #f))
-(%function-add-method! bard:contains? `(,<null> ,Anything ,<method>) (lambda (ls thing test) #f))
+(%function-add-method! bard:contains? `(,<null> ,Anything & args) (lambda (ls thing . args)(bard:false)))
+(%function-add-method! bard:contains? `(,<cons> ,Anything & args) %bard-contains?)
+(%function-add-method! bard:contains? `(,<string> ,Anything & args) %bard-contains?)
+(%function-add-method! bard:contains? `(,<frame> ,<cons> & args) %bard-contains?)
 
-;;; <cons>
-
-(%function-add-method! bard:contains? `(,<cons> ,Anything ,<primitive-procedure>)
-                       (lambda (ls thing test) 
-                         (let loop ((ls ls))
-                           (if (null? ls)
-                               #f
-                               (if (test thing (car ls))
-                                   #t
-                                   (loop (cdr ls)))))))
-
-(%function-add-method! bard:contains? `(,<cons> ,Anything ,<function>) 
-                       (lambda (ls thing test) 
-                         (let loop ((ls ls))
-                           (if (null? ls)
-                               #f
-                               (if (%apply test (list thing (car ls)))
-                                   #t
-                                   (loop (cdr ls)))))))
-
-(%function-add-method! bard:contains? `(,<cons> ,Anything ,<method>) 
-                       (lambda (ls thing test) 
-                         (let loop ((ls ls))
-                           (if (null? ls)
-                               #f
-                               (if (%apply test (list thing (car ls)))
-                                   #t
-                                   (loop (cdr ls)))))))
-
-;;; <string>
-
-(%function-add-method! bard:contains? `(,<string> ,Anything ,<primitive-procedure>)
-                       (lambda (ls thing test) 
-                         (let ((len (string-length ls)))
-                           (let loop ((i 0))
-                             (if (>= i len)
-                                 #f
-                                 (if (test thing (string-ref ls i))
-                                     #t
-                                     (loop (+ i 1))))))))
-
-(%function-add-method! bard:contains? `(,<string> ,Anything ,<function>)
-                       (lambda (ls thing test) 
-                         (let ((len (string-length ls)))
-                           (let loop ((i 0))
-                             (if (>= i len)
-                                 #f
-                                 (if (%apply test (list thing (string-ref ls i)))
-                                     #t
-                                     (loop (+ i 1))))))))
-
-(%function-add-method! bard:contains? `(,<string> ,Anything ,<method>)
-                       (lambda (ls thing test) 
-                         (let ((len (string-length ls)))
-                           (let loop ((i 0))
-                             (if (>= i len)
-                                 #f
-                                 (if (%apply test (list thing (string-ref ls i)))
-                                     #t
-                                     (loop (+ i 1))))))))
-
-;;; <frame>
-
-(%function-add-method! bard:contains? `(,<frame> ,<cons> ,<primitive-procedure>)
-                       (lambda (ls thing test) 
-                         (if (and (not (null? (cdr thing))
-                                       (null? (cddr thing))))
-                             (let ((k (car thing))
-                                   (v (cadr thing)))
-                               (test (list k v)
-                                     (list k (%frame-get ls k default: (bard:nothing))))))))
-
-(%function-add-method! bard:contains? `(,<frame> ,<cons> ,<function>)
-                       (lambda (ls thing test) 
-                         (if (and (not (null? (cdr thing)))
-                                  (null? (cddr thing)))
-                             (let ((k (car thing))
-                                   (v (cadr thing)))
-                               (%apply test
-                                       (list (list k v)
-                                             (list k (%frame-get ls k))))))))
-
-(%function-add-method! bard:contains? `(,<frame> ,<cons> ,<method>)
-                       (lambda (ls thing test) 
-                         (if (and (not (null? (cdr thing)))
-                                  (null? (cddr thing)))
-                             (let ((k (car thing))
-                                   (v (cadr thing)))
-                               (%apply test
-                                       (list (list k v)
-                                             (list k (%frame-get ls k))))))))
 
 ;;; difference
 ;;; ---------------------------------------------------------------------
 
 (define bard:difference (%make-function name: 'difference))
 
-;;; <null>
+(define (%bard-difference ls1 ls2 . args)
+  (let ((tp (%object->bard-type ls1))
+        (test (if (null? args)
+                  bard:=
+                  (car args)))
+        (items1 (%as-list ls1))
+        (items2 (%as-list ls2)))
+    (let loop ((items1 items1)
+               (result '()))
+      (if (null? items1)
+          (%to-type tp (reverse result))
+          (if (any? (lambda (i)(%apply test (list (car items1) i))) items2)
+              (loop (cdr items1) result)
+              (loop (cdr items1) (cons (car items1) result)))))))
 
-(%function-add-method! bard:difference `(,<null> ,<null> ,<primitive-procedure>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<null> ,<function>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<null> ,<method>) (lambda (ls thing test) (bard:nothing)))
+(%function-add-method! bard:difference `(,<null> ,<null> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<null> ,<cons> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<null> ,<string> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<null> ,<frame> & args) %bard-difference)
 
-(%function-add-method! bard:difference `(,<null> ,<cons> ,<primitive-procedure>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<cons> ,<function>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<cons> ,<method>) (lambda (ls thing test) (bard:nothing)))
+(%function-add-method! bard:difference `(,<cons> ,<null> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<cons> ,<cons> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<cons> ,<string> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<cons> ,<frame> & args) %bard-difference)
 
-(%function-add-method! bard:difference `(,<null> ,<string> ,<primitive-procedure>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<string> ,<function>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<string> ,<method>) (lambda (ls thing test) (bard:nothing)))
+(%function-add-method! bard:difference `(,<string> ,<null> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<string> ,<cons> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<string> ,<string> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<string> ,<frame> & args) %bard-difference)
 
-(%function-add-method! bard:difference `(,<null> ,<frame> ,<primitive-procedure>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<frame> ,<function>) (lambda (ls thing test) (bard:nothing)))
-(%function-add-method! bard:difference `(,<null> ,<frame> ,<method>) (lambda (ls thing test) (bard:nothing)))
-
-;;; <cons>
-
-(%function-add-method! bard:difference `(,<cons> ,<null> ,<primitive-procedure>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<cons> ,<null> ,<function>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<cons> ,<null> ,<method>) (lambda (ls thing test) ls))
-
-(%function-add-method! bard:difference `(,<cons> ,<cons> ,<primitive-procedure>)
-                       (lambda (ls1 ls2 test)
-                         (let loop ((items ls1)
-                                    (result '()))
-                           (if (null? items)
-                               (reverse result)
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(test x y)) ls2)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<cons> ,<function>)
-                       (lambda (ls1 ls2 test)
-                         (let loop ((items ls1)
-                                    (result '()))
-                           (if (null? items)
-                               (reverse result)
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(%apply test (list x y))) ls2)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<cons> ,<method>)
-                       (lambda (ls1 ls2 test)
-                         (let loop ((items ls1)
-                                    (result '()))
-                           (if (null? items)
-                               (reverse result)
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(%apply test (list x y))) ls2)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<string> ,<primitive-procedure>)
-                       (lambda (ls1 str test)
-                         (let ((ls2 (string->list str)))
-                           (let loop ((items ls1)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(test x y)) ls2)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<string> ,<function>) 
-                       (lambda (ls1 str test)
-                         (let ((ls2 (string->list str)))
-                           (let loop ((items ls1)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(%apply test (list x y))) ls2)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<string> ,<method>)
-                       (lambda (ls1 str test)
-                         (let ((ls2 (string->list str)))
-                           (let loop ((items ls1)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(%apply test (list x y))) ls2)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<frame> ,<primitive-procedure>)
-                       (lambda (ls fr test)
-                         (let ((slots ( %frame-slots fr)))
-                           (let loop ((items ls)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (slot)(test x (list (car slot)(cdr slot)))) slots)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<frame> ,<function>) 
-                       (lambda (ls fr test)
-                         (let ((slots ( %frame-slots fr)))
-                           (let loop ((items ls)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (slot)(%apply test (list x (list (car slot)(cdr slot))))) slots)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<cons> ,<frame> ,<method>) 
-                       (lambda (ls fr test)
-                         (let ((slots ( %frame-slots fr)))
-                           (let loop ((items ls)
-                                      (result '()))
-                             (if (null? items)
-                                 (reverse result)
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (slot)(%apply test (list x (list (car slot)(cdr slot))))) slots)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-;;; <string>
-
-(%function-add-method! bard:difference `(,<string> ,<null> ,<primitive-procedure>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<string> ,<null> ,<function>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<string> ,<null> ,<method>) (lambda (ls thing test) ls))
-
-(%function-add-method! bard:difference `(,<string> ,<cons> ,<primitive-procedure>)
-                       (lambda (str ls test)
-                         (let loop ((items (string->list str))
-                                    (result '()))
-                           (if (null? items)
-                               (list->string (reverse result))
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(test x y)) ls)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<string> ,<cons> ,<function>)
-                       (lambda (str ls test)
-                         (let loop ((items (string->list str))
-                                    (result '()))
-                           (if (null? items)
-                               (list->string (reverse result))
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(%apply test (list x y))) ls)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<string> ,<cons> ,<method>)
-                       (lambda (str ls test)
-                         (let loop ((items (string->list str))
-                                    (result '()))
-                           (if (null? items)
-                               (list->string (reverse result))
-                               (let ((x (car items))
-                                     (more (cdr items)))
-                                 (if (any? (lambda (y)(%apply test (list x y))) ls)
-                                     (loop more result)
-                                     (loop more (cons x result))))))))
-
-(%function-add-method! bard:difference `(,<string> ,<frame> ,<primitive-procedure>)
-                       (lambda (str fr test)
-                         (let ((ls (%frame->list fr)))
-                           (let loop ((items (string->list str))
-                                      (result '()))
-                             (if (null? items)
-                                 (list->string (reverse result))
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(test x y)) ls)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<string> ,<frame> ,<function>)
-                       (lambda (str fr test)
-                         (let ((ls (%frame->list fr)))
-                           (let loop ((items (string->list str))
-                                      (result '()))
-                             (if (null? items)
-                                 (list->string (reverse result))
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(%apply test (list x y))) ls)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-(%function-add-method! bard:difference `(,<string> ,<frame> ,<method>)
-                       (lambda (str fr test)
-                         (let ((ls (%frame->list fr)))
-                           (let loop ((items (string->list str))
-                                      (result '()))
-                             (if (null? items)
-                                 (list->string (reverse result))
-                                 (let ((x (car items))
-                                       (more (cdr items)))
-                                   (if (any? (lambda (y)(%apply test (list x y))) ls)
-                                       (loop more result)
-                                       (loop more (cons x result)))))))))
-
-;;; <frame>
-
-(%function-add-method! bard:difference `(,<frame> ,<null> ,<primitive-procedure>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<frame> ,<null> ,<function>) (lambda (ls thing test) ls))
-(%function-add-method! bard:difference `(,<frame> ,<null> ,<method>) (lambda (ls thing test) ls))
-
-(%function-add-method! bard:difference `(,<frame> ,<cons> ,<primitive-procedure>) 
-                       (lambda (fr ls test)
-                         (let* ((old-slots (%frame->list fr))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(test slot x))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<cons> ,<function>) 
-                       (lambda (fr ls test)
-                         (let* ((old-slots (%frame->list fr))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<cons> ,<method>) 
-                       (lambda (fr ls test)
-                         (let* ((old-slots (%frame->list fr))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-
-(%function-add-method! bard:difference `(,<frame> ,<string> ,<primitive-procedure>) 
-                       (lambda (fr str test)
-                         (let* ((old-slots (%frame->list fr))
-                                (ls (string->list str))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(test slot x))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<string> ,<function>) 
-                       (lambda (fr str test)
-                         (let* ((old-slots (%frame->list fr))
-                                (ls (string->list str))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<string> ,<method>) 
-                       (lambda (fr str test)
-                         (let* ((old-slots (%frame->list fr))
-                                (ls (string->list str))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                ls)))
-                                                   old-slots)))
-                           (%list->frame new-slots))))
-
-
-(%function-add-method! bard:difference `(,<frame> ,<frame> ,<primitive-procedure>) 
-                       (lambda (fr1 fr2 test)
-                         (let* ((slots1 (%frame->list fr1))
-                                (slots2 (%frame->list fr2))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(test slot x))
-                                                                slots2)))
-                                                   slots1)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<frame> ,<function>) 
-                       (lambda (fr1 fr2 test)
-                         (let* ((slots1 (%frame->list fr1))
-                                (slots2 (%frame->list fr2))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                slots2)))
-                                                   slots1)))
-                           (%list->frame new-slots))))
-
-(%function-add-method! bard:difference `(,<frame> ,<frame> ,<method>) 
-                       (lambda (fr1 fr2 test)
-                         (let* ((slots1 (%frame->list fr1))
-                                (slots2 (%frame->list fr2))
-                                (new-slots (filter (lambda (slot)
-                                                     (not (any? (lambda (x)(%apply test (list slot x)))
-                                                                slots2)))
-                                                   slots1)))
-                           (%list->frame new-slots))))
+(%function-add-method! bard:difference `(,<frame> ,<null> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<frame> ,<cons> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<frame> ,<string> & args) %bard-difference)
+(%function-add-method! bard:difference `(,<frame> ,<frame> & args) %bard-difference)
 
 ;;; drop
 ;;; ---------------------------------------------------------------------
 
 (define bard:drop (%make-function name: 'drop))
 
+(define (%bard-drop n ls)
+  (let ((tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (i n))
+      (if (<= i 0)
+          (%to-type tp items)
+          (if (null? items)
+              (error "count out of range" n)
+              (loop (cdr items) (- i 1)))))))
+
 (%function-add-method! bard:drop `(,<fixnum> ,<null>) (lambda (n ls)(if (zero? n) ls (error "count out of range" n))))
 
-(%function-add-method! bard:drop `(,<fixnum> ,<cons>)
-                       (lambda (n ls)
-                         (let loop ((i n)
-                                    (items ls))
-                           (if (<= i 0)
-                               items
-                               (if (null? items)
-                                   (error "count out of range" n)
-                                   (loop (- i 1)(cdr items)))))))
-
-(%function-add-method! bard:drop `(,<fixnum> ,<string>)
-                       (lambda (n str)
-                         (let loop ((i n)
-                                    (items (string->list str)))
-                           (if (<= i 0)
-                               (list->string items)
-                               (if (null? items)
-                                   (error "count out of range" n)
-                                   (loop (- i 1)(cdr items)))))))
-
-(%function-add-method! bard:drop `(,<fixnum> ,<frame>)
-                       (lambda (n fr)
-                         (let loop ((i n)
-                                    (items (%frame->list fr)))
-                           (if (<= i 0)
-                               (%list->frame items)
-                               (if (null? items)
-                                   (error "count out of range" n)
-                                   (loop (- i 1)(cdr items)))))))
+(%function-add-method! bard:drop `(,<fixnum> ,<cons>) %bard-drop)
+(%function-add-method! bard:drop `(,<fixnum> ,<string>) %bard-drop)
+(%function-add-method! bard:drop `(,<fixnum> ,<frame>) %bard-drop)
 
 
 ;;; drop-before
@@ -1030,6 +639,26 @@
                                    (loop (cdr items)))))))
 
 
+
+;;; first
+;;; ---------------------------------------------------------------------
+
+(define bard:first (%make-function name: 'first))
+
+(%function-add-method! bard:first `(,<null>)(lambda (ls)(bard:nothing)))
+(%function-add-method! bard:first `(,<cons>) (lambda (ls)(car ls)))
+(%function-add-method! bard:first `(,<string>)
+                       (lambda (str)
+                         (if (> (string-length str) 0)
+                             (string-ref str 0)
+                             (bard:nothing))))
+
+(%function-add-method! bard:first `(,<frame>) 
+                       (lambda (fr)
+                         (let ((ls (%frame->list fr)))
+                           (if (null? ls)
+                               (bard:nothing)
+                               (car ls)))))
 
 ;;; interleave
 ;;; ---------------------------------------------------------------------
@@ -1628,35 +1257,38 @@
 
 (define bard:range (%make-function name: 'range))
 
-(define (%bard-range start end step)
-  (if (and (> end start)
-           (<= step 0))
-      (error "bad range"))
-  (if (and (< end start)
-           (>= step 0))
-      (error "bad range"))
-  (let ((test (if (< step 0) <= >=)))
-    (let loop ((i start)
-               (result '()))
-      (if (test i end)
-          (reverse result)
-          (loop (+ i step)(cons i result))))))
+(define (%bard-range start end . args)
+  (let ((step (if (null? args)
+                  1
+                  (car args))))
+    (if (and (> end start)
+             (<= step 0))
+        (error "bad range"))
+    (if (and (< end start)
+             (>= step 0))
+        (error "bad range"))
+    (let ((test (if (< step 0) <= >=)))
+      (let loop ((i start)
+                 (result '()))
+        (if (test i end)
+            (reverse result)
+            (loop (+ i step)(cons i result)))))))
 
-(%function-add-method! bard:range `(,<fixnum> ,<fixnum> ,<fixnum>) %bard-range)
-(%function-add-method! bard:range `(,<bignum> ,<fixnum> ,<fixnum>) %bard-range)
-(%function-add-method! bard:range `(,<fixnum> ,<bignum> ,<fixnum>) %bard-range)
-(%function-add-method! bard:range `(,<fixnum> ,<fixnum> ,<bignum>) %bard-range)
-(%function-add-method! bard:range `(,<bignum> ,<fixnum> ,<bignum>) %bard-range)
-(%function-add-method! bard:range `(,<bignum> ,<bignum> ,<fixnum>) %bard-range)
-(%function-add-method! bard:range `(,<fixnum> ,<bignum> ,<bignum>) %bard-range)
-(%function-add-method! bard:range `(,<bignum> ,<bignum> ,<bignum>) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<fixnum> & args) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<fixnum> & args) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<bignum> & args) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<fixnum> & args) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<fixnum> & args) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<bignum> & args) %bard-range)
+(%function-add-method! bard:range `(,<fixnum> ,<bignum> & args) %bard-range)
+(%function-add-method! bard:range `(,<bignum> ,<bignum> & args) %bard-range)
 
 ;;; reduce
 ;;; ---------------------------------------------------------------------
 
 (define bard:reduce (%make-function name: 'reduce))
 
-(define (%bard-reduce fn ls init)
+(define (%bard-reduce fn init ls)
   (let ((tp (%object->bard-type ls)))
     (let loop ((items (%as-list ls))
                (result init))
@@ -1665,21 +1297,21 @@
           (loop (cdr items) 
                 (%apply fn (list result (car items))))))))
 
-(%function-add-method! bard:reduce `(,<primitive-procedure> ,<null> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<function> ,<null> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<method> ,<null> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,Anything ,<null>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,Anything ,<null>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,Anything ,<null>) %bard-reduce)
 
-(%function-add-method! bard:reduce `(,<primitive-procedure> ,<cons> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<function> ,<cons> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<method> ,<cons> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,Anything ,<cons>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,Anything ,<cons>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,Anything ,<cons>) %bard-reduce)
 
-(%function-add-method! bard:reduce `(,<primitive-procedure> ,<string> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<function> ,<string> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<method> ,<string> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,Anything ,<string>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,Anything ,<string>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,Anything ,<string>) %bard-reduce)
 
-(%function-add-method! bard:reduce `(,<primitive-procedure> ,<frame> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<function> ,<frame> ,Anything) %bard-reduce)
-(%function-add-method! bard:reduce `(,<method> ,<frame> ,Anything) %bard-reduce)
+(%function-add-method! bard:reduce `(,<primitive-procedure> ,Anything ,<frame>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<function> ,Anything ,<frame>) %bard-reduce)
+(%function-add-method! bard:reduce `(,<method> ,Anything ,<frame>) %bard-reduce)
 
 ;;; repeat
 ;;; ---------------------------------------------------------------------
@@ -1710,6 +1342,28 @@
 (%function-add-method! bard:reverse `(,<cons>) %bard-reverse)
 (%function-add-method! bard:reverse `(,<string>) %bard-reverse)
 (%function-add-method! bard:reverse `(,<frame>) %bard-reverse)
+
+;;; second
+;;; ---------------------------------------------------------------------
+
+(define bard:second (%make-function name: 'second))
+
+(%function-add-method! bard:second `(,<null>)(lambda (ls)(bard:nothing)))
+(%function-add-method! bard:second `(,<cons>) (lambda (ls)(cadr ls)))
+(%function-add-method! bard:second `(,<string>)
+                       (lambda (str)
+                         (if (> (string-length str) 1)
+                             (string-ref str 1)
+                             (error "index out of range" 1))))
+
+(%function-add-method! bard:second `(,<frame>) 
+                       (lambda (fr)
+                         (let ((ls (%frame->list fr)))
+                           (if (null? ls)
+                               (bard:nothing)
+                               (if (null? (cdr ls))
+                                   (error "index out of range" 1)
+                                   (cadr ls))))))
 
 ;;; select
 ;;; ---------------------------------------------------------------------
@@ -1749,16 +1403,19 @@
 
 (define bard:slice (%make-function name: 'slice))
 
-(define (%bard-slice ls start end)
-  (let* ((tp (%object->bard-type ls))
+(define (%bard-slice ls start . args)
+  (let* ((end (if (null? args)
+                  (%apply bard:length (list ls))
+                  (car args)))
+         (tp (%object->bard-type ls))
          (items (%as-list ls))
          (result (drop start (take end items))))
     (%to-type tp result)))
 
-(%function-add-method! bard:slice `(,<null> ,<fixnum> ,<fixnum>) %bard-slice)
-(%function-add-method! bard:slice `(,<cons> ,<fixnum> ,<fixnum>) %bard-slice)
-(%function-add-method! bard:slice `(,<string> ,<fixnum> ,<fixnum>) %bard-slice)
-(%function-add-method! bard:slice `(,<frame> ,<fixnum> ,<fixnum>) %bard-slice)
+(%function-add-method! bard:slice `(,<null> ,<fixnum> & args) %bard-slice)
+(%function-add-method! bard:slice `(,<cons> ,<fixnum> & args) %bard-slice)
+(%function-add-method! bard:slice `(,<string> ,<fixnum> & args) %bard-slice)
+(%function-add-method! bard:slice `(,<frame> ,<fixnum> & args) %bard-slice)
 
 ;;; some?
 ;;; ---------------------------------------------------------------------
@@ -1892,4 +1549,110 @@
 
 (%function-add-method! bard:take `(,<fixnum> ,<frame>) %bard-take)
 (%function-add-method! bard:take `(,<bignum> ,<frame>) %bard-take)
+
+;;; take-before
+;;; ---------------------------------------------------------------------
+
+(define bard:take-before (%make-function name: 'take-before))
+
+(define (%bard-take-before test ls)
+  (let ((tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (result '()))
+      (if (null? items)
+          (%to-type tp (reverse result))
+          (if (%apply test (list (car items)))
+              (%to-type tp (reverse result))
+              (loop (cdr items) (cons (car items) result)))))))
+
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<null>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<function> ,<null>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<method> ,<null>) %bard-take-before)
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<cons>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<function> ,<cons>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<method> ,<cons>) %bard-take-before)
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<string>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<function> ,<string>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<method> ,<string>) %bard-take-before)
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<frame>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<function> ,<frame>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<method> ,<frame>) %bard-take-before)
+
+
+;;; unique
+;;; ---------------------------------------------------------------------
+
+(define bard:unique (%make-function name: 'unique))
+
+(define (%bard-unique ls . args)
+  (let ((test (if (null? args)
+                  bard:=
+                  (car args)))
+        (tp (%object->bard-type ls)))
+    (let loop ((items (%as-list ls))
+               (result '()))
+      (if (null? items)
+          (%to-type tp (reverse result))
+          (if (any? (lambda (x)(%apply test (list (car items) x))) result)
+              (loop (cdr items) result)
+              (loop (cdr items)(cons (car items) result)))))))
+
+(%function-add-method! bard:unique `(,<null> & args) %bard-unique)
+(%function-add-method! bard:unique `(,<cons> & args) %bard-unique)
+(%function-add-method! bard:unique `(,<string> & args) %bard-unique)
+(%function-add-method! bard:unique `(,<frame> & args) %bard-unique)
+
+;;; unzip
+;;; ---------------------------------------------------------------------
+
+(define bard:unzip (%make-function name: 'unzip))
+
+(%function-add-method! bard:unzip `(,<null>) (lambda (ls)(bard:nothing)))
+(%function-add-method! bard:unzip `(,<cons>) 
+                       (lambda (ls)
+                         (let loop ((items ls)
+                                    (lefts '())
+                                    (rights '()))
+                           (if (null? items)
+                               (list (reverse lefts)
+                                     (reverse rights))
+                               (let ((item (car items)))
+                                 (loop (cdr items)
+                                       (cons (%apply bard:first (list item)) lefts)
+                                       (cons (%apply bard:second (list item)) rights)))))))
+
+(%function-add-method! bard:unzip `(,<frame>) 
+                       (lambda (fr)
+                         (let ((keys (bard:keys fr)))
+                           (list keys
+                                 (map (lambda (k)(%frame-get fr k)) keys)))))
+
+;;; zip
+;;; ---------------------------------------------------------------------
+
+(define bard:zip (%make-function name: 'zip))
+
+(%function-add-method! bard:zip `(,<null> ,<null>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<null> ,<cons>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<null> ,<string>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<null> ,<frame>) (lambda (x y)(bard:nothing)))
+
+(%function-add-method! bard:zip `(,<cons> ,<null>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<cons> ,<cons>) (lambda (x y)(map (lambda (a b)(list a b)) x y)))
+(%function-add-method! bard:zip `(,<cons> ,<string>) (lambda (x y)(map (lambda (a b)(list a b)) x (string->list y))))
+(%function-add-method! bard:zip `(,<cons> ,<frame>) (lambda (x y)(map (lambda (a b)(list a b)) x (%frame->list y))))
+
+(%function-add-method! bard:zip `(,<string> ,<null>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<string> ,<string>) (lambda (x y)(map (lambda (a b)(list a b)) (string->list x) (string->list y))))
+(%function-add-method! bard:zip `(,<string> ,<cons>) (lambda (x y)(map (lambda (a b)(list a b)) (string->list x) y)))
+(%function-add-method! bard:zip `(,<string> ,<frame>) (lambda (x y)(map (lambda (a b)(list a b)) (string->list x) (%frame->list y))))
+
+(%function-add-method! bard:zip `(,<frame> ,<null>) (lambda (x y)(bard:nothing)))
+(%function-add-method! bard:zip `(,<frame> ,<cons>) (lambda (x y)(map (lambda (a b)(list a b)) (%frame->list x) y)))
+(%function-add-method! bard:zip `(,<frame> ,<string>) (lambda (x y)(map (lambda (a b)(list a b)) (%frame->list x) (string->list y))))
+(%function-add-method! bard:zip `(,<frame> ,<frame>) (lambda (x y)(map (lambda (a b)(list a b)) (%frame->list x) (%frame->list y))))
 

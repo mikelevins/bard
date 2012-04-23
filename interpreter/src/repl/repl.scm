@@ -68,6 +68,7 @@
     'every? bard:every?
     'filter bard:filter
     'find bard:find
+    'first bard:first
     'interleave bard:interleave
     'interpose bard:interpose
     'intersection bard:intersection
@@ -80,6 +81,7 @@
     'reduce bard:reduce
     'repeat bard:repeat
     'reverse bard:reverse
+    'second bard:second
     'select bard:select
     'shuffle bard:shuffle
     'slice bard:slice
@@ -88,6 +90,10 @@
     'tail bard:tail
     'tails bard:tails
     'take bard:take
+    'take-before bard:take-before
+    'unique bard:unique
+    'unzip bard:unzip
+    'zip bard:zip
     )))
 
 
