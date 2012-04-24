@@ -174,6 +174,7 @@
 
 (%define-protocol Anything)
 (%define-protocol List)
+(%define-protocol Frame)
 
 ;;; ---------------------------------------------------------------------
 ;;; type accessors

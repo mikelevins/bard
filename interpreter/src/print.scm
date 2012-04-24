@@ -54,7 +54,7 @@
 
 (%defprinter <frame>
              (lambda (val)
-               (let ((all-keys (bard:keys val)))
+               (let ((all-keys (%keys val)))
                  (let loop ((keys all-keys)
                             (outstr "{"))
                    (if (null? keys)

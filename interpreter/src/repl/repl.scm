@@ -56,6 +56,16 @@
     '<method> <method>
     ;; protocols
     'Anything Anything
+
+    'Frame Frame
+    'contains-key? bard:contains-key?
+    'contains-value? bard:contains-value?
+    'get bard:get
+    'keys bard:keys
+    'merge bard:merge
+    'put bard:put
+    'vals bard:vals
+
     'List List
     'add-first bard:add-first
     'add-last bard:add-last

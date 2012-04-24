@@ -259,7 +259,7 @@
 (%function-add-method! bard:empty? `(,<null>) (lambda (ls)(bard:true)))
 (%function-add-method! bard:empty? `(,<cons>)(lambda (ls)(null? ls)))
 (%function-add-method! bard:empty? `(,<string>)(lambda (str)(<= (string-length str) 0)))
-(%function-add-method! bard:empty? `(,<frame>)(lambda (fr)(null? (bard:keys fr))))
+(%function-add-method! bard:empty? `(,<frame>)(lambda (fr)(null? (%keys fr))))
 
 ;;; every?
 ;;; ---------------------------------------------------------------------
@@ -482,7 +482,7 @@
 (%function-add-method! bard:length `(,<null>)(lambda (ls) 0))
 (%function-add-method! bard:length `(,<cons>) (lambda (ls)(length ls)))
 (%function-add-method! bard:length `(,<string>)(lambda (str)(string-length str)))
-(%function-add-method! bard:length `(,<frame>)(lambda (fr)(length (bard:keys fr))))
+(%function-add-method! bard:length `(,<frame>)(lambda (fr)(length (%keys fr))))
 
 ;;; list?
 ;;; ---------------------------------------------------------------------
@@ -915,7 +915,7 @@
 
 (%function-add-method! bard:unzip `(,<frame>) 
                        (lambda (fr)
-                         (let ((keys (bard:keys fr)))
+                         (let ((keys (%keys fr)))
                            (list keys
                                  (map (lambda (k)(%frame-get fr k)) keys)))))
 

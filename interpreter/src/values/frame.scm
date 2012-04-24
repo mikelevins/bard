@@ -105,17 +105,11 @@
 (define (%frame-find-slot fr key)
   (assoc key (%frame-slots fr)))
 
-(define (%frame-get fr key)
+(define (%frame-get fr key #!optional (default (bard:nothing)))
   (let ((slot (%frame-find-slot fr key)))
     (if slot
         (cdr slot)
-        (bard:nothing))))
-
-(define (%frame-put fr key val)
-  (let ((slot (%frame-find-slot fr key)))
-    (if slot
-        fr
-        (%frame-add-slot fr key val))))
+        default)))
 
 (define (%frame-merge fr1 fr2)
   (let* ((slots1 (%frame-slots fr1))
@@ -125,7 +119,16 @@
                              slots1)))
     (%private-make-frame (append new-slots1 slots2))))
 
+(define (%frame-put fr key val)
+  (let ((slot (%frame-find-slot fr key)))
+    (if slot
+        (%frame-merge fr (%list->frame (list (list key val))))
+        (%frame-add-slot fr key val))))
+
 (define bard:frame? %frame?)
 
-(define (bard:keys frame)
-  (nub (map car (%frame-slots frame))))
+(define (%keys frame)
+  (map car (%frame-slots frame)))
+
+(define (%vals frame)
+  (map cdr (%frame-slots frame)))
