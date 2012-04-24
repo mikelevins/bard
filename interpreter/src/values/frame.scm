@@ -125,8 +125,6 @@
         (%frame-merge fr (%list->frame (list (list key val))))
         (%frame-add-slot fr key val))))
 
-(define bard:frame? %frame?)
-
 (define (%keys frame)
   (map car (%frame-slots frame)))
 

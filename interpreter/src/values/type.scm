@@ -168,14 +168,6 @@
 
 (%define-structure-type <method> %method?)
 
-
-
-;;; protocol types
-
-(%define-protocol Anything)
-(%define-protocol List)
-(%define-protocol Frame)
-
 ;;; ---------------------------------------------------------------------
 ;;; type accessors
 ;;; ---------------------------------------------------------------------

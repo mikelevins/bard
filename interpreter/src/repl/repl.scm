@@ -15,12 +15,6 @@
    (list
     ;; general
     'id (lambda (x) x)
-    ;; generic comparison
-    '= bard:=
-    '> bard:>
-    '< bard:<
-    '>= bard:>=
-    '<= bard:<=
     ;; numbers
     '+ prim:+
     '- prim:-
@@ -54,10 +48,42 @@
     '<frame> <frame>
     '<function> <function>
     '<method> <method>
+
     ;; protocols
     'Anything Anything
+    'something? bard:something?
 
+    'Apply Apply
+    'applicable? bard:applicable?
+
+    'Atom Atom
+    'atom? bard:atom?
+
+    'Boolean Boolean
+    'boolean? bard:boolean?
+    'false? bard:false?
+    'true? bard:true?
+
+    'Character Character
+    'character? bard:character?
+
+    'Compare Compare
+    '> bard:>
+    '< bard:<
+    '>= bard:>=
+    '<= bard:<=
+
+    'Equal Equal
+    '= bard:=
+
+    'Float Float
+    'float? bard:float?
+
+    'ForeignValue ForeignValue
+    'foreign-value? bard:foreign-value?
+    
     'Frame Frame
+    'frame? bard:frame?
     'contains-key? bard:contains-key?
     'contains-value? bard:contains-value?
     'get bard:get
@@ -65,6 +91,15 @@
     'merge bard:merge
     'put bard:put
     'vals bard:vals
+
+    'Function Function
+    'function? bard:function?
+
+    'Integer Integer
+    'integer? bard:integer?
+
+    'Keyword Keyword
+    'keyword? bard:keyword?
 
     'List List
     'add-first bard:add-first
@@ -106,6 +141,40 @@
     'unique bard:unique
     'unzip bard:unzip
     'zip bard:zip
+
+    'Method Method
+    'method? bard:method?
+
+    'Name Name
+    'name? bard:name?
+
+    'Null Null
+    'null? bard:null?
+
+    'Number Number
+    'number? bard:number?
+
+    'PrimitiveValue PrimitiveValue
+    'primitive-value? bard:primitive-value?
+
+    'Procedure Procedure
+    'procedure? bard:procedure?
+
+    'Ratio Ratio
+    'ratio? bard:ratio?
+
+    'StructureValue StructureValue
+    'structure-value? bard:structure-value?
+
+    'Symbol Symbol
+    'symbol? bard:symbol?
+
+    'Text Text
+    'text? bard:text?
+
+    'Undefined Undefined
+    'undefined? bard:undefined?
+
     )))
 
 

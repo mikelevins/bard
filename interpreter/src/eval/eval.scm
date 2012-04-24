@@ -35,7 +35,7 @@
    ((bard:number? expr) expr)
    ((bard:character? expr) expr)
    ((bard:keyword? expr) expr)
-   ((bard:frame? expr) expr)
+   ((%frame? expr) expr)
    ((bard:text? expr) expr)
    ((procedure? expr) expr)
    ((%method? expr) expr)

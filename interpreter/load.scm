@@ -47,6 +47,7 @@
          "src/values/primitive-procedure.scm"
          "src/values/frame.scm"
          "src/protocols/Anything.scm"
+         "src/protocols/Apply.scm"
          "src/protocols/ForeignValue.scm"
          "src/protocols/StructureValue.scm"
          "src/protocols/PrimitiveValue.scm"

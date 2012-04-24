@@ -8,3 +8,21 @@
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
+
+(include "~~lib/_gambit#.scm")
+(##include "../values/type-macros.scm")
+
+;;; ---------------------------------------------------------------------
+;;; The Protocol
+;;; ---------------------------------------------------------------------
+
+(%define-protocol Method)
+
+
+;;; method?
+;;; ---------------------------------------------------------------------
+
+(define bard:method? (%make-function name: 'method?))
+
+(%function-add-method! bard:method? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:method? `(,<method>) (lambda (x)(bard:true)))

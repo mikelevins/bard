@@ -1,13 +1,30 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          Method.scm
+;;;; Name:          Frame.scm
 ;;;; Project:       Bard
-;;;; Purpose:       implementation of the Method protocol
+;;;; Purpose:       implementation of the Frame protocol
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
+
+(include "~~lib/_gambit#.scm")
+(##include "../values/type-macros.scm")
+
+;;; ---------------------------------------------------------------------
+;;; The Protocol
+;;; ---------------------------------------------------------------------
+
+(%define-protocol Frame)
+
+;;; frame?
+;;; ---------------------------------------------------------------------
+
+(define bard:frame? (%make-function name: 'frame?))
+
+(%function-add-method! bard:frame? `(,Anything) (lambda (thing) (bard:false)))
+(%function-add-method! bard:frame? `(,<frame>) (lambda (thing) (bard:true)))
 
 ;;; contains-key?
 ;;; ---------------------------------------------------------------------
