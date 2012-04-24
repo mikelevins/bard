@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          Equal.scm
 ;;;; Project:       Bard
-;;;; Purpose:       equality comparisons
+;;;; Purpose:       generic equality 
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;

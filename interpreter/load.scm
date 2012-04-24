@@ -69,6 +69,7 @@
          "src/protocols/Integer.scm"
          "src/protocols/Ratio.scm"
          "src/protocols/Equal.scm"
+         "src/protocols/Compare.scm"
          ;;"src/values/stream.scm"
          "src/prims.scm"
          "src/eval/special.scm"

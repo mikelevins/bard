@@ -17,15 +17,15 @@
     'id (lambda (x) x)
     ;; generic comparison
     '= bard:=
+    '> bard:>
+    '< bard:<
+    '>= bard:>=
+    '<= bard:<=
     ;; numbers
     '+ prim:+
     '- prim:-
     '* prim:*
     '/ prim:/
-    '> prim:>
-    '< prim:<
-    '>= prim:>=
-    '<= prim:<=
     'odd? odd?
     'even? even?
     'random (lambda (n)(random-integer n))
