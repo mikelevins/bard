@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "../values/type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -21,5 +20,8 @@
 ;;; text?
 ;;; ---------------------------------------------------------------------
 
-(define bard:text? string?)
+(define bard:text? (%make-function name: 'text?))
+
+(%function-add-method! bard:text? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:text? `(,<string>) (lambda (x)(bard:true)))
 

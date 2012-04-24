@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -18,9 +17,9 @@
 
 (define (%type-tag obj)
  (let ((t (##type obj)))
-   (cond ((fx= t (macro-type-fixnum))
+   (cond ((fx= t 0) ; fixnum tag
           32)
-         ((fx= t (macro-type-special))
+         ((fx= t 2) ; "special" tag
           (cond ((null? obj)    33)
                 ((char? obj)    34)
                 ((boolean? obj) 35)

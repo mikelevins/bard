@@ -13,6 +13,6 @@
 ;;; string
 ;;; ---------------------------------------------------------------------
 
-(define bard:string? string?)
+(define %string? string?)
 
 

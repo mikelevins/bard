@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "../values/type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -17,3 +16,11 @@
 ;;; ---------------------------------------------------------------------
 
 (%define-protocol Undefined)
+
+;;; undefined?
+;;; ---------------------------------------------------------------------
+
+(define bard:undefined? (%make-function name: 'undefined?))
+
+(%function-add-method! bard:undefined? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:undefined? `(,<undefined>) (lambda (x)(bard:true)))

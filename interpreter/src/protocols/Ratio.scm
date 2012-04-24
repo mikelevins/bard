@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "../values/type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -17,3 +16,11 @@
 ;;; ---------------------------------------------------------------------
 
 (%define-protocol Ratio)
+
+;;; ratio?
+;;; ---------------------------------------------------------------------
+
+(define bard:ratio? (%make-function name: 'ratio?))
+
+(%function-add-method! bard:ratio? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:ratio? `(,<ratnum>) (lambda (x)(bard:true)))

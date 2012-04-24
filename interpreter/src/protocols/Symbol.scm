@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "../values/type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -17,3 +16,12 @@
 ;;; ---------------------------------------------------------------------
 
 (%define-protocol Symbol)
+
+;;; symbol?
+;;; ---------------------------------------------------------------------
+
+(define bard:symbol? (%make-function name: 'symbol?))
+
+(%function-add-method! bard:symbol? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:symbol? `(,<symbol>) (lambda (x)(bard:true)))
+

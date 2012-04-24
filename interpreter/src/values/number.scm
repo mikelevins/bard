@@ -13,21 +13,21 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define bard:fixnum? ##fixnum?)
-(define bard:fixnum? ##bignum?)
+(define %fixnum? ##fixnum?)
+(define %fixnum? ##bignum?)
 
-(define (bard:integer? x)
+(define (%integer? x)
   (or (##fixnum? x)
       (##bignum? x)))
 
-(define (bard:float? x)
+(define (%float? x)
   (##flonum? x))
 
-(define (bard:ratio? x)
+(define (%ratio? x)
   (##ratnum? x))
 
-(define (bard:number? x) 
-  (or (bard:integer? x)
-      (bard:float? x)
-      (bard:ratio? x)))
+(define (%number? x) 
+  (or (%integer? x)
+      (%float? x)
+      (%ratio? x)))
 

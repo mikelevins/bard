@@ -13,6 +13,6 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define bard:character? char?)
+(define %character? char?)
 
 

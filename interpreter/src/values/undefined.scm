@@ -13,7 +13,7 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:undefined) #!unbound)
-(define (bard:undefined? x) (eqv? x #!unbound))
-(define (bard:defined? x)(not (bard:undefined? x)))
+(define (%undefined) #!unbound)
+(define (%undefined? x) (eqv? x #!unbound))
+(define (%defined? x)(not (%undefined? x)))
 

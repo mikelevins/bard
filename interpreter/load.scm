@@ -16,9 +16,6 @@
 ;;; termite includes and loads
 ;;; ----------------------------------------------------------------------
 
-(##include "~~lib/gambit#.scm")
-(##include "~~lib/_gambit#.scm")
-
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
 
@@ -87,6 +84,7 @@
 ;;; ----------------------------------------------------------------------
 
 (define (load-bard)
+  (gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 

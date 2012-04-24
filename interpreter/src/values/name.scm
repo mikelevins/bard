@@ -13,9 +13,9 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define bard:symbol? symbol?)
-(define bard:keyword? keyword?)
-(define (bard:name? x) 
-  (or (bard:symbol? x)
-      (bard:keyword? x)))
+(define %symbol? symbol?)
+(define %keyword? keyword?)
+(define (%name? x) 
+  (or (%symbol? x)
+      (%keyword? x)))
 

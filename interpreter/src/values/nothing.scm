@@ -13,8 +13,8 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:nothing) '())
-(define bard:nothing? null?)
-(define bard:null? null?)
-(define (bard:something? x)(not (bard:nothing? x)))
+(define (%nothing) '())
+(define %nothing? null?)
+(define %null? null?)
+(define (%something? x)(not (%nothing? x)))
 

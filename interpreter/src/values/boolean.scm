@@ -13,16 +13,16 @@
 ;;; API
 ;;;---------------------------------------------------------------------
 
-(define (bard:false) #f)
+(define (%false) #f)
 
-(define (bard:false? x) 
-  (or (eqv? x (bard:false))
-      (bard:nothing? x)))
+(define (%false? x) 
+  (or (eqv? x (%false))
+      (%nothing? x)))
 
-(define (bard:true) #t)
-(define (bard:true? x) (not (bard:false? x)))
+(define (%true) #t)
+(define (%true? x) (not (%false? x)))
 
-(define (bard:boolean? x)
-  (or (eqv? x (bard:false))
-      (eqv? x (bard:true))))
+(define (%boolean? x)
+  (or (eqv? x (%false))
+      (eqv? x (%true))))
 

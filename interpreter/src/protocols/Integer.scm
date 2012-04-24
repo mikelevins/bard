@@ -9,7 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "~~lib/_gambit#.scm")
 (##include "../values/type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
@@ -21,9 +20,9 @@
 ;;; integer?
 ;;; ---------------------------------------------------------------------
 
-(define bard:integer? (%make-integer name: 'integer?))
+(define bard:integer? (%make-function name: 'integer?))
 
-(%integer-add-method! bard:integer? `(,Anything) (lambda (x)(bard:false)))
-(%integer-add-method! bard:integer? `(,<fixnum>) (lambda (x)(bard:true)))
-(%integer-add-method! bard:integer? `(,<bignum>) (lambda (x)(bard:true)))
+(%function-add-method! bard:integer? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:integer? `(,<fixnum>) (lambda (x)(bard:true)))
+(%function-add-method! bard:integer? `(,<bignum>) (lambda (x)(bard:true)))
 
