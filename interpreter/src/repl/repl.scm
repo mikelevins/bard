@@ -29,6 +29,8 @@
     'odd? odd?
     'even? even?
     'random (lambda (n)(random-integer n))
+    ;; Character
+    'character? char?
     ;; List
     'list prim:list
     ;; Frame
