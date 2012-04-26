@@ -49,12 +49,15 @@
         (%apply-bard-method (car methods) args))))
 
 (define (%apply applicable args #!optional (env (%top-level-environment)))
-  (let ((applicable (%eval applicable env)))
+  (let ((args (%as-list args)))
     (cond
-     ((null? applicable) (bard:nothing))
+     ((null? applicable) (%nothing))
      ((string? applicable)(if (null? args)
                               (error "not enough arguments" args)
                               (string-ref applicable (car args))))
+     ((list? applicable)(if (null? args)
+                            (error "not enough arguments" args)
+                            (list-ref applicable (car args))))
      ((%frame? applicable)(if (null? args)
                               (error "not enough arguments" args)
                               (%frame-get applicable (car args))))

@@ -22,8 +22,8 @@
 
 (define bard:procedure? (%make-function name: 'procedure?))
 
-(%function-add-method! bard:procedure? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:procedure? `(,<primitive-procedure>) (lambda (x)(bard:true)))
-(%function-add-method! bard:procedure? `(,<function>) (lambda (x)(bard:true)))
-(%function-add-method! bard:procedure? `(,<method>) (lambda (x)(bard:true)))
+(%function-add-method! bard:procedure? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:procedure? `(,<primitive-procedure>) (lambda (x)(%true)))
+(%function-add-method! bard:procedure? `(,<function>) (lambda (x)(%true)))
+(%function-add-method! bard:procedure? `(,<method>) (lambda (x)(%true)))
 

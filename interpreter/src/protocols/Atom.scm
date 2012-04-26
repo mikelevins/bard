@@ -22,7 +22,7 @@
 
 (define bard:atom? (%make-function name: 'atom?))
 
-(%function-add-method! bard:atom? `(,Anything) (lambda (x)(bard:true)))
-(%function-add-method! bard:atom? `(,<cons>) (lambda (x)(bard:false)))
-(%function-add-method! bard:atom? `(,<string>) (lambda (x)(bard:false)))
-(%function-add-method! bard:atom? `(,<frame>) (lambda (x)(bard:false)))
+(%function-add-method! bard:atom? `(,Anything) (lambda (x)(%true)))
+(%function-add-method! bard:atom? `(,<cons>) (lambda (x)(%false)))
+(%function-add-method! bard:atom? `(,<string>) (lambda (x)(%false)))
+(%function-add-method! bard:atom? `(,<frame>) (lambda (x)(%false)))

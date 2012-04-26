@@ -23,7 +23,7 @@
 (%defprinter Anything (lambda (val)(object->string val)))
 (%defprinter <undefined> (lambda (val) "undefined"))
 (%defprinter <null> (lambda (val) "nothing"))
-(%defprinter <character> (lambda (val) (string-append "\\" (string val))))
+(%defprinter <character> (lambda (val) (object->string val)))
 (%defprinter <boolean> (lambda (val) (if val "true" "false")))
 (%defprinter <keyword> (lambda (val) (string-append (keyword->string val) ":")))
 
@@ -119,11 +119,11 @@
   (newline))
 
 ;;; (show 4)
-;;; (show (bard:undefined))
+;;; (show (%undefined))
 ;;; (show '())
 ;;; (show #\C)
-;;; (show (bard:true))
-;;; (show (bard:false))
+;;; (show (%true))
+;;; (show (%false))
 ;;; (show 'Foo)
 ;;; (show FooBar:)
 ;;; (show +)

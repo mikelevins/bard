@@ -22,6 +22,6 @@
 
 (define bard:symbol? (%make-function name: 'symbol?))
 
-(%function-add-method! bard:symbol? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:symbol? `(,<symbol>) (lambda (x)(bard:true)))
+(%function-add-method! bard:symbol? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:symbol? `(,<symbol>) (lambda (x)(%true)))
 

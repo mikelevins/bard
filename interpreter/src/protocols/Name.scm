@@ -16,3 +16,12 @@
 ;;; ---------------------------------------------------------------------
 
 (%define-protocol Name)
+
+;;; name?
+;;; ---------------------------------------------------------------------
+
+(define bard:name? (%make-function name: 'name?))
+
+(%function-add-method! bard:name? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:name? `(,<keyword>) (lambda (x)(%true)))
+(%function-add-method! bard:name? `(,<symbol>) (lambda (x)(%true)))

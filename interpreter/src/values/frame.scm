@@ -105,7 +105,7 @@
 (define (%frame-find-slot fr key)
   (assoc key (%frame-slots fr)))
 
-(define (%frame-get fr key #!optional (default (bard:nothing)))
+(define (%frame-get fr key #!optional (default (%nothing)))
   (let ((slot (%frame-find-slot fr key)))
     (if slot
         (cdr slot)

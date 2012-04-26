@@ -22,5 +22,5 @@
 
 (define bard:foreign-value? (%make-function name: 'foreign-value?))
 
-(%function-add-method! bard:foreign-value? `(,Anything) (lambda (x)(bard:false)))
+(%function-add-method! bard:foreign-value? `(,Anything) (lambda (x)(%false)))
 

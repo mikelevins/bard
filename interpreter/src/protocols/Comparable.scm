@@ -21,12 +21,12 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:comparable? (%make-function name: 'comparable?))
-(%function-add-method! bard:comparable? `(,Anything ,Anything)(lambda (x y)(bard:false)))
-(%function-add-method! bard:comparable? `(,<fixnum> ,<fixnum>)(lambda (x y)(bard:true)))
-(%function-add-method! bard:comparable? `(,<fixnum> ,<bignum>)(lambda (x y)(bard:true)))
-(%function-add-method! bard:comparable? `(,<bignum> ,<fixnum>)(lambda (x y)(bard:true)))
-(%function-add-method! bard:comparable? `(,<character> ,<character>)(lambda (x y)(bard:true)))
-(%function-add-method! bard:comparable? `(,<string> ,<string>)(lambda (x y)(bard:true)))
+(%function-add-method! bard:comparable? `(,Anything ,Anything)(lambda (x y)(%false)))
+(%function-add-method! bard:comparable? `(,<fixnum> ,<fixnum>)(lambda (x y)(%true)))
+(%function-add-method! bard:comparable? `(,<fixnum> ,<bignum>)(lambda (x y)(%true)))
+(%function-add-method! bard:comparable? `(,<bignum> ,<fixnum>)(lambda (x y)(%true)))
+(%function-add-method! bard:comparable? `(,<character> ,<character>)(lambda (x y)(%true)))
+(%function-add-method! bard:comparable? `(,<string> ,<string>)(lambda (x y)(%true)))
 
 ;;; =
 ;;; ---------------------------------------------------------------------

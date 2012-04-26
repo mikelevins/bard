@@ -35,7 +35,7 @@
                       #f)))))
    'begin (lambda (expr env) 
             (let loop ((forms (cdr expr))
-                       (val (bard:nothing)))
+                       (val (%nothing)))
               (if (null? forms)
                   val
                   (let ((form (car forms)))
@@ -66,14 +66,14 @@
                (%eval conseq env)
                (if alt?
                    (%eval (list-ref expr 3) env)
-                   (bard:nothing)))))
+                   (%nothing)))))
    'let (lambda (expr env)
           (let ((body (drop 2 expr)))
             (let loop ((bindings (list-ref expr 1))
                        (env env))
               (if (null? bindings)
                   (let loop2 ((forms body)
-                              (val (bard:nothing)))
+                              (val (%nothing)))
                     (if (null? forms)
                         val
                         (let ((form (car forms)))

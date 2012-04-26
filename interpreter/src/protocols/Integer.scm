@@ -22,7 +22,7 @@
 
 (define bard:integer? (%make-function name: 'integer?))
 
-(%function-add-method! bard:integer? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:integer? `(,<fixnum>) (lambda (x)(bard:true)))
-(%function-add-method! bard:integer? `(,<bignum>) (lambda (x)(bard:true)))
+(%function-add-method! bard:integer? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:integer? `(,<fixnum>) (lambda (x)(%true)))
+(%function-add-method! bard:integer? `(,<bignum>) (lambda (x)(%true)))
 

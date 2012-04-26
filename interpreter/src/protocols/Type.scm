@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          Equal.scm
+;;;; Name:          Type.scm
 ;;;; Project:       Bard
-;;;; Purpose:       generic equality 
+;;;; Purpose:       implementation of the Type protocol
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -15,11 +15,22 @@
 ;;; The Protocol
 ;;; ---------------------------------------------------------------------
 
-(%define-protocol Equal)
+(%define-protocol Type)
 
-;;; =
+;;; type
 ;;; ---------------------------------------------------------------------
 
-(define bard:= (%make-function name: '=))
-(%function-add-method! bard:= `(,Anything ,Anything)(lambda (x y)(equal? x y)))
+(define bard:type (%make-function name: 'type))
 
+(define %bard-type %object->bard-type)
+
+(%function-add-method! bard:type `(,Anything) %bard-type)
+
+;;; type?
+;;; ---------------------------------------------------------------------
+
+(define bard:type? (%make-function name: 'type?))
+
+(define %bard-type? %type?)
+
+(%function-add-method! bard:type? `(,Anything) %bard-type?)

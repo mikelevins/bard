@@ -22,6 +22,6 @@
 
 (define bard:something? (%make-function name: 'something?))
 
-(%function-add-method! bard:something? `(,Anything) (lambda (x)(bard:true)))
-(%function-add-method! bard:something? `(,<null>) (lambda (x)(bard:false)))
+(%function-add-method! bard:something? `(,Anything) (lambda (x)(%true)))
+(%function-add-method! bard:something? `(,<null>) (lambda (x)(%false)))
 

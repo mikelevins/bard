@@ -53,8 +53,12 @@
     'Anything Anything
     'something? bard:something?
 
-    'Apply Apply
+    'Applicable Applicable
     'applicable? bard:applicable?
+    'apply bard:apply
+
+    'As As
+    'as bard:as
 
     'Atom Atom
     'atom? bard:atom?
@@ -67,14 +71,12 @@
     'Character Character
     'character? bard:character?
 
-    'Compare Compare
+    'Comparable Comparable
+    '= bard:=
     '> bard:>
     '< bard:<
     '>= bard:>=
     '<= bard:<=
-
-    'Equal Equal
-    '= bard:=
 
     'Float Float
     'float? bard:float?
@@ -97,6 +99,24 @@
 
     'Integer Integer
     'integer? bard:integer?
+
+    'IOStream IOStream
+    'close bard:close
+    'current-input bard:current-input
+    'current-output bard:current-output
+    'display bard:display
+    'input-stream? bard:input-stream?
+    'io-stream? bard:io-stream?
+    'load bard:load
+    'open bard:open
+    'output-stream? bard:output-stream?
+    'print bard:print
+    'read bard:read
+    'read-file bard:read-file
+    'read-line bard:read-line
+    'read-lines bard:read-lines
+    'show bard:show
+    'write bard:write
 
     'Keyword Keyword
     'keyword? bard:keyword?
@@ -123,6 +143,7 @@
     'length bard:length
     'list? bard:list?
     'map bard:map
+    'merge bard:merge
     'position bard:position
     'range bard:range
     'reduce bard:reduce
@@ -149,7 +170,7 @@
     'name? bard:name?
 
     'Null Null
-    'null? bard:null?
+    'nothing? bard:nothing?
 
     'Number Number
     'number? bard:number?
@@ -171,6 +192,10 @@
 
     'Text Text
     'text? bard:text?
+
+    'Type Type
+    'type bard:type
+    'type? bard:type?
 
     'Undefined Undefined
     'undefined? bard:undefined?

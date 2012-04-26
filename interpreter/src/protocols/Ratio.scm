@@ -22,5 +22,5 @@
 
 (define bard:ratio? (%make-function name: 'ratio?))
 
-(%function-add-method! bard:ratio? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:ratio? `(,<ratnum>) (lambda (x)(bard:true)))
+(%function-add-method! bard:ratio? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:ratio? `(,<ratnum>) (lambda (x)(%true)))

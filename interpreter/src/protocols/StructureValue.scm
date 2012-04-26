@@ -22,10 +22,10 @@
 
 (define bard:structure-value? (%make-function name: 'structure-value?))
 
-(%function-add-method! bard:structure-value? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:structure-value? `(,<input-stream>) (lambda (x)(bard:true)))
-(%function-add-method! bard:structure-value? `(,<output-stream>) (lambda (x)(bard:true)))
-(%function-add-method! bard:structure-value? `(,<frame>) (lambda (x)(bard:true)))
-(%function-add-method! bard:structure-value? `(,<function>) (lambda (x)(bard:true)))
-(%function-add-method! bard:structure-value? `(,<method>) (lambda (x)(bard:true)))
+(%function-add-method! bard:structure-value? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:structure-value? `(,<input-stream>) (lambda (x)(%true)))
+(%function-add-method! bard:structure-value? `(,<output-stream>) (lambda (x)(%true)))
+(%function-add-method! bard:structure-value? `(,<frame>) (lambda (x)(%true)))
+(%function-add-method! bard:structure-value? `(,<function>) (lambda (x)(%true)))
+(%function-add-method! bard:structure-value? `(,<method>) (lambda (x)(%true)))
 

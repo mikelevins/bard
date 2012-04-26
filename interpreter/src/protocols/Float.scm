@@ -22,5 +22,5 @@
 
 (define bard:float? (%make-function name: 'float?))
 
-(%function-add-method! bard:float? `(,Anything) (lambda (x)(bard:false)))
-(%function-add-method! bard:float? `(,<flonum>) (lambda (x)(bard:true)))
+(%function-add-method! bard:float? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:float? `(,<flonum>) (lambda (x)(%true)))
