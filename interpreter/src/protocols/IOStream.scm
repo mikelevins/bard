@@ -21,43 +21,32 @@
 ;;; ---------------------------------------------------------------------
 ;;; (close stream)
 
-(define bard:close (%make-function name: 'close))
-
-(%function-add-method! bard:close `(,<input-stream>) (lambda (s)(close-input-port s)))
-(%function-add-method! bard:close `(,<output-stream>) (lambda (s)(close-output-port s)))
+(define bard:close close-input-port)
 
 ;;; current-input
 ;;; ---------------------------------------------------------------------
 
-(define (bard:current-input)(current-input-port))
+(define bard:current-input current-input-port)
 
 ;;; current-output
 ;;; ---------------------------------------------------------------------
 
-(define (bard:current-output)(current-output-port))
+(define bard:current-output current-output-port)
 
 ;;; display
 ;;; ---------------------------------------------------------------------
-;;; (display value &optional (stream (current-output)))
 
-(define bard:display (%make-function name: 'display))
+(define bard:display display)
 
 ;;; input-stream?
 ;;; ---------------------------------------------------------------------
 
-(define bard:input-stream? (%make-function name: 'input-stream?))
-
-(%function-add-method! bard:input-stream? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:input-stream? `(,<input-stream>) (lambda (x)(%true)))
+(define bard:input-stream? input-port?)
 
 ;;; iostream?
 ;;; ---------------------------------------------------------------------
 
-(define bard:iostream? (%make-function name: 'iostream?))
-
-(%function-add-method! bard:iostream? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:iostream? `(,<input-stream>) (lambda (x)(%true)))
-(%function-add-method! bard:iostream? `(,<output-stream>) (lambda (x)(%true)))
+(define (bard:iostream? x) (or (input-port? x)(output-port? x)))
 
 ;;; load
 ;;; ---------------------------------------------------------------------
@@ -65,21 +54,32 @@
 
 (define bard:load (%make-function name: 'load))
 
+(%function-add-method! bard:load `(,<string>)
+                       (lambda (path)
+                         (newline)
+                         (display (string-append "Loading " path "..."))
+                         (newline)
+                         (call-with-input-file path
+                           (lambda (in)
+                             (let loop ((form (bard:read in)))
+                               (if (eqv? form #!eof)
+                                   (newline)
+                                   (begin
+                                     (newline)
+                                     (display (%as-string (%eval form $bard-toplevel-environment)))
+                                     (loop (bard:read in)))))))))
+
 
 ;;; open
 ;;; ---------------------------------------------------------------------
-;;; (open pathname &optional (settings {:direction 'input :mode 'text}))
 
-(define bard:open (%make-function name: 'open))
+(define bard:open open-file)
 
 
 ;;; output-stream?
 ;;; ---------------------------------------------------------------------
 
-(define bard:output-stream? (%make-function name: 'output-stream?))
-
-(%function-add-method! bard:output-stream? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:output-stream? `(,<output-stream>) (lambda (x)(%true)))
+(define bard:output-stream? output-port?)
 
 ;;; print
 ;;; ---------------------------------------------------------------------
@@ -97,12 +97,27 @@
 
 (define bard:read-file (%make-function name: 'read-file))
 
+(%function-add-method! bard:read-file `(,<string>)
+                       (lambda (path)
+                         (newline)
+                         (call-with-input-file path
+                           (lambda (in)
+                             (let loop ((line (read-line in))
+                                        (result ""))
+                               (if (eqv? line #!eof)
+                                   result
+                                   (loop (read-line in) (string-append result line (string #\newline)))))))))
+
+
 ;;; read-line
 ;;; ---------------------------------------------------------------------
 ;;; (read-line &optional (stream (current-input)))
 
 (define bard:read-line (%make-function name: 'read-line))
 
+(%function-add-method! bard:read-line `(& args)
+                       (lambda (#!optional (in (current-input-port)))
+                         (read-line in)))
 
 ;;; read-lines
 ;;; ---------------------------------------------------------------------
@@ -110,12 +125,22 @@
 
 (define bard:read-lines (%make-function name: 'read-lines))
 
+(%function-add-method! bard:read-lines `(,<string>)
+                       (lambda (path)
+                         (newline)
+                         (call-with-input-file path
+                           (lambda (in)
+                             (let loop ((line (read-line in))
+                                        (result '()))
+                               (if (eqv? line #!eof)
+                                   (reverse result)
+                                   (loop (read-line in) (cons line result))))))))
 
 ;;; show
 ;;; ---------------------------------------------------------------------
 ;;; (show value) => Text
 
-(define bard:show (%make-function name: 'show))
+(define bard:show %as-string)
 
 ;;; write
 ;;; ---------------------------------------------------------------------
@@ -123,3 +148,6 @@
 
 (define bard:write (%make-function name: 'write))
 
+(%function-add-method! bard:write `(,Anything & args)
+                       (lambda (val #!optional (out (current-output-port)))
+                         (write (%as-string val) out)))

@@ -9,23 +9,36 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define-type %environment
-  id: D15B2526-146E-4263-9C2B-C62FBB9B115C
-  constructor: %private-make-environment
-  (bindings %environment-bindings %set-environment-bindings!))
+;;; ---------------------------------------------------------------------
+;;; global environment
+;;; ---------------------------------------------------------------------
 
-(define (%null-environment) (%private-make-environment '()))
+(define (%global-environment)
+  (make-table test: eq?))
 
-(define $bard-toplevel-environment (%null-environment))
+(define $bard-global-environment #f)
+
+(define (%defglobal var val)
+  (table-set! $bard-global-environment var val))
+
+(define (%global-value var)
+  (table-ref $bard-global-environment var (%undefined)))
+
+;;; ---------------------------------------------------------------------
+;;; lexical environments
+;;; ---------------------------------------------------------------------
+
+(define (%null-environment) '())
 
 (define (%add-binding env var val)
-  (%private-make-environment (cons (cons var val)
-                                   (%environment-bindings env))))
+  (cons (cons var val)
+        env))
 
 (define (%find-binding env var)
-  (assq var (%environment-bindings env)))
+  (assq var env))
 
 (define (%binding-value binding)(cdr binding))
+
 (define (%set-binding-value! binding val)(set-cdr! binding val))
 
 (define (%extend-environment env plist)
@@ -37,34 +50,12 @@
                  (val (cadr plist)))
             (%extend-environment (%add-binding env var val) (cddr plist))))))
 
-
-(define (%set-binding! env var val)
+(define (%set-variable! env var val)
   (let ((binding (%find-binding env var)))
     (if binding
-        (%set-binding-value! binding val)
-        (%set-environment-bindings! env 
-                                    (cons (cons var val)
-                                          (%environment-bindings env))))))
-
-(define (%set-bindings! env plist)
-  (if (null? plist)
-      env
-      (if (null? (cdr plist))
-          (error "Odd number of arguments to extend-environment" plist)
-          (let* ((var (car plist))
-                 (val (cadr plist)))
-            (%set-bindings-aux! (%set-binding! env var val) (cddr plist))))))
-
-(define (%top-level-environment)
-  $bard-toplevel-environment)
-
-(define (%define-variable var val #!optional (env (%top-level-environment)))
-  (%set-binding! env var val)
-  val)
-
-(define (%set-variable! var val #!optional (env (%top-level-environment)))
-  (let ((binding (%find-binding env var)))
-    (if binding
-        (%set-binding! env var val)
-        (error "Undefined variable" var))
+        (%set-binding-value! var val)
+        (if (%defined? (%global-value var))
+            (%defglobal var val)
+            (error "undefined variable " var)))
     val))
+

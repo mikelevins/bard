@@ -68,6 +68,7 @@
          "src/protocols/Integer.scm"
          "src/protocols/Ratio.scm"
          "src/protocols/Comparable.scm"
+         "src/print.scm"
          "src/protocols/IOStream.scm"
          "src/protocols/As.scm"
          "src/prims.scm"
@@ -76,8 +77,8 @@
          "src/eval/apply.scm"
          "src/eval/env.scm"
          "src/eval/eval.scm"
-         "src/print.scm"
          "src/reader/read.scm"
+         "src/repl/error.scm"
          "src/repl/repl.scm"
          ))
 
@@ -91,3 +92,4 @@
 
 ;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)
+;;; (bard:repl)

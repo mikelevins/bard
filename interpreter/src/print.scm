@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "values/type-macros.scm")
+(##include "values/function-macros.scm")
 
 
 (define as-string (%make-function name: 'as-string))
@@ -20,95 +21,90 @@
 (define (%as-string thing)
   (%apply as-string (list thing)))
 
-(%defprinter Anything (lambda (val)(object->string val)))
-(%defprinter <undefined> (lambda (val) "undefined"))
-(%defprinter <null> (lambda (val) "nothing"))
-(%defprinter <character> (lambda (val) (object->string val)))
-(%defprinter <boolean> (lambda (val) (if val "true" "false")))
-(%defprinter <keyword> (lambda (val) (string-append (keyword->string val) ":")))
+(%defprinter Anything (%primitive-method (val) (object->string val)))
+(%defprinter <undefined> (%primitive-method (ignored) "undefined"))
+(%defprinter <null> (%primitive-method (ignored) "nothing"))
+(%defprinter <character> (%primitive-method (val)(object->string val)))
+(%defprinter <boolean> (%primitive-method (val) (if val "true" "false")))
+(%defprinter <keyword> (%primitive-method (val) (string-append (keyword->string val) ":")))
 
-(%defprinter <primitive-procedure>
-             (lambda (val)
-               (string-append "#<primitive-procedure "
-                              (number->string (object->serial-number val)) ">")))
+(%defprinter <primitive-procedure> 
+             (%primitive-method (x) 
+                                (string-append "#<primitive-procedure "
+                                               (number->string (object->serial-number x)) ">")))
 
-(%defprinter <input-stream>
-             (lambda (val)
-               (string-append "#<input-stream "
-                              (number->string (object->serial-number val)) ">")))
+(%defprinter <input-stream> 
+             (%primitive-method (x) 
+                                (string-append "#<input-stream "
+                                               (number->string (object->serial-number x)) ">")))
 
-(%defprinter <output-stream>
-             (lambda (val)
-               (string-append "#<output-stream "
-                              (number->string (object->serial-number val)) ">")))
+(%defprinter <output-stream> 
+             (%primitive-method (x) 
+                                (string-append "#<output-stream "
+                                               (number->string (object->serial-number x)) ">")))
 
-(%defprinter <cons> 
-             (lambda (val)
-               (let loop ((items val)
-                          (outstr "("))
-                 (if (null? items)
-                     (string-append outstr ")")
-                     (if (equal? items val)
-                         (loop (cdr items)(string-append outstr (%as-string (car items))))
-                         (loop (cdr items)(string-append outstr " " (%as-string (car items)))))))))
+(%defprinter <cons>
+             (%primitive-method (x) 
+                                (let loop ((items x)
+                                           (outstr "("))
+                                  (if (null? items)
+                                      (string-append outstr ")")
+                                      (if (equal? items x)
+                                          (loop (cdr items)(string-append outstr (%as-string (car items))))
+                                          (loop (cdr items)(string-append outstr " " (%as-string (car items)))))))))
 
 (%defprinter <frame>
-             (lambda (val)
-               (let ((all-keys (%keys val)))
-                 (let loop ((keys all-keys)
-                            (outstr "{"))
-                   (if (null? keys)
-                       (string-append outstr "}")
-                       (if (equal? keys all-keys)
-                           (loop (cdr keys)
-                                 (let* ((val (%frame-get val (car keys))))
-                                   (string-append outstr (%as-string (car keys)) " " (%as-string val))))
-                           (loop (cdr keys)
-                                 (let* ((val (%frame-get val (car keys))))
-                                   (string-append outstr " " (%as-string (car keys)) " " (%as-string val))))))))))
-
-
+             (%primitive-method (x) 
+                                (let ((all-keys (%keys x)))
+                                  (let loop ((keys all-keys)
+                                             (outstr "{"))
+                                    (if (null? keys)
+                                        (string-append outstr "}")
+                                        (if (equal? keys all-keys)
+                                            (loop (cdr keys)
+                                                  (let* ((x (%frame-get x (car keys))))
+                                                    (string-append outstr (%as-string (car keys)) " " (%as-string x))))
+                                            (loop (cdr keys)
+                                                  (let* ((x (%frame-get x (car keys))))
+                                                    (string-append outstr " " (%as-string (car keys)) " " (%as-string x))))))))))
 
 (%defprinter <function>
-             (lambda (val)
-               (let ((fname (%function-name val)))
-                 (if fname
-                     (string-append "#<function "
-                                    (object->string fname)
-                                    " "
-                                    (number->string (object->serial-number val))
-                                    ">")
-                     (string-append "#<an anonymous function " (number->string (object->serial-number val)) ">")))))
+             (%primitive-method (x) 
+                                (let ((fname (%function-name x)))
+                                  (if fname
+                                      (string-append "#<function "
+                                                     (object->string fname)
+                                                     " "
+                                                     (number->string (object->serial-number x))
+                                                     ">")
+                                      (string-append "#<an anonymous function " (number->string (object->serial-number x)) ">")))))
 
 (%defprinter <method>
-             (lambda (val)
-               (let ((mname (%method-name val)))
-                 (if mname
-                     (string-append "#<method "
-                                    (object->string mname)
-                                    " "
-                                    (number->string (object->serial-number val))
-                                    ">")
-                     (string-append "#<an anonymous method " (number->string (object->serial-number val)) ">")))))
+             (%primitive-method (x) 
+                                (let ((mname (%method-name x)))
+                                  (if mname
+                                      (string-append "#<method " (object->string mname)
+                                                     " " (number->string (object->serial-number x)) ">")
+                                      (string-append "#<an anonymous method " (number->string (object->serial-number x)) ">")))))
 
-(%defprinter <protocol>
-             (lambda (val)
-               (object->string (%protocol-name val))))
+
+(%defprinter <protocol> (%primitive-method (val)(object->string val)))
 
 (%defprinter <singleton>
-             (lambda (val)
-               (string-append "#<singleton "
-                              (%as-string (%singleton-value val))
-                               ">")))
+             (%primitive-method (x) 
+                                (string-append "#<singleton "
+                                               (%as-string (%singleton-value x))
+                                               ">")))
 
 (%defprinter <type>
-             (lambda (val)
-               (cond
-                ((%singleton? val) (string-append "#<singleton " (%as-string (%singleton-value val)) ">"))
-                ((%primitive-type? val) (string-append "#<primitive-type " (%as-string (%primitive-type-name val)) ">"))
-                ((%structure-type? val)  (string-append "#<structure-type " (%as-string (%structure-type-name val)) ">"))
-                ((%protocol? val) (string-append "#<protocol " (%as-string (%protocol-name val)) ">"))
-                (else (error "not a type" val)))))
+             (%primitive-method (x) 
+                                (cond
+                                 ((%singleton? x) (string-append "#<singleton " (%as-string (%singleton-value x)) ">"))
+                                 ((%primitive-type? x) (string-append "#<primitive-type " (%as-string (%primitive-type-name x)) ">"))
+                                 ((%structure-type? x)  (string-append "#<structure-type " (%as-string (%structure-type-name x)) ">"))
+                                 ((%protocol? x) (string-append "#<protocol " (%as-string (%protocol-name x)) ">"))
+                                 (else (error (string-append "not a type" (object->string x)))))))
+
 
 (define (bard:print object #!optional (out (current-output-port)))
   (print port: out (%as-string object)))

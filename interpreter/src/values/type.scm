@@ -162,6 +162,7 @@
   id: 86F8548C-056C-4369-ADF3-1657D7E83649
   constructor: %private-make-method
   (name %method-name)
+  (environment %method-environment %set-method-environment!)
   (parameters %method-parameters)
   (body %method-body))
 

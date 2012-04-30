@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; TODO
 ;;; this scheme, which uses a predefined set of conversion tables, 
@@ -72,14 +73,15 @@
 
 (define bard:as (%make-function name: 'as))
 
-(define (%bard-as tp val)
-  (let* ((conversion-table (%get-conversion-table (%object->bard-type val)))
-             (converter (%get-converter conversion-table tp)))
-        (if converter
-            (converter val)
-            (error (string-append "Don't know how to convert " 
-                                  (%object->string tp)
-                                  " to "
-                                  (%object->string (%object->bard-type val)))))))
+(define %bard-as 
+  (%primitive-method (tp val)
+                     (let* ((conversion-table (%get-conversion-table (%object->bard-type val)))
+                            (converter (%get-converter conversion-table tp)))
+                       (if converter
+                           (converter val)
+                           (error (string-append "Don't know how to convert " 
+                                                 (object->string (%object->bard-type val))
+                                                 " to "
+                                                 (object->string tp)))))))
 
 (%function-add-method! bard:as `(,Anything ,Anything) %bard-as)

@@ -9,6 +9,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(include "function-macros.scm")
+
+(define $m (%method (x)(+ 1 x)))
+(define $n (%primitive-method (x y)(+ y x)))
+
 ;;; ---------------------------------------------------------------------
 ;;; utils
 ;;; ---------------------------------------------------------------------
@@ -19,10 +24,10 @@
    ((list? param) (car param))
    (else (error "invalid parameter spec" param))))
 
-(define (%function-param->signature-type param env)
+(define (%function-param->signature-type param)
   (cond
    ((symbol? param) Anything)
-   ((list? param) (let ((type-spec (%eval (cadr param) env)))
+   ((list? param) (let ((type-spec (cadr param)))
                     (if (%type? type-spec)
                         type-spec
                         (error "invalid type" type-spec))))
@@ -31,14 +36,13 @@
 (define (%function-param-list->formal-arguments params)
   (map %function-param->formal-argument params))
 
-(define (%function-param-list->method-signature params env)
+(define (%function-param-list->method-signature params)
   (let ((required-params (take-before (lambda (p)(eq? p '&))
                                       params))
         (tail (if (position-if (lambda (x) (eq? x '&)) params)
                   '(&)
                   '())))
-    (append (map (lambda (p) (%function-param->signature-type p env)) 
-                 required-params)
+    (append (map %function-param->signature-type required-params)
             tail)))
 
 
@@ -136,10 +140,15 @@
       params
       (error "Invalid parameter list for method" params)))
 
-(define (%make-method #!key (name #f)(params '())(body '()))
+(define (%make-method #!key (name #f)(environment '())(params '())(body '()))
   (let ((valid-name (%validate-method-name name))
         (valid-params (%validate-method-params params)))
-    (%private-make-method valid-name valid-params body)))
+    (%private-make-method valid-name environment valid-params body)))
+
+(define (%with-environment env meth)
+  (begin
+    (%set-method-environment! meth env)
+    meth))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions

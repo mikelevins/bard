@@ -9,25 +9,14 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (%single-arg args)
-  (if (= (length args) 1)
-      (car args)
-      (error (string-append "argument list for apply has the wrong number of arguments " 
-                            (object->string args)))))
+(define (%apply-not-defined thing args)
+  (error "not an applicable value" thing))
 
-(define (%apply-string s args)
-  (string-ref s (%single-arg args)))
+(define (%no-applicable-method fn args)
+  (error "no applicable method" fn args))
 
-(define (%apply-list ls args)
-  (list-ref ls (%single-arg args)))
-
-(define (%apply-frame fr args)
-  (%frame-get fr (%single-arg args)))
-
-(define (%method-lexical-environment meth args)
+(define (%extend-environment-with-formals-and-args env formals args)
   (let* ((ampersand? (lambda (x)(eq? x '&)))
-         (env (%method-environment meth))
-         (formals (%method-parameters meth))
          (required-formals (take-before ampersand? formals))
          (required-count (length required-formals))
          (required-args (take required-count args))
@@ -43,10 +32,14 @@
           (%extend-environment env plist)))))
 
 (define (%apply-bard-method method args)
-  (let* ((method-body (%method-body method))
-         (method-env (%method-environment method))
-         (lexical-env (%method-lexical-environment method args)))
-    (%eval method-body lexical-env)))
+  (if (procedure? method)
+      (apply method args)
+      (if (%method? method)
+          (let* ((formals (%method-parameters method))
+                 (env (%extend-environment-with-formals-and-args env formals args))
+                 (body (%method-body method)))
+            (%eval body env))
+          (error "not a method" method))))
 
 (define (%apply-bard-function fn args)
   (let* ((types (map %object->bard-type args))
@@ -56,15 +49,28 @@
         (%apply-bard-method (car methods) args))))
 
 (define (%apply applicable args)
-  (cond
+  (let ((argcount (length args)))
+    (cond
      ((null? applicable) (%nothing))
-     ((string? applicable)(%apply-string applicable args))
-     ((list? applicable)(%apply-list applicable args))
-     ((%frame? applicable)(%apply-frame applicable args))
+     ((string? applicable)(let ((i (if (= argcount 1)
+                                       (car args)
+                                       (error (string-append "wrong number of arguments applying a string " 
+                                                             (object->string argcount))))))
+                            (string-ref applicable i)))
+     ((list? applicable)(let ((i (if (= argcount 1)
+                                     (car args)
+                                     (error (string-append "wrong number of arguments applying a list " 
+                                                           (object->string argcount))))))
+                          (list-ref applicable i)))
+     ((%frame? applicable)(let ((k (if (= argcount 1)
+                                       (car args)
+                                       (error (string-append "wrong number of arguments applying a list " 
+                                                             (object->string argcount))))))
+                            (%frame-get applicable k)))
      ((procedure? applicable)(apply applicable args))
      ((%method? applicable)(%apply-bard-method applicable args))
      ((%function? applicable)(%apply-bard-function applicable args))
-     (else (error "not an applicable object" applicable))))
+     (else (error "not an applicable object" applicable)))))
 
 ;;; (%apply '() '())
 ;;; (%apply "Fred" '(3))
@@ -76,4 +82,3 @@
 ;;; (%apply + '(1))
 ;;; (%apply + '(1 2))
 ;;; (%apply + '(1 2 3))
-

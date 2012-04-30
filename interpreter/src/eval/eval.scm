@@ -12,37 +12,23 @@
 (define (%eval-variable var env)
   (let ((binding (%find-binding env var)))
     (if binding
-        (cdr binding)
-        (error "Undefined variable" var))))
+        (%binding-value binding)
+        (let ((global-val (%global-value var)))
+          (if (%defined? global-val)
+              global-val
+              (error (string-append "Undefined variable: " (object->string var))))))))
 
-(define (%eval-application-form expr env)
-  (%apply (%eval (car expr) env)
-          (map (lambda (x)(%eval x env))
-               (cdr expr))))
-
-(define (%eval-list expr env)
+(define (%eval expr env)
   (cond
-   ((%special-form? expr)(%eval-special-form expr env))
-   ((%macro-form? expr)(%eval-macro-form expr env))
-   (else (%eval-application-form expr env))))
-
-(define (%eval expr #!optional (env (%top-level-environment)))
-  (cond
-   ((%undefined? expr) expr)
-   ((%nothing? expr) expr)
-   ((eq? expr (%true)) expr)
-   ((eq? expr (%false)) expr)
-   ((%number? expr) expr)
-   ((%character? expr) expr)
-   ((%keyword? expr) expr)
-   ((%frame? expr) expr)
-   ((string? expr) expr)
-   ((procedure? expr) expr)
-   ((%method? expr) expr)
-   ((%function? expr) expr)
    ((%symbol? expr) (%eval-variable expr env))
-   ((%cons? expr) (%eval-list expr env))
-   (else (error "unrecognized expression" expr))))
+   ((%cons? expr) (cond
+                   ((%special-form? expr)(%eval-special-form expr env))
+                   ((%macro-form? expr)(%eval-macro-form expr env))
+                   (else (let ((op (%eval (car expr) env))
+                               (args (map (lambda (x)(%eval x env)) 
+                                          (cdr expr))))
+                           (%apply op args)))))
+   (else expr)))
 
 (define (%test-eval str #!optional (env '()))
   (%eval (%read-from-string str) env))

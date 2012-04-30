@@ -520,6 +520,37 @@
 (%function-add-method! bard:map `(,<function> & args) %bard-map)
 (%function-add-method! bard:map `(,<method> & args) %bard-map)
 
+;;; partition
+;;; ---------------------------------------------------------------------
+
+(define bard:partition (%make-function name: 'partition))
+
+(define (%bard-partition num ls #!optional (step 1))
+  (if (null? ls)
+      (%nothing)
+      (let ((tp (%object->bard-type ls)))
+        (let loop ((items (%as-list ls))
+                   (result '()))
+          (let ((len (length items)))
+            (if (< len num)
+                (reverse result)
+                (let ((num (if (< len num) len num))
+                      (step (if (< len step) len step)))
+                  (loop (drop step items)
+                        (cons (take num items) result)))))))))
+
+(%function-add-method! bard:partition `(,<fixnum> ,<null> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<bignum> ,<null> & args) %bard-partition)
+
+(%function-add-method! bard:partition `(,<fixnum> ,<cons> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<bignum> ,<cons> & args) %bard-partition)
+
+(%function-add-method! bard:partition `(,<fixnum> ,<string> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<bignum> ,<string> & args) %bard-partition)
+
+(%function-add-method! bard:partition `(,<fixnum> ,<frame> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<bignum> ,<frame> & args) %bard-partition)
+
 ;;; position
 ;;; ---------------------------------------------------------------------
 

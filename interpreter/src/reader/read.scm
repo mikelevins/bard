@@ -37,11 +37,12 @@
    ((list? val)(map %read-value->bard-value val))
    (else val)))
 
-(define (bard:read #!optional (port (current-input-port)))
+(define (bard:read #!optional port)
   (let ((original-readtable (input-port-readtable port)))
     (dynamic-wind
         (lambda ()(input-port-readtable-set! port +bard-readtable+))
-        (lambda ()(%read-value->bard-value (read port)))
+        (lambda ()(let ((port (or port (current-input-port))))
+                    (%read-value->bard-value (read port))))
         (lambda ()(input-port-readtable-set! port original-readtable)))))
 
 (define (bard:read-from-string s)
