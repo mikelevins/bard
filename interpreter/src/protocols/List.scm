@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -44,6 +45,8 @@
      ((equal? tp <frame>)(%frame->list ls))
      (else ls))))
 
+
+#| in the process of converting to new method implementation
 
 ;;; list?
 ;;; ---------------------------------------------------------------------
@@ -745,18 +748,21 @@
 (%function-add-method! bard:slice `(,<string> ,<fixnum> & args) %bard-slice)
 (%function-add-method! bard:slice `(,<frame> ,<fixnum> & args) %bard-slice)
 
+|#
+
 ;;; some?
 ;;; ---------------------------------------------------------------------
 
 (define bard:some? (%make-function name: 'some?))
 
-(define (%bard-some? test ls)
-  (let loop ((items (%as-list ls)))
+(define %bard-some? 
+  (%primitive-method (test ls)
+   (let loop ((items (%as-list ls)))
     (if (null? items)
         (%nothing)
         (if (%apply test (list (car items)))
             (car items)
-            (loop (cdr items))))))
+            (loop (cdr items)))))))
 
 (%function-add-method! bard:some? `(,<primitive-procedure> ,<null>) %bard-some?)
 (%function-add-method! bard:some? `(,<function> ,<null>) %bard-some?)
@@ -773,6 +779,8 @@
 (%function-add-method! bard:some? `(,<primitive-procedure> ,<frame>) %bard-some?)
 (%function-add-method! bard:some? `(,<function> ,<frame>) %bard-some?)
 (%function-add-method! bard:some? `(,<method> ,<frame>) %bard-some?)
+
+#|  in the process of converting to new method implementation
 
 ;;; sort
 ;;; ---------------------------------------------------------------------
@@ -980,3 +988,4 @@
 (%function-add-method! bard:zip `(,<frame> ,<string>) (lambda (x y)(map (lambda (a b)(list a b)) (%frame->list x) (string->list y))))
 (%function-add-method! bard:zip `(,<frame> ,<frame>) (lambda (x y)(map (lambda (a b)(list a b)) (%frame->list x) (%frame->list y))))
 
+|#

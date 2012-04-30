@@ -10,12 +10,16 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
 ;;; ---------------------------------------------------------------------
 
 (%define-protocol Comparable)
+
+#|  in the process of converting to new method implementation
+
 
 ;;; comparable?
 ;;; ---------------------------------------------------------------------
@@ -28,11 +32,15 @@
 (%function-add-method! bard:comparable? `(,<character> ,<character>)(lambda (x y)(%true)))
 (%function-add-method! bard:comparable? `(,<string> ,<string>)(lambda (x y)(%true)))
 
+|#
+
 ;;; =
 ;;; ---------------------------------------------------------------------
 
 (define bard:= (%make-function name: '=))
-(%function-add-method! bard:= `(,Anything ,Anything)(lambda (x y)(equal? x y)))
+(%function-add-method! bard:= `(,Anything ,Anything)(%primitive-method (x y)(equal? x y)))
+
+#|  in the process of converting to new method implementation
 
 ;;; >
 ;;; ---------------------------------------------------------------------
@@ -70,5 +78,5 @@
 (%function-add-method! bard:<= `(,<character> & args) (lambda (x . args) (apply char<=? (cons x args))))
 (%function-add-method! bard:<= `(,<string> & args) (lambda (x . args) (apply string<=? (cons x args))))
 
-
+|#
 
