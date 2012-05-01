@@ -111,10 +111,19 @@
 
 (define-type %singleton
   id: F735A1E4-9D1C-4FB2-8E22-BA4FD08B637C
-  constructor: %singleton
+  constructor: %private-make-singleton
   (value %singleton-value))
 
 (%define-structure-type <singleton> %singleton?)
+
+(define $singleton-table (make-table test: equal?))
+
+(define (%singleton x)
+  (let ((already? (table-ref $singleton-table x #f)))
+    (or already?
+        (let ((s (%private-make-singleton x)))
+          (table-set! $singleton-table x s)
+          s))))
 
 ;;; ---------------------------------------------------------------------
 ;;; define the base bard types
@@ -201,7 +210,7 @@
       (if (%singleton? t2)
           #f
           (if (%singleton? t1)
-              (%subtype? (%singleton-value t1) t2)
+              (%subtype? (%object->bard-type (%singleton-value t1)) t2)
               (if (equal? t2 Anything)
                   #t
                   #f)))))

@@ -48,9 +48,11 @@
          (lexical-env (%method-lexical-environment method args)))
     (%eval method-body lexical-env)))
 
+(define (%no-applicable-method fn args)
+  (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string args))))
+
 (define (%apply-bard-function fn args)
-  (let* ((types (map %object->bard-type args))
-         (methods (%function-ordered-methods fn types)))
+  (let* ((methods (%function-ordered-methods fn args)))
     (if (null? methods)
         (%no-applicable-method fn args)
         (%apply-bard-method (car methods) args))))

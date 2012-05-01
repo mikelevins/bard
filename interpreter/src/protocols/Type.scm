@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -33,4 +34,17 @@
 
 (define %bard-type? %type?)
 
-(%function-add-method! bard:type? `(,Anything) %bard-type?)
+(%function-add-method! bard:type? `(,Anything) (%primitive-method (x) (%bard-type? x)))
+
+;;; singleton?
+;;; ---------------------------------------------------------------------
+
+(define bard:singleton? (%make-function name: 'singleton?))
+
+(%function-add-method! bard:singleton? `(,Anything) (%primitive-method (x) (%singleton? x)))
+
+;;; singleton
+;;; ---------------------------------------------------------------------
+
+(define bard:singleton %singleton)
+

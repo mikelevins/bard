@@ -74,6 +74,12 @@
 (%defglobal 'Anything Anything)
 (%defglobal 'something? bard:something?)
 
+(%defglobal 'Type Type)
+(%defglobal 'type bard:type)
+(%defglobal 'type? bard:type?)
+(%defglobal 'singleton bard:singleton)
+(%defglobal 'singleton? bard:singleton?)
+
 (%defglobal 'Applicable Applicable)
 (%defglobal 'applicable? bard:applicable?)
 (%defglobal 'apply bard:apply)
@@ -214,10 +220,6 @@
 
 (%defglobal 'Text Text)
 (%defglobal 'text? bard:text?)
-
-(%defglobal 'Type Type)
-(%defglobal 'type bard:type)
-(%defglobal 'type? bard:type?)
 
 (%defglobal 'Undefined Undefined)
 (%defglobal 'undefined? bard:undefined?)

@@ -11,9 +11,6 @@
 
 (include "function-macros.scm")
 
-(define $m (%method (x)(+ 1 x)))
-(define $n (%primitive-method (x y)(+ y x)))
-
 ;;; ---------------------------------------------------------------------
 ;;; utils
 ;;; ---------------------------------------------------------------------
@@ -24,38 +21,45 @@
    ((list? param) (car param))
    (else (error "invalid parameter spec" param))))
 
-(define (%function-param->signature-type param)
+(define (%function-param->signature-type param env)
   (cond
    ((symbol? param) Anything)
-   ((list? param) (let ((type-spec (cadr param)))
-                    (if (%type? type-spec)
-                        type-spec
-                        (error "invalid type" type-spec))))
+   ((list? param) (let* ((type-spec (cadr param))
+                         (type (%eval type-spec env)))
+                    (if (%type? type)
+                        type
+                        (error "invalid type" type))))
    (else (error "invalid parameter spec" param))))
 
 (define (%function-param-list->formal-arguments params)
   (map %function-param->formal-argument params))
 
-(define (%function-param-list->method-signature params)
+(define (%function-param-list->method-signature params env)
   (let ((required-params (take-before (lambda (p)(eq? p '&))
                                       params))
         (tail (if (position-if (lambda (x) (eq? x '&)) params)
                   '(&)
-                  '())))
-    (append (map %function-param->signature-type required-params)
+                  '()))
+        (get-type (lambda (x)(%function-param->signature-type x env))))
+    (append (map get-type required-params)
             tail)))
 
 
-(define (%method-entry< cons1 cons2)
-  (let loop ((e1 (car cons1))
-             (e2 (car cons2)))
-    (if (null? e2)
-        #t
-        (if (null? e1)
-            #f
-            (if (%subtype? e1 e2)
-                #t
-                (loop (cdr e1) (cdr e2)))))))
+(define (%method-entry< e1 e2)
+  (let loop ((types1 (car e1))
+             (types2 (car e2)))
+    (if (null? types1)
+        #f
+        (if (null? types2)
+            #t
+            (let ((t1 (car types1))
+                  (t2 (car types2)))
+              (if (%subtype? t2 t1)
+                  #f
+                  (if (%subtype? t1 t2)
+                      #t
+                      (loop (cdr types1)(cdr types2)))))))))
+
 
 
 ;;; ---------------------------------------------------------------------
@@ -106,23 +110,29 @@
                                                 method)
                                           (%method-table-entries mtable))))))
 
-(define (%types-match-method-signature? argtypes msig)
+(define (%vals-match-method-signature? vals msig)
   (let* ((ampersand? (lambda (x)(eq? x '&)))
          (rest? (any? ampersand? msig))
          (required-args (take-before ampersand? msig))
          (required-argcount (length required-args))
-         (supplied-argcount (length argtypes)))
+         (supplied-argcount (length vals))
+         (matches? (lambda (val tp)
+                     (if (equal? tp Anything)
+                         #t
+                         (if (%singleton? tp)
+                             (equal? val (%singleton-value tp))
+                             (%subtype? (%object->bard-type val) tp))))))
     (and
      (if rest?
          (>= supplied-argcount required-argcount)
          (= supplied-argcount required-argcount))
-     (every? %subtype?
-             argtypes
+     (every? matches?
+             vals
              required-args))))
 
-(define (%method-entries-matching-types mtable argtypes)
+(define (%method-entries-matching-values mtable vals)
   (filter (lambda (entry)
-            (%types-match-method-signature? argtypes (car entry)))
+            (%vals-match-method-signature? vals (car entry)))
           (%method-table-entries mtable)))
 
 ;;; ---------------------------------------------------------------------
@@ -170,9 +180,9 @@
     (%method-table-set-entry! mtable signature method)
     fn))
 
-(define (%function-ordered-methods fn types)
+(define (%function-ordered-methods fn vals)
   (let* ((mtable (%function-method-table fn))
-         (entries (%method-entries-matching-types mtable types))
+         (entries (%method-entries-matching-values mtable vals))
          (ordered-entries (sort entries %method-entry<)))
     (map cdr ordered-entries)))
 
