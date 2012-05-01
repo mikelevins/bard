@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,5 +23,5 @@
 
 (define bard:float? (%make-function name: 'float?))
 
-(%function-add-method! bard:float? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:float? `(,<flonum>) (lambda (x)(%true)))
+(%function-add-method! bard:float? `(,Anything) (%method (x) false))
+(%function-add-method! bard:float? `(,<flonum>) (%method (x) true))

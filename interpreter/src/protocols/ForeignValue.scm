@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,5 +23,5 @@
 
 (define bard:foreign-value? (%make-function name: 'foreign-value?))
 
-(%function-add-method! bard:foreign-value? `(,Anything) (lambda (x)(%false)))
+(%function-add-method! bard:foreign-value? `(,Anything) (%method (x) false))
 

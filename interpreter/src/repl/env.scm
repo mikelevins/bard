@@ -99,6 +99,7 @@
 (%defglobal 'character? bard:character?)
 
 (%defglobal 'Comparable Comparable)
+(%defglobal 'comparable? bard:comparable?)
 (%defglobal '= bard:=)
 (%defglobal '> bard:>)
 (%defglobal '< bard:<)
