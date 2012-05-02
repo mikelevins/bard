@@ -67,7 +67,7 @@
                                                     (newline)
                                                     (begin
                                                       (newline)
-                                                      (display (%as-string (%eval form $bard-toplevel-environment)))
+                                                      (display (%as-string (%eval form (%null-environment))))
                                                       (loop (bard:read in)))))))))
 
 

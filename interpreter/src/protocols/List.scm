@@ -372,7 +372,7 @@
 (define bard:first (%make-function name: 'first))
 
 (%function-add-method! bard:first `(,<null>)(%method (ls) nothing))
-(%function-add-method! bard:first `(,<cons>) (%method (ls)(first ls)))
+(%function-add-method! bard:first `(,<cons>) (%primitive-method (ls)(car ls)))
 (%function-add-method! bard:first `(,<string>)
                        (%primitive-method (str)
                                           (if (> (string-length str) 0)
@@ -392,7 +392,7 @@
 (define bard:head (%make-function name: 'head))
 
 (%function-add-method! bard:head `(,<null>)(%method (ls) nothing))
-(%function-add-method! bard:head `(,<cons>) (%method (ls)(head ls)))
+(%function-add-method! bard:head `(,<cons>) (%primitive-method (ls)(car ls)))
 (%function-add-method! bard:head `(,<string>)
                        (%primitive-method (str)
                                           (if (> (string-length str) 0)
@@ -539,17 +539,22 @@
 
 (define bard:map (%make-function name: 'map))
 
+(define (%bard-map-aux fn lists)
+  (let loop ((lists lists)
+             (result '()))
+    (if (any? null? lists)
+        (reverse result)
+        (loop (map cdr lists)
+              (cons (%apply fn (map car lists))
+                    result)))))
+
 (define %bard-map 
   (%primitive-method (fn & args)
                      (if (null? args)
                          (%nothing)
-                         (let ((tp (%object->bard-type (car args))))
-                           (let loop ((lists (map %as-list args))
-                                      (result '()))
-                             (if (any? null? lists)
-                                 (%to-type tp (reverse result))
-                                 (loop (map cdr lists)
-                                       (cons (%apply fn (map car lists)) result))))))))
+                         (let* ((tp (%object->bard-type (car args)))
+                                (lists (map %as-list args)))
+                           (%to-type tp (%bard-map-aux fn lists))))))
 
 (%function-add-method! bard:map `(,<primitive-procedure> & args) %bard-map)
 (%function-add-method! bard:map `(,<function> & args) %bard-map)

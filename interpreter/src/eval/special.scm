@@ -41,7 +41,7 @@
                   (let ((form (car forms)))
                     (loop (cdr forms)
                           (%eval form env))))))
-   'define (lambda (expr env) (%define-variable (list-ref expr 1) (%eval (list-ref expr 2) env)))
+   'define (lambda (expr env) (%defglobal (list-ref expr 1) (%eval (list-ref expr 2) env)))
    'define-function (lambda (expr env) 
                       (let* ((proto (cadr expr))
                              (body (cons 'begin (drop 2 expr)))

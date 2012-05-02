@@ -13,6 +13,7 @@
 (define *bard-prompt* "bard> ")
 
 (define (bard:repl)
+  (gc-report-set! #f)
   (newline)
   (display *bard-banner*)
   (newline)

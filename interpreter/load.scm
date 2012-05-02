@@ -79,6 +79,7 @@
          "src/eval/eval.scm"
          "src/reader/read.scm"
          "src/repl/error.scm"
+         "src/repl/env.scm"
          "src/repl/repl.scm"
          ))
 

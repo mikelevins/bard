@@ -19,7 +19,8 @@
 (define $bard-global-environment #f)
 
 (define (%defglobal var val)
-  (table-set! $bard-global-environment var val))
+  (table-set! $bard-global-environment var val)
+  var)
 
 (define (%global-value var)
   (table-ref $bard-global-environment var (%undefined)))
