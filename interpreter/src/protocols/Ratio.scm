@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,5 +23,5 @@
 
 (define bard:ratio? (%make-function name: 'ratio?))
 
-(%function-add-method! bard:ratio? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:ratio? `(,<ratnum>) (lambda (x)(%true)))
+(%function-add-method! bard:ratio? `(,Anything) (%method (x) false))
+(%function-add-method! bard:ratio? `(,<ratnum>) (%method (x) true))

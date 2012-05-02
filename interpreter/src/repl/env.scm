@@ -164,6 +164,7 @@
 (%defglobal 'filter bard:filter)
 (%defglobal 'find bard:find)
 (%defglobal 'first bard:first)
+(%defglobal 'head bard:head)
 (%defglobal 'interleave bard:interleave)
 (%defglobal 'interpose bard:interpose)
 (%defglobal 'intersection bard:intersection)

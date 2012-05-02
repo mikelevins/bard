@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -55,19 +56,19 @@
 (define bard:load (%make-function name: 'load))
 
 (%function-add-method! bard:load `(,<string>)
-                       (lambda (path)
-                         (newline)
-                         (display (string-append "Loading " path "..."))
-                         (newline)
-                         (call-with-input-file path
-                           (lambda (in)
-                             (let loop ((form (bard:read in)))
-                               (if (eqv? form #!eof)
-                                   (newline)
-                                   (begin
-                                     (newline)
-                                     (display (%as-string (%eval form $bard-toplevel-environment)))
-                                     (loop (bard:read in)))))))))
+                       (%primitive-method (path)
+                                          (newline)
+                                          (display (string-append "Loading " path "..."))
+                                          (newline)
+                                          (call-with-input-file path
+                                            (lambda (in)
+                                              (let loop ((form (bard:read in)))
+                                                (if (eqv? form #!eof)
+                                                    (newline)
+                                                    (begin
+                                                      (newline)
+                                                      (display (%as-string (%eval form $bard-toplevel-environment)))
+                                                      (loop (bard:read in)))))))))
 
 
 ;;; open
@@ -98,15 +99,15 @@
 (define bard:read-file (%make-function name: 'read-file))
 
 (%function-add-method! bard:read-file `(,<string>)
-                       (lambda (path)
-                         (newline)
-                         (call-with-input-file path
-                           (lambda (in)
-                             (let loop ((line (read-line in))
-                                        (result ""))
-                               (if (eqv? line #!eof)
-                                   result
-                                   (loop (read-line in) (string-append result line (string #\newline)))))))))
+                       (%primitive-method (path)
+                                          (newline)
+                                          (call-with-input-file path
+                                            (lambda (in)
+                                              (let loop ((line (read-line in))
+                                                         (result ""))
+                                                (if (eqv? line #!eof)
+                                                    result
+                                                    (loop (read-line in) (string-append result line (string #\newline)))))))))
 
 
 ;;; read-line
@@ -116,8 +117,11 @@
 (define bard:read-line (%make-function name: 'read-line))
 
 (%function-add-method! bard:read-line `(& args)
-                       (lambda (#!optional (in (current-input-port)))
-                         (read-line in)))
+                       (%primitive-method (& args)
+                                          (let ((in (if (null? args)
+                                                        (current-input-port)
+                                                        in)))
+                                            (read-line in))))
 
 ;;; read-lines
 ;;; ---------------------------------------------------------------------
@@ -126,15 +130,15 @@
 (define bard:read-lines (%make-function name: 'read-lines))
 
 (%function-add-method! bard:read-lines `(,<string>)
-                       (lambda (path)
-                         (newline)
-                         (call-with-input-file path
-                           (lambda (in)
-                             (let loop ((line (read-line in))
-                                        (result '()))
-                               (if (eqv? line #!eof)
-                                   (reverse result)
-                                   (loop (read-line in) (cons line result))))))))
+                       (%primitive-method (path)
+                                          (newline)
+                                          (call-with-input-file path
+                                            (lambda (in)
+                                              (let loop ((line (read-line in))
+                                                         (result '()))
+                                                (if (eqv? line #!eof)
+                                                    (reverse result)
+                                                    (loop (read-line in) (cons line result))))))))
 
 ;;; show
 ;;; ---------------------------------------------------------------------
@@ -149,5 +153,8 @@
 (define bard:write (%make-function name: 'write))
 
 (%function-add-method! bard:write `(,Anything & args)
-                       (lambda (val #!optional (out (current-output-port)))
-                         (write (%as-string val) out)))
+                       (%primitive-method (val & args)
+                                          (let ((out (if (null? args)
+                                                         (current-output-port)
+                                                         (car args))))
+                                            (write (%as-string val) out))))

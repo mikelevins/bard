@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,7 +23,7 @@
 
 (define bard:integer? (%make-function name: 'integer?))
 
-(%function-add-method! bard:integer? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:integer? `(,<fixnum>) (lambda (x)(%true)))
-(%function-add-method! bard:integer? `(,<bignum>) (lambda (x)(%true)))
+(%function-add-method! bard:integer? `(,Anything) (%method (x)false))
+(%function-add-method! bard:integer? `(,<fixnum>) (%method (x)true))
+(%function-add-method! bard:integer? `(,<bignum>) (%method (x)true))
 

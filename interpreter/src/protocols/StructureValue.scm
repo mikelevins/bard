@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,10 +23,10 @@
 
 (define bard:structure-value? (%make-function name: 'structure-value?))
 
-(%function-add-method! bard:structure-value? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:structure-value? `(,<input-stream>) (lambda (x)(%true)))
-(%function-add-method! bard:structure-value? `(,<output-stream>) (lambda (x)(%true)))
-(%function-add-method! bard:structure-value? `(,<frame>) (lambda (x)(%true)))
-(%function-add-method! bard:structure-value? `(,<function>) (lambda (x)(%true)))
-(%function-add-method! bard:structure-value? `(,<method>) (lambda (x)(%true)))
+(%function-add-method! bard:structure-value? `(,Anything) (%method (x) false))
+(%function-add-method! bard:structure-value? `(,<input-stream>) (%method (x) true))
+(%function-add-method! bard:structure-value? `(,<output-stream>) (%method (x) true))
+(%function-add-method! bard:structure-value? `(,<frame>) (%method (x) true))
+(%function-add-method! bard:structure-value? `(,<function>) (%method (x) true))
+(%function-add-method! bard:structure-value? `(,<method>) (%method (x) true))
 

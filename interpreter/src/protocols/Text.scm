@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "../values/type-macros.scm")
+(##include "../values/function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; The Protocol
@@ -22,6 +23,6 @@
 
 (define bard:text? (%make-function name: 'text?))
 
-(%function-add-method! bard:text? `(,Anything) (lambda (x)(%false)))
-(%function-add-method! bard:text? `(,<string>) (lambda (x)(%true)))
+(%function-add-method! bard:text? `(,Anything) (%method (x) false))
+(%function-add-method! bard:text? `(,<string>) (%method (x) true))
 
