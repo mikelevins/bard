@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          env.scm
+;;;; Name:          toplevel.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       the initial Bard global environment
 ;;;; Author:        mikel evins
@@ -16,6 +16,17 @@
 ;;; ---------------------------------------------------------------------
 
 (%defglobal 'id (lambda (x) x))
+
+;;; ---------------------------------------------------------------------
+;;; system primitives
+;;; ---------------------------------------------------------------------
+
+(%defglobal 'exit prim:exit)
+(%defglobal 'gc prim:gc)
+(%defglobal 'quit prim:quit)
+(%defglobal 'room prim:room)
+(%defglobal 'version prim:version)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; number primitives

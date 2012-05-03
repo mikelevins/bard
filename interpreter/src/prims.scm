@@ -54,3 +54,17 @@
 
 (define (prim:frame . args) (%make-frame args))
 
+;;; System 
+
+(define (prim:gc)(##gc))
+
+(define (prim:room)
+  (begin
+      (gc-report-set! #t)
+      (##gc)
+      (gc-report-set! #f)))
+
+(define (prim:exit)(exit))
+(define (prim:quit)(exit))
+(define (prim:version) $bard-version-string)
+

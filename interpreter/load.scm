@@ -25,6 +25,7 @@
 
 (define $bard-files
   (paths $bard-root 
+         "src/version.scm"
          "lib/uuid.scm"
          "lib/srfi101.scm"
          "lib/wttree.scm"
@@ -79,7 +80,7 @@
          "src/eval/eval.scm"
          "src/reader/read.scm"
          "src/repl/error.scm"
-         "src/repl/env.scm"
+         "src/repl/toplevel.scm"
          "src/repl/repl.scm"
          ))
 
