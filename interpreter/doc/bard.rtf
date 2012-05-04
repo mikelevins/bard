@@ -1,0 +1,1492 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf320
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Menlo-Bold;
+\f3\fnil\fcharset0 Menlo-Italic;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww24480\viewh27400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs48 \cf0 Bard 0.1.1 Quick Reference\
+
+\b0\fs28 Copyright 2012 by mikel evins\
+\
+\
+
+\b\fs36 I. Running Bard\
+
+\b0\fs28 \
+Run the Bard interpreter by typing the name of the executable "bard" at the terminal's shell prompt:\
+\
+
+\f1 $ cd bard\
+$ ./bard\
+\
+Bard 0.1\
+\
+bard>\
+
+\f0 \
+To exit the interpreter, evaluate one of these expressions:\
+\
+
+\f1 bard> (exit)\
+bard> (quit)\
+bard> quit:\
+bard> q:\
+
+\f0 \
+All of these expressions have the same effect: they terminate the interpreter and return control to the shell.\
+\
+
+\b\fs36 II. Literal Data Expressions\
+
+\b0\fs28 \
+Bard provides a small but useful set of built-in datatypes. Each built-in datatype has a corresponding literal syntax that can be used to construct values of that type. Bard uses literal syntax to print values produced by evaluations.\
+\
+
+\b Undefined
+\b0 \
+\
+
+\f1 undefined\
+
+\f0 	A value that represents the absence of a defined value. The value of an unbound variable.\
+\
+
+\b Null
+\b0 \
+\
+
+\f1 nothing\
+
+\f0 	A value that represents nothing. A synonym for the empty list, or the empty set.\
+\
+
+\b Boolean
+\b0 \
+\
+
+\f1 true
+\f0 \
+
+\f1 false
+\f0 \
+\
+
+\b Numbers
+\b0 \
+\
+
+\f1 5\
+1.2\
+888888888888\
+-12\
+2/3\
+
+\f0 \
+
+\b Text Characters
+\b0 \
+\
+
+\f1 #\\C\
+#\\space\
+#\\u0041\
+
+\f0 \
+
+\b Symbols
+\b0 \
+\
+
+\f1 Foo
+\f0 \
+	A symbol is a named datum. Any two symbols that are spelled the same way are identical. Bard uses symbols as the names of variables, and if you enter a symbol at the Bard prompt, the evaluator attempts to find the value of a variable of that name, signaling an error if no such variable is defined. If you want to use the symbol itself (rather than the value of the named variable) as a datum, you can do so by quoting the symbol:\
+\
+
+\f1 'Foo\
+
+\f0 \
+
+\b Keywords
+\b0 \
+\
+
+\f1 bar:
+\f0 \
+	A keyword is exactly like a symbol, except that it is never used as the name of a variable. The value of a keyword is always the keyword itself, making keywords convenient to use as symbolic data, or as named keys in frames.\
+\
+
+\b Text
+\b0 \
+\
+
+\f1 "Foo, Bar, Baz"\
+
+\f0 	A text object represents textual data--a string of text characters. A text object is a special case of a more general data type called a 
+\b list
+\b0 .\
+\
+
+\b Frame\
+	
+\b0 A frame is an associative array that maps arbitrary keys to arbitrary values. A key may be any value except 
+\f1 undefined
+\f0  or 
+\f1 nothing
+\f0 . The value associated with a key may be any value except 
+\f1 undefined
+\f0 . 
+\b \
+
+\b0 \
+	An empty frame is written like this:\
+
+\f1 \{\}\
+
+\f0 \
+	A frame with keys 
+\f1 name:
+\f0 , 
+\f1 age:
+\f0 , and 
+\f1 shape:
+\f0  might be written like this:\
+\
+
+\f1 \{name: "Fred" age: 35 shape: 'square\}\
+
+\f0 \
+
+\b List
+\b0 \
+	A list is an ordered sequence of values:\
+
+\f1 (+ 2 3)\
+
+\f0 \
+	Like other Lisps, Bard represents expressions as lists. When you type a list at the interpreter's prompt, it treats the expression as an operator being applied to a sequence of arguments, and tries to evaluate it:\
+\
+
+\f1 bard> (+ 2 3)\
+\
+5\
+
+\f0 \
+	If you want to use the same list as a datum, rather than as an expression to be evaluated, you can quote it:\
+
+\f1 bard> '(+ 2 3)\
+(+ 2 3)\
+
+\f0 \
+	Often we'd like to create a list to be used as a datum rather than an expression to be evaluated. You can do that like this:\
+
+\f1 bard> (list + 2 3)\
+\
+(#<primitive-procedure 2> 2 3)\
+
+\f0 \
+	A slightly more compact way to write the same thing, while also making it clearer that the list is intended to be used as data, is to write the list with square brackets, like this:\
+
+\f1 bard> [+ 2 3]\
+\
+(#<primitive-procedure 2> 2 3)\
+
+\f0 \
+	The empty list, named 
+\f1 nothing
+\f0 , can also be written in either of the following two forms:\
+
+\f1 '()\
+[]\
+
+\f0 \
+Both Text and Frame values are also Lists. They can be used with Bard's List functions just like any other List. A Text is treated as a List of characters; a Frame is treated as a List of pairs, where the left-hand item in the pair is the key, and the right-hand item is the value.\
+\
+Incidentally, that means that Bard frames preserve the order of their keys.\
+\
+
+\b Method
+\b0 \
+\
+	A method is an object that can be applied to a list of arguments to compute a value. Commonly methods are created using the special form 
+\f1 define-function
+\f0 , but you can also just create one as-needed, as easily as you create a text or frame value:\
+\
+
+\f1 (method (x) (* x x))\
+
+\f0 \
+This example method accepts a single argument and multiples it by itself. You can call this method just as you would any other:\
+\
+
+\f1 bard> ((method (x)(* x x)) 2)\
+\
+4
+\f0 \
+
+\b\fs36 \
+III. Special Forms\
+
+\b0\fs28 \
+Special forms are operators that are built into the bard interpreter. Bard 0.1 defines twelve special forms:\
+\
+
+\f1 (and expr1 expr2 ... exprn) => Boolean\
+
+\f0 	Returns true if all its arguments evaluate to true. Otherwise returns false at the first expression that evaluates to false. Expressions after the first false one are not evaluated. And accepts zero or more arguments.\
+\
+
+\f1 (begin expr1 expr2 ... exprn) => Anything\
+
+\f0 	Evaluates each subexpression in left-to-right order and returns that value of the last. Begin accepts zero or more arguments.\
+\
+
+\f1 (define var val) => var\
+
+\f0 	Creates a global variable whose name is var and whose value is val.\
+\
+
+\f1 (define-function (fname (arg1 type1) (arg2 type2) ...(argN typeN)) body) => Function\
+
+\f0 	Creates a global variable named fname whose value is a function with arguments given by arg1...argN, with types given by type1 ... typeN. The body is a sequence of zero or more expressions that describe the computation performed when the function is applied to arguments of types type1...typeN. \
+	When fname is applied to arguments, the arguments are bound to the named parameters in the order they are given in the function call.\
+	You can use multiple define-function expressions to define different methods that are called when different argument types are supplied to the function.\
+	Zero or more arguments may be given in the function definition; the function takes as many arguments as are specified in the definition. \
+ 	Instead of being written (arg type), an argument may be given as just the name arg. In that case, the type Anything is inferred.\
+	\
+
+\f1 (define-function (fname (arg1 type1) (arg2 type2) ...(argN typeN) & rest-arg) body) => Function\
+
+\f0 	Exactly like the define-function above, except that the defined function accepts N or more arguments. All arguments after the & are collected into a list that is bound to rest-arg.\
+\
+
+\f1 (function)\
+(function fname)\
+
+\f0 	Returns a newly-created anonymous function with no methods defined. You can capture such a function in a variable binding and use define-function to add methods to it. The second form of function creates the function with a debug-name given by fname.\
+\
+
+\f1 (if test consequent alternate)\
+
+\f0 	Evaluates test. If the result is true, evaluates and returns consequent; otherwise evaluates and returns alternate. If not alternate is given, and test returns false, then if returns nothing.\
+\
+
+\f1 (let ((var1 expr1) (var2 expr2)...(varN exprN)) body)\
+
+\f0 	Creates a lexical scope in which var1 is bound to the value of expr1, var2 is bound to the value of expr2, and so on for all variables given. All the variables are defined in the scope of body, which is a sequence of zero of more expressions. the value of the final expression in body is returned. The value of var1 can be used in computing the value of var2, and so on, so that later variables' initialization forms can refer to earlier ones.\
+\
+
+\f1 (method (arg1 arg2 ... argN) body)\
+
+\f0 	Returns a newly-created method. When it's applied, var1 through N are bound to the arguments supplied in the call expression. Body is a sequence of zero or more expressions; the value of the last expression is returned when the method exits. The body can reference arguments arg1 through argN.\
+\
+
+\f1 (not expr)\
+
+\f0 	Returns the Boolean inverse of its argument.\
+\
+
+\f1 (or expr1 expr2 ... exprN)\
+
+\f0 	Returns false if all of its argument expressions return false; other wise returns the first non-false value returned by its argument expressions. Expressions after the first non-false one are not evaluated. Or accepts zero or more arguments.\
+\
+
+\f1 (quote expr)\
+
+\f0 	Returns expr without evaluating it.\
+\
+\
+
+\b\fs36 IV. Primitive Methods\
+
+\b0\fs28 \
+Bard 0.1 defines the following primitive methods:\
+\
+
+\b General utilities
+\b0 \
+\
+
+\f1 (apply (app Applicable) (arglist List)) => Anything
+\f0 \
+	Applies an applicable object (such as a function or frame) to a List of arguments, returning the resulting value.\
+\
+
+\f1 (id (x Anything)) => x
+\f0 \
+	The identity function; returns x. 
+\f1 id
+\f0  is often useful in functional code that maps functions over collections.\
+\
+
+\b System\
+
+\b0 \
+
+\f1 (exit)\
+
+\f0 	Terminates the Bard interpreter.\
+\
+
+\f1 (gc)\
+
+\f0 	Triggers Bard's garbage collector.\
+\
+
+\f1 (quit)\
+
+\f0 	Terminates the Bard interpreter.\
+\
+
+\f1 (room)\
+
+\f0 	Triggers Bard's garbage collector and prints statistics about memory use.\
+\
+
+\f1 (version)\
+
+\f0 	Returns the version string of the running Bard interpreter.\
+\
+\
+
+\b\fs36 V. Representations\
+
+\b0\fs28 \
+Concrete datatypes in Bard are called 
+\b representations
+\b0 . \
+\
+NOTE: Bard 0.1 doesn't provide any mechanisms users can use to define their own datatypes. That facility is coming. In the meantime, much can be accomplished using Lists and Frames.\
+\
+Bard 0.1 defines the following built-in representations:\
+\
+
+\b Primitive types
+\b0 \
+\
+
+\f1 <undefined>\
+<null>\
+<character>\
+<boolean>\
+<symbol>\
+<keyword>\
+<flonum>\
+<ratnum>\
+<fixnum>\
+<bignum>\
+<primitive-procedure>\
+<cons>\
+<string>\
+<frame>\
+<function>\
+<method>\
+<type>\
+<input-stream>\
+<output-stream>\
+<singleton>\
+
+\f0 \
+
+\b\fs36 VI. Singletons\
+
+\b0\fs28 \
+A 
+\b singleton
+\b0  is a computed type that represents a single Bard value. For example:\
+\
+
+\f1 bard> (singleton 'foo)\
+\
+#<singleton foo>\
+
+\f0 \
+Bard uses singletons to represent specific values as types for method dispatch. Using singletons, you can define a method that is called only when a specific value is passed to a function. For example:\
+\
+
+\f1 bard> (define-function (frob (x Anything)) x)\
+\
+#<function frob 6>\
+\
+bard> (define-function (frob (x <fixnum>)) "it's a fixnum")\
+\
+#<function frob 6>\
+\
+bard> (define-function (frob (x (singleton 2))) "it's two")\
+\
+#<function frob 6>\
+\
+bard> (frob 'foo)\
+\
+foo\
+\
+bard> (frob 100)\
+\
+"it's a fixnum"\
+\
+bard> (frob 2)\
+\
+"it's two"\
+\
+
+\f0 \
+
+\b\fs36 VII. Protocols\
+
+\b0\fs28 \
+Bard distinguishes two parts of a type: the 
+\b representation
+\b0 , covered in the previous chapter, and the 
+\b protocol
+\b0 , covered here. A protocol is a set of defined functions that, taken together, define an abstract type. A protocol may include any number of representations, and a given representation may participate in any number of protocols.\
+\
+Bard 0.1 defines the following built-in protocols:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Anything\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The abstract type of all Bard values.\
+\
+
+\f1 (something? (x Anything)) => Boolean
+\f0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Applicable\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The abstract type of all values that can be applied like functions. List and Frame values are Applicable, as are <primitive-procedure>, <function>, and <method>.\
+\
+
+\f1 (applicable? (x Anything)) => Boolean\
+
+\f0 	Returns true if x is Applicable and false otherwise.\
+\
+
+\f1 (apply (app Applicable)(args List)) => Boolean
+\f0 \
+	Applies app to args, returning the resulting value.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 As\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The As protocol provides a single function, as, for constructing new values from equivalent values of a different type.\
+\
+
+\f1 (as (representation (singleton 
+\f3\i rep
+\f1\i0 ))(x Anything)) => Anything
+\f0 \
+	Returns a value of type 
+\i rep
+\i0  that is equivalent to x.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Atom\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Atom protocol defines values that can be treated as atomic\'97that is, values that are not collections of other values.\
+\
+
+\f1 (atom? (x Anything)) => Boolean\
+	
+\f0 Returns true if x is an atom, and false otherwise.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Boolean\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Boolean protocol defines values that can be treated as true or false.\
+\
+
+\f1 (boolean? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a Boolean value (that is, if it is true or false), and false otherwise.\
+
+\f1 \
+(false? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as false, and false otherwise.\
+
+\f1 \
+(true? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as true, and false otherwise.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Character\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Character protocol defines values that can be treated as text characters.\
+\
+
+\f1 (character? (x Anything)) => Boolean
+\f0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Comparable\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Comparable protocol defines values that can be compared for equality or sort order.\
+\
+
+\f1 (comparable? (x Anything)(y Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y can be meaningfully compared.\
+\
+
+\f1 (= (x Anything)(y Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent.\
+\
+
+\f1 (> (x Comparable)(y Comparable)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if y should be ordered before x. \
+\
+
+\f1 (< (x Comparable)(y Comparable)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x should be ordered before y.\
+\
+
+\f1 (>= (x Comparable)(y Comparable)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent, or y should be ordered before x.\
+\
+
+\f1 (<= (x Comparable)(y Comparable)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent, or x should be ordered before y.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Float\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Float protocol defines floating-point numeric values. In Bard 0.1, all Float values are single-precision floating-point numbers.\
+\
+
+\f1 (float? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a floating-point number, and false otherwise.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 ForeignValue\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The ForeignValue protocol defines Bard values that represent foreign data, defined in some external language or program. Typically, this means C data.\
+\
+
+\f1 (foreign-value? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a foreign value, and false otherwise.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Frame\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Frame protocol defines values that can be treated as mappings from keys to values. Lists are also Frames; when you use a List as a Frame, Bard treats it as a mapping from the indexes of the list elements to the elements themselves.\
+\
+
+\f1 (frame? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a frame, and false otherwise.\
+\
+
+\f1 (contains-key? (x Frame)(k Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x contains a key equal to k.\
+\
+
+\f1 (contains-value? (x Frame)(v Anything)(test Function)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x contains a key k0 such that (test k0 k) returns true.\
+\
+
+\f1 (get (x Frame)(k Anything)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the value associated with key k on frame x, or nothing if there is no such association in x.\
+\
+
+\f1 (get (x Frame)(k Anything)(default Anything)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the value associated with key k on frame x, or default if there is no such association in x.\
+\
+
+\f1 (keys (x Frame)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of all keys in x. Applying keys to a List returns a List of the indexes of the elements.\
+\
+
+\f1 (merge (x Frame)(y Frame)) => Frame
+\f0 \
+
+\f1 	
+\f0 Returns a new frame that contains all the associations in both x and y. If x and y have keys that are equal then the associations from y are used in the new frame.\
+\
+
+\f1 (put (x Anything)(k Anything)(v Anything)) => Frame
+\f0 \
+
+\f1 	
+\f0 Returns a new frame in which key k is associated with value v. If x is not a frame, then the new frame also contains an association in which the key value: is associated with the value x.\
+\
+
+\f1 (vals (x Frame)) => List
+\f0 \
+
+\f1 	
+\f0 Returns all values from x. Applying vals to a List returns the List itself.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Function\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Function protocol defines values that represent Bard's polymorphic functions.\
+\
+
+\f1 (function? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a function.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 IOStream\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The IOStream protocol defines values that can be treated as input or output streams.\
+\
+
+\f1 (iostream? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as an input stream or an output stream.\
+\
+
+\f1 (input-stream? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as an input stream.\
+\
+
+\f1 (output-stream? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as an output stream.\
+\
+
+\f1 (close (x IOStream)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Closes the supplied stream. \
+\
+
+\f1 (current-input) => <input-stream>
+\f0 \
+
+\f1 	
+\f0 Returns Bard's current default input stream, corresponding to Unix's standard input.\
+\
+
+\f1 (current-output) => <output-stream>
+\f0 \
+
+\f1 	
+\f0 Returns Bard's current default output stream, corresponding to Unix's standard output.\
+\
+
+\f1 (display (x Anything)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes a human-readable text representation of x to the current output stream. \
+\
+
+\f1 (display (x Anything)(out <output-stream>)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes a human-readable text representation of x to the supplied output stream. \
+\
+
+\f1 (load (path Text)) => Anything
+\f0 \
+
+\f1 	
+\f0 Opens the file at path and reads its contents as Bard expressions, evaluating each expression in sequence as they are read, and returning the value of the last one. \
+\
+
+\f1 (open (path Text)) => IOStream
+\f0 \
+
+\f1 	
+\f0 Returns in <input-stream> on the file at path.\
+\
+
+\f1 (open (settings Frame)) => IOStream
+\f0 \
+
+\f1 	
+\f0 Returns an IOStream whose characteristics are determined by settings. Valid settings values include:\
+\
+		path: The pathname of the file to open. A value must be supplied for path:.\
+		direction: Either 'input or 'output. The default value is 'input.\
+\
+
+\f1 (read) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the next Bard value read from the current input sream.\
+\
+
+\f1 (read (in <input-stream>)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the next Bard value read from in.\
+\
+
+\f1 (read-file (path Text)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the contents of the file at path as a Text value.\
+\
+
+\f1 (read-line) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the next line read from the current input stream as a Text value.\
+\
+
+\f1 (read-line (in <input-stream>)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the next line read from in as a Text value.\
+\
+
+\f1 (read-lines (in <input-stream>)) => List\
+	
+\f0 Returns the contents of in as a list of Text objects.\
+\
+
+\f1 (show (x Anything)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns a Text representation of x.\
+\
+
+\f1 (write (x Anything)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes x in the form of a text literal to the current output stream. \
+\
+
+\f1 (write (x Anything)(out <output-stream>)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes x in the form of a text literal to out. \
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Integer\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Float protocol defines integer numeric values. In Bard 0.1, all Integer values are either fixed-point immediate integers (values of type <fixnum>) or arbitrary-precision, heap-allocated integers (values of type <bignum>). Conversion between <fixnum> and <bignum> values is handled automatically and transparently by the runtime.\
+\
+
+\f1 (integer? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as an integer.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Keyword\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Keyword protocol defines values that can be treated as keywords\'97that is, as self-evaluating names.\
+\
+
+\f1 (keyword? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a keyword.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 List\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The List protocol defines values that can be treated as ordered sequences of values.\
+\
+
+\f1 (list (x Anything)*) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List of arbitrary values in the order they were passed to list. list accepts zero or more arguments.\
+\
+
+\f1 (list? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a List.\
+\
+
+\f1 (add-first (x Anything)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List whose first element is x and whose remaining elements are the elements of ls.\
+\
+
+\f1 (add-last (ls List)(x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List that consists of the values of ls followed by x.\
+\
+
+\f1 (append (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List that contains the values of x followed by the values of y. When x and y are Frames the result is equivalent to (merge x y).\
+\
+
+\f1 (contains? (x List)(thing Anything)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns true if some element of s is equal to thing\
+\
+
+\f1 (contains? (x List)(thing Anything)(test Procedure)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns true if there is some element e of x such that (test thing e) returns true.\
+\
+
+\f1 (difference (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns the elements of x that are not elements of y. Values are tested for equality to determine whether they are in y.\
+\
+
+\f1 (difference (x List)(y List)(test Function)) => List
+\f0 \
+
+\f1 	
+\f0 Returns the elements of x that are not elements of y. Values are tested using 
+\f1 test
+\f0  to determine whether they are in y.\
+\
+
+\f1 (drop (n Integer)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List containing those elements of ls that remain after the first n are removed.\
+\
+
+\f1 (drop-before (test Procedure)(x List)) => List
+\f0 \
+
+\f1 	
+\f0 Searches x from left to right to find a value for which test returns true. If one is found, a new list is created containing that element and the remaining elements of x after it. If none is found, x is returned.\
+\
+
+\f1 (element (ls List)(n Integer)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the nth elements of ls, indexed from zero.\
+\
+
+\f1 (empty? (ls List)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if ls contains no elements.\
+\
+
+\f1 (every? (test Procedure)(ls List)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Applies test to each element of ls from left to right and returns true is test returns true for each application. If test returns false, then every? stops applying test to elements of ls and returns false.\
+\
+
+\f1 (filter (test Procedure)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns those elements e of ls for which (test e) returns true.\
+\
+
+\f1 (find (test Procedure)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Applies test to each element of ls from left to right and returns the first one for which the test returns true. If such an element is found then no further elements are tested.  If the test returns false for all elements, then find returns 
+\f1 nothing
+\f0 .\
+\
+
+\f1 (first (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the first element of x, or 
+\f1 nothing
+\f0  if x is empty.\
+\
+
+\f1 (head (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 A synonym for first, supplied for clarity and symmetry with tail.\
+\
+
+\f1 (interleave (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List containing the elements of x alternating with the elements of y. If x and y are different lengths then interleave stops constructing the list when the first argument list is exhausted. The result List is twice the length of the shorter argument.\
+\
+
+\f1 (interpose (x Anything)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List containing the elements of ls with x inserted between each succeeding pair of elements.\
+\
+
+\f1 (intersection (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns those values that are elements of both x and y. = is used to test whether values are equivalent.\
+\
+
+\f1 (intersection (x List)(y List)(test Function)) => List
+\f0 \
+
+\f1 	
+\f0 Returns those values that are elements of both x and y. test is used to test whether values are equivalent.\
+\
+
+\f1 (last (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the last element of x, or 
+\f1 nothing
+\f0  if x is empty.\
+\
+
+\f1 (length (x List)) => Integer
+\f0 \
+
+\f1 	
+\f0 Returns the count of elements in x.\
+\
+
+\f1 (map (app Applicable)(ls List)*) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list constructed by applying the applicable value app to each element of ls from left to right. If app is a procedure, it may accept more than one argument. In that case, the number of lists ls must be equal to the number of arguments accepted by app, and the length of the result is the length of the shortest ls.\
+\
+
+\f1 (partition (n Integer)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of lists, each of length n, and each constructed of elements from ls. If n is less than the length of ls, the result is nothing. Otherwise, the first element of the result is n elements of ls starting at index 0; the second element is n elements starting at index 1; and so on until it's not possible to retrieve n more elements from ls.\
+\
+
+\f1 (partition (n Integer)(ls List)(step Integer)) => List
+\f0 \
+
+\f1 	
+\f0 Returns the same kind of result as the two-argument form of partition, but the starting index of each successive sublist is step greater than the previous. Thus:\
+\
+
+\f1 	bard> (partition 2 "abcde" 2)\
+\
+	((#\\a #\\b) (#\\c #\\d))\
+\
+
+\f0 \
+
+\f1 (position (test Procedure)(ls List)) => Integer | nothing
+\f0 \
+
+\f1 	
+\f0 Applies test to each element of ls from left to right, returning the index of the first element that returns true, or 
+\f1 nothing
+\f0  if there is no such element.\
+\
+
+\f1 (range (start Integer)(end Integer)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a List of integers whose first element is start, whose last element is less than end, and in which each element is one greater than the previous.\
+\
+
+\f1 (range (start Integer)(end Integer)(step Integer)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a List of integers whose first element is start, whose last element is less than end, and in which each element is 
+\f1 step
+\f0  greater than the previous.\
+\
+
+\f1 (reduce (app Applicable)(init Anything)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns a value computed by first evaluating 
+\f1 (app init (first ls))
+\f0 , then applying 
+\f1 (app x (second ls)
+\f0 ), where x is equal to the value returned from the first expression, and so on until the elements of ls are exhausted. For example,:\
+\
+
+\f1 	bard> (reduce + 1 '(2 3))\
+\
+	6\
+
+\f0 \
+\
+
+\f1 (repeat (n Integer)(x Anything)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list containing n elements, all equal to x.\
+\
+
+\f1 (reverse (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list containing the elements of x in reverse order.\
+\
+
+\f1 (second (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the second element of s\'97that is, the element at index 1.\
+\
+
+\f1 (select (indexes List)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of value obtained by evaluating 
+\f1 (element ls (first indexes))
+\f0 , then 
+\f1 (element ls (second indexes))
+\f0 , and so on until the elements of indexes are exhausted.\
+\
+
+\f1 (shuffle (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of the elements of x in random order.\
+\
+
+\f1 (slice (x List)(start Integer)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list whose first element is 
+\f1 (element x start)
+\f0 , and whose remaining elements are the remaining elements of x in the same order.\
+\
+
+\f1 (slice (x List)(start Integer)(end Integer)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list whose first element is 
+\f1 (element x start)
+\f0 , whose last element is 
+\f1 (element x (- end 1))
+\f0 , and whose remaining elements are the remaining elements of x between them in the same order.\
+\
+
+\f1 (some? (test Procedure)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Applies test to each element of ls from left to right, returning the first value for which test returns true, or nothing if there is no such value.\
+\
+
+\f1 (sort (test Procedure)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List containing the elements of ls ordered according to the comparison specified in test. If x and y are members of ls, and 
+\f1 (test y x)
+\f0  returns true, then y appears before x in the result.\
+\
+
+\f1 (tail (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a List whose elements are the elements of x in the same order, after discarding the first.\
+\
+
+\f1 (tails (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of lists. The first element of the result is x; the second is (tail x); the third is (tail (tail x)); and so on until the next element would be empty. When the next element of the result would be empty, tails returns those elements accumulated up to that point.\
+\
+
+\f1 (take (n Integer)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns a list of the first n elements taken from ls.\
+\
+
+\f1 (take-before (test Procedure)(x List)) => List
+\f0 \
+
+\f1 	
+\f0 Applies test to the elements of ls from left to right, returning all those elements that appear before the first one for which test returns true.\
+\
+
+\f1 (unique (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list whose elements are the elements of x, but in which each value appears only once. = is used to determined whether two values are equal.\
+\
+
+\f1 (unique (x List)(test Procedure)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list whose elements are the elements of x, but in which each value appears only once. test is used to determined whether two values are equal.\
+\
+
+\f1 (unzip (x List)) => List
+\f0 \
+
+\f1 	
+\f0 x must be a List of Lists. Unzip takes the first element from each member of x, and the second element from each member of x. It returns a list in which the first element is all the first elements of the input, and the second is all the second elements.\
+\
+
+\f1 (zip (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list created by taking 
+\f1 (list (first x)(first y))
+\f0 , then 
+\f1 (list (second x)(second y))
+\f0 , and so on until one of the input lists is exhausted.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Method\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Method protocol defines values that represent Bard's monomorphic methods.\
+\
+
+\f1 (method? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Method.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Name\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Name protocol defines values that can be treated as names. Values conforming to the Keyword and Symbol protocols are Names.\
+\
+
+\f1 (name? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Name.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Null\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Null protocol defines the value 
+\f1 nothing
+\f0 , which is synonymous with the empty List.\
+\
+
+\f1 (nothing? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a null value.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Number\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Number protocol defines values that can be treated as numbers.\
+\
+
+\f1 (number? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Number.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 PrimitiveValue\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The PrimitiveValue protocol defines Bard's primitive built-in values.\
+\
+
+\f1 (primitive-value? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a primitive (built-in) value.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Procedure\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Procedure protocol defines values that can be treated as procedures. Bard Procedures are values that are atomic and applicable, including objects of types <primitive-procedure>, <function>, and <method>.\
+\
+
+\f1 (procedure? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a procedure (that is, a primitive method, a function, a method, or any value with similar characteristics).\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Ratio\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Ratio protocol defines values that can be treated as ratios.\
+\
+
+\f1 (ratio? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Ratio.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 StructureValue\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The StructureValue protocol defines Bard's built-in values that are not atomic, but have internal structure. More prosaically, they are built-in values that are implemented as pointers to in-RAM structures.\
+\
+
+\f1 (structure-value? (x Anything)) => Boolean
+\f0 \
+
+\f1 		
+\f0 Returns true if x is a value that Bard interprets as a StructureValue--that is, a built-in value that in not considered primitive, and that has internal structure.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Symbol\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Symbol protocol defines values that can be treated as symbols.\
+\
+
+\f1 (symbol? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Symbol.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Text\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Text protocol defines values that can be treated as text strings.\
+\
+
+\f1 (text? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as Text.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Type\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Type protocol defines values that can be treated as types, including <primitive-type>, <structure-type>, <protocol>, and <singleton>.\
+\
+
+\f1 (type? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Type.\
+\
+
+\f1 (singleton? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f2\b\fs32 \cf0 Undefined\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Undefined protocol defines values that undefined. Bard has a single distinguished undefined value, named undefined.\
+\
+
+\f1 (undefined? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as undefined.\
+\
+\
+
+\f1 \
+}

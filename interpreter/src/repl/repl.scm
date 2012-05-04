@@ -9,15 +9,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define *bard-banner* "Bard 0.1")
 (define *bard-prompt* "bard> ")
 
 (define (bard:repl)
   (gc-report-set! #f)
   (newline)
-  (display *bard-banner*)
+  (display $bard-version-string)
   (newline)
-  (read-line)
   (let loop ()
     (newline)
     (display *bard-prompt*)

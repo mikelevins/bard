@@ -74,7 +74,25 @@
 ;;; open
 ;;; ---------------------------------------------------------------------
 
-(define bard:open open-file)
+(define bard:open
+  (%primitive-method (& args)
+                     (if (null? args)
+                         (error "no argument supplied to open.")
+                         (let ((arg (car args)))
+                           (if (string? arg)
+                               (open-file arg)
+                               (let ((settings (%to-type <frame> arg)))
+                                 (if (%frame? settings)
+                                     (let ((path (%frame-get settings path: #f)))
+                                       (if path
+                                           (let ((direction (%frame-get settings direction: 'input)))
+                                             (case direction
+                                               ((input) (open-input-file path))
+                                               ((output) (open-output-file path))
+                                               (else (error (string-append "open called with no path argument")))))
+                                           (error "no path argument supplied to open")))
+                                     (error (string-append "wrong type of argument to open: "
+                                                           (%as-string arg))))))))))
 
 
 ;;; output-stream?

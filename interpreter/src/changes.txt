@@ -1,0 +1,10 @@
+0.1.1
+
+- fixed the initial prompt at repl startup
+
+- changed the repl to print the version string instead of an arbitrary
+  banner
+
+- edited, corrected, and expanded bard.rtf, the interpreter reference
+
+- changed open to accept a frame argument for settings
