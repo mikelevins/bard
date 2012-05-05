@@ -34,3 +34,4 @@ src/vm/dist/setup-config
 /src/interpreter/dist/
 /src/_termite.log
 /_termite.log
+interpreter/libBard.a
