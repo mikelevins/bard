@@ -34,6 +34,8 @@ pristine:
 main: compile_main_scheme
 	gcc ${CFLAGS} -o ${EXECUTABLE} ${GAMBIT_HOME}/lib/libgambc.a ${MAIN_C_SOURCES}
 
+lib: libBard
+
 libBard: compile_lib_scheme
 	gcc ${CFLAGS} -c  ${LIB_C_SOURCES} ${GAMBIT_HOME}/lib/libgambc.a -D___LIBRARY
 	ar rc ${LIBRARY} ${LIBRARY_OBJECTS} && ranlib ${LIBRARY}

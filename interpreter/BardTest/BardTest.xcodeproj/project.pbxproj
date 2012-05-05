@@ -1,0 +1,317 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		973428091555838400D6EA39 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973428081555838400D6EA39 /* Cocoa.framework */; };
+		973428131555838400D6EA39 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 973428111555838400D6EA39 /* InfoPlist.strings */; };
+		973428151555838400D6EA39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 973428141555838400D6EA39 /* main.m */; };
+		973428191555838400D6EA39 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 973428171555838400D6EA39 /* Credits.rtf */; };
+		9734281C1555838500D6EA39 /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 9734281B1555838500D6EA39 /* Document.m */; };
+		9734281F1555838500D6EA39 /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9734281D1555838500D6EA39 /* Document.xib */; };
+		973428221555838500D6EA39 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 973428201555838500D6EA39 /* MainMenu.xib */; };
+		973428291555840F00D6EA39 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 973428281555840F00D6EA39 /* libBard.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		973428041555838400D6EA39 /* BardTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BardTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		973428081555838400D6EA39 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		9734280B1555838400D6EA39 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		9734280C1555838400D6EA39 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		9734280D1555838400D6EA39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		973428101555838400D6EA39 /* BardTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BardTest-Info.plist"; sourceTree = "<group>"; };
+		973428121555838400D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		973428141555838400D6EA39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		973428161555838400D6EA39 /* BardTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BardTest-Prefix.pch"; sourceTree = "<group>"; };
+		973428181555838400D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		9734281A1555838500D6EA39 /* Document.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
+		9734281B1555838500D6EA39 /* Document.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document.m; sourceTree = "<group>"; };
+		9734281E1555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Document.xib; sourceTree = "<group>"; };
+		973428211555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		973428281555840F00D6EA39 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../libBard.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		973428011555838400D6EA39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				973428091555838400D6EA39 /* Cocoa.framework in Frameworks */,
+				973428291555840F00D6EA39 /* libBard.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		973427F91555838400D6EA39 = {
+			isa = PBXGroup;
+			children = (
+				9734280E1555838400D6EA39 /* BardTest */,
+				973428071555838400D6EA39 /* Frameworks */,
+				973428051555838400D6EA39 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		973428051555838400D6EA39 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				973428041555838400D6EA39 /* BardTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		973428071555838400D6EA39 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				973428281555840F00D6EA39 /* libBard.a */,
+				973428081555838400D6EA39 /* Cocoa.framework */,
+				9734280A1555838400D6EA39 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9734280A1555838400D6EA39 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9734280B1555838400D6EA39 /* AppKit.framework */,
+				9734280C1555838400D6EA39 /* CoreData.framework */,
+				9734280D1555838400D6EA39 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		9734280E1555838400D6EA39 /* BardTest */ = {
+			isa = PBXGroup;
+			children = (
+				9734281A1555838500D6EA39 /* Document.h */,
+				9734281B1555838500D6EA39 /* Document.m */,
+				9734281D1555838500D6EA39 /* Document.xib */,
+				973428201555838500D6EA39 /* MainMenu.xib */,
+				9734280F1555838400D6EA39 /* Supporting Files */,
+			);
+			path = BardTest;
+			sourceTree = "<group>";
+		};
+		9734280F1555838400D6EA39 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				973428101555838400D6EA39 /* BardTest-Info.plist */,
+				973428111555838400D6EA39 /* InfoPlist.strings */,
+				973428141555838400D6EA39 /* main.m */,
+				973428161555838400D6EA39 /* BardTest-Prefix.pch */,
+				973428171555838400D6EA39 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		973428031555838400D6EA39 /* BardTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 973428251555838500D6EA39 /* Build configuration list for PBXNativeTarget "BardTest" */;
+			buildPhases = (
+				973428001555838400D6EA39 /* Sources */,
+				973428011555838400D6EA39 /* Frameworks */,
+				973428021555838400D6EA39 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BardTest;
+			productName = BardTest;
+			productReference = 973428041555838400D6EA39 /* BardTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		973427FB1555838400D6EA39 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 973427FE1555838400D6EA39 /* Build configuration list for PBXProject "BardTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 973427F91555838400D6EA39;
+			productRefGroup = 973428051555838400D6EA39 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				973428031555838400D6EA39 /* BardTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		973428021555838400D6EA39 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				973428131555838400D6EA39 /* InfoPlist.strings in Resources */,
+				973428191555838400D6EA39 /* Credits.rtf in Resources */,
+				9734281F1555838500D6EA39 /* Document.xib in Resources */,
+				973428221555838500D6EA39 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		973428001555838400D6EA39 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				973428151555838400D6EA39 /* main.m in Sources */,
+				9734281C1555838500D6EA39 /* Document.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		973428111555838400D6EA39 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				973428121555838400D6EA39 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		973428171555838400D6EA39 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				973428181555838400D6EA39 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		9734281D1555838500D6EA39 /* Document.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9734281E1555838500D6EA39 /* en */,
+			);
+			name = Document.xib;
+			sourceTree = "<group>";
+		};
+		973428201555838500D6EA39 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				973428211555838500D6EA39 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		973428231555838500D6EA39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		973428241555838500D6EA39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		973428261555838500D6EA39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BardTest/BardTest-Prefix.pch";
+				INFOPLIST_FILE = "BardTest/BardTest-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/..\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		973428271555838500D6EA39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BardTest/BardTest-Prefix.pch";
+				INFOPLIST_FILE = "BardTest/BardTest-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/..\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		973427FE1555838400D6EA39 /* Build configuration list for PBXProject "BardTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				973428231555838500D6EA39 /* Debug */,
+				973428241555838500D6EA39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		973428251555838500D6EA39 /* Build configuration list for PBXNativeTarget "BardTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				973428261555838500D6EA39 /* Debug */,
+				973428271555838500D6EA39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 973427FB1555838400D6EA39 /* Project object */;
+}
