@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          repl.scm
+;;;; Name:          bard.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       a read-eval-print loop for Bard
 ;;;; Author:        mikel evins

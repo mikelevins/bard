@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          primitive-procedure.scm
+;;;; Name:          primitive_procedure.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       the <primitive-procedure> representation of Procedure
 ;;;;                (in other words, built-in Scheme procedures)

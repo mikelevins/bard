@@ -15,6 +15,8 @@
 		9734281F1555838500D6EA39 /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9734281D1555838500D6EA39 /* Document.xib */; };
 		973428221555838500D6EA39 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 973428201555838500D6EA39 /* MainMenu.xib */; };
 		973428291555840F00D6EA39 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 973428281555840F00D6EA39 /* libBard.a */; };
+		977AC7A31555A58A008EAB68 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 977AC7A21555A58A008EAB68 /* libBard.a */; };
+		977AC7AB1555AA50008EAB68 /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 977AC7AA1555AA50008EAB68 /* libgambc.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,10 @@
 		9734281E1555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Document.xib; sourceTree = "<group>"; };
 		973428211555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		973428281555840F00D6EA39 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../libBard.a; sourceTree = "<group>"; };
+		977AC7A21555A58A008EAB68 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../libBard.a; sourceTree = "<group>"; };
+		977AC7A41555A595008EAB68 /* bard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bard.h; path = ../../include/bard.h; sourceTree = "<group>"; };
+		977AC7A51555A595008EAB68 /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gambit.h; path = ../../include/gambit.h; sourceTree = "<group>"; };
+		977AC7AA1555AA50008EAB68 /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = gambit/libgambc.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +48,8 @@
 			files = (
 				973428091555838400D6EA39 /* Cocoa.framework in Frameworks */,
 				973428291555840F00D6EA39 /* libBard.a in Frameworks */,
+				977AC7A31555A58A008EAB68 /* libBard.a in Frameworks */,
+				977AC7AB1555AA50008EAB68 /* libgambc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +109,10 @@
 			isa = PBXGroup;
 			children = (
 				973428101555838400D6EA39 /* BardTest-Info.plist */,
+				977AC7A21555A58A008EAB68 /* libBard.a */,
+				977AC7AA1555AA50008EAB68 /* libgambc.a */,
+				977AC7A41555A595008EAB68 /* bard.h */,
+				977AC7A51555A595008EAB68 /* gambit.h */,
 				973428111555838400D6EA39 /* InfoPlist.strings */,
 				973428141555838400D6EA39 /* main.m */,
 				973428161555838400D6EA39 /* BardTest-Prefix.pch */,
@@ -264,12 +276,14 @@
 		973428261555838500D6EA39 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BardTest/BardTest-Prefix.pch";
 				INFOPLIST_FILE = "BardTest/BardTest-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/BardTest/gambit\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -279,12 +293,14 @@
 		973428271555838500D6EA39 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BardTest/BardTest-Prefix.pch";
 				INFOPLIST_FILE = "BardTest/BardTest-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/BardTest/gambit\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -310,6 +326,7 @@
 				973428271555838500D6EA39 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
