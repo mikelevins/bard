@@ -152,13 +152,6 @@
 
 ;;; Bard structure types
 
-(define-type %frame
-  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
-  constructor: %private-make-frame
-  (slots %frame-slots %set-frame-slots!))
-
-(%define-structure-type <frame> %frame?)
-
 (define-type %function
   id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
   constructor: %private-make-function

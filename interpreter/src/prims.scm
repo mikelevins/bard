@@ -18,13 +18,13 @@
 
 (define (prim:eval expr . args) 
   (let ((env (if (null? args)
-                 (%top-level-environment)
+                 (%null-environment)
                  (car args))))
     (%eval expr env)))
 
 (define (prim:apply fn args . rest) 
   (let ((env (if (null? rest)
-                 (%top-level-environment)
+                 (%null-environment)
                  (car rest))))
     (%apply fn args env)))
 

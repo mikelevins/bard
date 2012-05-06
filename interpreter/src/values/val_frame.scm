@@ -20,20 +20,15 @@
 ;;; - because key order is required to be stable, adding slots
 ;;;   requires linear traversals and reversals
 
+(define-type %frame
+  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
+  constructor: %private-make-frame
+  (slots %frame-slots %set-frame-slots!))
+
+(%define-structure-type <frame> %frame?)
+
 (define (%make-frame key-val-plist)
-  (let loop ((kvs key-val-plist)
-             (slots '())
-             (keys '()))
-    (if (null? kvs)
-        (%private-make-frame (reverse slots))
-        (if (null? (cdr kvs))
-            (error "malformed inputs to make-frame" key-val-plist)
-            (let ((k (car kvs))
-                  (v (cadr kvs))
-                  (more (cddr kvs)))
-              (if (member k keys)
-                  (error "duplicate keys in frame description" key-val-plist)
-                  (loop more (cons (cons k v) slots) (cons k keys))))))))
+  (%private-make-frame (reverse (plist->alist key-val-plist))))
 
 (define (->frame . kvs)(%make-frame kvs))
 
@@ -44,63 +39,24 @@
        (null? (cddr x))))
 
 (define (%list->frame ls)
-  (let ((slots (let loop ((items ls)
-                          (result '()))
-                 (if (null? items)
-                     (reverse result)
-                     (let* ((item (car items))
-                            (more (cdr items)))
-                       (if (and (list? item)
-                                (not (null? item))
-                                (not (null? (cdr item)))
-                                (null? (cddr item)))
-                           (let ((k (car item))
-                                 (v (cadr item)))
-                             (loop more (cons (cons k v) result)))
-                           (error "invalid slot description" item)))))))
-    (%private-make-frame slots)))
+  (%private-make-frame (map (lambda (item)(cons (car item)(cadr item)))
+                            ls)))
 
 (define (%frame->list fr)
-  (let* ((keys (map car (%frame-slots fr)))
-         (vals (map cdr (%frame-slots fr))))
-    (map (lambda (k v) (list k v)) keys vals)))
-
-(%define-structure-type <frame> %frame?)
+  (map (lambda (slot)(list (car slot)(cdr slot)))
+       (%frame-slots fr)))
 
 (define (%frame-add-slot fr key val)
-  (let ((keys (map car (%frame-slots fr))))
-    (if (member key keys)
-        (let* ((matching-key? (lambda (i x)(equal? i (car x))))
-               (slots (reverse (cons (cons key val)(reverse (remove key (%frame-slots fr) matching-key?))))))
-          (%private-make-frame slots))
-        (%private-make-frame (reverse (cons (cons key val) (reverse (%frame-slots fr))))))))
-
-(define (%frame-remove-slot fr key)
-  (let* ((matching-key? (lambda (i x)(equal? i (car x))))
-         (slots (remove key (%frame-slots fr) matching-key?)))
-    (%private-make-frame slots)))
-
-(define (%frame-add-slots fr . kv-plist)
-  (let loop ((kvs kv-plist)
-             (slots (%frame-slots fr)))
-    (if (null? kvs)
-        (%make-frame slots)
-        (if (null? (cdr kvs))
-            (error "odd number of arguments" kv-plist)
-            (let ((k (car kvs))
-                  (v (cadr kvs))
-                  (more (cddr kvs)))
-              (loop more (cons (cons k v) slots)))))))
-
-(define $frame-for-nonframe-value-table (make-table test: equal?))
-
-(define (%ensure-frame-for-nonframe-value! tp . kv-plist)
-  (let ((fr (table-ref $frame-for-nonframe-value-table tp #f)))
-    (or fr
-        (let* ((kvs `(type: ,tp ,@kv-plist))
-               (fr (%make-frame kvs)))
-          (table-set! $frame-for-nonframe-value-table tp fr)
-          fr))))
+  (let loop ((old-slots (%frame-slots fr))
+             (new-slots '()))
+    (if (null? old-slots)
+        (%private-make-frame (reverse new-slots))
+        (let ((slot (car old-slots)))
+          (if (equal? key (car slot))
+              (loop (cdr old-slots)
+                    (cons (cons key val) new-slots))
+              (loop (cdr old-slots)
+                    (cons slot new-slots)))))))
 
 (define (%frame-find-slot fr key)
   (assoc key (%frame-slots fr)))
@@ -120,10 +76,14 @@
     (%private-make-frame (append new-slots1 slots2))))
 
 (define (%frame-put fr key val)
-  (let ((slot (%frame-find-slot fr key)))
-    (if slot
-        (%frame-merge fr (%list->frame (list (list key val))))
-        (%frame-add-slot fr key val))))
+  (let loop ((old-slots (%frame-slots fr))
+             (new-slots '()))
+    (if (null? old-slots)
+        (%private-make-frame (reverse (cons (cons key val) new-slots)))
+        (let ((old-slot (car old-slots)))
+          (if (equal? (car old-slot) key)
+              (loop (cdr old-slots) new-slots)
+              (loop (cdr old-slots) (cons old-slot new-slots)))))))
 
 (define (%keys frame)
   (map car (%frame-slots frame)))
