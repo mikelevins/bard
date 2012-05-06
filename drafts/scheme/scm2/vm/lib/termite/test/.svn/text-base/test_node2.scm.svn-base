@@ -1,1 +1,0 @@
-(node-init node2)
