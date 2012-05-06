@@ -180,10 +180,18 @@
     (%method-table-set-entry! mtable signature method)
     fn))
 
-(define (%function-ordered-methods fn vals)
-  (let* ((mtable (%function-method-table fn))
-         (entries (%method-entries-matching-values mtable vals))
-         (ordered-entries (sort entries %method-entry<)))
-    (map cdr ordered-entries)))
+(define (%function-best-method fn vals)
+  (let loop ((entries (%method-table-entries (%function-method-table fn)))
+             (best #f))
+    (if (null? entries)
+        (if best (cdr best) #f)
+        (let ((entry (car entries)))
+          (if (%vals-match-method-signature? vals (car entry))
+              (if best
+                  (if (%method-entry< entry best)
+                      (loop (cdr entries) entry)
+                      (loop (cdr entries) best))
+                  (loop (cdr entries) entry))
+              (loop (cdr entries) best))))))
 
 

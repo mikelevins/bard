@@ -93,7 +93,7 @@
                      (loop (cdr expr)))))))
    'quote (lambda (expr env) (%expand-quotation (%ensure-valid-quotation expr) env))
    'set! (lambda (expr env) (%set-variable! (list-ref expr 1) (%eval (list-ref expr 2) env)  env))
-   ))
+   'time (lambda (expr env) (time (%eval (cadr expr) env)))))
 
 (define (%special-form? expr)
   (and (table-ref $special-forms-table (car expr) #f)

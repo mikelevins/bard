@@ -52,10 +52,10 @@
   (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string args))))
 
 (define (%apply-bard-function fn args)
-  (let* ((methods (%function-ordered-methods fn args)))
-    (if (null? methods)
-        (%no-applicable-method fn args)
-        (%apply-bard-method (car methods) args))))
+  (let ((method (%function-best-method fn args)))
+    (if method
+        (%apply-bard-method method args)
+        (%no-applicable-method fn args))))
 
 (define (%apply applicable args)
   (cond
