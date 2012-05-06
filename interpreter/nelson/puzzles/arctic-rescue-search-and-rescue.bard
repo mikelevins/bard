@@ -1,0 +1,43 @@
+;;; Nelson 1.0 puzzles
+
+(define-puzzle "Arctic Rescue: Search and Rescue"
+  (puzzle 
+   name: "Arctic Rescue: Search and Rescue"
+   title: "Arctic Rescue: Search and Rescue"
+   backdrops: [(sprite 
+                name: "backdrop"
+                image: "arctic-rescue-search-and-rescue-backdrop"
+                center: (variant
+                         iPad: (point x: 512 y: 384)
+                         iPhone: (point x: 240 y: 180)))]
+   HUD: [(sprite
+          name: "clock frame"
+          image: "clock-frame01"
+          center: (variant
+                   iPad: (point x: 136 y: 670)
+                   iPhone: (point x: 64 y: 270)))]
+   labels: [(label
+             name: "clock display"
+             text: "02:00"
+             font: (variant
+                    iPad: "digital-748"
+                    iPhone: "digital-736")
+             center: (variant
+                      iPad: (point x: 136 y: 670)
+                      iPhone: (point x: 64 y: 270)))]
+   buttons: [(button
+              name: "quit button"
+              image: "quit-button01"
+              center: (variant
+                       iPad: (point x: 512 y: 32)
+                       iPhone: (point x: 400 y: 34))
+              action: "Common Actions: Quit")]
+   timers: [(timer
+             name: "main timer"
+             init: 120.0
+             enabled: #t
+             interval: 1.0
+             increment: -1
+             display: "clock display"
+             displayAsClock: #t)]))
+

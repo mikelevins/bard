@@ -81,6 +81,7 @@
          "src/reader/read.scm"
          "src/repl/error.scm"
          "src/repl/toplevel.scm"
+         "nelson/Puzzle.scm"
          "src/bard.scm"
          ))
 

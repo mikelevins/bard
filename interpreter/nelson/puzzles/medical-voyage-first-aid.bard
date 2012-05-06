@@ -1,0 +1,355 @@
+;;; Nelson 1.0 puzzles
+
+(define-puzzle "Medical Voyage: First Aid"
+  (puzzle 
+   name: "Medical Voyage: First Aid"
+   title: "Medical Voyage: First Aid"
+   rule: "Medical Voyage: First Aid"
+   backdrops: [(sprite
+                name: "backdrop"
+                image: "triage-001"
+                center: (variant
+                         iPad: (point x: 512 y: 384)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart1"
+                image: "general-injury-chart"
+                center: (variant
+                         iPad: (point x: 164 y: 465)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart2"
+                image: "head-injury-chart"
+                center: (variant
+                         iPad: (point x: 402 y: 465)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart3"
+                image: "burn-chart"
+                center: (variant
+                         iPad: (point x: 634 y: 465)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart4"
+                image: "head-injury-chart"
+                center: (variant
+                         iPad: (point x: 873 y: 465)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart5"
+                image: "burn-chart"
+                center: (variant
+                         iPad: (point x: 164 y: 278)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart6"
+                image: "general-injury-chart"
+                center: (variant
+                         iPad: (point x: 402 y: 278)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart7"
+                image: "general-injury-chart"
+                center: (variant
+                         iPad: (point x: 634 y: 278)
+                         iPhone: (point x: 240 y: 180)))
+               (sprite
+                name: "chart8"
+                image: "burn-chart"
+                center: (variant
+                         iPad: (point x: 873 y: 278)
+                         iPhone: (point x: 240 y: 180)))]
+   HUD: [(sprite
+          name: "healthbox1"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 164 y: 632)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox2"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 398 y: 632)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox3"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 636 y: 632)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox4"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 868 y: 632)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox5"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 164 y: 212)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox6"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 398 y: 212)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox7"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 636 y: 212)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "healthbox8"
+          image: "healthbox"
+          center: (variant
+                   iPad: (point x: 868 y: 212)
+                   iPhone: (point x: 64 y: 270)))]
+   labels: [(label
+             name: "health meter 1"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 163 y: 633)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 2"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 397 y: 633)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 3"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 635 y: 633)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 4"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 867 y: 633)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 5"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 163 y: 213)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 6"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 397 y: 213)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 7"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 635 y: 213)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "health meter 8"
+             text: "50"
+             font: (variant
+                    iPad: "digital22"
+                    iPhone: "digital16")
+             center: (variant
+                      iPad: (point x: 867 y: 213)
+                      iPhone: (point x: 64 y: 270)))]
+   buttons: [(button
+              name: "patient1"
+              image: "patient-001-general-injured"
+              treated-image: "patient-001-general-treated"
+              ailment: "general injury"
+              center: (variant
+                       iPad: (point x: 164 y: 532)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient2"
+              image: "patient-001-head-injured"
+              treated-image: "patient-001-head-treated"
+              ailment: "head injury"
+              center: (variant
+                       iPad: (point x: 398 y: 532)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient3"
+              image: "patient-001-burns-injured"
+              treated-image: "patient-001-burns-treated"
+              ailment: "burn"
+              center: (variant
+                       iPad: (point x: 636 y: 532)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient4"
+              image: "patient-001-head-injured"
+              treated-image: "patient-001-head-treated"
+              ailment: "head injury"
+              center: (variant
+                       iPad: (point x: 868 y: 532)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient5"
+              image: "patient-001-burns-injured"
+              treated-image: "patient-001-burns-treated"
+              ailment: "burn"
+              center: (variant
+                       iPad: (point x: 164 y: 342)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient6"
+              image: "patient-001-general-injured"
+              treated-image: "patient-001-general-treated"
+              ailment: "general injury"
+              center: (variant
+                       iPad: (point x: 398 y: 342)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient7"
+              image: "patient-001-general-injured"
+              treated-image: "patient-001-general-treated"
+              ailment: "general injury"
+              center: (variant
+                       iPad: (point x: 636 y: 342)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")
+             (button
+              name: "patient8"
+              image: "patient-001-burns-injured"
+              treated-image: "patient-001-burns-treated"
+              ailment: "burn"
+              center: (variant
+                       iPad: (point x: 868 y: 342)
+                       iPhone: (point x: 120 y: 90))
+              action: "Medical Voyage: First Aid: Treat Patient")           
+             (button
+              name: "quit button"
+              image: "quit-button01"
+              center: (variant
+                       iPad: (point x: 512 y: 32)
+                       iPhone: (point x: 400 y: 34))
+              action: "Common Actions: Quit")]
+   timers: [(timer
+             name: "main timer"
+             init: 120.0
+             enabled: #t
+             interval: 1.0
+             increment: -1)
+            (timer
+             name: "health timer 1"
+             chart: "chart1"
+             patient: "patient1"
+             init: 70
+             enabled: #t
+             interval: 1.2
+             increment: -1
+             display: "health meter 1"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 2"
+             chart: "chart2"
+             patient: "patient2"
+             init: 90
+             enabled: #t
+             interval: 0.8
+             increment: -3
+             display: "health meter 2"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 3"
+             chart: "chart3"
+             patient: "patient3"
+             init: 59
+             enabled: #t
+             interval: 1.5
+             increment: -4
+             display: "health meter 3"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 4"
+             chart: "chart4"
+             patient: "patient4"
+             init: 74
+             enabled: #t
+             interval: 0.9
+             increment: -2.5
+             display: "health meter 4"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 5"
+             chart: "chart5"
+             patient: "patient5"
+             init: 87
+             enabled: #t
+             interval: 1.4
+             increment: -4.5
+             display: "health meter 5"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 6"
+             chart: "chart6"
+             patient: "patient6"
+             init: 41
+             enabled: #t
+             interval: 1.0
+             increment: -1
+             display: "health meter 6"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 7"
+             chart: "chart7"
+             patient: "patient7"
+             init: 66
+             enabled: #t
+             interval: 0.75
+             increment: -1
+             display: "health meter 7"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")
+            (timer
+             name: "health timer 8"
+             chart: "chart8"
+             patient: "patient8"
+             init: 50
+             enabled: #t
+             interval: 1.3
+             increment: -4
+             display: "health meter 8"
+             displayAsClock: #f
+             action: "Medical Voyage: First Aid: Update Health Timer")]))
+

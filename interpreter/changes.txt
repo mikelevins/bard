@@ -1,3 +1,24 @@
+0.1.2
+
+- adjusted repl output to be a little more readable
+
+- added Bard versions of Nelson puzzle descriptions
+
+- added Puzzle protocol for Nelson
+
+- improved frame implementation a little
+
+- changed function application to cons less
+
+- added the 'time' special form for crude timing measurements
+
+- added an (embryonic) C API for the library
+
+- added an XCode project for testing the static library build
+
+- rewrote the Makefile to support builing as either an executable or a
+  static library
+
 0.1.1
 
 - fixed the initial prompt at repl startup

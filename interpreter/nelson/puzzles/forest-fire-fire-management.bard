@@ -1,0 +1,124 @@
+;;; Nelson 1.0 puzzles
+
+(define-puzzle "Forest Fire: Fire Management"
+  (puzzle
+   name: "Forest Fire: Fire Management"
+   title: "Forest Fire: Fire Management"
+   rule: "Forest Fire: Fire Management"
+   backdrops: [(sprite 
+                name: "backdrop"
+                image: "fire-management-backdrop"
+                center: (variant
+                         iPad: (point x: 512 y: 384)
+                         iPhone: (point x: 240 y: 180)))]
+   HUD: [(sprite
+          name: "clock frame"
+          image: "clock-frame01"
+          center: (variant
+                   iPad: (point x: 96 y: 710)
+                   iPhone: (point x: 64 y: 270)))
+         (sprite
+          name: "tree count"
+          image: "clock-frame01"
+          center: (variant
+                   iPad: (point x: 928 y: 710)
+                   iPhone: (point x: 416 y: 270)))]
+   labels: [(label
+             name: "clock display"
+             text: "02:00"
+             font: (variant
+                    iPad: "digital-748"
+                    iPhone: "digital-736")
+             center: (variant
+                      iPad: (point x: 96 y: 710)
+                      iPhone: (point x: 64 y: 270)))
+            (label
+             name: "tree count display"
+             text: "0"
+             font: (variant
+                    iPad: "digital-748-red"
+                    iPhone: "digital-736-red")
+             center: (variant
+                      iPad: (point x: 928 y: 710)
+                      iPhone: (point x: 416 y: 270)))]
+   actors: [(actor
+             name: "logger"
+             icon: "logger-icon"
+             sprite: "logger-sprite"
+             spawn: (variant
+                     iPad: (point x: 512 y: 128)
+                     iPhone: (point x: 240 y: 64))
+             action: "Forest Fire: Fire Management: Logger Action")
+            (actor
+             name: "supervisor"
+             icon: "supervisor-icon"
+             sprite: "supervisor-sprite"
+             action: "Forest Fire: Fire Management: Logger Supervisor Action"
+             spawn: (variant
+                     iPad: (point x: 512 y: 700)
+                     iPhone: (point x: 240 y: 300)))
+            (actor
+             name: "tree"
+             sprites: (any-of "trees-chestnut-001-E"
+                              "trees-chestnut-001-N"
+                              "trees-chestnut-001-NE"
+                              "trees-chestnut-001-NW"
+                              "trees-chestnut-001-S"
+                              "trees-chestnut-001-SE"
+                              "trees-chestnut-001-SW"
+                              "trees-chestnut-001-W"
+                              "trees-oak-tree-001-E"
+                              "trees-oak-tree-001-N"
+                              "trees-oak-tree-001-NE"
+                              "trees-oak-tree-001-NW"
+                              "trees-oak-tree-001-S"
+                              "trees-oak-tree-001-SE"
+                              "trees-oak-tree-001-SW"
+                              "trees-oak-tree-001-W"
+                              "trees-pine-001-E"
+                              "trees-pine-001-N"
+                              "trees-pine-001-NE"
+                              "trees-pine-001-NW"
+                              "trees-pine-001-S"
+                              "trees-pine-001-SE"
+                              "trees-pine-001-SW"
+                              "trees-pine-001-W")
+             spawn: (variant
+                     iPad: (rectangle (point x: 0 y: 0)(point x: 1024 y: 560))
+                     iPhone: (rectangle (point x: 0 y: 0)(point x: 480 y: 262))))]
+   buttons: [(button
+              name: "logger dispenser"
+              image: "logger-button001"
+              center: (variant
+                       iPad: (point x: 96 y: 128)
+                       iPhone: (point x: 64 y: 100))
+              action: "Forest Fire: Fire Management: Dispense Logger")
+             (button
+              name: "supervisor dispenser"
+              image: "foreman-button001"
+              center: (variant
+                       iPad: (point x: 928 y: 128)
+                       iPhone: (point x: 448 y: 34))
+              action: "Forest Fire: Fire Management: Dispense Supervisor")
+             (button
+              name: "quit button"
+              image: "quit-button01"
+              center: (variant
+                       iPad: (point x: 512 y: 32)
+                       iPhone: (point x: 400 y: 34))
+              action: "Common Actions: Quit")]
+   timers: [(timer
+             name: "main timer"
+             init: 120.0
+             enabled: #t
+             interval: 1.0
+             increment: -1
+             display: "clock display"
+             displayAsClock: #t)
+            (timer
+             name: "tree spawn timer"
+             init: 0
+             enabled: #t
+             interval: 0.5
+             action: "Forest Fire: Fire Management: Spawn Tree")]))
+
