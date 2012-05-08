@@ -35,31 +35,52 @@
 (define bard:contains-key? (%make-function name: 'contains-key?))
 
 
-(define %bard-contains-key?
-  (%primitive-method (fr thing & args)
-                     (let ((test (if (null? args)
-                                     bard:=
-                                     (car args)))
-                           (keys (%keys fr)))
-                       (if (any? (lambda (k) (%apply test (list thing k))) keys)
-                           (%true)
-                           (%false)))))
-
-(define %bard-list-contains-key? 
-  (%primitive-method (ls thing & args)
-                     (let* ((test (if (null? args)
-                                      bard:=
-                                      (car args)))
-                            (items (%as-list ls))
-                            (keys (range 0 (length items))))
-                       (if (any? (lambda (k) (%apply test (list thing k))) keys)
-                           (%true)
-                           (%false)))))
-
 (%function-add-method! bard:contains-key? `(,<null> ,Anything & args) (%method (thing) false))
-(%function-add-method! bard:contains-key? `(,<cons> ,Anything & args) %bard-list-contains-key?)
-(%function-add-method! bard:contains-key? `(,<string> ,Anything & args) %bard-list-contains-key?)
-(%function-add-method! bard:contains-key? `(,<frame> ,Anything & args) %bard-contains-key?)
+
+(define %bard-cons-contains-key?
+  (%primitive-method (ls thing & args)
+                     (if (null? args)
+                         (and (integer? thing)
+                              (< -1 thing (length ls)))
+                         (let ((test (car args)))
+                           (let loop ((items ls)
+                                      (i 0))
+                             (if (null? items)
+                                 (%false)
+                                 (if (%funcall test thing i)
+                                     (%true)
+                                     (loop (cdr items)(+ i 1)))))))))
+
+(%function-add-method! bard:contains-key? `(,<cons> ,Anything & args) %bard-cons-contains-key?)
+
+(define %bard-string-contains-key?
+  (%primitive-method (str thing & args)
+                     (let ((len (string-length str)))
+                       (if (null? args)
+                           (and (integer? thing)
+                                (< -1 thing len))
+                           (let ((test (car args)))
+                             (let loop ((i 0))
+                               (if (>= i len)
+                                   (%false)
+                                   (if (%funcall test thing i)
+                                       (%true)
+                                       (loop (+ i 1))))))))))
+
+(%function-add-method! bard:contains-key? `(,<string> ,Anything & args) %bard-string-contains-key?)
+
+(define %bard-frame-contains-key?
+  (%primitive-method (fr thing & args)
+                     (let ((test (if (null? args) bard:= (car args))))
+                       (let loop ((slots (%frame-slots fr)))
+                         (if (null? slots)
+                             (%false)
+                             (let ((slot (car slots)))
+                               (if (%funcall test (car slot))
+                                   (%true)
+                                   (loop (cdr slots)))))))))
+
+(%function-add-method! bard:contains-key? `(,<frame> ,Anything & args) %bard-frame-contains-key?)
 
 ;;; contains-value?
 ;;; ---------------------------------------------------------------------

@@ -244,28 +244,86 @@
 
 (define bard:drop-before (%make-function name: 'drop-before))
 
-(define %bard-drop-before 
-  (%primitive-method (fn ls)
-                     (let ((tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls)))
-                         (if (null? items)
-                             (%nothing)
-                             (if (%apply fn (list (car items)))
-                                 (%to-type tp items)
-                                 (loop (cdr items))))))))
+(define %bard-null-drop-before (%primitive-method (fn ls)(%nothing)))
 
-(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<null>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<function> ,<null>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<method> ,<null>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<cons>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<function> ,<cons>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<method> ,<cons>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<string>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<function> ,<string>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<method> ,<string>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<frame>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<function> ,<frame>) %bard-drop-before)
-(%function-add-method! bard:drop-before `(,<method> ,<frame>) %bard-drop-before)
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<null>) %bard-null-drop-before)
+(%function-add-method! bard:drop-before `(,<function> ,<null>) %bard-null-drop-before)
+(%function-add-method! bard:drop-before `(,<method> ,<null>) %bard-null-drop-before)
+
+(define %bard-cons-drop-before
+  (%primitive-method (fn ls)
+                     (let loop ((items ls)
+                                (result '()))
+                       (if (null? items)
+                           (reverse result)
+                           (if (%apply fn (list (car items)))
+                               (reverse result)
+                               (loop (cdr items)
+                                     (cons (car items)result)))))))
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<cons>) 
+                       (%primitive-method (fn ls)
+                                          (let loop ((items ls)
+                                                     (result '()))
+                                            (if (null? items)
+                                                (reverse result)
+                                                (if (fn (car items))
+                                                    (reverse result)
+                                                    (loop (cdr items)
+                                                          (cons (car items)result)))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<cons>) %bard-cons-drop-before)
+(%function-add-method! bard:drop-before `(,<method> ,<cons>) %bard-cons-drop-before)
+
+(define %bard-string-drop-before
+  (%primitive-method (fn str)
+                     (let ((len (string-length str)))
+                       (let loop ((i 0))
+                         (if (>= i len)
+                             ""
+                             (if (%apply fn (list (string-ref str i)))
+                                 (substring str i len)
+                                 (loop (+ i 1))))))))
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<string>) 
+                       (%primitive-method (fn str)
+                                          (let ((len (string-length str)))
+                                            (let loop ((i 0))
+                                              (if (>= i len)
+                                                  ""
+                                                  (if (%fn (string-ref str i))
+                                                      (substring str i len)
+                                                      (loop (+ i 1))))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<string>) %bard-string-drop-before)
+(%function-add-method! bard:drop-before `(,<method> ,<string>) %bard-string-drop-before)
+
+(define %bard-frame-drop-before
+  (%primitive-method (fn fr)
+                     (let loop ((slots (%frame-slots fr))
+                                (result '()))
+                       (if (null? slots)
+                           (%private-make-frame (reverse result))
+                           (let ((slot (car slots)))
+                             (if (%apply fn (list (list (car slot)(cdr slot))))
+                                 (%private-make-frame (reverse result))
+                                 (loop (cdr slots)
+                                       (cons (car slots)result))))))))
+
+(%function-add-method! bard:drop-before `(,<primitive-procedure> ,<frame>)
+                       (%primitive-method (fn fr)
+                                          (let loop ((slots (%frame-slots fr))
+                                                     (result '()))
+                                            (if (null? slots)
+                                                (%private-make-frame (reverse result))
+                                                (let ((slot (car slots)))
+                                                  (if (fn (list (car slot)(cdr slot)))
+                                                      (%private-make-frame (reverse result))
+                                                      (loop (cdr slots)
+                                                            (cons (car slots)result))))))))
+
+(%function-add-method! bard:drop-before `(,<function> ,<frame>) %bard-frame-drop-before)
+(%function-add-method! bard:drop-before `(,<method> ,<frame>) %bard-frame-drop-before)
 
 ;;; element
 ;;; ---------------------------------------------------------------------
@@ -278,10 +336,8 @@
 
 (%function-add-method! bard:element `(,<frame> ,<fixnum>)
                        (%primitive-method (fr n)
-                         (let ((ls (%frame->list fr)))
-                           (if (null? ls)
-                               (error "index out of range" n)
-                               (list-ref ls n)))))
+                                          (let ((slot (list-ref (%frame-slots fr) n)))
+                                            (list (car slot)(cdr slot)))))
 
 ;;; empty?
 ;;; ---------------------------------------------------------------------
@@ -291,25 +347,23 @@
 (%function-add-method! bard:empty? `(,<null>) (%primitive-method (ls)(%true)))
 (%function-add-method! bard:empty? `(,<cons>)(%primitive-method (ls)(null? ls)))
 (%function-add-method! bard:empty? `(,<string>)(%primitive-method (str)(<= (string-length str) 0)))
-(%function-add-method! bard:empty? `(,<frame>)(%primitive-method (fr)(null? (%keys fr))))
+(%function-add-method! bard:empty? `(,<frame>)(%primitive-method (fr)(null? (%frame-slots fr))))
 
 ;;; every?
 ;;; ---------------------------------------------------------------------
 
 (define bard:every? (%make-function name: 'every?))
 
-(define %bard-every? 
-  (%primitive-method (fn ls)
-                     (every? (lambda (i)(%apply fn (list i)))
-                             (%as-list ls))))
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<null>) (%primitive-method (ls)(%true)))
+(%function-add-method! bard:every? `(,<function> ,<null>) (%primitive-method (ls)(%true)))
+(%function-add-method! bard:every? `(,<method> ,<null>) (%primitive-method (ls)(%true)))
 
-(%function-add-method! bard:every? `(,<primitive-procedure> ,<null>) %bard-every?)
-(%function-add-method! bard:every? `(,<function> ,<null>) %bard-every?)
-(%function-add-method! bard:every? `(,<method> ,<null>) %bard-every?)
+(define %bard-cons-every? 
+  (%primitive-method (fn ls)(every? (lambda (i)(%apply fn (list i))) ls)))
 
-(%function-add-method! bard:every? `(,<primitive-procedure> ,<cons>) %bard-every?)
-(%function-add-method! bard:every? `(,<function> ,<cons>) %bard-every?)
-(%function-add-method! bard:every? `(,<method> ,<cons>) %bard-every?)
+(%function-add-method! bard:every? `(,<primitive-procedure> ,<cons>) (%primitive-method (fn ls)(every? (lambda (i)(fn i)) ls)))
+(%function-add-method! bard:every? `(,<function> ,<cons>) %bard-cons-every?)
+(%function-add-method! bard:every? `(,<method> ,<cons>) %bard-cons-every?)
 
 (%function-add-method! bard:every? `(,<primitive-procedure> ,<string>) %bard-every?)
 (%function-add-method! bard:every? `(,<function> ,<string>) %bard-every?)

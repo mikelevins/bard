@@ -68,6 +68,14 @@
      ((%function? applicable)(%apply-bard-function applicable args))
      (else (error "not an applicable object" applicable))))
 
+(define %funcall 
+  (lambda (fn . args)
+    (cond
+     ((procedure? fn)(apply fn args))
+     ((%method? fn)(%apply-bard-method fn args))
+     ((%function? fn)(%apply-bard-function fn args))
+     (else (error "not an applicable object" fn)))))
+
 ;;; (%apply '() '())
 ;;; (%apply "Fred" '(3))
 ;;; (define $fr (->frame 'name "Fred" 'age 101 'shape 'square 'color "orange"))
