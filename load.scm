@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Volumes/ymra/Users/mikel/Projects/bard/bard/interpreter/")
+(define $bard-root  "/Volumes/ymra/Users/mikel/Projects/bard/bard/")
 
 ;;; termite includes and loads
 ;;; ----------------------------------------------------------------------

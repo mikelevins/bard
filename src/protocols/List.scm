@@ -69,13 +69,8 @@
 (%function-add-method! bard:add-first `(,<cons> ,<frame>) 
                        (%primitive-method (kv fr)
                          (if (%frame-slot? kv)
-                             (let* ((matching-key? (lambda (i x)(equal? i (car x))))
-                                    (k (car kv))
-                                    (v (cadr kv))
-                                    (slots (cons (cons k v)
-                                                 (remove k (%frame-slots fr) matching-key?))))
-                               (%private-make-frame slots))
-                             (error "when adding an element to a frame, the new element must be a list of two elements, a key and a value"))))
+                             (%frame-add-slot-first fr (car kv)(cadr kv))
+                             (error (string-append "not a valid frame slot: " (%as-string kv))))))
 
 ;;; add-last
 ;;; ---------------------------------------------------------------------
@@ -89,31 +84,23 @@
 (%function-add-method! bard:add-last `(,<frame> ,<cons>) 
                        (%primitive-method (fr kv)
                          (if (%frame-slot? kv)
-                             (let* ((matching-key? (lambda (i x)(equal? i (car x))))
-                                    (k (car kv))
-                                    (v (cadr kv))
-                                    (slots (remove k (%frame-slots fr) matching-key?))
-                                    (new-slots (reverse (cons (cons k v) 
-                                                              (reverse slots)))))
-                               (%private-make-frame new-slots))
-                             (error "when adding an element to a frame, the new element must be a list of two elements, a key and a value"))))
+                             (%frame-add-slot-last fr (car kv)(cadr kv))
+                             (error (string-append "not a valid frame slot: " (%as-string kv))))))
 
 ;;; any
 ;;; ---------------------------------------------------------------------
 
 (define bard:any (%make-function name: 'any))
 
-(define %bard-any 
-  (%primitive-method (ls)
-                     (let ((items (%as-list ls)))
-                       (if (null? items)
-                           (%nothing)
-                           (list-ref items (random-integer (length items)))))))
-
 (%function-add-method! bard:any `(,<null>) (%method (ls) nothing))
-(%function-add-method! bard:any `(,<cons>) %bard-any)
-(%function-add-method! bard:any `(,<string>) %bard-any)
-(%function-add-method! bard:any `(,<frame>) %bard-any)
+(%function-add-method! bard:any `(,<cons>) (%primitive-method (ls)(list-ref ls (random-integer (length ls)))))
+(%function-add-method! bard:any `(,<string>) (%primitive-method (s)(string-ref s (random-integer (string-length s)))))
+
+(%function-add-method! bard:any `(,<frame>)
+                       (%primitive-method (fr)
+                                          (let* ((slots (%frame-slots fr))
+                                                 (slot (list-ref slots (random-integer (length slots)))))
+                                            (list (car slot)(cdr slot)))))
 
 ;;; append
 ;;; ---------------------------------------------------------------------
@@ -146,22 +133,39 @@
 
 (define bard:contains? (%make-function name: 'contains?))
 
-(define %bard-contains? 
-  (%primitive-method (ls thing & args)
-                     (if (null? thing)
-                         (%false)
-                         (let ((test (if (null? args)
-                                         bard:=
-                                         (car args)))
-                               (items (%as-list ls)))
-                           (if (any? (lambda (i) (%apply test (list i thing))) items)
-                               (%true)
-                               (%false))))))
+(%function-add-method! bard:contains? `(,<null> ,Anything & args) (%primitive-method (ls x)(%false)))
 
-(%function-add-method! bard:contains? `(,<null> ,Anything & args) %bard-contains?)
-(%function-add-method! bard:contains? `(,<cons> ,Anything & args) %bard-contains?)
-(%function-add-method! bard:contains? `(,<string> ,Anything & args) %bard-contains?)
-(%function-add-method! bard:contains? `(,<frame> ,<cons> & args) %bard-contains?)
+(%function-add-method! bard:contains? `(,<cons> ,Anything & args) 
+                       (%primitive-method (ls x & args)
+                                          (let ((test (if (null? args) bard:= (car args))))
+                                            (let loop ((items ls))
+                                              (if (null? items)
+                                                  (%false)
+                                                  (if (%apply test (list x (car items)))
+                                                      (%true)
+                                                      (loop (cdr items))))))))
+
+(%function-add-method! bard:contains? `(,<string> ,Anything & args) 
+                       (%primitive-method (str x & args)
+                                          (let ((test (if (null? args) bard:= (car args)))
+                                                (len (string-length str)))
+                                            (let loop ((i 0))
+                                              (if (>= i len)
+                                                  (%false)
+                                                  (if (%apply test (list x (string-ref str i)))
+                                                      (%true)
+                                                      (loop (+ i 1))))))))
+
+(%function-add-method! bard:contains? `(,<frame> ,<cons> & args) 
+                       (%primitive-method (fr x & args)
+                                          (let ((test (if (null? args) bard:= (car args))))
+                                            (let loop ((items (%frame-slots fr)))
+                                              (if (null? items)
+                                                  (%false)
+                                                  (let ((item (car items)))
+                                                    (if (%apply test (list x (list (car item)(cdr item))))
+                                                        (%true)
+                                                        (loop (cdr items)))))))))
 
 
 ;;; difference
@@ -210,22 +214,29 @@
 
 (define bard:drop (%make-function name: 'drop))
 
-(define %bard-drop 
-  (%primitive-method (n ls)
-                     (let ((tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls))
-                                  (i n))
-                         (if (<= i 0)
-                             (%to-type tp items)
-                             (if (null? items)
-                                 (error "count out of range" n)
-                                 (loop (cdr items) (- i 1))))))))
-
 (%function-add-method! bard:drop `(,<fixnum> ,<null>) (%primitive-method (n ls)(if (zero? n) ls (error "count out of range" n))))
 
-(%function-add-method! bard:drop `(,<fixnum> ,<cons>) %bard-drop)
-(%function-add-method! bard:drop `(,<fixnum> ,<string>) %bard-drop)
-(%function-add-method! bard:drop `(,<fixnum> ,<frame>) %bard-drop)
+(%function-add-method! bard:drop `(,<fixnum> ,<cons>)
+                       (%primitive-method (n ls)
+                                          (let loop ((items ls)
+                                                     (i n))
+                                            (if (<= i 0)
+                                                items
+                                                (if (null? items)
+                                                    (error "count out of range" n)
+                                                    (loop (cdr items) (- i 1)))))))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<string>)(%primitive-method (n str)(substring str n (string-length str))))
+
+(%function-add-method! bard:drop `(,<fixnum> ,<frame>) 
+                       (%primitive-method (n fr)
+                                          (let loop ((items (%frame-slots fr))
+                                                     (i n))
+                                            (if (<= i 0)
+                                                (%private-make-frame items)
+                                                (if (null? items)
+                                                    (error "count out of range" n)
+                                                    (loop (cdr items) (- i 1)))))))
 
 
 ;;; drop-before

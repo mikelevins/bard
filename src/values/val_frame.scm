@@ -46,17 +46,30 @@
   (map (lambda (slot)(list (car slot)(cdr slot)))
        (%frame-slots fr)))
 
-(define (%frame-add-slot fr key val)
-  (let loop ((old-slots (%frame-slots fr))
+;;; private slot-management util
+;;; returns new slot list in reverse order
+(define (%frame-slots-remove-slot slots key)
+  (let loop ((old-slots slots)
              (new-slots '()))
     (if (null? old-slots)
-        (%private-make-frame (reverse new-slots))
+        new-slots
         (let ((slot (car old-slots)))
           (if (equal? key (car slot))
               (loop (cdr old-slots)
-                    (cons (cons key val) new-slots))
+                    new-slots)
               (loop (cdr old-slots)
                     (cons slot new-slots)))))))
+
+(define (%frame-remove-slot fr key)
+  (%private-make-frame (reverse (%frame-slots-remove-slot (%frame-slots fr) key))))
+
+(define (%frame-add-slot-last fr key val)
+  (%private-make-frame (reverse (cons (cons key val)
+                                      (%frame-slots-remove-slot (%frame-slots fr) key)))))
+
+(define (%frame-add-slot-first fr key val)
+  (%private-make-frame (cons (cons key val)
+                             (reverse (%frame-slots-remove-slot (%frame-slots fr) key)))))
 
 (define (%frame-find-slot fr key)
   (assoc key (%frame-slots fr)))
