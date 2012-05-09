@@ -135,6 +135,12 @@
                            (string-ref ls i)
                            default))))
 
+(%function-add-method! bard:get `(,Anything ,(%singleton type:) & args)
+                       (%primitive-method (fr thing & args)(%object->bard-type fr)))
+
+(%function-add-method! bard:get `(,Anything ,(%singleton value:) & args)
+                       (%primitive-method (fr thing & args) fr))
+
 (%function-add-method! bard:get `(,<null> ,Anything & args) (%primitive-method (fr thing & args)(%nothing)))
 
 (%function-add-method! bard:get `(,<cons> ,<fixnum> & args) %bard-get-from-list)
@@ -152,6 +158,7 @@
 
 (define bard:keys (%make-function name: 'keys))
 
+(%function-add-method! bard:keys `(,Anything) (%primitive-method (fr)(list type: value:)))
 (%function-add-method! bard:keys `(,<null>) (%primitive-method (fr)(%nothing)))
 (%function-add-method! bard:keys `(,<cons>) (%primitive-method (ls)(range 0 (length ls))))
 (%function-add-method! bard:keys `(,<string>) (%primitive-method (str)(range 0 (string-length str))))
@@ -262,11 +269,13 @@
 
 (define bard:put (%make-function name: 'put))
 
-(define %bard-put 
+(define %bard-put (%primitive-method (fr k v)(%frame-put fr k v)))
+
+(define %bard-put-in-anything
   (%primitive-method (fr k v)
-                     (%frame-put fr k v)))
-
-
+                     (%frame-merge (->frame type: (%object->bard-type fr)
+                                            value: fr)
+                                   (->frame k v))))
 
 (define %bard-put-in-null
   (%primitive-method (ls k v)
@@ -276,23 +285,33 @@
 
 (define %bard-put-in-list 
   (%primitive-method (ls k v)
-                     (let* ((tp (%object->bard-type ls))
-                            (items (%as-list ls))
-                            (new-items (if (= k (length items))
-                                           (reverse (cons v (reverse items)))
-                                           (if (< -1 k (length items))
-                                               (append (take k items)
-                                                       (cons v
-                                                             (drop (+ k 1) items)))
-                                               (error "Index out of range")))))
-                       (%to-type tp new-items))))
+                     (if (= k (length ls))
+                         (reverse (cons v (reverse ls)))
+                         (if (< -1 k (length ls))
+                             (append (take k ls)
+                                     (cons v
+                                           (drop (+ k 1) ls)))
+                             (error "Index out of range")))))
 
+(define %bard-put-in-string 
+  (%primitive-method (str k v)
+                     (if (char? v)
+                         (if (= k (string-length str))
+                             (string-append str (string v))
+                             (if (< -1 k (string-length str))
+                                 (string-append (substring str 0 k)
+                                                (string v)
+                                                (substring str (+ k 1) (string-length str)))
+                                 (error "Index out of range")))
+                         (%bard-put-in-list (string->list str) k v))))
+
+(%function-add-method! bard:put `(,Anything ,Anything ,Anything) %bard-put-in-anything)
 (%function-add-method! bard:put `(,<null> ,Anything ,Anything) %bard-put-in-null)
 (%function-add-method! bard:put `(,<null> ,<fixnum> ,Anything) %bard-put-in-null)
 (%function-add-method! bard:put `(,<cons> ,<fixnum> ,Anything) %bard-put-in-list)
 (%function-add-method! bard:put `(,<cons> ,<bignum> ,Anything) %bard-put-in-list)
-(%function-add-method! bard:put `(,<string> ,<fixnum> ,Anything) %bard-put-in-list)
-(%function-add-method! bard:put `(,<string> ,<bignum> ,Anything) %bard-put-in-list)
+(%function-add-method! bard:put `(,<string> ,<fixnum> ,Anything) %bard-put-in-string)
+(%function-add-method! bard:put `(,<string> ,<bignum> ,Anything) %bard-put-in-string)
 (%function-add-method! bard:put `(,<frame> ,Anything ,Anything) %bard-put)
 
 ;;; vals
@@ -300,7 +319,8 @@
 
 (define bard:vals (%make-function name: 'vals))
 
+(%function-add-method! bard:vals `(,Anything) (%method (x) (list x)))
 (%function-add-method! bard:vals `(,<null>) (%method (x) x))
 (%function-add-method! bard:vals `(,<cons>) (%method (x) x))
-(%function-add-method! bard:vals `(,<string>) (%primitive-method (x) (%as-list x)))
+(%function-add-method! bard:vals `(,<string>) (%primitive-method (x) (string->list x)))
 (%function-add-method! bard:vals `(,<frame>) (%primitive-method (fr) (%vals fr)))
