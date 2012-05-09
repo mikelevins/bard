@@ -119,29 +119,33 @@
 
 (define bard:get (%make-function name: 'get))
 
-(define %bard-get 
-  (%primitive-method (fr thing & args)
-                     (let ((default (if (null? args)
-                                        (%nothing)
-                                        (cadr args))))
-                       (%frame-get fr thing default))))
-
 (define %bard-get-from-list 
   (%primitive-method (ls i & args)
                      (let ((default (if (null? args)
                                         (%nothing)
-                                        (cadr args)))
-                           (ls (%as-list ls)))
+                                        (cadr args))))
                        (if (< -1 i (length ls))
                            (list-ref ls i)
                            default))))
 
-(%function-add-method! bard:get `(,<null> ,Anything & args) (lambda (fr thing . args)(%nothing)))
+(define %bard-get-from-string 
+  (%primitive-method (str i & args)
+                     (let ((default (if (null? args)(%nothing)(cadr args))))
+                       (if (< -1 i (string-length ls))
+                           (string-ref ls i)
+                           default))))
+
+(%function-add-method! bard:get `(,<null> ,Anything & args) (%primitive-method (fr thing & args)(%nothing)))
+
 (%function-add-method! bard:get `(,<cons> ,<fixnum> & args) %bard-get-from-list)
 (%function-add-method! bard:get `(,<cons> ,<bignum> & args) %bard-get-from-list)
-(%function-add-method! bard:get `(,<string> ,<fixnum> & args) %bard-get-from-list)
-(%function-add-method! bard:get `(,<string> ,<bignum> & args) %bard-get-from-list)
-(%function-add-method! bard:get `(,<frame> ,Anything & args) %bard-get)
+
+(%function-add-method! bard:get `(,<string> ,<fixnum> & args) %bard-get-from-string)
+(%function-add-method! bard:get `(,<string> ,<bignum> & args) %bard-get-from-string)
+
+(%function-add-method! bard:get `(,<frame> ,Anything & args)
+                       (%primitive-method (fr thing & args)
+                                          (%frame-get fr thing (if (null? args)(%nothing)(cadr args)))))
 
 ;;; keys
 ;;; ---------------------------------------------------------------------
@@ -155,46 +159,102 @@
 
 ;;; merge
 ;;; ---------------------------------------------------------------------
+;;; (merge fr1 fr2) => fr3, with slots from both frames
+;;; where keys appear in both frames, the values from fr2 are used
+;;; when sequences are treated as frames, their keys are the indexes
+;;; of their elements
 
 (define bard:merge (%make-function name: 'merge))
 
-(define %bard-merge 
-  (%primitive-method (ls1 ls2 & args)
-                     (let* ((tp (%object->bard-type ls1))
-                            (test (if (null? args)
-                                      bard:=
-                                      (car args)))
-                            (member? (lambda (x s)(any? (lambda (i)(%apply test (list i x))) s))))
-                       (let loop ((items (append (%as-list ls1)(%as-list ls2)))
-                                  (result '()))
-                         (if (null? items)
-                             (%to-type tp (reverse result))
-                             (let* ((item (car items))
-                                    (new-result (if (member? item result)
-                                                    result
-                                                    (cons item result))))
-                               (loop (cdr items) new-result)))))))
+(define %bard-merge-cons-cons
+  (%primitive-method (ls1 ls2)
+                     (let ((len1 (length ls1))
+                           (len2 (length ls2)))
+                       (if (<= len1 len2)
+                           ls2
+                           (append ls2 (drop len2 ls1))))))
 
-(define %bard-merge-frames 
-  (%primitive-method (fr1 fr2 & args)
-                     (%frame-merge fr1 fr2)))
+(define %bard-merge-cons-string
+  (%primitive-method (ls str)
+                     (let ((len1 (length ls))
+                           (len2 (string-length str)))
+                       (if (<= len1 len2)
+                           str
+                           (let ((tl (drop len2 ls)))
+                             (if (every? char? tl)
+                                 (string-append str (list->string tl))
+                                 (append (string->list str) tl)))))))
 
-(%function-add-method! bard:merge `(,<null> ,<null> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<null> ,<cons> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<null> ,<string> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<null> ,<frame> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<cons> ,<null> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<cons> ,<cons> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<cons> ,<string> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<cons> ,<frame> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<string> ,<null> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<string> ,<cons> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<string> ,<string> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<string> ,<frame> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<frame> ,<null> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<frame> ,<cons> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<frame> ,<string> & args) %bard-merge)
-(%function-add-method! bard:merge `(,<frame> ,<frame> & args) %bard-merge-frames)
+(define %bard-merge-cons-frame
+  (%primitive-method (ls fr)
+                     (%frame-merge (%private-make-frame (map cons (range 0 (length ls)) ls))
+                                   fr)))
+
+(define %bard-merge-string-cons
+  (%primitive-method (str ls)
+                     (let ((len1 (string-length str))
+                           (len2 (length ls)))
+                       (if (<= len1 len2)
+                           ls
+                           (let ((tl (substring str len2 len1)))
+                             (if (every? char? ls)
+                                 (string-append (list->string ls) tl)
+                                 (append ls (string->list tl))))))))
+
+(define %bard-merge-string-string
+  (%primitive-method (str1 str2)
+                     (let ((len1 (string-length str1))
+                           (len2 (string-length str2)))
+                       (if (<= len1 len2)
+                           str2
+                           (string-append str2 (substring str1 len2 len1))))))
+
+(define (%maybe-frame-to-string fr)
+  (let ((slots (%frame-slots fr)))
+    (if (and (every? integer? (map car slots))
+             (every? char? (map cdr slots)))
+        (let* ((sorted-slots (sort slots (lambda (s t)(< (car s)(car t)))))
+               (indexes (map car sorted-slots))
+               (index-count (length indexes))
+               (indexes1 (take (- index-count 1) indexes))
+               (indexes2 (drop 1 indexes)))
+          (if (every? (lambda (x y)(= y (+ x 1))) indexes1 indexes2)
+              (list->string (map cdr sorted-slots))
+              fr))
+        fr)))
+
+(define %bard-merge-string-frame
+  (%primitive-method (str fr)
+                     (%maybe-frame-to-string
+                      (%frame-merge (%private-make-frame (map cons (range 0 (string-length str)) (string->list str)))
+                                    fr))))
+
+(define %bard-merge-frame-cons
+  (%primitive-method (fr ls)
+                     (%frame-merge fr
+                                   (%private-make-frame (map cons (range 0 (length ls)) ls)))))
+
+(define %bard-merge-frame-string
+  (%primitive-method (fr str)
+                     (%frame-merge fr
+                                   (%private-make-frame (map cons (range 0 (string-length str)) (string->list str))))))
+
+(%function-add-method! bard:merge `(,<null> ,<null>) (%primitive-method (fr1 fr2) (%nothing)))
+(%function-add-method! bard:merge `(,<null> ,<cons>) (%primitive-method (fr1 fr2) fr2))
+(%function-add-method! bard:merge `(,<null> ,<string>) (%primitive-method (fr1 fr2) fr2))
+(%function-add-method! bard:merge `(,<null> ,<frame>) (%primitive-method (fr1 fr2) fr2))
+(%function-add-method! bard:merge `(,<cons> ,<null>) (%primitive-method (fr1 fr2) fr1))
+(%function-add-method! bard:merge `(,<cons> ,<cons>) %bard-merge-cons-cons)
+(%function-add-method! bard:merge `(,<cons> ,<string> ) %bard-merge-cons-string)
+(%function-add-method! bard:merge `(,<cons> ,<frame> ) %bard-merge-cons-frame)
+(%function-add-method! bard:merge `(,<string> ,<null> ) (%primitive-method (fr1 fr2) fr1))
+(%function-add-method! bard:merge `(,<string> ,<cons> ) %bard-merge-string-cons)
+(%function-add-method! bard:merge `(,<string> ,<string> ) %bard-merge-string-string)
+(%function-add-method! bard:merge `(,<string> ,<frame> ) %bard-merge-string-frame)
+(%function-add-method! bard:merge `(,<frame> ,<null> ) (%primitive-method (fr1 fr2) fr1))
+(%function-add-method! bard:merge `(,<frame> ,<cons> ) %bard-merge-frame-cons)
+(%function-add-method! bard:merge `(,<frame> ,<string> ) %bard-merge-frame-string)
+(%function-add-method! bard:merge `(,<frame> ,<frame> ) (%primitive-method (fr1 fr2) (%frame-merge fr1 fr2)))
 
 
 ;;; put

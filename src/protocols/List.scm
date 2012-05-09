@@ -365,13 +365,13 @@
 (%function-add-method! bard:every? `(,<function> ,<cons>) %bard-cons-every?)
 (%function-add-method! bard:every? `(,<method> ,<cons>) %bard-cons-every?)
 
-(%function-add-method! bard:every? `(,<primitive-procedure> ,<string>) %bard-every?)
-(%function-add-method! bard:every? `(,<function> ,<string>) %bard-every?)
-(%function-add-method! bard:every? `(,<method> ,<string>) %bard-every?)
+;(%function-add-method! bard:every? `(,<primitive-procedure> ,<string>) %bard-every?)
+;(%function-add-method! bard:every? `(,<function> ,<string>) %bard-every?)
+;(%function-add-method! bard:every? `(,<method> ,<string>) %bard-every?)
 
-(%function-add-method! bard:every? `(,<primitive-procedure> ,<frame>) %bard-every?)
-(%function-add-method! bard:every? `(,<function> ,<frame>) %bard-every?)
-(%function-add-method! bard:every? `(,<method> ,<frame>) %bard-every?)
+;(%function-add-method! bard:every? `(,<primitive-procedure> ,<frame>) %bard-every?)
+;(%function-add-method! bard:every? `(,<function> ,<frame>) %bard-every?)
+;(%function-add-method! bard:every? `(,<method> ,<frame>) %bard-every?)
 
 
 ;;; filter
