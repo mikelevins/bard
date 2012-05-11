@@ -87,7 +87,7 @@
                base-alist) 
           new-alist))
 
-(define (nub ls)
+(define (nub ls #!optional (test equal?))
   (let loop ((elts ls)
              (result '()))
     (if (null? elts)

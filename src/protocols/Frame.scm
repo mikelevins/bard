@@ -71,7 +71,7 @@
                                               (if (null? slots)
                                                   (%false)
                                                   (let ((slot (car slots)))
-                                                    (if (%funcall test (car slot))
+                                                    (if (%funcall test thing (%frame-slot-key slot))
                                                         (%true)
                                                         (loop (cdr slots)))))))))
 
@@ -110,7 +110,7 @@
                                               (if (null? slots)
                                                   (%false)
                                                   (let ((slot (car slots)))
-                                                    (if (%funcall test (cdr slot))
+                                                    (if (%funcall test thing (%frame-slot-val slot))
                                                         (%true)
                                                         (loop (cdr slots)))))))))
 
@@ -131,8 +131,8 @@
 (define %bard-get-from-string 
   (%primitive-method (str i & args)
                      (let ((default (if (null? args)(%nothing)(cadr args))))
-                       (if (< -1 i (string-length ls))
-                           (string-ref ls i)
+                       (if (< -1 i (string-length str))
+                           (string-ref str i)
                            default))))
 
 (%function-add-method! bard:get `(,Anything ,(%singleton type:) & args)
@@ -192,10 +192,21 @@
                                  (string-append str (list->string tl))
                                  (append (string->list str) tl)))))))
 
+(define (%maybe-frame-to-list fr)
+  (let ((slots (%frame-slots fr)))
+    (if (every? integer? (map %frame-slot-key slots))
+        (let* ((sorted-slots (sort slots (lambda (s t)(< (%frame-slot-key s)(%frame-slot-key t)))))
+               (indexes (map %frame-slot-key sorted-slots))
+               (index-count (length indexes))
+               (indexes1 (take (- index-count 1) indexes))
+               (indexes2 (drop 1 indexes)))
+          (if (every? (lambda (x y)(= y (+ x 1))) indexes1 indexes2)
+              (map %frame-slot-val sorted-slots)
+              fr))
+        fr)))
+
 (define %bard-merge-cons-frame
-  (%primitive-method (ls fr)
-                     (%frame-merge (%private-make-frame (map cons (range 0 (length ls)) ls))
-                                   fr)))
+  (%primitive-method (ls fr)(%maybe-frame-to-list (%frame-merge (%cons-as-frame ls) fr))))
 
 (define %bard-merge-string-cons
   (%primitive-method (str ls)
@@ -218,33 +229,28 @@
 
 (define (%maybe-frame-to-string fr)
   (let ((slots (%frame-slots fr)))
-    (if (and (every? integer? (map car slots))
-             (every? char? (map cdr slots)))
-        (let* ((sorted-slots (sort slots (lambda (s t)(< (car s)(car t)))))
-               (indexes (map car sorted-slots))
+    (if (and (every? integer? (map %frame-slot-key slots))
+             (every? char? (map %frame-slot-val slots)))
+        (let* ((sorted-slots (sort slots (lambda (s t)(< (%frame-slot-key s)(%frame-slot-key t)))))
+               (indexes (map %frame-slot-key sorted-slots))
                (index-count (length indexes))
                (indexes1 (take (- index-count 1) indexes))
                (indexes2 (drop 1 indexes)))
           (if (every? (lambda (x y)(= y (+ x 1))) indexes1 indexes2)
-              (list->string (map cdr sorted-slots))
+              (list->string (map %frame-slot-val sorted-slots))
               fr))
         fr)))
 
 (define %bard-merge-string-frame
   (%primitive-method (str fr)
                      (%maybe-frame-to-string
-                      (%frame-merge (%private-make-frame (map cons (range 0 (string-length str)) (string->list str)))
-                                    fr))))
+                      (%frame-merge (%string-as-frame str) fr))))
 
 (define %bard-merge-frame-cons
-  (%primitive-method (fr ls)
-                     (%frame-merge fr
-                                   (%private-make-frame (map cons (range 0 (length ls)) ls)))))
+  (%primitive-method (fr ls)(%frame-merge fr (%cons-as-frame ls))))
 
 (define %bard-merge-frame-string
-  (%primitive-method (fr str)
-                     (%frame-merge fr
-                                   (%private-make-frame (map cons (range 0 (string-length str)) (string->list str))))))
+  (%primitive-method (fr str)(%frame-merge fr (%string-as-frame str))))
 
 (%function-add-method! bard:merge `(,<null> ,<null>) (%primitive-method (fr1 fr2) (%nothing)))
 (%function-add-method! bard:merge `(,<null> ,<cons>) (%primitive-method (fr1 fr2) fr2))

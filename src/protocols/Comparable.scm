@@ -26,6 +26,7 @@
 (%function-add-method! bard:comparable? `(,<fixnum> ,<fixnum>)(%method (x y) true))
 (%function-add-method! bard:comparable? `(,<fixnum> ,<bignum>)(%method (x y) true))
 (%function-add-method! bard:comparable? `(,<bignum> ,<fixnum>)(%method (x y) true))
+(%function-add-method! bard:comparable? `(,<bignum> ,<bignum>)(%method (x y) true))
 (%function-add-method! bard:comparable? `(,<character> ,<character>)(%method (x y) true))
 (%function-add-method! bard:comparable? `(,<string> ,<string>)(%method (x y) true))
 

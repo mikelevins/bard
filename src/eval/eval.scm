@@ -10,13 +10,15 @@
 ;;;; ***********************************************************************
 
 (define (%eval-variable var env)
-  (let ((binding (%find-binding env var)))
-    (if binding
-        (%binding-value binding)
-        (let ((global-val (%global-value var)))
-          (if (%defined? global-val)
-              global-val
-              (error (string-append "Undefined variable: " (object->string var))))))))
+  (if (eq? var 'undefined)
+      (%undefined)
+      (let ((binding (%find-binding env var)))
+        (if binding
+            (%binding-value binding)
+            (let ((global-val (%global-value var)))
+              (if (%defined? global-val)
+                  global-val
+                  (error (string-append "Undefined variable: " (object->string var)))))))))
 
 (define (%eval-function-application expr env)
   (let ((expr (map (lambda (x)(%eval x env)) expr)))
@@ -34,25 +36,3 @@
    ((%cons? expr) (%eval-application expr env))
    (else expr)))
 
-(define (%test-eval str #!optional (env '()))
-  (%eval (%read-from-string str) env))
-
-;;; (%test-eval "undefined" (%initial-bard-environment))
-;;; (%test-eval "nothing" (%initial-bard-environment))
-;;; (%test-eval "true" (%initial-bard-environment))
-;;; (%test-eval "false" (%initial-bard-environment))
-;;; (%test-eval "1" (%initial-bard-environment))
-;;; (%test-eval "888888888" (%initial-bard-environment))
-;;; (%test-eval "-888888888" (%initial-bard-environment))
-;;; (%test-eval "1.23" (%initial-bard-environment))
-;;; (%test-eval "-1.23" (%initial-bard-environment))
-;;; (%test-eval "-1/23" (%initial-bard-environment))
-;;; (%test-eval "#\\c" (%initial-bard-environment))
-;;; (%test-eval "#\\space" (%initial-bard-environment))
-;;; (%test-eval "Name:" (%initial-bard-environment))
-;;; (%test-eval "()" (%initial-bard-environment))
-;;; (%test-eval "\"foo Bar Baz\"" (%initial-bard-environment))
-;;; (%test-eval "+" (%initial-bard-environment))
-;;; (%test-eval "(+ 2 3)" (%initial-bard-environment))
-;;; (%test-eval "(* (- 4 2)(+ 1 2))" (%initial-bard-environment))
-;;; (%test-eval "(method (x)(+ x 1))" (%initial-bard-environment))
