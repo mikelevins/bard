@@ -119,7 +119,12 @@
                                                 (list->string result)
                                                 result))))
 
-(%function-add-method! bard:append `(,<cons> ,<frame>)(%primitive-method (ls1 ls2)(append ls1 (%frame->list ls2))))
+(%function-add-method! bard:append `(,<cons> ,<frame>)
+                       (%primitive-method (ls1 ls2)
+                                          (let ((result (append ls1 (%frame->list ls2))))
+                                            (if (every? %frame-slot? result)
+                                                (%list->frame result)
+                                                result))))
 
 (%function-add-method! bard:append `(,<string> ,<null>) (%primitive-method (ls1 ls2) ls1))
 (%function-add-method! bard:append `(,<string> ,<string>) (%primitive-method (ls1 ls2) (string-append ls1 ls2)))
@@ -135,8 +140,15 @@
                                                   (%frame->list fr))))
 
 
+
+
 (%function-add-method! bard:append `(,<frame> ,<null>) (%primitive-method (ls1 ls2) ls1))
-(%function-add-method! bard:append `(,<frame> ,<cons>) (%primitive-method (ls1 ls2) (%frame-merge ls1 (%list->frame ls2))))
+
+(%function-add-method! bard:append `(,<frame> ,<cons>) 
+                       (%primitive-method (ls1 ls2)
+                                          (if (every? %frame-slot? ls2)
+                                              (%frame-merge ls1 (%list->frame ls2))
+                                              (append (%frame->list ls1) ls2))))
 
 (%function-add-method! bard:append `(,<frame> ,<string>)
                        (%primitive-method (fr str)
@@ -173,7 +185,7 @@
                                                       (%true)
                                                       (loop (+ i 1))))))))
 
-(%function-add-method! bard:contains? `(,<frame> ,<cons> & args) 
+(%function-add-method! bard:contains? `(,<frame> ,Anything & args) 
                        (%primitive-method (fr x & args)
                                           (let ((test (if (null? args) bard:= (car args))))
                                             (let loop ((items (%frame-slots fr)))
@@ -191,9 +203,9 @@
 (define bard:difference (%make-function name: 'difference))
 
 (%function-add-method! bard:difference `(,<null> ,<null> & args) (%primitive-method (ls1 ls2 & args)(%nothing)))
-(%function-add-method! bard:difference `(,<null> ,<cons> & args) (%primitive-method (ls1 ls2 & args) ls2))
-(%function-add-method! bard:difference `(,<null> ,<string> & args) (%primitive-method (ls1 ls2 & args) ls2))
-(%function-add-method! bard:difference `(,<null> ,<frame> & args) (%primitive-method (ls1 ls2 & args) ls2))
+(%function-add-method! bard:difference `(,<null> ,<cons> & args) (%primitive-method (ls1 ls2 & args) (%nothing)))
+(%function-add-method! bard:difference `(,<null> ,<string> & args) (%primitive-method (ls1 ls2 & args) (%nothing)))
+(%function-add-method! bard:difference `(,<null> ,<frame> & args) (%primitive-method (ls1 ls2 & args) (%nothing)))
 
 (%function-add-method! bard:difference `(,<cons> ,<null> & args) (%primitive-method (ls1 ls2 & args) ls1))
 (%function-add-method! bard:difference `(,<string> ,<null> & args) (%primitive-method (ls1 ls2 & args) ls1))
@@ -754,7 +766,7 @@
 (%function-add-method! bard:interleave `(,<frame> ,<frame>)
                        (%primitive-method (fr1 fr2)
                                           (let loop ((items1 (%frame->list fr1))
-                                                     (items2 (%frame->list str))
+                                                     (items2 (%frame->list fr2))
                                                      (result '()))
                                             (if (or (null? items1)
                                                     (null? items2))
@@ -797,7 +809,7 @@
 
 (%function-add-method! bard:interpose `(,Anything ,<string>) 
                        (%primitive-method (thing str)
-                                          (let ((len (length str)))
+                                          (let ((len (string-length str)))
                                             (let loop ((i 0)
                                                        (result '()))
                                               (if (>= i len)
@@ -805,20 +817,9 @@
                                                       (list->string (reverse result))
                                                       (reverse result))
                                                   (if (null? result)
-                                                      (loop (cdr items)(cons (string-ref str i) result))
-                                                      (loop (cdr items)(cons (string-ref str i) (cons thing result)))))))))
+                                                      (loop (+ i 1)(cons (string-ref str i) result))
+                                                      (loop (+ i 1)(cons (string-ref str i) (cons thing result)))))))))
 
-(%function-add-method! bard:interpose `(,Anything ,<frame>) 
-                       (%primitive-method (thing fr)
-                                          (let loop ((items (%frame->list fr))
-                                                     (result '()))
-                                            (if (null? items)
-                                                (if (%frame-slot? thing)
-                                                    (%list->frame (reverse result))
-                                                    (reverse result))
-                                                (if (null? result)
-                                                    (loop (cdr items)(cons (car items) result))
-                                                    (loop (cdr items)(cons (car items) (cons thing result))))))))
 
 ;;; intersection
 ;;; ---------------------------------------------------------------------
@@ -861,9 +862,9 @@
 (%function-add-method! bard:intersection `(,<cons> ,<frame> & args) %bard-intersection)
 (%function-add-method! bard:intersection `(,<string> ,<cons> & args) %bard-intersection)
 (%function-add-method! bard:intersection `(,<string> ,<string> & args) %bard-intersection)
-(%function-add-method! bard:intersection `(,<string> ,<frame> & args) %bard-intersection)
+(%function-add-method! bard:intersection `(,<string> ,<frame> & args) (%primitive-method (ls1 ls2 & args)(%nothing)))
 (%function-add-method! bard:intersection `(,<frame> ,<cons> & args) %bard-intersection)
-(%function-add-method! bard:intersection `(,<frame> ,<string> & args) %bard-intersection)
+(%function-add-method! bard:intersection `(,<frame> ,<string> & args) (%primitive-method (ls1 ls2 & args)(%nothing)))
 (%function-add-method! bard:intersection `(,<frame> ,<frame> & args) %bard-intersection)
 
 ;;; last
@@ -1084,8 +1085,8 @@
 
 (define bard:second (%make-function name: 'second))
 
-(%function-add-method! bard:second `(,<null>)(lambda (ls)(%nothing)))
-(%function-add-method! bard:second `(,<cons>) (lambda (ls)(cadr ls)))
+(%function-add-method! bard:second `(,<null>)(%primitive-method (ls)(%nothing)))
+(%function-add-method! bard:second `(,<cons>) (%primitive-method (ls)(cadr ls)))
 (%function-add-method! bard:second `(,<string>)
                        (%primitive-method (str)
                                           (if (> (string-length str) 1)
