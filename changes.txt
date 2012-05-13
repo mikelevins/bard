@@ -1,3 +1,25 @@
+0.1.3
+
+- updated the namer example to use new primitives.
+
+- made a few small changes and additions to protocols; updated the reference
+
+- fixed a bug in error reporting
+
+- added basic combinators as primitives
+
+- added comprehensive tests for all protocol functions
+
+- fixed a bug in get
+
+- fixed some inconsistencies in frame merging
+
+- improved performance of many protocol functions
+
+- updated makefile to build iOS libraries
+
+- reorganized the project directory, removing obsolete legacy code
+
 0.1.2
 
 - adjusted repl output to be a little more readable

@@ -10,6 +10,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; repl
+
 (define (prim:read . args) 
   (let ((in (if (null? args)
                 (current-input-port)
@@ -68,4 +70,14 @@
 (define (prim:quit)(exit))
 (define (prim:version) $bard-version-string)
 
+;;; functions
+
+(define prim:complement complement)
+(define prim:constantly constantly)
+
+(define (prim:flip fn)(lambda (x y)(%funcall fn y x)))
+
+(define (prim:partial fn . args)
+  (lambda more-args
+    (%apply fn `(,@args ,@more-args))))
 

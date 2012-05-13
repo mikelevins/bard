@@ -17,6 +17,8 @@
   (lambda more-args
     (apply fn `(,@args ,@more-args))))
 
+(define (flip fn)(lambda (x y)(fn y x)))
+
 (define (complement fn . args)
   (lambda more-args
     (not (apply fn `(,@args ,@more-args)))))
