@@ -72,7 +72,7 @@
 
 ;;; functions
 
-(define prim:complement complement)
+(define (prim:complement fn) (lambda args (not (%apply fn args))))
 (define prim:constantly constantly)
 
 (define (prim:flip fn)(lambda (x y)(%funcall fn y x)))
