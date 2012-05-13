@@ -898,22 +898,56 @@
 
 (define bard:map (%make-function name: 'map))
 
-(define (%bard-map-aux fn lists)
-  (let loop ((lists lists)
-             (result '()))
-    (if (any? null? lists)
-        (reverse result)
-        (loop (map cdr lists)
-              (cons (%apply fn (map car lists))
-                    result)))))
+(define %general-mapper
+  (lambda (fn arglists)
+    (let* ((arglists (map %as-list arglists))
+           (minlen (apply min (map length arglists)))
+           (arglists (map (lambda (al)(take minlen al)) arglists))
+           (op (lambda args (%apply fn args))))
+      (apply map (cons op arglists)))))
+
+(define $mapper-table (make-table test: equal?))
+
+(define (%defmapper key mapperfn)
+  (table-set! $mapper-table key mapperfn))
+
+(define (%getmapper key)
+  (table-ref $mapper-table key #f))
+
+(%defmapper `(,<null>) (lambda (fn arglists)(%nothing)))
+
+(%defmapper `(,<cons>) (lambda (fn arglists)
+                         (map (lambda (x)(%funcall fn x))
+                              (car arglists))))
+
+(%defmapper `(,<string>) (lambda (fn arglists)
+                           (let* ((str (car arglists))
+                                  (len (string-length str)))
+                             (let loop ((i 0)
+                                        (result '()))
+                               (if (>= i len)
+                                   (if (every? char? result)
+                                       (list->string (reverse result))
+                                       (reverse result))
+                                   (loop (+ i 1)(cons (%funcall fn (string-ref str i)) result)))))))
+
+(%defmapper `(,<frame>) (lambda (fn arglists)
+                          (let* ((fr (car arglists)))
+                            (let loop ((slots (%frame-slots fr))
+                                       (result '()))
+                              (if (null? slots)
+                                  (if (every? %frame-slot? result)
+                                      (%list->frame (reverse result))
+                                      (reverse result))
+                                  (loop (cdr slots)(cons (%funcall fn (car slots)) result)))))))
 
 (define %bard-map 
   (%primitive-method (fn & args)
-                     (if (null? args)
-                         (%nothing)
-                         (let* ((tp (%object->bard-type (car args)))
-                                (lists (map %as-list args)))
-                           (%to-type tp (%bard-map-aux fn lists))))))
+                     (let* ((argtypes (map %object->bard-type args))
+                            (mapper (%getmapper argtypes)))
+                       (if mapper
+                           (mapper fn args)
+                           (%general-mapper fn args)))))
 
 (%function-add-method! bard:map `(,<primitive-procedure> & args) %bard-map)
 (%function-add-method! bard:map `(,<function> & args) %bard-map)
@@ -924,66 +958,100 @@
 
 (define bard:partition (%make-function name: 'partition))
 
-(define %bard-partition 
+
+(define %bard-partition-nothing (%primitive-method (num ls & args)(%nothing)))
+
+(define (%bard-partition-aux num ls step)
+  (let loop ((items ls)
+             (result '()))
+    (let ((len (length items)))
+      (if (< len num)
+          (if (null? items)
+              (reverse result)
+              (reverse (cons items result)))
+          (let ((num (if (< len num) len num))
+                (step (if (< len step) len step)))
+            (loop (drop step items)
+                  (cons (take num items) result)))))))
+
+(define %bard-partition-cons 
   (%primitive-method (num ls & args)
-                     (if (null? ls)
-                         (%nothing)
-                         (let* ((step (if (null? args)
-                                          1
-                                          (car args)))
-                                (tp (%object->bard-type ls)))
-                           (let loop ((items (%as-list ls))
-                                      (result '()))
-                             (let ((len (length items)))
-                               (if (< len num)
-                                   (reverse result)
-                                   (let ((num (if (< len num) len num))
-                                         (step (if (< len step) len step)))
-                                     (loop (drop step items)
-                                           (cons (take num items) result))))))))))
+                     (let* ((step (if (null? args) 1 (car args))))
+                       (%bard-partition-aux num ls step))))
 
-(%function-add-method! bard:partition `(,<fixnum> ,<null> & args) %bard-partition)
-(%function-add-method! bard:partition `(,<bignum> ,<null> & args) %bard-partition)
+(define %bard-partition-string
+  (%primitive-method (num str & args)
+                     (let* ((step (if (null? args) 1 (car args))))
+                       (%bard-partition-aux num (string->list str) step))))
 
-(%function-add-method! bard:partition `(,<fixnum> ,<cons> & args) %bard-partition)
-(%function-add-method! bard:partition `(,<bignum> ,<cons> & args) %bard-partition)
+(define %bard-partition-frame
+  (%primitive-method (num fr & args)
+                     (let* ((step (if (null? args) 1 (car args))))
+                       (%bard-partition-aux num (%frame->list fr) step))))
 
-(%function-add-method! bard:partition `(,<fixnum> ,<string> & args) %bard-partition)
-(%function-add-method! bard:partition `(,<bignum> ,<string> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<fixnum> ,<null> & args) %bard-partition-nothing)
+(%function-add-method! bard:partition `(,<bignum> ,<null> & args) %bard-partition-nothing)
 
-(%function-add-method! bard:partition `(,<fixnum> ,<frame> & args) %bard-partition)
-(%function-add-method! bard:partition `(,<bignum> ,<frame> & args) %bard-partition)
+(%function-add-method! bard:partition `(,<fixnum> ,<cons> & args) %bard-partition-cons)
+(%function-add-method! bard:partition `(,<bignum> ,<cons> & args) %bard-partition-cons)
+
+(%function-add-method! bard:partition `(,<fixnum> ,<string> & args) %bard-partition-string)
+(%function-add-method! bard:partition `(,<bignum> ,<string> & args) %bard-partition-string)
+
+(%function-add-method! bard:partition `(,<fixnum> ,<frame> & args) %bard-partition-frame)
+(%function-add-method! bard:partition `(,<bignum> ,<frame> & args) %bard-partition-frame)
 
 ;;; position
 ;;; ---------------------------------------------------------------------
 
 (define bard:position (%make-function name: 'position))
 
-(define %bard-position 
+(define %bard-position-in-nothing (%primitive-method (test ls)(%nothing)))
+
+(define %bard-position-in-cons 
   (%primitive-method (test ls)
-                     (let* ((tp (%object->bard-type ls))
-                            (items (%as-list ls))
-                            (len (length items)))
+                     (let ((items ls))
                        (let loop ((items items)
                                   (i 0))
                          (if (null? items)
-                             (nothing)
+                             (%nothing)
                              (if (%funcall test (car items))
                                  i
                                  (loop (cdr items) (+ i 1))))))))
 
-(%function-add-method! bard:position `(,<primitive-procedure> ,<null>) %bard-position)
-(%function-add-method! bard:position `(,<function> ,<null>) %bard-position)
-(%function-add-method! bard:position `(,<method> ,<null>) %bard-position)
-(%function-add-method! bard:position `(,<primitive-procedure> ,<cons>) %bard-position)
-(%function-add-method! bard:position `(,<function> ,<cons>) %bard-position)
-(%function-add-method! bard:position `(,<method> ,<cons>) %bard-position)
-(%function-add-method! bard:position `(,<primitive-procedure> ,<string>) %bard-position)
-(%function-add-method! bard:position `(,<function> ,<string>) %bard-position)
-(%function-add-method! bard:position `(,<method> ,<string>) %bard-position)
-(%function-add-method! bard:position `(,<primitive-procedure> ,<frame>) %bard-position)
-(%function-add-method! bard:position `(,<function> ,<frame>) %bard-position)
-(%function-add-method! bard:position `(,<method> ,<frame>) %bard-position)
+(define %bard-position-in-string 
+  (%primitive-method (test str)
+                     (let ((len (string-length str)))
+                       (let loop ((i 0))
+                         (if (>= i len)
+                             (%nothing)
+                             (if (%funcall test (string-ref str i))
+                                 i
+                                 (loop (+ i 1))))))))
+
+(define %bard-position-in-frame 
+  (%primitive-method (test ls)
+                     (let ((items (%frame-slots ls)))
+                       (let loop ((items items)
+                                  (i 0))
+                         (if (null? items)
+                             (%nothing)
+                             (if (%funcall test (car items))
+                                 i
+                                 (loop (cdr items) (+ i 1))))))))
+
+(%function-add-method! bard:position `(,<primitive-procedure> ,<null>) %bard-position-in-nothing)
+(%function-add-method! bard:position `(,<function> ,<null>) %bard-position-in-nothing)
+(%function-add-method! bard:position `(,<method> ,<null>) %bard-position-in-nothing)
+(%function-add-method! bard:position `(,<primitive-procedure> ,<cons>) %bard-position-in-cons)
+(%function-add-method! bard:position `(,<function> ,<cons>) %bard-position-in-cons)
+(%function-add-method! bard:position `(,<method> ,<cons>) %bard-position-in-cons)
+(%function-add-method! bard:position `(,<primitive-procedure> ,<string>) %bard-position-in-string)
+(%function-add-method! bard:position `(,<function> ,<string>) %bard-position-in-string)
+(%function-add-method! bard:position `(,<method> ,<string>) %bard-position-in-string)
+(%function-add-method! bard:position `(,<primitive-procedure> ,<frame>) %bard-position-in-frame)
+(%function-add-method! bard:position `(,<function> ,<frame>) %bard-position-in-frame)
+(%function-add-method! bard:position `(,<method> ,<frame>) %bard-position-in-frame)
 
 ;;; range
 ;;; ---------------------------------------------------------------------
@@ -993,7 +1061,7 @@
 (define %bard-range 
   (%primitive-method (start end & args)
                      (let ((step (if (null? args)
-                                     1
+                                     (if (<= start end) 1 -1)
                                      (car args))))
                        (if (and (> end start)
                                 (<= step 0))
@@ -1024,13 +1092,12 @@
 
 (define %bard-reduce 
   (%primitive-method (fn init ls)
-                     (let ((tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls))
-                                  (result init))
-                         (if (null? items)
-                             (%to-type tp result)
-                             (loop (cdr items) 
-                                   (%funcall fn result (car items))))))))
+                     (let loop ((items (%as-list ls))
+                                (result init))
+                       (if (null? items)
+                           result
+                           (loop (cdr items) 
+                                 (%funcall fn result (car items)))))))
 
 (%function-add-method! bard:reduce `(,<primitive-procedure> ,Anything ,<null>) %bard-reduce)
 (%function-add-method! bard:reduce `(,<function> ,Anything ,<null>) %bard-reduce)
@@ -1102,22 +1169,6 @@
                                                     (error "index out of range" 1)
                                                     (cadr ls))))))
 
-;;; select
-;;; ---------------------------------------------------------------------
-
-(define bard:select (%make-function name: 'select))
-
-(define %bard-select 
-  (%primitive-method (indexes ls)
-                     (let* ((tp (%object->bard-type ls))
-                            (items (%as-list ls)))
-                       (%to-type tp (map (lambda (i)(list-ref items i)) indexes)))))
-
-(%function-add-method! bard:select `(,<null> ,Anything) (%primitive-method (indexes ls)(%nothing)))
-(%function-add-method! bard:select `(,<cons> ,<cons>) %bard-select)
-(%function-add-method! bard:select `(,<cons> ,<string>) %bard-select)
-(%function-add-method! bard:select `(,<cons> ,<frame>) %bard-select)
-
 ;;; shuffle
 ;;; ---------------------------------------------------------------------
 
@@ -1141,50 +1192,81 @@
 
 (define bard:slice (%make-function name: 'slice))
 
-(define %bard-slice 
-  (%primitive-method (ls start & args)
-                     (let* ((end (if (null? args)
-                                     (%funcall bard:length ls)
-                                     (car args)))
-                            (tp (%object->bard-type ls))
-                            (items (%as-list ls))
-                            (result (drop start (take end items))))
-                       (%to-type tp result))))
+(%function-add-method! bard:slice `(,<null> ,<fixnum> & args) (%primitive-method (ls start & args)(error "index out of range")))
 
-(%function-add-method! bard:slice `(,<null> ,<fixnum> & args) %bard-slice)
-(%function-add-method! bard:slice `(,<cons> ,<fixnum> & args) %bard-slice)
-(%function-add-method! bard:slice `(,<string> ,<fixnum> & args) %bard-slice)
-(%function-add-method! bard:slice `(,<frame> ,<fixnum> & args) %bard-slice)
+(%function-add-method! bard:slice `(,<cons> ,<fixnum> & args) 
+                       (%primitive-method (ls start & args)
+                                          (let* ((end (if (null? args)
+                                                          (length ls)
+                                                          (car args))))
+                                            (drop start (take end ls)))))
+
+(%function-add-method! bard:slice `(,<string> ,<fixnum> & args) 
+                       (%primitive-method (str start & args)
+                                          (let* ((end (if (null? args)
+                                                          (string-length str)
+                                                          (car args))))
+                                            (substring str start end))))
+
+(%function-add-method! bard:slice `(,<frame> ,<fixnum> & args) 
+                       (%primitive-method (fr start & args)
+                                          (let* ((ls (%frame-slots fr))
+                                                 (end (if (null? args)
+                                                          (length ls)
+                                                          (car args))))
+                                            (%list->frame (drop start (take end ls))))))
 
 ;;; some?
 ;;; ---------------------------------------------------------------------
 
 (define bard:some? (%make-function name: 'some?))
 
-(define %bard-some? 
+(define %bard-some-in-nothing? (%primitive-method (test ls)(%nothing)))
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<null>) %bard-some-in-nothing?)
+(%function-add-method! bard:some? `(,<function> ,<null>) %bard-some-in-nothing?)
+(%function-add-method! bard:some? `(,<method> ,<null>) %bard-some-in-nothing?)
+
+(define %bard-some-in-cons? 
   (%primitive-method (test ls)
-   (let loop ((items (%as-list ls)))
-    (if (null? items)
-        (%nothing)
-        (if (%funcall test (car items))
-            (car items)
-            (loop (cdr items)))))))
+                     (let loop ((items ls))
+                       (if (null? items)
+                           (%nothing)
+                           (if (%funcall test (car items))
+                               (car items)
+                               (loop (cdr items)))))))
 
-(%function-add-method! bard:some? `(,<primitive-procedure> ,<null>) %bard-some?)
-(%function-add-method! bard:some? `(,<function> ,<null>) %bard-some?)
-(%function-add-method! bard:some? `(,<method> ,<null>) %bard-some?)
 
-(%function-add-method! bard:some? `(,<primitive-procedure> ,<cons>) %bard-some?)
-(%function-add-method! bard:some? `(,<function> ,<cons>) %bard-some?)
-(%function-add-method! bard:some? `(,<method> ,<cons>) %bard-some?)
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<cons>) %bard-some-in-cons?)
+(%function-add-method! bard:some? `(,<function> ,<cons>) %bard-some-in-cons?)
+(%function-add-method! bard:some? `(,<method> ,<cons>) %bard-some-in-cons?)
 
-(%function-add-method! bard:some? `(,<primitive-procedure> ,<string>) %bard-some?)
-(%function-add-method! bard:some? `(,<function> ,<string>) %bard-some?)
-(%function-add-method! bard:some? `(,<method> ,<string>) %bard-some?)
+(define %bard-some-in-string? 
+  (%primitive-method (test str)
+                     (let ((len (string-length str)))
+                       (let loop ((i 0))
+                         (if (>= i len)
+                             (%nothing)
+                             (if (%funcall test (string-ref str i))
+                                 (string-ref str i)
+                                 (loop (+ i 1))))))))
 
-(%function-add-method! bard:some? `(,<primitive-procedure> ,<frame>) %bard-some?)
-(%function-add-method! bard:some? `(,<function> ,<frame>) %bard-some?)
-(%function-add-method! bard:some? `(,<method> ,<frame>) %bard-some?)
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<string>) %bard-some-in-string?)
+(%function-add-method! bard:some? `(,<function> ,<string>) %bard-some-in-string?)
+(%function-add-method! bard:some? `(,<method> ,<string>) %bard-some-in-string?)
+
+(define %bard-some-in-frame? 
+  (%primitive-method (test fr)
+                     (let loop ((items (%frame-slots fr)))
+                       (if (null? items)
+                           (%nothing)
+                           (if (%funcall test (car items))
+                               (car items)
+                               (loop (cdr items)))))))
+
+(%function-add-method! bard:some? `(,<primitive-procedure> ,<frame>) %bard-some-in-frame?)
+(%function-add-method! bard:some? `(,<function> ,<frame>) %bard-some-in-frame?)
+(%function-add-method! bard:some? `(,<method> ,<frame>) %bard-some-in-frame?)
 
 ;;; sort
 ;;; ---------------------------------------------------------------------
@@ -1263,63 +1345,113 @@
 
 (define bard:take (%make-function name: 'take))
 
-(define %bard-take 
+(define %bard-take-from-nothing (%primitive-method (n ls)(error "count out of range")))
+
+(%function-add-method! bard:take `(,<fixnum> ,<null>) %bard-take-from-nothing)
+(%function-add-method! bard:take `(,<bignum> ,<null>) %bard-take-from-nothing)
+
+(define %bard-take-from-cons
   (%primitive-method (n ls)
-                     (let ((tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls))
-                                  (i n)
+                     (let loop ((items ls)
+                                (i n)
+                                (result '()))
+                       (if (<= i 0)
+                           (reverse result)
+                           (if (null? items)
+                               (error "count out of range" n)
+                               (loop (cdr items)
+                                     (- i 1)
+                                     (cons (car items) result)))))))
+
+(%function-add-method! bard:take `(,<fixnum> ,<cons>) %bard-take-from-cons)
+(%function-add-method! bard:take `(,<bignum> ,<cons>) %bard-take-from-cons)
+
+(define %bard-take-from-string
+  (%primitive-method (n str)
+                     (let ((len (string-length str)))
+                       (let loop ((i 0)
+                                  (count n)
                                   (result '()))
-                         (if (<= i 0)
-                             (%to-type tp (reverse result))
-                             (if (null? items)
+                         (if (<= count 0)
+                             (list->string (reverse result))
+                             (if (>= i len)
                                  (error "count out of range" n)
-                                 (loop (cdr items)
-                                       (- i 1)
-                                       (cons (car items) result))))))))
+                                 (loop (+ i 1)
+                                       (- count 1)
+                                       (cons (string-ref str i) result))))))))
 
-(%function-add-method! bard:take `(,<fixnum> ,<null>) %bard-take)
-(%function-add-method! bard:take `(,<bignum> ,<null>) %bard-take)
+(%function-add-method! bard:take `(,<fixnum> ,<string>) %bard-take-from-string)
+(%function-add-method! bard:take `(,<bignum> ,<string>) %bard-take-from-string)
 
-(%function-add-method! bard:take `(,<fixnum> ,<cons>) %bard-take)
-(%function-add-method! bard:take `(,<bignum> ,<cons>) %bard-take)
+(define %bard-take-from-frame
+  (%primitive-method (n fr)
+                     (let loop ((items (%frame-slots fr))
+                                (i n)
+                                (result '()))
+                       (if (<= i 0)
+                           (%list->frame (reverse result))
+                           (if (null? items)
+                               (error "count out of range" n)
+                               (loop (cdr items)
+                                     (- i 1)
+                                     (cons (car items) result)))))))
 
-(%function-add-method! bard:take `(,<fixnum> ,<string>) %bard-take)
-(%function-add-method! bard:take `(,<bignum> ,<string>) %bard-take)
-
-(%function-add-method! bard:take `(,<fixnum> ,<frame>) %bard-take)
-(%function-add-method! bard:take `(,<bignum> ,<frame>) %bard-take)
+(%function-add-method! bard:take `(,<fixnum> ,<frame>) %bard-take-from-frame)
+(%function-add-method! bard:take `(,<bignum> ,<frame>) %bard-take-from-frame)
 
 ;;; take-before
 ;;; ---------------------------------------------------------------------
 
 (define bard:take-before (%make-function name: 'take-before))
 
-(define %bard-take-before 
+(define %bard-take-before-from-nothing (%primitive-method (test ls)(%nothing)))
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<null>) %bard-take-before-from-nothing)
+(%function-add-method! bard:take-before `(,<function> ,<null>) %bard-take-before-from-nothing)
+(%function-add-method! bard:take-before `(,<method> ,<null>) %bard-take-before-from-nothing)
+
+(define %bard-take-before-from-cons
   (%primitive-method (test ls)
-                     (let ((tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls))
+                     (let loop ((items ls)
+                                (result '()))
+                       (if (null? items)
+                           (reverse result)
+                           (if (%funcall test (car items))
+                               (reverse result)
+                               (loop (cdr items) (cons (car items) result)))))))
+
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<cons>) %bard-take-before-from-cons)
+(%function-add-method! bard:take-before `(,<function> ,<cons>) %bard-take-before-from-cons)
+(%function-add-method! bard:take-before `(,<method> ,<cons>) %bard-take-before-from-cons)
+
+(define %bard-take-before-from-string
+  (%primitive-method (test str)
+                     (let ((len (string-length str)))
+                       (let loop ((i 0)
                                   (result '()))
-                         (if (null? items)
-                             (%to-type tp (reverse result))
-                             (if (%funcall test (car items))
-                                 (%to-type tp (reverse result))
-                                 (loop (cdr items) (cons (car items) result))))))))
+                         (if (>= i len)
+                             (list->string (reverse result))
+                             (if (%funcall test (string-ref str i))
+                                 (list->string (reverse result))
+                                 (loop (+ i 1) (cons (string-ref str i) result))))))))
 
-(%function-add-method! bard:take-before `(,<primitive-procedure> ,<null>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<function> ,<null>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<method> ,<null>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<string>) %bard-take-before-from-string)
+(%function-add-method! bard:take-before `(,<function> ,<string>) %bard-take-before-from-string)
+(%function-add-method! bard:take-before `(,<method> ,<string>) %bard-take-before-from-string)
 
-(%function-add-method! bard:take-before `(,<primitive-procedure> ,<cons>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<function> ,<cons>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<method> ,<cons>) %bard-take-before)
+(define %bard-take-before-from-frame
+  (%primitive-method (test fr)
+                     (let loop ((items (%frame-slots fr))
+                                (result '()))
+                       (if (null? items)
+                           (%list->frame (reverse result))
+                           (if (%funcall test (car items))
+                               (reverse result)
+                               (loop (cdr items) (cons (car items) result)))))))
 
-(%function-add-method! bard:take-before `(,<primitive-procedure> ,<string>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<function> ,<string>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<method> ,<string>) %bard-take-before)
-
-(%function-add-method! bard:take-before `(,<primitive-procedure> ,<frame>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<function> ,<frame>) %bard-take-before)
-(%function-add-method! bard:take-before `(,<method> ,<frame>) %bard-take-before)
+(%function-add-method! bard:take-before `(,<primitive-procedure> ,<frame>) %bard-take-before-from-frame)
+(%function-add-method! bard:take-before `(,<function> ,<frame>) %bard-take-before-from-frame)
+(%function-add-method! bard:take-before `(,<method> ,<frame>) %bard-take-before-from-frame)
 
 
 ;;; unique
@@ -1327,24 +1459,41 @@
 
 (define bard:unique (%make-function name: 'unique))
 
-(define %bard-unique 
-  (%primitive-method (ls & args)
-                     (let ((test (if (null? args)
-                                     bard:=
-                                     (car args)))
-                           (tp (%object->bard-type ls)))
-                       (let loop ((items (%as-list ls))
-                                  (result '()))
-                         (if (null? items)
-                             (%to-type tp (reverse result))
-                             (if (any? (lambda (x)(%funcall test (car items) x)) result)
-                                 (loop (cdr items) result)
-                                 (loop (cdr items)(cons (car items) result))))))))
+(%function-add-method! bard:unique `(,<null> & args) (%primitive-method (ls & args)(%nothing)))
 
-(%function-add-method! bard:unique `(,<null> & args) %bard-unique)
-(%function-add-method! bard:unique `(,<cons> & args) %bard-unique)
-(%function-add-method! bard:unique `(,<string> & args) %bard-unique)
-(%function-add-method! bard:unique `(,<frame> & args) %bard-unique)
+(%function-add-method! bard:unique `(,<cons> & args) 
+                       (%primitive-method (ls & args)
+                                          (let ((test (if (null? args) bard:= (car args))))
+                                            (let loop ((items ls)
+                                                       (result '()))
+                                              (if (null? items)
+                                                  (reverse result)
+                                                  (if (any? (lambda (x)(%funcall test (car items) x)) result)
+                                                      (loop (cdr items) result)
+                                                      (loop (cdr items)(cons (car items) result))))))))
+
+(%function-add-method! bard:unique `(,<string> & args) 
+                       (%primitive-method (str & args)
+                                          (let ((test (if (null? args) bard:= (car args)))
+                                                (len (string-length str)))
+                                            (let loop ((i 0)
+                                                       (result '()))
+                                              (if (>= i len)
+                                                  (list->string (reverse result))
+                                                  (if (any? (lambda (x)(%funcall test (string-ref str i) x)) result)
+                                                      (loop (+ i 1) result)
+                                                      (loop (+ i 1)(cons (string-ref str i) result))))))))
+
+(%function-add-method! bard:unique `(,<frame> & args) 
+                       (%primitive-method (fr & args)
+                                          (let ((test (if (null? args) bard:= (car args))))
+                                            (let loop ((items (%frame-slots fr))
+                                                       (result '()))
+                                              (if (null? items)
+                                                  (%list->frame (reverse result))
+                                                  (if (any? (lambda (x)(%funcall test (car items) x)) result)
+                                                      (loop (cdr items) result)
+                                                      (loop (cdr items)(cons (car items) result))))))))
 
 ;;; unzip
 ;;; ---------------------------------------------------------------------
@@ -1367,9 +1516,16 @@
 
 (%function-add-method! bard:unzip `(,<frame>) 
                        (%primitive-method (fr)
-                                          (let ((keys (%keys fr)))
-                                            (list keys
-                                                  (map (lambda (k)(%frame-get fr k)) keys)))))
+                                          (let loop ((items (%frame-slots fr))
+                                                     (lefts '())
+                                                     (rights '()))
+                                            (if (null? items)
+                                                (list (reverse lefts)
+                                                      (reverse rights))
+                                                (let ((item (car items)))
+                                                  (loop (cdr items)
+                                                        (cons (car item) lefts)
+                                                        (cons (cadr item) rights)))))))
 
 ;;; zip
 ;;; ---------------------------------------------------------------------

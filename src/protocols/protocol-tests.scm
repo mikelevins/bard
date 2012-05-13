@@ -264,12 +264,16 @@
    ((put (frame a: 1 b: 2) c: 3) . ,(->frame a: 1 b: 2 c: 3))
    ((put (frame a: 1 b: 2 c: 3) b: 'THREE) . ,(->frame a: 1 c: 3 b: 'THREE))
    
+   ((select nothing (frame a: 1 b: 2 c: 3)) . ,(%nothing))
+   ((select '(0 3 4) '(zero one two three four five)) . (zero three four))
+   ((select '(0 3 4) "abcdefeghijk") . (#\a #\d #\e))
+   ((select '(a: c:) (frame a: 1 b: 2 c: 3)) . (1 3))
+
    ((vals nothing) . ,(%nothing))
    ((vals '(0 1 2)) . (0 1 2))
    ((vals "foobar") . (#\f #\o #\o #\b #\a #\r))
    ((vals (frame a: 1 b: 2 c: 3)) . (1 2 3))
    ))
-
 ;;; ---------------------------------------------------------------------
 ;;; Function
 ;;; ---------------------------------------------------------------------
@@ -471,6 +475,84 @@
    ((length '(a b c d)) . 4)
    ((length "abcd") . 4)
    ((length (frame a: 1 b: 2 c: 3)) . 3)
+
+   ((map odd? nothing) . ,(%nothing))
+   ((map odd? '(0 1 2 3)) . (#f #t #f #t))
+   ((map character? "abc") . (#t #t #t))
+   ((map first (frame a: 1 b: 2)) . (a: b:))
+   ((map + (list 2 3 4)(list 1 1 1)) . (3 4 5))
+   ((map + (list 2 3 4)(list 1 1)) . (3 4))
+   ((map < "abc" "bcd") . (#t #t #t))
+   ((map = "abc" "bcc") . (#f #f #t))
+   ((map (method (slot)(list (first slot) 'no)) (frame a: 1 b: 2 c: 3)) . ,(->frame a: 'no b: 'no c: 'no))
+   
+   ((partition 2 nothing) . ,(%nothing))
+   ((partition 2 '(0 1 2 3 4 5 6 7)) . ((0 1)(1 2)(2 3)(3 4)(4 5)(5 6)(6 7)(7)))
+   ((partition 2 '(0 1 2 3 4 5 6 7 8) 2) . ((0 1)(2 3)(4 5)(6 7)(8)))
+   ((partition 3 '(0 1 2 3 4 5 6 7 8) 2) . ((0 1 2)(2 3 4)(4 5 6)(6 7 8)(8)))
+   ((partition 3  "Walter") . ((#\W #\a #\l)(#\a #\l #\t)(#\l #\t #\e)(#\t #\e #\r)(#\e #\r)))
+
+   ((position odd? nothing) . ,(%nothing))
+   ((position odd? '(0 2 4 6 8 9)) . 5)
+   ((position (method (c)(= c #\D)) "abcDefg") . 3)
+   ((position (method (slot)(even? (second slot))) (frame a: 1 b: 3 c: 5 d: 6 e: 7)) . 3)
+
+   ((range 0 10) . (0 1 2 3 4 5 6 7 8 9))
+   ((range 0 10 3) . (0 3 6 9))
+   ((range 10 0) . (10 9 8 7 6 5 4 3 2 1))
+
+   ((reduce + 0 '()) . 0)
+   ((reduce + 0 '(1 1 1 1 1)) . 5)
+   ((reduce append "" '("F" "o" "o")) . "Foo")
+
+   ((repeat 2 1) . (1 1))
+   ((repeat 4 "oo") . ("oo" "oo" "oo" "oo"))
+
+   ((reverse nothing) . ,(%nothing))
+   ((reverse '(a b c)) . (c b a))
+   ((reverse "foo") . "oof")
+   ((reverse (frame a: 1 b: 2 c: 3)) . ,(->frame c: 3 b: 2 a: 1))
+
+   ((second nothing) . ,(%nothing))
+   ((second '(a b c)) . b)
+   ((second "abc") . #\b)
+   ((second (frame a: 1 b: 2 c: 3)) . (b: 2))
+
+   ((slice '(0 1 2 3 4 5 6 7 8) 2 5) . (2 3 4))
+   ((slice "abcdefghij" 2 5) . "cde")
+   ((slice (frame a: 0 b: 1 c: 2 d: 3 e: 4 f: 5 g: 6 h: 7) 2 5) . ,(->frame c: 2 d: 3 e: 4))
+
+   ((some? odd? nothing) . ,(%nothing))
+   ((some? odd? (range 0 10)) . 1)
+   ((some? character? "Foobar") . #\F)
+   ((some? integer? "Foobar") . ,(%nothing))
+   ((some? (method (s)(even? (second s))) (frame a: 1 b: 2 c: 3)) . (b: 2))
+
+   ((tail nothing) . ,(%nothing))
+   ((tail '(0 1 2 3)) . (1 2 3))
+   ((tail "abcde") . "bcde")
+   ((tail (frame a: 0 b: 1 c: 2 d: 3 e: 4 f: 5 g: 6 h: 7)) . ,(->frame b: 1 c: 2 d: 3 e: 4 f: 5 g: 6 h: 7))
+
+   ((tails nothing) . ,(%nothing))
+   ((tails '(a b c)) . ((a b c)(b c)(c)))
+   ((tails "abc") . ("abc" "bc" "c"))
+
+   ((take 1 '(apple banana cherry)) . (apple))
+   ((take 3 "abcdefgh") . "abc")
+   ((take 3 (frame a: 0 b: 1 c: 2 d: 3 e: 4 f: 5 g: 6 h: 7)) . ,(->frame a: 0 b: 1 c: 2))
+
+   ((take-before odd? '(0 2 4 6 7 8 9 10)) . (0 2 4 6))
+   ((take-before (method (c)(= c #\F)) "abcdeFghijk") . "abcde")
+
+   ((unique nothing) . ,(%nothing))
+   ((unique '(0 0 1 1 2 2)) . (0 1 2))
+   ((unique "Frobbozz") . "Frobz")
+   ((unique (frame a: 1 b: 1 c: 2 d: 3) (method (x y)(= (second x)(second y)))) . ,(->frame a: 1 c: 2 d: 3))
+
+   ((unzip nothing) . ,(%nothing))
+   ((unzip '((a 1)(b 2)(c 3))) . ((a b c)(1 2 3)))
+   ((unzip '("a1" "b2" "c3")) . ((#\a #\b #\c)(#\1 #\2 #\3)))
+   ((unzip (frame a: 1 b: 2 c: 3)) . ((a: b: c:)(1 2 3)))
    ))
 
 ;;; ---------------------------------------------------------------------

@@ -30,7 +30,7 @@
    ((%macro-form? expr)(%eval-macro-form expr env))
    (else (%eval-function-application expr env))))
 
-(define (%eval expr env)
+(define (%eval expr #!optional (env '()))
   (cond
    ((%symbol? expr) (%eval-variable expr env))
    ((%cons? expr) (%eval-application expr env))

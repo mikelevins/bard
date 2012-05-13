@@ -320,6 +320,20 @@
 (%function-add-method! bard:put `(,<string> ,<bignum> ,Anything) %bard-put-in-string)
 (%function-add-method! bard:put `(,<frame> ,Anything ,Anything) %bard-put)
 
+;;; select
+;;; ---------------------------------------------------------------------
+
+(define bard:select (%make-function name: 'select))
+
+(%function-add-method! bard:select `(,<null> ,Anything) 
+                       (%primitive-method (indexes ls)(%nothing)))
+(%function-add-method! bard:select `(,<cons> ,<cons>)
+                       (%primitive-method (indexes ls) (map (lambda (i)(list-ref ls i)) indexes)))
+(%function-add-method! bard:select `(,<cons> ,<string>)
+                       (%primitive-method (indexes str) (map (lambda (i)(string-ref str i)) indexes)))
+(%function-add-method! bard:select `(,<cons> ,<frame>)
+                       (%primitive-method (keys fr) (map (lambda (k)(%frame-get fr k)) keys)))
+
 ;;; vals
 ;;; ---------------------------------------------------------------------
 
