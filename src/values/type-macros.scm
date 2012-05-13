@@ -12,12 +12,14 @@
 (define-macro (%define-primitive-type name tag)
   `(begin
      (define ,name (%make-primitive-type ',name ,tag))
-     (table-set! $bard-primitive-type-table ,tag ,name)))
+     (table-set! $bard-primitive-type-table ,tag ,name)
+     ,name))
 
-(define-macro (%define-structure-type name predicate)
+(define-macro (%define-structure-type name gambit-structure-type predicate)
   `(begin
-     (define ,name (%make-structure-type ',name ,predicate))
-     ',name))
+     (define ,name (%make-structure-type ',name ,gambit-structure-type ,predicate))
+     (table-set! $bard-structure-type-table ,gambit-structure-type ,name)
+     ,name))
 
 (define-macro (%define-protocol name)
   `(begin

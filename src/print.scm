@@ -96,16 +96,6 @@
                                                (%as-string (%singleton-value x))
                                                ">")))
 
-(%defprinter <type>
-             (%primitive-method (x) 
-                                (cond
-                                 ((%singleton? x) (string-append "#<singleton " (%as-string (%singleton-value x)) ">"))
-                                 ((%primitive-type? x) (string-append "#<primitive-type " (%as-string (%primitive-type-name x)) ">"))
-                                 ((%structure-type? x)  (string-append "#<structure-type " (%as-string (%structure-type-name x)) ">"))
-                                 ((%protocol? x) (string-append "#<protocol " (%as-string (%protocol-name x)) ">"))
-                                 (else (error (string-append "not a type" (object->string x)))))))
-
-
 (define (bard:print object #!optional (out (current-output-port)))
   (print port: out (%as-string object)))
 

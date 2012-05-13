@@ -9,11 +9,14 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-macros.scm")
 (include "function-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; utils
 ;;; ---------------------------------------------------------------------
+
+(define (%ampersand? x)(eq? x '&))
 
 (define (%function-param->formal-argument param)
   (cond
@@ -111,10 +114,8 @@
                                           (%method-table-entries mtable))))))
 
 (define (%vals-match-method-signature? vals msig)
-  (let* ((ampersand? (lambda (x)(eq? x '&)))
-         (rest? (any? ampersand? msig))
-         (required-args (take-before ampersand? msig))
-         (required-argcount (length required-args))
+  (let* ((ampersand-pos (position-if %ampersand? msig))
+         (required-argcount (or ampersand-pos (length msig)))
          (supplied-argcount (length vals))
          (matches? (lambda (val tp)
                      (if (equal? tp Anything)
@@ -123,21 +124,32 @@
                              (equal? val (%singleton-value tp))
                              (%subtype? (%object->bard-type val) tp))))))
     (and
-     (if rest?
+     (if ampersand-pos
          (>= supplied-argcount required-argcount)
          (= supplied-argcount required-argcount))
-     (every? matches?
-             vals
-             required-args))))
-
-(define (%method-entries-matching-values mtable vals)
-  (filter (lambda (entry)
-            (%vals-match-method-signature? vals (car entry)))
-          (%method-table-entries mtable)))
+     (let loop ((vals vals)
+                (types msig)
+                (i 0))
+       (if (>= i required-argcount)
+           #t
+           (if (matches? (car vals)(car types))
+               (loop (cdr vals)(cdr types)(+ i 1))
+               #f))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; methods
 ;;; ---------------------------------------------------------------------
+
+(define-type %method
+  id: 86F8548C-056C-4369-ADF3-1657D7E83649
+  constructor: %private-make-method
+  (name %method-name)
+  (environment %method-environment %set-method-environment!)
+  (parameters %method-parameters)
+  (required-count %method-required-count)
+  (body %method-body))
+
+(%define-structure-type <method> (##structure-type (%private-make-method #f '() '() 0 '())) %method?)
 
 (define (%validate-method-name name)
   (cond
@@ -151,9 +163,11 @@
       (error "Invalid parameter list for method" params)))
 
 (define (%make-method #!key (name #f)(environment '())(params '())(body '()))
-  (let ((valid-name (%validate-method-name name))
-        (valid-params (%validate-method-params params)))
-    (%private-make-method valid-name environment valid-params body)))
+  (let* ((valid-name (%validate-method-name name))
+         (valid-params (%validate-method-params params))
+         (ampersand-pos (position-if %ampersand? valid-params))
+         (required-count (or ampersand-pos (length valid-params))))
+    (%private-make-method valid-name environment valid-params required-count body)))
 
 (define (%with-environment env meth)
   (begin
@@ -163,6 +177,14 @@
 ;;; ---------------------------------------------------------------------
 ;;; functions
 ;;; ---------------------------------------------------------------------
+
+(define-type %function
+  id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
+  constructor: %private-make-function
+  (name %function-name)
+  (method-table %function-method-table %set-function-method-table!))
+
+(%define-structure-type <function> (##structure-type (%private-make-function #f #f)) %function?)
 
 (define (%validate-function-name name)
   (cond

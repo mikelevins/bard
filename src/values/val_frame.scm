@@ -25,7 +25,7 @@
   constructor: %private-make-frame
   (slots %frame-slots %set-frame-slots!))
 
-(%define-structure-type <frame> %frame?)
+(%define-structure-type <frame> (##structure-type (%private-make-frame '())) %frame?)
 
 (define (%make-frame-slot key val)(list key val))
 (define (%frame-slot-key slot)(car slot))

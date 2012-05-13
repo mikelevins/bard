@@ -54,40 +54,22 @@
   (name %primitive-type-name)
   (tag %primitive-type-tag))
 
+(define $bard-primitive-type-table (make-table test: eqv?))
+
 ;;; ---------------------------------------------------------------------
 ;;; bard types
 ;;; ---------------------------------------------------------------------
-
-(define $bard-primitive-type-table (make-table test: eqv?))
 
 ;;; structure types
 
 (define-type %structure-type
   id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
-  constructor: %private-make-structure-type
+  constructor: %make-structure-type
   (name %structure-type-name)
+  (gambit-type %structure-type-gambit-type)
   (predicate %structure-type-predicate))
 
-(define $bard-structure-types '())
-
-(define (%make-structure-type name pred)
-  (let ((tp (%private-make-structure-type name pred)))
-    (set! $bard-structure-types
-          (cons (cons pred tp)
-                $bard-structure-types))
-    tp))
-
-(define (%obj->structure-type obj)
-  (let loop ((entries $bard-structure-types))
-    (if (null? entries)
-        #f
-        (let* ((entry (car entries))
-               (more (cdr entries))
-               (pred (car entry))
-               (type (cdr entry)))
-          (if (pred obj)
-              type
-              (loop more))))))
+(define $bard-structure-type-table (make-table test: eqv?))
 
 ;;; protocol types
 
@@ -105,7 +87,7 @@
                 $bard-protocols))
     tp))
 
-(%define-structure-type <protocol> %protocol?)
+(%define-structure-type <protocol> (##structure-type (%make-protocol 'ignored)) %protocol?)
 
 ;;; singletons
 
@@ -114,7 +96,7 @@
   constructor: %private-make-singleton
   (value %singleton-value))
 
-(%define-structure-type <singleton> %singleton?)
+(%define-structure-type <singleton> (##structure-type (%private-make-singleton 'ignored)) %singleton?)
 
 (define $singleton-table (make-table test: equal?))
 
@@ -147,28 +129,10 @@
 
 ;;; gambit structure types
 
-(%define-structure-type <input-stream> input-port?)
-(%define-structure-type <output-stream> output-port?)
+(%define-structure-type <input-stream> (##structure-type (current-input-port)) input-port?)
+(%define-structure-type <output-stream> (##structure-type (current-output-port)) output-port?)
 
 ;;; Bard structure types
-
-(define-type %function
-  id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
-  constructor: %private-make-function
-  (name %function-name)
-  (method-table %function-method-table %set-function-method-table!))
-
-(%define-structure-type <function> %function?)
-
-(define-type %method
-  id: 86F8548C-056C-4369-ADF3-1657D7E83649
-  constructor: %private-make-method
-  (name %method-name)
-  (environment %method-environment %set-method-environment!)
-  (parameters %method-parameters)
-  (body %method-body))
-
-(%define-structure-type <method> %method?)
 
 ;;; ---------------------------------------------------------------------
 ;;; type accessors
@@ -178,12 +142,7 @@
   (table-ref $bard-primitive-type-table (%type-tag thing)))
 
 (define (%structure-type thing)
-  (%obj->structure-type thing))
-
-(define (%object->bard-type thing)
-  (if (##structure? thing)
-      (%structure-type thing)
-      (%primitive-type thing)))
+  (table-ref $bard-structure-type-table (##structure-type thing)))
 
 (define (%type? thing)
   (or (%singleton? thing)
@@ -191,7 +150,19 @@
       (%structure-type? thing)
       (%protocol? thing)))
 
-(%define-structure-type <type> %type?)
+(define-type %type-type
+  id: 7EAC4075-6187-426F-A8DE-4DFC15400F62
+  constructor: %make-type-type
+  (name %type-type-name))
+
+(define <type> (%make-type-type '<type>))
+
+(define (%object->bard-type thing)
+  (cond
+   ((eq? thing <type>) <type>)
+   ((%type? thing) <type>)
+   ((##structure? thing) (%structure-type thing))
+   (else (%primitive-type thing))))
 
 ;;; ---------------------------------------------------------------------
 ;;; type taxonomy
