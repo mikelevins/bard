@@ -12,9 +12,13 @@
 (set! $bard-global-environment (%global-environment))
 
 ;;; ---------------------------------------------------------------------
-;;; general utils
+;;; primitive combinators
 ;;; ---------------------------------------------------------------------
 
+(%defglobal 'complement prim:complement)
+(%defglobal 'constantly prim:constantly)
+(%defglobal 'flip prim:flip)
+(%defglobal 'partial prim:partial)
 (%defglobal 'id (lambda (x) x))
 
 ;;; ---------------------------------------------------------------------
@@ -26,7 +30,6 @@
 (%defglobal 'quit prim:quit)
 (%defglobal 'room prim:room)
 (%defglobal 'version prim:version)
-
 
 ;;; ---------------------------------------------------------------------
 ;;; number primitives
