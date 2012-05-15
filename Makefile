@@ -81,7 +81,7 @@ IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objecti
 
 IOS_SIM_CC=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
 
-IOS_SIM_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
+IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -L${IOS_SIM_GAMBIT_HOME}/lib -x objective-c -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
 
 # ----------------------------------------
 # Library tools
