@@ -36,3 +36,4 @@ src/vm/dist/setup-config
 /_termite.log
 interpreter/libBard.a
 doc/Bard~.iba
+c_api/objc_data0.scm
