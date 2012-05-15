@@ -1,14 +1,12 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.scm
+;;;; Name:          objc_data.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard interpreter version string
+;;;; Purpose:       Scheme functions for constructing Objective-C data
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-
-(define $bard-version-string "Bard version 0.1.5")
+(c-declare "#import <Foundation/Foundation.h>")
 

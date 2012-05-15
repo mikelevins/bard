@@ -75,13 +75,13 @@ MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -no-c
 
 IOS_CC=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk
 
-IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
+IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
 
 # iOS Simulator
 
 IOS_SIM_CC=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
 
-IOS_SIM_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
+IOS_SIM_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
 
 # ----------------------------------------
 # Library tools
@@ -106,21 +106,21 @@ IOS_SIM_RANLIB=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ranlib
 # Bard Common files
 # ----------------------------------------
 
-SCHEME_SOURCES=src/version.scm lib/uuid.scm lib/srfi101.scm lib/wttree.scm src/util/general.scm src/util/list_utils.scm src/util/sort.scm src/values/val_type.scm src/values/val_function.scm src/values/val_undefined.scm src/values/nothing.scm src/values/val_character.scm src/values/val_boolean.scm src/values/val_number.scm src/values/val_name.scm src/values/string.scm src/values/cons.scm src/values/primitive_procedure.scm src/values/val_frame.scm src/protocols/Anything.scm src/protocols/Type.scm src/protocols/Applicable.scm src/protocols/ForeignValue.scm src/protocols/StructureValue.scm src/protocols/PrimitiveValue.scm src/protocols/Undefined.scm src/protocols/List.scm src/protocols/Atom.scm src/protocols/Text.scm src/protocols/Frame.scm src/protocols/Procedure.scm src/protocols/Name.scm src/protocols/Null.scm src/protocols/Number.scm src/protocols/Character.scm src/protocols/Boolean.scm src/protocols/Method.scm src/protocols/Function.scm src/protocols/Keyword.scm src/protocols/Symbol.scm src/protocols/Float.scm src/protocols/Integer.scm src/protocols/Ratio.scm src/protocols/Comparable.scm src/print.scm src/protocols/IOStream.scm src/protocols/As.scm src/prims.scm src/eval/special.scm src/eval/macro.scm src/eval/apply.scm src/eval/env.scm src/eval/eval.scm src/reader/read.scm src/repl/error.scm src/repl/toplevel.scm nelson/Puzzle.scm
+SCHEME_SOURCES=src/version.scm lib/uuid.scm src/util/general.scm src/util/list_utils.scm src/util/sort.scm src/values/val_type.scm src/values/val_function.scm src/values/val_undefined.scm src/values/nothing.scm src/values/val_character.scm src/values/val_boolean.scm src/values/val_number.scm src/values/val_name.scm src/values/string.scm src/values/cons.scm src/values/primitive_procedure.scm src/values/val_frame.scm src/protocols/Anything.scm src/protocols/Type.scm src/protocols/Applicable.scm src/protocols/ForeignValue.scm src/protocols/StructureValue.scm src/protocols/PrimitiveValue.scm src/protocols/Undefined.scm src/protocols/List.scm src/protocols/Atom.scm src/protocols/Text.scm src/protocols/Frame.scm src/protocols/Procedure.scm src/protocols/Name.scm src/protocols/Null.scm src/protocols/Number.scm src/protocols/Character.scm src/protocols/Boolean.scm src/protocols/Method.scm src/protocols/Function.scm src/protocols/Keyword.scm src/protocols/Symbol.scm src/protocols/Float.scm src/protocols/Integer.scm src/protocols/Ratio.scm src/protocols/Comparable.scm src/print.scm src/protocols/IOStream.scm src/protocols/As.scm src/prims.scm src/eval/special.scm src/eval/macro.scm src/eval/apply.scm src/eval/env.scm src/eval/eval.scm src/reader/read.scm src/repl/error.scm src/repl/toplevel.scm nelson/Puzzle.scm
 
-C_SOURCES=src/version.c lib/uuid.c lib/srfi101.c lib/wttree.c src/util/general.c src/util/list_utils.c src/util/sort.c src/values/val_type.c src/values/val_function.c src/values/val_undefined.c src/values/nothing.c src/values/val_character.c src/values/val_boolean.c src/values/val_number.c src/values/val_name.c src/values/string.c src/values/cons.c src/values/primitive_procedure.c src/values/val_frame.c src/protocols/Anything.c src/protocols/Type.c src/protocols/Applicable.c src/protocols/ForeignValue.c src/protocols/StructureValue.c src/protocols/PrimitiveValue.c src/protocols/Undefined.c src/protocols/List.c src/protocols/Atom.c src/protocols/Text.c src/protocols/Frame.c src/protocols/Procedure.c src/protocols/Name.c src/protocols/Null.c src/protocols/Number.c src/protocols/Character.c src/protocols/Boolean.c src/protocols/Method.c src/protocols/Function.c src/protocols/Keyword.c src/protocols/Symbol.c src/protocols/Float.c src/protocols/Integer.c src/protocols/Ratio.c src/protocols/Comparable.c src/print.c src/protocols/IOStream.c src/protocols/As.c src/prims.c src/eval/special.c src/eval/macro.c src/eval/apply.c src/eval/env.c src/eval/eval.c src/reader/read.c src/repl/error.c src/repl/toplevel.c nelson/Puzzle.c
+C_SOURCES=src/version.c lib/uuid.c src/util/general.c src/util/list_utils.c src/util/sort.c src/values/val_type.c src/values/val_function.c src/values/val_undefined.c src/values/nothing.c src/values/val_character.c src/values/val_boolean.c src/values/val_number.c src/values/val_name.c src/values/string.c src/values/cons.c src/values/primitive_procedure.c src/values/val_frame.c src/protocols/Anything.c src/protocols/Type.c src/protocols/Applicable.c src/protocols/ForeignValue.c src/protocols/StructureValue.c src/protocols/PrimitiveValue.c src/protocols/Undefined.c src/protocols/List.c src/protocols/Atom.c src/protocols/Text.c src/protocols/Frame.c src/protocols/Procedure.c src/protocols/Name.c src/protocols/Null.c src/protocols/Number.c src/protocols/Character.c src/protocols/Boolean.c src/protocols/Method.c src/protocols/Function.c src/protocols/Keyword.c src/protocols/Symbol.c src/protocols/Float.c src/protocols/Integer.c src/protocols/Ratio.c src/protocols/Comparable.c src/print.c src/protocols/IOStream.c src/protocols/As.c src/prims.c src/eval/special.c src/eval/macro.c src/eval/apply.c src/eval/env.c src/eval/eval.c src/reader/read.c src/repl/error.c src/repl/toplevel.c nelson/Puzzle.c
 
-OBJECTS=version.o uuid.o srfi101.o wttree.o general.o list_utils.o sort.o val_type.o val_function.o val_undefined.o nothing.o val_character.o val_boolean.o val_number.o val_name.o string.o cons.o primitive_procedure.o val_frame.o Anything.o Type.o Applicable.o ForeignValue.o StructureValue.o PrimitiveValue.o Undefined.o List.o Atom.o Text.o Frame.o Procedure.o Name.o Null.o Number.o Character.o Boolean.o Method.o Function.o Keyword.o Symbol.o Float.o Integer.o Ratio.o Comparable.o print.o IOStream.o As.o prims.o special.o macro.o apply.o env.o eval.o read.o error.o toplevel.o Puzzle.o
+OBJECTS=version.o uuid.o general.o list_utils.o sort.o val_type.o val_function.o val_undefined.o nothing.o val_character.o val_boolean.o val_number.o val_name.o string.o cons.o primitive_procedure.o val_frame.o Anything.o Type.o Applicable.o ForeignValue.o StructureValue.o PrimitiveValue.o Undefined.o List.o Atom.o Text.o Frame.o Procedure.o Name.o Null.o Number.o Character.o Boolean.o Method.o Function.o Keyword.o Symbol.o Float.o Integer.o Ratio.o Comparable.o print.o IOStream.o As.o prims.o special.o macro.o apply.o env.o eval.o read.o error.o toplevel.o Puzzle.o
 
 # ----------------------------------------
 # Inputs to the Bard library
 # ----------------------------------------
 
-LIB_SCHEME_SOURCES=c_api/bard_api.scm c_api/bard_c_api.scm src/bard.scm 
+LIB_SCHEME_SOURCES=c_api/bard_api.scm c_api/bard_c_api.scm c_api/objc_data.scm src/bard.scm 
 
-LIB_C_SOURCES=c_api/bard_api.c c_api/bard_c_api.c src/bard.c src/bard_.c
+LIB_C_SOURCES=c_api/bard_api.c c_api/bard_c_api.c c_api/objc_data.c src/bard.c src/bard_.c
 
-LIB_OBJECTS=bard_api.o bard_c_api.o bard.o bard_.o
+LIB_OBJECTS=bard_api.o bard_c_api.o objc_data.o bard.o bard_.o
 
 # ----------------------------------------
 # Inputs to the Bard executable

@@ -101,7 +101,7 @@
       acc
       (let ((k (car plist)))
         (if (null? (cdr plist))
-            (error "Malformed property list: " quals)
+            (error "Malformed property list: " plist)
             (if (assq k acc)
                 (error "Duplicate key in property list: " k)
                 (let ((v (cadr plist)))

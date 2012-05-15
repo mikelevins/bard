@@ -138,7 +138,7 @@
                        (%primitive-method (& args)
                                           (let ((in (if (null? args)
                                                         (current-input-port)
-                                                        in)))
+                                                        (car args))))
                                             (read-line in))))
 
 ;;; read-lines

@@ -45,7 +45,7 @@
 (define tags:$pair (%type-tag '(a . b)))
 (define tags:$symbol (%type-tag 'foo))
 (define tags:$keyword (%type-tag foo:))
-(define tags:$procedure (%type-tag (lambda () x)))
+(define tags:$procedure (%type-tag (lambda (x) x)))
 (define tags:$structure (%type-tag (current-input-port)))
 
 (define-type %primitive-type
