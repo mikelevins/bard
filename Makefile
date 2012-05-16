@@ -67,9 +67,9 @@ IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iphone-simulator
 
 MAC_CC=/Developer/usr/bin/gcc
 
-MAC_CFLAGS_LIB= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -arch i386 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -fasm-blocks -gdwarf-2 -D___LIBRARY
+MAC_CFLAGS_LIB= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -arch i386 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -fasm-blocks -gdwarf-2 -D___LIBRARY
 
-MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp -arch i386
+MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp -arch i386
 
 # iOS
 
@@ -126,9 +126,9 @@ LIB_OBJECTS=bard_api.o bard_c_api.o objc_data.o bard.o bard_.o
 # Inputs to the Bard executable
 # ----------------------------------------
 
-MAIN_SCHEME_SOURCES=src/bard.scm src/main.scm
+MAIN_SCHEME_SOURCES=c_api/objc_data.scm src/bard.scm src/main.scm
 
-MAIN_C_SOURCES=src/bard.c src/main.c src/main_.c
+MAIN_C_SOURCES=c_api/objc_data.c src/bard.c src/main.c src/main_.c
 
 # ----------------------------------------
 # make rules
@@ -197,7 +197,7 @@ ios_sim_lib:
 
 mac_main: 
 	${GSC} -link ${SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
-	${MAC_CC} ${MAC_CFLAGS_MAIN} -o ${MAC_EXECUTABLE} ${MAC_GAMBIT_HOME}/lib/libgambc.a ${C_SOURCES} ${MAIN_C_SOURCES}
+	${MAC_CC} ${MAC_CFLAGS_MAIN} -o ${MAC_EXECUTABLE} -L${MAC_GAMBIT_HOME}/lib/ -lgambc ${C_SOURCES} ${MAIN_C_SOURCES}
 	mv ${MAC_EXECUTABLE} ${MAC_BUILD_DIR}/${MAC_EXECUTABLE}
 
 
