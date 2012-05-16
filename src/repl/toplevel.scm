@@ -32,6 +32,17 @@
 (%defglobal 'version prim:version)
 
 ;;; ---------------------------------------------------------------------
+;;; type-system primitives
+;;; ---------------------------------------------------------------------
+
+(%defglobal '<type> <type>)
+(%defglobal 'type? prim:type?)
+(%defglobal 'type prim:type)
+(%defglobal 'singleton prim:singleton)
+(%defglobal 'singleton? prim:singleton?)
+(%defglobal '%primitive-type-tag %type-tag)
+
+;;; ---------------------------------------------------------------------
 ;;; number primitives
 ;;; ---------------------------------------------------------------------
 
@@ -89,10 +100,6 @@
 (%defglobal 'something? bard:something?)
 
 (%defglobal 'Type Type)
-(%defglobal 'type bard:type)
-(%defglobal 'type? bard:type?)
-(%defglobal 'singleton bard:singleton)
-(%defglobal 'singleton? bard:singleton?)
 
 (%defglobal 'Applicable Applicable)
 (%defglobal 'applicable? bard:applicable?)

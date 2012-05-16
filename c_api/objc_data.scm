@@ -10,17 +10,12 @@
 
 (c-declare "#import <Foundation/Foundation.h>")
 
-(define objc:nil
-  (c-lambda () "id"
-#<<c-code
-   ___result_voidstar = NULL;
-c-code
-))
+(define (objc:nil) #f)
 
 (define objc:retain
-  (c-lambda ("id") "id"
+  (c-lambda ("id") void
 #<<c-code
-   ___result_voidstar = [___arg1 retain];
+   [___arg1 retain];
 c-code
 ))
 
@@ -32,16 +27,15 @@ c-code
 ))
 
 (define objc:make-ns-string
-  (c-lambda (char-string) (pointer "NSString")
+  (c-lambda (char-string) "id"
 #<<c-code
-   NSString* s = (NSString*)[NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
+   NSString* s = [NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
    ___result_voidstar = (void*)s;
-   
 c-code
 ))
 
 (define objc:make-ns-mutable-array
-  (c-lambda () (pointer "NSMutableArray")
+  (c-lambda () "id"
 #<<c-code
    NSMutableArray* arr = [NSMutableArray array];
    ___result_voidstar = (void*)arr;
@@ -49,7 +43,7 @@ c-code
 ))
 
 (define objc:make-ns-mutable-dictionary
-  (c-lambda () (pointer "NSMutableDictionary")
+  (c-lambda () "id"
 #<<c-code
    NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:16];
    ___result_voidstar = (void*)dict;
@@ -68,7 +62,7 @@ c-code
 
 
 (define objc:ns-mutable-array/add-string
-  (c-lambda ((pointer "NSMutableArray")(pointer "NSString")) (pointer "NSMutableArray")
+  (c-lambda ((pointer "NSMutableArray")(pointer "NSString")) "id"
 #<<c-code
    [___arg1 addObject: ___arg2];
    ___result_voidstar = (void*)___arg1;

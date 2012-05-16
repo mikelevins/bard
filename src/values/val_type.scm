@@ -47,6 +47,7 @@
 (define tags:$keyword (%type-tag foo:))
 (define tags:$procedure (%type-tag (lambda (x) x)))
 (define tags:$structure (%type-tag (current-input-port)))
+(define tags:$foreign-value 18)
 
 (define-type %primitive-type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
@@ -126,6 +127,7 @@
 (%define-primitive-type <primitive-procedure> tags:$procedure)
 (%define-primitive-type <cons> tags:$pair)
 (%define-primitive-type <string> tags:$string)
+(%define-primitive-type <foreign-value> tags:$foreign-value)
 
 ;;; gambit structure types
 

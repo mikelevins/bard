@@ -81,3 +81,11 @@
   (lambda more-args
     (%apply fn `(,@args ,@more-args))))
 
+;;; type system
+
+(define prim:type? %type?)
+(define prim:type %object->bard-type)
+(define prim:singleton? %singleton?)
+(define prim:singleton %singleton)
+
+

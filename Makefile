@@ -116,19 +116,19 @@ OBJECTS=version.o uuid.o general.o list_utils.o sort.o val_type.o val_function.o
 # Inputs to the Bard library
 # ----------------------------------------
 
-LIB_SCHEME_SOURCES=c_api/bard_api.scm c_api/bard_c_api.scm c_api/objc_data.scm src/bard.scm 
+LIB_SCHEME_SOURCES=c_api/bard_api.scm c_api/bard_c_api.scm c_api/objc_data.scm c_api/bard_toplevel.scm src/bard.scm 
 
-LIB_C_SOURCES=c_api/bard_api.c c_api/bard_c_api.c c_api/objc_data.c src/bard.c src/bard_.c
+LIB_C_SOURCES=c_api/bard_api.c c_api/bard_c_api.c c_api/objc_data.c c_api/bard_toplevel.c src/bard.c src/bard_.c
 
-LIB_OBJECTS=bard_api.o bard_c_api.o objc_data.o bard.o bard_.o
+LIB_OBJECTS=bard_api.o bard_c_api.o objc_data.o bard_toplevel.o bard.o bard_.o
 
 # ----------------------------------------
 # Inputs to the Bard executable
 # ----------------------------------------
 
-MAIN_SCHEME_SOURCES=c_api/objc_data.scm src/bard.scm src/main.scm
+MAIN_SCHEME_SOURCES=c_api/objc_data.scm c_api/bard_toplevel.scm src/bard.scm src/main.scm
 
-MAIN_C_SOURCES=c_api/objc_data.c src/bard.c src/main.c src/main_.c
+MAIN_C_SOURCES=c_api/objc_data.c c_api/bard_toplevel.c src/bard.c src/main.c src/main_.c
 
 # ----------------------------------------
 # make rules

@@ -53,7 +53,10 @@
    ((unknown-keyword-argument-exception? err) "unknown keyword argument")
    ((keyword-expected-exception? err) "keyword argument expected")
    ((noncontinuable-exception? err) "noncontinuable exception")
-   (else "unrecognized error")))
+   ((unbound-table-key-exception? err) 
+    (string-append "unbound table key: " (object->string (unbound-table-key-exception-arguments err))
+                   " in procedure: " (object->string (unbound-table-key-exception-procedure err))))
+   (else (string-append "unrecognized error: " (object->string err)))))
 
 (define (display-error err)
   (let ((msg (error->string err)))
