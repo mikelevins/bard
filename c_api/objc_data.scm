@@ -8,13 +8,18 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(c-declare "#include <objc/runtime.h>")
 (c-declare "#import <Foundation/Foundation.h>")
 
-(define (objc:nil) #f)
+;;; ---------------------------------------------------------------------
+;;; object lifecycle
+;;; ---------------------------------------------------------------------
 
-(define objc:describe
-  (c-lambda ("id") void
+(define objc:class-name
+  (c-lambda ("id") char-string
 #<<c-code
+   const char* cname = object_getClassName(___arg1);
+   ___result = cname;
 c-code
 ))
 
@@ -32,7 +37,18 @@ c-code
 c-code
 ))
 
-(define objc:string-as-ns-string
+(define objc:autorelease
+  (c-lambda ("id") void
+#<<c-code
+   [___arg1 autorelease];
+c-code
+))
+
+;;; ---------------------------------------------------------------------
+;;; NSString
+;;; ---------------------------------------------------------------------
+
+(define objc:string->NSString
   (c-lambda (char-string) (pointer "NSString")
 #<<c-code
    NSString* s = [NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
@@ -40,7 +56,7 @@ c-code
 c-code
 ))
 
-(define objc:ns-string-as-string
+(define objc:NSString->string
   (c-lambda ((pointer "NSString")) char-string
 #<<c-code
    char* cstr = [___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
@@ -48,7 +64,11 @@ c-code
 c-code
 ))
 
-(define objc:make-ns-mutable-array
+;;; ---------------------------------------------------------------------
+;;; NSMutableArray
+;;; ---------------------------------------------------------------------
+
+(define objc:make-NSMutableArray
   (c-lambda () (pointer "NSMutableArray")
 #<<c-code
    NSMutableArray* arr = [NSMutableArray array];
@@ -56,7 +76,58 @@ c-code
 c-code
 ))
 
-(define objc:make-ns-mutable-dictionary
+(define objc:NSMutableArray/count
+  (c-lambda ((pointer "NSMutableArray")) int
+#<<c-code
+   int n = [___arg1 count];
+   ___result = n;
+c-code
+))
+
+(define objc:NSMutableArray/add-string!
+  (c-lambda ((pointer "NSMutableArray") char-string) void
+#<<c-code
+   NSString* str = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   [___arg1 addObject: str];
+c-code
+))
+
+(define objc:NSMutableArray/string-at-index
+  (c-lambda ((pointer "NSMutableArray") int) char-string
+#<<c-code
+   NSMutableArray* theArray = ___arg1;
+   int index = ___arg2;
+   int count = [theArray count];
+   if (index >= count) {
+      ___result = NULL;
+    } else {
+      id elt = [theArray objectAtIndex:index];
+      if ([elt isKindOfClass:[NSString class]]) {
+        NSString* str = (NSString*)elt;
+        char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+        ___result = cstr;
+      } else {
+        ___result = NULL;
+      }
+    }
+c-code
+))
+
+(define (objc:string-list->NSMutableArray ls)
+  (if (and (list? ls)
+           (every? string? ls))
+      (let ((arr (objc:make-NSMutableArray)))
+        (for-each (lambda (s) (objc:NSMutableArray/add-string! arr s)) ls)
+        arr)
+      (error (string-append "invalid argument in objc:list->NSMutableArray: "
+                            (object->string ls)))))
+
+
+;;; ---------------------------------------------------------------------
+;;; NSMutableDictionary
+;;; ---------------------------------------------------------------------
+
+(define objc:make-NSMutableDictionary
   (c-lambda () (pointer "NSMutableDictionary")
 #<<c-code
    NSMutableDictionary* dict = [NSMutableDictionary dictionary];
@@ -64,48 +135,114 @@ c-code
 c-code
 ))
 
-(define objc:ns-mutable-dictionary/set-string-for-key
+(define objc:NSMutableDictionary/put-string-at-string!
   (c-lambda ((pointer "NSMutableDictionary") char-string char-string) void
 #<<c-code
-   NSMutableDictionary* dict =___arg1;
+   NSMutableDictionary* dict = ___arg1;
    NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
    NSString* val = [NSString stringWithCString: ___arg3 encoding: NSASCIIStringEncoding];
-   [dict setObject: val forKey:key];
+   [dict setValue: val forKey: key];
 c-code
 ))
 
-(define objc:ns-mutable-dictionary/get-string-for-key
+(define objc:NSMutableDictionary/get-string-at-string
   (c-lambda ((pointer "NSMutableDictionary") char-string) char-string
 #<<c-code
-   NSMutableDictionary* dict =___arg1;
-   NSString* key = ___arg2;
-   NSString* str = (NSString*)[dict objectForKey: key];
-   char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
-   ___result = cstr;
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   id val = [dict valueForKey: key];
+   if (val == nil) {
+        ___result = NULL;
+   } else {
+      if ([val isKindOfClass:[NSString class]]) {
+        NSString* str = (NSString*)val;
+        char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+        ___result = cstr;
+      } else {
+        ___result = NULL;
+      }
+    }
 c-code
 ))
 
-
-(define objc:ns-mutable-array/add-string
-  (c-lambda ((pointer "NSMutableArray")(pointer "NSString")) void
+(define objc:NSMutableDictionary/get-string-at-string
+  (c-lambda ((pointer "NSMutableDictionary") char-string) char-string
 #<<c-code
-   [___arg1 addObject: ___arg2];
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   id val = [dict valueForKey: key];
+   if (val == nil) {
+        ___result = NULL;
+   } else {
+      if ([val isKindOfClass:[NSString class]]) {
+        NSString* str = (NSString*)val;
+        char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+        ___result = cstr;
+      } else {
+        ___result = NULL;
+      }
+    }
 c-code
 ))
 
-(define objc:ns-mutable-array/count
-  (c-lambda ((pointer "NSMutableArray")) int
+(define objc:NSMutableDictionary/put-int-at-string!
+  (c-lambda ((pointer "NSMutableDictionary") char-string int) void
 #<<c-code
-   int c = [___arg1 count];
-   ___result = c;
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   int val = ___arg3;
+   NSNumber* num = [NSNumber numberWithInt: val];
+   [dict setValue: num forKey: key];
 c-code
 ))
 
-(define objc:ns-mutable-array/element-as-string
-  (c-lambda ((pointer "NSMutableArray") int) char-string
+(define objc:NSMutableDictionary/get-int-at-string
+  (c-lambda ((pointer "NSMutableDictionary") char-string) int
 #<<c-code
-   NSString* str = (NSString*)[___arg1 objectAtIndex: ___arg2];
-   char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
-   ___result = cstr;
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   id val = [dict valueForKey: key];
+   if (val == nil) {
+        ___result = INT_MIN;
+   } else {
+      if ([val isKindOfClass:[NSNumber class]]) {
+        int i = [val intValue];
+        ___result = i;
+      } else {
+        ___result = INT_MIN;
+      }
+    }
 c-code
 ))
+
+(define objc:NSMutableDictionary/put-float-at-string!
+  (c-lambda ((pointer "NSMutableDictionary") char-string float) void
+#<<c-code
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   float val = ___arg3;
+   NSNumber* num = [NSNumber numberWithFloat: val];
+   [dict setValue: num forKey: key];
+c-code
+))
+
+(define objc:NSMutableDictionary/get-float-at-string
+  (c-lambda ((pointer "NSMutableDictionary") char-string) float
+#<<c-code
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   id val = [dict valueForKey: key];
+   if (val == nil) {
+        ___result = FLT_MIN;
+   } else {
+      if ([val isKindOfClass:[NSNumber class]]) {
+        float f = [val floatValue];
+        ___result = f;
+      } else {
+        ___result = FLT_MIN;
+      }
+    }
+c-code
+))
+
+
