@@ -12,6 +12,12 @@
 
 (define (objc:nil) #f)
 
+(define objc:describe
+  (c-lambda ("id") void
+#<<c-code
+c-code
+))
+
 (define objc:retain
   (c-lambda ("id") void
 #<<c-code
@@ -26,16 +32,24 @@ c-code
 c-code
 ))
 
-(define objc:make-ns-string
-  (c-lambda (char-string) "id"
+(define objc:string-as-ns-string
+  (c-lambda (char-string) (pointer "NSString")
 #<<c-code
    NSString* s = [NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
    ___result_voidstar = (void*)s;
 c-code
 ))
 
+(define objc:ns-string-as-string
+  (c-lambda ((pointer "NSString")) char-string
+#<<c-code
+   char* cstr = [___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
+   ___result = cstr;
+c-code
+))
+
 (define objc:make-ns-mutable-array
-  (c-lambda () "id"
+  (c-lambda () (pointer "NSMutableArray")
 #<<c-code
    NSMutableArray* arr = [NSMutableArray array];
    ___result_voidstar = (void*)arr;
@@ -43,9 +57,9 @@ c-code
 ))
 
 (define objc:make-ns-mutable-dictionary
-  (c-lambda () "id"
+  (c-lambda () (pointer "NSMutableDictionary")
 #<<c-code
-   NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:16];
+   NSMutableDictionary* dict = [NSMutableDictionary dictionary];
    ___result_voidstar = (void*)dict;
 c-code
 ))
@@ -60,11 +74,38 @@ c-code
 c-code
 ))
 
+(define objc:ns-mutable-dictionary/get-string-for-key
+  (c-lambda ((pointer "NSMutableDictionary") char-string) char-string
+#<<c-code
+   NSMutableDictionary* dict =___arg1;
+   NSString* key = ___arg2;
+   NSString* str = (NSString*)[dict objectForKey: key];
+   char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+   ___result = cstr;
+c-code
+))
+
 
 (define objc:ns-mutable-array/add-string
-  (c-lambda ((pointer "NSMutableArray")(pointer "NSString")) "id"
+  (c-lambda ((pointer "NSMutableArray")(pointer "NSString")) void
 #<<c-code
    [___arg1 addObject: ___arg2];
-   ___result_voidstar = (void*)___arg1;
+c-code
+))
+
+(define objc:ns-mutable-array/count
+  (c-lambda ((pointer "NSMutableArray")) int
+#<<c-code
+   int c = [___arg1 count];
+   ___result = c;
+c-code
+))
+
+(define objc:ns-mutable-array/element-as-string
+  (c-lambda ((pointer "NSMutableArray") int) char-string
+#<<c-code
+   NSString* str = (NSString*)[___arg1 objectAtIndex: ___arg2];
+   char* cstr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+   ___result = cstr;
 c-code
 ))
