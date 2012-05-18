@@ -45,3 +45,5 @@
 (%defglobal 'objc:NSMutableDictionary/get-int-at-string objc:NSMutableDictionary/get-int-at-string)
 (%defglobal 'objc:NSMutableDictionary/put-float-at-string! objc:NSMutableDictionary/put-float-at-string!)
 (%defglobal 'objc:NSMutableDictionary/get-float-at-string objc:NSMutableDictionary/get-float-at-string)
+(%defglobal 'objc:NSMutableDictionary/put-bool-at-string! objc:NSMutableDictionary/put-bool-at-string!)
+(%defglobal 'objc:NSMutableDictionary/get-bool-at-string objc:NSMutableDictionary/get-bool-at-string)

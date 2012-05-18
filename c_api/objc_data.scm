@@ -245,4 +245,34 @@ c-code
 c-code
 ))
 
+(define objc:NSMutableDictionary/put-bool-at-string!
+  (c-lambda ((pointer "NSMutableDictionary") char-string bool) void
+#<<c-code
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   BOOL val = ___arg3;
+   NSNumber* num = [NSNumber numberWithBool: val];
+   [dict setValue: num forKey: key];
+c-code
+))
+
+(define objc:NSMutableDictionary/get-bool-at-string
+  (c-lambda ((pointer "NSMutableDictionary") char-string) bool
+#<<c-code
+   NSMutableDictionary* dict = ___arg1;
+   NSString* key = [NSString stringWithCString: ___arg2 encoding: NSASCIIStringEncoding];
+   id val = [dict valueForKey: key];
+   if (val == nil) {
+        ___result = NO;
+   } else {
+      if ([val isKindOfClass:[NSNumber class]]) {
+        BOOL b = [val boolValue];
+        ___result = b;
+      } else {
+        ___result = NO;
+      }
+    }
+c-code
+))
+
 

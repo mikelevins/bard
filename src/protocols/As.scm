@@ -45,3 +45,8 @@
                                               (error (string-append "non-character element when converting a list to a string: "
                                                                     (%as-string y))))))
 
+
+(%function-add-method! bard:as `(,(%singleton <string>) ,<string>)(%primitive-method (x y) y))
+(%function-add-method! bard:as `(,(%singleton <string>) ,<symbol>)(%primitive-method (x y)(symbol->string y)))
+(%function-add-method! bard:as `(,(%singleton <string>) ,<keyword>)(%primitive-method (x y)(keyword->string y)))
+
