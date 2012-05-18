@@ -37,3 +37,4 @@ src/vm/dist/setup-config
 interpreter/libBard.a
 doc/Bard~.iba
 c_api/objc_data0.scm
+builds/

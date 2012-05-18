@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		97230CCC1566DF5B00455F2F /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97230CCB1566DF5B00455F2F /* libBard.a */; };
 		973428091555838400D6EA39 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973428081555838400D6EA39 /* Cocoa.framework */; };
 		973428131555838400D6EA39 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 973428111555838400D6EA39 /* InfoPlist.strings */; };
 		973428151555838400D6EA39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 973428141555838400D6EA39 /* main.m */; };
@@ -14,12 +15,11 @@
 		9734281C1555838500D6EA39 /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 9734281B1555838500D6EA39 /* Document.m */; };
 		9734281F1555838500D6EA39 /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9734281D1555838500D6EA39 /* Document.xib */; };
 		973428221555838500D6EA39 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 973428201555838500D6EA39 /* MainMenu.xib */; };
-		973428291555840F00D6EA39 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 973428281555840F00D6EA39 /* libBard.a */; };
-		977AC7A31555A58A008EAB68 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 977AC7A21555A58A008EAB68 /* libBard.a */; };
 		977AC7AB1555AA50008EAB68 /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 977AC7AA1555AA50008EAB68 /* libgambc.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		97230CCB1566DF5B00455F2F /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../builds/mac/libBard.a; sourceTree = "<group>"; };
 		973428041555838400D6EA39 /* BardTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BardTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		973428081555838400D6EA39 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9734280B1555838400D6EA39 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -34,8 +34,6 @@
 		9734281B1555838500D6EA39 /* Document.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document.m; sourceTree = "<group>"; };
 		9734281E1555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Document.xib; sourceTree = "<group>"; };
 		973428211555838500D6EA39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		973428281555840F00D6EA39 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../libBard.a; sourceTree = "<group>"; };
-		977AC7A21555A58A008EAB68 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../libBard.a; sourceTree = "<group>"; };
 		977AC7A41555A595008EAB68 /* bard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bard.h; path = ../../include/bard.h; sourceTree = "<group>"; };
 		977AC7A51555A595008EAB68 /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gambit.h; path = ../../include/gambit.h; sourceTree = "<group>"; };
 		977AC7AA1555AA50008EAB68 /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = gambit/libgambc.a; sourceTree = "<group>"; };
@@ -47,9 +45,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				973428091555838400D6EA39 /* Cocoa.framework in Frameworks */,
-				973428291555840F00D6EA39 /* libBard.a in Frameworks */,
-				977AC7A31555A58A008EAB68 /* libBard.a in Frameworks */,
 				977AC7AB1555AA50008EAB68 /* libgambc.a in Frameworks */,
+				97230CCC1566DF5B00455F2F /* libBard.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,7 +73,6 @@
 		973428071555838400D6EA39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				973428281555840F00D6EA39 /* libBard.a */,
 				973428081555838400D6EA39 /* Cocoa.framework */,
 				9734280A1555838400D6EA39 /* Other Frameworks */,
 			);
@@ -108,8 +104,8 @@
 		9734280F1555838400D6EA39 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				97230CCB1566DF5B00455F2F /* libBard.a */,
 				973428101555838400D6EA39 /* BardTest-Info.plist */,
-				977AC7A21555A58A008EAB68 /* libBard.a */,
 				977AC7AA1555AA50008EAB68 /* libgambc.a */,
 				977AC7A41555A595008EAB68 /* bard.h */,
 				977AC7A51555A595008EAB68 /* gambit.h */,
@@ -284,6 +280,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/BardTest/gambit\"",
+					"\"$(SRCROOT)/../builds/mac\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -301,6 +298,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/BardTest/gambit\"",
+					"\"$(SRCROOT)/../builds/mac\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

@@ -25,6 +25,10 @@ int main(int argc, char *argv[])
 	setup_params.linker  = SCHEME_LIBRARY_LINKER;
 	___setup (&setup_params);
     
+    NSMutableArray* arr = [NSMutableArray array];
+    const char* cname = object_getClassName(arr);
+    NSLog(@"\ncname == %s\n", cname);
+    
     char* version_string = version();
     NSLog(@"\nversion == %s\n", version_string);
 

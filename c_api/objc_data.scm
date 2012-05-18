@@ -12,16 +12,61 @@
 (c-declare "#import <Foundation/Foundation.h>")
 
 ;;; ---------------------------------------------------------------------
-;;; object lifecycle
+;;; foreign types
 ;;; ---------------------------------------------------------------------
 
 (define objc:class-name
+  (c-lambda ("Class") char-string
+#<<c-code
+   const char* cname = class_getName(___arg1);
+   ___result = cname;
+c-code
+))
+
+(define objc:object-class-name
   (c-lambda ("id") char-string
 #<<c-code
    const char* cname = object_getClassName(___arg1);
    ___result = cname;
 c-code
 ))
+
+(define objc:get-class
+  (c-lambda (char-string) "id"
+#<<c-code
+   id class = objc_getClass(___arg1);
+   ___result_voidstar = (void*)class;
+c-code
+))
+
+(define objc:class-of
+  (c-lambda ("id") "Class"
+#<<c-code
+   Class class = [___arg1 class];
+   ___result_voidstar = (void*)class;
+c-code
+))
+
+(define objc:instance-of?
+  (c-lambda ("id" "Class") bool
+#<<c-code
+   BOOL result = [___arg1 isKindOfClass: ___arg2];
+   ___result = result;
+c-code
+))
+
+(define objc:direct-instance-of?
+  (c-lambda ("id" "Class") bool
+#<<c-code
+   BOOL result = [___arg1 isMemberOfClass: ___arg2];
+   ___result = result;
+c-code
+))
+
+
+;;; ---------------------------------------------------------------------
+;;; object lifecycle
+;;; ---------------------------------------------------------------------
 
 (define objc:retain
   (c-lambda ("id") void
@@ -41,26 +86,6 @@ c-code
   (c-lambda ("id") void
 #<<c-code
    [___arg1 autorelease];
-c-code
-))
-
-;;; ---------------------------------------------------------------------
-;;; NSString
-;;; ---------------------------------------------------------------------
-
-(define objc:string->NSString
-  (c-lambda (char-string) (pointer "NSString")
-#<<c-code
-   NSString* s = [NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
-   ___result_voidstar = (void*)s;
-c-code
-))
-
-(define objc:NSString->string
-  (c-lambda ((pointer "NSString")) char-string
-#<<c-code
-   char* cstr = [___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
-   ___result = cstr;
 c-code
 ))
 
@@ -112,15 +137,6 @@ c-code
     }
 c-code
 ))
-
-(define (objc:string-list->NSMutableArray ls)
-  (if (and (list? ls)
-           (every? string? ls))
-      (let ((arr (objc:make-NSMutableArray)))
-        (for-each (lambda (s) (objc:NSMutableArray/add-string! arr s)) ls)
-        arr)
-      (error (string-append "invalid argument in objc:list->NSMutableArray: "
-                            (object->string ls)))))
 
 
 ;;; ---------------------------------------------------------------------
@@ -275,4 +291,45 @@ c-code
 c-code
 ))
 
+;;; ---------------------------------------------------------------------
+;;; Conversions
+;;; ---------------------------------------------------------------------
+
+;;; String <-> NSString
+
+(define objc:string->NSString
+  (c-lambda (char-string) (pointer "NSString")
+#<<c-code
+   NSString* s = [NSString stringWithCString:___arg1 encoding:NSASCIIStringEncoding];
+   ___result_voidstar = (void*)s;
+c-code
+))
+
+(define objc:NSString->string
+  (c-lambda ((pointer "NSString")) char-string
+#<<c-code
+   char* cstr = [___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
+   ___result = cstr;
+c-code
+))
+
+;;; List <-> NSMutableArray
+
+(define (objc:string-list->NSMutableArray ls)
+  (if (and (list? ls)
+           (every? string? ls))
+      (let ((arr (objc:make-NSMutableArray)))
+        (for-each (lambda (s) (objc:NSMutableArray/add-string! arr s)) ls)
+        arr)
+      (error (string-append "invalid argument in objc:list->NSMutableArray: "
+                            (object->string ls)))))
+
+(define (objc:NSMutableArray->List ls)
+  (if (and (list? ls)
+           (every? string? ls))
+      (let ((arr (objc:make-NSMutableArray)))
+        (for-each (lambda (s) (objc:NSMutableArray/add-string! arr s)) ls)
+        arr)
+      (error (string-append "invalid argument in objc:list->NSMutableArray: "
+                            (object->string ls)))))
 

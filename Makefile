@@ -155,7 +155,7 @@ tidy:
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
 	rm -f ${C_SOURCES}
-	rm -f ${LIBRARY_C_SOURCES}
+	rm -f ${LIB_C_SOURCES}
 	rm -f ${MAIN_C_SOURCES}
 
 # -------------------
