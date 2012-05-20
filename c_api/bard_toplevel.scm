@@ -28,34 +28,44 @@
 (%defglobal 'objc:autorelease objc:autorelease)
 
 ;;; ---------------------------------------------------------------------
-;;; NSMutableArray
+;;; Constructors
 ;;; ---------------------------------------------------------------------
 
 (%defglobal 'objc:make-NSMutableArray objc:make-NSMutableArray)
-(%defglobal 'objc:NSMutableArray/count objc:NSMutableArray/count)
-(%defglobal 'objc:NSMutableArray/add-string! objc:NSMutableArray/add-string!)
-(%defglobal 'objc:NSMutableArray/string-at-index objc:NSMutableArray/string-at-index)
-(%defglobal 'objc:string-list->NSMutableArray objc:string-list->NSMutableArray)
-(%defglobal 'objc:NSMutableArray->List objc:NSMutableArray->List)
-
-;;; ---------------------------------------------------------------------
-;;; NSMutableDictionary
-;;; ---------------------------------------------------------------------
-
 (%defglobal 'objc:make-NSMutableDictionary objc:make-NSMutableDictionary)
-(%defglobal 'objc:NSMutableDictionary/put-string-at-string! objc:NSMutableDictionary/put-string-at-string!)
-(%defglobal 'objc:NSMutableDictionary/get-string-at-string objc:NSMutableDictionary/get-string-at-string)
-(%defglobal 'objc:NSMutableDictionary/put-int-at-string! objc:NSMutableDictionary/put-int-at-string!)
-(%defglobal 'objc:NSMutableDictionary/get-int-at-string objc:NSMutableDictionary/get-int-at-string)
-(%defglobal 'objc:NSMutableDictionary/put-float-at-string! objc:NSMutableDictionary/put-float-at-string!)
-(%defglobal 'objc:NSMutableDictionary/get-float-at-string objc:NSMutableDictionary/get-float-at-string)
-(%defglobal 'objc:NSMutableDictionary/put-bool-at-string! objc:NSMutableDictionary/put-bool-at-string!)
-(%defglobal 'objc:NSMutableDictionary/get-bool-at-string objc:NSMutableDictionary/get-bool-at-string)
 
 ;;; ---------------------------------------------------------------------
-;;; conversions
+;;; Accessors
 ;;; ---------------------------------------------------------------------
 
+(%defglobal 'objc:NSMutableArray/add-object! objc:NSMutableArray/add-object!)
+(%defglobal 'objc:NSArray/count objc:NSArray/count)
+(%defglobal 'objc:NSArray/object-at-index objc:NSArray/object-at-index)
+(%defglobal 'objc:NSMutableDictionary/set-object-for-key! objc:NSMutableDictionary/set-object-for-key!)
+(%defglobal 'objc:NSDictionary/object-for-key objc:NSDictionary/object-for-key)
+(%defglobal 'objc:to-NSDictionary-key objc:to-NSDictionary-key)
+(%defglobal 'objc:Dictionary/get-keys-array objc:Dictionary/get-keys-array)
+
+;;; ---------------------------------------------------------------------
+;;; Conversions
+;;; ---------------------------------------------------------------------
+
+(%defglobal 'objc:NSNumber? objc:NSNumber?)
+(%defglobal 'objc:NSString? objc:NSString?)
+(%defglobal 'objc:NSArray? objc:NSArray?)
+(%defglobal 'objc:NSDictionary? objc:NSDictionary?)
+(%defglobal 'objc:boolean->NSNumber objc:boolean->NSNumber)
+(%defglobal 'objc:integer->NSNumber objc:integer->NSNumber)
+(%defglobal 'objc:float->NSNumber objc:float->NSNumber)
 (%defglobal 'objc:string->NSString objc:string->NSString)
-(%defglobal 'objc:NSString->string objc:NSString->string)
+(%defglobal 'objc:list->NSArray objc:list->NSArray)
+(%defglobal 'objc:frame->NSDictionary objc:frame->NSDictionary)
+(%defglobal 'objc:value-from-NSNumber objc:value-from-NSNumber)
+(%defglobal 'objc:string-from-NSString objc:string-from-NSString)
+(%defglobal 'objc:list-from-NSArray objc:list-from-NSArray)
+(%defglobal 'objc:frame-from-NSDictionary objc:frame-from-NSDictionary)
+(%defglobal 'objc:to-objc objc:to-objc)
+(%defglobal 'objc:from-objc objc:from-objc)
+
+
 
