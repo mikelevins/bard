@@ -75,13 +75,13 @@ MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x ob
 
 IOS_CC=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk
 
-IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
+IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c  -framework Foundation -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
 
 # iOS Simulator
 
 IOS_SIM_CC=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
 
-IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -L${IOS_SIM_GAMBIT_HOME}/lib -x objective-c -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
+IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -L${IOS_SIM_GAMBIT_HOME}/lib -x objective-c -framework Foundation -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
 
 # ----------------------------------------
 # Library tools

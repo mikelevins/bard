@@ -55,20 +55,21 @@
 
 (define bard:load (%make-function name: 'load))
 
-(%function-add-method! bard:load `(,<string>)
-                       (%primitive-method (path)
-                                          (newline)
-                                          (display (string-append "Loading " path "..."))
-                                          (newline)
-                                          (call-with-input-file path
-                                            (lambda (in)
-                                              (let loop ((form (bard:read in)))
-                                                (if (eqv? form #!eof)
-                                                    (newline)
-                                                    (begin
-                                                      (newline)
-                                                      (display (%as-string (%eval form (%null-environment))))
-                                                      (loop (bard:read in)))))))))
+(define (%bard-load path)
+  (newline)
+  (display (string-append "Loading " path "..."))
+  (newline)
+  (call-with-input-file path
+    (lambda (in)
+      (let loop ((form (bard:read in)))
+        (if (eqv? form #!eof)
+            (newline)
+            (begin
+              (newline)
+              (display (%as-string (%eval form (%null-environment))))
+              (loop (bard:read in))))))))
+
+(%function-add-method! bard:load `(,<string>)(%primitive-method (path)(%bard-load path)))
 
 
 ;;; open

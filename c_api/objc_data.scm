@@ -15,22 +15,6 @@
 ;;; foreign types
 ;;; ---------------------------------------------------------------------
 
-(define objc:class-name
-  (c-lambda ("Class") char-string
-#<<c-code
-   const char* cname = class_getName(___arg1);
-   ___result = cname;
-c-code
-))
-
-(define objc:object-class-name
-  (c-lambda ("id") char-string
-#<<c-code
-   const char* cname = object_getClassName(___arg1);
-   ___result = cname;
-c-code
-))
-
 (define objc:get-class
   (c-lambda (char-string) "id"
 #<<c-code
@@ -154,7 +138,7 @@ c-code
 (define objc:NSDictionary/object-for-key
   (c-lambda ((pointer "NSDictionary" (NSDictionary* NSMutableDictionary*))(pointer "NSString"))  "id"
 #<<c-code
-   NSMutableDictionary* dict = ___arg1;
+   NSDictionary* dict = ___arg1;
    NSString* key = ___arg2;
    id obj = [dict objectForKey: key];
    ___result_voidstar = (void*)obj;
@@ -169,10 +153,10 @@ c-code
             (else (error (string-append "Invalid NSDictionary key: " (object->string key)))))))
     (objc:string->NSString k)))
 
-(define objc:Dictionary/get-keys-array
+(define objc:NSDictionary/get-keys-array
   (c-lambda ((pointer "NSDictionary" (NSDictionary* NSMutableDictionary*))) (pointer "NSArray")
 #<<c-code
-   NSMutableDictionary* dict = ___arg1;
+   NSDictionary* dict = ___arg1;
    NSArray* keys = [dict allKeys];
    ___result_voidstar = (void*)keys;
 c-code
@@ -273,7 +257,7 @@ c-code
                 (cons (objc:from-objc (objc:NSArray/object-at-index arr i)) result))))))
 
 (define (objc:frame-from-NSDictionary dict)
-  (let* ((keys (objc:Dictionary/get-keys-array dict))
+  (let* ((keys (objc:NSDictionary/get-keys-array dict))
          (keycount (objc:NSArray/count keys)))
     (let loop ((i (- keycount 1))
                (slots '()))

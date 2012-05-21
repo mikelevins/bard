@@ -12,8 +12,6 @@
 ;;; foreign types
 ;;; ---------------------------------------------------------------------
 
-(%defglobal 'objc:class-name objc:class-name)
-(%defglobal 'objc:object-class-name objc:object-class-name)
 (%defglobal 'objc:get-class objc:get-class)
 (%defglobal 'objc:class-of objc:class-of)
 (%defglobal 'objc:instance-of? objc:instance-of?)
@@ -44,7 +42,7 @@
 (%defglobal 'objc:NSMutableDictionary/set-object-for-key! objc:NSMutableDictionary/set-object-for-key!)
 (%defglobal 'objc:NSDictionary/object-for-key objc:NSDictionary/object-for-key)
 (%defglobal 'objc:to-NSDictionary-key objc:to-NSDictionary-key)
-(%defglobal 'objc:Dictionary/get-keys-array objc:Dictionary/get-keys-array)
+(%defglobal 'objc:NSDictionary/get-keys-array objc:NSDictionary/get-keys-array)
 
 ;;; ---------------------------------------------------------------------
 ;;; Conversions
