@@ -53,11 +53,11 @@ MAC_GAMBIT_HOME=/usr/local/gambit/macosx
 
 # iOS
 
-IOS_GAMBIT_HOME=/usr/local/gambit/iphone
+IOS_GAMBIT_HOME=/usr/local/gambit/ios
 
 # iOS Simulator
 
-IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iphone-simulator
+IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iosSimulator
 
 # ----------------------------------------
 # C Compiler
@@ -65,23 +65,23 @@ IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iphone-simulator
 
 # Mac
 
-MAC_CC=/Developer/usr/bin/gcc
+MAC_CC=/usr/bin/clang
 
-MAC_CFLAGS_LIB= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -arch i386 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -fasm-blocks -gdwarf-2 -D___LIBRARY
+MAC_CFLAGS_LIB= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -arch x86_64 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -fasm-blocks -gdwarf-2 -D___LIBRARY
 
-MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -mieee-fp -arch i386
+MAC_CFLAGS_MAIN= -O1 -I${MAC_GAMBIT_HOME}/include -L${MAC_GAMBIT_HOME}/lib -x objective-c -framework Foundation -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -arch x86_64
 
 # iOS
 
-IOS_CC=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk
+IOS_CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch armv7 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk
 
-IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -L${IOS_GAMBIT_HOME}/lib -x objective-c  -framework Foundation -no-cpp-precomp -Wno-unused -O1 -fno-math-errno -fschedule-insns2 -fno-trapping-math -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
+IOS_CFLAGS_LIB= -I${IOS_GAMBIT_HOME}/include -x objective-c  -framework Foundation -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
 
 # iOS Simulator
 
-IOS_SIM_CC=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
+IOS_SIM_CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -arch i386 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
 
-IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -L${IOS_SIM_GAMBIT_HOME}/lib -x objective-c -framework Foundation -arch i386   -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common  -D___LIBRARY
+IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -x objective-c -framework Foundation -Wno-unused -O1 -fno-math-errno -fno-strict-aliasing -fwrapv -fomit-frame-pointer -fPIC -fno-common -D___LIBRARY
 
 # ----------------------------------------
 # Library tools
@@ -89,18 +89,18 @@ IOS_SIM_CFLAGS_LIB= -I${IOS_SIM_GAMBIT_HOME}/include -L${IOS_SIM_GAMBIT_HOME}/li
 
 # Mac
 
-MAC_AR=/Developer/usr/bin/ar
-MAC_RANLIB = /Developer/usr/bin/ranlib
+MAC_AR=/usr/bin/ar
+MAC_RANLIB = /usr/bin/ranlib
 
 # iOS
 
-IOS_AR=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar
-IOS_RANLIB=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ranlib
+IOS_AR=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
+IOS_RANLIB=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
 
 # iOS Simulator
 
-IOS_SIM_AR=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar
-IOS_SIM_RANLIB=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ranlib
+IOS_SIM_AR=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
+IOS_SIM_RANLIB=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
 
 # ----------------------------------------
 # Bard Common files
