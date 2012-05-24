@@ -40,3 +40,14 @@
 
 (define (bound? name)
   (not (##unbound? (##global-var-ref (##make-global-var name)))))
+
+(define (plist->alist plist #!optional (acc '()))
+  (if (null? plist)
+      acc
+      (let ((k (car plist)))
+        (if (null? (cdr plist))
+            (error "Malformed property list: " plist)
+            (if (assq k acc)
+                (error "Duplicate key in property list: " k)
+                (let ((v (cadr plist)))
+                  (plist->alist (cddr plist) (cons (cons k v) acc))))))))

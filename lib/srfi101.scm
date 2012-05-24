@@ -1,4 +1,4 @@
-;;;; ***********************************************************************
+;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          srfi101.scm
@@ -439,21 +439,21 @@
 
 ;; This code based on code written by Abdulaziz Ghuloum
 ;; http://ikarus-scheme.org/pipermail/ikarus-users/2009-September/000595.html
-(define get-cached
-  (let ((h (make-table)))
-    (lambda (x)
-      (define (f x)
-        (cond
-         ((pair? x) (ra:cons (f (car x)) (f (cdr x))))
-         ((vector? x) (vector-map f x))
-         (else x)))
-      (cond
-       ((not (or (pair? x) (vector? x))) x)
-       ((table-ref h x #f))
-       (else
-        (let ((v (f x)))
-          (hashtable-set! h x v)
-          v))))))
+;; (define get-cached
+;;   (let ((h (make-table)))
+;;     (lambda (x)
+;;       (define (f x)
+;;         (cond
+;;          ((pair? x) (ra:cons (f (car x)) (f (cdr x))))
+;;          ((vector? x) (vector-map f x))
+;;          (else x)))
+;;       (cond
+;;        ((not (or (pair? x) (vector? x))) x)
+;;        ((table-ref h x #f))
+;;        (else
+;;         (let ((v (f x)))
+;;           (hashtable-set! h x v)
+;;           v))))))
 
 
 ;;; ra:null
