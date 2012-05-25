@@ -117,6 +117,9 @@
           (ra:make-node x n n)))))
 
 ;; Nat [Tree X] Nat [X -> X] -> X [Tree X]
+#| modified 2012-05-25 by mikel evins
+   replaced let-values with receive for compatibility with Gambit
+   replaced make-ra:node with ra:make-node
 (define (tree-ref/update mid t i f)
   (cond ((zero? i)
          (if (ra:node? t) 
@@ -137,6 +140,30 @@
                                                 (sub1 (- i mid)) 
                                                 f)))
            (values v* (ra:make-node (ra:node-val t) (ra:node-left t) t*))))))
+|#
+
+(define (tree-ref/update mid t i f)
+  (cond ((zero? i)
+         (if (ra:node? t) 
+             (values (ra:node-val t)
+                     (ra:make-node (f (ra:node-val t))
+                                (ra:node-left t)
+                                (ra:node-right t)))
+             (values t (f t))))
+        ((<= i mid)
+         (receive (v* t*)
+                  (tree-ref/update (half (sub1 mid)) 
+                                   (ra:node-left t) 
+                                   (sub1 i) 
+                                   f)
+                  (values v* (ra:make-node (ra:node-val t) t* (ra:node-right t)))))
+        (else           
+         (receive (v* t*)
+                  (tree-ref/update (half (sub1 mid)) 
+                                   (ra:node-right t) 
+                                   (sub1 (- i mid)) 
+                                   f)
+                  (values v* (ra:make-node (ra:node-val t) (ra:node-left t) t*))))))
 
 ;; Special-cased above to avoid logarathmic amount of cons'ing
 ;; and any multi-values overhead.  Operates in constant space.

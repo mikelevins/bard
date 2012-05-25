@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          type.scm
+;;;; Name:          types.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       representation of Bard types
 ;;;; Author:        mikel evins
@@ -12,7 +12,7 @@
 (##include "type-macros.scm")
 
 ;;; ---------------------------------------------------------------------
-;;; primitive types
+;;; primitive type utilities
 ;;; ---------------------------------------------------------------------
 
 (define (%type-tag obj)
@@ -47,7 +47,15 @@
 (define tags:$keyword (%type-tag foo:))
 (define tags:$procedure (%type-tag (lambda (x) x)))
 (define tags:$structure (%type-tag (current-input-port)))
+(define tags:$vector 0)
 (define tags:$foreign-value 18)
+
+;;; ---------------------------------------------------------------------
+;;; bard type objects
+;;; ---------------------------------------------------------------------
+;;; type objects represent types as values in Bard
+
+;;; primitive types: types that are built into the underlying Gambit
 
 (define-type %primitive-type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
@@ -57,22 +65,18 @@
 
 (define $bard-primitive-type-table (make-table test: eqv?))
 
-;;; ---------------------------------------------------------------------
-;;; bard types
-;;; ---------------------------------------------------------------------
-
-;;; structure types
+;;; structure types: types that are represented by Gambit structures
 
 (define-type %structure-type
   id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
   constructor: %make-structure-type
   (name %structure-type-name)
-  (gambit-type %structure-type-gambit-type)
+  (representation %structure-type-representation) ; the gambit structure prototype
   (predicate %structure-type-predicate))
 
 (define $bard-structure-type-table (make-table test: eqv?))
 
-;;; protocol types
+;;; protocols: values that represent Bard protocols
 
 (define-type %protocol
   id: 47065A1E-5CB4-4DD0-A304-312F3B052316
@@ -90,7 +94,7 @@
 
 (%define-structure-type <protocol> (##structure-type (%make-protocol 'ignored)) %protocol?)
 
-;;; singletons
+;;; singletons: objects that represent single values as types
 
 (define-type %singleton
   id: F735A1E4-9D1C-4FB2-8E22-BA4FD08B637C
@@ -109,35 +113,7 @@
           s))))
 
 ;;; ---------------------------------------------------------------------
-;;; define the base bard types
-;;; ---------------------------------------------------------------------
-
-;;; primitive types
-
-(%define-primitive-type <undefined> tags:$undefined)
-(%define-primitive-type <null> tags:$null)
-(%define-primitive-type <character> tags:$character)
-(%define-primitive-type <boolean> tags:$boolean)
-(%define-primitive-type <symbol> tags:$symbol)
-(%define-primitive-type <keyword> tags:$keyword)
-(%define-primitive-type <flonum> tags:$flonum)
-(%define-primitive-type <ratnum> tags:$ratnum)
-(%define-primitive-type <fixnum> tags:$fixnum)
-(%define-primitive-type <bignum> tags:$bignum)
-(%define-primitive-type <primitive-procedure> tags:$procedure)
-(%define-primitive-type <cons> tags:$pair)
-(%define-primitive-type <string> tags:$string)
-(%define-primitive-type <foreign-value> tags:$foreign-value)
-
-;;; gambit structure types
-
-(%define-structure-type <input-stream> (##structure-type (current-input-port)) input-port?)
-(%define-structure-type <output-stream> (##structure-type (current-output-port)) output-port?)
-
-;;; Bard structure types
-
-;;; ---------------------------------------------------------------------
-;;; type accessors
+;;; type operations
 ;;; ---------------------------------------------------------------------
 
 (define (%primitive-type thing)
@@ -180,4 +156,25 @@
               (if (equal? t2 Anything)
                   #t
                   #f)))))
+
+;;; ---------------------------------------------------------------------
+;;; base bard type objects
+;;; ---------------------------------------------------------------------
+
+(%define-primitive-type <undefined> tags:$undefined)
+(%define-primitive-type <null> tags:$null)
+(%define-primitive-type <character> tags:$character)
+(%define-primitive-type <boolean> tags:$boolean)
+(%define-primitive-type <symbol> tags:$symbol)
+(%define-primitive-type <keyword> tags:$keyword)
+(%define-primitive-type <flonum> tags:$flonum)
+(%define-primitive-type <ratnum> tags:$ratnum)
+(%define-primitive-type <fixnum> tags:$fixnum)
+(%define-primitive-type <bignum> tags:$bignum)
+(%define-primitive-type <primitive-procedure> tags:$procedure)
+(%define-primitive-type <string> tags:$string)
+(%define-primitive-type <foreign-value> tags:$foreign-value)
+
+(%define-structure-type <input-stream> (##structure-type (current-input-port)) input-port?)
+(%define-structure-type <output-stream> (##structure-type (current-output-port)) output-port?)
 

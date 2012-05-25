@@ -55,7 +55,6 @@
 ;; "src/eval/apply.scm"
 ;; "src/eval/env.scm"
 ;; "src/eval/eval.scm"
-;; "src/reader/read.scm"
 ;; "src/repl/error.scm"
 ;; "src/repl/toplevel.scm"
 ;; "nelson/Puzzle.scm"
@@ -69,7 +68,8 @@
          "lib/wttree.scm"
          "src/util/general.scm"
          "src/values/types.scm"
-         "src/values/values.scm"
+         ;;"src/values/values.scm"
+         ;;"src/read.scm"
 
          ))
 

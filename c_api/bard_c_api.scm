@@ -12,7 +12,4 @@
           char-string "bard_version" ""
           (api:version))
 
-(c-define (c:load path) (char-string) 
-          void "bard_load" ""
-          (api:load path))
 

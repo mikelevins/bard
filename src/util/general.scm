@@ -51,3 +51,27 @@
                 (error "Duplicate key in property list: " k)
                 (let ((v (cadr plist)))
                   (plist->alist (cddr plist) (cons (cons k v) acc))))))))
+
+(define (alist-keys alist)(map car alist))
+(define (alist-vals alist)(map cdr alist))
+
+(define (alist-get alist key #!key (default #f)(test equal?))
+  (let loop ((alist alist))
+    (if (null? alist)
+        default
+        (if (test key (car (car alist)))
+            (cdr (car alist))
+            (loop (cdr alist))))))
+
+(define (interpose item ls)
+  (if (or (null? ls)
+          (null? (cdr ls)))
+      ls
+      (cons (car ls)
+            (cons item
+                  (interpose item (cdr ls))))))
+
+
+(define (slib:error . args)
+  (error (apply string-append (interpose " " (map object->string args)))))
+

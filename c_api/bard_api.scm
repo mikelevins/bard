@@ -17,6 +17,4 @@
 (define (api:version)
   $bard-version-string)
 
-(define (api:load path)
-  (%bard-load path))
 

@@ -9,8 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(##include "type-macros.scm")
-
 ;;; ---------------------------------------------------------------------
 ;;; primitive type utilities
 ;;; ---------------------------------------------------------------------
@@ -47,61 +45,50 @@
 (define tags:$keyword (%type-tag foo:))
 (define tags:$procedure (%type-tag (lambda (x) x)))
 (define tags:$structure (%type-tag (current-input-port)))
-(define tags:$vector 0)
+(define tags:$vector (%type-tag (vector)))
+(define tags:$box (%type-tag (box 1)))
 (define tags:$foreign-value 18)
 
 ;;; ---------------------------------------------------------------------
-;;; bard type objects
+;;; Bard type objects
 ;;; ---------------------------------------------------------------------
-;;; type objects represent types as values in Bard
 
-;;; primitive types: types that are built into the underlying Gambit
-
-(define-type %primitive-type
+(define-type %built-in-type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
-  constructor: %make-primitive-type
-  (name %primitive-type-name)
-  (tag %primitive-type-tag))
+  constructor: %make-built-in-type
+  (name %built-in-type-name)
+  (tag %built-in-type-tag))
 
-(define $bard-primitive-type-table (make-table test: eqv?))
-
-;;; structure types: types that are represented by Gambit structures
-
-(define-type %structure-type
-  id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
-  constructor: %make-structure-type
-  (name %structure-type-name)
-  (representation %structure-type-representation) ; the gambit structure prototype
-  (predicate %structure-type-predicate))
-
-(define $bard-structure-type-table (make-table test: eqv?))
-
-;;; protocols: values that represent Bard protocols
-
-(define-type %protocol
-  id: 47065A1E-5CB4-4DD0-A304-312F3B052316
-  constructor: %private-make-protocol
-  (name %protocol-name))
-
-(define $bard-protocols '())
-
-(define (%make-protocol name)
-  (let ((tp (%private-make-protocol name)))
-    (set! $bard-protocols
-          (cons (cons name tp)
-                $bard-protocols))
+(define $bard-built-in-type-table (make-table test: eqv?))
+(define (%def-built-in-type name tag)
+  (let ((tp (%make-built-in-type name tag)))
+    (table-set! $bard-built-in-type-table tag tp)
     tp))
 
-(%define-structure-type <protocol> (##structure-type (%make-protocol 'ignored)) %protocol?)
+(define (%built-in-type thing)
+  (table-ref $bard-built-in-type-table (%type-tag thing)))
 
-;;; singletons: objects that represent single values as types
+
+(define-type %standard-type
+  id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
+  constructor: %make-standard-type
+  (name %standard-type-name)
+  (representation %standard-type-representation) ; the gambit structure prototype
+  (predicate %standard-type-predicate))
+
+(define $bard-standard-type-table (make-table test: eqv?))
+(define (%def-standard-type name structure-type predicate)
+  (let ((tp (%make-standard-type name structure-type predicate)))
+    (table-set! $bard-standard-type-table structure-type tp)
+    tp))
+
+(define (%standard-type thing)
+  (table-ref $bard-standard-type-table (##structure-type thing)))
 
 (define-type %singleton
   id: F735A1E4-9D1C-4FB2-8E22-BA4FD08B637C
   constructor: %private-make-singleton
   (value %singleton-value))
-
-(%define-structure-type <singleton> (##structure-type (%private-make-singleton 'ignored)) %singleton?)
 
 (define $singleton-table (make-table test: equal?))
 
@@ -112,69 +99,43 @@
           (table-set! $singleton-table x s)
           s))))
 
-;;; ---------------------------------------------------------------------
-;;; type operations
-;;; ---------------------------------------------------------------------
-
-(define (%primitive-type thing)
-  (table-ref $bard-primitive-type-table (%type-tag thing)))
-
-(define (%structure-type thing)
-  (table-ref $bard-structure-type-table (##structure-type thing)))
-
-(define (%type? thing)
-  (or (%singleton? thing)
-      (%primitive-type? thing)
-      (%structure-type? thing)
-      (%protocol? thing)))
-
 (define-type %type-type
   id: 7EAC4075-6187-426F-A8DE-4DFC15400F62
   constructor: %make-type-type
   (name %type-type-name))
 
+(define <undefined> (%def-built-in-type '<undefined> tags:$undefined))
+(define <null> (%def-built-in-type '<null> tags:$null))
+(define <character> (%def-built-in-type '<character> tags:$character))
+(define <boolean> (%def-built-in-type '<boolean> tags:$boolean))
+(define <symbol> (%def-built-in-type '<symbol> tags:$symbol))
+(define <keyword> (%def-built-in-type '<keyword> tags:$keyword))
+(define <flonum> (%def-built-in-type '<flonum> tags:$flonum))
+(define <ratnum> (%def-built-in-type '<ratnum> tags:$ratnum))
+(define <fixnum> (%def-built-in-type '<fixnum> tags:$fixnum))
+(define <bignum> (%def-built-in-type '<bignum> tags:$bignum))
+(define <primitive-procedure> (%def-built-in-type '<primitive-procedure> tags:$procedure))
+(define <string> (%def-built-in-type '<string> tags:$string))
+(define <foreign-value> (%def-built-in-type '<foreign-value> tags:$foreign-value))
+
+(define <iostream> (%def-standard-type '<iostream> (##structure-type (current-input-port))  
+                                       (lambda (x)(or (input-port? x)(output-port? x)))))
+
 (define <type> (%make-type-type '<type>))
+
+;;; ---------------------------------------------------------------------
+;;; type operations
+;;; ---------------------------------------------------------------------
+
+(define (%type? thing)
+  (or (%type-type? thing)
+      (%singleton? thing)
+      (%built-in-type? thing)
+      (%standard-type? thing)))
 
 (define (%object->bard-type thing)
   (cond
-   ((eq? thing <type>) <type>)
    ((%type? thing) <type>)
-   ((##structure? thing) (%structure-type thing))
-   (else (%primitive-type thing))))
-
-;;; ---------------------------------------------------------------------
-;;; type taxonomy
-;;; ---------------------------------------------------------------------
-
-(define (%subtype? t1 t2)
-  (if (equal? t1 t2)
-      #t
-      (if (%singleton? t2)
-          #f
-          (if (%singleton? t1)
-              (%subtype? (%object->bard-type (%singleton-value t1)) t2)
-              (if (equal? t2 Anything)
-                  #t
-                  #f)))))
-
-;;; ---------------------------------------------------------------------
-;;; base bard type objects
-;;; ---------------------------------------------------------------------
-
-(%define-primitive-type <undefined> tags:$undefined)
-(%define-primitive-type <null> tags:$null)
-(%define-primitive-type <character> tags:$character)
-(%define-primitive-type <boolean> tags:$boolean)
-(%define-primitive-type <symbol> tags:$symbol)
-(%define-primitive-type <keyword> tags:$keyword)
-(%define-primitive-type <flonum> tags:$flonum)
-(%define-primitive-type <ratnum> tags:$ratnum)
-(%define-primitive-type <fixnum> tags:$fixnum)
-(%define-primitive-type <bignum> tags:$bignum)
-(%define-primitive-type <primitive-procedure> tags:$procedure)
-(%define-primitive-type <string> tags:$string)
-(%define-primitive-type <foreign-value> tags:$foreign-value)
-
-(%define-structure-type <input-stream> (##structure-type (current-input-port)) input-port?)
-(%define-structure-type <output-stream> (##structure-type (current-output-port)) output-port?)
+   ((##structure? thing) (%standard-type thing))
+   (else (%built-in-type thing))))
 

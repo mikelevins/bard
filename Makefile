@@ -82,8 +82,7 @@ SCHEME_SOURCES= \
          lib/srfi101.scm \
          lib/wttree.scm \
          src/util/general.scm \
-         src/values/types.scm \
-         src/values/values.scm
+         src/values/types.scm 
 
 
 C_SOURCES= \
@@ -92,8 +91,7 @@ C_SOURCES= \
          lib/srfi101.c \
          lib/wttree.c \
          src/util/general.c \
-         src/values/types.c \
-         src/values/values.c
+         src/values/types.c 
 
 OBJECTS= \
          version.o \
@@ -101,8 +99,7 @@ OBJECTS= \
          srfi101.o \
          wttree.o \
          general.o \
-         types.o \
-         values.o
+         types.o 
 
 
 # ----------------------------------------
