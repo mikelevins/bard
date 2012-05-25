@@ -9,7 +9,7 @@
 ;;;; ***********************************************************************
 
 (c-define (c:version) () 
-          char-string "version" ""
+          char-string "bard_version" ""
           (api:version))
 
 (c-define (c:load path) (char-string) 
