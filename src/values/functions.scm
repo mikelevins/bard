@@ -68,6 +68,35 @@
             (loop (%cdr sig1)(%cdr sig2))
             #f))))
 
+(define (%function-param->method-signature-type env param)
+  (cond
+   ((symbol? param) (if (eq? param '&) & Anything))
+   ((%list? param) (%eval (%car (%cdr param)) env))
+   (else (error (string-append "Invalid function parameter: " (object->string param))))))
+
+(define (%validate-method-signature sig)
+  (if (and (%list? sig)
+           (%every? %type? sig)
+           (let ((ampersand-pos (%position & sig)))
+             (if ampersand-pos 
+                 (= ampersand-pos (- (%length sig) 1))
+                 #t)))
+      sig
+      (else (error (string-append "Invalid method signature: " (object->string sig))))))
+
+(define (%function-param-list->method-signature params env)
+  (%validate-method-signature (%map (partial %function-param->method-signature-type env)
+                                    params)))
+
+(define (%function-param->formal-argument param)
+  (cond
+   ((symbol? param) param)
+   ((%list? param) (%car param))
+   (else (error (string-append "Invalid function parameter: " (object->string param))))))
+
+(define (%function-param-list->formal-arguments params)
+  (%map %function-param->formal-argument params))
+
 ;;; ---------------------------------------------------------------------
 ;;; methods
 ;;; ---------------------------------------------------------------------
@@ -77,18 +106,25 @@
   extender: %def-method-type
   read-only:
   (name %type-name)
-  (formals %method-formals))
+  (environment %method-environment))
 
 (%def-method-type %primitive-method
-                  constructor: %make-primitive-method
+                  constructor: %private-make-primitive-method
                   read-only:
                   (function %method-function))
 
+(define (%make-primitive-method parameters method-function #!key (environment '())(name "An anonymous primitive method"))
+  (%private-make-primitive-method name environment method-function))
+
 (%def-method-type %interpreted-method
-                  constructor: %make-interpreted-method
+                  constructor: %private-make-interpreted-method
                   read-only:
-                  (environment %method-environment)
+                  (formals %method-formals)
                   (body %method-body))
+
+(define (%make-interpreted-method parameters method-body  #!key (environment '())(name "An anonymous interpreted method"))
+  (%private-make-interpreted-method name parameters environment method-body))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; functions
@@ -96,11 +132,15 @@
 
 (define-type %function
   id: 0E7FE105-F4B7-4EE4-AA16-9475976B003D
+  constructor: %private-make-function
   read-only:
   (name %function-name)
-  (signatures %function-method-signatures)
-  (formals %function-method-formals)
-  (bodies %function-method-bodies))
+  (signatures %function-method-signatures %set-function-method-signatures!)
+  (formals %function-method-formals %set-function-method-formals!)
+  (bodies %function-method-bodies %set-function-method-bodies!))
+
+(define (%make-function #!key (name "An anonymous function"))
+  (%private-make-function name (%list) (%list) (%list)))
 
 (define (%function-max-method-index fn)
   (- (%length (%function-method-signatures fn)) 1))

@@ -71,6 +71,11 @@
          "src/values/values.scm"
          "src/values/functions.scm"
          "src/read.scm"
+         "src/eval/env.scm"
+         ;;"src/eval/special.scm"
+         ;;"src/eval/macro.scm"
+         ;;"src/eval/apply.scm"
+         ;;"src/eval/eval.scm"
          ;;"src/print.scm"
 
          ))

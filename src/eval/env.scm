@@ -29,18 +29,17 @@
 ;;; lexical environments
 ;;; ---------------------------------------------------------------------
 
-(define (%null-environment) '())
+(define (%symbol< s1 s2)
+  (string<? (symbol->string s1)
+           (symbol->string s2)))
+
+(define $environment-wt-type (make-wt-tree-type %symbol<))
+(define %null-environment #f)
+(let ((_null-env  (make-wt-tree $environment-wt-type)))
+  (set! %null-environment (lambda () _null-env)))
 
 (define (%add-binding env var val)
-  (cons (cons var val)
-        env))
-
-(define (%find-binding env var)
-  (assq var env))
-
-(define (%binding-value binding)(cdr binding))
-
-(define (%set-binding-value! binding val)(set-cdr! binding val))
+  (wt-tree/add env var val))
 
 (define (%extend-environment env plist)
   (if (null? plist)
@@ -51,12 +50,9 @@
                  (val (cadr plist)))
             (%extend-environment (%add-binding env var val) (cddr plist))))))
 
+(define (%lookup-variable-value env var)
+  (wt-tree/lookup env var (%undefined)))
+
 (define (%set-variable! env var val)
-  (let ((binding (%find-binding env var)))
-    (if binding
-        (%set-binding-value! var val)
-        (if (%defined? (%global-value var))
-            (%defglobal var val)
-            (error "undefined variable " var)))
-    val))
+  (wt-tree/add! env var val))
 

@@ -11,42 +11,40 @@
 
 
 (define (%ensure-valid-quotation x)
-  (if (and (list? x)
-           (not (null? (cdr x)))
-           (null? (cddr x)))
+  (if (and (%list? x)
+           (not (%null? (%cdr x)))
+           (%null? (%cddr x)))
       x
       (error "invalid quote form")))
 
 (define (%expand-quotation expr env)
-  (cadr expr))
-
-;;; (%expand-quotation '(quote *)(%initial-bard-environment))
+  (%car (%cdr expr)))
 
 (define $special-forms-table
   (->table 
    'and (lambda (expr env)
-          (let loop ((expr (cdr expr))
-                     (val '()))
-            (if (null? expr)
+          (let loop ((expr (%cdr expr))
+                     (val %nil))
+            (if (%null? expr)
                 val
-                (let ((v (%eval (car expr) env)))
+                (let ((v (%eval (%car expr) env)))
                   (if v
-                      (loop (cdr expr) v)
+                      (loop (%cdr expr) v)
                       #f)))))
    'begin (lambda (expr env) 
-            (let loop ((forms (cdr expr))
-                       (val (%nothing)))
-              (if (null? forms)
+            (let loop ((forms (%cdr expr))
+                       (val %nil))
+              (if (%null? forms)
                   val
-                  (let ((form (car forms)))
-                    (loop (cdr forms)
+                  (let ((form (%car forms)))
+                    (loop (%cdr forms)
                           (%eval form env))))))
-   'define (lambda (expr env) (%defglobal (list-ref expr 1) (%eval (list-ref expr 2) env)))
+   'define (lambda (expr env) (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env)))
    'define-function (lambda (expr env) 
-                      (let* ((proto (cadr expr))
-                             (body (cons 'begin (drop 2 expr)))
-                             (fname (car proto))
-                             (params (cdr proto))
+                      (let* ((proto (%car (%cdr expr)))
+                             (body (%cons 'begin (%drop 2 expr)))
+                             (fname (%car proto))
+                             (params (%cdr proto))
                              (sig (%function-param-list->method-signature params env))
                              (formal-params (%function-param-list->formal-arguments params))
                              (fn (%global-value fname))
