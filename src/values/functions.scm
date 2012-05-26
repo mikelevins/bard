@@ -9,210 +9,116 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(include "function-macros.scm")
-
 ;;; ---------------------------------------------------------------------
-;;; utils
+;;; method signatures
 ;;; ---------------------------------------------------------------------
 
-(define (%ampersand? x)(eq? x '&))
+(define (%optional-argument-type? tp)
+  (eq? tp &))
 
-(define (%function-param->formal-argument param)
-  (cond
-   ((symbol? param) param)
-   ((list? param) (car param))
-   (else (error "invalid parameter spec" param))))
+(define (%method-signature-rest-arg? sig)
+  (and (> (%length sig) 0)
+       (%optional-argument-type? (%last sig))))
 
-(define (%function-param->signature-type param env)
-  (cond
-   ((symbol? param) Anything)
-   ((list? param) (let* ((type-spec (cadr param))
-                         (type (%eval type-spec env)))
-                    (if (%type? type)
-                        type
-                        (error "invalid type" type))))
-   (else (error "invalid parameter spec" param))))
+(define (%method-signature-required-count sig)
+  (if (%method-signature-rest-arg? sig)
+      (- (%length sig) 1)
+      (%length sig)))
 
-(define (%function-param-list->formal-arguments params)
-  (map %function-param->formal-argument params))
+(define (%method-signature-element sig i)
+  (%list-ref sig i))
 
-(define (%function-param-list->method-signature params env)
-  (let ((required-params (take-before (lambda (p)(eq? p '&))
-                                      params))
-        (tail (if (position-if (lambda (x) (eq? x '&)) params)
-                  '(&)
-                  '()))
-        (get-type (lambda (x)(%function-param->signature-type x env))))
-    (append (map get-type required-params)
-            tail)))
+(define (%method-signature-matches? sig args)
+  (let* ((required-count (%method-signature-required-count sig))
+         (rest-arg? (%method-signature-rest-arg? sig))
+         (test (if rest-arg? >= =)))
+    (if (test (length args) required-count)
+        (let loop ((i 0))
+          (if (>= i required-count)
+              #t
+              (if (%subtype? (%object->bard-type (car args)) 
+                             (%method-signature-element sig i))
+                  (loop (+ i 1))
+                  #f)))
+        #f)))
 
-
-(define (%method-entry< e1 e2)
-  (let loop ((types1 (car e1))
-             (types2 (car e2)))
-    (if (null? types1)
-        #f
-        (if (null? types2)
-            #t
-            (let ((t1 (car types1))
-                  (t2 (car types2)))
-              (if (%subtype? t2 t1)
-                  #f
-                  (if (%subtype? t1 t2)
+(define (%type-more-specific? t1 t2)
+  (if (%optional-argument-type? t1)
+      (if (%optional-argument-type? t2)
+          #t
+          #f)
+      (if (eq? t1 t2)
+          #t
+          (if (%singleton? t2)
+              #f
+              (if (%singleton? t1)
+                  (%type-more-specific? (%object->bard-type (%singleton-value t1)) t2)
+                  (if (eq? t2 Anything)
                       #t
-                      (loop (cdr types1)(cdr types2)))))))))
+                      #f))))))
 
-
-
-;;; ---------------------------------------------------------------------
-;;; method tables
-;;; ---------------------------------------------------------------------
-
-;;; a method table matches formal type signatures to methods
-;;; a formal type signature is a list of one of the following
-;;; two forms:
-;;; 1. (type*)
-;;; 2. (type* &)
-;;; form 1 is a list of type objects. In order to match it, 
-;;; a list of argument types must be the same length as the
-;;; signature, and each argument type must be a subtype of
-;;; the signature type.
-;;; form 2 is a list of types followed by the ampersand.
-;;; In order to match, a list of argtypes must have at
-;;; least as many members as the signature, excluding the
-;;; ampersand, and each of the argument types that appears
-;;; before the position of the ampersand must be a
-;;; subtype of the corresponding signature type.
-;;; 
-;;; the method signatures used by method tables should not be
-;;; confused with the parameters that are stored on methods.
-;;; those parameters are the formal parameters that are bound
-;;; to input arguments, including the name of the rest argument
-;;; that is bound to any optional args. by contrast, a
-;;; method signature as used in the method table is not
-;;; a list of formal parameters, but a list of the allowed 
-;;; types of formal parameters, along with the presence or
-;;; absence of the ampersand to indicate whether extra 
-;;; arguments are allowed.
-
-(define-type %method-table
-  id: F7221DF7-EA48-413A-9897-527989D87B63
-  constructor: %make-method-table
-  (entries %method-table-entries %set-method-table-entries!))
-
-(define (%method-table-find-entry mtable signature)
-  (assoc signature (%method-table-entries mtable)))
-
-(define (%method-table-set-entry! mtable signature method)
-  (let ((entry (%method-table-find-entry mtable signature)))
-    (if entry
-        (set-cdr! entry method)
-        (%set-method-table-entries! mtable
-                                    (cons (cons (copy-tree signature) 
-                                                method)
-                                          (%method-table-entries mtable))))))
-
-(define (%vals-match-method-signature? vals msig)
-  (let* ((ampersand-pos (position-if %ampersand? msig))
-         (required-argcount (or ampersand-pos (length msig)))
-         (supplied-argcount (length vals))
-         (matches? (lambda (val tp)
-                     (if (equal? tp Anything)
-                         #t
-                         (if (%singleton? tp)
-                             (equal? val (%singleton-value tp))
-                             (%subtype? (%object->bard-type val) tp))))))
-    (and
-     (if ampersand-pos
-         (>= supplied-argcount required-argcount)
-         (= supplied-argcount required-argcount))
-     (let loop ((vals vals)
-                (types msig)
-                (i 0))
-       (if (>= i required-argcount)
-           #t
-           (if (matches? (car vals)(car types))
-               (loop (cdr vals)(cdr types)(+ i 1))
-               #f))))))
+(define (%method-signature-more-specific? sig1 sig2)
+  (let loop ((sig1 sig1)
+             (sig2 sig2))
+    (if (%null? sig1)
+        (if (%null? sig2)
+            #t
+            #f)
+        (if (%type-more-specific? (%car sig1)(%car sig2))
+            (loop (%cdr sig1)(%cdr sig2))
+            #f))))
 
 ;;; ---------------------------------------------------------------------
 ;;; methods
 ;;; ---------------------------------------------------------------------
 
 (define-type %method
-  id: 86F8548C-056C-4369-ADF3-1657D7E83649
-  constructor: %private-make-method
-  (name %method-name)
-  (environment %method-environment %set-method-environment!)
-  (parameters %method-parameters)
-  (required-count %method-required-count)
-  (body %method-body))
+  id: 927A1AD2-762A-4DE6-9900-C22857D20E5A
+  extender: %def-method-type
+  read-only:
+  (name %type-name)
+  (formals %method-formals))
 
-(%define-structure-type <method> (##structure-type (%private-make-method #f '() '() 0 '())) %method?)
+(%def-method-type %primitive-method
+                  constructor: %make-primitive-method
+                  read-only:
+                  (function %method-function))
 
-(define (%validate-method-name name)
-  (cond
-   ((symbol? name) name)
-   ((eq? name #f) #f)
-   (else (error "invalid method name" name))))
-
-(define (%validate-method-params params)
-  (if (every? symbol? params)
-      params
-      (error "Invalid parameter list for method" params)))
-
-(define (%make-method #!key (name #f)(environment '())(params '())(body '()))
-  (let* ((valid-name (%validate-method-name name))
-         (valid-params (%validate-method-params params))
-         (ampersand-pos (position-if %ampersand? valid-params))
-         (required-count (or ampersand-pos (length valid-params))))
-    (%private-make-method valid-name environment valid-params required-count body)))
-
-(define (%with-environment env meth)
-  (begin
-    (%set-method-environment! meth env)
-    meth))
+(%def-method-type %interpreted-method
+                  constructor: %make-interpreted-method
+                  read-only:
+                  (environment %method-environment)
+                  (body %method-body))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions
 ;;; ---------------------------------------------------------------------
 
 (define-type %function
-  id: C612A269-DA79-48F2-9FA0-F5F8F329EEBC
-  constructor: %private-make-function
+  id: 0E7FE105-F4B7-4EE4-AA16-9475976B003D
+  read-only:
   (name %function-name)
-  (method-table %function-method-table %set-function-method-table!))
+  (signatures %function-method-signatures)
+  (formals %function-method-formals)
+  (bodies %function-method-bodies))
 
-(%define-structure-type <function> (##structure-type (%private-make-function #f #f)) %function?)
+(define (%function-max-method-index fn)
+  (- (%length (%function-method-signatures fn)) 1))
 
-(define (%validate-function-name name)
-  (cond
-   ((symbol? name) name)
-   ((eq? name #f) #f)
-   (else (error "invalid function name" name))))
+(define (%function-nth-method-signature i)
+  (%list-ref (%function-method-signatures fn) i))
 
-(define (%make-function #!key (name #f))
-  (let* ((valid-name (%validate-function-name name))
-         (method-table (%make-method-table '())))
-    (%private-make-function valid-name method-table)))
-
-(define (%function-add-method! fn signature method)
-  (let ((mtable (%function-method-table fn)))
-    (%method-table-set-entry! mtable signature method)
-    fn))
-
-(define (%function-best-method fn vals)
-  (let loop ((entries (%method-table-entries (%function-method-table fn)))
-             (best #f))
-    (if (null? entries)
-        (if best (cdr best) #f)
-        (let ((entry (car entries)))
-          (if (%vals-match-method-signature? vals (car entry))
-              (if best
-                  (if (%method-entry< entry best)
-                      (loop (cdr entries) entry)
-                      (loop (cdr entries) best))
-                  (loop (cdr entries) entry))
-              (loop (cdr entries) best))))))
-
-
+(define (%function-best-method fn args)
+  (let ((last-method-index (%function-max-method-index fn)))
+    (let loop ((i 0)
+               (best #f))
+      (if (>= i last-method-index)
+          best
+          (let ((sig (%function-nth-method-signature i)))
+            (if (%method-signature-matches? sig args)
+                (if best
+                    (if (%method-signature-more-specific? sig best)
+                        (loop (+ 1 i) sig)
+                        (loop (+ 1 i) best))
+                    (loop (+ 1 i) sig))
+                (loop (+ 1 i) best)))))))

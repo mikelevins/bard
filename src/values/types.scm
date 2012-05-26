@@ -13,7 +13,7 @@
 ;;; primitive type utilities
 ;;; ---------------------------------------------------------------------
 
-(define (%type-tag obj)
+(define (%tag obj)
  (let ((t (##type obj)))
    (cond ((fx= t 0) ; fixnum tag
           32)
@@ -31,119 +31,128 @@
         i
         (loop (* i i)))))
 
-(define tags:$undefined (%type-tag #!unbound))
-(define tags:$null (%type-tag '()))
-(define tags:$boolean (%type-tag #t))
-(define tags:$character (%type-tag #\c))
-(define tags:$fixnum (%type-tag 1))
-(define tags:$bignum (%type-tag (%find-bignum)))
-(define tags:$flonum (%type-tag 1.2))
-(define tags:$ratnum (%type-tag 2/3))
-(define tags:$string (%type-tag "foo"))
-(define tags:$pair (%type-tag '(a . b)))
-(define tags:$symbol (%type-tag 'foo))
-(define tags:$keyword (%type-tag foo:))
-(define tags:$procedure (%type-tag (lambda (x) x)))
-(define tags:$structure (%type-tag (current-input-port)))
-(define tags:$vector (%type-tag (vector)))
-(define tags:$box (%type-tag (box 1)))
+(define tags:$undefined (%tag #!unbound))
+(define tags:$null (%tag '()))
+(define tags:$boolean (%tag #t))
+(define tags:$character (%tag #\c))
+(define tags:$fixnum (%tag 1))
+(define tags:$bignum (%tag (%find-bignum)))
+(define tags:$flonum (%tag 1.2))
+(define tags:$ratnum (%tag 2/3))
+(define tags:$string (%tag "foo"))
+(define tags:$pair (%tag '(a . b)))
+(define tags:$symbol (%tag 'foo))
+(define tags:$keyword (%tag foo:))
+(define tags:$procedure (%tag (lambda (x) x)))
+(define tags:$structure (%tag (current-input-port)))
+(define tags:$vector (%tag (vector)))
+(define tags:$box (%tag (box 1)))
 (define tags:$foreign-value 18)
 
 ;;; ---------------------------------------------------------------------
-;;; Bard type objects
+;;; type definitions
 ;;; ---------------------------------------------------------------------
+;;; primitive | structure | protocol | singleton | user-defined
 
-(define-type %built-in-type
+(define-type %type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
-  constructor: %make-built-in-type
-  (name %built-in-type-name)
-  (tag %built-in-type-tag))
+  extender: %defsubtype
+  read-only:
+  (name %type-name)
+  (tag %type-tag))
 
-(define $bard-built-in-type-table (make-table test: eqv?))
-(define (%def-built-in-type name tag)
-  (let ((tp (%make-built-in-type name tag)))
-    (table-set! $bard-built-in-type-table tag tp)
-    tp))
+(%defsubtype %primitive-type constructor: %make-primitive-type)
 
-(define (%built-in-type thing)
-  (table-ref $bard-built-in-type-table (%type-tag thing)))
+(%defsubtype %standard-type constructor: %make-standard-type (prototype %type-prototype))
 
+(%defsubtype %protocol constructor: %make-protocol)
 
-(define-type %standard-type
-  id: FCD7B5F9-2FA4-49F9-AF7A-22BE656A3633
-  constructor: %make-standard-type
-  (name %standard-type-name)
-  (representation %standard-type-representation) ; the gambit structure prototype
-  (predicate %standard-type-predicate))
-
-(define $bard-standard-type-table (make-table test: eqv?))
-(define (%def-standard-type name structure-type predicate)
-  (let ((tp (%make-standard-type name structure-type predicate)))
-    (table-set! $bard-standard-type-table structure-type tp)
-    tp))
-
-(define (%standard-type thing)
-  (table-ref $bard-standard-type-table (##structure-type thing)))
-
-(define-type %singleton
-  id: F735A1E4-9D1C-4FB2-8E22-BA4FD08B637C
-  constructor: %private-make-singleton
+(%defsubtype %singleton
+  constructor: %make-singleton
+  read-only:
   (value %singleton-value))
 
-(define $singleton-table (make-table test: equal?))
+;;; ---------------------------------------------------------------------
+;;; bard's type table
+;;; ---------------------------------------------------------------------
 
-(define (%singleton x)
-  (let ((already? (table-ref $singleton-table x #f)))
-    (or already?
-        (let ((s (%private-make-singleton x)))
-          (table-set! $singleton-table x s)
+;;; types
+
+(define $bard-types (make-table test: eqv?))
+(define $bard-structure-tags (make-table test: eqv?))
+(define $bard-max-type-tag 0)
+
+(define (%next-available-type-tag)(+ 1 $bard-max-type-tag))
+
+(define (%assert-type! tag tp)
+  (table-set! $bard-types tag tp)
+  (set! $bard-max-type-tag (max tag $bard-max-type-tag))
+  tp)
+
+(define (%define-primitive-type name tag)
+  (%assert-type! tag (%make-primitive-type name tag)))
+
+(define (%define-standard-type name prototype #!optional (tag (%next-available-type-tag)))
+  (let ((tp (%make-standard-type name tag prototype)))
+    (%assert-type! tag tp)
+    (table-set! $bard-structure-tags prototype tag)
+    tp))
+
+(define (%define-protocol name #!optional (tag (%next-available-type-tag)))
+  (%assert-type! tag (%make-protocol name tag)))
+
+;;; singletons
+
+(define $bard-singletons (make-table test: eqv?))
+
+(define (%singleton val)
+  (let ((found (table-ref $bard-singletons (object->serial-number val))))
+    (or found
+        (let ((s (%make-singleton (string-append "singleton " (object->string val)) val)))
+          (table-set! $bard-singletons (object->serial-number val) s)
           s))))
 
-(define-type %type-type
-  id: 7EAC4075-6187-426F-A8DE-4DFC15400F62
-  constructor: %make-type-type
-  (name %type-type-name))
+;;; ---------------------------------------------------------------------
+;;; basic types
+;;; ---------------------------------------------------------------------
 
-(define-type %anything-type
-  id: ED16E187-096C-4FF5-9697-98A18E5FFA74
-  constructor: %make-anything-type
-  (name %anything-type-name))
+(define <undefined> (%define-primitive-type '<undefined> tags:$undefined))
+(define <null> (%define-primitive-type '<null> tags:$null))
+(define <character> (%define-primitive-type '<character> tags:$character))
+(define <boolean> (%define-primitive-type '<boolean> tags:$boolean))
+(define <symbol> (%define-primitive-type '<symbol> tags:$symbol))
+(define <keyword> (%define-primitive-type '<keyword> tags:$keyword))
+(define <flonum> (%define-primitive-type '<flonum> tags:$flonum))
+(define <ratnum> (%define-primitive-type '<ratnum> tags:$ratnum))
+(define <fixnum> (%define-primitive-type '<fixnum> tags:$fixnum))
+(define <bignum> (%define-primitive-type '<bignum> tags:$bignum))
+(define <primitive-procedure> (%define-primitive-type '<primitive-procedure> tags:$procedure))
+(define <string> (%define-primitive-type '<string> tags:$string))
+(define <foreign-value> (%define-primitive-type '<foreign-value> tags:$foreign-value))
 
-(define <undefined> (%def-built-in-type '<undefined> tags:$undefined))
-(define <null> (%def-built-in-type '<null> tags:$null))
-(define <character> (%def-built-in-type '<character> tags:$character))
-(define <boolean> (%def-built-in-type '<boolean> tags:$boolean))
-(define <symbol> (%def-built-in-type '<symbol> tags:$symbol))
-(define <keyword> (%def-built-in-type '<keyword> tags:$keyword))
-(define <flonum> (%def-built-in-type '<flonum> tags:$flonum))
-(define <ratnum> (%def-built-in-type '<ratnum> tags:$ratnum))
-(define <fixnum> (%def-built-in-type '<fixnum> tags:$fixnum))
-(define <bignum> (%def-built-in-type '<bignum> tags:$bignum))
-(define <primitive-procedure> (%def-built-in-type '<primitive-procedure> tags:$procedure))
-(define <string> (%def-built-in-type '<string> tags:$string))
-(define <foreign-value> (%def-built-in-type '<foreign-value> tags:$foreign-value))
-
-(define <iostream> (%def-standard-type '<iostream> (##structure-type (current-input-port))  
-                                       (lambda (x)(or (input-port? x)(output-port? x)))))
-
-(define Anything (%make-anything-type 'Anything))
-(define <type> (%make-type-type '<type>))
+(define <iostream> (%define-standard-type '<iostream> (##structure-type (current-input-port))))
+(define Anything (%define-protocol 'Anything))
+(define Type (%define-protocol 'Type))
+(define & (%define-protocol '&)) ; type of optional args in method signatures
 
 ;;; ---------------------------------------------------------------------
 ;;; type operations
 ;;; ---------------------------------------------------------------------
 
-(define (%type? thing)
-  (or (%type-type? thing)
-      (%singleton? thing)
-      (%built-in-type? thing)
-      (%standard-type? thing)))
+(define (%object->type-tag thing)
+  (cond
+   ((%type? thing) (%type-tag thing))
+   ((##structure? thing) (table-ref $bard-structure-tags (##structure-type thing) #f))
+   (else (%tag thing))))
 
 (define (%object->bard-type thing)
   (cond
-   ((%type? thing) <type>)
-   ((##structure? thing) (%standard-type thing))
-   (else (%built-in-type thing))))
+   ((%type? thing) Type)
+   ((##structure? thing) (let ((tag (%object->type-tag thing)))
+                           (if tag
+                               (table-ref $bard-types tag #f)
+                               (error (string-append "Can't get the type of " (object-string thing))))))
+   (else (table-ref $bard-types (%tag thing)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; type taxonomy

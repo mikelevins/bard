@@ -85,7 +85,7 @@
    ((eq? 'nothing val)(%nothing))
    ((eq? 'true val)(%true))
    ((eq? 'false val)(%false))
-   ((list? val)(map %read-value->bard-value val))
+   ((list? val)(%cons->ralist (map %read-value->bard-value val)))
    (else val)))
 
 (define (bard:read #!optional port)
@@ -100,9 +100,9 @@
   (call-with-input-string s (lambda (in)(bard:read in))))
 
 ;;; (bard:read-from-string "")
-;;; (car (bard:read-from-string "'x"))
-;;; (car (bard:read-from-string ",x"))
-;;; (car (bard:read-from-string ",@x"))
+;;; (bard:read-from-string "'x")
+;;; (bard:read-from-string ",x")
+;;; (bard:read-from-string ",@x")
 ;;; (show (bard:read-from-string "undefined"))
 ;;; (show (bard:read-from-string "nothing"))
 ;;; (show (bard:read-from-string "true"))

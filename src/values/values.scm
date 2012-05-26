@@ -102,6 +102,8 @@
 (define %list? ra:list?)
 (define %cons ra:cons)
 (define %car ra:car)
+(define %first ra:car)
+(define (%last ls) (%list-ref ls (- (%length ls) 1)))
 (define %cdr ra:cdr)
 (define %list ra:list)
 (define %make-list ra:make-list)
@@ -128,7 +130,7 @@
 (define %ralist->cons ra:random-access-list->linear-access-list)
 (define %cons->ralist ra:linear-access-list->random-access-list)
 
-(define <ralist> (%def-standard-type '<ralist> (##structure-type (%list 0)) %list?))
+(define <list> (%define-standard-type '<list> (##structure-type (%list 0))))
 
 ;;; ---------------------------------------------------------------------
 ;;; frame
@@ -157,7 +159,7 @@
   (slots %frame-slots)
   (keys %frame-keys))
 
-(define <frame> (%def-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list))) %frame?))
+(define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list)))))
 
 (define (%make-frame kv-plist)
   (let* ((alist (plist->alist kv-plist))

@@ -9,10 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(##include "values/type-macros.scm")
-(##include "values/function-macros.scm")
-
-
 (define as-string (%make-function name: 'as-string))
 
 (define (%defprinter type printer)

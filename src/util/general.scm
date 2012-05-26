@@ -71,7 +71,14 @@
             (cons item
                   (interpose item (cdr ls))))))
 
-
 (define (slib:error . args)
   (error (apply string-append (interpose " " (map object->string args)))))
 
+(define (vector-every? fn vec)
+  (let ((len (vector-length vec)))
+    (let loop ((i 0))
+      (if (>= i len)
+          #t
+          (if (fn (vector-ref vec i))
+              (loop (+ i 1))
+              #f)))))
