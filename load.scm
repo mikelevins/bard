@@ -68,7 +68,7 @@
          "lib/wttree.scm"
          "src/util/general.scm"
          "src/values/types.scm"
-         ;;"src/values/values.scm"
+         "src/values/values.scm"
          ;;"src/read.scm"
 
          ))

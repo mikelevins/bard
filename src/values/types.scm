@@ -104,6 +104,11 @@
   constructor: %make-type-type
   (name %type-type-name))
 
+(define-type %anything-type
+  id: ED16E187-096C-4FF5-9697-98A18E5FFA74
+  constructor: %make-anything-type
+  (name %anything-type-name))
+
 (define <undefined> (%def-built-in-type '<undefined> tags:$undefined))
 (define <null> (%def-built-in-type '<null> tags:$null))
 (define <character> (%def-built-in-type '<character> tags:$character))
@@ -121,6 +126,7 @@
 (define <iostream> (%def-standard-type '<iostream> (##structure-type (current-input-port))  
                                        (lambda (x)(or (input-port? x)(output-port? x)))))
 
+(define Anything (%make-anything-type 'Anything))
 (define <type> (%make-type-type '<type>))
 
 ;;; ---------------------------------------------------------------------
@@ -139,3 +145,17 @@
    ((##structure? thing) (%standard-type thing))
    (else (%built-in-type thing))))
 
+;;; ---------------------------------------------------------------------
+;;; type taxonomy
+;;; ---------------------------------------------------------------------
+
+(define (%subtype? t1 t2)
+  (if (eq? t1 t2)
+      #t
+      (if (%singleton? t2)
+          #f
+          (if (%singleton? t1)
+              (%subtype? (%object->bard-type (%singleton-value t1)) t2)
+              (if (eq? t2 Anything)
+                  #t
+                  #f)))))

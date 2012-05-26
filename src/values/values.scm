@@ -9,8 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(##include "type-macros.scm")
-
 ;;; ----------------------------------------------------------------------
 ;;; undefined
 ;;; ----------------------------------------------------------------------
@@ -130,7 +128,7 @@
 (define %ralist->cons ra:random-access-list->linear-access-list)
 (define %cons->ralist ra:linear-access-list->random-access-list)
 
-(%define-structure-type <ralist> (##structure-type (%list 0)) %list?)
+(define <ralist> (%def-standard-type '<ralist> (##structure-type (%list 0)) %list?))
 
 ;;; ---------------------------------------------------------------------
 ;;; frame
@@ -159,7 +157,7 @@
   (slots %frame-slots)
   (keys %frame-keys))
 
-(%define-structure-type <frame> (##structure-type (%private-make-frame $empty-slots (%list))) %frame?)
+(define <frame> (%def-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list))) %frame?))
 
 (define (%make-frame kv-plist)
   (let* ((alist (plist->alist kv-plist))
