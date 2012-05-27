@@ -38,7 +38,7 @@
               (%add-binding env (cadr formals) args))
           (loop (cdr formals)(cdr args)(+ i 1)(%add-binding env (car formals)(car args)))))))
 
-(define (%apply-bard-method method args)
+(define (%apply-method method args)
   (let* ((method-body (%method-body method))
          (lexical-env (%method-lexical-environment method args)))
     (%eval method-body lexical-env)))
@@ -46,29 +46,29 @@
 (define (%no-applicable-method fn args)
   (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string args))))
 
-(define (%apply-bard-function fn args)
+(define (%apply-function fn args)
   (let ((method (%function-best-method fn args)))
     (if method
-        (%apply-bard-method method args)
+        (%apply-method method args)
         (%no-applicable-method fn args))))
 
 (define (%apply applicable args)
   (cond
-     ((null? applicable) (%nothing))
-     ((string? applicable)(%apply-string applicable args))
-     ((list? applicable)(%apply-list applicable args))
-     ((%frame? applicable)(%apply-frame applicable args))
-     ((procedure? applicable)(apply applicable args))
-     ((%method? applicable)(%apply-bard-method applicable args))
-     ((%function? applicable)(%apply-bard-function applicable args))
-     (else (error "not an applicable object" applicable))))
+   ((%function? applicable)(%apply-function applicable args))
+   ((%method? applicable)(%apply-method applicable args))
+   ((procedure? applicable)(apply applicable args))
+   ((%frame? applicable)(%apply-frame applicable args))
+   ((%list? applicable)(%apply-list applicable args))
+   ((string? applicable)(%apply-string applicable args))
+   ((%null? applicable) (%nothing))
+   (else (error "not an applicable object" applicable))))
 
 (define %funcall 
   (lambda (fn . args)
     (cond
-     ((procedure? fn)(apply fn args))
-     ((%method? fn)(%apply-bard-method fn args))
      ((%function? fn)(%apply-bard-function fn args))
+     ((%method? fn)(%apply-method fn args))
+     ((procedure? fn)(apply fn args))
      (else (error "not an applicable object" fn)))))
 
 ;;; (%apply '() '())

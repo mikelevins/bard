@@ -106,9 +106,9 @@
 (define $bard-singletons (make-table test: eqv?))
 
 (define (%singleton val)
-  (let ((found (table-ref $bard-singletons (object->serial-number val))))
+  (let ((found (table-ref $bard-singletons (object->serial-number val) #f)))
     (or found
-        (let ((s (%make-singleton (string-append "singleton " (object->string val)) val)))
+        (let ((s (%make-singleton (string-append "singleton " (object->string val)) (%tag val) val)))
           (table-set! $bard-singletons (object->serial-number val) s)
           s))))
 
@@ -151,7 +151,7 @@
    ((##structure? thing) (let ((tag (%object->type-tag thing)))
                            (if tag
                                (table-ref $bard-types tag #f)
-                               (error (string-append "Can't get the type of " (object-string thing))))))
+                               (error (string-append "Can't get the type of " (object->string thing))))))
    (else (table-ref $bard-types (%tag thing)))))
 
 ;;; ---------------------------------------------------------------------

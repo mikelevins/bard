@@ -105,25 +105,26 @@
   id: 927A1AD2-762A-4DE6-9900-C22857D20E5A
   extender: %def-method-type
   read-only:
-  (name %type-name)
-  (environment %method-environment))
+  (name %method-name)
+  (environment %method-environment)
+  (signature %method-signature)
+  (formals %method-formals))
 
 (%def-method-type %primitive-method
                   constructor: %private-make-primitive-method
                   read-only:
                   (function %method-function))
 
-(define (%make-primitive-method parameters method-function #!key (environment '())(name "An anonymous primitive method"))
-  (%private-make-primitive-method name environment method-function))
+(define (%make-primitive-method signature formals method-function #!key (environment '())(name "An anonymous primitive method"))
+  (%private-make-primitive-method name environment signature formals method-function))
 
 (%def-method-type %interpreted-method
                   constructor: %private-make-interpreted-method
                   read-only:
-                  (formals %method-formals)
                   (body %method-body))
 
-(define (%make-interpreted-method parameters method-body  #!key (environment '())(name "An anonymous interpreted method"))
-  (%private-make-interpreted-method name parameters environment method-body))
+(define (%make-interpreted-method signature formals method-body  #!key (environment '())(name "An anonymous interpreted method"))
+  (%private-make-interpreted-method name environment signature formals method-body))
 
 
 ;;; ---------------------------------------------------------------------

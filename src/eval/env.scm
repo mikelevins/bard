@@ -13,33 +13,26 @@
 ;;; global environment
 ;;; ---------------------------------------------------------------------
 
-(define (%global-environment)
+(define (%global-variables)
   (make-table test: eq?))
 
-(define $bard-global-environment #f)
+(define $bard-global-variables #f)
 
 (define (%defglobal var val)
-  (table-set! $bard-global-environment var val)
+  (table-set! $bard-global-variables var val)
   var)
 
 (define (%global-value var)
-  (table-ref $bard-global-environment var (%undefined)))
+  (table-ref $bard-global-variables var (%undefined)))
 
 ;;; ---------------------------------------------------------------------
 ;;; lexical environments
 ;;; ---------------------------------------------------------------------
 
-(define (%symbol< s1 s2)
-  (string<? (symbol->string s1)
-           (symbol->string s2)))
-
-(define $environment-wt-type (make-wt-tree-type %symbol<))
-(define %null-environment #f)
-(let ((_null-env  (make-wt-tree $environment-wt-type)))
-  (set! %null-environment (lambda () _null-env)))
+(define (%null-environment) '())
 
 (define (%add-binding env var val)
-  (wt-tree/add env var val))
+  (cons (cons var val) env))
 
 (define (%extend-environment env plist)
   (if (null? plist)
@@ -51,8 +44,14 @@
             (%extend-environment (%add-binding env var val) (cddr plist))))))
 
 (define (%lookup-variable-value env var)
-  (wt-tree/lookup env var (%undefined)))
+  (let ((binding (assq var env)))
+    (if binding (cdr binding) (%undefined))))
 
 (define (%set-variable! env var val)
-  (wt-tree/add! env var val))
+  (let ((binding (assq var env)))
+    (if binding
+        (begin
+          (set-cdr! binding val)
+          val)
+        (error (string-append "Undefined variable: " (symbol->string var))))))
 

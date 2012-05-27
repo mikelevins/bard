@@ -99,10 +99,6 @@
 (define (bard:read-from-string s)
   (call-with-input-string s (lambda (in)(bard:read in))))
 
-;;; (bard:read-from-string "")
-;;; (bard:read-from-string "'x")
-;;; (bard:read-from-string ",x")
-;;; (bard:read-from-string ",@x")
 ;;; (show (bard:read-from-string "undefined"))
 ;;; (show (bard:read-from-string "nothing"))
 ;;; (show (bard:read-from-string "true"))

@@ -18,13 +18,13 @@
   (table-set! $bard-macro-functions name mfun))
 
 (define (%macro-form? expr)
-  (and (list? expr)
-       (not (null? expr))
-       (table-ref $bard-macro-functions (car expr) #f)
+  (and (%list? expr)
+       (not (%null? expr))
+       (table-ref $bard-macro-functions (%car expr) #f)
        #t))
 
 (define (%macroexpand expr env)
-  (let* ((expander (table-ref $bard-macro-functions (car expr) #f)))
+  (let* ((expander (table-ref $bard-macro-functions (%car expr) #f)))
     (if expander
         (expander expr env)
         (error "undefined macro in expression" expr))))

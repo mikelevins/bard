@@ -69,14 +69,14 @@
          "src/util/general.scm"
          "src/values/types.scm"
          "src/values/values.scm"
+         "src/print.scm"
+         "src/eval/env.scm"
          "src/values/functions.scm"
          "src/read.scm"
-         "src/eval/env.scm"
-         ;;"src/eval/special.scm"
-         ;;"src/eval/macro.scm"
+         "src/eval/special.scm"
+         "src/eval/macro.scm"
          ;;"src/eval/apply.scm"
          ;;"src/eval/eval.scm"
-         ;;"src/print.scm"
 
          ))
 
