@@ -54,14 +54,14 @@
 
 (define (%apply applicable args)
   (cond
-   ((%function? applicable)(%apply-function applicable args))
-   ((%method? applicable)(%apply-method applicable args))
-   ((procedure? applicable)(apply applicable args))
-   ((%frame? applicable)(%apply-frame applicable args))
-   ((%list? applicable)(%apply-list applicable args))
-   ((string? applicable)(%apply-string applicable args))
-   ((%null? applicable) (%nothing))
-   (else (error "not an applicable object" applicable))))
+   ;;((%function? applicable)(%apply-function applicable args))
+   ;;((%method? applicable)(%apply-method applicable args))
+   ;;((procedure? applicable)(apply applicable args))
+   ;;((%frame? applicable)(%apply-frame applicable args))
+   ;;((%list? applicable)(%apply-list applicable args))
+   ;;((string? applicable)(%apply-string applicable args))
+   ;;((%null? applicable) (%nothing))
+   (else (error (string-append "not an applicable object: " (object->string applicable) "; args: " (object->string args))))))
 
 (define %funcall 
   (lambda (fn . args)

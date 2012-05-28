@@ -18,6 +18,9 @@
 
 (define $bard-global-variables #f)
 
+(define (%init-bard)
+  (set! $bard-global-variables (%global-variables)))
+
 (define (%defglobal var val)
   (table-set! $bard-global-variables var val)
   var)
@@ -47,11 +50,16 @@
   (let ((binding (assq var env)))
     (if binding (cdr binding) (%undefined))))
 
-(define (%set-variable! env var val)
+(define (%set-variable! var val env)
   (let ((binding (assq var env)))
     (if binding
         (begin
           (set-cdr! binding val)
           val)
-        (error (string-append "Undefined variable: " (symbol->string var))))))
+        (let ((global-val (%global-value var)))
+          (if (%defined? global-val)
+              (begin
+                (%defglobal var val)
+                val)
+              (error (string-append "Undefined variable: " (symbol->string var))))))))
 

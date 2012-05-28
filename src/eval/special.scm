@@ -9,89 +9,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define $special-forms-table (make-table test: eq?))
 
-(define (%ensure-valid-quotation x)
-  (if (and (%list? x)
-           (not (%null? (%cdr x)))
-           (%null? (%cddr x)))
-      x
-      (error "invalid quote form")))
+(define (%defspecial nm eval-fn)
+  (table-set! $special-forms-table nm eval-fn))
 
-(define (%expand-quotation expr env)
-  (%car (%cdr expr)))
-
-(define $special-forms-table
-  (->table 
-   'and (lambda (expr env)
-          (let loop ((expr (%cdr expr))
-                     (val %nil))
-            (if (%null? expr)
-                val
-                (let ((v (%eval (%car expr) env)))
-                  (if v
-                      (loop (%cdr expr) v)
-                      #f)))))
-   'begin (lambda (expr env) 
-            (let loop ((forms (%cdr expr))
-                       (val %nil))
-              (if (%null? forms)
-                  val
-                  (let ((form (%car forms)))
-                    (loop (%cdr forms)
-                          (%eval form env))))))
-   'define (lambda (expr env) (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env)))
-   'define-function (lambda (expr env) 
-                      (let* ((proto (%car (%cdr expr)))
-                             (body (%cons 'begin (%drop 2 expr)))
-                             (fname (%car proto))
-                             (params (%cdr proto))
-                             (sig (%function-param-list->method-signature params env))
-                             (formal-params (%function-param-list->formal-arguments params))
-                             (fn (%global-value fname))
-                             (meth (%make-method name: fname environment: env params: formal-params body: body)))
-                        (if (not (%defined? fn))
-                            (begin
-                              (set! fn (%make-function name: fname))
-                              (%defglobal fname fn)))
-                        (%function-add-method! fn sig meth)))
-   'function (lambda (expr env) (%make-function name: #f))
-   'if (lambda (expr env)
-         (let ((test (%list-ref expr 1))
-               (conseq (%list-ref expr 2))
-               (alt? (> (%length expr) 3)))
-           (if (%eval test env)
-               (%eval conseq env)
-               (if alt?
-                   (%eval (%list-ref expr 3) env)
-                   (%nothing)))))
-   'let (lambda (expr env)
-          (let ((body (%drop 2 expr)))
-            (let loop ((bindings (%list-ref expr 1))
-                       (env env))
-              (if (%null? bindings)
-                  (let loop2 ((forms body)
-                              (val (%nothing)))
-                    (if (%null? forms)
-                        val
-                        (let ((form (%car forms)))
-                          (loop2 (%cdr forms)
-                                 (%eval form env)))))
-                  (let ((binding (%car bindings)))
-                    (loop (%cdr bindings)
-                          (%add-binding env (%car binding)(%eval (%car (%cdr binding)) env))))))))
-   'method (lambda (expr env) (%make-method name: #f environment: env params: (%list-ref expr 1) body: (%cons 'begin (%drop 2 expr))))
-   'not (lambda (expr env)(if (%eval (%cadr expr) env) (%false) (%true)))
-   'or (lambda (expr env)
-         (let loop ((expr (%cdr expr)))
-           (if (%null? expr)
-               #f
-               (let ((v (%eval (%car expr) env)))
-                 (if v
-                     v
-                     (loop (%cdr expr)))))))
-   'quote (lambda (expr env) (%expand-quotation (%ensure-valid-quotation expr) env))
-   'set! (lambda (expr env) (%set-variable! (%list-ref expr 1) (%eval (%list-ref expr 2) env)  env))
-   'time (lambda (expr env) (time (%eval (%cadr expr) env)))))
+(define (%special-evaluator nm)
+  (table-ref $special-forms-table nm #f))
 
 (define (%special-form? expr)
   (and (table-ref $special-forms-table (%car expr) #f)
@@ -101,5 +25,93 @@
   (let ((evaluator (table-ref $special-forms-table (%car expr) #f)))
     (if evaluator
         (evaluator expr env)
-        (error "unrecognized special form" (%car expr)))))
+        (error (string-append "unrecognized special form" (%as-string (%car expr)))))))
 
+(%defspecial 'and 
+             (lambda (expr env)
+               (let loop ((expr (%cdr expr))
+                          (val (%true)))
+                 (if (%null? expr)
+                     val
+                     (let ((v (%eval (%car expr) env)))
+                       (if (%true? v)
+                           (loop (%cdr expr) v)
+                           (%false)))))))
+
+(%defspecial 'begin
+             (lambda (expr env) 
+               (let loop ((forms (%cdr expr))
+                          (val (%nothing)))
+                 (if (%null? forms)
+                     val
+                     (let ((form (%car forms)))
+                       (loop (%cdr forms)
+                             (%eval form env)))))))
+
+(%defspecial 'define
+             (lambda (expr env)
+               (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))
+               (%list-ref expr 1)))
+
+(%defspecial 'if
+             (lambda (expr env)
+               (let ((test (%list-ref expr 1))
+                     (conseq (%list-ref expr 2))
+                     (alt? (> (%length expr) 3)))
+                 (if (%eval test env)
+                     (%eval conseq env)
+                     (if alt?
+                         (%eval (%list-ref expr 3) env)
+                         (%nothing))))))
+
+(%defspecial 'let
+             (lambda (expr env)
+               (let ((body (%drop 2 expr)))
+                 (let loop ((bindings (%list-ref expr 1))
+                            (env env))
+                   (if (%null? bindings)
+                       (let loop2 ((forms body)
+                                   (val (%nothing)))
+                         (if (%null? forms)
+                             val
+                             (let ((form (%car forms)))
+                               (loop2 (%cdr forms)
+                                      (%eval form env)))))
+                       (let ((binding (%car bindings)))
+                         (loop (%cdr bindings)
+                               (%add-binding env
+                                             (%car binding)
+                                             (%eval (%car (%cdr binding))
+                                                    env)))))))))
+
+(%defspecial 'not
+             (lambda (expr env)
+               (if (%eval (%car (%cdr expr)) env)
+                   (%false)
+                   (%true))))
+
+(%defspecial 'or
+             (lambda (expr env)
+               (let loop ((expr (%cdr expr)))
+                 (if (%null? expr)
+                     (%false)
+                     (let ((v (%eval (%car expr) env)))
+                       (if v
+                           v
+                           (loop (%cdr expr))))))))
+
+(%defspecial 'quote (lambda (expr env)
+                      (if (= 2 (%length expr))
+                          (%car (%cdr expr))
+                          (error (string-append "Wrong number of arguments to quote: " (%as-string (%cdr expr)))))))
+
+(%defspecial 'set!
+             (lambda (expr env)
+               (%set-variable! (%list-ref expr 1)
+                               (%eval (%list-ref expr 2)
+                                      env)
+                               env)))
+
+(%defspecial 'time
+             (lambda (expr env)
+               (time (%eval (%car (%cdr expr)) env))))

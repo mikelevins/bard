@@ -75,8 +75,8 @@
          "src/read.scm"
          "src/eval/special.scm"
          "src/eval/macro.scm"
-         ;;"src/eval/apply.scm"
-         ;;"src/eval/eval.scm"
+         "src/eval/apply.scm"
+         "src/eval/eval.scm"
 
          ))
 

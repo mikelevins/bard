@@ -85,7 +85,7 @@
    ((eq? 'nothing val)(%nothing))
    ((eq? 'true val)(%true))
    ((eq? 'false val)(%false))
-   ((list? val)(%cons->ralist (map %read-value->bard-value val)))
+   ((pair? val)(%cons->ralist (map %read-value->bard-value val)))
    (else val)))
 
 (define (bard:read #!optional port)
