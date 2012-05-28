@@ -127,8 +127,16 @@
 (define (%list-put ls n val) (ra:list-set ls n val))
 (define %map ra:map)
 (define %for-each ra:for-each)
-(define %ralist->cons ra:random-access-list->linear-access-list)
-(define %cons->ralist ra:linear-access-list->random-access-list)
+
+(define (%ralist->cons x) 
+  (if (%list? x) 
+      (map %ralist->cons (ra:random-access-list->linear-access-list x))
+      x))
+
+(define (%cons->ralist x) 
+  (if (pair? x) 
+      (%map %cons->ralist (ra:linear-access-list->random-access-list x))
+      x))
 
 (define <list> (%define-standard-type '<list> (##structure-type (%list 0))))
 

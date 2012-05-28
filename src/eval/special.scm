@@ -53,6 +53,12 @@
                (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))
                (%list-ref expr 1)))
 
+(%defspecial 'function
+             (lambda (expr env)
+               (if (> (%length expr) 1)
+                   (%make-function name: (%list-ref expr 1))
+                   (%make-function))))
+
 (%defspecial 'if
              (lambda (expr env)
                (let ((test (%list-ref expr 1))
@@ -83,6 +89,27 @@
                                              (%car binding)
                                              (%eval (%car (%cdr binding))
                                                     env)))))))))
+
+(define (%parse-method-form m)
+  (let* ((first (%list-ref m 0))
+         (mname (if (symbol? first)
+                    first
+                    #f))
+         (formals (if (symbol? first)
+                      (%list-ref m 1)
+                      (%list-ref m 0)))
+         (body (if (symbol? first)
+                   (%drop 2 m)
+                   (%drop 1 m))))
+    (%cons mname (%cons formals body))))
+
+(%defspecial 'method
+             (lambda (expr env)
+               (let* ((mdesc (%parse-method-form (%cdr expr)))
+                      (mname (%list-ref mdesc 0))
+                      (formals (%list-ref mdesc 1))
+                      (body (%drop 2 mdesc)))
+                 (%make-interpreted-method formals body environment: env name: mname))))
 
 (%defspecial 'not
              (lambda (expr env)

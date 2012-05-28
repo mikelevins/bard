@@ -107,7 +107,6 @@
   read-only:
   (name %method-name)
   (environment %method-environment)
-  (signature %method-signature)
   (formals %method-formals))
 
 (%def-method-type %primitive-method
@@ -115,17 +114,25 @@
                   read-only:
                   (function %method-function))
 
-(define (%make-primitive-method signature formals method-function #!key (environment '())(name "An anonymous primitive method"))
-  (%private-make-primitive-method name environment signature formals method-function))
+(define (%make-primitive-method formals method-function #!key (environment '())(name #f))
+  (%private-make-primitive-method name environment formals method-function))
+
+(define <primitive-method>
+  (%define-standard-type '<primitive-method> (##structure-type (%make-primitive-method '() #f))))
 
 (%def-method-type %interpreted-method
                   constructor: %private-make-interpreted-method
                   read-only:
                   (body %method-body))
 
-(define (%make-interpreted-method signature formals method-body  #!key (environment '())(name "An anonymous interpreted method"))
-  (%private-make-interpreted-method name environment signature formals method-body))
+(define (%make-interpreted-method formals method-body  #!key (environment '())(name #f))
+  (%private-make-interpreted-method name environment formals method-body))
 
+(define <interpreted-method>
+  (%define-standard-type '<interpreted-method> (##structure-type (%make-interpreted-method '() '()))))
+
+(define (%method-name? x)
+  (or (symbol? x)(string? x)))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions
@@ -140,8 +147,10 @@
   (formals %function-method-formals %set-function-method-formals!)
   (bodies %function-method-bodies %set-function-method-bodies!))
 
-(define (%make-function #!key (name "An anonymous function"))
+(define (%make-function #!key (name #f))
   (%private-make-function name (%list) (%list) (%list)))
+
+(define <function> (%define-standard-type '<function> (##structure-type (%make-function))))
 
 (define (%function-max-method-index fn)
   (- (%length (%function-method-signatures fn)) 1))

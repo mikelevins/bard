@@ -86,6 +86,38 @@
                    (string-append "(singleton " (%as-string (%singleton-value x)) ")")
                    (object->string (%type-name x)))))
 
+(%defprinter <function> 
+             (lambda (x)
+               (let ((nm (%function-name x)))
+                 (if  nm
+                      (string-append "#<function " (object->string nm) ">")
+                      (string-append "#<anonymous function " (object->string (object->serial-number x)) ">")))))
+
+
+(%defprinter <primitive-method> 
+             (lambda (x)
+               (let ((nm (%method-name x)))
+                 (if  nm
+                      (string-append "#<primitive-method " (object->string nm) ">")
+                      (string-append "#<anonymous primitive method " (object->string (object->serial-number x)) ">")))))
+
+(%defprinter <interpreted-method> 
+             (lambda (x)
+               (let ((nm (or (and (%method-name x)
+                                  (%as-string (%method-name x)))
+                             ""))
+                     (formals (%method-formals x))
+                     (body (%method-body x)))
+                 (with-output-to-string '() 
+                                        (lambda () 
+                                          (display "(method ")
+                                          (display nm)
+                                          (if (> (string-length nm) 0) (display " "))
+                                          (display (interpose " " (%ralist->cons formals)))
+                                          (if (> (%length body) 0) (display " "))
+                                          (for-each (lambda (i)(display i))
+                                                    (interpose " " (%ralist->cons body)))
+                                          (display ")"))))))
 
 (define (%as-string x)
   (let ((printer (table-ref $bard-printers (%object->bard-type x) #f)))

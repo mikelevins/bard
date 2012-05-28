@@ -106,3 +106,15 @@
 ;;; (show (%eval (bard:read-from-string "(time 1.2)")))
 ;;; (show (%eval (bard:read-from-string "(time \"Fred and Barney\")")))
 ;;; (show (%eval (bard:read-from-string "(time (and true true))")))
+
+;;; (show (%eval (bard:read-from-string "(function)")))
+;;; (show (%eval (bard:read-from-string "(function foo)")))
+
+;;; (show (%eval (bard:read-from-string "(method ())")))
+;;; (show (%eval (bard:read-from-string "(method foo ())")))
+;;; (show (%eval (bard:read-from-string "(method foo (x) x)")))
+;;; (show (%eval (bard:read-from-string "(method foo (x) (begin (* x x)))")))
+
+
+
+
