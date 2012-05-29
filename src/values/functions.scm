@@ -68,35 +68,6 @@
             (loop (%cdr sig1)(%cdr sig2))
             #f))))
 
-(define (%function-param->method-signature-type env param)
-  (cond
-   ((symbol? param) (if (eq? param '&) & Anything))
-   ((%list? param) (%eval (%car (%cdr param)) env))
-   (else (error (string-append "Invalid function parameter: " (object->string param))))))
-
-(define (%validate-method-signature sig)
-  (if (and (%list? sig)
-           (%every? %type? sig)
-           (let ((ampersand-pos (%position & sig)))
-             (if ampersand-pos 
-                 (= ampersand-pos (- (%length sig) 1))
-                 #t)))
-      sig
-      (else (error (string-append "Invalid method signature: " (object->string sig))))))
-
-(define (%function-param-list->method-signature params env)
-  (%validate-method-signature (%map (partial %function-param->method-signature-type env)
-                                    params)))
-
-(define (%function-param->formal-argument param)
-  (cond
-   ((symbol? param) param)
-   ((%list? param) (%car param))
-   (else (error (string-append "Invalid function parameter: " (object->string param))))))
-
-(define (%function-param-list->formal-arguments params)
-  (%map %function-param->formal-argument params))
-
 ;;; ---------------------------------------------------------------------
 ;;; methods
 ;;; ---------------------------------------------------------------------
@@ -105,24 +76,27 @@
   id: 927A1AD2-762A-4DE6-9900-C22857D20E5A
   extender: %def-method-type
   read-only:
-  (name %method-name)
-  (environment %method-environment)
-  (formals %method-formals))
+  (name %method-name))
 
 (%def-method-type %primitive-method
                   constructor: %private-make-primitive-method
                   read-only:
-                  (function %method-function))
+                  (required-count %primitive-method-required-count)
+                  (optional-parameter %primitive-method-optional-parameter?)
+                  (function %primitive-method-function))
 
-(define (%make-primitive-method formals method-function #!key (environment '())(name #f))
-  (%private-make-primitive-method name environment formals method-function))
+(define (%make-primitive-method method-function
+                                #!key (required-count 0) (optional-parameter #f) (environment '())(name #f))
+  (%private-make-primitive-method name required-count optional-parameter method-function))
 
 (define <primitive-method>
-  (%define-standard-type '<primitive-method> (##structure-type (%make-primitive-method '() #f))))
+  (%define-standard-type '<primitive-method> (##structure-type (%make-primitive-method #f))))
 
 (%def-method-type %interpreted-method
                   constructor: %private-make-interpreted-method
                   read-only:
+                  (environment %method-environment)
+                  (formals %method-formals)
                   (body %method-body))
 
 (define (%make-interpreted-method formals method-body  #!key (environment '())(name #f))
@@ -143,9 +117,10 @@
   constructor: %private-make-function
   read-only:
   (name %function-name)
+  read-write:
   (signatures %function-method-signatures %set-function-method-signatures!)
   (formals %function-method-formals %set-function-method-formals!)
-  (bodies %function-method-bodies %set-function-method-bodies!))
+  (methods %function-methods %set-function-methods!))
 
 (define (%make-function #!key (name #f))
   (%private-make-function name (%list) (%list) (%list)))
@@ -161,14 +136,44 @@
 (define (%function-best-method fn args)
   (let ((last-method-index (%function-max-method-index fn)))
     (let loop ((i 0)
+               (m #f)
                (best #f))
       (if (>= i last-method-index)
-          best
+          (if best
+              (values (%function-nth-method fn m) best)
+              (values #f #f))
           (let ((sig (%function-nth-method-signature i)))
             (if (%method-signature-matches? sig args)
                 (if best
                     (if (%method-signature-more-specific? sig best)
-                        (loop (+ 1 i) sig)
-                        (loop (+ 1 i) best))
-                    (loop (+ 1 i) sig))
-                (loop (+ 1 i) best)))))))
+                        (loop (+ 1 i) i sig)
+                        (loop (+ 1 i) m best))
+                    (loop (+ 1 i) i sig))
+                (loop (+ 1 i) m best)))))))
+
+(define (%add-method! fn msig method)
+  (let* ((found-pos (%position (lambda (s)(%every? equal? s msig)) 
+                               (%function-method-signatures fn)))
+         (sigs (if found-pos
+                   (%function-method-signatures fn)
+                   (%append (%function-method-signatures fn) (%list msig))))
+         (methods (if found-pos
+                      (ra:list-set (%function-methods fn) found-pos method)
+                      (%append (%function-methods fn) (%list method)))))
+    (%set-function-method-signatures! fn sigs)
+    (%set-function-methods! fn methods)
+    fn))
+
+(define (%add-primitive-method! fn msig method-function #!key (name #f))
+  (let* ((method (%make-primitive-method method-function environment: env name: name))
+         (found-pos (%position (lambda (s)(%every? equal? s msig)) 
+                               (%function-method-signatures fn)))
+         (sigs (if found-pos
+                   (%function-method-signatures fn)
+                   (%append (%function-method-signatures fn) (%list msig))))
+         (methods (if found-pos
+                      (ra:list-set (%function-methods fn) found-pos method)
+                      (%append (%function-methods fn) (%list method)))))
+    (%set-function-method-signatures! fn sigs)
+    (%set-function-methods! fn methods)
+    fn))

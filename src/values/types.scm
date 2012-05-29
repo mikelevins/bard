@@ -168,3 +168,12 @@
               (if (eq? t2 Anything)
                   #t
                   #f)))))
+
+(define (%keyed-collection? op)
+  (or
+   (%null? op)
+   (string? op)
+   (%list? op)
+   (%frame? op)))
+
+

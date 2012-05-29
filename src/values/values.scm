@@ -102,6 +102,7 @@
 (define %list? ra:list?)
 (define %cons ra:cons)
 (define %car ra:car)
+(define %cadr ra:cadr)
 (define %first ra:car)
 (define (%last ls) (%list-ref ls (- (%length ls) 1)))
 (define %cdr ra:cdr)
@@ -111,7 +112,54 @@
 (define %append ra:append)
 (define %reverse ra:reverse)
 
+(define (%some? test ls)
+  (let ((items ls))
+    (if (%null? items)
+        (%nothing)
+        (if (test (%car items))
+            (%car items)
+            (loop (%cdr items))))))
+
+(define (%every? test ls #!optional (ls2 #f))
+  (if ls2
+      (let ((items1 ls)
+            (items2 ls))
+        (if (or (%null? items1)
+                (%null? items2))
+            (%true)
+            (if (test (%car items1)(%car items2))
+                (loop (%cdr items1)(%cdr items2))
+                (%false))))
+      (let ((items ls))
+        (if (%null? items)
+            (%true)
+            (if (test (%car items))
+                (loop (%cdr items))
+                (%false))))))
+
+(define (%position test ls)
+  (let ((len (%length ls)))
+    (let loop ((items ls)
+               (i 0))
+      (if (>= i len)
+          (%false)
+          (if (test (%car items))
+              i
+              (loop (%cdr items)(+ 1 i)))))))
+
 (define (%drop n ls)(ra:list-tail ls n))
+
+(define (%take n ls)
+  (let ((len (%length ls)))
+    (let loop ((items ls)
+               (i 0)
+               (result %nil))
+      (if (>= i n)
+          result
+          (if (%null? items)
+              (error (string-append "Can't take " (%as-string n) " items from " (%as-string ls)))
+              (loop (%cdr items)(+ i 1)(%append result (%list (%car items)))))))))
+
 
 (define (%remove x ls #!optional (test equal?))
   (let loop ((items ls)

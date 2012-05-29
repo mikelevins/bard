@@ -9,76 +9,48 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (%single-arg args)
-  (if (= (length args) 1)
-      (car args)
-      (error (string-append "argument list for apply has the wrong number of arguments " 
-                            (object->string args)))))
+(define (%apply-keyed-collection op args)
+  (if (= 1 (%length args))
+      (cond
+       ((%null? op) %nil)
+       ((string? op)(string-ref op (%car args)))
+       ((%list? op)(%list-ref op (%car args)))
+       ((%frame? op)(%frame-get op (%car args)))
+       (else (error (string-append "Not an applicable object: " (%as-string op)))))
+      (error (string-append "Too many arguments: " (%as-string args)))))
 
-(define (%apply-string s args)
-  (string-ref s (%single-arg args)))
+(define (%apply-primitive-method op args)
+  (let* ((required-count (%primitive-method-required-count op))
+         (argcount (%length args)))
+    (if (< argcount required-count)
+        (error (string-append "Not enough arguments: " (%as-string args)))
+        (let ((rest? (%primitive-method-optional-parameter? op)))
+          (if (and (not rest?)(> argcount required-count))
+              (error (string-append "Too many arguments: " (%as-string args)))
+              (let ((fn (%primitive-method-function op)))
+                (case argcount
+                  ((0)(fn))
+                  ((1)(let ((a (%list-ref args 0)))
+                        (fn a)))
+                  ((2)(let ((a (%list-ref args 0))
+                            (b (%list-ref args 1)))
+                        (fn a b)))
+                  ((3)(let ((a (%list-ref args 0))
+                            (b (%list-ref args 1))
+                            (c (%list-ref args 2)))
+                        (fn a b c)))
+                  ((4)(let ((a (%list-ref args 0))
+                            (b (%list-ref args 1))
+                            (c (%list-ref args 2))
+                            (d (%list-ref args 3)))
+                        (fn a b c d)))
+                  (else (let ((parms (%ralist->cons args)))
+                          (apply fn parms))))))))))
 
-(define (%apply-list ls args)
-  (list-ref ls (%single-arg args)))
-
-(define (%apply-frame fr args)
-  (%frame-get fr (%single-arg args)))
-
-(define (%method-lexical-environment meth args)
-  (let* ((env (%method-environment meth))
-         (formals (%method-parameters meth))
-         (required-count (%method-required-count meth)))
-    (let loop ((formals formals)
-               (args args)
-               (i 0)
-               (env env))
-      (if (>= i required-count)
-          (if (null? formals)
-              env
-              (%add-binding env (cadr formals) args))
-          (loop (cdr formals)(cdr args)(+ i 1)(%add-binding env (car formals)(car args)))))))
-
-(define (%apply-method method args)
-  (let* ((method-body (%method-body method))
-         (lexical-env (%method-lexical-environment method args)))
-    (%eval method-body lexical-env)))
-
-(define (%no-applicable-method fn args)
-  (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string args))))
-
-(define (%apply-function fn args)
-  (let ((method (%function-best-method fn args)))
-    (if method
-        (%apply-method method args)
-        (%no-applicable-method fn args))))
-
-(define (%apply applicable args)
+(define (%apply op args)
   (cond
-   ;;((%function? applicable)(%apply-function applicable args))
-   ;;((%method? applicable)(%apply-method applicable args))
-   ;;((procedure? applicable)(apply applicable args))
-   ;;((%frame? applicable)(%apply-frame applicable args))
-   ;;((%list? applicable)(%apply-list applicable args))
-   ;;((string? applicable)(%apply-string applicable args))
-   ;;((%null? applicable) (%nothing))
-   (else (error (string-append "not an applicable object: " (object->string applicable) "; args: " (object->string args))))))
+   ((%keyed-collection? op)(%apply-keyed-collection op args))
+   ((%primitive-method? op)(%apply-primitive-method op args))
+   (else (error (string-append "not an applicable object: " (%as-string op) "; args: " (%as-string args))))))
 
-(define %funcall 
-  (lambda (fn . args)
-    (cond
-     ((%function? fn)(%apply-bard-function fn args))
-     ((%method? fn)(%apply-method fn args))
-     ((procedure? fn)(apply fn args))
-     (else (error "not an applicable object" fn)))))
-
-;;; (%apply '() '())
-;;; (%apply "Fred" '(3))
-;;; (define $fr (->frame 'name "Fred" 'age 101 'shape 'square 'color "orange"))
-;;; (%apply $fr '(name))
-;;; (%apply $fr '(shape))
-;;; (%apply $fr '(hypotenuse))
-;;; (%apply + '())
-;;; (%apply + '(1))
-;;; (%apply + '(1 2))
-;;; (%apply + '(1 2 3))
-
+(define %funcall (lambda (fn . args)(%apply fn (%cons->ralist args))))
