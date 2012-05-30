@@ -141,6 +141,9 @@
 (define (%function-nth-method-signature i)
   (%list-ref (%function-method-signatures fn) i))
 
+(define (%function-nth-method i)
+  (%list-ref (%function-methods fn) i))
+
 (define (%function-best-method fn args)
   (let ((last-method-index (%function-max-method-index fn)))
     (let loop ((i 0)

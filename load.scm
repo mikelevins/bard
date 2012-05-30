@@ -32,7 +32,7 @@
          "src/values/values.scm"
          "src/eval/env.scm"
          "src/values/functions.scm"
-         "src/prims.scm"
+         "src/repl/prims.scm"
          "src/read.scm"
          "src/print.scm"
          "src/eval/special.scm"
