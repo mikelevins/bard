@@ -18,9 +18,6 @@
 
 (define $bard-global-variables #f)
 
-(define (%init-bard)
-  (set! $bard-global-variables (%global-variables)))
-
 (define (%defglobal var val)
   (table-set! $bard-global-variables var val)
   var)
@@ -45,6 +42,9 @@
           (let* ((var (car plist))
                  (val (cadr plist)))
             (%extend-environment (%add-binding env var val) (cddr plist))))))
+
+(define (%merge-environments env1 env2)
+  (append env2 env1))
 
 (define (%lookup-variable-value env var)
   (let ((binding (assq var env)))

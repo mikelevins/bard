@@ -76,18 +76,23 @@
   id: 927A1AD2-762A-4DE6-9900-C22857D20E5A
   extender: %def-method-type
   read-only:
-  (name %method-name))
+  (name %method-name)
+  (formals %method-formals)
+  (restarg %method-restarg)
+  (required-count %method-required-count))
 
 (%def-method-type %primitive-method
                   constructor: %private-make-primitive-method
                   read-only:
-                  (required-count %primitive-method-required-count)
-                  (optional-parameter %primitive-method-optional-parameter?)
-                  (function %primitive-method-function))
+                  (function %method-function))
 
-(define (%make-primitive-method method-function
-                                #!key (required-count 0) (optional-parameter #f) (environment '())(name #f))
-  (%private-make-primitive-method name required-count optional-parameter method-function))
+(define (%make-primitive-method function  
+                                #!key 
+                                (parameters %nil)
+                                (name #f)
+                                (required-count 0)
+                                (restarg #f))
+  (%private-make-primitive-method name parameters restarg required-count function))
 
 (define <primitive-method>
   (%define-standard-type '<primitive-method> (##structure-type (%make-primitive-method #f))))
@@ -96,17 +101,20 @@
                   constructor: %private-make-interpreted-method
                   read-only:
                   (environment %method-environment)
-                  (formals %method-formals)
                   (body %method-body))
 
-(define (%make-interpreted-method formals method-body  #!key (environment '())(name #f))
-  (%private-make-interpreted-method name environment formals method-body))
+(define (%make-interpreted-method parameters method-body  
+                                  #!key 
+                                  (environment '())
+                                  (name #f)
+                                  (required-count 0)
+                                  (restarg #f))
+  (%private-make-interpreted-method name parameters restarg required-count environment method-body))
 
 (define <interpreted-method>
   (%define-standard-type '<interpreted-method> (##structure-type (%make-interpreted-method '() '()))))
 
-(define (%method-name? x)
-  (or (symbol? x)(string? x)))
+(define (%method-name? x)(or (symbol? x)(string? x)))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions

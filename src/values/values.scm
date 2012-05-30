@@ -14,7 +14,7 @@
 ;;; ----------------------------------------------------------------------
 
 (define (%undefined) #!unbound)
-(define (%undefined? x) (eqv? x #!unbound))
+(define (%undefined? x) (or (eqv? x #!unbound)(eqv? x #!void)))
 (define (%defined? x)(not (%undefined? x)))
 
 ;;; ---------------------------------------------------------------------

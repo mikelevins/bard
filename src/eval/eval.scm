@@ -115,6 +115,6 @@
 ;;; (show (%eval (bard:read-from-string "(method foo (x) x)")))
 ;;; (show (%eval (bard:read-from-string "(method foo (x) (begin (* x x)))")))
 
-
+;;; (show (%eval (bard:read-from-string "(+ 2 3)")))
 
 

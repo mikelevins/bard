@@ -98,14 +98,15 @@
                            (if (%true? rest-arg) (%list rest-arg) %nil)))
          (signature (%append (%map (partial %define-function-parameter->type env) required-args)
                              (if (%true? rest-arg) (%list &) %nil))))
-    (%list fname fn env formals body signature)))
+    (%list fname fn env formals (%true? rest-arg) body signature)))
 
 (define (%fdesc-get-function-name fdesc)(%list-ref fdesc 0))
 (define (%fdesc-get-function fdesc)(%list-ref fdesc 1))
 (define (%fdesc-get-method-environment fdesc)(%list-ref fdesc 2))
 (define (%fdesc-get-method-formals fdesc)(%list-ref fdesc 3))
-(define (%fdesc-get-method-body fdesc)(%list-ref fdesc 4))
-(define (%fdesc-get-method-signature fdesc)(%list-ref fdesc 5))
+(define (%fdesc-get-method-rest-arg? fdesc)(%list-ref fdesc 4))
+(define (%fdesc-get-method-body fdesc)(%list-ref fdesc 5))
+(define (%fdesc-get-method-signature fdesc)(%list-ref fdesc 6))
 
 (%defspecial 'define-function
              (lambda (expr env)
@@ -169,30 +170,53 @@
 ;;; method
 ;;; ----------------------------------------------------------------------
 
-(define (%parse-method-form m)
-  (let* ((first (%list-ref m 0))
-         (mname (if (symbol? first)
-                    first
-                    #f))
-         (formals (if (symbol? first)
-                      (%list-ref m 1)
-                      (%list-ref m 0)))
-         (body (if (symbol? first)
-                   (%drop 2 m)
-                   (%drop 1 m))))
-    (%list mname formals body)))
+;;; method-form => (method-name formals restarg body)
+;;; (method (x y) (+ x y)) => (#f (x y) #f (begin (+ x y)))
+;;; (method foo (x y) (+ x y)) => (foo (x y) #f (begin (+ x y)))
+;;; (method foo (x y) (begin (+ x y))) => (foo (x y) #f (begin (+ x y)))
+;;; (method foo (x y) (+ x y)(* x y)) => (foo (x y) #f (begin (+ x y)(* x y)))
+;;; (method (x y & more) (+ x y)) => (#f (x y) more (begin (+ x y)))
 
-(define (%mdesc-get-name mdesc)(%list-ref fdesc 0))
-(define (%mdesc-get-formals mdesc)(%list-ref fdesc 1))
-(define (%mdesc-get-body mdesc)(%list-ref fdesc 2))
+(define (%parse-method-parameters params)
+  (let loop ((ps params)
+             (formals %nil))
+    (if (%null? ps)
+        (values formals #f)
+        (if (eq? '& (%car ps))
+            (let* ((ps (%cdr ps))
+                   (len (%length ps)))
+              (case len
+               ((0)(error "An ampersand must be followed by a parameter name"))
+               ((1)(values formals (%car ps)))
+               (else (error "Too many parameters following an ampersand"))))
+            (loop (%cdr ps)(%append formals (%list (%car ps))))))))
+
+(define (%parse-method-form m)
+  (let* ((form (%cdr m))
+         (first (%car form))
+         (mname (if (symbol? first) first #f))
+         (params (if mname (%list-ref form 1)(%list-ref form 0)))
+         (body (%cons 'begin (if mname (%drop 2 form)(%drop 1 form)))))
+    (receive (formals restarg)(%parse-method-parameters params)
+             (%list mname formals restarg body))))
+
+(define (%mdesc-get-name mdesc)(%list-ref mdesc 0))
+(define (%mdesc-get-formals mdesc)(%list-ref mdesc 1))
+(define (%mdesc-get-restarg mdesc)(%list-ref mdesc 2))
+(define (%mdesc-get-body mdesc)(%list-ref mdesc 3))
 
 (%defspecial 'method
              (lambda (expr env)
-               (let* ((mdesc (%parse-method-form (%cdr expr)))
+               (let* ((mdesc (%parse-method-form expr))
                       (mname (%mdesc-get-name mdesc))
                       (formals (%mdesc-get-formals mdesc))
+                      (restarg (%mdesc-get-restarg mdesc))
                       (body (%mdesc-get-body mdesc)))
-                 (%make-interpreted-method formals body environment: env name: mname))))
+                 (%make-interpreted-method formals body 
+                                           environment: env
+                                           name: mname
+                                           required-count: (%length formals)
+                                           restarg: restarg))))
 
 ;;; not
 ;;; ----------------------------------------------------------------------

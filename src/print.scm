@@ -115,8 +115,7 @@
                                           (if (> (string-length nm) 0) (display " "))
                                           (display (interpose " " (%ralist->cons formals)))
                                           (if (> (%length body) 0) (display " "))
-                                          (for-each (lambda (i)(display i))
-                                                    (interpose " " (%ralist->cons body)))
+                                          (display (%as-string body))
                                           (display ")"))))))
 
 (define (%as-string x)
