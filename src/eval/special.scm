@@ -22,10 +22,12 @@
        #t))
 
 (define (%eval-special-form expr env)
-  (let ((evaluator (table-ref $special-forms-table (%car expr) #f)))
+  (let* ((op (%car expr))
+         (evaluator (table-ref $special-forms-table op #f)))
     (if evaluator
         (evaluator expr env)
         (error (string-append "unrecognized special form" (%as-string (%car expr)))))))
+
 
 ;;; ----------------------------------------------------------------------
 ;;; special forms defined
@@ -129,6 +131,12 @@
                (if (> (%length expr) 1)
                    (%make-function name: (%list-ref expr 1))
                    (%make-function))))
+
+;;; generate
+;;; ----------------------------------------------------------------------
+;;; (generate ((x 1))
+;;;           (yield (* x x))
+;;;           (then (+ x 1)))
 
 ;;; if
 ;;; ----------------------------------------------------------------------
@@ -243,10 +251,21 @@
 ;;; quote
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'quote (lambda (expr env)
-                      (if (= 2 (%length expr))
-                          (%car (%cdr expr))
-                          (error (string-append "Wrong number of arguments to quote: " (%as-string (%cdr expr)))))))
+(%defspecial 'quote 
+             (lambda (expr env)
+               (if (= 2 (%length expr))
+                   (%car (%cdr expr))
+                   (error (string-append "Wrong number of arguments to quote: " (%as-string (%cdr expr)))))))
+
+;;; repeat
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'repeat
+             (lambda (expr env)
+               (let ((form (%cons 'begin (%cdr expr))))
+                 (let loop ()
+                   (%eval form env)
+                   (loop)))))
 
 ;;; set!
 ;;; ----------------------------------------------------------------------
@@ -264,3 +283,5 @@
 (%defspecial 'time
              (lambda (expr env)
                (time (%eval (%car (%cdr expr)) env))))
+
+

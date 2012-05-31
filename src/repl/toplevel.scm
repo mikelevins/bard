@@ -123,11 +123,11 @@
 
   ;; (%defglobal 'Comparable Comparable)
   ;; (%defglobal 'comparable? bard:comparable?)
-  ;; (%defglobal '= bard:=)
-  ;; (%defglobal '> bard:>)
-  ;; (%defglobal '< bard:<)
-  ;; (%defglobal '>= bard:>=)
-  ;; (%defglobal '<= bard:<=)
+  (%defglobal '= prim:=)
+  (%defglobal '> prim:>)
+  (%defglobal '< prim:<)
+  (%defglobal '>= prim:>=)
+  (%defglobal '<= prim:<=)
 
   ;; (%defglobal 'Float Float)
   ;; (%defglobal 'float? bard:float?)

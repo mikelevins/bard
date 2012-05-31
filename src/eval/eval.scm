@@ -30,13 +30,20 @@
    ((%macro-form? expr)(%eval-macro-form expr env))
    (else (%eval-function-application expr env))))
 
+
 (define (%eval expr #!optional (env '()))
   (cond
    ((%symbol? expr) (%eval-variable expr env))
-   ((%list? expr) (if (%null? expr)
-                      expr
-                      (%eval-application expr env)))
+   ((%list? expr) (cond
+                   ((%null? expr) expr)
+                   ((eq? 'with-exit (%car expr))
+                    (let* ((form (%cdr expr))
+                           (exit-var (%car (%car form)))
+                           (body (%cons 'begin (%drop 1 form))))
+                      (call/cc (lambda (k)(%eval body (%add-binding env exit-var k))))))
+                   (else (%eval-application expr env))))
    (else expr)))
+
 
 ;;; (%init-bard)
 ;;; (show (%eval (bard:read-from-string "undefined")))

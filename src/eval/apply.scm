@@ -82,6 +82,7 @@
    ((%keyed-collection? op)(%apply-keyed-collection op args))
    ((%primitive-method? op)(%apply-primitive-method op args))
    ((%interpreted-method? op)(%apply-interpreted-method op args))
+   ((procedure? op)(apply op (%ralist->cons args)))
    (else (error (string-append "not an applicable object: " (%as-string op) "; args: " (%as-string args))))))
 
 (define %funcall (lambda (fn . args)(%apply fn (%cons->ralist args))))
