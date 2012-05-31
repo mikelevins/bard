@@ -34,14 +34,9 @@ MAC_LDFLAGS_MAIN=-arch ${MAC_ARCH} -isysroot ${MAC_SYSROOT} -mmacosx-version-min
 # iOS
 # ----------------------------------------
 
-# Common
-
-IOS_LIBRARY=libBard.a
-IOS_BUILD_DIR=builds/ios
-
 # Device
 
-IOS_DEVICE_LIBRARY=libBard_ios.a
+IOS_DEVICE_LIBRARY=libBard.a
 IOS_DEVICE_BUILD_DIR=builds/ios/device
 IOS_DEVICE_GAMBIT_HOME=/usr/local/gambit/ios
 IOS_DEVICE_ARCH=armv7
@@ -54,23 +49,24 @@ IOS_DEVICE_LIBTOOL=${IOS_DEVICE_TOOLS_ROOT}/usr/bin/libtool
 
 IOS_DEVICE_CFLAGS_LIB=-arch ${IOS_DEVICE_ARCH} -x objective-c  -isysroot ${IOS_DEVICE_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -g -Wno-conversion -Wno-sign-conversion -I${IOS_DEVICE_GAMBIT_HOME}/include -D___LIBRARY
 
-IOS_DEVICE_LDFLAGS_LIB=-static -arch_only ${IOS_DEVICE_ARCH} -syslibroot ${IOS_DEVICE_SYSLIBROOT=} -ObjC -framework Foundation -L${IOS_DEVICE_GAMBIT_HOME}/lib -lgambc -o ${IOS_DEVICE_BUILD_DIR}/${IOS_DEVICE_LIBRARY}
+IOS_DEVICE_LDFLAGS_LIB=-static -arch_only ${IOS_DEVICE_ARCH} -syslibroot ${IOS_DEVICE_SYSLIBROOT} -ObjC -framework Foundation -L${IOS_DEVICE_GAMBIT_HOME}/lib -lgambc -o ${IOS_DEVICE_BUILD_DIR}/${IOS_DEVICE_LIBRARY}
 
 # Simulator
 
-IOS_SIM_LIBRARY=libBard_ios_sim.a
+IOS_SIM_LIBRARY=libBard.a
 IOS_SIM_BUILD_DIR=builds/ios/simulator
 IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iosSimulator
 IOS_SIM_ARCH=i386
 IOS_SIM_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 IOS_SIM_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
+IOS_SIM_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
 
 IOS_SIM_CC=${IOS_SIM_TOOLS_ROOT}/usr/bin/clang
 IOS_SIM_LIBTOOL=${IOS_SIM_TOOLS_ROOT}/usr/bin/libtool
 
 IOS_SIM_CFLAGS_LIB=-arch ${IOS_SIM_ARCH} -x objective-c  -isysroot ${IOS_SIM_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -g -Wno-conversion -Wno-sign-conversion -I${IOS_SIM_GAMBIT_HOME}/include -D___LIBRARY
 
-IOS_SIM_LDFLAGS_LIB=-static -arch_only ${IOS_SIM_ARCH} -syslibroot ${IOS_SIM_SYSLIBROOT=} -ObjC -framework Foundation -L${IOS_SIM_GAMBIT_HOME}/lib -lgambc -o ${IOS_SIM_BUILD_DIR}/${IOS_SIM_LIBRARY}
+IOS_SIM_LDFLAGS_LIB=-static -arch_only ${IOS_SIM_ARCH} -syslibroot ${IOS_SIM_SYSLIBROOT} -ObjC -framework Foundation -L${IOS_SIM_GAMBIT_HOME}/lib -lgambc -o ${IOS_SIM_BUILD_DIR}/${IOS_SIM_LIBRARY}
 
 # ----------------------------------------
 # Bard Common files
@@ -187,7 +183,6 @@ all: mac_lib mac_main ios_lib
 clean:
 	rm -f ${MAC_BUILD_DIR}/${MAC_EXECUTABLE}
 	rm -f ${MAC_BUILD_DIR}/$(MAC_LIBRARY)
-	rm -f ${IOS_BUILD_DIR}/$(IOS_LIBRARY)
 	rm -f ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY)
 	rm -f ${IOS_SIM_BUILD_DIR}/$(IOS_SIM_LIBRARY)
 	rm -f ${OBJECTS}
@@ -197,8 +192,6 @@ clean:
 	rm -f ${MAIN_C_SOURCES}
 
 tidy:
-	rm -f ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY)
-	rm -f ${IOS_SIM_BUILD_DIR}/$(IOS_SIM_LIBRARY)
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
 	rm -f ${C_SOURCES}
@@ -218,7 +211,7 @@ mac_lib: tidy
 # iOS 
 
 ios_lib: ios_device_lib ios_sim_lib
-	lipo ${IOS_DEVICE_BUILD_DIR}/${IOS_DEVICE_LIBRARY} ${IOS_SIM_BUILD_DIR}/${IOS_SIM_LIBRARY} -create -output ${IOS_BUILD_DIR}/${IOS_LIBRARY}
+
 
 # iOS Device
 
