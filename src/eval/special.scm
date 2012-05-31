@@ -155,25 +155,20 @@
 ;;; let
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'let
-             (lambda (expr env)
-               (let ((body (%drop 2 expr)))
-                 (let loop ((bindings (%list-ref expr 1))
-                            (env env))
-                   (if (%null? bindings)
-                       (let loop2 ((forms body)
-                                   (val (%nothing)))
-                         (if (%null? forms)
-                             val
-                             (let ((form (%car forms)))
-                               (loop2 (%cdr forms)
-                                      (%eval form env)))))
-                       (let ((binding (%car bindings)))
-                         (loop (%cdr bindings)
-                               (%add-binding env
-                                             (%car binding)
-                                             (%eval (%car (%cdr binding))
-                                                    env)))))))))
+(define (%eval-let expr env)
+  (let ((body (%cons 'begin (%drop 2 expr))))
+    (let loop ((bindings (%list-ref expr 1))
+               (env env))
+      (if (%null? bindings)
+          (%eval body env)
+          (let ((binding (%car bindings)))
+            (loop (%cdr bindings)
+                  (%add-binding env
+                                (%car binding)
+                                (%eval (%car (%cdr binding))
+                                       env))))))))
+
+(%defspecial 'let (lambda (expr env)(%eval-let expr env)))
 
 ;;; method
 ;;; ----------------------------------------------------------------------
