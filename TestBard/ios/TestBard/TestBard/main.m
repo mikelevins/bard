@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #define ___VERSION 406006
 #include "gambit.h"
+#include "bard.h"
 
 #define SCHEME_LIBRARY_LINKER ____20_bard__
 
@@ -27,8 +28,11 @@ int main(int argc, char *argv[])
 	setup_params.linker  = SCHEME_LIBRARY_LINKER;
 	___setup (&setup_params);
 
+    
     int retval;
     @autoreleasepool {
+        NSString* bardVersion = bard_version();
+        NSLog(@"%@",bardVersion);
         retval=UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
     ___cleanup ();	

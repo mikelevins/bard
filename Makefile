@@ -90,7 +90,8 @@ SCHEME_SOURCES= \
          src/eval/apply.scm \
          src/eval/eval.scm \
          src/repl/error.scm \
-         src/repl/toplevel.scm
+         src/repl/toplevel.scm \
+         c_api/objc_data.scm
 
 
 C_SOURCES= \
@@ -111,7 +112,8 @@ C_SOURCES= \
          src/eval/apply.c \
          src/eval/eval.c \
          src/repl/error.c \
-         src/repl/toplevel.c
+         src/repl/toplevel.c \
+         c_api/objc_data.c
 
 
 OBJECTS= \
@@ -132,7 +134,8 @@ OBJECTS= \
          apply.o \
          eval.o \
          error.o \
-         toplevel.o
+         toplevel.o \
+         objc_data.o
 
 
 # ----------------------------------------

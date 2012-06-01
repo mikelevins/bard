@@ -8,8 +8,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(c-declare "#import <Foundation/Foundation.h>")
+
 (c-define (c:version) () 
-          char-string "bard_version" ""
+          (pointer "NSString") "bard_version" ""
           (api:version))
 
 

@@ -138,10 +138,10 @@
 (define (%function-max-method-index fn)
   (- (%length (%function-method-signatures fn)) 1))
 
-(define (%function-nth-method-signature i)
+(define (%function-nth-method-signature fn i)
   (%list-ref (%function-method-signatures fn) i))
 
-(define (%function-nth-method i)
+(define (%function-nth-method fn i)
   (%list-ref (%function-methods fn) i))
 
 (define (%function-best-method fn args)
@@ -176,7 +176,7 @@
     fn))
 
 (define (%add-primitive-method! fn msig method-function #!key (name #f))
-  (let* ((method (%make-primitive-method method-function environment: env name: name))
+  (let* ((method (%make-primitive-method method-function environment: '() name: name))
          (found-pos (%position (lambda (s)(%every? equal? s msig)) 
                                (%function-method-signatures fn)))
          (sigs (if found-pos

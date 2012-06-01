@@ -15,7 +15,7 @@
 ;;; functions defined as c-lambdas in bard_c_api.scm
 
 (define (api:version)
-  $bard-version-string)
+  (objc:string->NSString $bard-version-string))
 
 
 

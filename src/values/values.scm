@@ -113,7 +113,7 @@
 (define %reverse ra:reverse)
 
 (define (%some? test ls)
-  (let ((items ls))
+  (let loop ((items ls))
     (if (%null? items)
         (%nothing)
         (if (test (%car items))
@@ -122,15 +122,15 @@
 
 (define (%every? test ls #!optional (ls2 #f))
   (if ls2
-      (let ((items1 ls)
-            (items2 ls))
+      (let loop ((items1 ls)
+                 (items2 ls))
         (if (or (%null? items1)
                 (%null? items2))
             (%true)
             (if (test (%car items1)(%car items2))
                 (loop (%cdr items1)(%cdr items2))
                 (%false))))
-      (let ((items ls))
+      (let loop ((items ls))
         (if (%null? items)
             (%true)
             (if (test (%car items))
