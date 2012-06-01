@@ -45,6 +45,20 @@
    (else expr)))
 
 
+(define (%bard-load path)
+  (newline)
+  (display (string-append "Loading " path "..."))
+  (newline)
+  (call-with-input-file path
+    (lambda (in)
+      (let loop ((form (bard:read in)))
+        (if (eqv? form #!eof)
+            (newline)
+            (begin
+              (newline)
+              (display (%as-string (%eval form (%null-environment))))
+              (loop (bard:read in))))))))
+
 ;;; (%init-bard)
 ;;; (show (%eval (bard:read-from-string "undefined")))
 ;;; (show (%eval (bard:read-from-string "nothing")))

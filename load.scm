@@ -41,6 +41,7 @@
          "src/eval/eval.scm"
          "src/repl/error.scm"
          "src/repl/toplevel.scm"
+         "src/values/protocols.scm"
          "src/bard.scm"
 
          ))

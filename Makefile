@@ -91,6 +91,7 @@ SCHEME_SOURCES= \
          src/eval/eval.scm \
          src/repl/error.scm \
          src/repl/toplevel.scm \
+         src/values/protocols.scm \
          c_api/objc_data.scm
 
 
@@ -113,6 +114,7 @@ C_SOURCES= \
          src/eval/eval.c \
          src/repl/error.c \
          src/repl/toplevel.c \
+         src/values/protocols.c \
          c_api/objc_data.c
 
 
@@ -135,6 +137,7 @@ OBJECTS= \
          eval.o \
          error.o \
          toplevel.o \
+         protocols.o \
          objc_data.o
 
 

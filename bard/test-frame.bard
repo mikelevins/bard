@@ -1,0 +1,2 @@
+(define $test-frame (frame name: "Fred" age: 101 shape: "square" friends: ["Barney" "Betty" "Wilma"]))
+

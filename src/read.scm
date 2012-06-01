@@ -79,13 +79,24 @@
 ;;; the reader
 ;;; ----------------------------------------------------------------------
 
+(define (%read-frame-form val)
+  (let ((plist (map %read-value->bard-value val)))
+    (%make-frame plist)))
+
+(define (%read-cons val)
+  (cond
+   ((null? val) val)
+   ((eq? 'list (car val))(%cons->ralist (cdr val)))
+   ((eq? 'frame (car val))(%read-frame-form (cdr val)))
+   (else (%cons->ralist val))))
+
 (define (%read-value->bard-value val)
   (cond
    ((eq? 'undefined val)(%undefined))
    ((eq? 'nothing val)(%nothing))
    ((eq? 'true val)(%true))
    ((eq? 'false val)(%false))
-   ((pair? val)(%cons->ralist (map %read-value->bard-value val)))
+   ((pair? val)(%read-cons val))
    (else val)))
 
 (define (bard:read #!optional port)
@@ -116,4 +127,5 @@
 ;;; (show (bard:read-from-string "(0 1 2 3)"))
 ;;; (show (bard:read-from-string "[0 1 2 3]"))
 ;;; (show (bard:read-from-string "{0 1 2 3}"))
+
 

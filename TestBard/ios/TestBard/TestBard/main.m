@@ -31,10 +31,10 @@ int main(int argc, char *argv[])
     
     int retval;
     @autoreleasepool {
-        NSString* bardVersion = bard_version();
-        NSLog(@"%@",bardVersion);
+        //NSString* bardVersion = bard_version();
+        //NSLog(@"%@",bardVersion);
         retval=UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
-    ___cleanup ();	
+//    ___cleanup ();	
 	return retval;
 }

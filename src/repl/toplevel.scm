@@ -68,6 +68,10 @@
 
   (%defglobal 'frame prim:frame)
 
+;;; ---------------------------------------------------------------------
+;;; types
+;;; ---------------------------------------------------------------------
+
   ;; representations
 
   (%defglobal '<undefined> <undefined>)
@@ -158,7 +162,7 @@
   ;; (%defglobal 'display bard:display)
   ;; (%defglobal 'input-stream? bard:input-stream?)
   ;; (%defglobal 'iostream? bard:iostream?)
-  ;; (%defglobal 'load bard:load)
+  (%defglobal 'load %bard-load)
   ;; (%defglobal 'open bard:open)
   ;; (%defglobal 'output-stream? bard:output-stream?)
   (%defglobal 'print prim:print)

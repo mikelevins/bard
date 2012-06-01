@@ -10,7 +10,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; repl
+;;; repl and I/O
 ;;; ---------------------------------------------------------------------
 
 (define prim:read
@@ -48,6 +48,15 @@
    parameters: (%list 'thing)
    required-count: 1
    restarg: 'more
+   ))
+
+(define prim:load
+  (%make-primitive-method
+   (lambda (path)(%bard-load path))
+   name: 'load
+   parameters: (%list 'path)
+   required-count: 1
+   restarg: #f
    ))
 
 ;;; Number

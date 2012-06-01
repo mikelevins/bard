@@ -12,6 +12,9 @@
 
 #import "DetailViewController.h"
 
+#include "bard.h"
+
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -29,7 +32,14 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    
     // Override point for customization after application launch.
+    NSString* respath = [[NSBundle mainBundle] resourcePath];
+    NSLog(@"respath == %@",respath);
+    //NSArray* reslist = list_files(respath);
+    //NSLog(@"reslist == %@",[reslist description]);
+    
+    
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];
         self.navigationController = [[[UINavigationController alloc] initWithRootViewController:masterViewController] autorelease];
