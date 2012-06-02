@@ -32,11 +32,11 @@
   (let* ((required-count (%method-signature-required-count sig))
          (rest-arg? (%method-signature-rest-arg? sig))
          (test (if rest-arg? >= =)))
-    (if (test (length args) required-count)
+    (if (test (%length args) required-count)
         (let loop ((i 0))
           (if (>= i required-count)
               #t
-              (if (%subtype? (%object->bard-type (car args)) 
+              (if (%subtype? (%object->bard-type (%car args)) 
                              (%method-signature-element sig i))
                   (loop (+ i 1))
                   #f)))
@@ -149,11 +149,11 @@
     (let loop ((i 0)
                (m #f)
                (best #f))
-      (if (>= i last-method-index)
+      (if (> i last-method-index)
           (if best
               (values (%function-nth-method fn m) best)
               (values #f #f))
-          (let ((sig (%function-nth-method-signature i)))
+          (let ((sig (%function-nth-method-signature fn i)))
             (if (%method-signature-matches? sig args)
                 (if best
                     (if (%method-signature-more-specific? sig best)
@@ -175,8 +175,13 @@
     (%set-function-methods! fn methods)
     fn))
 
-(define (%add-primitive-method! fn msig method-function #!key (name #f))
-  (let* ((method (%make-primitive-method method-function environment: '() name: name))
+(define (%add-primitive-method! fn msig params method-function #!key (name #f))
+  (let* ((method (%make-primitive-method method-function 
+                                         name: name parameters: params 
+                                         required-count: (%method-signature-required-count msig)
+                                         restarg: (if (%method-signature-rest-arg? msig)
+                                                      (%last params)
+                                                      #f)))
          (found-pos (%position (lambda (s)(%every? equal? s msig)) 
                                (%function-method-signatures fn)))
          (sigs (if found-pos

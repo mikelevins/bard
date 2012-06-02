@@ -218,10 +218,17 @@
 (define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list)))))
 
 (define (%make-frame kv-plist)
-  (let* ((alist (plist->alist kv-plist))
-         (slots (alist->wt-tree $slots-wt-type alist))
-         (keys (%cons->ralist (map car alist))))
-    (%private-make-frame slots keys)))
+  (let loop ((kvs kv-plist)
+             (fr (%private-make-frame $empty-slots %nil)))
+    (if (null? kvs)
+        fr
+        (if (null? (cdr kvs))
+            (error (string-append "Malformed argument list to frame constructor: " (object->string kv-plist)))
+            (let ((k (car kvs))
+                  (v (cadr kvs))
+                  (more (cddr kvs)))
+              (loop more
+                    (%frame-put fr k v)))))))
 
 (define (%frame . kv-plist)(%make-frame kv-plist))
 

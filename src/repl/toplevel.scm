@@ -143,10 +143,10 @@
   ;; (%defglobal 'frame? bard:frame?)
   ;; (%defglobal 'contains-key? bard:contains-key?)
   ;; (%defglobal 'contains-value? bard:contains-value?)
-  ;; (%defglobal 'get bard:get)
+  (%defglobal 'get bard:get)
   ;; (%defglobal 'keys bard:keys)
   ;; (%defglobal 'merge bard:merge)
-  ;; (%defglobal 'put bard:put)
+  (%defglobal 'put bard:put)
   ;; (%defglobal 'vals bard:vals)
 
   ;; (%defglobal 'Function Function)

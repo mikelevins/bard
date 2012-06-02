@@ -79,24 +79,14 @@
 ;;; the reader
 ;;; ----------------------------------------------------------------------
 
-(define (%read-frame-form val)
-  (let ((plist (map %read-value->bard-value val)))
-    (%make-frame plist)))
-
-(define (%read-cons val)
-  (cond
-   ((null? val) val)
-   ((eq? 'list (car val))(%cons->ralist (cdr val)))
-   ((eq? 'frame (car val))(%read-frame-form (cdr val)))
-   (else (%cons->ralist val))))
-
 (define (%read-value->bard-value val)
   (cond
+   ((null? val)(%nothing))
    ((eq? 'undefined val)(%undefined))
    ((eq? 'nothing val)(%nothing))
    ((eq? 'true val)(%true))
    ((eq? 'false val)(%false))
-   ((pair? val)(%read-cons val))
+   ((pair? val)(%cons->ralist val))
    (else val)))
 
 (define (bard:read #!optional port)
@@ -124,8 +114,17 @@
 ;;; (show (bard:read-from-string "\"Fred and Barney\""))
 ;;; (show (bard:read-from-string "Fred"))
 ;;; (show (bard:read-from-string "name:"))
-;;; (show (bard:read-from-string "(0 1 2 3)"))
+;;; (show (bard:read-from-string "(list 0 1 2 3)"))
 ;;; (show (bard:read-from-string "[0 1 2 3]"))
-;;; (show (bard:read-from-string "{0 1 2 3}"))
+;;; (show (bard:read-from-string "{a: 1 b: 2 c: [1 2 3]}"))
+;;; (show (bard:read-from-string "{a: 1 b: [1 2 3]}"))
+
+
+;;; (show (bard:read-from-string "{0 1 2 3 4 {a: 1 b: 2}}"))
+;;; (show (bard:read-from-string "{0 1 2 3 4 [01 2 3] 5 {a: 1 b: 2}}"))
+;;; (show (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}"))
+;;; (show (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")))
+;;; (show (%frame-get (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")) friends:))
+;;; (show (%eval (bard:read-from-string "(list 0 1 2 3 4 5)")))
 
 

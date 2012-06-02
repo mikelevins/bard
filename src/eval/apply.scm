@@ -77,12 +77,19 @@
           (let* ((env (%method-lexical-environment env formals rest params)))
             (%eval body env))))))
 
+(define (%apply-function fn params)
+  (receive (best-method signature) (%function-best-method fn params)
+           (if best-method
+               (%apply best-method params)
+               (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string params))))))
+
 (define (%apply op args)
   (cond
    ((%keyed-collection? op)(%apply-keyed-collection op args))
    ((%primitive-method? op)(%apply-primitive-method op args))
    ((%interpreted-method? op)(%apply-interpreted-method op args))
+   ((%function? op)(%apply-function op args))
    ((procedure? op)(apply op (%ralist->cons args)))
-   (else (error (string-append "not an applicable object: " (%as-string op) "; args: " (%as-string args))))))
+   (else (error (string-append "not an applicable object: " (object->string op) "; args: " (object->string args))))))
 
 (define %funcall (lambda (fn . args)(%apply fn (%cons->ralist args))))
