@@ -19,4 +19,15 @@
           (let ((dirpath (objc:NSString->string path)))
             (api:list-files dirpath)))
 
+(c-define (c:count-files path) ((pointer "NSString")) 
+          (pointer "NSNumber") "count_files" ""
+          (let ((dirpath (objc:NSString->string path)))
+            (api:count-files dirpath)))
+
+(c-define (c:bard-info path) ((pointer "NSString")) 
+          (pointer "NSMutableDictionary") "bard_info" ""
+          (let ((dirpath (objc:NSString->string path)))
+            (api:bard-info dirpath)))
+
+
 

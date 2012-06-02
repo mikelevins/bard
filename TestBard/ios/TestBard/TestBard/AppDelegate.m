@@ -38,6 +38,10 @@
     NSLog(@"respath == %@",respath);
     NSMutableArray*files=list_files(respath);
     NSLog(@"files == %@",files);
+    NSNumber* filecount = count_files(respath);
+    NSLog(@"filecount == %@", filecount);
+    NSMutableDictionary* infodict = bard_info(respath);
+    NSLog(@"\nObjc: == %@", infodict);
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];
