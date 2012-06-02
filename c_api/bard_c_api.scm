@@ -14,4 +14,9 @@
           (pointer "NSString") "bard_version" ""
           (api:version))
 
+(c-define (c:list-files path) ((pointer "NSString")) 
+          void "list_files" ""
+          (let ((dirpath (objc:NSString->string path)))
+            (api:list-files dirpath)))
+
 

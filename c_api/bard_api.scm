@@ -18,8 +18,5 @@
   (objc:string->NSString $bard-version-string))
 
 
-
-
-
-
-
+(define (api:list-files dirpath)
+  (display dirpath))
