@@ -36,9 +36,8 @@
     // Override point for customization after application launch.
     NSString* respath = [[NSBundle mainBundle] resourcePath];
     NSLog(@"respath == %@",respath);
-    //NSArray* reslist = list_files(respath);
-    //NSLog(@"reslist == %@",[reslist description]);
-    
+    NSMutableArray*files=list_files(respath);
+    NSLog(@"files == %@",files);
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];

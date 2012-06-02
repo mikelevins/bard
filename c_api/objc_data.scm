@@ -26,7 +26,22 @@ c-code
 (define objc:NSString->string
   (c-lambda ((pointer "NSString")) char-string
 #<<c-code
-   const char* s = [___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
+   char* s = (char *)[___arg1 cStringUsingEncoding:NSASCIIStringEncoding];
    ___result = s;
+c-code
+))
+
+(define objc:make-NSMutableArray
+  (c-lambda () (pointer "NSMutableArray")
+#<<c-code
+   NSMutableArray* arr = [NSMutableArray array];
+   ___result_voidstar = (void*)arr;
+c-code
+))
+
+(define objc:NSMutableArray/add-string!
+  (c-lambda ((pointer "NSMutableArray") (pointer "NSString")) void
+#<<c-code
+   [___arg1 addObject:___arg2];
 c-code
 ))

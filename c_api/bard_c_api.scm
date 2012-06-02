@@ -15,7 +15,7 @@
           (api:version))
 
 (c-define (c:list-files path) ((pointer "NSString")) 
-          void "list_files" ""
+          (pointer "NSMutableArray") "list_files" ""
           (let ((dirpath (objc:NSString->string path)))
             (api:list-files dirpath)))
 

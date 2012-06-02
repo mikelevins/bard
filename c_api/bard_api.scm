@@ -17,6 +17,15 @@
 (define (api:version)
   (objc:string->NSString $bard-version-string))
 
-
 (define (api:list-files dirpath)
-  (display dirpath))
+  (let ((files (directory-files dirpath))
+        (arr (objc:make-NSMutableArray)))
+    (newline)
+    (display arr)
+    (newline)
+    (for-each (lambda (f)
+                (let ((nsstr (objc:string->NSString f)))
+                  (objc:NSMutableArray/add-string! arr nsstr)))
+              files)
+    arr))
+
