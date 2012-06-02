@@ -112,6 +112,16 @@ c-code
              (display (object->string val))
              (display " to NSMutableArray"))))))
 
+(define (objc:list->NSMutableArray items)
+  (let* ((arr (objc:make-NSMutableArray)))
+    (for-each (lambda (it)(objc:NSMutableArray/add-value! arr it))
+              items)
+    arr))
+
+(define (objc:ralist->NSMutableArray items)
+  (objc:list->NSMutableArray (%ralist->cons items)))
+
+
 ;;; frames
 
 (define objc:make-NSMutableDictionary
@@ -150,53 +160,34 @@ c-code
 c-code
 ))
 
-(define (objc:list->NSMutableArray items)
-  (let* ((arr (objc:make-NSMutableArray)))
-    (for-each (lambda (it)(objc:NSMutableArray/add-value! arr it))
-              items)
-    arr))
-
-(define (objc:ralist->NSMutableArray items)
-  (let* ((arr (objc:make-NSMutableArray)))
-    (let loop ((items items))
-      (if (not (%null? items))
-          (begin
-            (objc:NSMutableArray/add-value! arr (%car items))
-            (loop (%cdr items)))))
-    arr))
+(define (objc:NSMutableDictionary/set-value-for-key! dict key val)
+  (let ((k (bard->objc key))
+        (v (bard->objc val)))
+    (cond
+     ((boolean? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
+     ((integer? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
+     ((flonum? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
+     ((string? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
+     ((symbol? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
+     ((keyword? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
+     ((%list? val) (objc:NSMutableDictionary/put-array-at-key! dict k v))
+     ((%frame? val) (objc:NSMutableDictionary/put-dictionary-at-key! dict k v))
+     (else (begin
+             (display "List error: can't add ")
+             (display (object->string val))
+             (display " to NSMutableArray"))))))
 
 (define (objc:frame->NSMutableDictionary fr)
   (let* ((dict (objc:make-NSMutableDictionary))
-         (keys (%frame-keys fr)))
-    (%for-each (lambda (key)
-                 (let* ((k (bard->objc key))
-                        (val (%frame-get fr key #f))
-                        (v (bard->objc val)))
-                   (newline)
-                   (display "objc:frame->NSMutableDictionary: ")
-                   (display (object->string val))
-                   (cond
-                    ((boolean? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
-                    ((integer? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
-                    ((flonum? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
-                    ((string? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
-                    ((symbol? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
-                    ((keyword? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
-                    ((%list? val) (objc:NSMutableDictionary/put-array-at-key! (objc:ralist->NSMutableArray val)))
-                    ;;((%frame? val) )
-                    (else (begin
-                            (display "Frame error: can't add ")
-                            (display (object->string val))
-                            (display " to NSMutableDictionary"))))))
-               keys)
-    (newline)
-    (display "Done with objc:frame->NSMutableDictionary")
+         (keys (%ralist->cons (%frame-keys fr))))
+    (for-each (lambda (key)
+                (objc:NSMutableDictionary/set-value-for-key! dict key (%frame-get fr key #f)))
+              keys)
     dict))
 
+;;; all values
+
 (define (bard->objc val)
-  (newline)
-  (display "bard->objc: ")
-  (display (object->string val))
   (cond
    ((boolean? val)(objc:boolean->NSNumber val))
    ((integer? val)(objc:integer->NSNumber val))
@@ -205,7 +196,7 @@ c-code
    ((symbol? val)(objc:string->NSString (symbol->string val)))
    ((keyword? val)(objc:string->NSString (keyword->string val)))
    ((%list? val)(objc:ralist->NSMutableArray val))
-   ;;((%frame? val)(objc:frame->NSMutableDictionary val))
+   ((%frame? val)(objc:frame->NSMutableDictionary val))
    (else (begin
            (newline)
            (display "Conversion error: can't convert ")

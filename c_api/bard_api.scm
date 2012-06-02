@@ -17,17 +17,6 @@
 (define (api:version)
   (objc:string->NSString $bard-version-string))
 
-#|
-(define (api:list-files dirpath)
-  (let ((files (directory-files dirpath))
-        (arr (objc:make-NSMutableArray)))
-    (for-each (lambda (f)
-                (let ((nsstr (objc:string->NSString f)))
-                  (objc:NSMutableArray/add-string! arr nsstr)))
-              files)
-    arr))
-|#
-
 (define (api:list-files dirpath)
   (let ((files (directory-files dirpath)))
     (objc:list->NSMutableArray files)))
@@ -37,19 +26,13 @@
          (count (length files)))
     (objc:integer->NSNumber count)))
 
-
 (define (api:bard-info dirpath)
   (let ((fr (%frame version: $bard-version-string
                     enabled: (%true)
                     arbitraryCount: 3
                     numberosity: 1.3
-                    things: (%list #f 3 2.4 "Apple")
-                    )))
-    (display "bard: ")
-    (display (%as-string fr))
-    (newline)
-    ;;(objc:frame->NSMutableDictionary fr)
-    #f))
+                    things: (%list #f 3 2.4 "Apple"))))
+    (objc:frame->NSMutableDictionary fr)))
 
 
 
