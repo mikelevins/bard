@@ -14,12 +14,26 @@
 ;;; Frame
 ;;; ---------------------------------------------------------------------
 
+;;; get
+
 (define bard:get (%make-function name: 'get))
 
 (%add-primitive-method! bard:get
                         (%list <frame> Anything)
                         (%list 'frame 'key)
                         (lambda (frame key)(%frame-get frame key (%nothing)))
+                        name: 'get)
+
+(%add-primitive-method! bard:get
+                        (%list <null> <fixnum>)
+                        (%list 'ls 'n)
+                        (lambda (ls n)(error (string-append "Index out of range: " (object->string n))))
+                        name: 'get)
+
+(%add-primitive-method! bard:get
+                        (%list <list> <fixnum>)
+                        (%list 'ls 'n)
+                        (lambda (ls n)(%list-ref ls n))
                         name: 'get)
 
 

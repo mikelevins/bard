@@ -124,7 +124,7 @@
 (define (%every? test ls #!optional (ls2 #f))
   (if ls2
       (let loop ((items1 ls)
-                 (items2 ls))
+                 (items2 ls2))
         (if (or (%null? items1)
                 (%null? items2))
             (%true)
