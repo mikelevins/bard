@@ -11,6 +11,13 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;; Common utilities
+;;; ---------------------------------------------------------------------
+
+(define %yes (constantly (%true)))
+(define %no (constantly (%false)))
+
+;;; ---------------------------------------------------------------------
 ;;; Applicable
 ;;; ---------------------------------------------------------------------
 
@@ -49,9 +56,106 @@
                         (lambda (type thing)(symbol->string thing))
                         name: 'as)
 
+(%add-primitive-method! bard:as
+                        (%list (%singleton <symbol>) <string>)
+                        (%list 'type 'thing)
+                        (lambda (type thing)(string->symbol thing))
+                        name: 'as)
+
+(%add-primitive-method! bard:as
+                        (%list (%singleton <string>) <keyword>)
+                        (%list 'type 'thing)
+                        (lambda (type thing)(keyword->string thing))
+                        name: 'as)
+
+(%add-primitive-method! bard:as
+                        (%list (%singleton <keyword>) <string>)
+                        (%list 'type 'thing)
+                        (lambda (type thing)(string->keyword thing))
+                        name: 'as)
+
+;;; ---------------------------------------------------------------------
+;;; Boolean
+;;; ---------------------------------------------------------------------
+
+(define bard:boolean?
+  (%make-primitive-method %boolean?
+   name: 'boolean?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+(define bard:false?
+  (%make-primitive-method %false?
+   name: 'false?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+(define bard:true?
+  (%make-primitive-method %true?
+   name: 'true?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+;;; ---------------------------------------------------------------------
+;;; Character
+;;; ---------------------------------------------------------------------
+
+(define bard:character?
+  (%make-primitive-method %character?
+   name: 'character?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+;;; ---------------------------------------------------------------------
+;;; Equal
+;;; ---------------------------------------------------------------------
+
+(define bard:= (%make-function name: '=))
+
+(%add-primitive-method! bard:=
+                        (%list Anything Anything)
+                        (%list 'apple 'orange)
+                        equal?
+                        name: '=)
+
+;;; ---------------------------------------------------------------------
+;;; Float
+;;; ---------------------------------------------------------------------
+
+(define bard:float?
+  (%make-primitive-method flonum?
+   name: 'float?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+;;; ---------------------------------------------------------------------
+;;; ForeignValue?
+;;; ---------------------------------------------------------------------
+
+(define bard:foreign-value?
+  (%make-primitive-method ##foreign?
+   name: 'foreign-value?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
 ;;; ---------------------------------------------------------------------
 ;;; Frame
 ;;; ---------------------------------------------------------------------
+
+;;; frame?
+
+(define bard:frame?
+  (%make-primitive-method %frame?
+   name: 'frame?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
 
 ;;; get
 
@@ -90,3 +194,40 @@
                         %frame-put
                         name: 'put)
 
+;;; ---------------------------------------------------------------------
+;;; List
+;;; ---------------------------------------------------------------------
+
+(define bard:length (%make-function name: 'length))
+
+(%add-primitive-method! bard:length
+                        (%list <list>)
+                        (%list 'ls)
+                        %length
+                        name: 'length)
+
+(define bard:last (%make-function name: 'last))
+
+(%add-primitive-method! bard:last
+                        (%list <list>)
+                        (%list 'ls)
+                        %last
+                        name: 'last)
+
+(define bard:append (%make-function name: 'append))
+
+(%add-primitive-method! bard:append
+                        (%list <list>  <list>)
+                        (%list 'ls1 'ls2)
+                        %append
+                        name: 'append)
+
+
+;;; ---------------------------------------------------------------------
+;;; Ordered
+;;; ---------------------------------------------------------------------
+
+  ;;(%defglobal '> bard:>)
+  ;;(%defglobal '< bard:<)
+  ;;(%defglobal '>= bard:>=)
+  ;;(%defglobal '<= bard:<=)

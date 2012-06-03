@@ -124,48 +124,33 @@
   ;; ---------------------------------------------------------------------
   (%defglobal 'as bard:as)
 
-  ;; 
+  ;; Boolean
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Atom Atom)
-  ;; (%defglobal 'atom? bard:atom?)
+  (%defglobal 'boolean? bard:boolean?)
+  (%defglobal 'false? bard:false?)
+  (%defglobal 'true? bard:true?)
 
-  ;; 
+  ;; Character
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Boolean Boolean)
-  ;; (%defglobal 'boolean? bard:boolean?)
-  ;; (%defglobal 'false? bard:false?)
-  ;; (%defglobal 'true? bard:true?)
+  (%defglobal 'character? bard:character?)
 
-  ;; 
+  ;; Equal
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Character Character)
-  ;; (%defglobal 'character? bard:character?)
 
-  ;; 
+  (%defglobal 'primitive:= prim:=)
+  (%defglobal '= bard:=)
+
+  ;; Float
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Comparable Comparable)
-  ;; (%defglobal 'comparable? bard:comparable?)
+  (%defglobal 'float? bard:float?)
 
-  (%defglobal '= prim:=)
-  (%defglobal '> prim:>)
-  (%defglobal '< prim:<)
-  (%defglobal '>= prim:>=)
-  (%defglobal '<= prim:<=)
-
-  ;; 
+  ;; ForeignValue
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Float Float)
-  ;; (%defglobal 'float? bard:float?)
+  (%defglobal 'foreign-value? bard:foreign-value?)
 
-  ;; 
+  ;; Frame
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'ForeignValue ForeignValue)
-  ;; (%defglobal 'foreign-value? bard:foreign-value?)
-
-  ;; 
-  ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Frame Frame)
-  ;; (%defglobal 'frame? bard:frame?)
+  (%defglobal 'frame? bard:frame?)
   ;; (%defglobal 'contains-key? bard:contains-key?)
   ;; (%defglobal 'contains-value? bard:contains-value?)
 
@@ -178,19 +163,16 @@
 
   ;; (%defglobal 'vals bard:vals)
 
-  ;; 
+  ;; Function
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Function Function)
   ;; (%defglobal 'function? bard:function?)
 
-  ;; 
+  ;; Integer
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Integer Integer)
   ;; (%defglobal 'integer? bard:integer?)
 
-  ;; 
+  ;; IOStream
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'IOStream IOStream)
   ;; (%defglobal 'close bard:close)
   ;; (%defglobal 'current-input bard:current-input)
   ;; (%defglobal 'current-output bard:current-output)
@@ -213,18 +195,16 @@
   ;; (%defglobal 'show bard:show)
   ;; (%defglobal 'write bard:write)
 
-  ;; 
+  ;; Keyword
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Keyword Keyword)
   ;; (%defglobal 'keyword? bard:keyword?)
 
-  ;; 
+  ;; List
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'List List)
   ;; (%defglobal 'add-first bard:add-first)
   ;; (%defglobal 'add-last bard:add-last)
   ;; (%defglobal 'any bard:any)
-  ;; (%defglobal 'append bard:append)
+  (%defglobal 'append bard:append)
   ;; (%defglobal 'contains? bard:contains?)
   ;; (%defglobal 'difference bard:difference)
   ;; (%defglobal 'drop bard:drop)
@@ -239,8 +219,8 @@
   ;; (%defglobal 'interleave bard:interleave)
   ;; (%defglobal 'interpose bard:interpose)
   ;; (%defglobal 'intersection bard:intersection)
-  ;; (%defglobal 'last bard:last)
-  ;; (%defglobal 'length bard:length)
+  (%defglobal 'last bard:last)
+  (%defglobal 'length bard:length)
   ;; (%defglobal 'list? bard:list?)
   ;; (%defglobal 'map bard:map)
   ;; (%defglobal 'merge bard:merge)
@@ -264,57 +244,49 @@
   ;; (%defglobal 'unzip bard:unzip)
   ;; (%defglobal 'zip bard:zip)
 
-  ;; 
+  ;; Method
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Method Method)
   ;; (%defglobal 'method? bard:method?)
 
-  ;; 
+  ;; Name
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Name Name)
   ;; (%defglobal 'name? bard:name?)
 
-  ;; 
+  ;; Null
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Null Null)
   ;; (%defglobal 'nothing? bard:nothing?)
 
-  ;; 
+  ;;  Number
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Number Number)
   ;; (%defglobal 'number? bard:number?)
 
-  ;; 
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'PrimitiveValue PrimitiveValue)
-  ;; (%defglobal 'primitive-value? bard:primitive-value?)
+  ;; Ordered
+  ;; ---------------------------------------------------------------------
 
-  ;; 
+  (%defglobal 'primitive:> prim:>)
+  (%defglobal 'primitive:< prim:<)
+  (%defglobal 'primitive:>= prim:>=)
+  (%defglobal 'primitive:<= prim:<=)
+
+  ;; Procedure
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Procedure Procedure)
   ;; (%defglobal 'procedure? bard:procedure?)
 
-  ;; 
+  ;; Ratio
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Ratio Ratio)
   ;; (%defglobal 'ratio? bard:ratio?)
 
-  ;; 
+  ;; Symbol
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'StructureValue StructureValue)
-  ;; (%defglobal 'structure-value? bard:structure-value?)
-
-  ;; 
-  ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Symbol Symbol)
   ;; (%defglobal 'symbol? bard:symbol?)
 
-  ;; 
+  ;; Text
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Text Text)
   ;; (%defglobal 'text? bard:text?)
 
-  ;; 
+  ;; Undefined
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'undefined? bard:undefined?)

@@ -166,9 +166,11 @@
           #f)))
 
 (define (%instance-of? val tp)
-  (if (%singleton? tp)
-      (eq? (%singleton val) tp)
-      (%subtype? (%object->bard-type val) tp)))
+  (if (eq? tp Anything)
+      (%true)
+      (if (%singleton? tp)
+          (eq? (%singleton val) tp)
+          (%subtype? (%object->bard-type val) tp))))
 
 (define (%keyed-collection? op)
   (or
