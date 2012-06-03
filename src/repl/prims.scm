@@ -50,6 +50,15 @@
    restarg: 'more
    ))
 
+(define prim:newline
+  (%make-primitive-method
+   (lambda ()(newline))
+   name: 'newline
+   parameters: %nil
+   required-count: 0
+   restarg: #f
+   ))
+
 (define prim:load
   (%make-primitive-method
    (lambda (path)(%bard-load path))

@@ -35,35 +35,22 @@
     
     // Override point for customization after application launch.
     NSString* respath = [[NSBundle mainBundle] resourcePath];
-    NSLog(@"respath == %@",respath);
-    NSMutableArray*files=list_files(respath);
-    NSLog(@"files == %@",files);
-    NSNumber* filecount = count_files(respath);
-    NSLog(@"filecount == %@", filecount);
-    NSMutableDictionary* infodict = bard_info(respath);
-    NSLog(@"\nObjc: == %@", infodict);
-    
-    NSString* testfile = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"bard"];
-    if (testfile==nil) {
-        NSLog(@"testfile was nil");
-    } else {
-        bool testfileResult = bard_load(testfile);
-        if (testfileResult) {
-            NSLog(@"loading testfile succeeded");
+    NSArray* bardPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@"bard" inDirectory:nil];
+    for (NSString* path in bardPaths) {
+        NSString* text = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:nil];
+        if (text == nil) {
+            NSLog(@"Unable to read Bard file: %@", path);
         } else {
-            NSLog(@"loading testfile failed");
-        }
-        
-        // check it in Objective-C
-        NSString* bardStr = [NSString stringWithContentsOfFile:testfile encoding:NSASCIIStringEncoding error:nil];
-        if (bardStr==nil) {
-            NSLog(@"Failed to read testfile using Objective-C");
-        } else {
-            NSLog(@"testfile contains:\n");
-            NSLog(@"%@",bardStr);
+            NSLog(@"Loading %@...", path);
+            bool succeeded = bard_load_from_string(text);
+            if (succeeded) {
+                NSLog(@"%@ loaded.", path);
+            } else {
+                NSLog(@"%@ failed to load.", path);
+            }
         }
     }
-    
+        
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];
         self.navigationController = [[[UINavigationController alloc] initWithRootViewController:masterViewController] autorelease];

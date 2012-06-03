@@ -14,25 +14,20 @@
           (pointer "NSString") "bard_version" ""
           (api:version))
 
-(c-define (c:list-files path) ((pointer "NSString")) 
-          (pointer "NSMutableArray") "list_files" ""
-          (let ((dirpath (objc:NSString->string path)))
-            (api:list-files dirpath)))
-
-(c-define (c:bard-load path) ((pointer "NSString")) 
-          bool "bard_load" ""
-          (let ((path (objc:NSString->string path)))
-            (api:load-file path)))
-
-(c-define (c:count-files path) ((pointer "NSString")) 
-          (pointer "NSNumber") "count_files" ""
-          (let ((dirpath (objc:NSString->string path)))
-            (api:count-files dirpath)))
+(c-define (c:init-bard) () 
+          bool "init_bard" ""
+          (api:init-bard))
 
 (c-define (c:bard-info path) ((pointer "NSString")) 
           (pointer "NSMutableDictionary") "bard_info" ""
           (let ((dirpath (objc:NSString->string path)))
             (api:bard-info dirpath)))
 
+(c-define (c:bard-load-from-string text) ((pointer "NSString")) 
+          bool "bard_load_from_string" ""
+          (let ((load-string (objc:NSString->string text))) 
+            (newline)
+            (display "Loading from string: ")
+            (%bard-load-from-string load-string)))
 
 

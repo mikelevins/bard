@@ -166,6 +166,7 @@
   ;; (%defglobal 'open bard:open)
   ;; (%defglobal 'output-stream? bard:output-stream?)
   (%defglobal 'print prim:print)
+  (%defglobal 'newline prim:newline)
   (%defglobal 'read prim:read)
   ;; (%defglobal 'read-file bard:read-file)
   ;; (%defglobal 'read-line bard:read-line)

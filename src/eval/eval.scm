@@ -51,15 +51,30 @@
   (newline)
   (call-with-input-file path
     (lambda (in)
-      (display "Reading...")(newline)
       (let loop ((form (bard:read in)))
-        (display (%as-string form))(newline)
         (if (eqv? form #!eof)
             (newline)
             (begin
               (newline)
               (display (%as-string (%eval form (%null-environment))))
               (loop (bard:read in))))))))
+
+(define (%bard-load-from-string load-string)
+  (let ((error-handler (lambda (err)
+                         (display (error->string err))
+                         #f))
+        (reader (lambda () 
+                  (call-with-input-string 
+                   load-string
+                   (lambda (in)
+                     (let loop ((form (bard:read in)))
+                       (if (eqv? form #!eof)
+                           (newline)
+                           (begin
+                             (%eval form (%null-environment))
+                             (loop (bard:read in)))))))
+                  #t)))
+    (with-exception-catcher error-handler reader)))
 
 ;;; (%init-bard)
 ;;; (show (%eval (bard:read-from-string "undefined")))

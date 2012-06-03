@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     @autoreleasepool {
         NSString* bardVersion = bard_version();
         NSLog(@"%@",bardVersion);
+        bool bardSucceeded=init_bard();
         retval=UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
     ___cleanup ();	

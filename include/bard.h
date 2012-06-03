@@ -1,8 +1,7 @@
 #import <Foundation/Foundation.h>
 
 extern NSString* bard_version ();
-extern NSMutableArray* list_files (NSString* path);
-extern bool bard_load (NSString* path);
-extern NSNumber* count_files (NSString* path);
+extern bool init_bard();
 extern NSMutableDictionary* bard_info (NSString* path);
+extern bool bard_load_from_string(NSString* text);
 
