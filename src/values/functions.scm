@@ -36,8 +36,8 @@
         (let loop ((i 0))
           (if (>= i required-count)
               #t
-              (if (%subtype? (%object->bard-type (%list-ref args i)) 
-                             (%method-signature-element sig i))
+              (if (%instance-of? (%list-ref args i)
+                                 (%method-signature-element sig i))
                   (loop (+ i 1))
                   #f)))
         #f)))

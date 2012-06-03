@@ -11,6 +11,45 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;; Applicable
+;;; ---------------------------------------------------------------------
+
+(define (%applicable? thing)
+  (or 
+   (%keyed-collection? thing)
+   (%primitive-method? thing)
+   (%interpreted-method? thing)
+   (%function? thing)
+   (procedure? thing)))
+
+(define bard:applicable?
+  (%make-primitive-method %applicable?
+   name: 'applicable?
+   parameters: (%list 'thing)
+   required-count: 1
+   restarg: #f))
+
+(define bard:apply
+  (%make-primitive-method %apply
+   name: 'apply
+   parameters: (%list 'op 'args)
+   required-count: 2
+   restarg: #f))
+
+
+;;; ---------------------------------------------------------------------
+;;; As
+;;; ---------------------------------------------------------------------
+
+(define bard:as (%make-function name: 'as))
+
+(%add-primitive-method! bard:as
+                        (%list (%singleton <string>) <symbol>)
+                        (%list 'type 'thing)
+                        (lambda (type thing)(symbol->string thing))
+                        name: 'as)
+
+;;; ---------------------------------------------------------------------
 ;;; Frame
 ;;; ---------------------------------------------------------------------
 

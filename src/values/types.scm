@@ -161,13 +161,14 @@
 (define (%subtype? t1 t2)
   (if (eq? t1 t2)
       #t
-      (if (%singleton? t2)
-          #f
-          (if (%singleton? t1)
-              (%subtype? (%object->bard-type (%singleton-value t1)) t2)
-              (if (eq? t2 Anything)
-                  #t
-                  #f)))))
+      (if (eq? t2 Anything)
+          #t
+          #f)))
+
+(define (%instance-of? val tp)
+  (if (%singleton? tp)
+      (eq? (%singleton val) tp)
+      (%subtype? (%object->bard-type val) tp)))
 
 (define (%keyed-collection? op)
   (or

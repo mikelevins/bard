@@ -1,5 +1,0 @@
-;;; Nelson 1.0 puzzle loader
-
-(map (method (f)(load f))
-     ["arctic-rescue-firefighting.bard"
-      "arctic-rescue-first-aid.bard"])

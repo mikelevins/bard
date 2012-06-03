@@ -100,61 +100,96 @@
   (%defglobal 'true (%true))
   (%defglobal 'false (%false))
 
+  ;; ---------------------------------------------------------------------
   ;; protocols
+  ;; ---------------------------------------------------------------------
+
+  ;; Anything
+  ;; ---------------------------------------------------------------------
 
   (%defglobal 'Anything Anything)
   ;;(%defglobal 'something? bard:something?)
 
+  ;; Type
+  ;; ---------------------------------------------------------------------
+
   (%defglobal 'Type Type)
 
-  ;; (%defglobal 'Applicable Applicable)
-  ;; (%defglobal 'applicable? bard:applicable?)
-  ;; (%defglobal 'apply bard:apply)
+  ;; Applicable
+  ;; ---------------------------------------------------------------------
+  (%defglobal 'applicable? bard:applicable?)
+  (%defglobal 'apply bard:apply)
 
-  ;; (%defglobal 'As As)
-  ;; (%defglobal 'as bard:as)
+  ;; As
+  ;; ---------------------------------------------------------------------
+  (%defglobal 'as bard:as)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Atom Atom)
   ;; (%defglobal 'atom? bard:atom?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Boolean Boolean)
   ;; (%defglobal 'boolean? bard:boolean?)
   ;; (%defglobal 'false? bard:false?)
   ;; (%defglobal 'true? bard:true?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Character Character)
   ;; (%defglobal 'character? bard:character?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Comparable Comparable)
   ;; (%defglobal 'comparable? bard:comparable?)
+
   (%defglobal '= prim:=)
   (%defglobal '> prim:>)
   (%defglobal '< prim:<)
   (%defglobal '>= prim:>=)
   (%defglobal '<= prim:<=)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Float Float)
   ;; (%defglobal 'float? bard:float?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'ForeignValue ForeignValue)
   ;; (%defglobal 'foreign-value? bard:foreign-value?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Frame Frame)
   ;; (%defglobal 'frame? bard:frame?)
   ;; (%defglobal 'contains-key? bard:contains-key?)
   ;; (%defglobal 'contains-value? bard:contains-value?)
+
   (%defglobal 'get bard:get)
+
   ;; (%defglobal 'keys bard:keys)
   ;; (%defglobal 'merge bard:merge)
+
   (%defglobal 'put bard:put)
+
   ;; (%defglobal 'vals bard:vals)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Function Function)
   ;; (%defglobal 'function? bard:function?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Integer Integer)
   ;; (%defglobal 'integer? bard:integer?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'IOStream IOStream)
   ;; (%defglobal 'close bard:close)
   ;; (%defglobal 'current-input bard:current-input)
@@ -162,21 +197,29 @@
   ;; (%defglobal 'display bard:display)
   ;; (%defglobal 'input-stream? bard:input-stream?)
   ;; (%defglobal 'iostream? bard:iostream?)
+
   (%defglobal 'load %bard-load)
+
   ;; (%defglobal 'open bard:open)
   ;; (%defglobal 'output-stream? bard:output-stream?)
+
   (%defglobal 'print prim:print)
   (%defglobal 'newline prim:newline)
   (%defglobal 'read prim:read)
+
   ;; (%defglobal 'read-file bard:read-file)
   ;; (%defglobal 'read-line bard:read-line)
   ;; (%defglobal 'read-lines bard:read-lines)
   ;; (%defglobal 'show bard:show)
   ;; (%defglobal 'write bard:write)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Keyword Keyword)
   ;; (%defglobal 'keyword? bard:keyword?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'List List)
   ;; (%defglobal 'add-first bard:add-first)
   ;; (%defglobal 'add-last bard:add-last)
@@ -221,36 +264,58 @@
   ;; (%defglobal 'unzip bard:unzip)
   ;; (%defglobal 'zip bard:zip)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Method Method)
   ;; (%defglobal 'method? bard:method?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Name Name)
   ;; (%defglobal 'name? bard:name?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Null Null)
   ;; (%defglobal 'nothing? bard:nothing?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Number Number)
   ;; (%defglobal 'number? bard:number?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'PrimitiveValue PrimitiveValue)
   ;; (%defglobal 'primitive-value? bard:primitive-value?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Procedure Procedure)
   ;; (%defglobal 'procedure? bard:procedure?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Ratio Ratio)
   ;; (%defglobal 'ratio? bard:ratio?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'StructureValue StructureValue)
   ;; (%defglobal 'structure-value? bard:structure-value?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Symbol Symbol)
   ;; (%defglobal 'symbol? bard:symbol?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Text Text)
   ;; (%defglobal 'text? bard:text?)
 
+  ;; 
+  ;; ---------------------------------------------------------------------
   ;; (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'undefined? bard:undefined?)
 
