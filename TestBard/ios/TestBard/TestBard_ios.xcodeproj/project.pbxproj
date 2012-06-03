@@ -21,6 +21,7 @@
 		9742769D1577EEEC002BBA8F /* DetailViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9742769B1577EEEC002BBA8F /* DetailViewController_iPad.xib */; };
 		974276A71577EF59002BBA8F /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 974276A61577EF59002BBA8F /* libgambc.a */; };
 		974276C41577F122002BBA8F /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 974276C31577F122002BBA8F /* libBard.a */; };
+		97888DD4157B91A100E09FDE /* test.bard in Resources */ = {isa = PBXBuildFile; fileRef = 97888DD3157B91A100E09FDE /* test.bard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		974276A41577EF38002BBA8F /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gambit.h; path = /usr/local/gambit/ios/include/gambit.h; sourceTree = "<absolute>"; };
 		974276A61577EF59002BBA8F /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = ../../../../../../../../../../../usr/local/gambit/ios/lib/libgambc.a; sourceTree = "<group>"; };
 		974276C31577F122002BBA8F /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../../../builds/ios/device/libBard.a; sourceTree = "<group>"; };
+		97888DD3157B91A100E09FDE /* test.bard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.bard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				974276A61577EF59002BBA8F /* libgambc.a */,
 				974276A41577EF38002BBA8F /* gambit.h */,
 				974276A31577EF20002BBA8F /* bard.h */,
+				97888DD3157B91A100E09FDE /* test.bard */,
 			);
 			name = bard;
 			sourceTree = "<group>";
@@ -160,7 +163,7 @@
 			attributes = {
 				LastUpgradeCheck = 0430;
 			};
-			buildConfigurationList = 974276701577EEEC002BBA8F /* Build configuration list for PBXProject "TestBard" */;
+			buildConfigurationList = 974276701577EEEC002BBA8F /* Build configuration list for PBXProject "TestBard_ios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -187,6 +190,7 @@
 				974276971577EEEC002BBA8F /* MasterViewController_iPad.xib in Resources */,
 				9742769A1577EEEC002BBA8F /* DetailViewController_iPhone.xib in Resources */,
 				9742769D1577EEEC002BBA8F /* DetailViewController_iPad.xib in Resources */,
+				97888DD4157B91A100E09FDE /* test.bard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,7 +334,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		974276701577EEEC002BBA8F /* Build configuration list for PBXProject "TestBard" */ = {
+		974276701577EEEC002BBA8F /* Build configuration list for PBXProject "TestBard_ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9742769E1577EEEC002BBA8F /* Debug */,
@@ -346,6 +350,7 @@
 				974276A21577EEEC002BBA8F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

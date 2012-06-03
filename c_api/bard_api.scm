@@ -21,6 +21,17 @@
   (let ((files (directory-files dirpath)))
     (objc:list->NSMutableArray files)))
 
+(define (api:load-file path)
+  (with-exception-catcher (lambda (err)
+                            (newline)
+                            (display (string-append "Error loading file "
+                                                    path " "))
+                            (display-error err)
+                            (newline)
+                            #f)
+                          (lambda ()(%bard-load path)
+                            #t)))
+
 (define (api:count-files dirpath)
   (let* ((files (directory-files dirpath))
          (count (length files)))

@@ -14,7 +14,21 @@
    ((error-exception? err) (error-exception-message err))
    ((heap-overflow-exception? err) "Heap overflow")
    ((stack-overflow-exception? err) "Stack overflow")
-   ((os-exception? err) (string-append "OS exception: " (object->string (os-exception-code err))))
+   ((os-exception? err) (let* ((proc (os-exception-procedure err))
+                               (args (os-exception-arguments err))
+                               (errcode (os-exception-code err))
+                               (errstr (if errcode (err-code->string errcode) ""))
+                               (msg (os-exception-message err)))
+                          (string-append "OS error in procedure "
+                                         (object->string proc)
+                                         " with arguments "
+                                         (object->string args)
+                                         "; error code: "
+                                         (object->string errcode)
+                                         " ("
+                                         (object->string errstr)
+                                         "); message: "
+                                         (object->string msg))))
    ((unbound-os-environment-variable-exception? err)
     (string-append "Unbound OS environment variable; "
                    "procedure: " (object->string (unbound-os-environment-variable-exception-procedure err))

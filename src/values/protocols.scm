@@ -36,6 +36,12 @@
                         (lambda (ls n)(%list-ref ls n))
                         name: 'get)
 
+(%add-primitive-method! bard:get
+                        (%list <string> <fixnum>)
+                        (%list 'str 'n)
+                        (lambda (str n)(string-ref str n))
+                        name: 'get)
+;;; put
 
 (define bard:put (%make-function name: 'put))
 
@@ -44,3 +50,4 @@
                         (%list 'frame 'key 'val)
                         %frame-put
                         name: 'put)
+

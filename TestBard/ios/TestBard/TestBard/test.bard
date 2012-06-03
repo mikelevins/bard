@@ -1,0 +1,4 @@
+(display "loading test.bard")(newline)
+(display "reading a string...")(newline)
+"Foo Bar"
+(display "success")(newline)

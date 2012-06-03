@@ -19,6 +19,11 @@
           (let ((dirpath (objc:NSString->string path)))
             (api:list-files dirpath)))
 
+(c-define (c:bard-load path) ((pointer "NSString")) 
+          bool "bard_load" ""
+          (let ((path (objc:NSString->string path)))
+            (api:load-file path)))
+
 (c-define (c:count-files path) ((pointer "NSString")) 
           (pointer "NSNumber") "count_files" ""
           (let ((dirpath (objc:NSString->string path)))

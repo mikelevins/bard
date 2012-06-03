@@ -51,7 +51,9 @@
   (newline)
   (call-with-input-file path
     (lambda (in)
+      (display "Reading...")(newline)
       (let loop ((form (bard:read in)))
+        (display (%as-string form))(newline)
         (if (eqv? form #!eof)
             (newline)
             (begin

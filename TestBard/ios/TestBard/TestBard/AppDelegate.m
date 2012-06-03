@@ -43,6 +43,27 @@
     NSMutableDictionary* infodict = bard_info(respath);
     NSLog(@"\nObjc: == %@", infodict);
     
+    NSString* testfile = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"bard"];
+    if (testfile==nil) {
+        NSLog(@"testfile was nil");
+    } else {
+        bool testfileResult = bard_load(testfile);
+        if (testfileResult) {
+            NSLog(@"loading testfile succeeded");
+        } else {
+            NSLog(@"loading testfile failed");
+        }
+        
+        // check it in Objective-C
+        NSString* bardStr = [NSString stringWithContentsOfFile:testfile encoding:NSASCIIStringEncoding error:nil];
+        if (bardStr==nil) {
+            NSLog(@"Failed to read testfile using Objective-C");
+        } else {
+            NSLog(@"testfile contains:\n");
+            NSLog(@"%@",bardStr);
+        }
+    }
+    
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];
         self.navigationController = [[[UINavigationController alloc] initWithRootViewController:masterViewController] autorelease];
