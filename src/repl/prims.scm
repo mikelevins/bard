@@ -187,7 +187,7 @@
 
 (define prim:frame
   (%make-primitive-method
-   (lambda args (%make-frame args))
+   (lambda args (%make-frame (%cons->ralist args)))
    name: 'frame
    parameters: %nil
    required-count: 0

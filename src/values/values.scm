@@ -103,6 +103,7 @@
 (define %cons ra:cons)
 (define %car ra:car)
 (define %cadr ra:cadr)
+(define %cddr ra:cddr)
 (define %first ra:car)
 (define (%last ls) (%list-ref ls (- (%length ls) 1)))
 (define %cdr ra:cdr)
@@ -220,17 +221,16 @@
 (define (%make-frame kv-plist)
   (let loop ((kvs kv-plist)
              (fr (%private-make-frame $empty-slots %nil)))
-    (if (null? kvs)
+    (if (%null? kvs)
         fr
-        (if (null? (cdr kvs))
+        (if (%null? (%cdr kvs))
             (error (string-append "Malformed argument list to frame constructor: " (object->string kv-plist)))
-            (let ((k (car kvs))
-                  (v (cadr kvs))
-                  (more (cddr kvs)))
-              (loop more
-                    (%frame-put fr k v)))))))
+            (let ((k (%car kvs))
+                  (v (%cadr kvs))
+                  (more (%cddr kvs)))
+              (loop more (%frame-put fr k v)))))))
 
-(define (%frame . kv-plist)(%make-frame kv-plist))
+(define (%frame . kv-plist)(%make-frame (%cons->ralist kv-plist)))
 
 (define (%frame-get fr key #!optional (default (%nothing)))
   (wt-tree/lookup (%frame-slots fr) key default))

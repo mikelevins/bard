@@ -79,6 +79,18 @@
 ;;; the reader
 ;;; ----------------------------------------------------------------------
 
+(define (%read-cons val)
+  (cond
+   ((null? val) (%nothing))
+   ((eq? 'list (car val)) (%cons 'list (%read-cons (cdr val))))
+   ((eq? 'frame (car val)) (%cons 'frame (%read-cons (cdr val))))
+   (else (let loop ((items val)
+                    (ls %nil))
+           (if (null? items)
+               ls
+               (loop (cdr items)
+                     (%append ls (%list (%read-value->bard-value (car items))))))))))
+
 (define (%read-value->bard-value val)
   (cond
    ((null? val)(%nothing))
@@ -86,7 +98,7 @@
    ((eq? 'nothing val)(%nothing))
    ((eq? 'true val)(%true))
    ((eq? 'false val)(%false))
-   ((pair? val)(%cons->ralist val))
+   ((pair? val)(%read-cons val))
    (else val)))
 
 (define (bard:read #!optional port)
