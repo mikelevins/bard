@@ -184,6 +184,16 @@
                         (%list 'str 'n)
                         (lambda (str n)(string-ref str n))
                         name: 'get)
+
+;;; keys
+
+(define bard:keys (%make-function name: 'keys))
+
+(%add-primitive-method! bard:keys
+                        (%list <frame>)
+                        (%list 'frame)
+                        (lambda (frame)(%frame-keys frame))
+                        name: 'keys)
 ;;; put
 
 (define bard:put (%make-function name: 'put))
@@ -195,15 +205,51 @@
                         name: 'put)
 
 ;;; ---------------------------------------------------------------------
+;;; IOStream
+;;; ---------------------------------------------------------------------
+
+(define bard:current-input
+  (%make-primitive-method current-input-port
+   name: 'current-input
+   parameters: %nil
+   required-count: 0
+   restarg: #f))
+
+(define bard:current-output
+  (%make-primitive-method current-output-port
+   name: 'current-output
+   parameters: %nil
+   required-count: 0
+   restarg: #f))
+
+;;; ---------------------------------------------------------------------
 ;;; List
 ;;; ---------------------------------------------------------------------
 
 (define bard:length (%make-function name: 'length))
 
 (%add-primitive-method! bard:length
+                        (%list <null>)
+                        (%list 'ls)
+                        (constantly 0)
+                        name: 'length)
+
+(%add-primitive-method! bard:length
                         (%list <list>)
                         (%list 'ls)
                         %length
+                        name: 'length)
+
+(%add-primitive-method! bard:length
+                        (%list <string>)
+                        (%list 'string)
+                        string-length
+                        name: 'length)
+
+(%add-primitive-method! bard:length
+                        (%list <frame>)
+                        (%list 'frame)
+                        (lambda (frame)(%length (%frame-keys frame)))
                         name: 'length)
 
 (define bard:last (%make-function name: 'last))
@@ -214,12 +260,52 @@
                         %last
                         name: 'last)
 
+(%add-primitive-method! bard:last
+                        (%list <string>)
+                        (%list 'string)
+                        (lambda (string)(string-ref string (- (string-length string) 1)))
+                        name: 'last)
+
+(%add-primitive-method! bard:last
+                        (%list <frame>)
+                        (%list 'frame)
+                        (lambda (frame)
+                          (let* ((keys (%frame-keys frame))
+                                 (key (%list-ref keys (- (%length keys) 1))))
+                            (%frame key (%frame-get frame key (%nothing)))))
+                        name: 'last)
+
+
 (define bard:append (%make-function name: 'append))
+
+(%add-primitive-method! bard:append
+                        (%list <null>  <null>)
+                        (%list 'ls1 'ls2)
+                        (constantly (%nothing))
+                        name: 'append)
+
+(%add-primitive-method! bard:append
+                        (%list <null>  <list>)
+                        (%list 'ls1 'ls2)
+                        (lambda (ls1 ls2) ls2)
+                        name: 'append)
+
+(%add-primitive-method! bard:append
+                        (%list <list>  <null>)
+                        (%list 'ls1 'ls2)
+                        (lambda (ls1 ls2) ls1)
+                        name: 'append)
 
 (%add-primitive-method! bard:append
                         (%list <list>  <list>)
                         (%list 'ls1 'ls2)
                         %append
+                        name: 'append)
+
+(%add-primitive-method! bard:append
+                        (%list <string>  <string>)
+                        (%list 'str1 'str2)
+                        string-append
                         name: 'append)
 
 

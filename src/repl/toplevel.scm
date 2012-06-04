@@ -156,7 +156,7 @@
 
   (%defglobal 'get bard:get)
 
-  ;; (%defglobal 'keys bard:keys)
+  (%defglobal 'keys bard:keys)
   ;; (%defglobal 'merge bard:merge)
 
   (%defglobal 'put bard:put)
@@ -174,8 +174,8 @@
   ;; IOStream
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'close bard:close)
-  ;; (%defglobal 'current-input bard:current-input)
-  ;; (%defglobal 'current-output bard:current-output)
+  (%defglobal 'current-input bard:current-input)
+  (%defglobal 'current-output bard:current-output)
   ;; (%defglobal 'display bard:display)
   ;; (%defglobal 'input-stream? bard:input-stream?)
   ;; (%defglobal 'iostream? bard:iostream?)

@@ -71,57 +71,88 @@
 ;;; define-function
 ;;; ----------------------------------------------------------------------
 
-(define (%define-function-parameter->formal-parameter arg)
-  (cond
-   ((symbol? arg) arg)
-   ((%list? arg) (%car arg))
-   (else (error (string-append "Invalid function parameter: " (%as-string arg))))))
+;;; (show (%eval (bard:read-from-string "(define-function (always-true) true)")))
+;;; (show (%eval (bard:read-from-string "(define-function (itself x) x)")))
+;;; (show (%eval (bard:read-from-string "(define-function (my-list & args) args)")))
+;;; (show (%eval (bard:read-from-string "(define-function (foo {a: 1 b: 2}) (list a b))")))
+;;; (show (%eval (bard:read-from-string "(define-function (elt (ls <list>)(i <fixnum>)) (%list-ref ls i))")))
+;;; (show (%eval (bard:read-from-string "(define-function (frob (x <list>)(y <fixnum>) & more-args) (%list-ref ls i))")))
 
-(define (%define-function-parameter->type env arg)
-  (cond
-   ((symbol? arg) Anything)
-   ((%list? arg) (%eval (%cadr arg) env))
-   (else (error (string-append "Invalid function parameter: " (%as-string arg))))))
+(define %fparams %list)
 
-(define (%parse-define-function-form f env)
-  (let* ((proto (%list-ref f 1))
-         (body (%cons 'begin (%drop 2 f)))
-         (fname (%list-ref body 0))
-         (fn (table-ref $bard-global-variables fname #f))
-         (args (%drop 1 body))
-         (amp-pos (%position (lambda (a)(eq? '& a)) args))
-         (required-args (if (%true? amp-pos)
-                            (%take amp-pos args)
-                            args))
-         (rest-arg (if (%true? amp-pos)
-                       (%car (%drop (+ amp-pos 1) args))
-                       #f))
-         (formals (%append (%map %define-function-parameter->formal-parameter required-args)
-                           (if (%true? rest-arg) (%list rest-arg) %nil)))
-         (signature (%append (%map (partial %define-function-parameter->type env) required-args)
-                             (if (%true? rest-arg) (%list &) %nil))))
-    (%list fname fn env formals (%true? rest-arg) body signature)))
+(define (%parse-function-parameters params env)
+  (let loop ((params params)
+             (param-names %nil)
+             (param-types %nil)
+             (rest-arg #f)
+             (frame-arg #f))
+    (if (%null? params)
+        (%fparams param-names param-types rest-arg frame-arg)
+        (let ((next (%car params))
+              (more (%cdr params)))
+          (cond
+           ((eq? '& next) (loop %nil
+                                param-names
+                                param-types
+                                (%cadr params)
+                                frame-arg))
+           ((symbol? next) (loop (%cdr params)
+                                 (%append param-names (%list next))
+                                 (%append param-types (%list 'Anything))
+                                 rest-arg
+                                 frame-arg))
+           ((%list? next) (if (eq? 'frame (%car next))
+                              (loop %nil
+                                    param-names
+                                    param-types
+                                    rest-arg
+                                    next)
+                              (loop (%cdr params)
+                                    (%append param-names (%list (%car next)))
+                                    (%append param-types (%list (%cadr next)))
+                                    rest-arg
+                                    frame-arg)))
+           (else (error (string-append "Invalid parameter: " (object->string next)))))))))
 
-(define (%fdesc-get-function-name fdesc)(%list-ref fdesc 0))
-(define (%fdesc-get-function fdesc)(%list-ref fdesc 1))
-(define (%fdesc-get-method-environment fdesc)(%list-ref fdesc 2))
-(define (%fdesc-get-method-formals fdesc)(%list-ref fdesc 3))
-(define (%fdesc-get-method-rest-arg? fdesc)(%list-ref fdesc 4))
-(define (%fdesc-get-method-body fdesc)(%list-ref fdesc 5))
-(define (%fdesc-get-method-signature fdesc)(%list-ref fdesc 6))
+(define (%parse-function-prototype proto env)
+  (let* ((name (%car proto))
+         (params (%cdr proto)))
+    (%cons name (%parse-function-parameters params env))))
 
-(%defspecial 'define-function
-             (lambda (expr env)
-               (let* ((fdesc (%parse-define-function-form (%cdr expr) env))
-                      (fname (%fdesc-get-function-name fdesc))
-                      (menv (%fdesc-get-method-environment fdesc))
-                      (mformals (%fdesc-get-method-formals fdesc))
-                      (mbody (%fdesc-get-method-body fdesc))
-                      (fn (or (%fdesc-get-function fdesc)
-                              (%make-function name: fname)))
-                      (msig (%fdesc-get-method-signature fdesc))
-                      (method (%make-interpreted-method mformals mbody environment: menv name: fname)))
-                 (%add-method! fn msig method))))
+(define (%fproto-name fp)(%list-ref fp 0))
+(define (%fproto-formals fp)(%list-ref fp 1))
+(define (%fproto-types fp)(%list-ref fp 2))
+(define (%fproto-restarg fp)(%list-ref fp 3))
+(define (%fproto-framearg fp)(%list-ref fp 4))
+
+
+;;; TODO: define-function can now parse frame args, e.g.:
+;;; (define-function (x y {a: "default1" b: "default2"})...)
+;;; but functions do not yet handle them
+(define (%define-function expr #!optional (env (%null-environment)))
+  (let* ((prototype (%parse-function-prototype (%list-ref expr 1) env))
+         (fname (%fproto-name prototype))
+         (fn (or (table-ref $bard-global-variables fname #f)
+                 (let ((f (%make-function name: fname)))
+                   (%defglobal fname f)
+                   f)))
+         (formals (%fproto-formals prototype))
+         (types (%map (lambda (p)(%eval p env))
+                      (%fproto-types prototype)))
+         (restarg (%fproto-restarg prototype))
+         (framearg (%fproto-framearg prototype))
+         (required-count (%length types))
+         (body (%cons 'begin (%drop 2 expr)))
+         (method-signature types)
+         (method (%make-interpreted-method formals body
+                                           environment: env
+                                           name: fname
+                                           required-count: required-count
+                                           restarg: restarg)))
+    (%add-method! fn method-signature method)
+    fname))
+
+(%defspecial 'define-function %define-function)
 
 ;;; function
 ;;; ----------------------------------------------------------------------
