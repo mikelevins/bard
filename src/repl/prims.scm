@@ -184,7 +184,7 @@
 
 (define prim:list
   (%make-primitive-method
-   (lambda args (%cons->ralist args))
+   (lambda args (%cons->bard-list args))
    name: 'list
    parameters: %nil
    required-count: 0
@@ -196,7 +196,7 @@
 
 (define prim:frame
   (%make-primitive-method
-   (lambda args (%make-frame (%cons->ralist args)))
+   (lambda args (%make-frame (%cons->bard-list args)))
    name: 'frame
    parameters: %nil
    required-count: 0
@@ -270,7 +270,7 @@
 (define prim:complement 
   (%make-primitive-method
    (lambda (f)
-     (%make-primitive-method (lambda args (not (%apply f (%cons->ralist args))))
+     (%make-primitive-method (lambda args (not (%apply f (%cons->bard-list args))))
                              name: #f
                              parameters: %nil
                              required-count: 0
@@ -315,7 +315,7 @@
 (define prim:partial 
   (%make-primitive-method
    (lambda (f #!rest outer-args)
-     (%make-primitive-method (lambda inner-args (%apply f (%cons->ralist (append outer-args inner-args))))
+     (%make-primitive-method (lambda inner-args (%apply f (%cons->bard-list (append outer-args inner-args))))
                              name: #f
                              parameters: %nil
                              required-count: 0

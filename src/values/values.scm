@@ -97,21 +97,20 @@
 ;;; list
 ;;; ---------------------------------------------------------------------
 
-(define %nil ra:null)
-(define %null? ra:null?)
-(define %list? ra:list?)
-(define %cons ra:cons)
-(define %car ra:car)
-(define %cadr ra:cadr)
-(define %cddr ra:cddr)
-(define %first ra:car)
+(define %nil '())
+(define %null? null?)
+(define %list? list?)
+(define %cons cons)
+(define %car car)
+(define %cadr cadr)
+(define %cddr cddr)
+(define %first car)
 (define (%last ls) (%list-ref ls (- (%length ls) 1)))
-(define %cdr ra:cdr)
-(define %list ra:list)
-(define %make-list ra:make-list)
-(define %length ra:length)
-(define %append ra:append)
-(define %reverse ra:reverse)
+(define %cdr cdr)
+(define %list list)
+(define %length length)
+(define %append append)
+(define %reverse reverse)
 
 (define (%some? test ls)
   (let loop ((items ls))
@@ -148,7 +147,7 @@
               i
               (loop (%cdr items)(+ 1 i)))))))
 
-(define (%drop n ls)(ra:list-tail ls n))
+(define (%drop n ls)(list-tail ls n))
 
 (define (%take n ls)
   (let ((len (%length ls)))
@@ -172,22 +171,13 @@
               (loop (%cdr items) result)
               (loop (%cdr items)(%append result (%list item))))))))
 
-(define %list-ref ra:list-ref)
-(define (%list-put ls n val) (ra:list-set ls n val))
-(define %map ra:map)
-(define %for-each ra:for-each)
+(define %list-ref list-ref)
+(define (%list-put ls n val)(%append (%take n ls) (%cons val (%drop (+ 1 n) ls))))
+(define %map map)
+(define %for-each for-each)
 
-(define (%ralist->cons x) 
-  (if (%list? x) 
-      (map %ralist->cons (ra:random-access-list->linear-access-list x))
-      x))
-
-(define (%cons->ralist x) 
-  (if (pair? x) 
-      (%map %cons->ralist (ra:linear-access-list->random-access-list x))
-      x))
-
-(define <list> (%define-standard-type '<list> (##structure-type (%list 0))))
+(define (%bard-list->cons x) x)
+(define (%cons->bard-list x) x)
 
 ;;; ---------------------------------------------------------------------
 ;;; frame
@@ -195,7 +185,7 @@
 ;;; frames based on Adams' weight-balanced binary trees Bard frames
 ;;; are obliged to provide a stable order for keys, in order to
 ;;; support the List protocol.  we do that by representing a frame as
-;;; a structure with a wttree for the slots, and an ralist that
+;;; a structure with a wttree for the slots, and a list that
 ;;; presents the keys in the order they were added
 
 
@@ -230,7 +220,7 @@
                   (more (%cddr kvs)))
               (loop more (%frame-put fr k v)))))))
 
-(define (%frame . kv-plist)(%make-frame (%cons->ralist kv-plist)))
+(define (%frame . kv-plist)(%make-frame (%cons->bard-list kv-plist)))
 
 (define (%frame-get fr key #!optional (default (%nothing)))
   (wt-tree/lookup (%frame-slots fr) key default))

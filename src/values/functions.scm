@@ -169,7 +169,7 @@
                    (%function-method-signatures fn)
                    (%append (%function-method-signatures fn) (%list msig))))
          (methods (if found-pos
-                      (ra:list-set (%function-methods fn) found-pos method)
+                      (%list-put (%function-methods fn) found-pos method)
                       (%append (%function-methods fn) (%list method)))))
     (%set-function-method-signatures! fn sigs)
     (%set-function-methods! fn methods)
@@ -188,7 +188,7 @@
                    (%function-method-signatures fn)
                    (%append (%function-method-signatures fn) (%list msig))))
          (methods (if found-pos
-                      (ra:list-set (%function-methods fn) found-pos method)
+                      (%list-put (%function-methods fn) found-pos method)
                       (%append (%function-methods fn) (%list method)))))
     (%set-function-method-signatures! fn sigs)
     (%set-function-methods! fn methods)
