@@ -311,3 +311,35 @@
                (time (%eval (%car (%cdr expr)) env))))
 
 
+;;; with-open-file
+;;; ----------------------------------------------------------------------
+;;; (with-open-file (var path {direction: 'input}) (do-stuff-to-file-stream var))
+
+(%defspecial 'with-open-file
+             (lambda (expr env)
+               (let* ((spec (%list-ref expr 1))
+                      (var (%car spec))
+                      (path (%eval (%cadr spec) env))
+                      (keyargs (%drop 2 spec))
+                      (direction (let ((keylen (%length keyargs)))
+                                   (if (<= keylen 0)
+                                       'input
+                                       (if (and (= 2 keylen)
+                                                (eq? direction:))
+                                           (%eval (%cadr keyargs) env)
+                                           (error (string-append "Invalid keyword arguments to with-open-file: "
+                                                                 (%as-string keyargs)))))))
+                      (body (%cons 'begin (%drop 2 expr))))
+                 (case direction
+                   ((input in) (call-with-input-file path
+                                 (lambda (in)
+                                   (let ((env (%add-binding env var in)))
+                                     (%eval body env)))))
+                   ((output out) (call-with-output-file path
+                                   (lambda (out)
+                                     (let ((env (%add-binding env var out)))
+                                       (%eval body env)))))
+                   (else (error (string-append "Invalid value for direction: argument: "
+                                               (object->string direction))))))))
+
+

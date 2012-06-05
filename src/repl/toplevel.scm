@@ -52,8 +52,8 @@
   (%defglobal '- prim:-)
   (%defglobal '* prim:*)
   (%defglobal '/ prim:/)
-  (%defglobal 'odd? odd?)
-  (%defglobal 'even? even?)
+  (%defglobal 'odd? prim:odd?)
+  (%defglobal 'even? prim:even?)
   (%defglobal 'random prim:random)
 
 ;;; ---------------------------------------------------------------------
@@ -108,7 +108,6 @@
   ;; ---------------------------------------------------------------------
 
   (%defglobal 'Anything Anything)
-  ;;(%defglobal 'something? bard:something?)
 
   ;; Type
   ;; ---------------------------------------------------------------------
@@ -190,8 +189,8 @@
   (%defglobal 'read prim:read)
 
   ;; (%defglobal 'read-file bard:read-file)
-  ;; (%defglobal 'read-line bard:read-line)
-  ;; (%defglobal 'read-lines bard:read-lines)
+  (%defglobal 'read-line bard:read-line)
+  (%defglobal 'read-lines bard:read-lines)
   ;; (%defglobal 'show bard:show)
   ;; (%defglobal 'write bard:write)
 
@@ -201,20 +200,20 @@
 
   ;; List
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'add-first bard:add-first)
+  (%defglobal 'add-first bard:add-first)
   ;; (%defglobal 'add-last bard:add-last)
-  ;; (%defglobal 'any bard:any)
+  (%defglobal 'any bard:any)
   (%defglobal 'append bard:append)
   ;; (%defglobal 'contains? bard:contains?)
   ;; (%defglobal 'difference bard:difference)
-  ;; (%defglobal 'drop bard:drop)
+  (%defglobal 'drop bard:drop)
   ;; (%defglobal 'drop-before bard:drop-before)
-  ;; (%defglobal 'element bard:element)
+  (%defglobal 'element bard:element)
   ;; (%defglobal 'empty? bard:empty?)
   ;; (%defglobal 'every? bard:every?)
-  ;; (%defglobal 'filter bard:filter)
+  (%defglobal 'filter bard:filter)
   ;; (%defglobal 'find bard:find)
-  ;; (%defglobal 'first bard:first)
+  (%defglobal 'first bard:first)
   ;; (%defglobal 'head bard:head)
   ;; (%defglobal 'interleave bard:interleave)
   ;; (%defglobal 'interpose bard:interpose)
@@ -222,13 +221,14 @@
   (%defglobal 'last bard:last)
   (%defglobal 'length bard:length)
   ;; (%defglobal 'list? bard:list?)
-  ;; (%defglobal 'map bard:map)
+  (%defglobal 'map bard:map)
   ;; (%defglobal 'merge bard:merge)
   ;; (%defglobal 'partition bard:partition)
   ;; (%defglobal 'position bard:position)
   ;; (%defglobal 'range bard:range)
-  ;; (%defglobal 'reduce bard:reduce)
+  (%defglobal 'reduce bard:reduce)
   ;; (%defglobal 'repeat bard:repeat)
+  (%defglobal 'rest bard:rest)
   ;; (%defglobal 'reverse bard:reverse)
   ;; (%defglobal 'second bard:second)
   ;; (%defglobal 'select bard:select)
@@ -236,9 +236,8 @@
   ;; (%defglobal 'slice bard:slice)
   ;; (%defglobal 'some? bard:some?)
   ;; (%defglobal 'sort bard:sort)
-  ;; (%defglobal 'tail bard:tail)
   ;; (%defglobal 'tails bard:tails)
-  ;; (%defglobal 'take bard:take)
+  (%defglobal 'take bard:take)
   ;; (%defglobal 'take-before bard:take-before)
   ;; (%defglobal 'unique bard:unique)
   ;; (%defglobal 'unzip bard:unzip)
@@ -254,7 +253,8 @@
 
   ;; Null
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'nothing? bard:nothing?)
+  (%defglobal 'nothing? bard:nothing?)
+  (%defglobal 'something? bard:something?)
 
   ;;  Number
   ;; ---------------------------------------------------------------------
@@ -269,6 +269,11 @@
   (%defglobal 'primitive:< prim:<)
   (%defglobal 'primitive:>= prim:>=)
   (%defglobal 'primitive:<= prim:<=)
+
+  (%defglobal '> bard:>)
+  (%defglobal '< bard:<)
+  (%defglobal '>= bard:>=)
+  (%defglobal '<= bard:<=)
 
   ;; Procedure
   ;; ---------------------------------------------------------------------
