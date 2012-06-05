@@ -201,7 +201,7 @@
   ;; List
   ;; ---------------------------------------------------------------------
   (%defglobal 'add-first bard:add-first)
-  ;; (%defglobal 'add-last bard:add-last)
+  (%defglobal 'add-last bard:add-last)
   (%defglobal 'any bard:any)
   (%defglobal 'append bard:append)
   ;; (%defglobal 'contains? bard:contains?)

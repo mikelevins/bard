@@ -44,7 +44,7 @@
                             (c (%list-ref args 2))
                             (d (%list-ref args 3)))
                         (fn a b c d)))
-                  (else (let ((parms (%ralist->cons args)))
+                  (else (let ((parms (%bard-list->cons args)))
                           (apply fn parms))))))))))
 
 (define (%method-lexical-environment env params rest vals)
@@ -89,7 +89,7 @@
    ((%primitive-method? op)(%apply-primitive-method op args))
    ((%interpreted-method? op)(%apply-interpreted-method op args))
    ((%function? op)(%apply-function op args))
-   ((procedure? op)(apply op (%ralist->cons args)))
+   ((procedure? op)(apply op (%bard-list->cons args)))
    (else (error (string-append "not an applicable object: " (object->string op) "; args: " (object->string args))))))
 
-(define %funcall (lambda (fn . args)(%apply fn (%cons->ralist args))))
+(define %funcall (lambda (fn . args)(%apply fn (%cons->bard-list args))))

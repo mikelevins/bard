@@ -113,7 +113,7 @@
                                           (display "(method ")
                                           (display nm)
                                           (if (> (string-length nm) 0) (display " "))
-                                          (display (interpose " " (%ralist->cons formals)))
+                                          (display (interpose " " (%bard-list->cons formals)))
                                           (if (> (%length body) 0) (display " "))
                                           (display (%as-string body))
                                           (display ")"))))))

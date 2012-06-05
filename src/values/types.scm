@@ -128,6 +128,7 @@
 (define <bignum> (%define-primitive-type '<bignum> tags:$bignum))
 (define <primitive-procedure> (%define-primitive-type '<primitive-procedure> tags:$procedure))
 (define <string> (%define-primitive-type '<string> tags:$string))
+(define <list> (%define-primitive-type '<list> tags:$pair))
 (define <foreign-value> (%define-primitive-type '<foreign-value> tags:$foreign-value))
 
 (define <iostream> (%define-standard-type '<iostream> (##structure-type (current-input-port))))

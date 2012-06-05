@@ -25,7 +25,6 @@
   (paths $bard-root 
          "src/version.scm"
          "lib/uuid.scm"
-         "lib/srfi101.scm"
          "lib/wttree.scm"
          "src/util/general.scm"
          "src/values/types.scm"
@@ -43,7 +42,6 @@
          "src/repl/toplevel.scm"
          "src/values/protocols.scm"
          "src/bard.scm"
-
          ))
 
 ;;; load sources

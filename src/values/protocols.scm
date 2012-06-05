@@ -1,4 +1,4 @@
-;;;; ***********************************************************************
+;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocols.scm
@@ -77,7 +77,7 @@
 (%add-primitive-method! bard:as
                         (%list (%singleton <list>) <string>)
                         (%list 'type 'thing)
-                        (lambda (type thing)(%cons->ralist (string->list thing)))
+                        (lambda (type thing)(%cons->bard-list (string->list thing)))
                         name: 'as)
 
 (%add-primitive-method! bard:as
@@ -89,7 +89,7 @@
 (%add-primitive-method! bard:as
                         (%list (%singleton <string>) <list>)
                         (%list 'type 'thing)
-                        (lambda (type thing)(list->string (%ralist->cons thing)))
+                        (lambda (type thing)(list->string (%bard-list->cons thing)))
                         name: 'as)
 
 ;;; ---------------------------------------------------------------------
@@ -254,7 +254,7 @@
      (let loop ((line (read-line stream))
                 (lines '()))
        (if (eq? line #!eof)
-           (%cons->ralist (reverse lines))
+           (%cons->bard-list (reverse lines))
            (loop (read-line stream)
                  (cons line lines)))))
    name: 'read-lines
@@ -266,55 +266,51 @@
 ;;; List
 ;;; ---------------------------------------------------------------------
 
-(define bard:length (%make-function name: 'length))
+;;; add-first
 
-(%add-primitive-method! bard:length
-                        (%list <null>)
-                        (%list 'ls)
-                        (constantly 0)
-                        name: 'length)
+(define bard:add-first (%make-function name: 'add-first))
 
-(%add-primitive-method! bard:length
-                        (%list <list>)
-                        (%list 'ls)
-                        %length
-                        name: 'length)
+(%add-primitive-method! bard:add-first
+                        (%list Anything <null>)
+                        (%list 'thing 'ls)
+                        %cons
+                        name: 'add-first)
 
-(%add-primitive-method! bard:length
-                        (%list <string>)
-                        (%list 'string)
-                        string-length
-                        name: 'length)
+(%add-primitive-method! bard:add-first
+                        (%list Anything <list>)
+                        (%list 'thing 'ls)
+                        %cons
+                        name: 'add-first)
 
-(%add-primitive-method! bard:length
-                        (%list <frame>)
-                        (%list 'frame)
-                        (lambda (frame)(%length (%frame-keys frame)))
-                        name: 'length)
+(%add-primitive-method! bard:add-first
+                        (%list <character> <string>)
+                        (%list 'ch 'str)
+                        (lambda (ch str)(string-append (string ch) str))
+                        name: 'add-first)
 
-(define bard:last (%make-function name: 'last))
+;;; add-last
 
-(%add-primitive-method! bard:last
-                        (%list <list>)
-                        (%list 'ls)
-                        %last
-                        name: 'last)
+(define bard:add-last (%make-function name: 'add-last))
 
-(%add-primitive-method! bard:last
-                        (%list <string>)
-                        (%list 'string)
-                        (lambda (string)(string-ref string (- (string-length string) 1)))
-                        name: 'last)
+(%add-primitive-method! bard:add-last
+                        (%list <null> Anything)
+                        (%list 'ls 'thing)
+                        (lambda (ls thing)(%list thing))
+                        name: 'add-last)
 
-(%add-primitive-method! bard:last
-                        (%list <frame>)
-                        (%list 'frame)
-                        (lambda (frame)
-                          (let* ((keys (%frame-keys frame))
-                                 (key (%list-ref keys (- (%length keys) 1))))
-                            (%frame key (%frame-get frame key (%nothing)))))
-                        name: 'last)
+(%add-primitive-method! bard:add-last
+                        (%list <list> Anything)
+                        (%list 'ls 'thing)
+                        (lambda (ls thing)(%append ls (%list thing)))
+                        name: 'add-last)
 
+(%add-primitive-method! bard:add-last
+                        (%list <string> <character>)
+                        (%list 'str 'ch)
+                        (lambda (str ch)(string-append str (string ch)))
+                        name: 'add-last)
+
+;;; append
 
 (define bard:append (%make-function name: 'append))
 
@@ -347,6 +343,61 @@
                         (%list 'str1 'str2)
                         string-append
                         name: 'append)
+
+;;; last
+
+(define bard:last (%make-function name: 'last))
+
+(%add-primitive-method! bard:last
+                        (%list <list>)
+                        (%list 'ls)
+                        %last
+                        name: 'last)
+
+(%add-primitive-method! bard:last
+                        (%list <string>)
+                        (%list 'string)
+                        (lambda (string)(string-ref string (- (string-length string) 1)))
+                        name: 'last)
+
+(%add-primitive-method! bard:last
+                        (%list <frame>)
+                        (%list 'frame)
+                        (lambda (frame)
+                          (let* ((keys (%frame-keys frame))
+                                 (key (%list-ref keys (- (%length keys) 1))))
+                            (%frame key (%frame-get frame key (%nothing)))))
+                        name: 'last)
+
+;;; length
+
+(define bard:length (%make-function name: 'length))
+
+(%add-primitive-method! bard:length
+                        (%list <null>)
+                        (%list 'ls)
+                        (constantly 0)
+                        name: 'length)
+
+(%add-primitive-method! bard:length
+                        (%list <list>)
+                        (%list 'ls)
+                        %length
+                        name: 'length)
+
+(%add-primitive-method! bard:length
+                        (%list <string>)
+                        (%list 'string)
+                        string-length
+                        name: 'length)
+
+(%add-primitive-method! bard:length
+                        (%list <frame>)
+                        (%list 'frame)
+                        (lambda (frame)(%length (%frame-keys frame)))
+                        name: 'length)
+
+
 
 (define bard:take (%make-function name: 'take))
 
@@ -390,20 +441,6 @@
                         (%list 'n 'str)
                         (lambda (n str)(substring str n (string-length str)))
                         name: 'drop)
-
-(define bard:add-first (%make-function name: 'add-first))
-
-(%add-primitive-method! bard:add-first
-                        (%list Anything <null>)
-                        (%list 'thing 'ls)
-                        %cons
-                        name: 'add-first)
-
-(%add-primitive-method! bard:add-first
-                        (%list Anything <list>)
-                        (%list 'thing 'ls)
-                        %cons
-                        name: 'add-first)
 
 (define bard:any (%make-function name: 'any))
 
@@ -449,12 +486,18 @@
   (let loop ((items ls)
              (result '()))
     (if (%null? items)
-        (%cons->ralist (reverse result))
+        (%cons->bard-list (reverse result))
         (if (%funcall test (%car items))
             (loop (%cdr items)
                   (cons (%car items) result))
             (loop (%cdr items)
                   result)))))
+
+(%add-primitive-method! bard:filter
+                        (%list Anything <null>)
+                        (%list 'fn 'ls)
+                        (constantly (%nothing))
+                        name: 'filter)
 
 (%add-primitive-method! bard:filter
                         (%list <primitive-method> <list>)
@@ -480,7 +523,7 @@
   (let loop ((items ls)
              (result '()))
     (if (%null? items)
-        (%cons->ralist (reverse result))
+        (%cons->bard-list (reverse result))
         (loop (%cdr items)
               (cons (%funcall fn (%car items))
                     result)))))

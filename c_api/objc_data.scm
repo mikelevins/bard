@@ -118,10 +118,6 @@ c-code
               items)
     arr))
 
-(define (objc:ralist->NSMutableArray items)
-  (objc:list->NSMutableArray (%ralist->cons items)))
-
-
 ;;; frames
 
 (define objc:make-NSMutableDictionary
@@ -179,7 +175,7 @@ c-code
 
 (define (objc:frame->NSMutableDictionary fr)
   (let* ((dict (objc:make-NSMutableDictionary))
-         (keys (%ralist->cons (%frame-keys fr))))
+         (keys (%bard-list->cons (%frame-keys fr))))
     (for-each (lambda (key)
                 (objc:NSMutableDictionary/set-value-for-key! dict key (%frame-get fr key #f)))
               keys)
@@ -195,7 +191,7 @@ c-code
    ((string? val)(objc:string->NSString val))
    ((symbol? val)(objc:string->NSString (symbol->string val)))
    ((keyword? val)(objc:string->NSString (keyword->string val)))
-   ((%list? val)(objc:ralist->NSMutableArray val))
+   ((%list? val)(objc:list->NSMutableArray val))
    ((%frame? val)(objc:frame->NSMutableDictionary val))
    (else (begin
            (newline)
