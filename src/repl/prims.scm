@@ -22,6 +22,30 @@
    required-count: 0
    restarg: 'more))
 
+(define prim:read-text
+  (%make-primitive-method
+   (lambda (text)
+     (bard:read-from-string text))
+   name: 'read-text
+   parameters: (%list 'text)
+   required-count: 1
+   restarg: #f))
+
+(define prim:read-file
+  (%make-primitive-method
+   (lambda (path)
+     (call-with-input-file path
+       (lambda (in)
+         (let* ((finfo (file-info path))
+                (fsize (file-info-size finfo))
+                (buf (make-string fsize)))
+           (read-substring buf 0 fsize in)
+           buf))))
+   name: 'read-file
+   parameters: (%list 'path)
+   required-count: 1
+   restarg: #f))
+
 (define prim:eval
   (%make-primitive-method
    (lambda (expr #!optional (env (%null-environment)))

@@ -5,7 +5,7 @@
 \margl1440\margr1440\vieww24480\viewh27400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
-\f0\b\fs48 \cf0 Bard 0.2.0 Quick Reference\
+\f0\b\fs48 \cf0 Bard 0.2.2 Quick Reference\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0\fs28 \cf0 Copyright 2012 by mikel evins\
@@ -24,7 +24,7 @@ Run the Bard interpreter by typing the name of the executable "bard" at the term
 \f1 \cf0 $ cd bard\
 $ ./bard\
 \
-Bard 0.2.0\
+Bard 0.2.2\
 \
 bard>\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
@@ -284,7 +284,7 @@ III. Special Forms\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0\fs28 \cf0 \
-Special forms are operators that are built into the bard interpreter. Bard 0.2.0 defines seventeen special forms:\
+Special forms are operators that are built into the bard interpreter. Bard 0.2.2 defines seventeen special forms:\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -324,10 +324,6 @@ Special forms are operators that are built into the bard interpreter. Bard 0.2.0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0 \cf0 	Exactly like the define-function above, except that the defined function accepts N or more arguments. All arguments after the & are collected into a list that is bound to rest-arg.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-
-\b \cf0 NOTE: there is a known bug in Bard 0.2.0 that may prevent use of & arguments
-\b0 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -463,7 +459,7 @@ Special forms are operators that are built into the bard interpreter. Bard 0.2.0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0\fs28 \cf0 \
-Bard 0.2.0 defines the following primitive methods:\
+Bard 0.2.2 defines the following primitive methods:\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -475,6 +471,14 @@ Bard 0.2.0 defines the following primitive methods:\
 \f1 \cf0 (apply (app Applicable) (arglist List)) => Anything
 \f0 \
 	Applies an applicable object (such as a function or frame) to a List of arguments, returning the resulting value.\
+\
+
+\f1 (eval (expr Anything)) => Anything
+\f0 \
+
+\f1 (eval (expr Anything)(env Environment)) => Anything
+\f0 \
+	Evaluates the expression in the supplied environment, or in the null environment if no environment is supplied. Returns the resulting value.\
 \
 
 \f1 (identity (x Anything)) => x
@@ -630,9 +634,13 @@ Concrete datatypes in Bard are called
 \b representations
 \b0 . \
 \
-NOTE: Bard 0.2.0 doesn't provide any mechanisms users can use to define their own datatypes. That facility is coming. In the meantime, much can be accomplished using Lists and Frames.\
-\
-Bard 0.2 defines the following built-in representations:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 NOTE: Bard 0.2.2 doesn't provide any mechanisms users can use to define their own datatypes. That facility is coming. In the meantime, much can be accomplished using Lists and Frames.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+Bard 0.2.2 defines the following built-in representations:\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -730,9 +738,9 @@ Bard distinguishes two parts of a type: the
 
 \b \cf0 NOTE:
 \b0  
-\b In version 0.2.0 Bard's Protocols are in the middle of a redesign to better support user-defined types and function dispatch. The only Protocols present in Bard 0.2.0 as first-class objects are Anything and Type. Many protocol functions are temporarily missing. Please note that functions or methods that should be present in Bard may be absent in version 0.2.0.\
+\b In version 0.2.2 Bard's Protocols are in the middle of a redesign to better support user-defined types and function dispatch. The only Protocols present in Bard 0.2.2 as first-class objects are Anything and Type. Many protocol functions are temporarily missing. Please note that functions or methods that should be present in Bard may be absent in version 0.2.2.\
 \
-The Protocol functions present in Bard 0.2.0 are described below.
+The Protocol functions present in Bard 0.2.2 are described below.
 \b0 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
@@ -853,7 +861,7 @@ The Equal protocol defines values that can be compared for equality.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\b0\fs28 \cf0 \
-The Float protocol defines floating-point numeric values. In Bard 0.2.0, all Float values are single-precision floating-point numbers.\
+The Float protocol defines floating-point numeric values. In Bard 0.2.2, all Float values are single-precision floating-point numbers.\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -984,6 +992,13 @@ The IOStream protocol defines values that can be treated as input or output stre
 \f0 Returns the next Bard value read from in.\
 \
 
+\f1 (read-file (pathname <string>)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the entire contents of the file at pathname as a string.\
+\
+
 \f1 (read-line) => Text
 \f0 \
 
@@ -1001,6 +1016,18 @@ The IOStream protocol defines values that can be treated as input or output stre
 \f1 (read-lines (in <input-stream>)) => List\
 	
 \f0 Returns the contents of in as a list of Text objects.\
+\
+
+\f1 (read-text (text <string>)) => Anything
+\f0 \
+
+\f1 	
+\f0 Reads a Bard object from text as if by using read. Returns the first Bard value read from the string.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 TODO: Provide an API that permits reading more than one object from a string.
+\b0 \
+\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural

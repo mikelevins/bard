@@ -32,6 +32,7 @@
   (%defglobal 'quit prim:quit)
   (%defglobal 'room prim:room)
   (%defglobal 'version prim:version)
+  (%defglobal 'eval prim:eval)
 
 ;;; ---------------------------------------------------------------------
 ;;; type-system primitives
@@ -187,8 +188,8 @@
   (%defglobal 'print prim:print)
   (%defglobal 'newline prim:newline)
   (%defglobal 'read prim:read)
-
-  ;; (%defglobal 'read-file bard:read-file)
+  (%defglobal 'read-text prim:read-text)
+  (%defglobal 'read-file prim:read-file)
   (%defglobal 'read-line bard:read-line)
   (%defglobal 'read-lines bard:read-lines)
   ;; (%defglobal 'show bard:show)
