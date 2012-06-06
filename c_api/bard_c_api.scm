@@ -23,8 +23,8 @@
           (let ((dirpath (objc:NSString->string path)))
             (api:bard-info dirpath)))
 
-(c-define (c:bard-load-from-string text) ((pointer "NSString")) 
-          bool "bard_load_from_string" ""
+(c-define (c:bard-evaluate text) ((pointer "NSString")) 
+          bool "bard_evaluate" ""
           (let ((load-string (objc:NSString->string text))) 
             (%bard-load-from-string load-string)))
 
