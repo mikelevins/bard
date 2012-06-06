@@ -31,16 +31,18 @@
    required-count: 1
    restarg: #f))
 
+(define (%bard-read-file path)
+  (call-with-input-file path
+    (lambda (in)
+      (let* ((finfo (file-info path))
+             (fsize (file-info-size finfo))
+             (buf (make-string fsize)))
+        (read-substring buf 0 fsize in)
+        buf))))
+
 (define prim:read-file
   (%make-primitive-method
-   (lambda (path)
-     (call-with-input-file path
-       (lambda (in)
-         (let* ((finfo (file-info path))
-                (fsize (file-info-size finfo))
-                (buf (make-string fsize)))
-           (read-substring buf 0 fsize in)
-           buf))))
+   %bard-read-file
    name: 'read-file
    parameters: (%list 'path)
    required-count: 1

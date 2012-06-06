@@ -26,8 +26,6 @@
 (c-define (c:bard-load-from-string text) ((pointer "NSString")) 
           bool "bard_load_from_string" ""
           (let ((load-string (objc:NSString->string text))) 
-            (newline)
-            (display "Loading from string: ")
             (%bard-load-from-string load-string)))
 
 
