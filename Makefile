@@ -75,7 +75,6 @@ IOS_SIM_LDFLAGS_LIB=-static -arch_only ${IOS_SIM_ARCH} -syslibroot ${IOS_SIM_SYS
 SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
-         lib/wttree.scm \
          src/util/general.scm \
          src/values/types.scm \
          src/values/values.scm \
@@ -97,7 +96,6 @@ SCHEME_SOURCES= \
 C_SOURCES= \
          src/version.c \
          lib/uuid.c \
-         lib/wttree.c \
          src/util/general.c \
          src/values/types.c \
          src/values/values.c \
@@ -119,7 +117,6 @@ C_SOURCES= \
 OBJECTS= \
          version.o \
          uuid.o \
-         wttree.o \
          general.o \
          types.o \
          values.o  \

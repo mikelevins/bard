@@ -25,7 +25,6 @@
   (paths $bard-root 
          "src/version.scm"
          "lib/uuid.scm"
-         "lib/wttree.scm"
          "src/util/general.scm"
          "src/values/types.scm"
          "src/values/values.scm"

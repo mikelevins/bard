@@ -182,8 +182,23 @@
 ;;; ---------------------------------------------------------------------
 ;;; frame
 ;;; ---------------------------------------------------------------------
+;;; frames based on Adams' weight-balanced binary trees Bard frames
+;;; are obliged to provide a stable order for keys, in order to
+;;; support the List protocol.  we do that by representing a frame as
+;;; a structure with a wttree for the slots, and a list that
+;;; presents the keys in the order they were added
 
-(define $empty-slots (make-table test: equal?))
+
+;;; wttrees rely on an ordering function to dispose keys.
+;;; %key< orders any two Bard values that may be used as keys
+;;; any Bard value except nothing or undefined may be a key
+
+(define (%key< k1 k2)
+  (< (object->serial-number k1)
+     (object->serial-number k2)))
+
+(define $slots-wt-type (make-wt-tree-type %key<))
+(define $empty-slots (make-wt-tree $slots-wt-type))
 
 (define-type %frame
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
@@ -191,25 +206,28 @@
   (slots %frame-slots)
   (keys %frame-keys))
 
-(define $empty-frame (%private-make-frame $empty-slots '()))
-
 (define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list)))))
 
 (define (%make-frame kv-plist)
-  (let* ((alist (plist->alist kv-plist))
-         (keys (map car alist))
-         (slots (list->table alist test: equal?)))
-    (%private-make-frame slots keys)))
+  (let loop ((kvs kv-plist)
+             (fr (%private-make-frame $empty-slots %nil)))
+    (if (%null? kvs)
+        fr
+        (if (%null? (%cdr kvs))
+            (error (string-append "Malformed argument list to frame constructor: " (object->string kv-plist)))
+            (let ((k (%car kvs))
+                  (v (%cadr kvs))
+                  (more (%cddr kvs)))
+              (loop more (%frame-put fr k v)))))))
 
 (define (%frame . kv-plist)(%make-frame (%cons->bard-list kv-plist)))
 
 (define (%frame-get fr key #!optional (default (%nothing)))
-  (table-ref (%frame-slots fr) key default))
+  (wt-tree/lookup (%frame-slots fr) key default))
 
 (define (%frame-put fr key value)
-  (let* ((new-slots (table-copy (%frame-slots fr)))
+  (let* ((new-slots (wt-tree/add (wt-tree/delete (%frame-slots fr) key) key value))
          (new-keys (%append (%remove key (%frame-keys fr))(%list key))))
-    (table-set! new-slots key value)
     (%private-make-frame new-slots new-keys)))
 
 ;;; ---------------------------------------------------------------------
