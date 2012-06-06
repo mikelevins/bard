@@ -250,13 +250,7 @@
 
 (define bard:read-lines
   (%make-primitive-method 
-   (lambda (stream)
-     (let loop ((line (read-line stream))
-                (lines '()))
-       (if (eq? line #!eof)
-           (%cons->bard-list (reverse lines))
-           (loop (read-line stream)
-                 (cons line lines)))))
+   (lambda (stream)(read-all stream read-line))
    name: 'read-lines
    parameters: (%list 'stream)
    required-count: 1
