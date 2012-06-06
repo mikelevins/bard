@@ -54,7 +54,9 @@
     (if (%null? args)
         ;; out of args
         (if (%null? formals)
-            env
+            (if (%true? rest)
+                (%add-binding env rest args)
+                env)
             (error (string-append "Not enough arguments: " (%as-string vals))))
         ;; more args to process
         (if (%null? formals)

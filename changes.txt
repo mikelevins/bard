@@ -1,3 +1,53 @@
+0.2.1
+
+- fixed a bug that prevented rest args from working.
+
+0.2.0
+
+- experimented some with representation of types, in order to support
+  user-defined types; this feature is not yet in, but will be in the
+  near future
+
+- protocol implementation is ndergoing changes. in 0.2.0 the protocols
+  (except for Anything and Type) are not first-class objects, and many
+  protocol functions are unimplemented while I tinker with the representations
+
+- experimented with generators and series (possibly-infinite data
+  structures that encapsulate generators); not ready for prime time,
+  but a future Bard release may expose generators and series as a tool
+  for iteration
+
+- <output-stream> and <input-stream> are replaced by <iostream>
+
+- lists are now represented by an abstract interal protocol (%cons,
+  %car, %cdr, etc.) to make it easy to switch representations
+
+- experimented with lists represented by binary trees, but the Van
+  Horn implementation of random-access-lists does not perform as
+  advertised in Gambit. Operations advertised as Olog(N) were measured
+  linear, and constant factors are higher than for native cons
+  implementation, so rolled back to conses until I can find or write a
+  suitable implmentation of functional sequences.
+
+- frames are now represented by weight-balanced binary trees
+
+- added repeat and with-exit; this is a very general solution to
+  looping, but should be regarded as a temporary placeholder to be
+  replaced at some point with a better functional alternative. exits
+  bound by with-exit are in fact full continuations, and it's probably
+  not a good idea to expose them in this way
+
+- experimented with an pgrade to Gambit 4.6.6, but rolled back after
+  segfaults in iOS builds; the toolchain currently is still based
+  on Gambit 4.6.1
+
+- Bard project now includes Cocoa test harnesses for iOS and Mac OSX
+
+- Makefiles now build iOS and MacOSX libraries with exposed C entry
+  points and data-marshaling support
+
+- function dispatch and application cons much less and are faster
+
 0.1.3
 
 - updated the namer example to use new primitives.
