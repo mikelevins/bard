@@ -7,6 +7,15 @@
 GSC=/usr/local/gambit/macosx/bin/gsc
 
 # ----------------------------------------
+# Nelson
+# ----------------------------------------
+# for targets that build components for
+# the nelson project, we need the path
+# to the Nelson project
+
+NELSON_PATH=/Volumes/ymra/Users/mikel/Projects/nelson/nelson/project2/Nelson/bard
+
+# ----------------------------------------
 # Mac
 # ----------------------------------------
 
@@ -237,3 +246,10 @@ mac_main: tidy
 	${MAC_CC} ${MAC_CFLAGS_MAIN} ${MAC_LDFLAGS_MAIN} ${C_SOURCES} ${MAIN_C_SOURCES}
 
 
+# -------------------
+# Nelson components
+
+nelson: ios_lib
+	make tidy
+	cp ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY) ${NELSON_PATH}/lib/libBard.a
+	cp include/bard.h ${NELSON_PATH}/include/bard.h

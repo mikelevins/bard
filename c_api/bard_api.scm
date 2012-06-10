@@ -26,15 +26,31 @@
                        #t)))
     (with-exception-catcher error-handler initializer)))
 
-(define (api:bard-info dirpath)
-  (let ((fr (%frame version: $bard-version-string
-                    enabled: (%true)
-                    arbitraryCount: 3
-                    numberosity: 1.3
-                    things: (%list #f 3 2.4 "Apple"))))
-    (objc:frame->NSMutableDictionary fr)))
+(define api:$BARD_NULL 0)
+(define api:$BARD_BOOLEAN 1)
+(define api:$BARD_NUMBER 2)
+(define api:$BARD_SYMBOL 3)
+(define api:$BARD_KEYWORD 4)
+(define api:$BARD_TEXT 5)
+(define api:$BARD_LIST 6)
+(define api:$BARD_FRAME 7)
+(define api:$BARD_UNRECOGNIZED 255)
 
+(define (api:type-for-C obj)
+  (cond
+   ((null? obj) api:$BARD_NULL)
+   ((boolean? obj) api:$BARD_BOOLEAN)
+   ((number? obj) api:$BARD_NUMBER)
+   ((symbol? obj) api:$BARD_SYMBOL)
+   ((keyword? obj) api:$BARD_KEYWORD)
+   ((string? obj) api:$BARD_TEXT)
+   ((%list? obj) api:$BARD_LIST)
+   ((%frame? obj) api:$BARD_FRAME)
+   (else api:$BARD_UNRECOGNIZED)))
 
-(define (api:bard-load-from-string load-string)
-  (%bard-load-from-string load-string))
+(define (api:bard-read text)
+  (let* ((str (objc:NSString->string text)))
+    (bard:read-from-string str)))
 
+(define (api:bard-eval expr)
+  (%eval expr '()))

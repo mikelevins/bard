@@ -18,14 +18,14 @@
           bool "init_bard" ""
           (api:init-bard))
 
-(c-define (c:bard-info path) ((pointer "NSString")) 
-          (pointer "NSMutableDictionary") "bard_info" ""
-          (let ((dirpath (objc:NSString->string path)))
-            (api:bard-info dirpath)))
+(c-define (c:bard-type obj) (scheme-object) 
+          int "bard_type" ""
+          (api:type-for-C obj))
 
-(c-define (c:bard-evaluate text) ((pointer "NSString")) 
-          bool "bard_evaluate" ""
-          (let ((load-string (objc:NSString->string text))) 
-            (%bard-load-from-string load-string)))
+(c-define (c:bard-read text) ((pointer "NSString")) 
+          scheme-object "bard_read" ""
+          (api:bard-read text))
 
-
+(c-define (c:bard-eval expr) (scheme-object) 
+          scheme-object "bard_eval" ""
+          (api:bard-eval expr))
