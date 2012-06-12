@@ -14,17 +14,24 @@
 ;;; This file defines Scheme API functions that are called by the C API
 ;;; functions defined as c-lambdas in bard_c_api.scm
 
+(define $bard-error #f)
+
+(define-macro (reporting-errors . body)
+  (let ((errvar (gensym)))
+    `(with-exception-catcher
+      ;; error handler
+      (lambda (,errvar)(begin (set! $bard-error (error->string ,errvar)) #f))
+      ;; body
+      (lambda () (begin (set! $bard-error #f) ,@body)))))
+
 (define (api:version)
-  (objc:string->NSString $bard-version-string))
+  (reporting-errors
+   (objc:string->NSString $bard-version-string)))
 
 (define (api:init-bard)
-  (let ((error-handler (lambda (err)
-                         (display (error->string err))
-                         #f))
-        (initializer (lambda ()
-                       (%init-bard)
-                       #t)))
-    (with-exception-catcher error-handler initializer)))
+  (reporting-errors
+   (%init-bard)
+   #t))
 
 (define api:$BARD_NULL 0)
 (define api:$BARD_BOOLEAN 1)
@@ -49,8 +56,30 @@
    (else api:$BARD_UNRECOGNIZED)))
 
 (define (api:bard-read text)
-  (let* ((str (objc:NSString->string text)))
-    (bard:read-from-string str)))
+  (reporting-errors
+   (let* ((str (objc:NSString->string text)))
+     (bard:read-from-string str))))
 
 (define (api:bard-eval expr)
-  (%eval expr '()))
+  (reporting-errors
+   (%eval expr '())))
+
+(define (api:load-from-string text)
+  (reporting-errors
+   (let* ((str (objc:NSString->string text)))
+     (%bard-load-from-string str))))
+
+(define (api:show expr)
+  (reporting-errors
+   (objc:string->NSString (%as-string expr))))
+
+(define (api:as-array expr)
+  (reporting-errors
+   (cond
+    ((null? expr) #f)
+    ((%list? expr)(objc:list->NSMutableArray expr))
+    (else (begin
+            (display (string-append "Bard error: cannot convert "
+                                    (object->string expr)
+                                    " to an NSArray."))
+            #f)))))

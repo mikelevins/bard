@@ -12,8 +12,14 @@
 #define BARD_FRAME 7
 #define BARD_UNRECOGNIZED 255
 
+extern bool bard_error_status();
+extern char* bard_error ();
+extern void clear_bard_error ();
 extern NSString* bard_version ();
 extern bool init_bard();
 extern int bard_type(___SCMOBJ expr);
 extern ___SCMOBJ bard_read(NSString* text);
 extern ___SCMOBJ bard_eval(___SCMOBJ expr);
+extern bool bard_load(NSString* text);
+extern NSString* bard_show(___SCMOBJ expr);
+extern NSMutableArray* as_array(___SCMOBJ expr);

@@ -10,6 +10,18 @@
 
 (c-declare "#import <Foundation/Foundation.h>")
 
+(c-define (c:bard-error?) () 
+          bool "bard_error_status" ""
+          (and $bard-error #t))
+
+(c-define (c:bard-error) () 
+          char-string "bard_error" ""
+          $bard-error)
+
+(c-define (c:clear-bard-error) () 
+          void "clear_bard_error" ""
+          (set! $bard-error #f))
+
 (c-define (c:version) () 
           (pointer "NSString") "bard_version" ""
           (api:version))
@@ -29,3 +41,16 @@
 (c-define (c:bard-eval expr) (scheme-object) 
           scheme-object "bard_eval" ""
           (api:bard-eval expr))
+
+(c-define (c:bard-load text) ((pointer "NSString")) 
+          bool "bard_load" ""
+          (api:load-from-string text))
+
+(c-define (c:bard-show expr) (scheme-object) 
+          (pointer "NSString") "bard_show" ""
+          (api:show expr))
+
+(c-define (c:as-array expr) (scheme-object) 
+          (pointer "NSMutableArray") "as_array" ""
+          (api:as-array expr))
+
