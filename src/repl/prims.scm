@@ -284,7 +284,7 @@
 (define prim:uuid
   (%make-primitive-method
    (lambda () (make-uuid))
-   name: 'version
+   name: 'uuid
    parameters: %nil
    required-count: 0
    restarg: #f
