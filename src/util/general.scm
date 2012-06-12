@@ -52,6 +52,14 @@
             (cdr (car alist))
             (loop (cdr alist))))))
 
+(define (every? fn ls)
+  (let loop ((items ls))
+    (if (null? items)
+        #t
+        (if (fn (car items))
+            (loop (cdr items))
+            #f))))
+
 (define (interpose item ls)
   (if (or (null? ls)
           (null? (cdr ls)))

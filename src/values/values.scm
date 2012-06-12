@@ -102,11 +102,11 @@
 (define %list? list?)
 (define %cons cons)
 (define %car car)
+(define %cdr cdr)
 (define %cadr cadr)
 (define %cddr cddr)
 (define %first car)
 (define (%last ls) (%list-ref ls (- (%length ls) 1)))
-(define %cdr cdr)
 (define %list list)
 (define %length length)
 (define %append append)
@@ -195,11 +195,27 @@
 
 (define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list)))))
 
+(define (%frame-slot? x)
+  (and (%list? x)
+       (not (%null? x))
+       (not (%null? (%cdr x)))
+       (%null? (%cddr x))))
+
 (define (%make-frame kv-plist)
   (let* ((alist (plist->alist kv-plist))
          (keys (map car alist))
          (slots (list->table alist test: equal?)))
     (%private-make-frame slots keys)))
+
+(define (%maybe-slot-list->frame slist)
+  (with-exception-catcher
+   (lambda (err) slist)
+   (lambda ()
+     (let* ((alist (map (lambda (slot)(cons (car slot)(cadr slot))) 
+                        slist))
+            (keys (map car alist))
+            (slots (list->table alist test: equal?)))
+       (%private-make-frame slots keys)))))
 
 (define (%frame . kv-plist)(%make-frame (%cons->bard-list kv-plist)))
 

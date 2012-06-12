@@ -2,6 +2,8 @@
 #include "gambit.h"
 #import <Foundation/Foundation.h>
 
+#define BardValue ___SCMOBJ
+
 #define BARD_NULL 0
 #define BARD_BOOLEAN 1
 #define BARD_NUMBER 2
@@ -17,9 +19,9 @@ extern char* bard_error ();
 extern void clear_bard_error ();
 extern NSString* bard_version ();
 extern bool init_bard();
-extern int bard_type(___SCMOBJ expr);
-extern ___SCMOBJ bard_read(NSString* text);
-extern ___SCMOBJ bard_eval(___SCMOBJ expr);
+extern int bard_type(BardValue expr);
+extern BardValue bard_read(NSString* text);
+extern BardValue bard_eval(BardValue expr);
 extern bool bard_load(NSString* text);
-extern NSString* bard_show(___SCMOBJ expr);
-extern NSMutableArray* as_array(___SCMOBJ expr);
+extern NSString* bard_show(BardValue  expr);
+extern NSMutableArray* as_array(BardValue expr);

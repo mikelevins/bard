@@ -33,6 +33,7 @@
   (%defglobal 'room prim:room)
   (%defglobal 'version prim:version)
   (%defglobal 'eval prim:eval)
+  (%defglobal 'uuid prim:uuid)
 
 ;;; ---------------------------------------------------------------------
 ;;; type-system primitives
@@ -41,6 +42,7 @@
   (%defglobal 'Type Type)
   (%defglobal 'type? prim:type?)
   (%defglobal 'type prim:type)
+  (%defglobal 'instance-of? prim:instance-of?)
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'singleton? prim:singleton?)
   (%defglobal '%primitive-type-tag %type-tag)
@@ -62,6 +64,7 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'list prim:list)
+  (%defglobal 'list? bard:list?)
 
 ;;; ---------------------------------------------------------------------
 ;;; Frame primitives

@@ -20,6 +20,14 @@
                   global-val
                   (error (string-append "Undefined variable: " (object->string var)))))))))
 
+(define (%eval-sequence seq env)
+  (let loop ((exprs seq)
+             (val (%nothing)))
+    (if (%null? exprs)
+        val
+        (loop (cdr exprs)
+              (%eval (%car exprs) env)))))
+
 (define (%eval-function-application expr env)
   (let* ((op (%eval (%car expr) env))
          (args (map (lambda (x)(%eval x env))

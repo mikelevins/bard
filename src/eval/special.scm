@@ -52,13 +52,24 @@
 
 (%defspecial 'begin
              (lambda (expr env) 
-               (let loop ((forms (%cdr expr))
-                          (val (%nothing)))
-                 (if (%null? forms)
-                     val
-                     (let ((form (%car forms)))
-                       (loop (%cdr forms)
-                             (%eval form env)))))))
+               (%eval-sequence (%cdr expr) env)))
+
+;;; cond
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'cond
+             (lambda (expr env)
+               (let loop ((clauses (%cdr expr)))
+                 (if (%null? clauses)
+                     (%nothing)
+                     (let* ((clause (%car clauses))
+                            (test (%car clause))
+                            (conseq (%cdr clause)))
+                       (if (eq? 'else test)
+                           (%eval-sequence conseq env)
+                           (if (%true? (%eval test env))
+                               (%eval-sequence conseq env)
+                               (loop (%cdr clauses)))))))))
 
 ;;; define
 ;;; ----------------------------------------------------------------------
@@ -177,7 +188,7 @@
                (let ((test (%list-ref expr 1))
                      (conseq (%list-ref expr 2))
                      (alt? (> (%length expr) 3)))
-                 (if (%eval test env)
+                 (if (%true? (%eval test env))
                      (%eval conseq env)
                      (if alt?
                          (%eval (%list-ref expr 3) env)
@@ -187,11 +198,11 @@
 ;;; ----------------------------------------------------------------------
 
 (define (%eval-let expr env)
-  (let ((body (%cons 'begin (%drop 2 expr))))
+  (let ((body (%drop 2 expr)))
     (let loop ((bindings (%list-ref expr 1))
                (env env))
       (if (%null? bindings)
-          (%eval body env)
+          (%eval-sequence body env)
           (let ((binding (%car bindings)))
             (loop (%cdr bindings)
                   (%add-binding env
@@ -257,7 +268,7 @@
 
 (%defspecial 'not
              (lambda (expr env)
-               (if (%eval (%car (%cdr expr)) env)
+               (if (%true? (%eval (%car (%cdr expr)) env))
                    (%false)
                    (%true))))
 
@@ -270,7 +281,7 @@
                  (if (%null? expr)
                      (%false)
                      (let ((v (%eval (%car expr) env)))
-                       (if v
+                       (if (%true? v)
                            v
                            (loop (%cdr expr))))))))
 

@@ -281,6 +281,15 @@
    restarg: #f
    ))
 
+(define prim:uuid
+  (%make-primitive-method
+   (lambda () (make-uuid))
+   name: 'version
+   parameters: %nil
+   required-count: 0
+   restarg: #f
+   ))
+
 ;;; functions
 ;;; ---------------------------------------------------------------------
 
@@ -371,6 +380,15 @@
    name: 'type
    parameters: (%list 'thing)
    required-count: 1
+   restarg: #f
+   ))
+
+(define prim:instance-of?
+  (%make-primitive-method
+   %instance-of?
+   name: 'instance-of?
+   parameters: (%list 'thing 'tp)
+   required-count: 2
    restarg: #f
    ))
 
