@@ -317,7 +317,7 @@
 (%add-primitive-method! bard:any
                         (%list <string>)
                         (%list 'ls)
-                        (lambda (ls)(%string-ref ls (random-integer (string-length ls))))
+                        (lambda (ls)(string-ref ls (random-integer (string-length ls))))
                         name: 'any)
 
 ;;; append
@@ -632,16 +632,6 @@
                         name: 'map)
 
 ;;; <frame>
-
-(define (%bard-map-frame fn fr)
-  (let loop ((ks (%frame-keys fr))
-             (out '()))
-    (if (%null? ks)
-        (%maybe-slot-list->frame out)
-        (let* ((k (%car ks))
-               (v (%frame-get fr k)))
-          (loop (%cdr ks)
-                (%cons (%funcall fn k v) out))))))
 
 (define (%bard-map-frame fn fr)
   (let loop ((ks (%frame-keys fr))
