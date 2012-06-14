@@ -54,3 +54,7 @@
           (pointer "NSMutableArray") "as_array" ""
           (api:as-array expr))
 
+(c-define (c:as-integer expr) (scheme-object) 
+          int "as_integer" ""
+          (api:as-integer expr))
+

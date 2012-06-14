@@ -83,3 +83,14 @@
                                     (object->string expr)
                                     " to an NSArray."))
             #f)))))
+
+(define (api:as-integer expr)
+  (reporting-errors
+   (cond
+    ((integer? expr) expr)
+    ((flonum? expr) (round (inexact->exact expr)))
+    (else (begin
+            (display (string-append "Bard error: cannot convert "
+                                    (object->string expr)
+                                    " to an integer."))
+            -1)))))
