@@ -25,3 +25,4 @@ extern BardValue bard_eval(BardValue expr);
 extern bool bard_load(NSString* text);
 extern NSString* bard_show(BardValue  expr);
 extern NSMutableArray* as_array(BardValue expr);
+extern int as_integer(BardValue expr);
