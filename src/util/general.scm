@@ -68,6 +68,15 @@
             (cons item
                   (interpose item (cdr ls))))))
 
+(define (remove-if test ls)
+  (let loop ((items ls))
+    (if (null? items)
+        '()
+        (if (test (car items))
+            (remove-if test (cdr items))
+            (cons (car items)
+                  (remove-if test (cdr items)))))))
+
 (define (slib:error . args)
   (error (apply string-append (interpose " " (map object->string args)))))
 

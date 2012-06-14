@@ -183,17 +183,16 @@
 ;;; frame
 ;;; ---------------------------------------------------------------------
 
-(define $empty-slots (make-table test: equal?))
+(define $empty-slots '())
 
 (define-type %frame
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
   constructor: %private-make-frame
-  (slots %frame-slots)
-  (keys %frame-keys))
+  (slots %frame-slots))
 
-(define $empty-frame (%private-make-frame $empty-slots '()))
+(define $empty-frame (%private-make-frame $empty-slots))
 
-(define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots (%list)))))
+(define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots))))
 
 (define (%frame-slot? x)
   (and (%list? x)
@@ -201,32 +200,51 @@
        (not (%null? (%cdr x)))
        (%null? (%cddr x))))
 
+(define (%plist->slots plist)
+  (let loop ((kvs plist))
+    (if (null? kvs)
+        '()
+        (if (null? (cdr kvs))
+            (error (string-append "Malformed plist: " (object->string plist)))
+            (cons (list (car kvs)
+                        (cadr kvs))
+                  (loop (cddr kvs)))))))
+
 (define (%make-frame kv-plist)
-  (let* ((alist (plist->alist kv-plist))
-         (keys (map car alist))
-         (slots (list->table alist test: equal?)))
-    (%private-make-frame slots keys)))
+  (let* ((slots (%plist->slots kv-plist)))
+    (%private-make-frame slots)))
 
 (define (%maybe-slot-list->frame slist)
-  (with-exception-catcher
-   (lambda (err) slist)
-   (lambda ()
-     (let* ((alist (map (lambda (slot)(cons (car slot)(cadr slot))) 
-                        slist))
-            (keys (map car alist))
-            (slots (list->table alist test: equal?)))
-       (%private-make-frame slots keys)))))
+  (let loop ((slist slist)
+             (slots '())
+             (keys '()))
+    (if (null? slist)
+        (%private-make-frame (reverse slots))
+        (let ((slot (car slist)))
+          (if (%frame-slot? slot)
+              (let ((key (car slot)))
+                (if (member key keys)
+                    slist
+                    (loop (cdr slist)
+                          (cons slot slots)
+                          (cons key keys))))
+              slist)))))
 
-(define (%frame . kv-plist)(%make-frame (%cons->bard-list kv-plist)))
+(define (%frame . kv-plist)(%make-frame kv-plist))
 
 (define (%frame-get fr key #!optional (default (%nothing)))
-  (table-ref (%frame-slots fr) key default))
+  (let ((slot (assoc key (%frame-slots fr))))
+    (if slot (cadr slot) default)))
 
 (define (%frame-put fr key value)
-  (let* ((new-slots (table-copy (%frame-slots fr)))
-         (new-keys (%append (%remove key (%frame-keys fr))(%list key))))
-    (table-set! new-slots key value)
-    (%private-make-frame new-slots new-keys)))
+  (let* ((new-slots (append
+                     (remove-if (lambda (slot)(equal? key (car slot)))
+                                (%frame-slots fr))
+                     (list (list key value)))))
+    (%private-make-frame new-slots)))
+
+(define (%frame-keys fr)(map car (%frame-slots fr)))
+(define (%frame-vals fr)(map cadr (%frame-slots fr)))
 
 ;;; ---------------------------------------------------------------------
 ;;; generator
