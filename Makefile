@@ -176,15 +176,15 @@ LIB_OBJECTS= \
 # ----------------------------------------
 
 NELSON_SCHEME_SOURCES= \
-         nelson/nelson_special.scm \
+         nelson/nelson_actions.scm \
          nelson/nelson_version.scm
 
 NELSON_C_SOURCES= \
-         nelson/nelson_special.c \
+         nelson/nelson_actions.c \
          nelson/nelson_version.c 
 
 NELSON_OBJECTS= \
-         nelson_special.o \
+         nelson_actions.o \
          nelson_version.o 
 
 

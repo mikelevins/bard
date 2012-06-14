@@ -94,3 +94,15 @@
                                     (object->string expr)
                                     " to an integer."))
             -1)))))
+
+(define (api:as-dictionary expr)
+  (reporting-errors
+   (cond
+    ((null? expr) #f)
+    ((%frame? expr)(objc:frame->NSMutableDictionary expr))
+    (else (begin
+            (display (string-append "Bard error: cannot convert "
+                                    (object->string expr)
+                                    " to an NSDictionary."))
+            #f)))))
+

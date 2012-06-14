@@ -58,3 +58,7 @@
           int "as_integer" ""
           (api:as-integer expr))
 
+(c-define (c:as-dictionary expr) (scheme-object) 
+          (pointer "NSMutableDictionary") "as_dictionary" ""
+          (api:as-dictionary expr))
+
