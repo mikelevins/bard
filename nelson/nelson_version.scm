@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.scm
+;;;; Name:          nelson_version.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       the Bard interpreter version string
 ;;;; Author:        mikel evins
@@ -10,5 +10,5 @@
 ;;;; ***********************************************************************
 
 
-(define $bard-version-string "Bard version 0.2.4")
+(define $bard-version-string "Bard version 0.2.4 (Nelson)")
 

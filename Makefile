@@ -31,6 +31,9 @@ MAC_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platf
 MAC_CC=${MAC_TOOLS_ROOT}/usr/bin/clang
 MAC_LIBTOOL=${MAC_TOOLS_ROOT}/usr/bin/libtool
 
+NELSON_EXECUTABLE=bard
+NELSON_BUILD_DIR=builds/nelson
+
 MAC_CFLAGS_LIB=-arch ${MAC_ARCH} -x objective-c -isysroot ${MAC_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.6 -g -Wno-conversion -Wno-sign-conversion -I${MAC_GAMBIT_HOME}/include -D___LIBRARY
 
 MAC_LDFLAGS_LIB=-static -arch_only ${MAC_ARCH} -syslibroot ${MAC_SYSLIBROOT} -framework Cocoa -o ${MAC_BUILD_DIR}/${MAC_LIBRARY}
@@ -38,6 +41,8 @@ MAC_LDFLAGS_LIB=-static -arch_only ${MAC_ARCH} -syslibroot ${MAC_SYSLIBROOT} -fr
 MAC_CFLAGS_MAIN=-arch ${MAC_ARCH} -x objective-c -isysroot ${MAC_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.6 -g -Wno-conversion -Wno-sign-conversion -I${MAC_GAMBIT_HOME}/include
 
 MAC_LDFLAGS_MAIN=-arch ${MAC_ARCH} -isysroot ${MAC_SYSROOT} -mmacosx-version-min=10.7 -framework Cocoa -o ${MAC_BUILD_DIR}/${MAC_EXECUTABLE} -L${MAC_GAMBIT_HOME}/lib -lgambc
+
+NELSON_LDFLAGS_MAIN=-arch ${MAC_ARCH} -isysroot ${MAC_SYSROOT} -mmacosx-version-min=10.7 -framework Cocoa -o ${NELSON_BUILD_DIR}/${NELSON_EXECUTABLE} -L${MAC_GAMBIT_HOME}/lib -lgambc
 
 # ----------------------------------------
 # iOS
@@ -167,6 +172,23 @@ LIB_OBJECTS= \
 
 
 # ----------------------------------------
+# Inputs to the Nelson Bard library
+# ----------------------------------------
+
+NELSON_SCHEME_SOURCES= \
+         nelson/nelson_special.scm \
+         nelson/nelson_version.scm
+
+NELSON_C_SOURCES= \
+         nelson/nelson_special.c \
+         nelson/nelson_version.c 
+
+NELSON_OBJECTS= \
+         nelson_special.o \
+         nelson_version.o 
+
+
+# ----------------------------------------
 # Inputs to the Bard executable
 # ----------------------------------------
 
@@ -196,16 +218,20 @@ clean:
 	rm -f ${IOS_SIM_BUILD_DIR}/$(IOS_SIM_LIBRARY)
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
+	rm -f ${NELSON_OBJECTS}
 	rm -f ${C_SOURCES}
 	rm -f ${LIB_C_SOURCES}
 	rm -f ${MAIN_C_SOURCES}
+	rm -f ${NELSON_C_SOURCES}
 
 tidy:
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
+	rm -f ${NELSON_OBJECTS}
 	rm -f ${C_SOURCES}
 	rm -f ${LIB_C_SOURCES}
 	rm -f ${MAIN_C_SOURCES}
+	rm -f ${NELSON_C_SOURCES}
 
 # -------------------
 # Bard Library
@@ -249,7 +275,29 @@ mac_main: tidy
 # -------------------
 # Nelson components
 
-nelson: ios_lib
+nelson: nelson_main nelson_lib
 	make tidy
 	cp ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY) ${NELSON_PATH}/lib/libBard.a
 	cp include/bard.h ${NELSON_PATH}/include/bard.h
+
+nelson_lib: nelson_device_lib nelson_sim_lib
+
+
+# Nelson Device
+
+nelson_device_lib: tidy
+	${GSC} -link ${SCHEME_SOURCES} ${NELSON_SCHEME_SOURCES} ${LIB_SCHEME_SOURCES}
+	${IOS_DEVICE_CC} ${IOS_DEVICE_CFLAGS_LIB} -c ${C_SOURCES}  ${NELSON_C_SOURCES} ${LIB_C_SOURCES}
+	${IOS_DEVICE_LIBTOOL} ${IOS_DEVICE_LDFLAGS_LIB} ${OBJECTS} ${NELSON_OBJECTS} ${LIB_OBJECTS} 
+
+# Nelson Simulator
+
+nelson_sim_lib: tidy
+	${GSC} -link ${SCHEME_SOURCES} ${NELSON_SCHEME_SOURCES} ${LIB_SCHEME_SOURCES} 
+	${IOS_SIM_CC} ${IOS_SIM_CFLAGS_LIB} -c ${C_SOURCES} ${NELSON_C_SOURCES} ${LIB_C_SOURCES} 
+	${IOS_SIM_LIBTOOL} ${IOS_SIM_LDFLAGS_LIB} ${OBJECTS} ${NELSON_OBJECTS} ${LIB_OBJECTS} 
+
+# Nelson mac main
+nelson_main: tidy
+	${GSC} -link ${SCHEME_SOURCES} ${NELSON_SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
+	${MAC_CC} ${MAC_CFLAGS_MAIN} ${NELSON_LDFLAGS_MAIN} ${C_SOURCES} ${NELSON_C_SOURCES} ${MAIN_C_SOURCES}
