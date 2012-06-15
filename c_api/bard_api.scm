@@ -99,13 +99,7 @@
   (reporting-errors
    (cond
     ((null? expr) #f)
-    ((%frame? expr)
-     (begin
-       (newline)
-       (display (string-append "Converting "
-                               (%as-string expr)
-                               " to NSMutableDictionary..."))
-       (objc:frame->NSMutableDictionary expr)))
+    ((%frame? expr)(objc:frame->NSMutableDictionary expr))
     (else (begin
             (display (string-append "Bard error: cannot convert "
                                     (object->string expr)
