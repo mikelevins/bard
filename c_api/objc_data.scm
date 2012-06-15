@@ -100,14 +100,16 @@ c-code
   (let ((v (bard->objc val)))
     (cond
      ((boolean? val) (objc:NSMutableArray/add-number! arr v))
-     ((integer? val) (objc:NSMutableArray/add-number! arr v))
+     ((fixnum? val) (objc:NSMutableArray/add-number! arr v))
+     ((##bignum? val) (objc:NSMutableArray/add-number! arr v))
      ((flonum? val) (objc:NSMutableArray/add-number! arr v))
      ((string? val) (objc:NSMutableArray/add-string! arr v))
      ((symbol? val) (objc:NSMutableArray/add-string! arr v))
      ((keyword? val) (objc:NSMutableArray/add-string! arr v))
      ((%list? val) (objc:NSMutableArray/add-array! arr v))
-     ;;((%frame? val) (objc:NSMutableArray/add-dictionary! arr v))
+     ((%frame? val) (objc:NSMutableArray/add-dictionary! arr v))
      (else (begin
+             (newline)
              (display "List error: can't add ")
              (display (object->string val))
              (display " to NSMutableArray"))))))
@@ -149,8 +151,15 @@ c-code
 c-code
 ))
 
-(define objc:NSMutableDictionary/put-dictionary-at-key!
+(define objc:NSMutableDictionary/put-dictionary-at-string-key!
   (c-lambda ((pointer "NSMutableDictionary") (pointer "NSString")(pointer "NSMutableDictionary")) void
+#<<c-code
+   [___arg1 setObject:___arg3 forKey:___arg2];
+c-code
+))
+
+(define objc:NSMutableDictionary/put-dictionary-at-number-key!
+  (c-lambda ((pointer "NSMutableDictionary") (pointer "NSNumber")(pointer "NSMutableDictionary")) void
 #<<c-code
    [___arg1 setObject:___arg3 forKey:___arg2];
 c-code
@@ -161,21 +170,34 @@ c-code
         (v (bard->objc val)))
     (cond
      ((boolean? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
-     ((integer? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
+     ((fixnum? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
+     ((##bignum? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
      ((flonum? val) (objc:NSMutableDictionary/put-number-at-key! dict k v))
      ((string? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
      ((symbol? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
      ((keyword? val) (objc:NSMutableDictionary/put-string-at-key! dict k v))
      ((%list? val) (objc:NSMutableDictionary/put-array-at-key! dict k v))
-     ((%frame? val) (objc:NSMutableDictionary/put-dictionary-at-key! dict k v))
+     ((%frame? val) (cond 
+                     ((string? key)(objc:NSMutableDictionary/put-dictionary-at-string-key! dict k v))
+                     ((symbol? key)(objc:NSMutableDictionary/put-dictionary-at-string-key! dict k v))
+                     ((keyword? key)(objc:NSMutableDictionary/put-dictionary-at-string-key! dict k v))
+                     ((number? key)(objc:NSMutableDictionary/put-dictionary-at-number-key! dict k v))
+                     (else (begin
+                             (newline)
+                             (display "Frame error: can't convert ")
+                             (display (object->string key))
+                             (display " to dictionary key")
+                             (newline)))))
      (else (begin
-             (display "List error: can't add ")
+             (newline)
+             (display "Frame error: can't add ")
              (display (object->string val))
-             (display " to NSMutableArray"))))))
+             (display " to NSMutableDictionary")
+             (newline))))))
 
 (define (objc:frame->NSMutableDictionary fr)
   (let* ((dict (objc:make-NSMutableDictionary))
-         (keys (%bard-list->cons (%frame-keys fr))))
+         (keys (%frame-keys fr)))
     (for-each (lambda (key)
                 (objc:NSMutableDictionary/set-value-for-key! dict key (%frame-get fr key #f)))
               keys)
@@ -186,7 +208,8 @@ c-code
 (define (bard->objc val)
   (cond
    ((boolean? val)(objc:boolean->NSNumber val))
-   ((integer? val)(objc:integer->NSNumber val))
+   ((fixnum? val)(objc:integer->NSNumber val))
+   ((##bignum? val)(objc:integer->NSNumber val))
    ((flonum? val)(objc:float->NSNumber val))
    ((string? val)(objc:string->NSString val))
    ((symbol? val)(objc:string->NSString (symbol->string val)))
@@ -198,5 +221,6 @@ c-code
            (display "Conversion error: can't convert ")
            (display (object->string val))
            (display " to Objective-C")
+           (newline)
            #f))))
 
