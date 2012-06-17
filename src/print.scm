@@ -93,6 +93,10 @@
                       (string-append "#<function " (object->string nm) ">")
                       (string-append "#<anonymous function " (object->string (object->serial-number x)) ">")))))
 
+(%defprinter <generator> 
+             (lambda (x)
+               (string-append "#<generator " (object->string (object->serial-number x)) ">")))
+
 
 (%defprinter <primitive-method> 
              (lambda (x)

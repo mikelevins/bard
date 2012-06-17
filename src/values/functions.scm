@@ -172,3 +172,39 @@
     (%set-function-method-signatures! fn sigs)
     (%set-function-methods! fn methods)
     fn))
+
+;;; ---------------------------------------------------------------------
+;;; generators
+;;; ---------------------------------------------------------------------
+
+(define-type %generator
+  id: 32EDAE4A-BA00-4313-BC4F-1F3A1F7AC8C0
+  constructor: %make-generator
+  read-only:
+  (yield-expression %generator-yield-expression)
+  (then-expression %generator-then-expression)
+  read-write:
+  (environment %generator-environment %set-generator-environment!)
+  (bindings %generator-bindings %set-generator-bindings!))
+
+(define <generator> (%define-standard-type '<generator> (##structure-type (%make-generator '() '() '() '()))))
+
+(define (%next gen)
+  (let* ((env (%generator-environment gen))
+         (bindings (%generator-bindings gen))
+         (this-env (let loop ((bds bindings)
+                              (e env))
+                     (if (%null? bds)
+                         e
+                         (let ((bd (%car bds)))
+                           (loop (%cdr bds)
+                                 (%cons (%cons (%car bd)
+                                               (%cadr bd))
+                                        e))))))
+         (next-val (%eval-sequence (%generator-yield-expression gen) this-env))
+         (new-bindings (map (lambda (var val-exp)
+                              (list var (%eval val-exp this-env)))
+                            (map %car bindings)
+                            (%generator-then-expression gen))))
+    (%set-generator-bindings! gen new-bindings)
+    next-val))

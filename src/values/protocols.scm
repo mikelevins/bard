@@ -674,6 +674,24 @@
               (%funcall fn result (%car items))))))
 
 (%add-primitive-method! bard:reduce
+                        (%list <primitive-method> Anything <null>)
+                        (%list 'fn 'init 'ls)
+                        %bard-reduce
+                        name: 'reduce)
+
+(%add-primitive-method! bard:reduce
+                        (%list <interpreted-method> Anything <null>)
+                        (%list 'fn 'init 'ls)
+                        %bard-reduce
+                        name: 'reduce)
+
+(%add-primitive-method! bard:reduce
+                        (%list <function> Anything <null>)
+                        (%list 'fn 'init 'ls)
+                        %bard-reduce
+                        name: 'reduce)
+
+(%add-primitive-method! bard:reduce
                         (%list <primitive-method> Anything <list>)
                         (%list 'fn 'init 'ls)
                         %bard-reduce
@@ -690,7 +708,6 @@
                         (%list 'fn 'init 'ls)
                         %bard-reduce
                         name: 'reduce)
-
 ;;; rest 
 
 (define bard:rest (%make-function name: 'rest))

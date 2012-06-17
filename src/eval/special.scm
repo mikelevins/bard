@@ -180,6 +180,25 @@
 ;;;           (yield (* x x))
 ;;;           (then (+ x 1)))
 
+(%defspecial 'generate
+             (lambda (expr env)
+               (let* ((env (%copy-environment env))
+                      (bindings (map (lambda (binding)
+                                       (%list (%car binding)
+                                              (%eval (%cadr binding) env)))
+                                     (%list-ref expr 1)))
+                      (yield-expr (let ((xp (%list-ref expr 2)))
+                                    (if (eq? 'yield (car xp))
+                                        (cdr xp)
+                                        (error (string-append "Invalid yield form in generate: "
+                                                              (object->string xp))))))
+                      (then-expr (let ((xp (%list-ref expr 3)))
+                                   (if (eq? 'then (car xp))
+                                       (cdr xp)
+                                       (error (string-append "Invalid then form in generate: "
+                                                             (object->string xp)))))))
+                 (%make-generator yield-expr then-expr env bindings))))
+
 ;;; if
 ;;; ----------------------------------------------------------------------
 
@@ -197,20 +216,12 @@
 ;;; let
 ;;; ----------------------------------------------------------------------
 
-(define (%eval-let expr env)
-  (let ((body (%drop 2 expr)))
-    (let loop ((bindings (%list-ref expr 1))
-               (env env))
-      (if (%null? bindings)
-          (%eval-sequence body env)
-          (let ((binding (%car bindings)))
-            (loop (%cdr bindings)
-                  (%add-binding env
-                                (%car binding)
-                                (%eval (%car (%cdr binding))
-                                       env))))))))
+(%defspecial 'let 
+             (lambda (expr env)
+               (let ((bindings (%list-ref expr 1))
+                     (body (%drop 2 expr)))
+                 (%eval-sequence body (%add-let-bindings env bindings)))))
 
-(%defspecial 'let (lambda (expr env)(%eval-let expr env)))
 
 ;;; method
 ;;; ----------------------------------------------------------------------
@@ -299,9 +310,9 @@
 
 (%defspecial 'repeat
              (lambda (expr env)
-               (let ((form (%cons 'begin (%cdr expr))))
+               (let ((form (%cdr expr)))
                  (let loop ()
-                   (%eval form env)
+                   (%eval-sequence form env)
                    (loop)))))
 
 ;;; set!

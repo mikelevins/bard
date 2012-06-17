@@ -34,6 +34,16 @@
 (define (%add-binding env var val)
   (cons (cons var val) env))
 
+(define (%add-let-bindings env bindings)
+  (if (%null? bindings)
+      env
+      (let ((binding (%car bindings)))
+        (%add-let-bindings (%add-binding env
+                                         (%car binding)
+                                         (%eval (%cadr binding)
+                                                env))
+                           (%cdr bindings)))))
+
 (define (%extend-environment env plist)
   (if (null? plist)
       env
@@ -45,6 +55,14 @@
 
 (define (%merge-environments env1 env2)
   (append env2 env1))
+
+(define (%copy-environment env)
+  (if (%null? env)
+      '()
+      (let ((binding (%car env)))
+        (%cons (%cons (%car binding)
+                      (%cdr binding))
+            (%copy-environment (%cdr env))))))
 
 (define (%lookup-variable-value env var)
   (let ((binding (assq var env)))

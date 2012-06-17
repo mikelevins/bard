@@ -1,3 +1,19 @@
+0.2.4
+
+- added a To-Do list
+- added generators
+- nelson subsystem: fixed several bugs in data-conversion to
+  Objective-C
+- nelson: added special form for actions
+- nelson: expanded the nelson build, adding a special
+  nelson version of the standalone interpreter
+- changed representation of frames for speed
+- added as_integer to C API
+- fixed a bug in the <string> method of any
+- corrected the debug name of the uuid function
+- added <frame> method to map
+- added error APIs to the C API
+
 0.2.3
 
 - much faster implementation of read-lines
