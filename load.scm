@@ -55,3 +55,5 @@
 ;;; (load-bard)
 ;;; (%init-bard)
 ;;; (bard:repl)
+
+(quasiquote (unquote 3))

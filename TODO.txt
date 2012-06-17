@@ -2,9 +2,11 @@ Bard To-Do list
 
 1. [DONE] generators
 
-2. series (generators with memoization and support for the List protocol)
+2. unquote & macros
 
-3. loop (like named let -- syntax is the same as generate, but without yield)
+3. series (generators with memoization and support for the List protocol)
+
+4. loop (like named let -- syntax is the same as generate, but without yield)
 
 (loop ((x 0)
        (y 1))
@@ -18,23 +20,23 @@ Use with-exit to escape:
     (if (> y 100)(return y))
     (then y (+ y 1))))
 
-4. fast pure-functional lists
+5. fast pure-functional lists
 
-5. fast pure-functional frames
+6. fast pure-functional frames
 
-6. User-defined record types
+7. User-defined record types
 
-7. User-defined taxonomies with C3 type linearization and method dispatch
+8. User-defined taxonomies with C3 type linearization and method dispatch
 
-8. Thread-safe module variables (likely using Gambit mailboxes)
+9. Thread-safe module variables (likely using Gambit mailboxes)
 
-9. Image saving and loading
+10. Image saving and loading
 
-10. VM
+11. VM
 
-11. first-class protocols
+12. first-class protocols
 
-12. modules
+13. modules
 
-13. lazy list comprehensions (using generators?)
+14. lazy list comprehensions (using generators?)
 
