@@ -134,7 +134,8 @@
   (newline))
 
 (define (bard:print x #!optional (port (current-output-port)))
-  (display (%as-string x) port))
+  (display (%as-string x) port)
+  x)
 
 ;;; (show 4)
 ;;; (show (%undefined))

@@ -44,3 +44,12 @@
                                 (if (%null? (%cddr expr))
                                     `(let ((,var ,(%cadr expr))) (if ,var ,var ,(%false)))
                                     `(let ((,var ,(%cadr expr))) (if ,var (and ,@(%cddr expr)) ,(%false))))))))
+
+(%define-macro-function 'or
+                        (lambda (expr env)
+                          (let ((var (gensym)))
+                            (if (%null? (%cdr expr))
+                                (%false)
+                                (if (%null? (%cddr expr))
+                                    `(let ((,var ,(%cadr expr))) (if ,var ,var ,(%false)))
+                                    `(let ((,var ,(%cadr expr))) (if ,var ,var (or ,@(%cddr expr)))))))))

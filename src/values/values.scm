@@ -48,7 +48,9 @@
       (%nothing? x)))
 
 (define (%true) #t)
-(define (%true? x) (not (%false? x)))
+(define (%true? x) 
+  (and (not (%false? x))
+       (not (%undefined? x))))
 
 (define (%boolean? x)
   (or (eqv? x (%false))

@@ -1,3 +1,8 @@
+0.2.5
+
+- macros implemented
+- quasiquote implemented
+
 0.2.4
 
 - added a To-Do list
