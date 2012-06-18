@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          load.scm
-;;;; Project:       Bard
-;;;; Purpose:       bard system loader
+;;;; Name:          loadvm.scm
+;;;; Project:       Bard 
+;;;; Purpose:       bard vm loader
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -23,37 +23,16 @@
 
 (define $bard-files
   (paths $bard-root 
-         "src/version.scm"
-         "lib/uuid.scm"
-         "src/util/general.scm"
-         "src/values/types.scm"
-         "src/values/values.scm"
-         "src/eval/env.scm"
-         "src/values/functions.scm"
-         "src/repl/prims.scm"
-         "src/read.scm"
-         "src/print.scm"
-         "src/eval/special.scm"
-         "src/eval/macro.scm"
-         "src/eval/apply.scm"
-         "src/eval/eval.scm"
-         "src/repl/error.scm"
-         "src/repl/toplevel.scm"
-         "src/values/protocols.scm"
-         "src/bard.scm"
+         "src/vm/version.scm"
          ))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
 
-(define (load-bard)
+(define (loadvm)
   (gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load (string-append $bard-root "/load.scm"))
-;;; (load-bard)
-;;; (%init-bard)
-;;; (bard:repl)
-
-
+;;; (load (string-append $bard-root "/loadvm.scm"))
+;;; (loadvm)

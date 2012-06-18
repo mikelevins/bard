@@ -4,6 +4,10 @@ Bard To-Do list
 
 2. [DONE] unquote & macros
 
+3. returning multiple values; extend let to bind multiple values
+
+4. match (pattern-matching and destructuring)
+
 3. define-macro
 
 4. frame args for define-function
