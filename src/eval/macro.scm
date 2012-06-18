@@ -36,3 +36,11 @@
 ;;; standard macros
 ;;; ---------------------------------------------------------------------
 
+(%define-macro-function 'and
+                        (lambda (expr env)
+                          (let ((var (gensym)))
+                            (if (%null? (%cdr expr))
+                                (%true)
+                                (if (%null? (%cddr expr))
+                                    `(let ((,var ,(%cadr expr))) (if ,var ,var ,(%false)))
+                                    `(let ((,var ,(%cadr expr))) (if ,var (and ,@(%cddr expr)) ,(%false))))))))
