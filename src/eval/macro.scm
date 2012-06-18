@@ -23,21 +23,21 @@
        (table-ref $bard-macro-functions (%car expr) #f)
        #t))
 
-(define (%macroexpand expr env)
+(define (%macroexpand expr)
   (let* ((expander (table-ref $bard-macro-functions (%car expr) #f)))
     (if expander
-        (expander expr env)
+        (%funcall expander expr)
         (error "undefined macro in expression" expr))))
 
 (define (%eval-macro-form expr env)
-  (%eval (%macroexpand expr env) env))
+  (%eval (%macroexpand expr) env))
 
 ;;; ---------------------------------------------------------------------
 ;;; standard macros
 ;;; ---------------------------------------------------------------------
 
 (%define-macro-function 'and
-                        (lambda (expr env)
+                        (lambda (expr)
                           (let ((var (gensym)))
                             (if (%null? (%cdr expr))
                                 (%true)
@@ -46,7 +46,7 @@
                                     `(let ((,var ,(%cadr expr))) (if ,var (and ,@(%cddr expr)) ,(%false))))))))
 
 (%define-macro-function 'or
-                        (lambda (expr env)
+                        (lambda (expr)
                           (let ((var (gensym)))
                             (if (%null? (%cdr expr))
                                 (%false)
