@@ -3,12 +3,13 @@
 ;;;;
 ;;;; Name:          version.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard interpreter version string
+;;;; Purpose:       the Bard vm implementation
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
+(include "asm.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; utilities
@@ -56,7 +57,7 @@
 ;;; vm instructions
 ;;; ---------------------------------------------------------------------
 
-(define (opcode instr)(vector-ref instr 0))
+(define (instr:opcode instr)(vector-ref instr 0))
 (define (instr:arg instr n)(vector-ref instr n))
 
 ;;; ---------------------------------------------------------------------
@@ -239,8 +240,9 @@
 
 (define (%instruction->string instr)
   (if instr
-      (object->string (cons (vm:opname (opcode instr))
-                            (cdr (vector->list instr))))
+      (let* ((ilist (vector->list instr))
+             (opstr (vm:opname (instr:opcode instr))))
+        (object->string (cons opstr (cdr ilist))))
       ""))
 
 (define (vm:show-instruction vm)
@@ -249,18 +251,14 @@
     (display "  instr: ")
     (display (%instruction->string instr))))
 
+(define (%code->string code)
+  (object->string (%disasm code)))
+
 (define (vm:show-code vm)
   (let ((code (vm:code vm)))
     (newline)
     (display "   code: ")
-    (let loop ((instructions (vector->list code)))
-      (if (null? instructions)
-          (newline)
-          (begin
-            (display (%instruction->string (car instructions)))
-            (newline)
-            (display "         ")
-            (loop (cdr instructions)))))))
+    (display (%code->string code))))
 
 (define (vm:show-pc vm)
   (let* ((pc (vm:pc vm)))
@@ -284,7 +282,9 @@
   (vm:show-instruction vm)
   (vm:show-pc vm)
   (vm:show-stack vm)
-  (vm:show-code vm))
+  (vm:show-code vm)
+  (newline)
+  (newline))
 
 ;;; ---------------------------------------------------------------------
 ;;; running the vm
@@ -298,7 +298,7 @@
 (define (vm:step vm)
   (vm:set-instruction! vm (vector-ref (vm:code vm) (vm:pc vm)))
   (vm:set-pc! vm (+ 1 (vm:pc vm)))
-  (let ((operation (vm:op (opcode (vm:instruction vm)))))
+  (let ((operation (vm:op (instr:opcode (vm:instruction vm)))))
     (operation vm)))
 
 (define (vm:step-show vm)
@@ -308,7 +308,7 @@
   (vm:set-instruction! vm (vector-ref (vm:code vm) (vm:pc vm)))
   (vm:show-instruction vm)
   (vm:set-pc! vm (+ 1 (vm:pc vm)))
-  (let ((operation (vm:op (opcode (vm:instruction vm)))))
+  (let ((operation (vm:op (instr:opcode (vm:instruction vm)))))
     (operation vm))
   (newline)
   (newline))
@@ -351,11 +351,12 @@
 
 #| tests
 
-(vm:run-program (vm:as-code `((,HALT))) show: #t)
-(vm:run-program (vm:as-code `((,CONST 5)(,HALT))) show: #t)
-(vm:run-program (vm:as-code `((,CONST 5)(,GSET x)(,POP)(,HALT))) show: #t)
-(vm:run-program (vm:as-code `((,CONST 5)(,GSET x)(,POP)(,GVAR x)(,HALT))) show: #t)
-
+(vm:run-program (%asm ((HALT))) show: #t)
+(vm:run-program (%asm ((CONST 5)(HALT))) show: #t)
+(vm:run-program (%asm ((CONST 5)(GSET 'x)(POP)(HALT))) show: #t)
+(vm:run-program (%asm ((CONST 5)(GSET 'x)(POP)(GVAR 'x)(HALT))) show: #t)
+(vm:run-program (%asm ((JUMP 3)(TRUE)(TJUMP 5)(FALSE)(FJUMP 1)(HALT))) show: #t)
 
 |#
+
 
