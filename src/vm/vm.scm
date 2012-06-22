@@ -61,17 +61,17 @@
 (define (instr:arg instr n)(vector-ref instr n))
 
 ;;; ---------------------------------------------------------------------
-;;; functions
+;;; methods
 ;;; ---------------------------------------------------------------------
 
-(define-type vmfunction
+(define-type vmmethod
   id: DC746B5B-F06C-4735-BAF2-8EEEFA5355CE
-  constructor: %private-make-vmfunction
-  (code vm:function-code)
-  (env vm:function-environment))
+  constructor: %private-make-vmmethod
+  (code vm:method-code)
+  (env vm:method-environment))
 
-(define (vm:make-function #!key code env)
-  (%private-make-vmfunction code env))
+(define (vm:make-method #!key code env)
+  (%private-make-vmmethod code env))
 
 (define (vm:as-code args)
   (apply vector (map (lambda (a)(apply vector a)) args)))
@@ -79,6 +79,17 @@
 ;;; ---------------------------------------------------------------------
 ;;; return addresses
 ;;; ---------------------------------------------------------------------
+
+(define-type vm return-record
+  id: 28D56336-01B7-467F-B35B-88334FEEC25C
+  constructor: %private-make-return-record
+  (pc return-record-pc)
+  (method return-record-method)
+  (env return-record-environment)
+
+(define (vm:make-return-record #!key
+                               pc method env)
+  (%private-make-return-record pc method env))
 
 ;;; ---------------------------------------------------------------------
 ;;; the vm
@@ -104,7 +115,7 @@
                  (stack '())
                  (argcount 0)
                  (instruction #f))
-  (%private-make-vm #f fun (vm:function-code fun) pc (vm:make-globals) env stack argcount instruction))
+  (%private-make-vm #f fun (vm:method-code fun) pc (vm:make-globals) env stack argcount instruction))
 
 (define (vm:push! vm val)
   (vm:set-stack! vm (cons val (vm:stack vm))))
@@ -165,15 +176,15 @@
 (defop  7 (JUMP dest) (vm:set-pc! vm dest))
 (defop  8 (FJUMP dest) (if (false? (vm:pop! vm)) (vm:set-pc! vm dest)))
 (defop  9 (TJUMP dest) (if (true? (vm:pop! vm)) (vm:set-pc! vm dest)))
-(defop 10 (SAVE dest) (vm:push! vm (vm:make-return-address pc: dest fn: (vm:fun vm) env: (vm:env vm))))
+(defop 10 (SAVE dest) (vm:push! vm (vm:make-return-record pc: dest method: (vm:fun vm) env: (vm:env vm))))
 
-(defop 11 (RETURN) ;; return value is top of stack; return-address is second
+(defop 11 (RETURN) ;; return value is top of stack; return-record is second
   (begin 
     (vm:swap! vm) ;; swap so return address is on top
-    (vm:set-fun! vm (vm:return-address-function (vm:top vm)))
-    (vm:set-code! vm (vm:function-code (vm:fun vm)))
-    (vm:set-env! vm (vm:return-address-environment (vm:top vm)))
-    (vm:set-pc! vm (vm:return-address-pc (vm:top vm)))
+    (vm:set-fun! vm (vm:return-record-method (vm:top vm)))
+    (vm:set-code! vm (vm:method-code (vm:fun vm)))
+    (vm:set-env! vm (vm:return-record-environment (vm:top vm)))
+    (vm:set-pc! vm (vm:return-record-pc (vm:top vm)))
     ;; discard return address
     (vm:pop! vm)))
 
@@ -181,8 +192,8 @@
   (begin
     (vm:set-env! vm (cdr (vm:env vm)))                 ; discard the top frame
     (vm:set-fun! vm (vm:pop vm))
-    (vm:set-code! vm (vm:function-code (vm:fun vm)))
-    (vm:set-env! vm (vm:function-environment (vm:fun vm)))
+    (vm:set-code! vm (vm:method-code (vm:fun vm)))
+    (vm:set-env! vm (vm:method-environment (vm:fun vm)))
     (vm:set-pc! vm 0)
     (vm:set-argcount! vm argcount)))
 
@@ -214,9 +225,9 @@
                               (object->string n-args) " or more expected; "
                               (object->string argcount) " supplied.")))))
 
-(defop 15 (FN fun)
-  (vm:push! vm (vm:make-function code: (vm:function-code fun)
-                                 env: (vm:env vm))))
+(defop 15 (METH fun)
+  (vm:push! vm (vm:make-method code: (vm:method-code fun)
+                               env: (vm:env vm))))
 
 (defop 16 (PRIM op)
   (let ((n-args (vm:argcount vm)))
@@ -340,7 +351,7 @@
           (loop)))))
 
 (define (vm:run-program code #!key (show #f))
-  (let* ((f (vm:make-function code: code env: '()))
+  (let* ((f (vm:make-method code: code env: '()))
          (m (vm:make-vm fun: f)))
     (if show
         (vm:run-show m)
