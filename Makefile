@@ -279,6 +279,7 @@ nelson: nelson_main nelson_lib
 	make tidy
 	cp ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY) ${NELSON_PATH}/lib/libBard.a
 	cp include/bard.h ${NELSON_PATH}/include/bard.h
+	cp nelson/nelson_bard.h ${NELSON_PATH}/include/nelson_bard.h
 
 nelson_lib: nelson_device_lib nelson_sim_lib
 

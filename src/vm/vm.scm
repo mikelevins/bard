@@ -85,7 +85,7 @@
   constructor: %private-make-return-record
   (pc return-record-pc)
   (method return-record-method)
-  (env return-record-environment)
+  (env return-record-environment))
 
 (define (vm:make-return-record #!key
                                pc method env)
@@ -167,6 +167,7 @@
      (vector-set! $vm-operations ,num (operation ,proto ,body))
      (vector-set! $vm-operation-names ,num ',(car proto))))
 
+(defop  0 (HALT)(vm:set-halted! vm #t))
 (defop  1 (LVAR frame var) (vm:push! vm (vm:lvar-ref vm frame var)))
 (defop  2 (LSET frame var) (vm:lvar-set! vm frame var (vm:top vm)))
 (defop  3 (GVAR vname) (vm:push! vm (vm:gref vm vname)))
@@ -187,6 +188,8 @@
     (vm:set-pc! vm (vm:return-record-pc (vm:top vm)))
     ;; discard return address
     (vm:pop! vm)))
+
+;;; function calls
 
 (defop 12 (CALLJ argcount) 
   (begin
@@ -237,13 +240,29 @@
           (vm:push! vm (apply op args))
           (loop (+ i 1)(cons (vm:pop vm) args))))))
 
+;;; constant ops
+
 (defop 17 (TRUE)(vm:push! vm #t))
 (defop 18 (FALSE)(vm:push! vm #f))
 (defop 19 (MINUSONE)(vm:push! vm -1))
 (defop 20 (ZERO)(vm:push! vm 0))
 (defop 21 (ONE)(vm:push! vm 1))
 (defop 22 (TWO)(vm:push! vm 2))
-(defop 23 (HALT)(vm:set-halted! vm #t))
+
+;;; List ops
+
+(define (vm:%empty-list) '())
+(define (vm:%cons hd tl) (cons hd tl))
+(define (vm:%cdr ls) (cdr ls))
+
+(defop 23 (NIL)(vm:push! vm (vm:%empty-list)))
+(defop 24 (CONS hd tl) (vm:push! vm (vm:%cons hd tl)))
+(defop 25 (CAR ls) (vm:push! vm (vm:%car ls)))
+(defop 26 (CDR ls) (vm:push! vm (vm:%cdr ls)))
+
+;;; EQ ops
+
+(defop 27 (EQ x y) (vm:push! vm (vm:%eq x y)))
 
 ;;; ---------------------------------------------------------------------
 ;;; displaying the vm
