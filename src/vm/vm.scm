@@ -47,11 +47,13 @@
 (define (vm:make-frame args)
   (apply vector args))
 
-(define (vm:lvar-ref env frame-index var-index)
-  (vector-ref (list-ref env frame-index) var-index))
+(define (vm:lvar-ref vm frame-index var-index)
+  (let ((env (vm:env vm)))
+    (vector-ref (list-ref env frame-index) var-index)))
 
-(define (vm:lvar-set! env frame-index var-index val)
-  (vector-set! (list-ref env frame-index) var-index val))
+(define (vm:lvar-set! vm frame-index var-index val)
+  (let ((env (vm:env vm)))
+   (vector-set! (list-ref env frame-index) var-index val)))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm instructions
@@ -264,6 +266,7 @@
 
 (defop 27 (EQ x y) (vm:push! vm (vm:%eq x y)))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; displaying the vm
 ;;; ---------------------------------------------------------------------
@@ -275,25 +278,65 @@
         (object->string (cons opstr (cdr ilist))))
       ""))
 
-(define (vm:show-instruction vm)
+(define (vm:show-instruction vm #!key (pad ""))
   (let* ((instr (vm:instruction vm)))
-    (newline)
-    (display "  instr: ")
-    (display (%instruction->string instr))))
+    (display pad)
+    (display "instr: ")
+    (if instr
+        (display (%instruction->string instr))
+        (display "[NONE]"))))
 
 (define (%code->string code)
   (object->string (%disasm code)))
 
-(define (vm:show-code vm)
-  (let ((code (vm:code vm)))
-    (newline)
-    (display "   code: ")
-    (display (%code->string code))))
+(define (vm:show-code vm #!key (pad ""))
+  (let* ((code (vm:code vm))
+         (len (vector-length code)))
+    (let loop ((i 0))
+      (if (< i len)
+          (let ((instr (vector-ref code i)))
+            (newline)
+            (display pad)
+            (display "  ")
+            (display i)
+            (display " ")
+            (display (%instruction->string instr))
+            (loop (+ i 1)))))))
+
+(define (vm:show-env vm #!key (pad ""))
+  (let* ((env (vm:env vm))
+         (len (length env)))
+    (display pad)
+    (display "[")
+    (if (> len 0)
+        (let outer-loop ((i 0))
+          (if (< i len)
+              (let* ((fr (list-ref env i))
+                     (l (vector-length fr)))
+                (newline)
+                (display pad)
+                (display "  frame ")
+                (display i)
+                (display ": ")
+                (let inner-loop ((j 0))
+                  (if (< j l)
+                      (let ((val (vector-ref fr j)))
+                        (newline)
+                        (display pad)
+                        (display "    var ")
+                        (display i)
+                        (display ": ")
+                        (display val)
+                        (inner-loop (+ j 1)))))
+                (outer-loop (+ i 1)))
+              (newline))))
+    (display pad)
+    (display "]")
+    (newline)))
 
 (define (vm:show-pc vm)
   (let* ((pc (vm:pc vm)))
-    (newline)
-    (display "  pc: ")
+    (display "pc: ")
     (display (object->string pc))))
 
 (define (%stack->string s)
@@ -301,20 +344,35 @@
 
 (define (vm:show-stack vm)
   (let* ((stack (vm:stack vm)))
-    (newline)
-    (display "  stack: ")
+    (display " stack: ")
     (display (%stack->string stack))))
 
-(define (vm:show-vm vm)
-  (newline)
-  (display " halted: ")
-  (display (object->string (vm:halted? vm)))
-  (vm:show-instruction vm)
-  (vm:show-pc vm)
-  (vm:show-stack vm)
-  (vm:show-code vm)
-  (newline)
-  (newline))
+(define (vm:show-vm vm #!key 
+                    (show-code #f)
+                    (show-env #f)
+                    (indent 0))
+  (let ((pad (make-string indent #\space)))
+    (if show-code 
+        (begin
+          (newline)
+          (display pad)
+          (display "code:")
+          (vm:show-code vm pad: pad)
+          (newline)))
+    (if show-env 
+        (begin
+          (display pad)
+          (display "env: ")
+          (vm:show-env vm pad: pad)))
+    (display pad)
+    (vm:show-pc vm)
+    (display " ")
+    (vm:show-instruction vm)
+    (display " halted: ")
+    (display (object->string (vm:halted? vm)))
+    (vm:show-stack vm)
+    (display " ")
+    (newline)))
 
 ;;; ---------------------------------------------------------------------
 ;;; running the vm
@@ -332,16 +390,14 @@
     (operation vm)))
 
 (define (vm:step-show vm)
-  (display "step:")
-  (vm:show-pc vm)
-  (vm:show-stack vm)
+  (newline)
+  (display "step")
+  (newline)
   (vm:set-instruction! vm (vector-ref (vm:code vm) (vm:pc vm)))
-  (vm:show-instruction vm)
   (vm:set-pc! vm (+ 1 (vm:pc vm)))
   (let ((operation (vm:op (instr:opcode (vm:instruction vm)))))
     (operation vm))
-  (newline)
-  (newline))
+  (vm:show-vm vm indent: 2))
 
 (define (vm:run vm)
   (let loop ()
@@ -355,13 +411,34 @@
 
 (define (vm:run-show vm)
   (newline)
+  (display "-------------------")
+  (newline)
+  (display $bardvm-version-string)
+  (newline)
+  (display "-------------------")
+  (newline)
+  (vm:show-vm vm show-code: #t  show-env: #t)
+  (newline)
   (display "start")
-  (vm:show-vm vm)
   (let loop ()
     (if (vm:halted? vm)
         (begin
           (display "stop")
-          (vm:show-vm vm)
+          (newline)
+          (newline)
+          (display "-------------")
+          (newline)
+          (if (null? (vm:stack vm))
+              (begin
+                (display "No value returned.")
+                (newline)(newline))
+              (begin
+                (display "Value = ")
+                (display (vm:top vm))
+                (newline)(newline)))
+          (display "End state:")
+          (newline)
+          (vm:show-vm vm show-code: #t  show-env: #t indent: 2)
           (if (null? (vm:stack vm))
               '()
               (vm:top vm)))
@@ -371,22 +448,11 @@
 
 (define (vm:run-program code #!key (show #f))
   (let* ((f (vm:make-method code: code env: '()))
-         (m (vm:make-vm fun: f)))
+         (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
     (if show
-        (vm:run-show m)
-        (vm:run m))
-    (if (null? (vm:stack m))
+        (vm:run-show vm)
+        (vm:run vm))
+    (if (null? (vm:stack vm))
         #!void
-        (vm:top m))))
-
-#| tests
-
-(vm:run-program (%asm ((HALT))) show: #t)
-(vm:run-program (%asm ((CONST 5)(HALT))) show: #t)
-(vm:run-program (%asm ((CONST 5)(GSET 'x)(POP)(HALT))) show: #t)
-(vm:run-program (%asm ((CONST 5)(GSET 'x)(POP)(GVAR 'x)(HALT))) show: #t)
-(vm:run-program (%asm ((JUMP 3)(TRUE)(TJUMP 5)(FALSE)(FJUMP 1)(HALT))) show: #t)
-
-|#
-
+        (vm:top vm))))
 
