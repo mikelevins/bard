@@ -9,6 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define-macro (%instruction form)
+  `(vector ,(car form) ,@(cdr form)))
+
 (define-macro (%asm-form form)
   `(vector ,(car form) ,@(cdr form)))
 
