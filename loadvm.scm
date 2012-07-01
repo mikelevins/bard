@@ -25,6 +25,7 @@
   (paths $bard-root 
          "src/vm/version.scm"
          "src/vm/vm.scm"
+         "src/vm/vm-tests.scm"
          ))
 
 ;;; load sources

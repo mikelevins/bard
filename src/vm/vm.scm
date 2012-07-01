@@ -82,7 +82,7 @@
 ;;; return addresses
 ;;; ---------------------------------------------------------------------
 
-(define-type vm return-record
+(define-type vm-return-record
   id: 28D56336-01B7-467F-B35B-88334FEEC25C
   constructor: %private-make-return-record
   (pc return-record-pc)
@@ -179,7 +179,7 @@
 (defop  7 (JUMP dest) (vm:set-pc! vm dest))
 (defop  8 (FJUMP dest) (if (false? (vm:pop! vm)) (vm:set-pc! vm dest)))
 (defop  9 (TJUMP dest) (if (true? (vm:pop! vm)) (vm:set-pc! vm dest)))
-(defop 10 (SAVE dest) (vm:push! vm (vm:make-return-record pc: dest method: (vm:fun vm) env: (vm:env vm))))
+(defop 10 (SAVE) (vm:push! vm (vm:make-return-record pc: (+ 1 (vm:pc vm)) method: (vm:fun vm) env: (vm:env vm))))
 
 (defop 11 (RETURN) ;; return value is top of stack; return-record is second
   (begin 
@@ -255,16 +255,20 @@
 
 (define (vm:%empty-list) '())
 (define (vm:%cons hd tl) (cons hd tl))
+(define (vm:%car ls) (car ls))
 (define (vm:%cdr ls) (cdr ls))
 
 (defop 23 (NIL)(vm:push! vm (vm:%empty-list)))
-(defop 24 (CONS hd tl) (vm:push! vm (vm:%cons hd tl)))
-(defop 25 (CAR ls) (vm:push! vm (vm:%car ls)))
-(defop 26 (CDR ls) (vm:push! vm (vm:%cdr ls)))
+(defop 24 (CONS) (let ((tl (vm:pop! vm))(hd (vm:pop! vm)))(vm:push! vm (vm:%cons hd tl))))
+(defop 25 (CAR) (vm:push! vm (vm:%car (vm:pop! vm))))
+(defop 26 (CDR) (vm:push! vm (vm:%cdr (vm:pop! vm))))
 
 ;;; EQ ops
 
-(defop 27 (EQ x y) (vm:push! vm (vm:%eq x y)))
+(define (vm:%eq x y) (eq? x y))
+
+
+(defop 27 (EQ) (vm:push! vm (vm:%eq (vm:pop! vm)(vm:pop! vm))))
 
 
 ;;; ---------------------------------------------------------------------
@@ -344,7 +348,7 @@
 
 (define (vm:show-stack vm)
   (let* ((stack (vm:stack vm)))
-    (display " stack: ")
+    (display "stack: ")
     (display (%stack->string stack))))
 
 (define (vm:show-vm vm #!key 
@@ -361,6 +365,7 @@
           (newline)))
     (if show-env 
         (begin
+          (newline)
           (display pad)
           (display "env: ")
           (vm:show-env vm pad: pad)))
@@ -370,8 +375,9 @@
     (vm:show-instruction vm)
     (display " halted: ")
     (display (object->string (vm:halted? vm)))
+    (newline)
+    (display pad)
     (vm:show-stack vm)
-    (display " ")
     (newline)))
 
 ;;; ---------------------------------------------------------------------

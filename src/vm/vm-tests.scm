@@ -30,8 +30,9 @@
 
 
 
-(define (vm:deftest testid testfn
+(define (vm:deftest testid testcode
                     #!key
+                    (env '())
                     (show-vm #t)
                     (expected-pc #f)
                     (expected-instruction #f)
@@ -44,7 +45,13 @@
                 (display testid)
                 (display "...")
                 (newline)
-                (let* ((out-vm (testfn show-vm: show-vm))
+                (let* ((testfn (lambda (#!key (show-vm #t))
+                                 (let* ((code testcode)
+                                        (vm (vm:make-vm fun: (vm:make-method code: code env: '())
+                                                        env: env)))
+                                   (vm:run-show vm)
+                                   vm)))
+                       (out-vm (testfn show-vm: show-vm))
                        (out-pc (vm:pc out-vm))
                        (out-instruction (vm:instruction out-vm))
                        (out-halt (vm:halted? out-vm))
@@ -93,153 +100,214 @@
 ;;; ---------------------------------------------------------------------
 
 (vm:deftest 'HALT
-            (lambda (#!key (show-vm #t))
-              (let* ((env (vm:add-frame (vm:null-env)
-                                        (vm:make-frame '(5))))
-                     (code (%asm ((LVAR 0 0)(HALT))))
-                     (vm (vm:make-vm fun: (vm:make-method code: code env: '())
-                                     env: env)))
-                (if show-vm
-                    (vm:run-show vm)
-                    (vm:run vm))
-                vm))
-            expected-pc: 2
-            expected-stack: '(5))
+            (%asm ((HALT)))
+            expected-pc: 1
+            expected-stack: '())
 
 ;;; (vm:run-test 'HALT)
 
-#|
-
 ;;; LVAR
 ;;; ---------------------------------------------------------------------
-;;; (test-LVAR)
-;;; expected end state:
-;;; pc: 2 instr: (HALT) halted: #t stack: (5) 
 
-(define (test-LVAR)
-  (let* ((env (vm:add-frame (vm:null-env)
-                            (vm:make-frame '(5))))
-         (code (%asm ((LVAR 0 0)(HALT))))
-         (vm (vm:make-vm fun: (vm:make-method code: code env: '())
-                         env: env)))
-    (vm:run-show vm)))
+(vm:deftest 'LVAR
+            (%asm ((LVAR 0 0)(HALT)))
+            env: (vm:add-frame (vm:null-env)(vm:make-frame '(5)))
+            expected-pc: 2
+            expected-stack: '(5))
+
+;;; (vm:run-test 'LVAR)
 
 ;;; LSET
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 5 instr: (HALT) halted: #t stack: (10) 
 
-(define (test-LSET)
-  (let* ((env (vm:add-frame (vm:null-env)
-                          (vm:make-frame '(5))))
-       (code (%asm ((CONST 10)(LSET 0 0)(POP)(LVAR 0 0)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '())
-                       env: env)))
-  (vm:run-show vm)))
+(vm:deftest 'LSET
+            (%asm ((CONST 10)(LSET 0 0)(POP)(LVAR 0 0)(HALT)))
+            env: (vm:add-frame (vm:null-env)(vm:make-frame '(5)))
+            expected-pc: 5
+            expected-stack: '(10))
 
-;;; GVAR
-;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 2 instr: (HALT) halted: #t stack: (101) 
-
-(define (test-GVAR)
-  (let* ((code (%asm ((GVAR 'x)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:gset! vm 'x 101)
-  (vm:run-show vm)))
-
-;;; GSET
-;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 5 instr: (HALT) halted: #t stack: (202) 
-
-(define (test-GSET)
-  (let* ((code (%asm ((CONST 202)(GSET 'x)(POP)(GVAR 'x)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
-
-;;; POP
-;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 3 instr: (HALT) halted: #t stack: () 
-
-(define (test-POP)
-  (let* ((code (%asm ((CONST 77)(POP)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+;;; (vm:run-test 'LSET)
 
 ;;; CONST
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 2 instr: (HALT) halted: #t stack: (77)
 
-(define (test-CONST)
-  (let* ((code (%asm ((CONST 77)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+(vm:deftest 'CONST
+            (%asm ((CONST 77)(HALT)))
+            expected-pc: 2
+            expected-stack: '(77))
+
+;;; (vm:run-test 'CONST)
+
+;;; GSET, GVAR
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'GVAR
+            (%asm ((CONST 101)(GSET 'x)(GVAR 'x)(HALT)))
+            expected-pc: 4
+            expected-stack: '(101 101))
+
+;;; (vm:run-test 'GVAR)
+
+
+;;; POP
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'POP
+            (%asm ((CONST 77)(POP)(HALT)))
+            expected-pc: 3
+            expected-stack: '())
+
+;;; (vm:run-test 'POP)
 
 ;;; JUMP
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 3 instr: (HALT) halted: #t stack: () 
 
-(define (test-JUMP)
-  (let* ((code (%asm ((JUMP 2)(CONST 99)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+(vm:deftest 'JUMP
+            (%asm ((JUMP 2)(CONST 99)(HALT)))
+            expected-pc: 3
+            expected-stack: '())
+
+;;; (vm:run-test 'JUMP)
 
 ;;; FJUMP
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 5 instr: (HALT) halted: #t stack: () 
 
-(define (test-FJUMP)
-  (let* ((code (%asm ((CONST #f)(FJUMP 3)(CONST 'wrong)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+(vm:deftest 'FJUMP
+            (%asm ((CONST #f)(FJUMP 3)(CONST 'wrong)(HALT)))
+            expected-pc: 4
+            expected-stack: '())
+
+;;; (vm:run-test 'FJUMP)
 
 ;;; TJUMP
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 5 instr: (HALT) halted: #t stack: () 
 
-(define (test-TJUMP)
-  (let* ((code (%asm ((CONST #t)(TJUMP 3)(CONST 'wrong)(HALT))))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+(vm:deftest 'TJUMP
+            (%asm ((CONST #t)(TJUMP 3)(CONST 'wrong)(HALT)))
+            expected-pc: 4
+            expected-stack: '())
 
-;;; SAVE
+;;; (vm:run-test 'TJUMP)
+
+;;; TRUE
 ;;; ---------------------------------------------------------------------
-;;; expected end state:
-;;; pc: 5 instr: (HALT) halted: #t stack: () 
 
-(define (test-SAVE)
-  (let* ((code (%asm ()))
-       (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
-  (vm:run-show vm)))
+(vm:deftest 'TRUE
+            (%asm ((TRUE)(HALT)))
+            expected-pc: 2
+            expected-stack: '(#t))
 
-|#
+;;; (vm:run-test 'TRUE)
+
+;;; FALSE
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'FALSE
+            (%asm ((FALSE)(HALT)))
+            expected-pc: 2
+            expected-stack: '(#f))
+
+;;; (vm:run-test 'FALSE)
+
+;;; MINUSONE
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'MINUSONE
+            (%asm ((MINUSONE)(HALT)))
+            expected-pc: 2
+            expected-stack: '(-1))
+
+;;; (vm:run-test 'MINUSONE)
+
+;;; ZERO
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'ZERO
+            (%asm ((ZERO)(HALT)))
+            expected-pc: 2
+            expected-stack: '(0))
+
+;;; (vm:run-test 'ZERO)
+
+;;; ONE
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'ONE
+            (%asm ((ONE)(HALT)))
+            expected-pc: 2
+            expected-stack: '(1))
+
+;;; (vm:run-test 'ONE)
+
+;;; TWO
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'TWO
+            (%asm ((TWO)(HALT)))
+            expected-pc: 2
+            expected-stack: '(2))
+
+;;; (vm:run-test 'TWO)
+
+;;; NIL
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'NIL
+            (%asm ((NIL)(HALT)))
+            expected-pc: 2
+            expected-stack: '(()))
+
+;;; (vm:run-test 'NIL)
+
+;;; CONS
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'CONS
+            (%asm ((CONST 1)(CONST 2)(CONS)(HALT)))
+            expected-pc: 4
+            expected-stack: '((1 . 2)))
+
+;;; (vm:run-test 'CONS)
+
+;;; CAR
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'CAR
+            (%asm ((CONST 1)(CONST 2)(CONS)(CAR)(HALT)))
+            expected-pc: 5
+            expected-stack: '(1))
+
+;;; (vm:run-test 'CAR)
+
+;;; CDR
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'CDR
+            (%asm ((CONST 1)(CONST 2)(CONS)(CDR)(HALT)))
+            expected-pc: 5
+            expected-stack: '(2))
+
+;;; (vm:run-test 'CDR)
+
+;;; EQ
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'EQ
+            (%asm ((CONST 1)(CONST 1)(EQ)(HALT)))
+            expected-pc: 4
+            expected-stack: '(#t))
+
+;;; (vm:run-test 'EQ)
+
 
 #| tests
 
-
+METH
 RETURN
 CALLJ
 ARGS
 ARGS.
-METH
 PRIM
-TRUE
-FALSE
-MINUSONE
-ZERO
-ONE
-TWO
-NIL
-CONS
-CAR
-CDR
-EQ
 
 |#
 
