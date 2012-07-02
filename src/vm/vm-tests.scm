@@ -35,6 +35,7 @@
                     (env '())
                     (show-vm #t)
                     (expected-pc #f)
+                    (expected-env (env:null))
                     (expected-instruction #f)
                     (expected-halt? #t)
                     (expected-stack #f))
@@ -47,12 +48,13 @@
                 (newline)
                 (let* ((testfn (lambda (#!key (show-vm #t))
                                  (let* ((code testcode)
-                                        (vm (vm:make-vm fun: (vm:make-method code: code env: '())
+                                        (vm (vm:make-vm method: (vm:make-method code: code env: '())
                                                         env: env)))
                                    (vm:run-show vm)
                                    vm)))
                        (out-vm (testfn show-vm: show-vm))
                        (out-pc (vm:pc out-vm))
+                       (out-env (vm:env out-vm))
                        (out-instruction (vm:instruction out-vm))
                        (out-halt (vm:halted? out-vm))
                        (out-stack (vm:stack out-vm))
@@ -64,6 +66,13 @@
                                           "unexpected pc value"
                                           expected: expected-pc
                                           found: out-pc))))
+                  (if expected-env
+                      (set! success?
+                            (and success?
+                                 (%assert (equal? expected-env out-env)
+                                          "unexpected environment state"
+                                          expected: expected-env
+                                          found: out-env))))
                   (if expected-instruction
                       (set! success?
                             (and success?
@@ -147,7 +156,6 @@
             expected-stack: '(101 101))
 
 ;;; (vm:run-test 'GVAR)
-
 
 ;;; POP
 ;;; ---------------------------------------------------------------------
@@ -299,15 +307,51 @@
 
 ;;; (vm:run-test 'EQ)
 
+;;; METH
+;;; ---------------------------------------------------------------------
+
+(define $m1 (vm:make-method code: (%asm ((HALT))) env: (env:null)))
+
+(vm:deftest 'METH
+            (%asm ((METH $m1)(HALT)))
+            expected-pc: 2)
+
+;;; (vm:run-test 'METH)
+
+;;; PRIM
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'PRIM
+            (%asm ((CONST 3)(CONST 6)(NARGS 2)(PRIM *)(HALT)))
+            expected-pc: 5
+            expected-stack: '(18))
+
+;;; (vm:run-test 'PRIM)
+
+;;; ARGS
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'ARGS
+            (%asm ((CONST 1)(CONST 2)(CONST 3)(NARGS 3)(ARGS 3)(HALT)))
+            expected-pc: 6
+            expected-env: (list (vector 1 2 3)))
+
+;;; (vm:run-test 'ARGS)
+
+;;; ARGS
+;;; ---------------------------------------------------------------------
+
+(vm:deftest 'ARGS.
+            (%asm ((CONST 1)(CONST 2)(CONST 3)(CONST 4)(CONST 5)(NARGS 5)(ARGS. 3)(HALT)))
+            expected-pc: 8
+            expected-env: (list (vector 1 2 3 (list 4 5))))
+
+;;; (vm:run-test 'ARGS.)
 
 #| tests
 
-METH
 RETURN
 CALLJ
-ARGS
-ARGS.
-PRIM
 
 |#
 

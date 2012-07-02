@@ -39,13 +39,33 @@
 ;;; vm code accesses variables with a frame index and the index of the var
 ;;; in the frame
 
-(define (vm:null-env) '())
+(define (env:null) '())
 
-(define (vm:add-frame env fr)
+(define (env:add-frame env fr)
   (cons fr env))
 
-(define (vm:make-frame args)
-  (apply vector args))
+(define (vm:add-args-to-env! vm nargs)
+  (let ((fr (make-vector nargs)))
+    (let loop ((i (- nargs 1)))
+      (if (< i 0)
+          (vm:set-env! vm (env:add-frame (vm:env vm) fr))
+          (begin
+            (vector-set! fr i (vm:pop! vm))
+            (loop (- i 1)))))))
+
+(define (vm:add-varargs-to-env! vm required-count supplied-count)
+  (let loop ((i (- supplied-count 1))
+             (restarg '())
+             (required-args '()))
+    (if (>= i required-count)
+        (loop (- i 1)(cons (vm:pop! vm) restarg) required-args)
+        (if (>= i 0)
+            (loop (- i 1) restarg (cons (vm:pop! vm) required-args))
+            (vm:set-env! vm
+                         (env:add-frame (vm:env vm)
+                                        (apply vector
+                                               (append required-args
+                                                       (list restarg)))))))))
 
 (define (vm:lvar-ref vm frame-index var-index)
   (let ((env (vm:env vm)))
@@ -86,7 +106,7 @@
   id: 28D56336-01B7-467F-B35B-88334FEEC25C
   constructor: %private-make-return-record
   (pc return-record-pc)
-  (method return-record-method)
+  (meth return-record-method)
   (env return-record-environment))
 
 (define (vm:make-return-record #!key
@@ -101,7 +121,7 @@
   id: 85820E73-753A-4EF8-B575-5A330200197A
   constructor: %private-make-vm
   (halted vm:halted? vm:set-halted!)
-  (fun vm:fun vm:set-fun!)
+  (method vm:method vm:set-method!)
   (code vm:code vm:set-code!)
   (pc vm:pc vm:set-pc!)
   (globals vm:globals)
@@ -111,20 +131,20 @@
   (instruction vm:instruction vm:set-instruction!))
 
 (define (vm:make-vm #!key
-                 (fun #f)
+                 (method #f)
                  (pc 0)
-                 (env '())
+                 (env (env:null))
                  (stack '())
                  (argcount 0)
                  (instruction #f))
-  (%private-make-vm #f fun (vm:method-code fun) pc (vm:make-globals) env stack argcount instruction))
+  (%private-make-vm #f method (vm:method-code method) pc (vm:make-globals) env stack argcount instruction))
 
 (define (vm:push! vm val)
   (vm:set-stack! vm (cons val (vm:stack vm))))
 
-(define (vm:stacknth vm n)(list-ref (vm:stack vm) n))
+(define (vm:stack-ref vm n)(list-ref (vm:stack vm) n))
 
-(define (vm:top vm)(vm:stacknth vm 0))
+(define (vm:top vm)(vm:stack-ref vm 0))
 
 (define (vm:pop! vm)
   (let ((out (vm:top vm)))
@@ -132,11 +152,11 @@
     out))
 
 (define (vm:swap! vm)
-  (let ((old-top (vm:pop vm))
-        (old-next (vm:pop vm)))
-    (vm:push! vm old-top)
-    (vm:push! vm old-next)
-    old-next))
+  (let ((old-stack (vm:stack vm)))
+    (vm:set-stack! vm 
+                   (cons (cadr old-stack)
+                         (cons (car old-stack)
+                               (cddr old-stack))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm operations
@@ -179,77 +199,68 @@
 (defop  7 (JUMP dest) (vm:set-pc! vm dest))
 (defop  8 (FJUMP dest) (if (false? (vm:pop! vm)) (vm:set-pc! vm dest)))
 (defop  9 (TJUMP dest) (if (true? (vm:pop! vm)) (vm:set-pc! vm dest)))
-(defop 10 (SAVE) (vm:push! vm (vm:make-return-record pc: (+ 1 (vm:pc vm)) method: (vm:fun vm) env: (vm:env vm))))
+(defop 10 (SAVE addr) (vm:push! vm (vm:make-return-record pc: addr method: (vm:method vm) env: (vm:env vm))))
 
 (defop 11 (RETURN) ;; return value is top of stack; return-record is second
-  (begin 
-    (vm:swap! vm) ;; swap so return address is on top
-    (vm:set-fun! vm (vm:return-record-method (vm:top vm)))
-    (vm:set-code! vm (vm:method-code (vm:fun vm)))
-    (vm:set-env! vm (vm:return-record-environment (vm:top vm)))
-    (vm:set-pc! vm (vm:return-record-pc (vm:top vm)))
-    ;; discard return address
+  (let ((ret (vm:stack-ref vm 1))
+         (meth (return-record-method ret)))
+    (vm:set-method! vm meth)
+    (vm:set-code! vm (vm:method-code meth))
+    (vm:set-env! vm (return-record-environment ret))
+    (vm:set-pc! vm (return-record-pc ret))
+    ;; discard the return address and keep the value
+    (vm:swap! vm)
     (vm:pop! vm)))
 
 ;;; function calls
 
-(defop 12 (CALLJ argcount) 
+(defop 12 (NARGS n) (vm:set-argcount! vm n))
+
+(defop 13 (CALLJ argcount) 
   (begin
-    (vm:set-env! vm (cdr (vm:env vm)))                 ; discard the top frame
-    (vm:set-fun! vm (vm:pop vm))
-    (vm:set-code! vm (vm:method-code (vm:fun vm)))
-    (vm:set-env! vm (vm:method-environment (vm:fun vm)))
+    (vm:pop! vm)
+    (vm:set-method! (vm:pop! vm))
+    (vm:set-code! (vm:method-code (vm:method vm)))
+    (vm:set-env! vm (vm:method-environment (vm:method vm)))
     (vm:set-pc! vm 0)
     (vm:set-argcount! vm argcount)))
 
-(defop 13 (ARGS nargs) 
+(defop 14 (ARGS nargs) 
   (let ((argcount (vm:argcount vm)))
     (if (= argcount nargs)
-        (let loop ((i 0)(args '()))
-          (if (>= i nargs)
-              (vm:set-env! vm (vm:add-frame (vm:env vm) (vm:make-frame args)))
-              (loop (+ i 1)(cons (vm:pop vm) args))))
+        (vm:add-args-to-env! vm nargs)
         (error (string-append "Wrong number of arguments; " 
                               (object->string nargs) " expected; "
                               (object->string argcount) " supplied.")))))
 
-(defop 14 (ARGS. n-args) 
+(defop 15 (ARGS. nargs) 
   (let ((argcount (vm:argcount vm)))
-    (if (>= argcount n-args)
-        (let loop ((i 0) (args '()) (rest '()))
-          (if (>= i argcount)
-              (vm:set-env! vm (vm:add-frame (vm:env vm) (vm:make-frame (append args (list rest)))))
-              (if (>= i (- argcount n-args))
-                  (loop (+ i 1)
-                        args
-                        (cons (vm:pop vm) rest))
-                  (loop (+ i 1)
-                        (cons (vm:pop vm) args)
-                        rest))))
+    (if (>= argcount nargs)
+        (vm:add-varargs-to-env! vm nargs argcount)
         (error (string-append "Wrong number of arguments; " 
-                              (object->string n-args) " or more expected; "
+                              (object->string nargs) " or more expected; "
                               (object->string argcount) " supplied.")))))
 
-(defop 15 (METH fun)
-  (vm:push! vm (vm:make-method code: (vm:method-code fun)
+(defop 16 (METH m)
+  (vm:push! vm (vm:make-method code: (vm:method-code m)
                                env: (vm:env vm))))
 
-(defop 16 (PRIM op)
+(defop 17 (PRIM op)
   (let ((n-args (vm:argcount vm)))
     (let loop ((i 0)
                (args '()))
       (if (>= i n-args)
           (vm:push! vm (apply op args))
-          (loop (+ i 1)(cons (vm:pop vm) args))))))
+          (loop (+ i 1)(cons (vm:pop! vm) args))))))
 
 ;;; constant ops
 
-(defop 17 (TRUE)(vm:push! vm #t))
-(defop 18 (FALSE)(vm:push! vm #f))
-(defop 19 (MINUSONE)(vm:push! vm -1))
-(defop 20 (ZERO)(vm:push! vm 0))
-(defop 21 (ONE)(vm:push! vm 1))
-(defop 22 (TWO)(vm:push! vm 2))
+(defop 18 (TRUE)(vm:push! vm #t))
+(defop 19 (FALSE)(vm:push! vm #f))
+(defop 20 (MINUSONE)(vm:push! vm -1))
+(defop 21 (ZERO)(vm:push! vm 0))
+(defop 22 (ONE)(vm:push! vm 1))
+(defop 23 (TWO)(vm:push! vm 2))
 
 ;;; List ops
 
@@ -258,17 +269,16 @@
 (define (vm:%car ls) (car ls))
 (define (vm:%cdr ls) (cdr ls))
 
-(defop 23 (NIL)(vm:push! vm (vm:%empty-list)))
-(defop 24 (CONS) (let ((tl (vm:pop! vm))(hd (vm:pop! vm)))(vm:push! vm (vm:%cons hd tl))))
-(defop 25 (CAR) (vm:push! vm (vm:%car (vm:pop! vm))))
-(defop 26 (CDR) (vm:push! vm (vm:%cdr (vm:pop! vm))))
+(defop 24 (NIL)(vm:push! vm (vm:%empty-list)))
+(defop 25 (CONS) (let ((tl (vm:pop! vm))(hd (vm:pop! vm)))(vm:push! vm (vm:%cons hd tl))))
+(defop 26 (CAR) (vm:push! vm (vm:%car (vm:pop! vm))))
+(defop 27 (CDR) (vm:push! vm (vm:%cdr (vm:pop! vm))))
 
 ;;; EQ ops
 
 (define (vm:%eq x y) (eq? x y))
 
-
-(defop 27 (EQ) (vm:push! vm (vm:%eq (vm:pop! vm)(vm:pop! vm))))
+(defop 28 (EQ) (vm:push! vm (vm:%eq (vm:pop! vm)(vm:pop! vm))))
 
 
 ;;; ---------------------------------------------------------------------
@@ -328,7 +338,7 @@
                         (newline)
                         (display pad)
                         (display "    var ")
-                        (display i)
+                        (display j)
                         (display ": ")
                         (display val)
                         (inner-loop (+ j 1)))))
@@ -453,8 +463,8 @@
           (loop)))))
 
 (define (vm:run-program code #!key (show #f))
-  (let* ((f (vm:make-method code: code env: '()))
-         (vm (vm:make-vm fun: (vm:make-method code: code env: '()))))
+  (let* ((f (vm:make-method code: code env: (env:null)))
+         (vm (vm:make-vm method: (vm:make-method code: code env: (env:null)))))
     (if show
         (vm:run-show vm)
         (vm:run vm))
