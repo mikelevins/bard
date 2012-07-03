@@ -84,8 +84,9 @@
 (define reg:meth 4)
 (define reg:code 5)
 (define reg:inst 6)
-(define reg:valc 7)
-(define (reg:valn n) (+ 1 reg:VALC n))
+(define reg:stack 7)
+(define reg:valc 8)
+(define (reg:valn n) (+ 1 reg:valc n))
 
 (define (state-vector-min-length)
   (+ reg:valc 1))
@@ -93,7 +94,7 @@
 (define (new-state-vector #!optional (len 16))
   (make-vector len (void)))
 
-(define (init-constant-set sv h p g e m c i)
+(define (init-constant-set sv h p g e m c i s)
     (vector-set! sv reg:halt h)
     (vector-set! sv reg:pc p)
     (vector-set! sv reg:glob g)
@@ -101,6 +102,7 @@
     (vector-set! sv reg:meth m)
     (vector-set! sv reg:code c)
     (vector-set! sv reg:inst i)
+    (vector-set! sv reg:stack s)
   sv)
 
 (define (big-enough-for n)
@@ -117,11 +119,32 @@
       sv
       (expand-state-vector sv)))
 
+(define (push-frame! fr sv)
+  (rset! reg:stack sv (cons fr (reg reg:stack sv))))
+
+(define (pop-frame! sv)
+  (let* ((s (reg reg:stack sv))
+         (fr (car s)))
+    (rset! reg:stack sv (cdr s))
+    fr))
+
+(define (stack-depth sv)
+  (length (reg reg:stack sv)))
+
+(define (last-val-index sv)
+  (+ reg:valc (reg reg:valc sv)))
+
 (define (next-val-index sv)
-  (+ 1 reg:valc (reg reg:valc sv)))
+  (+ 1 (last-val-index sv)))
+
+(define (vals-empty? sv)
+  (<= (reg reg:valc sv) 0))
 
 (define (inc-valc! sv)
   (rset! reg:valc sv (+ 1 (reg reg:valc sv))))
+
+(define (dec-valc! sv)
+  (rset! reg:valc sv (- (reg reg:valc sv) 1)))
 
 (define (push-val! v sv)
   (let ((sv (maybe-expand-state-vector sv))
@@ -129,6 +152,16 @@
     (rset! n sv v)
     (inc-valc! sv)
     sv))
+
+(define (pop-val! sv)
+  (if (vals-empty? sv)
+      (error "No values")
+      (let ((v (reg (last-val-index sv) sv)))
+        (dec-valc! sv)
+        v)))
+
+(define (purge-vals! sv)
+  (rset! reg:valc sv 0))
 
 (define (make-state-vector #!key 
                            (halt #f)
@@ -138,29 +171,33 @@
                            (meth (null-method))
                            (code (null-code))
                            (inst #f)
+                           (stack '())
                            (vals '()))
-  (list->vector (append (list halt pc glob env meth code inst (length vals)) vals)))
+  (list->vector (append (list halt pc glob env meth code inst stack (length vals)) vals)))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm diagnostic tools
 ;;; ---------------------------------------------------------------------
 
 (define (showinst inst)
-  (display "(")
-  (display (opname (instruction:opcode inst)))
-  (let ((argc (- (vector-length inst) 1)))
-    (let loop ((i 1))
-      (if (< i argc)
-          (begin
-            (display " ")
-            (display (instruction:argn instr i))
-            (loop (+ 1 i))))))
-  (display ")"))
+  (if inst
+      (begin
+        (display "(")
+        (display (opname (instruction:opcode inst)))
+        (let ((argc (- (vector-length inst) 1)))
+          (let loop ((i 1))
+            (if (< i argc)
+                (begin
+                  (display " ")
+                  (display (instruction:argn instr i))
+                  (loop (+ 1 i))))))
+        (display ")"))))
 
 (define (showglobals globals) #f)
 (define (showenv env) #f)
-(define (showmeth env) #f)
-(define (showcode env) #f)
+(define (showmeth m) #f)
+(define (showcode c) #f)
+(define (showstack s) #f)
 
 (define (showvals sv)
   (let ((valc (reg reg:valc sv)))
@@ -168,9 +205,10 @@
       (if (< i valc)
           (begin
             (display " ")
-            (display (reg (reg:valn i) sv)))))))
+            (display (reg (reg:valn i) sv))
+            (loop (+ i 1)))))))
 
-(define (showvm sv #!key (show-globals #f)(show-env #f)(show-method #f)(show-code #t)(show-vals #t))
+(define (showvm sv #!key (show-globals #f)(show-env #f)(show-method #f)(show-code #t)(show-vals #t)(show-stack #f))
   (newline)
   (display "halt: ")(display (reg reg:halt sv))(display " ")
   (display "pc: ")(display (reg reg:pc sv))(display " ")
@@ -178,12 +216,17 @@
   (if show-vals
       (let ((valc (reg reg:valc sv)))
         (newline)
-        (if (> valc 0)
-            (begin
-              (display valc)(display " values:")
-              (showvals sv))
-            (display "0 values"))))
+        (if (<= valc 0)
+            (display "0 values")
+            (if (= valc 1)
+                (begin
+                  (display "1 value:")
+                  (showvals sv))
+                (begin
+                  (display valc)(display " values:")
+                  (showvals sv))))))
   (if show-code (begin (showcode (reg reg:code sv))))
+  (if show-stack (begin (showstack (reg reg:stack sv))))
   (if show-globals (begin (showglobals (reg reg:glob sv))))
   (if show-env (begin (showenv (reg reg:env sv))))
   (if show-method (begin (showmethod (reg reg:meth sv))))
@@ -216,7 +259,7 @@
                          (reverse blist)
                          (loop (cdr args)
                                (+ i 1)
-                               (cons `(,(car args) (instruction:argn (reg reg:instr ,state) i))
+                               (cons `(,(car args) (instruction:argn (reg reg:inst ,state) ,i))
                                      blist)))))
          (fn (gensym)))
     `(lambda (,state)(let ,bindings ,@body))))
@@ -230,7 +273,58 @@
 (define (op n)(vector-ref $vm-operations n))
 (define (opname n)(vector-ref $vm-operation-names n))
 
+;;; ---------------------------------------------------------------------
+;;; ops
+;;; ---------------------------------------------------------------------
+
+(define @ vector)
+
+(define (nil) '())
+(define (true) #t)
+(define (false) #f)
+(define (true? x)(and x #t))
+(define (false? x)(not x))
+
 (defop 0 (HALT) vm (rset! reg:halt vm #t))
+(defop 1 (NIL) vm (push-val! (nil) vm))
+(defop 2 (TRUE) vm (push-val! (true) vm))
+(defop 3 (FALSE) vm (push-val! (false) vm))
+(defop 4 (CONST c) vm (push-val! c vm))
+(defop 5 (JUMP dest) vm (rset! reg:pc vm dest))
+(defop 6 (FJUMP dest) vm (if (false? (pop-val! vm))(rset! reg:pc vm dest) vm))
+(defop 7 (TJUMP dest) vm (if (true? (pop-val! vm))(rset! reg:pc vm dest) vm))
+
+(defop 8 (SAVE dest) vm (let* ((fr (copy-state-vector vm))
+                               (fr1 (rset! reg:pc fr dest)))
+                          (push-frame! fr1 vm)))
+
+;;; op tests
+;;; ---------------------------------------------------------------------
+
+(define (test-HALT)
+  (showvm (vm:run (make-state-vector code: (@ (@ HALT))))))
+
+;;; (test-HALT)
+
+(define (test-CONST)
+  (showvm (vm:run (make-state-vector code: (@ (@ CONST 3)(@ HALT))))))
+
+;;; (test-CONST)
+
+(define (test-JUMP)
+  (showvm (vm:run (make-state-vector code: (@ (@ CONST 3)(@ JUMP 3)(@ CONST 2)(@ HALT))))))
+
+;;; (test-JUMP)
+
+(define (test-FJUMP)
+  (showvm (vm:run (make-state-vector code: (@ (@ CONST 1)(@ FALSE)(@ FJUMP 4)(@ CONST 2)(@ HALT))))))
+
+;;; (test-FJUMP)
+
+(define (test-TJUMP)
+  (showvm (vm:run (make-state-vector code: (@ (@ CONST 1)(@ TRUE)(@ TJUMP 4)(@ CONST 2)(@ HALT))))))
+
+;;; (test-TJUMP)
 
 ;;; ---------------------------------------------------------------------
 ;;; running the vm
@@ -240,5 +334,13 @@
   (rset! reg:inst sv (vector-ref (reg reg:code sv) (reg reg:pc sv))))
 
 (define (exec! sv)
+  (rset! reg:pc sv (+ 1 (reg reg:pc sv)))
   ((op (instruction:opcode (reg reg:inst sv))) sv))
+
+(define (vm:run vm)
+  (let loop ((state vm))
+    (if (reg reg:halt state)
+        state
+        (let ((state1 (exec! (fetch! state))))
+          (loop state1)))))
 
