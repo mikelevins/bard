@@ -46,12 +46,15 @@
 (define val1 (lambda (v w . rest) w))
 (define val2 (lambda (v w x . rest) x))
 (define val3 (lambda (v w x y . rest) y))
-(define valn (lambda vals (list-ref vals n)))
+(define valn (lambda (n . vals) (list-ref vals n)))
 (define vals (lambda vals vals))
 
 ;;; ---------------------------------------------------------------------
 ;;; ops
 ;;; ---------------------------------------------------------------------
+
+(define (false? x)(not x))
+(define (true? x)(not (false? x)))
 
 (define (opHALT halt? pc env code instr stack)
   (-> (#t pc env code instr stack)))
@@ -81,7 +84,7 @@
 
 (define (opTJUMP halt? pc env code instr stack)
   (let ((dest (instruction:arg 1 instr)))
-    (if (false? (-> (force (car stack)) val0))
+    (if (true? (-> (force (car stack)) val0))
         (-> (halt? dest env code instr (cdr stack)))
         (-> (halt? pc env code instr (cdr stack))))))
 
