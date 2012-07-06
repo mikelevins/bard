@@ -46,6 +46,17 @@
                   (print (fset:@ obj i)))))
   (cl:format s ")"))
 
+(cl:defmethod print ((obj fset:map) cl:&optional (s cl:*standard-output*))
+  (cl:format s "{")
+  (cl:let ((space-before? cl:nil))
+    (fset:do-map (k v obj)
+      (cl:when space-before? (cl:format s " "))
+      (cl:setf space-before? cl:t)
+      (print k s)
+      (cl:format s " ")
+      (print v s)))
+  (cl:format s "}"))
+
 ;;; =====================================================================
 ;;; run the repl
 ;;; =====================================================================
