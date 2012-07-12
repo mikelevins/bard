@@ -219,7 +219,7 @@
   (%defglobal 'drop bard:drop)
   ;; (%defglobal 'drop-before bard:drop-before)
   (%defglobal 'element bard:element)
-  ;; (%defglobal 'empty? bard:empty?)
+  (%defglobal 'empty? bard:empty?)
   ;; (%defglobal 'every? bard:every?)
   (%defglobal 'filter bard:filter)
   ;; (%defglobal 'find bard:find)
@@ -299,7 +299,7 @@
 
   ;; Text
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'text? bard:text?)
+  (%defglobal 'text? %text?)
 
   ;; Undefined
   ;; ---------------------------------------------------------------------
