@@ -1,3 +1,7 @@
+0.2.6
+
+- define-macro implemented, exposing macros in the surface language
+
 0.2.5
 
 - macros implemented

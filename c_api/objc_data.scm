@@ -203,9 +203,6 @@ c-code
               keys)
     dict))
 
-(define (objc:NSMutableDictionary->frame dict)
-  (%frame changed: #f bogus: #t))
-
 ;;; all values
 
 (define (bard->objc val)

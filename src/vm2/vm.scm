@@ -99,6 +99,8 @@
          (frame (delay (-> (halt? dest env code instr stack)))))
     (-> (halt? pc env code instr (cons frame stack)))))
 
+;;;(define (opFUNCALL halt? pc env code instr stack) )
+
 ;;; ---------------------------------------------------------------------
 ;;; instructions
 ;;; ---------------------------------------------------------------------

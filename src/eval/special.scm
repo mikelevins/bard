@@ -68,6 +68,20 @@
                (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))
                (%list-ref expr 1)))
 
+;;; define-macro prototype & body
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'define-macro
+             (lambda (expr env)
+               (let* ((proto (cadr expr))
+                      (body (cddr expr))
+                      (mname (car proto))
+                      (marglist (cdr proto))
+                      (expander (%eval `(method ,marglist (begin ,@body)) env)))
+                 (%define-macro-function mname
+                                         (lambda (expr)
+                                           (%apply expander (%cdr expr)))))))
+
 ;;; define-function
 ;;; ----------------------------------------------------------------------
 
