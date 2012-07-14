@@ -17,3 +17,5 @@
 
 (defun load-bard ()
   (asdf:oos 'asdf:load-op :bard))
+
+;;; (load-bard)
