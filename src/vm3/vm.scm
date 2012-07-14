@@ -71,37 +71,39 @@
 (define vals (lambda vals vals))
 
 ;;; ---------------------------------------------------------------------
+;;; instruction utils
+;;; ---------------------------------------------------------------------
+
+(define (arg1 instr)(list-ref instr 1))
+(define (arg2 instr)(list-ref instr 2))
+
+;;; ---------------------------------------------------------------------
 ;;; ops
 ;;; ---------------------------------------------------------------------
 
-(define (opHALT Stack Env Code Dump)
-  (-> (Stack Env nil nil)))
+(define (%NIL Stack Env Code Dump)
+  (-> ((cons nil Stack) Env (cdr Code) Dump)))
 
-(define (opNIL Stack Env Code Dump)
-  (-> ((cons nil Stack) Env Code Dump)))
+(define (%LDC Stack Env Code Dump)
+  (let* ((instr (car Code))
+         (c (arg1 instr)))
+    (-> ((cons c Stack) Env (cdr Code) Dump))))
 
-(define (opCONST Stack Env Code Dump)
-  (let ((x (instruction:arg 1 instr)))
-    (-> ((cons x Stack) Env Code Dump))))
+(define (%LD Stack Env Code Dump)
+  (let* ((instr (car Code))
+         (i (arg1 instr))
+         (j (arg2 instr))
+         (v (list-ref (list-ref Env i) j)))
+    (-> ((cons v Stack) Env (cdr Code) Dump))))
 
-(define (opTRUE Stack Env Code Dump)
-  (-> ((cons true Stack) Env Code Dump)))
+(define (%SEL Stack Env Code Dump)
+  (let* ((instr (car Code))
+         (v (car Stack))
+         (ct (arg1 instr))
+         (cf (argr instr)))
+    (if (true? v)
+        (-> (Stack Env ct (cons (cdr Code) Dump)))
+        (-> (Stack Env cf (cons (cdr Code) Dump))))))
 
-(define (opFALSE Stack Env Code Dump)
-  (-> ((cons false Stack) Env Code Dump)))
-
-(define (opSEL Stack Env Code Dump)
-  (if (true? (car Stack))
-      (-> ((cdr Stack) Env (instruction:arg1 (car Code)) (cons (cdr Code) Dump)))
-      (-> ((cdr Stack) Env (instruction:arg2 (car Code)) (cons (cdr Code) Dump)))))
-
-(define (opJOIN Stack Env Code Dump)
+(define (%JOIN Stack Env Code Dump)
   (-> (Stack Env (car Dump) (cdr Dump))))
-
-(define (opFN Stack Env Code Dump)
-  (let ((fn (instruction:arg1 (car Code))))
-    (-> ((cons (cons fn Env) Stack) Env Code Dump))))
-
-
-
-
