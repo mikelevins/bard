@@ -122,11 +122,14 @@
 
 (define (%AP Stack Env Code Dump)
   (let* ((closure (car Stack))
-         (c (car closure))
-         (e (cdr closure))
+         (f (car closure))
+         (e+ (cdr closure))
          (vals (cadr Stack))
-         (s (cddr Stack)))
-    (-> (nil (cons vals e) c Dump))))
+         (s (drop 2 Stack))
+         (e Env)
+         (c (drop 1 Code))
+         (d Dump))
+    (-> (nil (cons vals e+) f (cons s (cons e (cons c d)))))))
 
 (define (%RTN Stack Env Code Dump)
   (let* ((s (car Dump))
@@ -185,12 +188,19 @@
 ;;; (%exec '(2) '() `(,JOIN) '((0)))
 ;;; (%exec '(2) '() `(,NOP) '())
 ;;;
-;;; ((lambda (x y)(+ x y)) 2 3)
-;;; NIL LDC 3 CONS LDC 2 CONS LDF (LD (0 . 1) LD (0 . 0) + RTN) AP
-;;; (%exec '() '() `(,NIL ,LDC 3 ,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
-;;; (%exec '(3 ()) '() `(,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
-;;; (%exec '((3)) '() `(,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
-;;; (%exec '((2 3)) '() `(,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
-;;; (%exec `((,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN)(2 3)) '() `( ,AP) '())
+;;; ((lambda (x y)(cons x y)) 2 3)
+;;; NIL LDC 3 CONS LDC 2 CONS LDF (LD (0 . 1) LD (0 . 0) CONS RTN) AP
+;;; (%exec '() '() `(,NIL ,LDC 3 ,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) ,AP) '())
+;;; (%exec '(3 ()) '() `(,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) ,AP) '())
+;;; (%exec '((3)) '() `(,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) ,AP) '())
+;;; (%exec '(2 (3)) '() `(,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) ,AP) '())
+;;; (%exec '((2 3)) '() `(,LDF (,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) ,AP) '())
+;;; (%exec `(((,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN)) (2 3)) '() `(,AP) '())
+;;; (%exec `() '((2 3)) `(,LD (0 . 1) ,LD (0 . 0) ,CONS ,RTN) '(()()()))
+;;; (%exec `(3) '((2 3)) `(,LD (0 . 0) ,CONS ,RTN) '(()()()))
+;;; (%exec `(2 3) '((2 3)) `(,CONS ,RTN) '(()()()))
+;;; (%exec `((2 . 3)) '((2 3)) `(,RTN) '(()()()))
+;;;
+
 
 
