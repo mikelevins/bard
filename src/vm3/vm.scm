@@ -71,6 +71,12 @@
 (define vals (lambda vals vals))
 
 ;;; ---------------------------------------------------------------------
+;;; register utils
+;;; ---------------------------------------------------------------------
+
+(define (drop n ls)(list-tail ls n))
+
+;;; ---------------------------------------------------------------------
 ;;; instruction utils
 ;;; ---------------------------------------------------------------------
 
@@ -81,29 +87,110 @@
 ;;; ops
 ;;; ---------------------------------------------------------------------
 
+(define (%NOP Stack Env Code Dump)
+  (-> (Stack Env Code Dump)))
+
 (define (%NIL Stack Env Code Dump)
-  (-> ((cons nil Stack) Env (cdr Code) Dump)))
+  (-> ((cons nil Stack) Env (drop 1 Code) Dump)))
 
 (define (%LDC Stack Env Code Dump)
-  (let* ((instr (car Code))
-         (c (arg1 instr)))
-    (-> ((cons c Stack) Env (cdr Code) Dump))))
+  (let* ((c (arg1 Code)))
+    (-> ((cons c Stack) Env (drop 2 Code) Dump))))
 
 (define (%LD Stack Env Code Dump)
-  (let* ((instr (car Code))
-         (i (arg1 instr))
-         (j (arg2 instr))
+  (let* ((ref (arg1 Code))
+         (i (car ref))
+         (j (cdr ref))
          (v (list-ref (list-ref Env i) j)))
-    (-> ((cons v Stack) Env (cdr Code) Dump))))
+    (-> ((cons v Stack) Env (drop 2 Code) Dump))))
 
 (define (%SEL Stack Env Code Dump)
-  (let* ((instr (car Code))
-         (v (car Stack))
-         (ct (arg1 instr))
-         (cf (argr instr)))
+  (let* ((v (car Stack))
+         (ct (arg1 Code))
+         (cf (arg2 Code)))
     (if (true? v)
-        (-> (Stack Env ct (cons (cdr Code) Dump)))
-        (-> (Stack Env cf (cons (cdr Code) Dump))))))
+        (-> ((drop 1 Stack) Env ct (cons (drop 3 Code) Dump)))
+        (-> ((drop 1 Stack) Env cf (cons (drop 3 Code) Dump))))))
 
 (define (%JOIN Stack Env Code Dump)
-  (-> (Stack Env (car Dump) (cdr Dump))))
+  (-> (Stack Env (car Dump) (drop 1 Dump))))
+
+(define (%LDF Stack Env Code Dump)
+  (let* ((f (arg1 Code))
+         (closure (cons f Env)))
+    (-> ((cons closure Stack) Env (drop 2 Code) Dump))))
+
+(define (%AP Stack Env Code Dump)
+  (let* ((closure (car Stack))
+         (c (car closure))
+         (e (cdr closure))
+         (vals (cadr Stack))
+         (s (cddr Stack)))
+    (-> (nil (cons vals e) c Dump))))
+
+(define (%RTN Stack Env Code Dump)
+  (let* ((s (car Dump))
+         (e (cadr Dump))
+         (c (caddr Dump))
+         (d (cdddr Dump))
+         (val (car Stack)))
+    (-> ((cons val s) e c d))))
+
+(define (%CONS Stack Env Code Dump)
+  (let* ((hd (car Stack))
+         (tl (cadr Stack))
+         (pair (cons hd tl)))
+    (-> ((cons pair (drop 2 Stack)) Env (drop 1 Code) Dump))))
+
+
+(define $vmops (make-vector 16 0))
+
+(define NOP 0)
+(define NIL 1)
+(define LDC 2)
+(define LD 3)
+(define SEL 4)
+(define JOIN 5)
+(define LDF 6)
+(define AP 7)
+(define RTN 8)
+(define CONS 9)
+
+(define (defop op fn)
+  (vector-set! $vmops op fn))
+
+(defop NOP %NOP)
+(defop NIL %NIL)
+(defop LDC %LDC)
+(defop LD %LD)
+(defop SEL %SEL)
+(defop JOIN %JOIN)
+(defop LDF %LDF)
+(defop AP %AP)
+(defop RTN %RTN)
+(defop CONS %CONS)
+
+(define (%fetch ins)(vector-ref $vmops ins))
+
+(define (%exec s e c d)
+  ((%fetch (car c)) s e c d))
+
+;;; (%exec '() '() `(,NOP) '())
+;;; (%exec '() '() `(,NIL) '())
+;;; (%exec '() '() `(,LDC 2) '())
+;;; (%exec '() '((3)) `(,LD (0 . 0)) '())
+;;; if #f 1 else 2 nop
+;;; (%exec '(#f) '() `(,SEL (,LDC 1 ,JOIN)(,LDC 2 ,JOIN) ,NOP) '())
+;;; (%exec '() '() `(,LDC 2 ,JOIN) '((0)))
+;;; (%exec '(2) '() `(,JOIN) '((0)))
+;;; (%exec '(2) '() `(,NOP) '())
+;;;
+;;; ((lambda (x y)(+ x y)) 2 3)
+;;; NIL LDC 3 CONS LDC 2 CONS LDF (LD (0 . 1) LD (0 . 0) + RTN) AP
+;;; (%exec '() '() `(,NIL ,LDC 3 ,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
+;;; (%exec '(3 ()) '() `(,CONS ,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
+;;; (%exec '((3)) '() `(,LDC 2 ,CONS ,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
+;;; (%exec '((2 3)) '() `(,LDF (,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN) ,AP) '())
+;;; (%exec `((,LD (0 . 1) ,LD (0 . 0) ,+ ,RTN)(2 3)) '() `( ,AP) '())
+
+
