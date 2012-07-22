@@ -1,0 +1,149 @@
+Notes on vm4
+
+Compiling basic Bard expressions
+
+Object code for the VM is in the form of vectors of words. Each word
+encodes a VM instruction. Words are wide enough that many simple
+operations are encded as immediate values within instruction
+words. For those operations whose arguments don't fit within an
+instruction words, the arguments follow the instruction inline.
+
+The VM maintains a reference to the current vode vector in a CODE
+register, and an index to the next instruction to execute in
+PC. Exectution decodes the next instruction, populates the VM
+registers, and performs the machine operation, leaving the machine
+registers populated with the resulting state.
+
+The Bard VM has a logically infinite number of registers. THese
+regisers consist of:
+
+CODE        - the object-code to execute
+PC          - the index of the next instruction to execute, in the code
+              vector
+ENV         - the lexical environment of the current function
+GLOB        - the table of global variables
+STACK       - a vector of saved register-vectors. each entry is
+              a copy of the VM registers.
+NVALS       - the count of val registers in use
+VAL0...VALn - values returned by the last-completed operation
+NARGS       - the count of argument registers in use
+ARG0...ARGn - arguments to the next-to-execute operation
+
+The number of VAL and ARG registers can fluctuate; the machine
+reserves as many as it needs in order to execute a given function.
+
+Register formats
+
+Machine vectors are represented as append-only expandable vectors. The
+VM resizes these as-needed.
+
+CODE refers to a vector of instructions.
+
+PC is an integer index into CODE.
+
+ENV is a stack represented as a vector of vectors. The top of the
+stack is the current lexical environment. Subsequent entries are
+enclosing environments. References to lexical variables are pairs of
+indexes, identifying the stack frame and the index of a variable value
+within the stack frame.
+
+GLOB is a vector of values. A global variable reference is an index
+into the global vector.
+
+STACK is a stack of saved register vectors, where each register vector
+is a vector copy of all the machine registers. The top of the stack is
+the most-recently-saved registers.
+
+NVALS is a count of return values returned by the
+most-recently-completed machine operation.
+
+VAL0...VALn are the values returned by the most-recently-completed
+machine operation.
+
+NARGS is a count of args prepared for the next-to-be-executed machine
+operation.
+
+ARG0...ARGn are the argumet values prepared for the next-to-be-executed machine
+operation.
+
+Execution
+
+The VM fetches and decodes the instruction at position PC in the CODE
+vector, populating the ARG registers and setting NARGS to the number
+of arguments in the input.
+
+It next retrieves the machine operation identified by the opcode part
+of the instruction, and then applies that operation to the register
+vector.
+
+The machine operation updates the values in the register vector to
+reflect its results. In general, this means overwriting the PC,
+updating ENV, populating VAL registers, and overwriting NVALS to
+reflect the number of values produced. For some instructions it may
+also involve saving registers (copying the pre-operation values of the
+registers to an entry in STACK), or restoring registers (copying an
+entry in STACK to the VM registers, overwriting the current register
+values).
+
+VM Instructions
+
+  The expression "VALn+" means the value registers
+  VALn and any after it that are used by code
+  returning values
+
+CONST  n c   - write value c to ARGn
+LVAR   n i j - copy the contents of lexical variable j in environment
+               frame i to ARGn
+GVAR   n i   - copy the contents of global variable i to ARGn
+SLOT   m n i - copy the contents of slot i of the record value in ARGn
+               to ARGm
+LSET   n i j - copy ARGn to the contents of lexical variable j in
+               environment frame i
+GSET   n i   - copy the ARGn to the contents of global variable i
+SSET   m n i - copy the contents of ARGm to slot i of the record value
+               in ARGn
+JUMP   p     - set PC to value p
+TJUMP  n p   - set PC to value p if ARGn is true
+FJUMP  n p   - set PC to value p if ARGn is false
+ARGS   n     - push a new environment frame containing copies of the
+               values in ARG0...ARGn
+FN     f n   - set ARGm to a function closure constructed from the
+               function in ARGf and the current ENV
+DISP   m f n - set ARGm to the method of the function in ARGf that
+               matches the parameters in ARG0...ARGn, or, if there is 
+               no such method, set m to $NOTHING 
+SAVE   n       copies the values of all registers to a new entry in
+               STACK; instead of saving PC, save n in its place
+APPLY  f n   - sets CODE to the code of the function in ARGf; sets ENV
+               to the environment of that same function; sets PC to 0;
+               sets NARGS to ARGn
+PRIM  m p n  - sets VAL+ to the result of applying primitive p to
+               ARG0...ARGn
+RETURN  n    - copies top-of-stack to the registers, then discards it
+               from STACK; copies (or preserves) VAL0...VALn to 
+               VAL0...VALn after saved registers are restored
+
+Register moves
+
+MOVEA  i j m - copies registers ARGi...ARGj to registers ARGm...ARG(m+(j-i)) 
+MOVEV  i j m - copies registers VALi...VALj to registers VALm...VAL(m+(j-i)) 
+MOVEAV i j m - copies registers ARGi...ARGj to registers VALm...VAL(m+(j-i))  
+MOVEVA i j m - copies registers VALi...VALj to registers ARGm...ARG(m+(j-i)) 
+
+Constant instructions
+
+NOTH   n     - write (the Bard value) nothing to ARGn
+TRUE   n     - write true to ARGn
+FALSE  n     - write false to ARGn
+ONE    n     - write 1 to ARGn
+TWO    n     - write 2 to ARGn
+NEG1   n     - write -1 to ARGn
+HALT         - stop execution
+
+I/O instructions
+
+Filesystem instructions
+
+Network instructions
+
+Window and event-system instructions
