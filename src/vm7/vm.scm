@@ -149,6 +149,10 @@
   instr
   stack)
 
+;;; ---------------------------------------------------------------------
+;;; aux machine functions
+;;; ---------------------------------------------------------------------
+
 (define (push-val! vm v)
   (vm-vals-set! vm (cons v (vm-vals vm))))
 
@@ -163,6 +167,23 @@
 (define (vm-require-argcount vm argcount)
   (or (= argcount (length (vm-vals vm)))
       (error "Wrong number of arguments")))
+
+;;; data type to add:
+;;; map
+;;; method
+;;; function
+
+(define (slot-ref obj sname) #f)
+(define (slot-set! obj sname val) #f)
+(define (make-method arglist mbody env) #f)
+(define (makefn) #f)
+(define (function-add-method! fn sig meth) #f)
+(define (best-applicable-method! fn sig) #f)
+(define (take-vals vm n) #f)
+(define (extend-env! vm vars vals) #f)
+(define (method-code method) #f)
+(define (push-state! vm) #f)
+(define (pop-state! vm) #f)
 
 ;;; ---------------------------------------------------------------------
 ;;; the instructions
@@ -194,15 +215,22 @@
 
 ;;; functions
 
-(defop 15 METH (lambda (vm arglist mbody) (push-val! vm (make-method arglist mbody (vm-env vm)))))
+(defop 15 METH (lambda (vm)
+                 (let ((mbody (pop-val! vm))
+                       (arglist (pop-val! vm)))
+                   (push-val! vm (make-method arglist mbody (vm-env vm))))))
+
 (defop 16 FN (lambda (vm) (push-val! vm (makefn))))
 
-(defop 17 DEFM (lambda (vm sig m)
-                 (let ((fn (pop-val! vm)))
-                   (function-add-method! fn sig m)
-                   (push-val! vm fn))))
+(defop 17 DEFM (lambda (vm)
+                 (let ((body (pop-val! vm))
+                       (sig (pop-val! vm)))
+                   (push-val! (make-method sig body (vm-env vm))))))
 
-(defop 18 DISP (lambda (vm fn sig) (push-val! vm (best-applicable-method fn sig))))
+(defop 18 DISP (lambda (vm)
+                 (let ((args (pop-val! vm))
+                       (f (pop-val! vm)))
+                   (push-val! (best-applicable-method f args)))))
 
 ;;; function-calling and control
 
