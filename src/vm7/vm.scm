@@ -23,13 +23,13 @@
 ;;; constants
 ;;; ---------------------------------------------------------------------
 
-(define $undefined #!unbound)
+(define $undefined '(absent))
 (define $nothing '())
 (define $true #t)
 (define $false #f)
 
 ;;; ---------------------------------------------------------------------
-;;; primitive predicates
+;;; utility predicates
 ;;; ---------------------------------------------------------------------
 
 (define nothing? null?)
@@ -105,6 +105,38 @@
         (vm-env-set! vm (add-binding env var val)))))
 
 ;;; ---------------------------------------------------------------------
+;;; prims
+;;; ---------------------------------------------------------------------
+
+(define-type vmprim
+  name
+  nargs
+  fn)
+
+(define $max-prim 24)
+
+(define $primtable (make-vector (+ $max-prim 1) #f))
+(define $prim-names-table (make-vector (+ $max-prim 1) #f))
+
+(define-macro (defprim pcode pname nargs pfn)
+  `(begin
+     (define ,pname ,pcode)
+     (vector-set! $primtable ,pcode (make-vmprim ',pname ,nargs ,pfn))
+     (vector-set! $prim-names-table ,pcode ',pname)))
+
+(define (pcode->prim pc)(vector-ref $primtable pc))
+
+(define (prim->primname p)
+  (vector-ref $prim-names-table p))
+
+(define (apply-prim vm p args)
+  (apply (vmprim-fn p) args))
+
+;;; the prims
+
+(defprim 1 PRIM+ 2 (lambda (x y)(+ x y)))
+
+;;; ---------------------------------------------------------------------
 ;;; the vm
 ;;; ---------------------------------------------------------------------
 
@@ -120,6 +152,18 @@
 (define (push-val! vm v)
   (vm-vals-set! vm (cons v (vm-vals vm))))
 
+(define (pop-val! vm)
+  (let ((val (car (vm-vals vm))))
+    (vm-vals-set! vm (cdr (vm-vals vm)))
+    val))
+
+(define (clear-vals! vm)
+  (vm-vals-set! vm '()))
+
+(define (vm-require-argcount vm argcount)
+  (or (= argcount (length (vm-vals vm)))
+      (error "Wrong number of arguments")))
+
 ;;; ---------------------------------------------------------------------
 ;;; the instructions
 ;;; ---------------------------------------------------------------------
@@ -131,11 +175,11 @@
 ;;; variables
 
 (defop 1 LVAR (lambda (vm var) (push-val! vm (lref (vm-env vm) var))))
-(defop 2 LSET (lambda (vm var val) (lset! vm (vm-env vm) var val)))
-(defop 3 MVAR (lambda (vm var) (mref (vm-globals vm) var)))
-(defop 4 MSET (lambda (vm var val) (lset! (vm-globals vm) var val)))
-(defop 5 SLOT (lambda (vm obj sname) (slot-ref obj sname)))
-(defop 6 SSET (lambda (vm obj sname val) (slot-set! obj sname val)))
+(defop 2 LSET (lambda (vm var) (lset! vm (vm-env vm) var (pop-val! vm))))
+(defop 3 MVAR (lambda (vm var) (push-val! vm(mref (vm-globals vm) var))))
+(defop 4 MSET (lambda (vm var) (mset! (vm-globals vm) var (pop-val! vm))))
+(defop 5 SLOT (lambda (vm obj sname) (push-val! vm (slot-ref obj sname))))
+(defop 6 SSET (lambda (vm obj sname) (slot-set! obj sname (pop-val! vm))))
 
 ;;; constants
 
@@ -162,10 +206,10 @@
 
 ;;; function-calling and control
 
-(defop 19 IF (lambda (vm test thenc elsec) 
-               (if test
-                   (vm-code-set! thenc)
-                   (vm-code-set! elsec))))
+(defop 19 IF (lambda (vm thend elsed) 
+               (if (pop-val! vm)
+                   (vm-pc-set! vm thend)
+                   (vm-pc-set! vm elsed))))
 
 (defop 20 ARGS (lambda (vm) 
                  (let* ((method (top-val vm))
@@ -181,10 +225,13 @@
 
 (defop 23 RESTORE (lambda (vm) (pop-state! vm)))
 
-(defop 24 PRIM (lambda (vm p) 
-                 (let* ((argcount (prim-nargs p)))
+(defop 24 PRIM (lambda (vm pcode) 
+                 (let* ((p (pcode->prim pcode))
+                        (argcount (vmprim-nargs p))
+                        (args (vm-vals vm)))
                    (vm-require-argcount vm argcount)
-                   (vm-vals-set! vm (apply-prim vm p (vm-vals vm))))))
+                   (clear-vals! vm)
+                   (push-val! vm (apply-prim vm p args)))))
 
 ;;; ---------------------------------------------------------------------
 ;;;  saving and loading compiled code
@@ -269,22 +316,38 @@
 ;;; ---------------------------------------------------------------------
 
 (define (print-instruction instr)
-  (let ((nm (op->opname (car instr)))
-        (args (cddr instr)))
+  (let* ((op (car instr))
+         (nm (op->opname op))
+         (args (cddr instr)))
     (display nm)
-    (for-each (lambda (arg)(display " ")(display arg))
-              args)))
+    (if (eq? nm 'PRIM)
+        (let ((pname (prim->primname (car args))))
+          (display " ")(display pname))
+        (for-each (lambda (arg)(display " ")(display arg))
+                  args))))
 
-(define (print-code code)
-  (let ((len (vector-length code)))
+(define (print-code vm code)
+  (let ((len (vector-length code))
+        (pc (vm-pc vm)))
     (let loop ((i 0))
       (if (< i len)
           (begin
             (newline)
-            (display " ")(display (object->string i))(display ". ")
+            (if (= i pc)
+                (display ">")
+                (display " "))
+            (display (object->string i))(display ". ")
             (print-instruction (vector-ref code i))
             (loop (+ i 1)))
           (newline)))))
+
+(define (print-globals vm)
+  (table-for-each (lambda (k v)
+                    (begin
+                      (newline)(display "  ")
+                      (display (object->string k))(display ": ")
+                      (display (object->string v))))
+                  (vm-globals vm)))
 
 (define (vmprint vm)
   (newline)
@@ -293,7 +356,8 @@
   (display "vals: ")(display (vm-vals vm))(newline)
   (display "stack: ")(display (vm-stack vm))(newline)
   (display "env: ")(display (vm-env vm))(newline)
-  (display "code: ")(print-code (vm-code vm))(newline)
+  (display "globals: ")(print-globals vm)(newline)
+  (display "code: ")(print-code vm (vm-code vm))(newline)
   (newline))
 
 (define (testvm code)
@@ -311,11 +375,29 @@
   (step vm)
   (vmprint vm))
 
-;;; (define $vm (testvm (vector (list HALT))))
+(define (@ . args)(apply vector args))
+(define ($ . args)(apply list args))
+
+;;; (define $vm (testvm (@ ($ HALT))))
 ;;; (teststep $vm)
 ;;;
-;;; (define $vm (testvm (vector (list LSET 'x 5)(list HALT))))
+;;; (define $vm (testvm (@ ($ CONST 5)($ LSET 'x)($ HALT))))
 ;;; (teststep $vm)
 ;;;
-;;; (define $vm (testvm (vector (list LSET 'x 5)(list LVAR 'x)(list HALT))))
+;;; (define $vm (testvm (@ ($ CONST 5)($ LSET 'x)($ LVAR 'x)($ HALT))))
+;;; (teststep $vm)
+;;;
+;;; (define $vm (testvm (@ ($ CONST 2)($ CONST 3)($ PRIM PRIM+)($ HALT))))
+;;; (teststep $vm)
+;;;
+;;; (define $vm (testvm (@ ($ CONST 2)($ CONST 3)($ PRIM PRIM+)($ HALT))))
+;;; (teststep $vm)
+;;;
+;;; (define $vm (testvm (@ ($ CONST $false)($ IF 2 3)($ CONST 'yes)($ CONST 'no)($ HALT))))
+;;; (teststep $vm)
+;;;
+;;; (define $vm (testvm (@ ($ CONST $true)($ IF 2 3)($ CONST 'yes)($ CONST 'no)($ HALT))))
+;;; (teststep $vm)
+;;;
+;;; (define $vm (testvm (@ ($ CONST $true)($ MSET 'x)($ CONST 0)($ MVAR 'x)($ HALT))))
 ;;; (teststep $vm)
