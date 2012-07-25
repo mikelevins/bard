@@ -23,10 +23,6 @@
 ;;; constants
 ;;; ---------------------------------------------------------------------
 
-(define $undefined '(absent))
-(define $nothing '())
-(define $true #t)
-(define $false #f)
 
 ;;; ---------------------------------------------------------------------
 ;;; utility predicates
@@ -54,7 +50,7 @@
 ;;; vm ops
 ;;; ---------------------------------------------------------------------
 
-(define $max-opcode 24)
+(define $max-opcode 25)
 
 (define $optable (make-vector (+ $max-opcode 1) #f))
 (define $opnames-table (make-vector (+ $max-opcode 1) #f))
@@ -67,11 +63,27 @@
 
 (define (opcode->op opc)(vector-ref $optable opc))
 
+(define (op->opcode op)
+  (let loop ((i 0))
+    (if (<= i $max-opcode)
+        (if (eq? op (vector-ref $optable i))
+            i
+            (loop (+ 1 i)))
+        #f)))
+
 (define (op->opname op)
   (let loop ((i 0))
     (if (<= i $max-opcode)
         (if (eq? op (vector-ref $optable i))
             (vector-ref $opnames-table i)
+            (loop (+ 1 i)))
+        #f)))
+
+(define (opname->opcode opnm)
+  (let loop ((i 0))
+    (if (<= i $max-opcode)
+        (if (eq? opnm (vector-ref $opnames-table i))
+            i
             (loop (+ 1 i)))
         #f)))
 
@@ -150,6 +162,15 @@
   stack)
 
 ;;; ---------------------------------------------------------------------
+;;; base data types
+;;; ---------------------------------------------------------------------
+
+;;; data types to add:
+;;; map
+;;; method
+;;; function
+
+;;; ---------------------------------------------------------------------
 ;;; aux machine functions
 ;;; ---------------------------------------------------------------------
 
@@ -167,11 +188,6 @@
 (define (vm-require-argcount vm argcount)
   (or (= argcount (length (vm-vals vm)))
       (error "Wrong number of arguments")))
-
-;;; data type to add:
-;;; map
-;;; method
-;;; function
 
 (define (slot-ref obj sname) #f)
 (define (slot-set! obj sname val) #f)
@@ -193,67 +209,69 @@
 
 (defop 0 HALT (lambda (vm) #f)) ; dummy op; gets replaced at vm init time
 
-;;; variables
+;;; variables and values
 
-(defop 1 LVAR (lambda (vm var) (push-val! vm (lref (vm-env vm) var))))
-(defop 2 LSET (lambda (vm var) (lset! vm (vm-env vm) var (pop-val! vm))))
-(defop 3 MVAR (lambda (vm var) (push-val! vm(mref (vm-globals vm) var))))
-(defop 4 MSET (lambda (vm var) (mset! (vm-globals vm) var (pop-val! vm))))
-(defop 5 SLOT (lambda (vm obj sname) (push-val! vm (slot-ref obj sname))))
-(defop 6 SSET (lambda (vm obj sname) (slot-set! obj sname (pop-val! vm))))
+(defop  1 LVAR (lambda (vm var) (push-val! vm (lref (vm-env vm) var))))
+(defop  2 LSET (lambda (vm var) (lset! vm (vm-env vm) var (pop-val! vm))))
+(defop  3 MVAR (lambda (vm var) (push-val! vm(mref (vm-globals vm) var))))
+(defop  4 MSET (lambda (vm var) (mset! (vm-globals vm) var (pop-val! vm))))
+(defop  5 SLOT (lambda (vm obj sname) (push-val! vm (slot-ref obj sname))))
+(defop  6 SSET (lambda (vm obj sname) (slot-set! obj sname (pop-val! vm))))
+(defop  7 POP  (lambda (vm) (pop-val! vm)))
 
 ;;; constants
 
-(defop  7 CONST   (lambda (vm k) (push-val! vm k)))
-(defop  8 NOTHING (lambda (vm) (push-val! vm $nothing)))
-(defop  9 TRUE    (lambda (vm) (push-val! vm $true)))
-(defop 10 FALSE   (lambda (vm) (push-val! vm $false)))
-(defop 11 ZERO    (lambda (vm) (push-val! vm 0)))
-(defop 12 ONE     (lambda (vm) (push-val! vm 1)))
-(defop 13 TWO     (lambda (vm) (push-val! vm 2)))
-(defop 14 NEG1    (lambda (vm) (push-val! vm -1)))
+(defop  8 CONST   (lambda (vm k) (push-val! vm k)))
+(defop  9 NOTHING (lambda (vm) (push-val! vm $nothing)))
+(defop 10 TRUE    (lambda (vm) (push-val! vm $true)))
+(defop 11 FALSE   (lambda (vm) (push-val! vm $false)))
+(defop 12 ZERO    (lambda (vm) (push-val! vm 0)))
+(defop 13 ONE     (lambda (vm) (push-val! vm 1)))
+(defop 14 TWO     (lambda (vm) (push-val! vm 2)))
+(defop 15 NEG1    (lambda (vm) (push-val! vm -1)))
 
 ;;; functions
 
-(defop 15 METH (lambda (vm)
+(defop 16 METH (lambda (vm)
                  (let ((mbody (pop-val! vm))
                        (arglist (pop-val! vm)))
                    (push-val! vm (make-method arglist mbody (vm-env vm))))))
 
-(defop 16 FN (lambda (vm) (push-val! vm (makefn))))
+(defop 17 FN (lambda (vm) (push-val! vm (makefn))))
 
-(defop 17 DEFM (lambda (vm)
+(defop 18 DEFM (lambda (vm)
                  (let ((body (pop-val! vm))
                        (sig (pop-val! vm)))
                    (push-val! (make-method sig body (vm-env vm))))))
 
-(defop 18 DISP (lambda (vm)
+(defop 19 DISP (lambda (vm)
                  (let ((args (pop-val! vm))
                        (f (pop-val! vm)))
+                   (push-val! vm args)
                    (push-val! (best-applicable-method f args)))))
 
 ;;; function-calling and control
 
-(defop 19 IF (lambda (vm thend elsed) 
+(defop 20 IF (lambda (vm thend elsed) 
                (if (pop-val! vm)
                    (vm-pc-set! vm thend)
                    (vm-pc-set! vm elsed))))
 
-(defop 20 ARGS (lambda (vm) 
+(defop 21 ARGS (lambda (vm) 
                  (let* ((method (top-val vm))
                         (params (msig method))
                         (vals (take-vals vm (length params))))
                    (extend-env! vm params vals))))
 
-(defop 21 APPLY (lambda (vm) 
+(defop 22 APPLY (lambda (vm) 
                   (vm-code-set! vm (method-code (pop-val! vm)))
                   (vm-pc-set! vm 0)))
 
-(defop 22 SAVE (lambda (vm) (push-state! vm)))
+(defop 23 SAVE (lambda (vm) (push-state! vm)))
 
-(defop 23 RESTORE (lambda (vm) (pop-state! vm)))
+(defop 24 RESTORE (lambda (vm) (pop-state! vm)))
 
-(defop 24 PRIM (lambda (vm pcode) 
+(defop 25 PRIM (lambda (vm pcode) 
                  (let* ((p (pcode->prim pcode))
                         (argcount (vmprim-nargs p))
                         (args (vm-vals vm)))
@@ -413,9 +431,6 @@
 ;;; (teststep $vm)
 ;;;
 ;;; (define $vm (testvm (@ ($ CONST 5)($ LSET 'x)($ LVAR 'x)($ HALT))))
-;;; (teststep $vm)
-;;;
-;;; (define $vm (testvm (@ ($ CONST 2)($ CONST 3)($ PRIM PRIM+)($ HALT))))
 ;;; (teststep $vm)
 ;;;
 ;;; (define $vm (testvm (@ ($ CONST 2)($ CONST 3)($ PRIM PRIM+)($ HALT))))
