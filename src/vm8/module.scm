@@ -158,8 +158,8 @@
                     *the-module-registry*)
     (sort results (lambda (x y)(string<? (symbol->string x)(symbol->string y))))))
 
-(define (find-module registry mname)
-  (table-ref registry mname #f))
+(define (find-module mname)
+  (table-ref *the-module-registry* mname #f))
 
 (define (mref mname varname)
   (let ((mdl (find-module mname)))
@@ -172,15 +172,6 @@
     (if mdl
         (set-variable! module varname val)
         (error (string-append "No such module: " (object->string mname))))))
-
-(define-module 'bard.lang)
-(define-module 'bard.user)
-
-(define (%default-initial-module)
-  (find-module 'bard.user))
-
-(define (%bard-modules)
-  *the-module-registry*)
 
 ;;; ----------------------------------------------------------------------
 ;;; module names
@@ -235,6 +226,13 @@
 ;;;
 ;;; it is an error for more than one colon to appear in a name.
 
+(define (symbol-name s)
+  (if (symbol? s)
+      (symbol->string s)
+      (if (keyword? s)
+          (keyword->string s)
+          (error "not a symbol" s))))
+
 (define (colon-position s)
   (let ((len (string-length s)))
     (let loop ((i 0))
@@ -245,12 +243,10 @@
           #f))))
 
 (define (parse-symbol-name s)
-  (if (keyword? s)
-      (values (keyword->string s) #f)
-      (let* ((str (symbol->string s))
-             (colon-pos (colon-position str)))
-        (if colon-pos
-            (values (substring str (+ 1 colon-pos)(string-length str))
-                    (substring str 0 colon-pos))
-            (values str #f)))))
+  (let* ((str (symbol-name s))
+         (colon-pos (colon-position str)))
+    (if colon-pos
+        (values (substring str (+ 1 colon-pos)(string-length str))
+                (substring str 0 colon-pos))
+        (values str #f))))
 

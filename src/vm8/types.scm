@@ -134,6 +134,7 @@
 (define <iostream> (%define-standard-type '<iostream> (##structure-type (current-input-port))))
 (define Anything (%define-protocol 'Anything))
 (define Type (%define-protocol 'Type))
+(define & (%define-protocol '&)) ; type of optional args in method signatures
 
 ;;; ---------------------------------------------------------------------
 ;;; type operations

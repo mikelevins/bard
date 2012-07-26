@@ -13,9 +13,8 @@
 ;;; undefined
 ;;; ----------------------------------------------------------------------
 
-(define $undefined #!unbound)
-(define (%undefined) #!unbound)
-(define (%undefined? x) (or (eqv? x #!unbound)(eqv? x #!void)))
+(define (%undefined) $undefined)
+(define (%undefined? x) (or (eqv? x $undefined)(eqv? x #!void)))
 (define (%defined? x)(not (%undefined? x)))
 
 ;;; ---------------------------------------------------------------------
@@ -28,7 +27,6 @@
 ;;; nothing
 ;;; ----------------------------------------------------------------------
 
-(define $nothing '())
 (define (%nothing) $nothing)
 (define %nothing? null?)
 (define (%something? x)(not (%nothing? x)))
@@ -43,14 +41,12 @@
 ;;; boolean
 ;;; ----------------------------------------------------------------------
 
-(define $false #f)
 (define (%false) $false)
 
 (define (%false? x) 
   (or (eqv? x (%false))
       (%nothing? x)))
 
-(define $true #t)
 (define (%true) $true)
 (define (%true? x) 
   (and (not (%false? x))
@@ -103,7 +99,6 @@
 ;;; list
 ;;; ---------------------------------------------------------------------
 
-(define %nil $nothing)
 (define %null? null?)
 (define %list? list?)
 (define %list list)
@@ -113,15 +108,7 @@
 (define %cadr cadr)
 (define %cddr cddr)
 (define %first car)
-
-(define (%last ls)
-  (if (null? ls)
-      $nothing
-      (let loop ((ls ls))
-        (if (null? (cdr ls))
-            (car ls)
-            (loop (cdr ls))))))
-
+(define (%last ls) (%list-ref ls (- (%length ls) 1)))
 (define %length length)
 (define %append append)
 (define %reverse reverse)
@@ -175,24 +162,29 @@
               (loop (%cdr items)(+ i 1)(%append result (%list (%car items)))))))))
 
 
-(define (%remove-if pred ls)
-  (let loop ((ls ls)
-             (result '()))
-    (if (%null? ls)
-        (reverse result)
-        (if (pred (car ls))
-            (loop (cdr ls)(cons (car ls) result))
-            (loop (cdr ls) result)))))
+(define (%remove x ls #!optional (test equal?))
+  (let loop ((items ls)
+             (result %nil))
+    (if (%null? items)
+        result
+        (let ((item (%car items)))
+          (if (test x item)
+              (loop (%cdr items) result)
+              (loop (%cdr items)(%append result (%list item))))))))
 
 (define %list-ref list-ref)
 (define (%list-put ls n val)(%append (%take n ls) (%cons val (%drop (+ 1 n) ls))))
 (define %map map)
+(define %for-each for-each)
+
+(define (%bard-list->cons x) x)
+(define (%cons->bard-list x) x)
 
 ;;; ---------------------------------------------------------------------
 ;;; frame
 ;;; ---------------------------------------------------------------------
 
-(define $empty-slots $nothing)
+(define $empty-slots '())
 
 (define-type %frame
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
@@ -203,32 +195,47 @@
 
 (define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots))))
 
-(define (%make-frame plist)
-  (let loop ((kvs plist)
-             (slots '()))
+(define (%frame-slot? x)
+  (and (%list? x)
+       (not (%null? x))
+       (not (%null? (%cdr x)))))
+
+(define (%plist->slots plist)
+  (let loop ((kvs plist))
     (if (null? kvs)
-        (%private-make-frame (reverse slots))
+        '()
         (if (null? (cdr kvs))
-            (error (string-append "malformed slot list: "
-                                  (object->string plist)))
-            (loop (cddr kvs)
-                  (cons (cons (car kvs)
-                              (cadr kvs))
-                        slots))))))
+            (error (string-append "Malformed plist: " (object->string plist)))
+            (cons (cons (car kvs)
+                        (cadr kvs))
+                  (loop (cddr kvs)))))))
+
+(define (%make-frame kv-plist)
+  (let* ((slots (%plist->slots kv-plist)))
+    (%private-make-frame slots)))
 
 (define (%frame . kv-plist)(%make-frame kv-plist))
 
-(define (%frame-get fr key)
+(define (%frame-get fr key #!optional (default (%nothing)))
   (let ((slot (assoc key (%frame-slots fr))))
-    (if slot (cdr slot) $nothing)))
+    (if slot (cdr slot) default)))
 
 (define (%frame-put fr key value)
   (let* ((new-slots (append
-                     (%remove-if (lambda (slot)(equal? key (car slot)))
-                                 (%frame-slots fr))
-                     (list (cons key value)))))
+                     (remove-if (lambda (slot)(equal? key (car slot)))
+                                (%frame-slots fr))
+                     (list (list key value)))))
     (%private-make-frame new-slots)))
 
 (define (%frame-keys fr)(map car (%frame-slots fr)))
 (define (%frame-vals fr)(map cdr (%frame-slots fr)))
+
+(define (slot-ref fr k)
+  (%frame-get fr k))
+
+(define (slot-set! fr k v)
+  (let ((slot (assoc key (%frame-slots fr))))
+    (if slot
+        (set-cdr! slot v)
+        (error (string-append "No such slot: " (object->string k))))))
 
