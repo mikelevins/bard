@@ -75,7 +75,9 @@
 (defop  10 ADDMODULE (%makeop (vm nm)(vm-add-module vm nm)))
 (defop  11 MVAR (%makeop (vm s)(vm-push-val! vm (mref (vm-modules vm)(vm-pop-val! vm) s))))
 (defop  12 MSETTER (%makeop (vm s)(vm-push-val! vm (msetter vm (vm-pop-val! vm) s))))
-(defop  13 POP (%makeop (vm)(vm-pop-val! vm)))
+(defop  13 SLOT (%makeop (vm s)(vm-push-val! vm (slot-ref vm (vm-pop-val! vm) s))))
+(defop  14 SSETTER (%makeop (vm s)(vm-push-val! vm (slot-setter vm (vm-pop-val! vm) s))))
+(defop  15 POP (%makeop (vm)(vm-pop-val! vm)))
 
 
 

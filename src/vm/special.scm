@@ -20,21 +20,16 @@
 (define (%special-compiler nm)
   (table-ref $special-forms-table nm #f))
 
-(define (%setter-form? expr)
-  (and (list? (car expr))
-       (eq? 'setter (car (car expr)))))
-
 (define (%special-form? expr)
-  (or (setter-form? expr)
-      (and (table-ref $special-forms-table (%car expr) #f)
-           #t)))
+  (and (table-ref $special-forms-table (%car expr) #f)
+           #t))
 
 (define (%compile-special-form expr env)
   (let* ((op (%car expr))
          (compiler (table-ref $special-forms-table op #f)))
     (if compiler
         (compiler (cdr expr) env)
-        (error (string-append "unrecognized special form" (%as-string (%car expr)))))))
+        (error (string-append "unrecognized special form" (object->string (%car expr)))))))
 
 ;;; ----------------------------------------------------------------------
 ;;; special forms defined
@@ -158,11 +153,17 @@
 
 (%defspecial 'setter 
              (lambda (expr env)
-               (let* ((var (cadr expr))
-                      (ref (in-env? var)))
-                 (if ref
-                     (%gen LSETTER (car ref)(cdr ref))
-                     (%gen MSETTER var)))))
+               (let ((var (car expr)))
+                 (if (symbol? var)
+                     (let ((ref (in-env? var env)))
+                       (if ref
+                           (%gen LSETTER (car ref)(cdr ref))
+                           (%gen MSETTER var)))
+                     (let ((varname (car var))
+                           (obj-expr (cadr var)))
+                       (%seq 
+                        (%compile obj-expr env)
+                        (%gen SSETTER varname)))))))
 
 ;;; time
 ;;; ----------------------------------------------------------------------

@@ -85,7 +85,9 @@
                        (%gen MVAR var))))))
 
 (define (%compile-apply expr env)
-  (%gen APPLY))
+  (let ((op (%compile (car expr) env))
+        (args (map (lambda (e)(%compile e env)) (cdr expr))))
+    (apply %seq (append args (list op)(list (%gen APPLY))))))
 
 (define (%compile-application expr env)
   (cond
@@ -103,15 +105,16 @@
 
 
 ;;; constants
-;;; (%disassemble (%assemble (%compile (%read-from-string "nothing") '())))
-;;; (%disassemble (%assemble (%compile (%read-from-string "-1") '())))
-;;; (%disassemble (%assemble (%compile (%read-from-string "0") '())))
-;;; (%disassemble (%assemble (%compile (%read-from-string "1") '())))
-;;; (%disassemble (%assemble (%compile (%read-from-string "2") '())))
-;;; (%disassemble (%assemble (%compile (%read-from-string "12") '())))
+;;; (%compile (%read-from-string "nothing") '())
+;;; (%compile (%read-from-string "-1") '())
+;;; (%compile (%read-from-string "0") '())
+;;; (%compile (%read-from-string "1") '())
+;;; (%compile (%read-from-string "2") '())
+;;; (%compile (%read-from-string "12") '())
 
 ;;; variables
-;;; (%disassemble (%assemble (%compile (%read-from-string "y") '(((x . 0))))))
-;;; (%disassemble (%assemble (%compile (%read-from-string "y") '(((x . 0)(y . 1))))))
+;;; (%compile (%read-from-string "y") '(((x . 0))))
+;;; (%compile (%read-from-string "y") '(((x . 0)(y . 1))))
+;;; (%compile (%read-from-string "(set! y 2)") '(((x . 0)(y . 1))))
 
 
