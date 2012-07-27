@@ -29,27 +29,12 @@
       (and (table-ref $special-forms-table (%car expr) #f)
            #t)))
 
-(define (%compile-setter-form expr env)
-  (let* ((setter-expr (car expr))
-         (var (cadr setter-expr))
-         (val-expr (cadr expr))
-         (ref (in-env? var env)))
-    (if ref
-        (%gen LSET (car ref)(cdr ref))
-        (receive (varname mname)(parse-symbol-name var)
-                 (%seq (%compile val-expr env)
-                       (%gen MODULE mname)
-                       (%gen MSET var))))))
-
 (define (%compile-special-form expr env)
-  (if (%setter-form? expr)
-      (%compile-setter-form expr env)
-      (let* ((op (%car expr))
-             (compiler (table-ref $special-forms-table op #f)))
-        (if compiler
-            (compiler (cdr expr) env)
-            (error (string-append "unrecognized special form" (%as-string (%car expr))))))))
-
+  (let* ((op (%car expr))
+         (compiler (table-ref $special-forms-table op #f)))
+    (if compiler
+        (compiler (cdr expr) env)
+        (error (string-append "unrecognized special form" (%as-string (%car expr)))))))
 
 ;;; ----------------------------------------------------------------------
 ;;; special forms defined
@@ -167,6 +152,17 @@
 ;;; ----------------------------------------------------------------------
 
 (%defspecial 'quote %special-not-yet-implemented)
+
+;;; setter
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'setter 
+             (lambda (expr env)
+               (let* ((var (cadr expr))
+                      (ref (in-env? var)))
+                 (if ref
+                     (%gen LSETTER (car ref)(cdr ref))
+                     (%gen MSETTER var)))))
 
 ;;; time
 ;;; ----------------------------------------------------------------------

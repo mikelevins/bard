@@ -56,6 +56,11 @@
   (cons (make-binding var val setter)
         frame))
 
+(define (get-binding env i j)
+  (with-exception-catcher
+   (lambda (err)(error "Invalid lexical variable reference"))
+   (lambda ()(list-ref (list-ref env i) j))))
+
 (define (binding-var binding)
   (car binding))
 
@@ -95,19 +100,11 @@
                  (+ 1 i)))))))
 
 (define (lref env i j)
-  (with-exception-catcher
-   (lambda (err)(error "Invalid lexical variable reference"))
-   (lambda ()(binding-val (list-ref (list-ref env i) j)))))
+  (binding-val (get-binding env i j)))
 
-(define (lset! env i j v)
-  (with-exception-catcher
-   (lambda (err)(error "Invalid lexical variable reference"))
-   (lambda ()
-     (let* ((binding (list-ref (list-ref env i) j))
-            (setter (binding-setter binding)))
-       (if binding-setter
-           (binding-setter v)
-           (error "Can't set an immutable variable"))))))
+(define (lsetter env i j)
+  (binding-setter (get-binding env i j)))
+
 
 
 

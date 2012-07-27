@@ -35,10 +35,15 @@
   id: 546917D2-A97E-4859-84E3-A9536883F7BC
   constructor: %private-make-var
   (val %private-val %private-set-val!)
-  (mutable? %private-mutable?))
+  (setter %private-setter %private-set-setter!))
 
-(define (make-var #!key (value $undefined)(mutable #f))
-  (%private-make-var value mutable))
+(define (make-var #!key (value #!unbound)(mutable #f))
+  (let* ((var (%private-make-var value #f))
+         (setter (if mutable
+                     (lambda (x)(%private-set-val! var x))
+                     #f)))
+    (%private-set-setter! var setter)
+    var))
 
 ;;; ----------------------------------------------------------------------
 ;;; modules
@@ -73,7 +78,7 @@
 (define (import-local-name import-record)
   (list-ref import-record 2))
 
-(define (define-variable module name #!key (value $undefined)(mutable #f))
+(define (define-variable module name #!key (value #!unbound)(mutable #f))
   (if (table-ref (module-entries module) name #f)
       (error (string-append "Variable exists: " (object->string name)))
       (let ((var (make-var value: value mutable: mutable)))
@@ -86,12 +91,18 @@
         (%private-val var)
         $undefined)))
 
+(define (lookup-variable-setter module varname)
+  (let ((var (table-ref (module-entries module) varname #f)))
+    (if var
+        (%private-setter var)
+        $undefined)))
+
 (define (set-variable! module varname val)
   (let ((var (table-ref (module-entries module) varname #f)))
     (if var
-        (if (%private-mutable? var)
+        (if (%private-setter var)
             (begin
-              (%private-set-val! var val)
+              ((%private-setter var) val)
               val)
             (error (string-append "Can't set read-only variable: " (object->string varname))))
         (error (string-append "Undefined variable: " (object->string varname))))))
@@ -119,8 +130,8 @@
 
 (define *the-module-registry* (make-table test: eq?))
 
-(define (define-module mname)
-  (if (table-ref *the-module-registry* mname #f)
+(define (define-module registry mname)
+  (if (table-ref registry mname #f)
       (error (string-append "Module exists: " (object->string mname)))
       (let ((module (make-module mname)))
         (table-set! *the-module-registry* mname module)
@@ -167,18 +178,17 @@
         (lookup-variable mdl varname)
         #!unbound)))
 
-(define (mset! registry mname varname val)
+(define (msetter registry mname varname)
   (let ((mdl (find-module registry mname)))
     (if mdl
-        (set-variable! mdl varname val)
-        (error (string-append "No such module: " (object->string mname))))
-    val))
-
-(define-module 'bard.lang)
-(define-module 'bard.user)
+        (lookup-variable mdl varname)
+        #!unbound)))
 
 (define (%bard-modules)
   *the-module-registry*)
+
+(define-module (%bard-modules) 'bard.lang)
+(define-module (%bard-modules) 'bard.user)
 
 (define (%default-initial-module)
   (find-module (%bard-modules) 'bard.user))

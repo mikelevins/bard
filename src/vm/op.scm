@@ -70,11 +70,11 @@
 ;;; variables
 
 (defop   7 LVAR (%makeop (vm i j)(vm-push-val! vm (lref (vm-env vm) i j))))
-(defop   8 LSET (%makeop (vm i j v)(lset! (vm-env vm) i j v)))
+(defop   8 LSETTER (%makeop (vm i j)(vm-push-val! vm (lsetter (vm-env vm) i j))))
 (defop   9 MODULE (%makeop (vm nm)(vm-push-val! vm (vm-get-module-name vm nm))))
 (defop  10 ADDMODULE (%makeop (vm nm)(vm-add-module vm nm)))
 (defop  11 MVAR (%makeop (vm s)(vm-push-val! vm (mref (vm-modules vm)(vm-pop-val! vm) s))))
-(defop  12 MSET (%makeop (vm s)(vm-push-val! vm (mset! (vm-modules vm) (vm-pop-val! vm) s (vm-pop-val! vm)))))
+(defop  12 MSETTER (%makeop (vm s)(vm-push-val! vm (msetter vm (vm-pop-val! vm) s))))
 (defop  13 POP (%makeop (vm)(vm-pop-val! vm)))
 
 
