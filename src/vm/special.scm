@@ -9,6 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(include "compiler-macros.scm")
+
+
 (define $special-forms-table (make-table test: eq?))
 
 (define (%defspecial nm eval-fn)
@@ -17,7 +20,7 @@
 (define (%special-compiler nm)
   (table-ref $special-forms-table nm #f))
 
-(define (setter-form? expr)
+(define (%setter-form? expr)
   (and (list? (car expr))
        (eq? 'setter (car (car expr)))))
 
@@ -26,14 +29,25 @@
       (and (table-ref $special-forms-table (%car expr) #f)
            #t)))
 
+(define (%compile-setter-form expr env)
+  (let* ((setter-expr (car expr))
+         (var (cadr setter-expr))
+         (val-expr (cadr expr))
+         (ref (in-env? var env)))
+    (if ref
+        (%gen LSET (car ref)(cdr ref))
+        (receive (varname mname)(parse-symbol-name var)
+                 (%seq (%compile val-expr env)
+                       (%gen MODULE mname)
+                       (%gen MSET var))))))
 
 (define (%compile-special-form expr env)
-  (if (setter-form? expr)
+  (if (%setter-form? expr)
       (%compile-setter-form expr env)
       (let* ((op (%car expr))
              (compiler (table-ref $special-forms-table op #f)))
         (if compiler
-            (compiler expr env)
+            (compiler (cdr expr) env)
             (error (string-append "unrecognized special form" (%as-string (%car expr))))))))
 
 
@@ -47,14 +61,16 @@
 ;;; begin
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'begin
-             (lambda (expr env) 
-               (cond
-                ((null? expr)(%gen NOTHING))
-                ((= 1 (length expr))(%compile (car expr) env))
-                (else (%seq (%compile (car expr) env)
-                            (%gen POP)
-                            (%compile-begin (cdr expr) env))))))
+(define %compile-begin
+  (lambda (expr env) 
+    (cond
+     ((null? expr)(%gen NOTHING))
+     ((= 1 (length expr))(%compile (car expr) env))
+     (else (%seq (%compile (car expr) env)
+                 (%gen POP)
+                 (%compile-begin (cdr expr) env))))))
+
+(%defspecial 'begin %compile-begin)
 
 ;;; cond
 ;;; ----------------------------------------------------------------------

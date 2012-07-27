@@ -135,10 +135,14 @@
 ;;; testing
 ;;; ---------------------------------------------------------------------
 
+(define (compile-test-function expr env)
+  (let ((code (%link! (%assemble (%compile expr env)))))
+    (make-function code)))
+
 (define (testvm expr #!key
                 (env (null-env))
                 (module 'bard.user))
-  (let* ((fn (%compile-function expr env))
+  (let* ((fn (compile-test-function expr env))
          (code (function-code fn))
          (module (find-module *the-module-registry* module))
      (vm (make-vm fn: fn env: env module: module)))
@@ -164,8 +168,9 @@
 ;;;   module
 ;;; (delete-module! *the-module-registry* 'user.test)
 ;;; (define-module 'user.test)
-;;; (define-variable (find-module *the-module-registry* 'user.test) 'x value: 8)
-;;; (define $vm (testvm 'x module: 'user.test))
+;;; (define-variable (find-module *the-module-registry* 'user.test) 'x value: 8 mutable: #t)
+;;; (define $vm (testvm '(begin x ((setter x) 3) x) module: 'user.test))
+;;; (define $vm (testvm '((setter x) 3) module: 'user.test))
 ;;;
 ;;;
 ;;; (vmprint $vm)

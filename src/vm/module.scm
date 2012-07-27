@@ -170,8 +170,9 @@
 (define (mset! registry mname varname val)
   (let ((mdl (find-module registry mname)))
     (if mdl
-        (set-variable! module varname val)
-        (error (string-append "No such module: " (object->string mname))))))
+        (set-variable! mdl varname val)
+        (error (string-append "No such module: " (object->string mname))))
+    val))
 
 (define-module 'bard.lang)
 (define-module 'bard.user)

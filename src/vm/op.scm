@@ -74,7 +74,8 @@
 (defop   9 MODULE (%makeop (vm nm)(vm-push-val! vm (vm-get-module-name vm nm))))
 (defop  10 ADDMODULE (%makeop (vm nm)(vm-add-module vm nm)))
 (defop  11 MVAR (%makeop (vm s)(vm-push-val! vm (mref (vm-modules vm)(vm-pop-val! vm) s))))
-(defop  12 MSET (%makeop (vm s v)(mset! (vm-modules vm) (vm-pop-val! vm) s v)))
+(defop  12 MSET (%makeop (vm s)(vm-push-val! vm (mset! (vm-modules vm) (vm-pop-val! vm) s (vm-pop-val! vm)))))
+(defop  13 POP (%makeop (vm)(vm-pop-val! vm)))
 
 
 

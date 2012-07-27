@@ -10,12 +10,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(include "compiler-macros.scm")
+
 ;;; ---------------------------------------------------------------------
 ;;; code generation
 ;;; ---------------------------------------------------------------------
-
-(define-macro (%gen opname . args)
-  `(list (list ',opname ,@args)))
 
 (define (%seq . code)
   (apply append code))
@@ -88,37 +87,31 @@
 (define (%compile-apply expr env)
   (%gen APPLY))
 
-(define (%compile-function expr env)
-  (let ((code (%link! (%compile expr env))))
-    (make-function code)))
-
 (define (%compile-application expr env)
   (cond
-   ((%special-form? (car expr))(%compile-special-form expr env))
+   ((%special-form? expr)(%compile-special-form expr env))
    ((%macro? (car expr))(%compile (%macroexpand expr) env))
    (else (%compile-apply expr env))))
 
-(define (%compile expr env #!key (assemble #t))
+(define (%compile expr env)
   (let ((code (cond
                ((%nothing? expr)(%compile-constant expr))
                ((%symbol? expr)(%compile-var-ref expr env))
                ((%list? expr)(%compile-application expr env))
                (else (%compile-constant expr)))))
-    (if assemble
-        (%assemble code)
-        code)))
+    code))
 
 
 ;;; constants
-;;; (%disassemble (%compile (%read-from-string "nothing") '()))
-;;; (%disassemble (%compile (%read-from-string "-1") '()))
-;;; (%disassemble (%compile (%read-from-string "0") '()))
-;;; (%disassemble (%compile (%read-from-string "1") '()))
-;;; (%disassemble (%compile (%read-from-string "2") '()))
-;;; (%disassemble (%compile (%read-from-string "12") '()))
+;;; (%disassemble (%assemble (%compile (%read-from-string "nothing") '())))
+;;; (%disassemble (%assemble (%compile (%read-from-string "-1") '())))
+;;; (%disassemble (%assemble (%compile (%read-from-string "0") '())))
+;;; (%disassemble (%assemble (%compile (%read-from-string "1") '())))
+;;; (%disassemble (%assemble (%compile (%read-from-string "2") '())))
+;;; (%disassemble (%assemble (%compile (%read-from-string "12") '())))
 
 ;;; variables
-;;; (%disassemble (%compile (%read-from-string "y") '(((x . 0)))))
-;;; (%disassemble (%compile (%read-from-string "y") '(((x . 0)(y . 1)))))
+;;; (%disassemble (%assemble (%compile (%read-from-string "y") '(((x . 0))))))
+;;; (%disassemble (%assemble (%compile (%read-from-string "y") '(((x . 0)(y . 1))))))
 
 
