@@ -29,3 +29,6 @@
         (%funcall expander expr)
         (error "undefined macro in expression" expr))))
 
+(%define-macro-function 'set!
+                        (lambda (expr)
+                          `((setter ,(cadr expr)) ,(caddr expr))))

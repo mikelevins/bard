@@ -17,3 +17,9 @@
 
 (define (make-function code #!key (debug-name #f))
   (%private-make-function code debug-name))
+
+
+(define (%funcall f . args)
+  (if (procedure? f)
+      (apply f args)
+      (error "%funcall is not yet implemented for Bard functions and methods")))

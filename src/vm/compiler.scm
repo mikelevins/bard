@@ -90,7 +90,7 @@
 (define (%compile-application expr env)
   (cond
    ((%special-form? expr)(%compile-special-form expr env))
-   ((%macro? (car expr))(%compile (%macroexpand expr) env))
+   ((%macro-form? expr)(%compile (%macroexpand expr) env))
    (else (%compile-apply expr env))))
 
 (define (%compile expr env)
