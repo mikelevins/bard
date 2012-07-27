@@ -55,6 +55,12 @@
               (error (string-append "Undefined module: " (object->string mname))))
           (vm-module vm))))
 
+(define (vm-get-module-name vm mname)
+  (if (null? mname)
+      (error "No valid module found")
+      (or mname
+          (module-name (vm-module vm)))))
+
 ;;; ---------------------------------------------------------------------
 ;;; running
 ;;; ---------------------------------------------------------------------
@@ -129,10 +135,13 @@
 ;;; testing
 ;;; ---------------------------------------------------------------------
 
-(define (testvm expr)
-  (let* ((fn (%compile-function expr (null-env)))
+(define (testvm expr #!key
+                (env (null-env))
+                (module 'bard.user))
+  (let* ((fn (%compile-function expr env))
          (code (function-code fn))
-     (vm (make-vm fn: fn)))
+         (module (find-module *the-module-registry* module))
+     (vm (make-vm fn: fn env: env module: module)))
     (vm-code-set! vm code)
     vm))
 
@@ -140,8 +149,28 @@
   (step vm)
   (vmprint vm))
 
+;;; constants
 ;;; (define $vm (testvm 5))
+;;; (define $vm (testvm $nothing))
+;;; (define $vm (testvm -1))
+;;; (define $vm (testvm 0))
+;;; (define $vm (testvm 1))
+;;; (define $vm (testvm 2))
+;;;
+;;; variables
+;;;   lexical
+;;; (define $vm (testvm 'x env: (extend-env (null-env) 'x '7)))
+;;;
+;;;   module
+;;; (delete-module! *the-module-registry* 'user.test)
+;;; (define-module 'user.test)
+;;; (define-variable (find-module *the-module-registry* 'user.test) 'x value: 8)
+;;; (define $vm (testvm 'x module: 'user.test))
+;;;
+;;;
 ;;; (vmprint $vm)
 ;;; (teststep $vm)
-;;;
+
+
+
 

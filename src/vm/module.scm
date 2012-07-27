@@ -126,8 +126,8 @@
         (table-set! *the-module-registry* mname module)
         mname)))
 
-(define (delete-module! mname)
-  (if (table-ref *the-module-registry* mname)
+(define (delete-module! registry mname)
+  (if (table-ref registry mname #f)
       ;; if there's no such module, don't do any work
       (begin
         (table-for-each 
@@ -161,14 +161,14 @@
 (define (find-module registry mname)
   (table-ref registry mname #f))
 
-(define (mref mname varname)
-  (let ((mdl (find-module mname)))
+(define (mref registry mname varname)
+  (let ((mdl (find-module registry mname)))
     (if mdl
         (lookup-variable mdl varname)
-        $undefined)))
+        #!unbound)))
 
-(define (mset! mname varname val)
-  (let ((mdl (find-module mname)))
+(define (mset! registry mname varname val)
+  (let ((mdl (find-module registry mname)))
     (if mdl
         (set-variable! module varname val)
         (error (string-append "No such module: " (object->string mname))))))
@@ -176,11 +176,11 @@
 (define-module 'bard.lang)
 (define-module 'bard.user)
 
-(define (%default-initial-module)
-  (find-module 'bard.user))
-
 (define (%bard-modules)
   *the-module-registry*)
+
+(define (%default-initial-module)
+  (find-module (%bard-modules) 'bard.user))
 
 ;;; ----------------------------------------------------------------------
 ;;; module names

@@ -50,8 +50,7 @@
     (set-cdr! (cdr binding) setterfn)
     binding))
 
-(define (make-env-frame bindings)
-  (list bindings))
+(define (make-env-frame) '())
 
 (define (add-binding frame var val #!optional (setter #f))
   (cons (make-binding var val setter)
@@ -68,6 +67,10 @@
 
 (define (enclosing-env env)
   (cdr env))
+
+(define (extend-env env var val #!optional (setter #f))
+  (cons (add-binding (make-env-frame) var val setter)
+        env))
 
 (define (in-frame? var frame)
   (let loop ((bindings frame)
@@ -94,7 +97,7 @@
 (define (lref env i j)
   (with-exception-catcher
    (lambda (err)(error "Invalid lexical variable reference"))
-   (lambda ()(cdr (list-ref (list-ref env i) j)))))
+   (lambda ()(binding-val (list-ref (list-ref env i) j)))))
 
 (define (lset! env i j v)
   (with-exception-catcher
