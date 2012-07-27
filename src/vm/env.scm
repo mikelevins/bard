@@ -29,32 +29,42 @@
 ;;; total number of frames will remain small enough to prove tractable.
 ;;; if that gamble fails to pay off, I can replace this representation
 ;;; with a vector-based one.
+;;;
+;;; each binding is of the following form:
+;;;   (varname . (value . setter-function))
+;;; by default the setter function is #f, making the
+;;; variable immutable
+;;; the compiler recognizes a binding qualifier named ":mutable"
+;;; that causes it to pass the setter #t parameter when making
+;;; a binding, resulting in a mutable lexical variable.
+;;; in this way, immutability is the default, but it can be
+;;; selectively overriden for lexical variables anywhere
 
 (define (null-env) '())
 
-(define (make-binding var val)
-  (cons var val))
+(define (make-binding var val #!optional (setter #f))
+  (let* ((binding (cons var (cons val #f)))
+         (setterfn (if setter
+                       (lambda (x)(set-car! (cdr binding) x))
+                       #f)))
+    (set-cdr! (cdr binding) setterfn)
+    binding))
 
 (define (make-env-frame bindings)
   (list bindings))
 
-(define (add-binding frame var val)
-  (cons (make-binding var val)
+(define (add-binding frame var val #!optional (setter #f))
+  (cons (make-binding var val setter)
         frame))
 
-(define (extend-env env plist)
-  (let loop ((kvs plist)
-             (bindings '()))
-    (if (null? kvs)
-        (cons (make-env-frame (reverse bindings))
-              env)
-        (if (null? (cdr kvs))
-            (error (string-append "malformed variable-bindings list: "
-                                  (object->string plist)))
-            (let ((k (car kvs))
-                  (v (cdr kvs)))
-              (loop (cddr kvs)
-                    (cons (make-binding k v) bindings)))))))
+(define (binding-var binding)
+  (car binding))
+
+(define (binding-val binding)
+  (car (cdr binding)))
+
+(define (binding-setter binding)
+  (cdr (cdr binding)))
 
 (define (enclosing-env env)
   (cdr env))
@@ -89,7 +99,12 @@
 (define (lset! env i j v)
   (with-exception-catcher
    (lambda (err)(error "Invalid lexical variable reference"))
-   (lambda ()(set-cdr! (list-ref (list-ref env i) j) v))))
+   (lambda ()
+     (let* ((binding (list-ref (list-ref env i) j))
+            (setter (binding-setter binding)))
+       (if binding-setter
+           (binding-setter v)
+           (error "Can't set an immutable variable"))))))
 
 
 
