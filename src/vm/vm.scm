@@ -167,9 +167,9 @@
 ;;;
 ;;;   module
 ;;; (delete-module! *the-module-registry* 'user.test)
-;;; (define-module 'user.test)
+;;; (define-module *the-module-registry* 'user.test)
 ;;; (define-variable (find-module *the-module-registry* 'user.test) 'x value: 8 mutable: #t)
-;;; (define $vm (testvm '(begin x ((setter x) 3) x) module: 'user.test))
+;;; (define $vm (testvm '(begin x (set! x 3) x) module: 'user.test))
 ;;; (define $vm (testvm '((setter x) 3) module: 'user.test))
 ;;;
 ;;;

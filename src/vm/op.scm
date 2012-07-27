@@ -79,6 +79,9 @@
 (defop  14 SSETTER (%makeop (vm s)(vm-push-val! vm (slot-setter vm (vm-pop-val! vm) s))))
 (defop  15 POP (%makeop (vm)(vm-pop-val! vm)))
 
+;;; functions
+(defop  16 APPLY (%makeop (vm)(vm-apply! vm)))
+
 
 
 
