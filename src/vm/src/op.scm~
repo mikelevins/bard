@@ -1,0 +1,71 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          op.scm
+;;;; Project:       Bard VM
+;;;; Purpose:       vm operations
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+(define $max-opcode 25)
+
+(define $optable (make-vector (+ $max-opcode 1) #f))
+(define $opnames-table (make-vector (+ $max-opcode 1) #f))
+
+(define-macro (defop opcode opname opfn)
+  `(begin
+     (define ,opname ,opcode)
+     (vector-set! $optable ,opcode ,opfn)
+     (vector-set! $opnames-table ,opcode ',opname)))
+
+(define (opcode->opfn opc)(vector-ref $optable opc))
+
+(define (opfn->opcode op)
+  (let loop ((i 0))
+    (if (<= i $max-opcode)
+        (if (eq? op (vector-ref $optable i))
+            i
+            (loop (+ 1 i)))
+        #f)))
+
+(define (opfn->opname op)
+  (let loop ((i 0))
+    (if (<= i $max-opcode)
+        (if (eq? op (vector-ref $optable i))
+            (vector-ref $opnames-table i)
+            (loop (+ 1 i)))
+        #f)))
+
+(define (opcode->opname opc)
+  (vector-ref $opnames-table opc))
+
+(define (opname->opcode opnm)
+  (let loop ((i 0))
+    (if (<= i $max-opcode)
+        (if (eq? opnm (vector-ref $opnames-table i))
+            i
+            (loop (+ 1 i)))
+        #f)))
+
+;;; ---------------------------------------------------------------------
+;;; the instructions
+;;; ---------------------------------------------------------------------
+
+;;; constants
+
+(defop  1 CONST (lambda (k) k))
+(defop  2 LREF (lambda (i j)(lref (get-env) i j)))
+(defop  3 MREF (lambda (mnm vnm)(mref (find-module mnm) vnm)))
+(defop  4 DROP1 (lambda (x1 x2) x2))
+(defop  5 SLOTSETTER (lambda (var obj)(slot-setter obj var)))
+(defop  6 LSETTER (lambda (i j)(lsetter (get-env) i j)))
+(defop  7 MSETTER (lambda (mnm vnm)(msetter (find-module mnm) vnm)))
+(defop  8 METHOD (lambda (lambda-list body-code env)(make-method lambda-list body-code env)))
+(defop  9 DEF (lambda (var val mutable?)
+                (receive (vnm mnm)(parse-symbol-name s)
+                         (define-variable (find-module mnm) vnm value: val mutable: mutable?))))
+(defop 10 QUOTE (lambda (x) x))
+(defop 11 APP (lambda (op args)(apply-applicable op args)))
+

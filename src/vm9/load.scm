@@ -30,14 +30,18 @@
 
 (define $bard-files
   (paths $bard-root 
-         "/src/vm+/types.scm"
-         "/src/vm+/values.scm"
-         "/src/vm+/reader.scm"
-         "/src/vm+/printer.scm"
-         "/src/vm+/env.scm"
-         "/src/vm+/module.scm"
-         "/src/vm+/compiler.scm"
-         "/src/vm+/function.scm"
+         "/src/vm/types.scm"
+         "/src/vm/values.scm"
+         "/src/vm/reader.scm"
+         "/src/vm/printer.scm"
+         "/src/vm/env.scm"
+         "/src/vm/module.scm"
+         "/src/vm/op.scm"
+         "/src/vm/special.scm"
+         "/src/vm/macro.scm"
+         "/src/vm/compiler.scm"
+         "/src/vm/function.scm"
+         "/src/vm/vm.scm"
          ))
 
 ;;; load sources

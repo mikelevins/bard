@@ -169,17 +169,17 @@
                     *the-module-registry*)
     (sort results (lambda (x y)(string<? (symbol->string x)(symbol->string y))))))
 
-(define (find-module registry mname)
+(define (get-module registry mname)
   (table-ref registry mname #f))
 
 (define (mref registry mname varname)
-  (let ((mdl (find-module registry mname)))
+  (let ((mdl (get-module registry mname)))
     (if mdl
         (lookup-variable mdl varname)
         #!unbound)))
 
 (define (msetter registry mname varname)
-  (let ((mdl (find-module registry mname)))
+  (let ((mdl (get-module registry mname)))
     (if mdl
         (lookup-variable mdl varname)
         #!unbound)))
@@ -191,7 +191,7 @@
 (define-module (%bard-modules) 'bard.user)
 
 (define (%default-initial-module)
-  (find-module (%bard-modules) 'bard.user))
+  (get-module (%bard-modules) 'bard.user))
 
 ;;; ----------------------------------------------------------------------
 ;;; module names
