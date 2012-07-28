@@ -257,11 +257,11 @@
 
 (define (parse-symbol-name s)
   (if (keyword? s)
-      (values (keyword->string s) #f)
+      (values (string->symbol (keyword->string s)) #f)
       (let* ((str (symbol->string s))
              (colon-pos (colon-position str)))
         (if colon-pos
-            (values (substring str (+ 1 colon-pos)(string-length str))
-                    (substring str 0 colon-pos))
-            (values str #f)))))
+            (values (string->symbol (substring str (+ 1 colon-pos)(string-length str)))
+                    (string->symbol (substring str 0 colon-pos)))
+            (values (string->symbol str) #f)))))
 
