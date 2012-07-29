@@ -1,0 +1,62 @@
+
+                           
+opc opnm  args  
+
+  1 VAL   k     vals <- k
+
+  2 LREF  i j   v <- (lref i j env); 
+                vals <- v
+
+  3 LSETR i j   setter <- (lsetter i j env); 
+                vals <- setter
+
+  4 MREF  m v   v <- (mref m v modules); 
+                vals <- v
+
+  5 MSETR m v   setter <- (msetter m v modules); 
+                vals <- setter
+
+  6 SREF        o,s <- vals; 
+                v <- slotref(o,s); 
+                vals <- v
+
+  7 SSETR       o,s <- vals; 
+                setter <- slotsetter(o,s); 
+                vals <- setter
+
+  8 DEF         md,vr,vl,m? <- vals
+                outvl,outvr = (define-variable md vr vl m?);
+                vals <- outvl,outvr
+
+  9 CLOS        ll,cd,en <- vals;
+                fn <- (make-closure ll cd en);
+                vals <- fn
+
+ 10 PRIM        pr,args <- vals; 
+                vs <- (applyprim pr args); 
+                vals <- vs
+
+ 11 MODL        mnm <- vals; 
+                module <- (find-module mnm); 
+                vals <- module
+
+ 12 INMD        mnm <- vals; 
+                module <- (find-module mnm); 
+                vm.module <- module; 
+                vals <- module
+
+ 13 SAVE d       vmstate <- vm(pc<-d);
+                vm.stack <- vm.stack:vmstate
+                
+ 14 APPL        fn,args <- vals;
+                vm.pc <-0;
+                vm.fn <- fn
+                vm.env <- (bind fn.params args):fn.env
+                vm.code <- fn.code
+
+ 15 RETN        vmstate <- (pop vm.stack)
+                vm.pc <-vmstate.pc;
+                vm.fn <- vmstate.fn
+                vm.env <- vmstate.env
+                vm.code <- vm.fn.code
+                
