@@ -23,7 +23,7 @@ MAC_EXECUTABLE=bard
 MAC_LIBRARY=libBard.a
 MAC_BUILD_DIR=builds/mac
 MAC_GAMBIT_HOME=/usr/local/gambit/macosx
-MAC_ARCH=i386
+MAC_ARCH=x86_64
 MAC_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 MAC_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
 MAC_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
@@ -64,7 +64,7 @@ IOS_DEVICE_LDFLAGS_LIB=-static -arch_only ${IOS_DEVICE_ARCH} -syslibroot ${IOS_D
 
 IOS_SIM_LIBRARY=libBard.a
 IOS_SIM_BUILD_DIR=builds/ios/simulator
-IOS_SIM_GAMBIT_HOME=/usr/local/gambit/iosSimulator
+IOS_SIM_GAMBIT_HOME=/usr/local/gambit/ios
 IOS_SIM_ARCH=i386
 IOS_SIM_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 IOS_SIM_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
