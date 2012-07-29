@@ -42,6 +42,9 @@
                       (define-variable (find-module mnm) vnm value: val mutable: mutable?))))
 (defop QUOTE (lambda (x) x))
 (defop APP (lambda (op args)(apply-applicable op args)))
+(defop PRIM (lambda (prim args)(apply-primitive prim args)))
+(defop INMODULE (lambda (mname)(set-current-module! mname)))
+(defop ADDMODULE (lambda (mname)(add-module! mname)))
 
 ;;; ---------------------------------------------------------------------
 ;;; instruction linkers
@@ -93,3 +96,13 @@
                (let ((opexpr (cadr expr))
                      (args (caddr expr)))
                  (list APP (%link opexpr) (map %link args)))))
+
+(deflink PRIM (lambda (expr)
+                (let* ((pname (cadr expr))
+                       (pr (%primitive pname))
+                       (args (caddr expr)))
+                  (list PRIM pr (map %link args)))))
+
+(deflink INMODULE (lambda (expr) (cons INMODULE (cdr expr))))
+(deflink ADDMODULE (lambda (expr) (cons ADDMODULE (cdr expr))))
+

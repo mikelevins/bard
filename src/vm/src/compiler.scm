@@ -75,16 +75,33 @@
          (valexpr (%compile (caddr expr) env)))
     `(DEF ,vname ,valexpr ,mutable?)))
 
+(define (%compile-primitive-call expr env)
+  (let* ((primname (car expr))
+         (argexprs (cdr expr))
+         (args (map (lambda (a)(%compile a env)) argexprs)))
+    `(PRIM ,primname ,args)))
+
+(define (%compile-in-module expr )
+  (let* ((mname (car expr)))
+    `(INMODULE ,mname)))
+
+(define (%compile-define-module expr)
+  (let* ((mname (car expr)))
+    `(ADDMODULE ,mname)))
+
 (define (%compile-application expr env)
   (let ((op-expr (car expr)))
     (cond
      ((%macro-form? expr) (%compile (%macroexpand expr) env))
+     ((eq? 'in-module op-expr) (%compile-in-module (cdr expr)))
+     ((eq? 'define-module op-expr) (%compile-define-module (cdr expr)))
      ((eq? 'begin op-expr) (%compile-begin (cdr expr) env))
      ((eq? 'if op-expr) (%compile-if expr env))
      ((eq? 'define op-expr) (%compile-definition expr env))
      ((eq? 'quote op-expr) `(QUOTE ,(cadr expr)))
      ((eq? 'setter op-expr) (%compile-setter expr env))
      ((eq? 'method op-expr) (%compile-method expr env))
+     ((primitive? op-expr) (%compile-primitive-call expr env))
      (else (let ((op (%compile op-expr env))
                  (args (map (lambda (e)(%compile e env))
                             (cdr expr))))
@@ -115,7 +132,7 @@
 (define (comptest str)
   (let ((env (extend-env (extend-env (null-env) 'y 1 #t)
                          'x 2)))
-    (%compile (%read-from-string str) $env)))
+    (%compile (%read-from-string str) env)))
 
 ;;; CONST
 ;;; (%link (comptest "nothing"))             -> (CONST ())
@@ -134,7 +151,7 @@
 ;;;
 ;;; SLOTSETTER
 ;;; (%link (comptest "(setter (name foo))")) -> (SLOTSETTER name (MREF #f foo))
-;;; (comptest "(set! (name foo) 'bar)")      -> (APP (SLOTSETTER name (MREF #f foo)) ((QUOTE bar)))
+;;; (%link (comptest "(set! (name foo) 'bar)"))      -> (APP (SLOTSETTER name (MREF #f foo)) ((QUOTE bar)))
 ;;;
 ;;; LSETTER
 ;;; (%link (comptest "(setter x)"))          -> (LSETTER 1 0)
@@ -159,6 +176,18 @@
 ;;;
 ;;; APP
 ;;; (%link (comptest "(foo 2 3)"))           -> (APP (MREF #f foo) ((CONST 2) (CONST 3)))
+;;;
+;;; PRIM
+;;; (%link (comptest "(PRIM+ 2 3)"))         -> (APP (MREF #f foo) ((CONST 2) (CONST 3)))
+;;;
+;;; INMODULE
+;;; (%link (comptest "(in-module bard.lang)"))
+;;;                                          -> (INMODULE bard.lang)
+;;;
+;;; ADDMODULE
+;;; (%link (comptest "(define-module user.test)"))           
+;;;                                          -> (ADDMODULE user.test)
+
 
 
 

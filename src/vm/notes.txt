@@ -1,3 +1,66 @@
 an attempt to target an abstract machine that is not astack machine or
 a register machine, but instead a Lisp
 
+this version is rather beautiful, producing compiled code like this:
+
+
+(set! (name foo) 'bar) => (APP (SLOTSETTER name (MREF #f foo)) ((QUOTE bar)))
+
+The compiled code is then linked to produce object code like this:
+
+(#<procedure #25 APP>
+ (#<procedure #26 SLOTSETTER> name (#<procedure #27 MREF> #f foo))
+ ((#<procedure #28 QUOTE> bar)))
+
+
+There are a couple of problems with this scheme:
+
+1. it's very to devise a good method of stepping through this
+code
+
+2. execution involves traversing the tree of s-expressions and
+deciding for each node whether it's a procedure to be applied or a
+value to be returned; the type-check and logic at each step is onerous
+
+For both efficiency and ease of debugging it would be nice to flatten
+the executable code into a flat vector of instructions such that we
+know without examination which elements are executable.
+
+Using stack discipline:
+
+(set! (name foo) 'bar)
+|
+v
+(APP (SLOTSETTER name (MREF #f foo)) ((QUOTE bar)))
+|
+v
+push bar                     | bar
+push foo                     | foo bar
+push #f                      | #f foo bar
+push (MREF (pop)(pop))       | #<value of foo> bar
+push name                    | name #<value of foo> bar
+push (SLOTSETTER (pop)(pop)) | #<setter (name foo)> bar
+push (APP (pop) (pop))       | bar
+|
+v
+CONST bar
+CONST foo
+CONST #f
+MREF
+CONST name
+SLOTSETTER
+APP
+
+
+Using registers:
+
+LDC arg1 #f               | [#f]:[]
+LDC arg2 foo              | [#f foo]:[]
+MREF arg1 agr2 > v1       | [#f foo]:[#<value of foo>]
+LDC arg1 name             | [name foo]:[#<value of foo>]
+MV v1 > arg2              | [name #<value of foo>]:[#<value of foo>]
+SLSET arg1 arg2 > v1      | [name #<value of foo>]:[#<setter (name foo)>]
+MV v1 > arg1              | [#<setter (name foo)> #<value of foo>]:[#<setter (name foo)>]
+LDC arg2 bar              | [#<setter (name foo)> bar]:[#<setter (name foo)>]
+APP arg1 arg1 > v1        | [#<setter (name foo)> bar]:[bar]
+

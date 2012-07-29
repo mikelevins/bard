@@ -33,25 +33,33 @@
 
 (define $primitives (make-table test: eq?))
 
-(define (%primitive? expr)
+(define (%primitive expr)
   (table-ref $primitives expr #f))
 
 (define (apply-primitive prim args)
   (let* ((argcount (length args))
-         (required-argcount (primitive-nargs prim)))
+         (required-argcount (primitive-nargs prim))
+         (papply (lambda ()
+                   (let ((fn (primitive-fn prim))
+                         (args (map exec args)))
+                     (apply fn args))))
+         (perror (lambda (msg required-count)
+                   (error (string-append
+                           msg (object-string prim)
+                           "; required "
+                           (if required-argcount
+                               (object-string required-argcount)
+                               "zero")
+                           ", but found "
+                           (object-string argcount))))))
     (cond
-     ((eqv? required-argcount #f))
-     ((eqv? required-argcount #t))
+     ((eqv? required-argcount #f)(if (zero? argcount)
+                                     (papply)
+                                     (perror "Too many arguments to primitive: " 0)))
+     ((eqv? required-argcount #t)(papply))
      ((number? required-argcount)(if (= argcount required-argcount)
-                                     (let ((fn (primitive-fn prim)))
-                                       (apply fn args))
-                                     (error (string-append
-                                             "Wrong number of arguments to primitive: " 
-                                             (object-string prim)
-                                             "; requires "
-                                             (object-string required-argcount)
-                                             ", but found "
-                                             (object-string argcount)))))
+                                     (papply)
+                                     (perror)))
      (else (error (string-append "Invalid primitive: " 
                                  (object-string prim)))))))
 
@@ -80,7 +88,7 @@
   (%private-make-method lambda-list body-code env debug-name))
 
 (define (apply-method f args)
-  #f)
+  (error "apply-method is not yet implemented"))
 
 ;;; ---------------------------------------------------------------------
 ;;; functions
@@ -96,7 +104,7 @@
   (%private-make-function code debug-name))
 
 (define (apply-function f args)
-  #f)
+  (error "apply-function is not yet implemented"))
 
 ;;; ---------------------------------------------------------------------
 ;;; funcall
@@ -108,7 +116,7 @@
    ((procedure? f)(apply f args))
    ((function? f)(apply-function f args))
    ((method? f)(apply-method f args))
-   ((primitive? f)(apply-primitive f args))
+   ((primitive f)(apply-primitive f args))
    (else (error (string-append "Not an applicable object: "
                                (object->string app))))))
 
