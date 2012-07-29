@@ -14,7 +14,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/home/mikel/Projects/bard")
+(define $bard-root  "/Users/mikel/Projects/bard/bard")
 
 ;;; ----------------------------------------------------------------------
 ;;; set the proper readtable for Bard
@@ -30,9 +30,19 @@
 
 (define $bard-files
   (paths $bard-root 
+         "/src/vm/src/stretchy-vector.scm"
+         "/src/vm/src/env.scm"
+         "/src/vm/src/module.scm"
+         "/src/vm/src/schema.scm"
          "/src/vm/src/op.scm"
          "/src/vm/src/vm.scm"
          ))
+
+;;; global utils
+;;; ----------------------------------------------------------------------
+
+(define not-yet-implemented 
+  (lambda args (error "function not yet implemented")))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
