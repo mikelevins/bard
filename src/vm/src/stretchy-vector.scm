@@ -56,9 +56,21 @@
           (stretchy-vector-set! sv len val)
           (stretchy-vector-fill-pointer-set! sv (+ len 1))))))
 
+(define (vector-pushlist! sv vals)
+  (for-each (lambda (v)(vector-push-extend! sv v))
+            vals))
+
 (define (vector-pop! sv)
   (let* ((newlen (- (stretchy-vector-length sv) 1))
          (val (vector-ref (stretchy-vector-elements sv)
                           newlen)))
     (stretchy-vector-fill-pointer-set! sv newlen)
     val))
+
+(define (vector-popn! sv n)
+  (let ((len (stretchy-vector-length sv)))
+    (if (< len n)
+        (error "vector underflow")
+        (let ((elts (vector->list (subvector (stretchy-vector-elements sv) (- len n) len))))
+          (stretchy-vector-fill-pointer-set! sv (- len n))
+          elts))))

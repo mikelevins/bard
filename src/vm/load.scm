@@ -53,5 +53,3 @@
             $bard-files))
 
 ;;; (load-bard)
-
-

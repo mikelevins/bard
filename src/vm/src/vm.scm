@@ -25,9 +25,18 @@
   modules)
 
 
-(define (pushval! vm val)(not-yet-implemented))
-(define (popval! vm)(not-yet-implemented))
-(define (popnvals! vm n)(not-yet-implemented))
+(define (pushval! vm val)
+  (vector-push-extend! (vm-vals vm) val))
+
+(define (popval! vm)
+  (vector-pop! (vm-vals vm)))
+
+(define (pushvals! vm vals)
+  (vector-pushlist! (vm-vals vm) vals))
+
+(define (popnvals! vm n)
+  (vector-popn! (vm-vals vm) n))
+
 (define (find-module vm mname)(not-yet-implemented))
 (define (set-module! vm module)(not-yet-implemented))
 (define (pushstate! vm destpc code fn stack env module)(not-yet-implemented))

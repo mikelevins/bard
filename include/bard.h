@@ -1,4 +1,4 @@
-#define ___VERSION 406001
+#define ___VERSION 406006
 #include "gambit.h"
 #import <Foundation/Foundation.h>
 

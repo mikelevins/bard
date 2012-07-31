@@ -248,43 +248,6 @@
 (define (%frame-keys fr)(map car (%frame-slots fr)))
 (define (%frame-vals fr)(map cadr (%frame-slots fr)))
 
-;;; ---------------------------------------------------------------------
-;;; generator
-;;; ---------------------------------------------------------------------
-;;; a generator is a restartable computation that yields one computed
-;;; result per invocation
-;;;
-;;; (generate ((x 1))
-;;;           (yield (* x x))
-;;;           (then (+ x 1)))
-;;;
-;;; a fib generator
-;;; > (define g
-;;;     (generate ((x 0)
-;;;                (y 1)
-;;;                (z 1))
-;;;               (yield x)
-;;;               (next (+ x y) z (+ y z))))
-;;;
-;;; > (g)
-;;; 0
-;;; > (g)
-;;; 1
-;;; > (g)
-;;; 1
-;;; > (g)
-;;; 2
-;;; > (g)
-;;; 3
-
-
-
-
-;;; ---------------------------------------------------------------------
-;;; series
-;;; ---------------------------------------------------------------------
-;;; a series is an object that encapsulates a generator and caches the
-;;; yielded values so that they can be treated as a list
 
 
 
