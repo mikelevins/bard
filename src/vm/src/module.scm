@@ -12,3 +12,4 @@
 (define (mref module var)(not-yet-implemented))
 (define (msetter module var)(not-yet-implemented))
 (define (define-variable module varname val mutable?)(not-yet-implemented))
+(define (find-module registry mname)(not-yet-implemented))

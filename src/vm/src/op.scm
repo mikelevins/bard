@@ -38,7 +38,7 @@
 (defop  1 VAL     (vm) (k)   (pushval! vm k))
 (defop  2 LREF    (vm) (i j) (pushval! vm (lref (env vm) i j)))
 (defop  3 LSETR   (vm) (i j) (pushval! vm (lsetter (env vm) i j)))
-(defop  4 MREF    (vm) (m v) (pushval! vm (mref (find-module vm m) v)))
+(defop  4 MREF    (vm) (m v) (pushval! vm (mref (find-module (modules vm) m) v)))
 (defop  5 MSETR   (vm) (m v) (pushval! vm (msetter (find-module vm m) v)))
 (defop  6 SREF    (vm) ()    (pushval! vm (let ((obj (popval! vm))
                                                 (slot-name (popval! vm)))

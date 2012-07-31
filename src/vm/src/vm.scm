@@ -14,16 +14,15 @@
 (define-type vm
   id: 37C7FA3E-3C9A-45E0-B70D-CE1D252BF17B
   constructor: %private-make-vm
-  pc
-  instr
-  code
-  fn
-  stack
-  vals
-  env
-  module
-  modules)
-
+  (pc pc set-pc!)
+  (instr instr set-instr!)
+  (code code set-code!)
+  (fn fn set-fn!)
+  (stack stack set-stack!)
+  (vals vals set-vals!)
+  (env env set-env!)
+  (module module set-module!)
+  (modules modules))
 
 (define (pushval! vm val)
   (vector-push-extend! (vm-vals vm) val))
@@ -37,8 +36,13 @@
 (define (popnvals! vm n)
   (vector-popn! (vm-vals vm) n))
 
-(define (find-module vm mname)(not-yet-implemented))
-(define (set-module! vm module)(not-yet-implemented))
-(define (pushstate! vm destpc code fn stack env module)(not-yet-implemented))
-(define (popstate! vm)(not-yet-implemented))
-(define (setstate! vm pc code fn stack env module)(not-yet-implemented))
+(define (make-saved-state vm)
+  (vector ()))
+
+(define (pushstate! vm destpc code fn stack env module)
+  (vector-push-extend! (stack vm) (make-saved-state vm)))
+
+(define (popstate! vm)(vector-pop! (stack vm)))
+
+(define (setstate! vm pc code fn stack env module)
+  )

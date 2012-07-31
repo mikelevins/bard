@@ -14,7 +14,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/bard")
+(define $bard-root  "~/Projects/bard/bard")
 
 ;;; ----------------------------------------------------------------------
 ;;; set the proper readtable for Bard
