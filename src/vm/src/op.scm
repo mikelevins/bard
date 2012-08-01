@@ -83,6 +83,6 @@
                                (setstate! vm 0 (function-code fn) fn (stack vm) env (module vm))))
 
 (defop 18 RETURN  (vm) (dst) (let ((state (popstate! vm)))
-                               (setstate! vm (pc state) (code state) (fn state) (stack state)
-                                          (env state) (module state))))
+                               (setstate! vm (saved-pc state) (saved-code state) (saved-fn state) 
+                                          (saved-stack state)(saved-env state) (saved-module state))))
 

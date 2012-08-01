@@ -52,7 +52,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; type definitions
 ;;; ---------------------------------------------------------------------
-;;; primitive | structure | protocol | singleton | user-defined
+;;; primitive | structure | protocol | singleton | schema (user-defined)
 
 (define-type %type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
@@ -71,6 +71,27 @@
   constructor: %make-singleton
   read-only:
   (value %singleton-value))
+
+;;; ---------------------------------------------------------------------
+;;; schemas (user-defined types)
+;;; ---------------------------------------------------------------------
+;;; (define-schema <foo> (<bar> <baz>)
+;;;   grault
+;;;   (quux :default 0 :mutable true)
+;;;   (wibble :initializer (method (instance supplied-value) ...)))
+;;; (define x (make <foo> grault: 1))
+;;; (grault x) => 1
+;;; (quux x) => 0
+;;; (set! (quux x) 101)
+;;; (quux x) => 101
+
+(define $schemas (make-table test: eq?))
+
+(define (make-schema includes slotspecs) #f)
+
+(include "schema.macros.scm")
+
+(define (make schema . initargs) #f)
 
 ;;; ---------------------------------------------------------------------
 ;;; bard's type table

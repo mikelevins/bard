@@ -4,15 +4,27 @@
 
 (c-define (c:bard-error?) () 
           bool "bard_error_status" ""
-          (and $bard-error #t))
+          (not (null? $bard-errors)))
 
-(c-define (c:bard-error) () 
-          char-string "bard_error" ""
-          $bard-error)
+(c-define (c:bard-last-error-code) () 
+          int "bard_last_error_code" ""
+          (if (null? $bard-errors)
+              $ERR:NO-ERROR
+              (error-report-error-code (car $bard-errors))))
 
-(c-define (c:clear-bard-error) () 
-          void "clear_bard_error" ""
-          (set! $bard-error #f))
+(c-define (c:bard-last-error-message) () 
+          char-string "bard_last_error_message" ""
+          (if (null? $bard-errors)
+              "No error"
+              (error-report-error-message (car $bard-errors))))
+
+(c-define (c:clear-last-bard-error) () 
+          void "clear_last_bard_error" ""
+          (clear-last-error-report!))
+
+(c-define (c:clear-all-bard-errors) () 
+          void "clear_all_bard_errors" ""
+          (clear-error-reports!))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard startup

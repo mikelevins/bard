@@ -1,3 +1,5 @@
+(include "error_macros.scm")
+
 (define api:$BARD_UNDEFINED -1)
 (define api:$BARD_NULL 0)
 (define api:$BARD_CHARACTER 1)
@@ -18,11 +20,13 @@
   $bard-version-string)
 
 (define (cbard:init-bard)
-  (%init-bard)
-  #t)
+  (with-recorded-errors #f
+   (%init-bard)
+   #t))
 
 (define (cbard:type-for-C obj)
-  (cond
+  (with-recorded-errors api:$BARD_UNRECOGNIZED
+   (cond
    ((eqv? obj #!unbound) api:$BARD_UNDEFINED)
    ((null? obj) api:$BARD_NULL)
    ((char? obj) api:$BARD_CHARACTER)
@@ -37,10 +41,11 @@
    ((%function? obj) api:$BARD_FUNCTION)
    ((%method? obj) api:$BARD_METHOD)
    ((%type? obj) api:$BARD_TYPE)
-   (else api:$BARD_UNRECOGNIZED)))
+   (else api:$BARD_UNRECOGNIZED))))
 
 (define (cbard:typename obj)
-  (cond
+  (with-recorded-errors "Unrecognized type"
+   (cond
    ((eqv? obj #!unbound) "Undefined")
    ((null? obj) "Null")
    ((char? obj) "Character")
@@ -57,16 +62,19 @@
    ((%type? obj) "Type")
    ((%frame? obj) "Frame")
    ((%list? obj) "List")
-   (else "Unrecognized type")))
+   (else "Unrecognized type"))))
 
 (define (cbard:read str)
-  (bard:read-from-string str))
+  (with-recorded-errors #f
+   (bard:read-from-string str)))
 
 (define (cbard:eval obj)
-  (%eval obj))
+  (with-recorded-errors #f
+   (%eval obj)))
 
 (define (cbard:print obj)
-  (%as-string obj))
+  (with-recorded-errors "#<Error printing an object>"
+   (%as-string obj)))
 
 (define (cbard:as-char obj)
   (if (char? obj)
@@ -87,8 +95,9 @@
       0.0))
 
 (define (cbard:as-string obj)
-  (if (string? obj)
+  (with-recorded-errors "#<Error converting an object to a string>"
+   (if (string? obj)
       obj
-      (object->string obj)))
+      (object->string obj))))
 
 

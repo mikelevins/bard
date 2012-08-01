@@ -36,13 +36,27 @@
 (define (popnvals! vm n)
   (vector-popn! (vm-vals vm) n))
 
-(define (make-saved-state vm)
-  (vector ()))
+(define (make-saved-vm destpc scode sfn sstack senv smodule)
+  (vector destpc scode sfn sstack senv smodule))
 
-(define (pushstate! vm destpc code fn stack env module)
-  (vector-push-extend! (stack vm) (make-saved-state vm)))
+(define (saved-pc state)(vector-ref state 0))
+(define (saved-code state)(vector-ref state 1))
+(define (saved-fn state)(vector-ref state 2))
+(define (saved-stack state)(vector-ref state 3))
+(define (saved-env state)(vector-ref state 4))
+(define (saved-module state)(vector-ref state 5))
+
+(define (pushstate! vm destpc scode sfn sstack senv smodule)
+  (vector-push-extend! (stack vm) 
+                       (make-saved-vm destpc scode sfn sstack senv smodule)))
 
 (define (popstate! vm)(vector-pop! (stack vm)))
 
-(define (setstate! vm pc code fn stack env module)
-  )
+(define (setstate! vm spc scode sfn sstack senv smodule)
+  (set-pc! vm spc)
+  (set-code! vm scode)
+  (set-fn! vm sfn)
+  (set-stack! vm sstack)
+  (set-env! vm senv)
+  (set-module! vm smodule))
+
