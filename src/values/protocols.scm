@@ -177,50 +177,53 @@
 
 ;;; get
 
-(define bard:get (%make-function name: 'get))
+(define (%bard-get fr k)
+  (cond
+   ((%frame? fr)(%frame-get fr k))
+   ((%list? fr)(if (integer? k)
+                   (list-ref fr k)
+                   (getf k fr (%nothing))))
+   ((string? fr)(string-ref fr k))
+   (else (%nothing))))
 
-(%add-primitive-method! bard:get
-                        (%list <frame> Anything)
-                        (%list 'frame 'key)
-                        (lambda (frame key)(%frame-get frame key (%nothing)))
-                        name: 'get)
-
-(%add-primitive-method! bard:get
-                        (%list <null> <fixnum>)
-                        (%list 'ls 'n)
-                        (lambda (ls n)(error (string-append "Index out of range: " (object->string n))))
-                        name: 'get)
-
-(%add-primitive-method! bard:get
-                        (%list <list> <fixnum>)
-                        (%list 'ls 'n)
-                        (lambda (ls n)(%list-ref ls n))
-                        name: 'get)
-
-(%add-primitive-method! bard:get
-                        (%list <string> <fixnum>)
-                        (%list 'str 'n)
-                        (lambda (str n)(string-ref str n))
-                        name: 'get)
+(define bard:get
+  (%make-primitive-method %bard-get
+   name: 'get
+   parameters: (%list 'frame 'key)
+   required-count: 2
+   restarg: #f))
 
 ;;; keys
 
-(define bard:keys (%make-function name: 'keys))
+(define (%bard-keys fr)
+  (cond
+   ((%frame? fr)(%frame-keys fr))
+   ((%list? fr)(iota (%length fr)))
+   ((string? fr)(iota (string-length fr)))
+   (else (%nothing))))
 
-(%add-primitive-method! bard:keys
-                        (%list <frame>)
-                        (%list 'frame)
-                        (lambda (frame)(%frame-keys frame))
-                        name: 'keys)
+(define bard:keys
+  (%make-primitive-method %bard-keys
+   name: 'keys
+   parameters: (%list 'frame)
+   required-count: 1
+   restarg: #f))
+
 ;;; put
 
-(define bard:put (%make-function name: 'put))
+(define (%bard-put fr k v)
+  (cond
+   ((%frame? fr)(%frame-put fr k v))
+   ((%list? fr)(%list-put fr k v))
+   ((string? fr)(%string-put fr k v))
+   (else (%frame value: fr k v))))
 
-(%add-primitive-method! bard:put
-                        (%list <frame> Anything Anything)
-                        (%list 'frame 'key 'val)
-                        %frame-put
-                        name: 'put)
+(define bard:put
+  (%make-primitive-method %bard-put
+   name: 'put
+   parameters: (%list 'frame 'key 'value)
+   required-count: 3
+   restarg: #f))
 
 ;;; ---------------------------------------------------------------------
 ;;; IOStream

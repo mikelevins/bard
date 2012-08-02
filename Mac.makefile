@@ -21,7 +21,7 @@ SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/
 
 CC=/usr/local/gcc/bin/gcc
 
-CFLAGS_WARNINGS=-Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wpointer-sign -Wno-newline-eof -Wno-conversion -Wno-sign-conversion
+CFLAGS_WARNINGS=-Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-sign-compare -Wpointer-sign -Wno-conversion -Wno-sign-conversion
 
 CFLAGS_LANG=-x objective-c -std=gnu99 -fmessage-length=0 
 

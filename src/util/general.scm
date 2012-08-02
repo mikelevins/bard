@@ -9,6 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+
+(define (not-yet-implemented . args)
+  (error "Not yet implemented" args))
+
 (define (identity x) x)
 
 (define (constantly x) (lambda args x))
@@ -23,9 +27,13 @@
   (lambda more-args
     (not (apply fn `(,@args ,@more-args)))))
 
-
-(define (not-yet-implemented . args)
-  (error "Not yet implemented" args))
+(define (iota n)
+  (let loop ((i (- n 1))
+             (result '()))
+    (if (<= i 0)
+        (cons i result)
+        (loop (- i 1)
+              (cons i result)))))
 
 (define (bound? name)
   (not (##unbound? (##global-var-ref (##make-global-var name)))))
@@ -88,3 +96,23 @@
           (if (fn (vector-ref vec i))
               (loop (+ i 1))
               #f)))))
+
+(define (getf key plist #!optional (default #f))
+  (let ((tl (member key plist)))
+    (and tl (not (null? (cdr tl))) (cadr tl))))
+
+(define (drop n ls)
+  (list-tail ls n))
+
+(define (take n ls)
+  (let loop ((ls ls)
+             (n n))
+    (if (<= n 0)
+        '()
+        (if (null? ls)
+            (error "count out of range")
+            (cons (car ls)
+                  (loop (cdr ls)
+                        (- n 1)))))))
+
+

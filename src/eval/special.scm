@@ -68,6 +68,40 @@
                (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))
                (%list-ref expr 1)))
 
+;;; define-schema
+;;; ----------------------------------------------------------------------
+
+(define (%canonicalize-slot-spec spec)
+  (let ((spec (if (symbol? spec)
+                  (list spec default: (%nothing))
+                  (if (list? spec)
+                      (list (car spec)
+                            default:
+                            (getf default: spec (%nothing)))
+                      (error (string-append "Invalid slot spec: "
+                                            (object->string spec)))))))
+    spec))
+
+(define (%parse-canonical-slot-description spec env)
+  (cons (car spec)
+        (%eval (getf default: spec (%nothing)) env)))
+
+(define (%parse-slot-descriptions specs env)
+  (let ((specs (map %canonicalize-slot-spec specs)))
+    (map (lambda (s) (%parse-canonical-slot-description s env))
+         specs)))
+
+(%defspecial 'define-schema
+             (lambda (expr env)
+               (let* ((sname (list-ref expr 1))
+                      (includes (map (lambda (e)(%eval e env))
+                                     (list-ref expr 2)))
+                      (slot-specs (drop 3 expr))
+                      (slots (%parse-slot-descriptions slot-specs env))
+                      (sc (%make-schema sname includes slots)))
+                 (table-set! $bard-global-variables sname sc)
+                 sc)))
+
 ;;; define-macro prototype & body
 ;;; ----------------------------------------------------------------------
 

@@ -46,6 +46,7 @@
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'singleton? prim:singleton?)
   (%defglobal '%primitive-type-tag %type-tag)
+  (%defglobal 'make prim:make)
 
 ;;; ---------------------------------------------------------------------
 ;;; number primitives

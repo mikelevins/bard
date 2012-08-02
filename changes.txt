@@ -1,3 +1,7 @@
+0.2.7
+
+- define-schema implemented, providing user-defined types
+
 0.2.6
 
 - define-macro implemented, exposing macros in the surface language

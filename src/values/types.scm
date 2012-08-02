@@ -73,27 +73,6 @@
   (value %singleton-value))
 
 ;;; ---------------------------------------------------------------------
-;;; schemas (user-defined types)
-;;; ---------------------------------------------------------------------
-;;; (define-schema <foo> (<bar> <baz>)
-;;;   grault
-;;;   (quux :default 0 :mutable true)
-;;;   (wibble :initializer (method (instance supplied-value) ...)))
-;;; (define x (make <foo> grault: 1))
-;;; (grault x) => 1
-;;; (quux x) => 0
-;;; (set! (quux x) 101)
-;;; (quux x) => 101
-
-(define $schemas (make-table test: eq?))
-
-(define (make-schema includes slotspecs) #f)
-
-(include "schema.macros.scm")
-
-(define (make schema . initargs) #f)
-
-;;; ---------------------------------------------------------------------
 ;;; bard's type table
 ;;; ---------------------------------------------------------------------
 
@@ -133,6 +112,7 @@
           (table-set! $bard-singletons (object->serial-number val) s)
           s))))
 
+
 ;;; ---------------------------------------------------------------------
 ;;; basic types
 ;;; ---------------------------------------------------------------------
@@ -164,12 +144,17 @@
 (define (%object->type-tag thing)
   (cond
    ((%type? thing) (%type-tag thing))
+   ((%schema-instance? thing)(%schema-tag (%schema-instance-schema thing)))
    ((##structure? thing) (table-ref $bard-structure-tags (##structure-type thing) #f))
    (else (%tag thing))))
 
 (define (%object->bard-type thing)
   (cond
    ((%type? thing) Type)
+   ((%schema-instance? thing)(let ((tag (%object->type-tag thing)))
+                               (if tag
+                                   (table-ref $bard-types tag #f)
+                                   (error (string-append "Can't get the type of " (object->string thing))))))
    ((##structure? thing) (let ((tag (%object->type-tag thing)))
                            (if tag
                                (table-ref $bard-types tag #f)

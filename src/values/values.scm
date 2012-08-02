@@ -174,7 +174,6 @@
               (loop (%cdr items)(%append result (%list item))))))))
 
 (define %list-ref list-ref)
-(define (%list-put ls n val)(%append (%take n ls) (%cons val (%drop (+ 1 n) ls))))
 (define %map map)
 (define %for-each for-each)
 
@@ -189,6 +188,7 @@
 
 (define-type %frame
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
+  extender: %define-frame-type
   constructor: %private-make-frame
   (slots %frame-slots))
 
@@ -245,11 +245,120 @@
                      (list (list key value)))))
     (%private-make-frame new-slots)))
 
+(define (%list-put ls key value)
+  (if (and (integer? key)
+           (< -1 key (length ls)))
+      (append (take key ls) (list value) (drop (+ 1 key) ls))
+      (let* ((pairs (map list (iota (length ls)) ls))
+             (fr (%private-make-frame pairs)))
+        (%frame-put fr key value))))
+
+(define (%string-put str k v)
+  (if (and (integer? k)
+           (< -1 k (string-length str))
+           (char? v))
+      (string-append (substring str 0 k) (string v) (substring str (+ k 1)(string-length str)))
+      (let* ((chars (string->list str))
+             (pairs (map list (iota (string-length str)) chars))
+             (fr (%private-make-frame pairs)))
+        (%frame-put fr k v))))
+
 (define (%frame-keys fr)(map car (%frame-slots fr)))
 (define (%frame-vals fr)(map cadr (%frame-slots fr)))
 
+;;; ---------------------------------------------------------------------
+;;; schemas (user-defined types)
+;;; ---------------------------------------------------------------------
+;;;
+;;; (define-schema <foo> (<bar> <baz>)
+;;;   grault
+;;;   (quux :default 0 :mutable true)
+;;;   (wibble :initializer (method (instance supplied-value) ...)))
+;;; (define x (make <foo> grault: 1))
+;;; (grault x) => 1
+;;; (quux x) => 0
+;;; (set! (quux x) 101)
+;;; (quux x) => 101
+
+(%define-frame-type %schema
+ constructor: %private-make-schema
+ name
+ includes
+ slot-names
+ tag)
+
+(define <schema> 
+  (%define-standard-type '<schema> (##structure-type (%private-make-schema $empty-slots #f '() '() -1))))
+
+(define (%all-slots schema) (%frame-slots schema))
+
+(define (%spec->slot spec)
+  (let* ((sname (car spec))
+         (attrs (cdr spec))
+         (default (getf default: attrs (%nothing))))
+    (cons sname default)))
+
+(define (%ensure-no-conflicting-slots slots)
+  (let loop ((ss slots)
+             (keys '()))
+    (if (null? ss)
+        slots
+        (let ((slot (car ss)))
+          (if (member (car slot) keys)
+              (error (string-append "Duplicate key in schema slot-descriptions: " (car slot)))
+              (loop (cdr ss) 
+                    (cons (car slot)
+                          keys)))))))
+
+(define (%assemble-schema-slots includes slot-specs)
+  (let* ((included-slots (apply append (map %all-slots includes)))
+         (new-slots (map %spec->slot slot-specs)))
+    (%ensure-no-conflicting-slots (append included-slots new-slots))))
+
+(define (%make-schema name includes slot-specs)
+  (let* ((slots (%assemble-schema-slots includes slot-specs))
+         (slot-names (map car slots))
+         (tag (%next-available-type-tag))
+         (sc (%private-make-schema slots name includes slot-names tag)))
+    (%assert-type! tag sc)
+    sc))
 
 
+(%define-frame-type %schema-instance
+ constructor: %private-make-schema-instance
+ schema)
 
+(define (%validate-initargs schema initargs)
+  (let ((specs (%frame-slots schema)))
+    (let loop ((inits initargs))
+      (if (null? inits)
+          #t
+          (if (null? (cdr inits))
+              (error (string-append "Malformed schema init list:"
+                                    (object->string initargs)))
+              (if (assoc (car inits) specs)
+                  (loop (cddr inits))
+                  (error (string-append "Unrecognized slot name in initializer:"
+                                        (object->string (car inits))))))))))
 
+(define (%make schema . initargs)
+  (%validate-initargs schema initargs)
+  (let loop ((specs (%frame-slots schema))
+             (slots '()))
+    (if (null? specs)
+        (%private-make-schema-instance (reverse slots) schema)
+        (let* ((spec (car specs))
+               (sname (car spec))
+               (sdefault (cdr spec))
+               (init (member sname initargs))
+               (sval (if init
+                        (cadr init)
+                        sdefault)))
+          (loop (cdr specs)
+                (cons (list sname sval)
+                      slots))))))
 
+(define (%schema x)
+  (if (%schema-instance? x)
+      (%schema-instance-schema x)
+      (%nothing)))

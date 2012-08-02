@@ -418,3 +418,10 @@
    restarg: #f
    ))
 
+(define prim:make
+  (%make-primitive-method
+   %make
+   name: 'make
+   parameters: (%list )
+   required-count: 1
+   restarg: #t))

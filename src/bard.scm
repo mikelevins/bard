@@ -13,7 +13,7 @@
 
 (define *bard-prompt* "bard> ")
 
-(define (bard:repl)
+(define (bard:repl #!key (debug #f))
   (gc-report-set! #f)
   (newline)
   (display $bard-version-string)
@@ -23,10 +23,7 @@
     (newline)
     (newline)
     (display *bard-prompt*)
-    (let ((error-handler (lambda (err)
-                           (display-error err)
-                           (loop)))
-          (rep (lambda ()
+    (let ((rep (lambda ()
                  (let* ((input (read-line))
                         (expr (bard:read-from-string input)))
                    (if (or (eq? expr quit:)
@@ -41,5 +38,10 @@
                              (if (%defined? val)
                                  (display (%as-string val)))
                              (loop))))))))
-      (with-exception-catcher error-handler rep))))
+      (if debug
+          (rep)
+          (let ((error-handler (lambda (err)
+                                 (display-error err)
+                                 (loop))))
+            (with-exception-catcher error-handler rep))))))
 

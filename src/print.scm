@@ -53,6 +53,25 @@
                                                         (loop (%cdr keys))))))))
                                         (display "}")))))
 
+(%defprinter <schema> 
+             (lambda (sc)
+               (with-output-to-string '() 
+                                      (lambda () 
+                                        (let ((schema-name (%schema-name sc))
+                                              (includes (map %schema-name (%schema-includes sc)))
+                                              (slot-names (%schema-slot-names sc)))
+                                          (display "#<")
+                                          (if schema-name
+                                              (begin (display "schema ")(display schema-name))
+                                              (display "an anonymous schema"))
+                                          (display " ( ")
+                                          (for-each (lambda (in)(display in)(display " ")) includes)
+                                          (display ") ")
+                                          (display " ( ")
+                                          (for-each (lambda (sn)(display sn)(display " ")) slot-names)
+                                          (display ") ")
+                                          (display ">"))))))
+
 
 (%defprinter <list> 
              (lambda (ls)
@@ -126,7 +145,12 @@
   (let ((printer (table-ref $bard-printers (%object->bard-type x) #f)))
     (if printer
         (printer x)
-        (error (string-append "No Bard printer defined for value: " (object->string x))))))
+        (let ((xtype (%object->bard-type x)))
+          (if (%schema? xtype)
+              (let ((printer (table-ref $bard-printers <frame> #f)))
+                (if printer
+                    (printer x)
+                    (error (string-append "No Bard printer defined for value: " (object->string x))))))))))
 
 (define (show x)
   (newline)
