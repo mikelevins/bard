@@ -1,3 +1,7 @@
+0.2.8
+
+- enable schemas to use strings and keywords as keys
+
 0.2.7
 
 - define-schema implemented, providing user-defined types

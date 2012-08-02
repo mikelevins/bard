@@ -72,7 +72,7 @@
 ;;; ----------------------------------------------------------------------
 
 (define (%canonicalize-slot-spec spec)
-  (let ((spec (if (symbol? spec)
+  (let ((spec (if (or (symbol? spec)(string? spec)(keyword? spec))
                   (list spec default: (%nothing))
                   (if (list? spec)
                       (list (car spec)
