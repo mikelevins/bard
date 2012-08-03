@@ -68,13 +68,37 @@
   (with-recorded-errors #f
    (bard:read-from-string str)))
 
+(define (cbard:read-lines str)
+  (with-recorded-errors #f
+    (call-with-input-string str
+      (lambda (in)(read-all in read-line)))))
+
+(define (cbard:read-nonempty-lines str)
+  (let ((lines (cbard:read-lines str)))
+    (if lines
+        (filter nonempty-source-line? lines)
+        '())))
+
 (define (cbard:eval obj)
   (with-recorded-errors #f
    (%eval obj)))
 
+(define (cbard:load-from-string str)
+  (with-recorded-errors #f
+    (%bard-load-from-string str)))
+
 (define (cbard:print obj)
   (with-recorded-errors "#<Error printing an object>"
    (%as-string obj)))
+
+(define (cbard:is-empty? obj)
+  (cond
+   ((null? obj) #t)
+   ((list? obj) #f)
+   ((%frame? obj)(<= (length (%frame-keys obj)) 0))
+   ((string? obj)(<= (string-length obj) 0))
+   ((vector? obj)(<= (vector-length obj) 0))
+   (else #f)))
 
 (define (cbard:as-char obj)
   (if (char? obj)
@@ -99,5 +123,6 @@
    (if (string? obj)
       obj
       (object->string obj))))
+
 
 

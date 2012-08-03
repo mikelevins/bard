@@ -1,8 +1,6 @@
 # ----------------------------------------
 # Gambit
 # ----------------------------------------
-# we use the same host GSC to compile
-# Scheme sources for all targets
 
 GSC=/usr/local/gambit/macosx/bin/gsc
 

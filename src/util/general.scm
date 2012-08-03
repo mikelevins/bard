@@ -115,4 +115,59 @@
                   (loop (cdr ls)
                         (- n 1)))))))
 
+(define (filter test ls)
+  (if (null? ls)
+      '()
+      (if (test (car ls))
+          (cons (car ls)
+                (filter test (cdr ls)))
+          (filter test (cdr ls)))))
+
+(define (empty-string? str)
+  (> 1 (string-length str)))
+
+(define (comment-line? str)
+  (let ((len (string-length str)))
+    (let loop ((i 0))
+      (if (< i len)
+          (let ((ch (string-ref str i)))
+            (if (char-whitespace? ch)
+                (loop (+ i 1))
+                (if (char=? #\; ch)
+                    #t
+                    #f)))
+          #f))))
+
+(define (left-trim str test)
+  (let ((len (string-length str)))
+    (let loop ((i 0))
+      (if (< i len)
+          (let ((ch (string-ref str i)))
+            (if (test ch)
+                (loop (+ i 1))
+                (substring str i len)))
+          ""))))
+
+(define (right-trim str test)
+  (let loop ((i (- (string-length str) 1)))
+    (if (< i 0)
+        ""
+        (let ((ch (string-ref str i)))
+          (if (test ch)
+              (loop (- i 1))
+              (substring str 0 (+ i 1)))))))
+
+(define (trim-whitespace str)
+  (right-trim (left-trim str char-whitespace?) char-whitespace?))
+
+(define (nonempty-source-line? str)
+  (and (string? str)
+       (not (comment-line? str))
+       (not (empty-string? (trim-whitespace str)))))
+
+(define (read-file path)
+  (call-with-input-file path
+    (lambda (in)
+      (apply string-append (interpose (string #\newline) (read-all in read-line))))))
+
 

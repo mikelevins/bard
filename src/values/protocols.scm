@@ -251,9 +251,15 @@
    required-count: 1
    restarg: #f))
 
+(define (%bard-read-lines in)
+  (cond
+   ((input-port? in)(read-all in read-line))
+   ((string? in)(call-with-input-string in (lambda (stream)(read-all stream read-line))))
+   (else (error (string-append "Invalid argument to read-lines: "
+                               (object->string in))))))
+
 (define bard:read-lines
-  (%make-primitive-method 
-   (lambda (stream)(read-all stream read-line))
+  (%make-primitive-method %bard-read-lines
    name: 'read-lines
    parameters: (%list 'stream)
    required-count: 1

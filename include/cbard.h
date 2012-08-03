@@ -65,11 +65,20 @@ extern const char* bard_version ();
 extern bool init_bard();
 extern int bard_type(BardValue expr);
 extern const char* bard_typename(BardValue expr);
+
 extern BardValue bard_read(const char* str);
+extern BardValue bard_read_lines(const char* str);
+extern BardValue bard_read_nonempty_lines(const char* str);
+
 extern BardValue bard_eval(BardValue obj);
+extern BardValue bard_load_from_string(const char* str);
+
 extern const char* bard_print(BardValue expr);
+
+extern bool bard_is_empty(BardValue obj);
 extern char as_char(BardValue expr);
 extern bool as_bool(BardValue expr);
 extern int as_int(BardValue expr);
 extern float as_float(BardValue expr);
 extern const char* as_string(BardValue expr);
+

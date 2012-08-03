@@ -55,20 +55,37 @@
 ;;; ---------------------------------------------------------------------
 
 (c-define (c:bard-read str) (char-string) 
-          int "bard_read" ""
+          scheme-object "bard_read" ""
           (cbard:read str))
+
+(c-define (c:bard-read-lines str) (char-string) 
+          scheme-object "bard_read_lines" ""
+          (cbard:read-lines str))
+
+(c-define (c:bard-read-nonempty-lines str) (char-string) 
+          scheme-object "bard_read_nonempty_lines" ""
+          (cbard:read-nonempty-lines str))
 
 (c-define (c:bard-eval obj) (scheme-object) 
           scheme-object "bard_eval" ""
           (cbard:eval obj))
+
+(c-define (c:bard-load-from-string str) (char-string) 
+          scheme-object "bard_load_from_string" ""
+          (cbard:load-from-string str))
 
 (c-define (c:bard-print obj) (scheme-object) 
           scheme-object "bard_print" ""
           (cbard:print obj))
 
 ;;; ---------------------------------------------------------------------
-;;; simple value conversions
+;;; operations on values
 ;;; ---------------------------------------------------------------------
+
+(c-define (c:is-empty obj) (scheme-object) 
+          bool "bard_is_empty" ""
+          (cbard:is-empty? obj))
+
 
 (c-define (c:as-char obj) (scheme-object) 
           char "as_char" ""
@@ -89,21 +106,5 @@
 (c-define (c:as-string obj) (scheme-object) 
           char-string "as_string" ""
           (cbard:as-string obj))
-
-;;; ---------------------------------------------------------------------
-;;; operations on symbols and keywords
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
-;;; operations on strings
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
-;;; operations on lists
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
-;;; operations on frames
-;;; ---------------------------------------------------------------------
 
 

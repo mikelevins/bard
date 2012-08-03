@@ -1,8 +1,6 @@
 # ----------------------------------------
 # Gambit
 # ----------------------------------------
-# we use the same host GSC to compile
-# Scheme sources for all targets
 
 GSC=/usr/local/gambit/macosx/bin/gsc
 
@@ -13,48 +11,64 @@ GSC=/usr/local/gambit/macosx/bin/gsc
 # the MRRescue project, we need the path
 # to the project
 
-MRRESCUE_PATH=/Users/mikel/Projects/nelson/nelson/project/MRRescue
+INSTALL_PATH=/Users/mikel/Projects/nelson/nelson/project/MRRescue
 
 # ----------------------------------------
-# iOS
+# Common
 # ----------------------------------------
 
-# Device
+BUILD_DIR=builds/ios
+LIBRARY=libBard.a
 
-IOS_BUILD_DIR=builds/ios
-IOS_LIBRARY=libBard.a
+# ----------------------------------------
+# iOS Device
+# ----------------------------------------
 
-IOS_DEVICE_LIBRARY=libBard.a
-IOS_DEVICE_BUILD_DIR=builds/ios/device
-IOS_DEVICE_GAMBIT_HOME=/usr/local/gambit/ios
-IOS_DEVICE_ARCH=armv7
-IOS_DEVICE_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
-IOS_DEVICE_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk
-IOS_DEVICE_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk
+DEV_LIBRARY=libBard_dev.a
+DEV_BUILD_DIR=builds/ios/device
+DEV_GAMBIT_HOME=/usr/local/gambit/ios
+DEV_ARCH=armv7
+DEV_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+DEV_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk
+DEV_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk
 
-IOS_DEVICE_CC=${IOS_DEVICE_TOOLS_ROOT}/usr/bin/clang
-IOS_DEVICE_LIBTOOL=${IOS_DEVICE_TOOLS_ROOT}/usr/bin/libtool
+DEV_CC=${DEV_TOOLS_ROOT}/usr/bin/clang
+DEV_LIBTOOL=${DEV_TOOLS_ROOT}/usr/bin/libtool
 
-IOS_DEVICE_CFLAGS_LIB=-arch ${IOS_DEVICE_ARCH} -x objective-c  -isysroot ${IOS_DEVICE_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -g -Wno-conversion -Wno-sign-conversion -I${IOS_DEVICE_GAMBIT_HOME}/include -D___LIBRARY
+DEV_CFLAGS_WARN=-Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-conversion -Wno-sign-conversion
 
-IOS_DEVICE_LDFLAGS_LIB=-static -arch_only ${IOS_DEVICE_ARCH} -syslibroot ${IOS_DEVICE_SYSLIBROOT} -ObjC -all_load -framework UIKit -o ${IOS_DEVICE_BUILD_DIR}/${IOS_DEVICE_LIBRARY}
+DEV_CFLAGS_PLATFORM=-arch ${DEV_ARCH} -x objective-c  -isysroot ${DEV_SYSROOT} -fmessage-length=0 -std=gnu99 -fpascal-strings -O0 -fasm-blocks -g
 
-# Simulator
+DEV_CFLAGS=${DEV_CFLAGS_PLATFORM} ${DEV_CFLAGS_WARN} -I${DEV_GAMBIT_HOME}/include -D___LIBRARY
 
-IOS_SIM_LIBRARY=libBard.a
-IOS_SIM_BUILD_DIR=builds/ios/simulator
-IOS_SIM_GAMBIT_HOME=/usr/local/gambit/ios
-IOS_SIM_ARCH=i386
-IOS_SIM_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
-IOS_SIM_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
-IOS_SIM_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
+DEV_LDFLAGS_PLATFORM=-static -arch_only ${DEV_ARCH} -syslibroot ${DEV_SYSLIBROOT} -ObjC -all_load -framework UIKit
 
-IOS_SIM_CC=${IOS_SIM_TOOLS_ROOT}/usr/bin/clang
-IOS_SIM_LIBTOOL=${IOS_SIM_TOOLS_ROOT}/usr/bin/libtool
+DEV_LDFLAGS=${DEV_LDFLAGS_PLATFORM} -o ${DEV_BUILD_DIR}/${DEV_LIBRARY}
 
-IOS_SIM_CFLAGS_LIB=-arch ${IOS_SIM_ARCH} -x objective-c  -isysroot ${IOS_SIM_SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -g -Wno-conversion -Wno-sign-conversion -I${IOS_SIM_GAMBIT_HOME}/include -D___LIBRARY
+# ----------------------------------------
+# iOS Simulator
+# ----------------------------------------
 
-IOS_SIM_LDFLAGS_LIB=-static -arch_only ${IOS_SIM_ARCH} -syslibroot ${IOS_SIM_SYSLIBROOT} -ObjC -all_load -framework Foundation -L${IOS_SIM_GAMBIT_HOME}/lib -lgambc -o ${IOS_SIM_BUILD_DIR}/${IOS_SIM_LIBRARY}
+SIM_LIBRARY=libBard_sim.a
+SIM_BUILD_DIR=builds/ios/simulator
+SIM_GAMBIT_HOME=/usr/local/gambit/ios
+SIM_ARCH=i386
+SIM_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+SIM_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
+SIM_SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk
+
+SIM_CC=${SIM_TOOLS_ROOT}/usr/bin/clang
+SIM_LIBTOOL=${SIM_TOOLS_ROOT}/usr/bin/libtool
+
+SIM_CFLAGS_WARN=-Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-conversion -Wno-sign-conversion
+
+SIM_CFLAGS_PLATFORM=-arch ${SIM_ARCH} -x objective-c  -isysroot ${SIM_SYSROOT} -fmessage-length=0 -std=gnu99  -fpascal-strings 
+
+SIM_CFLAGS=${SIM_CFLAGS_WARN} ${SIM_CFLAGS_PLATFORM} -O0 -g -I${SIM_GAMBIT_HOME}/include -D___LIBRARY
+
+SIM_LDFLAGS_PLATFORM=-static -arch_only ${SIM_ARCH} -syslibroot ${SIM_SYSLIBROOT} -ObjC -all_load -framework Foundation
+
+SIM_LDFLAGS=${SIM_LDFLAGS_PLATFORM} -L${SIM_GAMBIT_HOME}/lib -lgambc -o ${SIM_BUILD_DIR}/${SIM_LIBRARY}
 
 # ----------------------------------------
 # Bard Common files
@@ -78,7 +92,6 @@ SCHEME_SOURCES= \
          src/repl/error.scm \
          src/repl/toplevel.scm \
          src/values/protocols.scm
-
 
 C_SOURCES= \
          src/version.c \
@@ -148,8 +161,12 @@ LIB_OBJECTS= \
 # make rules
 # ----------------------------------------
 
-all: mrrescue_lib
+all: lib
 	make tidy
+
+install: 
+	cp ${BUILD_DIR}/$(LIBRARY) ${INSTALL_PATH}/bard/lib/libBard.a
+	cp include/cbard.h ${INSTALL_PATH}/bard/include/cbard.h
 
 # -------------------
 # Housekeeping
@@ -159,39 +176,35 @@ clean:
 	rm -f ${LIB_C_SOURCES}
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
-	rm -f ${IOS_LIBRARY}
-	rm -f ${IOS_DEVICE_LIBRARY}
-	rm -f ${IOS_SIM_LIBRARY}
+	rm -f ${LIBRARY}
+	rm -f ${DEV_LIBRARY}
+	rm -f ${SIM_LIBRARY}
 
 tidy:
 	rm -f ${C_SOURCES}
 	rm -f ${LIB_C_SOURCES}
 	rm -f ${OBJECTS}
 	rm -f ${LIB_OBJECTS}
+	rm -f ${DEV_LIBRARY}
+	rm -f ${SIM_LIBRARY}
 
 # -------------------
-# Mrrescue components
+# components
 
-all: mrrescue_lib
+lib: device_lib sim_lib
+	lipo -create ${DEV_BUILD_DIR}/$(DEV_LIBRARY) ${SIM_BUILD_DIR}/$(SIM_LIBRARY) -output ${BUILD_DIR}/$(LIBRARY)
 
-install: 
-	cp ${IOS_BUILD_DIR}/$(IOS_LIBRARY) ${MRRESCUE_PATH}/bard/lib/libBard.a
-	cp include/cbard.h ${MRRESCUE_PATH}/bard/include/cbard.h
+# Device
 
-mrrescue_lib: mrrescue_device_lib mrrescue_sim_lib
-	lipo -create ${IOS_DEVICE_BUILD_DIR}/$(IOS_DEVICE_LIBRARY) ${IOS_SIM_BUILD_DIR}/$(IOS_SIM_LIBRARY) -output ${IOS_BUILD_DIR}/$(IOS_LIBRARY)
-
-# Mrrescue Device
-
-mrrescue_device_lib: 
+device_lib: 
 	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES}
-	${IOS_DEVICE_CC} ${IOS_DEVICE_CFLAGS_LIB} -c ${C_SOURCES} ${LIB_C_SOURCES}
-	${IOS_DEVICE_LIBTOOL} ${IOS_DEVICE_LDFLAGS_LIB} ${OBJECTS} ${LIB_OBJECTS}
+	${DEV_CC} ${DEV_CFLAGS} -c ${C_SOURCES} ${LIB_C_SOURCES}
+	${DEV_LIBTOOL} ${DEV_LDFLAGS} ${OBJECTS} ${LIB_OBJECTS}
 
-# Mrrescue Simulator
+# Simulator
 
-mrrescue_sim_lib: 
+sim_lib: 
 	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES} 
-	${IOS_SIM_CC} ${IOS_SIM_CFLAGS_LIB} -c ${C_SOURCES} ${LIB_C_SOURCES} 
-	${IOS_SIM_LIBTOOL} ${IOS_SIM_LDFLAGS_LIB} ${OBJECTS} ${LIB_OBJECTS}
+	${SIM_CC} ${SIM_CFLAGS} -c ${C_SOURCES} ${LIB_C_SOURCES} 
+	${SIM_LIBTOOL} ${SIM_LDFLAGS} ${OBJECTS} ${LIB_OBJECTS}
 
