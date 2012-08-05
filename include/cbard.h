@@ -72,9 +72,12 @@ extern BardValue bard_read_nonempty_lines(const char* str);
 
 extern BardValue bard_eval(BardValue obj);
 extern BardValue bard_load_from_string(const char* str);
+extern BardValue bard_get(BardValue obj, BardValue key);
+extern BardValue bard_keys(BardValue obj);
 
 extern const char* bard_print(BardValue expr);
 
+extern bool bard_is_nothing(BardValue obj);
 extern bool bard_is_empty(BardValue obj);
 extern char as_char(BardValue expr);
 extern bool as_bool(BardValue expr);

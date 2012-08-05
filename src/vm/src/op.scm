@@ -52,7 +52,7 @@
                                                 (val (popval! vm))
                                                 (varname (popval! vm))
                                                 (module (popval! vm)))
-                                            (define-variable module varname val mutable?))))
+                                            (define-variable module varname value: val mutable: mutable?))))
 
 (defop  9 CLOSE   (vm) ()    (pushval! vm (let ((env (popval! vm))
                                                 (code-body (popval! vm))

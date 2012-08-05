@@ -74,6 +74,14 @@
           scheme-object "bard_load_from_string" ""
           (cbard:load-from-string str))
 
+(c-define (c:bard-get obj key) (scheme-object scheme-object) 
+          scheme-object "bard_get" ""
+          (%frame-get obj key))
+
+(c-define (c:bard-keys obj) (scheme-object) 
+          scheme-object "bard_keys" ""
+          (%frame-keys obj))
+
 (c-define (c:bard-print obj) (scheme-object) 
           scheme-object "bard_print" ""
           (cbard:print obj))
@@ -81,6 +89,10 @@
 ;;; ---------------------------------------------------------------------
 ;;; operations on values
 ;;; ---------------------------------------------------------------------
+
+(c-define (c:is-nothing obj) (scheme-object) 
+          bool "bard_is_nothing" ""
+          (%nothing? obj))
 
 (c-define (c:is-empty obj) (scheme-object) 
           bool "bard_is_empty" ""
@@ -100,7 +112,7 @@
           (cbard:as-int obj))
 
 (c-define (c:as-float obj) (scheme-object) 
-          char "as_float" ""
+          float "as_float" ""
           (cbard:as-float obj))
 
 (c-define (c:as-string obj) (scheme-object) 

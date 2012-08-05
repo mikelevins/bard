@@ -9,5 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; two kinds of schema:
+;;; 1. table-style schema with named fields
+;;; 2. vector-style schema with element-type and count constraints
+
 (define (slotref obj slot-name)(not-yet-implemented))
 (define (slot-setter obj slot-name)(not-yet-implemented))
