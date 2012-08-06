@@ -71,6 +71,10 @@ extern BardValue bard_read_lines(const char* str);
 extern BardValue bard_read_nonempty_lines(const char* str);
 
 extern BardValue bard_eval(BardValue obj);
+extern int bard_object_to_id(BardValue obj);
+extern BardValue bard_id_to_object(int oid);
+
+
 extern BardValue bard_load_from_string(const char* str);
 extern BardValue bard_get(BardValue obj, BardValue key);
 extern BardValue bard_keys(BardValue obj);
