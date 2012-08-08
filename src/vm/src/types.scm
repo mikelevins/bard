@@ -290,5 +290,16 @@
 (define <iostream> (%define-structure-type debug-name: '<iostream>  system: #t tag: (get-next-available-system-typenumber)))
 (define Anything (%define-protocol debug-name: 'Anything  system: #t tag: (get-next-available-system-typenumber)))
 (define Type (%define-protocol debug-name: 'Type  system: #t tag: (get-next-available-system-typenumber)))
-(define & (%define-protocol debug-name: '&  system: #t tag: (get-next-available-system-typenumber))) ; type of optional args in method signatures
+
+;;; type of optional args in method signatures
+(define & (%define-protocol debug-name: '&  system: #t tag: (get-next-available-system-typenumber)))
+
+;;; (define <function> )
+;;; (define <method> )
+;;; (define <protocol> )
+;;; (define Schema )
+;;; (define <table-schema> )
+;;; (define <vector-schema> )
+;;; (define <simple-table> )
+;;; (define <simple-vector> )
 
