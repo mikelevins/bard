@@ -9,9 +9,11 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; two kinds of schema:
-;;; 1. table-style schema with named fields
-;;; 2. vector-style schema with element-type and count constraints
+;;; a bard datatype is a tuple of values.
+;;; a schema is a data structure that describes such a tuple.
+;;; users can create new datatypes by defining schemas.
+
+
 
 (define (slotref obj slot-name)(not-yet-implemented))
 (define (slot-setter obj slot-name)(not-yet-implemented))

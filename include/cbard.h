@@ -54,33 +54,27 @@
 #define BARD_ERR_UNBOUND_TABLE_KEY 30
 #define BARD_ERR_UNIDENTIFIED_ERROR 127
 
-
+// ---------------------------------------------------------------------
 // API functions
+// ---------------------------------------------------------------------
+
+// errors
+
 extern bool bard_error_status();
 extern int bard_last_error_code ();
 extern const char* bard_last_error_message ();
 extern void clear_last_bard_error ();
 extern void clear_all_bard_errors ();
+
+// initialization
+
 extern const char* bard_version ();
 extern bool init_bard();
+
+// types and conversions
+
 extern int bard_type(BardValue expr);
 extern const char* bard_typename(BardValue expr);
-
-extern BardValue bard_read(const char* str);
-extern BardValue bard_read_lines(const char* str);
-extern BardValue bard_read_nonempty_lines(const char* str);
-
-extern BardValue bard_eval(BardValue obj);
-extern int bard_object_to_id(BardValue obj);
-extern BardValue bard_id_to_object(int oid);
-
-
-extern BardValue bard_load_from_string(const char* str);
-extern BardValue bard_get(BardValue obj, BardValue key);
-extern BardValue bard_keys(BardValue obj);
-
-extern const char* bard_print(BardValue expr);
-
 extern bool bard_is_nothing(BardValue obj);
 extern bool bard_is_empty(BardValue obj);
 extern char as_char(BardValue expr);
@@ -88,4 +82,41 @@ extern bool as_bool(BardValue expr);
 extern int as_int(BardValue expr);
 extern float as_float(BardValue expr);
 extern const char* as_string(BardValue expr);
+
+// object ids
+
+#define BARD_NO_OBJECT_ID 0
+extern int bard_object_to_id(BardValue obj);
+extern BardValue bard_id_to_object(int oid);
+
+// reading and loading
+
+extern BardValue bard_read(const char* str);
+extern BardValue bard_read_lines(const char* str);
+extern BardValue bard_read_nonempty_lines(const char* str);
+extern BardValue bard_load_from_string(const char* str);
+extern BardValue bard_eval(BardValue obj);
+
+// -------------------
+// operations on values
+// --------------------
+
+// frames
+
+extern BardValue bard_get(BardValue obj, BardValue key);
+extern BardValue bard_get_char_key(BardValue obj, char key);
+extern BardValue bard_get_bool_key(BardValue obj, bool key);
+extern BardValue bard_get_int_key(BardValue obj, int key);
+extern BardValue bard_get_float_key(BardValue obj, float key);
+extern BardValue bard_get_symbol_key(BardValue obj, const char* key);
+extern BardValue bard_get_keyword_key(BardValue obj, const char* key);
+extern BardValue bard_get_string_key(BardValue obj, const char* key);
+extern BardValue bard_keys(BardValue obj);
+
+// lists
+
+extern int bard_length(BardValue obj);
+extern BardValue bard_element(BardValue obj,int index);
+
+
 

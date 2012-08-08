@@ -152,6 +152,7 @@
                     (printer x)
                     (error (string-append "No Bard printer defined for value: " (object->string x))))))))))
 
+
 (define (show x)
   (newline)
   (display (%as-string x))
