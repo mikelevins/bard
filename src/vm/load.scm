@@ -30,9 +30,11 @@
 
 (define $bard-files
   (paths $bard-root 
+         "/src/vm/src/utils.scm"
          "/src/vm/src/stretchy-vector.scm"
          "/src/vm/src/env.scm"
          "/src/vm/src/module.scm"
+         "/src/vm/src/types.scm"
          "/src/vm/src/schema.scm"
          "/src/vm/src/op.scm"
          "/src/vm/src/vm.scm"
