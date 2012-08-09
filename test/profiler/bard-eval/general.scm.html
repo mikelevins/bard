@@ -1,0 +1,1738 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html
+ ><body
+  ><table cellspacing="0" cellpadding="0" border="0" style="font-size: 12px;"
+   ><tr
+    ><td
+     >1: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >2: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; FILE IDENTIFICATION</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >3: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >4: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Name:          general.scm</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >5: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Project:       Bard</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >6: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Purpose:       uncategorized utilities</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >7: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Author:        mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >8: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Copyright:     2012 by mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >9: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >10: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >11: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >12: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >13: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (not-yet-implemented . args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >14: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (error "Not yet implemented" args))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >15: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >16: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (identity x) x)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >17: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >18: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (constantly x) (lambda args x))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >19: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >20: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (partial fn . args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >21: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (lambda more-args</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >22: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (apply fn `(,@args ,@more-args))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >23: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >24: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (flip fn)(lambda (x y)(fn y x)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >25: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >26: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (complement fn . args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >27: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (lambda more-args</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >28: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (not (apply fn `(,@args ,@more-args)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >29: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >30: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (iota n)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >31: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((i (- n 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >32: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (result '()))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >33: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (&lt;= i 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >34: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (cons i result)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >35: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (loop (- i 1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >36: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (cons i result)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >37: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >38: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (bound? name)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >39: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (not (##unbound? (##global-var-ref (##make-global-var name)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >40: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >41: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (plist-&gt;alist plist)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >42: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((kvs plist)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >43: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (result '()))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >44: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (null? kvs)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >45: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (reverse result)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >46: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (null? (cdr kvs))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >47: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (error (string-append "Malformed plist: " (object-&gt;string plist)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >48: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (loop (cddr kvs)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >49: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (cons (cons (car kvs)(cadr kvs))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >50: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                        result))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >51: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >52: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (alist-keys alist)(map car alist))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >53: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (alist-vals alist)(map cdr alist))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >54: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >55: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (alist-get alist key #!key (default #f)(test equal?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >56: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((alist alist))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >57: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (null? alist)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >58: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        default</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >59: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (test key (car (car alist)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >60: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (cdr (car alist))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >61: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (loop (cdr alist))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >62: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >63: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (every? fn ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >64: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((items ls))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >65: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (null? items)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >66: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >67: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (fn (car items))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >68: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (loop (cdr items))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >69: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            #f))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >70: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >71: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (interpose item ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >72: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (or (null? ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >73: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (null? (cdr ls)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >74: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      ls</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >75: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (cons (car ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >76: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (cons item</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >77: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (interpose item (cdr ls))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >78: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >79: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (remove-if test ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >80: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((items ls))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >81: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (null? items)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >82: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        '()</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >83: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (test (car items))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >84: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (remove-if test (cdr items))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >85: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (cons (car items)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >86: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (remove-if test (cdr items)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >87: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >88: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (slib:error . args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >89: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (error (apply string-append (interpose " " (map object-&gt;string args)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >90: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >91: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (vector-every? fn vec)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >92: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((len (vector-length vec)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >93: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (let loop ((i 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >94: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (&gt;= i len)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >95: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >96: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (if (fn (vector-ref vec i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >97: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (loop (+ i 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >98: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              #f)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >99: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >100: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (getf key plist #!optional (default #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >101: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((tl (member key plist)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >102: </td
+    ><td align="center"
+     >50.% </td
+    ><td
+     ><pre style="background-color:#d77fa7"
+      >    (and tl (not (null? (cdr tl))) (cadr tl))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >103: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >104: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (drop n ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >105: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (list-tail ls n))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >106: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >107: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (take n ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >108: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((ls ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >109: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (n n))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >110: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (&lt;= n 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >111: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        '()</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >112: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (null? ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >113: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (error "count out of range")</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >114: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (cons (car ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >115: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (loop (cdr ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >116: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                        (- n 1)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >117: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >118: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (filter test ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >119: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (null? ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >120: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      '()</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >121: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (test (car ls))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >122: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (cons (car ls)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >123: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (filter test (cdr ls)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >124: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (filter test (cdr ls)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >125: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >126: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (empty-string? str)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >127: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (&gt; 1 (string-length str)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >128: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >129: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (comment-line? str)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >130: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((len (string-length str)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >131: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (let loop ((i 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >132: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (&lt; i len)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >133: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (let ((ch (string-ref str i)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >134: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (if (char-whitespace? ch)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >135: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (loop (+ i 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >136: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (if (char=? #\; ch)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >137: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                    #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >138: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                    #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >139: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          #f))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >140: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >141: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (left-trim str test)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >142: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((len (string-length str)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >143: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (let loop ((i 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >144: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (&lt; i len)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >145: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (let ((ch (string-ref str i)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >146: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (if (test ch)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >147: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (loop (+ i 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >148: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (substring str i len)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >149: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          ""))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >150: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >151: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (right-trim str test)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >152: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((i (- (string-length str) 1)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >153: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (&lt; i 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >154: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        ""</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >155: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (let ((ch (string-ref str i)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >156: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (if (test ch)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >157: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (loop (- i 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >158: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (substring str 0 (+ i 1)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >159: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >160: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (trim-whitespace str)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >161: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (right-trim (left-trim str char-whitespace?) char-whitespace?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >162: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >163: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (nonempty-source-line? str)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >164: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (and (string? str)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >165: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       (not (comment-line? str))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >166: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       (not (empty-string? (trim-whitespace str)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >167: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >168: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (read-file path)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >169: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (call-with-input-file path</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >170: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (lambda (in)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >171: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (apply string-append (interpose (string #\newline) (read-all in read-line))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >172: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >173: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ></table
+  ></body
+ ></html
+>#!void

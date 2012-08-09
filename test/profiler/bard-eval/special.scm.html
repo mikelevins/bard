@@ -1,0 +1,4488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html
+ ><body
+  ><table cellspacing="0" cellpadding="0" border="0" style="font-size: 12px;"
+   ><tr
+    ><td
+     >1: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >2: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; FILE IDENTIFICATION</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >3: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >4: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Name:          special.scm</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >5: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Project:       Bard</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >6: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Purpose:       bard special forms</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >7: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Author:        mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >8: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Copyright:     2012 by mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >9: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >10: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >11: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >12: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define $special-forms-table (make-table test: eq?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >13: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >14: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%defspecial nm eval-fn)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >15: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (table-set! $special-forms-table nm eval-fn))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >16: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >17: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%special-evaluator nm)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >18: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (table-ref $special-forms-table nm #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >19: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >20: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%special-form? expr)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >21: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (and (table-ref $special-forms-table (%car expr) #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >22: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       #t))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >23: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >24: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%eval-special-form expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >25: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((op (%car expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >26: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (evaluator (table-ref $special-forms-table op #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >27: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if evaluator</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >28: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (evaluator expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >29: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (error (string-append "unrecognized special form" (%as-string (%car expr)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >30: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >31: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >32: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >33: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; special forms defined</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >34: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >35: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >36: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; and</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >37: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >38: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >39: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; begin</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >40: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >41: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >42: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'begin</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >43: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env) </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >44: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (%eval-sequence (%cdr expr) env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >45: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >46: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >47: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >48: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >49: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >50: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >51: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let loop ((clauses (%cdr expr)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >52: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (if (%null? clauses)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >53: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (%nothing)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >54: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (let* ((clause (%car clauses))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >55: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            (test (%car clause))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >56: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            (conseq (%cdr clause)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >57: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                       (if (eq? 'else test)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >58: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                           (%eval-sequence conseq env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >59: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                           (if (%true? (%eval test env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >60: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (%eval-sequence conseq env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >61: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (loop (%cdr clauses)))))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >62: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >63: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; define</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >64: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >65: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >66: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'define</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >67: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >68: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >69: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (%list-ref expr 1)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >70: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >71: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; define-schema</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >72: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >73: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >74: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%canonicalize-slot-spec spec)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >75: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((spec (if (or (symbol? spec)(string? spec)(keyword? spec))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >76: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (list spec default: (%nothing))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >77: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (if (list? spec)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >78: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (list (car spec)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >79: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            default:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >80: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            (getf default: spec (%nothing)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >81: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (error (string-append "Invalid slot spec: "</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >82: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                            (object-&gt;string spec)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >83: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    spec))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >84: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >85: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-canonical-slot-description spec env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >86: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (cons (car spec)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >87: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (%eval (getf default: spec (%nothing)) env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >88: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >89: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-slot-descriptions specs env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >90: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((specs (map %canonicalize-slot-spec specs)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >91: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (map (lambda (s) (%parse-canonical-slot-description s env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >92: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         specs)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >93: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >94: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'define-schema</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >95: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >96: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let* ((sname (list-ref expr 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >97: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (includes (map (lambda (e)(%eval e env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >98: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                     (list-ref expr 2)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >99: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (slot-specs (drop 3 expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >100: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (slots (%parse-slot-descriptions slot-specs env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >101: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (sc (%make-schema sname includes slots)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >102: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (table-set! $bard-global-variables sname sc)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >103: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 sc)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >104: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >105: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; define-macro prototype &amp; body</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >106: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >107: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >108: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'define-macro</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >109: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >110: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let* ((proto (cadr expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >111: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (body (cddr expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >112: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (mname (car proto))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >113: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (marglist (cdr proto))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >114: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (expander (%eval `(method ,marglist (begin ,@body)) env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >115: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (%define-macro-function mname</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >116: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                         (lambda (expr)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >117: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           (%apply expander (%cdr expr)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >118: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >119: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; define-function</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >120: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >121: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >122: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (always-true) true)")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >123: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (itself x) x)")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >124: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (my-list &amp; args) args)")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >125: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (foo {a: 1 b: 2}) (list a b))")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >126: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (elt (ls &lt;list&gt;)(i &lt;fixnum&gt;)) (%list-ref ls i))")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >127: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (show (%eval (bard:read-from-string "(define-function (frob (x &lt;list&gt;)(y &lt;fixnum&gt;) &amp; more-args) (%list-ref ls i))")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >128: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >129: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define %fparams %list)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >130: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >131: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-function-parameters params env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >132: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((params params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >133: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (param-names %nil)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >134: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (param-types %nil)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >135: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (rest-arg #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >136: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (frame-arg #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >137: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (%null? params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >138: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (%fparams param-names param-types rest-arg frame-arg)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >139: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (let ((next (%car params))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >140: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (more (%cdr params)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >141: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >142: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >           ((eq? '&amp; next) (loop %nil</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >143: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                param-names</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >144: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                param-types</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >145: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                (%cadr params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >146: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                frame-arg))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >147: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >           ((symbol? next) (loop (%cdr params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >148: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 (%append param-names (%list next))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >149: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 (%append param-types (%list 'Anything))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >150: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 rest-arg</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >151: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 frame-arg))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >152: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >           ((%list? next) (if (eq? 'frame (%car next))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >153: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                              (loop %nil</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >154: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    param-names</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >155: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    param-types</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >156: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    rest-arg</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >157: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    next)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >158: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                              (loop (%cdr params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >159: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    (%append param-names (%list (%car next)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >160: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    (%append param-types (%list (%cadr next)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >161: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    rest-arg</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >162: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    frame-arg)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >163: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >           (else (error (string-append "Invalid parameter: " (object-&gt;string next)))))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >164: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >165: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-function-prototype proto env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >166: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((name (%car proto))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >167: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (params (%cdr proto)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >168: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%cons name (%parse-function-parameters params env))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >169: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >170: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%fproto-name fp)(%list-ref fp 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >171: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%fproto-formals fp)(%list-ref fp 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >172: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%fproto-types fp)(%list-ref fp 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >173: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%fproto-restarg fp)(%list-ref fp 3))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >174: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%fproto-framearg fp)(%list-ref fp 4))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >175: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >176: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >177: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; TODO: define-function can now parse frame args, e.g.:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >178: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (define-function (x y {a: "default1" b: "default2"})...)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >179: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; but functions do not yet handle them</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >180: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%define-function expr #!optional (env (%null-environment)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >181: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((prototype (%parse-function-prototype (%list-ref expr 1) env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >182: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (fname (%fproto-name prototype))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >183: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (fn (or (table-ref $bard-global-variables fname #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >184: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (let ((f (%make-function name: fname)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >185: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%defglobal fname f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >186: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >187: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (formals (%fproto-formals prototype))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >188: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (types (%map (lambda (p)(%eval p env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >189: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (%fproto-types prototype)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >190: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (restarg (%fproto-restarg prototype))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >191: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (framearg (%fproto-framearg prototype))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >192: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (required-count (%length types))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >193: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (body (%cons 'begin (%drop 2 expr)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >194: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (method-signature types)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >195: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (method (%make-interpreted-method formals body</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >196: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           environment: env</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >197: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           name: fname</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >198: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           required-count: required-count</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >199: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           restarg: restarg)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >200: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%add-method! fn method-signature method)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >201: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    fname))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >202: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >203: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'define-function %define-function)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >204: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >205: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; function</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >206: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >207: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >208: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'function</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >209: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >210: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (if (&gt; (%length expr) 1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >211: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%make-function name: (%list-ref expr 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >212: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%make-function))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >213: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >214: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; generate</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >215: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >216: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (generate ((x 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >217: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;           (yield (* x x))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >218: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;           (then (+ x 1)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >219: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >220: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'generate</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >221: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >222: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let* ((env (%copy-environment env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >223: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (bindings (map (lambda (binding)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >224: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       (%list (%car binding)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >225: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                              (%eval (%cadr binding) env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >226: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                     (%list-ref expr 1)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >227: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (yield-expr (let ((xp (%list-ref expr 2)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >228: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                    (if (eq? 'yield (car xp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >229: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                        (cdr xp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >230: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                        (error (string-append "Invalid yield form in generate: "</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >231: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                                              (object-&gt;string xp))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >232: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (then-expr (let ((xp (%list-ref expr 3)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >233: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (if (eq? 'then (car xp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >234: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       (cdr xp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >235: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       (error (string-append "Invalid then form in generate: "</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >236: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                                             (object-&gt;string xp)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >237: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (%make-generator yield-expr then-expr env bindings))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >238: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >239: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; if</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >240: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >241: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >242: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'if</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >243: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >244: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let ((test (%list-ref expr 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >245: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (conseq (%list-ref expr 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >246: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (alt? (&gt; (%length expr) 3)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >247: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (if (%true? (%eval test env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >248: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (%eval conseq env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >249: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (if alt?</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >250: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                         (%eval (%list-ref expr 3) env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >251: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                         (%nothing))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >252: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >253: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; let</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >254: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >255: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >256: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'let </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >257: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >258: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let ((bindings (%list-ref expr 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >259: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (body (%drop 2 expr)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >260: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (%eval-sequence body (%add-let-bindings env bindings)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >261: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >262: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >263: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >264: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >265: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >266: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; method-form =&gt; (method-name formals restarg body)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >267: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (method (x y) (+ x y)) =&gt; (#f (x y) #f (begin (+ x y)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >268: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (method foo (x y) (+ x y)) =&gt; (foo (x y) #f (begin (+ x y)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >269: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (method foo (x y) (begin (+ x y))) =&gt; (foo (x y) #f (begin (+ x y)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >270: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (method foo (x y) (+ x y)(* x y)) =&gt; (foo (x y) #f (begin (+ x y)(* x y)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >271: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (method (x y &amp; more) (+ x y)) =&gt; (#f (x y) more (begin (+ x y)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >272: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >273: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-method-parameters params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >274: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((ps params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >275: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (formals %nil))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >276: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (%null? ps)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >277: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (values formals #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >278: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (eq? '&amp; (%car ps))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >279: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (let* ((ps (%cdr ps))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >280: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (len (%length ps)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >281: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (case len</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >282: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               ((0)(error "An ampersand must be followed by a parameter name"))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >283: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               ((1)(values formals (%car ps)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >284: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (else (error "Too many parameters following an ampersand"))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >285: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (loop (%cdr ps)(%append formals (%list (%car ps))))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >286: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >287: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%parse-method-form m)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >288: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((form (%cdr m))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >289: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (first (%car form))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >290: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (mname (if (symbol? first) first #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >291: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (params (if mname (%list-ref form 1)(%list-ref form 0)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >292: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (body (%cons 'begin (if mname (%drop 2 form)(%drop 1 form)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >293: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (receive (formals restarg)(%parse-method-parameters params)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >294: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (%list mname formals restarg body))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >295: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >296: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%mdesc-get-name mdesc)(%list-ref mdesc 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >297: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%mdesc-get-formals mdesc)(%list-ref mdesc 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >298: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%mdesc-get-restarg mdesc)(%list-ref mdesc 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >299: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%mdesc-get-body mdesc)(%list-ref mdesc 3))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >300: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >301: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >302: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >303: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let* ((mdesc (%parse-method-form expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >304: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (mname (%mdesc-get-name mdesc))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >305: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (formals (%mdesc-get-formals mdesc))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >306: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (restarg (%mdesc-get-restarg mdesc))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >307: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (body (%mdesc-get-body mdesc)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >308: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (%make-interpreted-method formals body </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >309: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           environment: env</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >310: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           name: mname</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >311: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           required-count: (%length formals)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >312: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           restarg: restarg))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >313: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >314: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; not</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >315: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >316: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >317: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'not</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >318: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >319: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (if (%true? (%eval (%car (%cdr expr)) env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >320: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%false)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >321: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%true))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >322: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >323: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >324: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; quasiquote</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >325: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >326: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; after norvig</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >327: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >328: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (constant? exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >329: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (pair? exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >330: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (eq? (car exp) 'quote)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >331: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (not (symbol? exp))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >332: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >333: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (combine-skeletons left right exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >334: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >335: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((and (constant? left) (constant? right)) </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >336: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (and (eqv? (%eval left) (car exp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >337: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (eqv? (%eval right) (cdr exp)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >338: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (list 'quote exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >339: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (list 'quote (cons (%eval left) (%eval right)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >340: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((null? right) (list 'list left))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >341: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((and (pair? right) (eq? (car right) 'list))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >342: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (cons 'list (cons left (cdr right))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >343: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (else (list 'add-first left right))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >344: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >345: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%expand-quasiquote exp nesting)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >346: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >347: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       ((not (pair? exp)) </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >348: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	(if (constant? exp) exp (list 'quote exp)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >349: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       ((and (eq? (car exp) 'unquote) (= (length exp) 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >350: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	(if (= nesting 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >351: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	    (%cadr exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >352: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	    (combine-skeletons ''unquote </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >353: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			       (%expand-quasiquote (cdr exp) (- nesting 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >354: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			       exp)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >355: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       ((and (eq? (car exp) 'quasiquote) (= (length exp) 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >356: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	(combine-skeletons ''quasiquote </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >357: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			   (%expand-quasiquote (cdr exp) (+ nesting 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >358: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			   exp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >359: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       ((and (pair? (car exp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >360: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	     (eq? (caar exp) 'unquote-splicing)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >361: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	     (= (length (car exp)) 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >362: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	(if (= nesting 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >363: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	    (list 'append (%cadr (%car exp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >364: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >		  (%expand-quasiquote (cdr exp) nesting))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >365: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >	    (combine-skeletons (%expand-quasiquote (car exp) (- nesting 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >366: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			       (%expand-quasiquote (cdr exp) nesting)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >367: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >			       exp)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >368: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >       (else (combine-skeletons (%expand-quasiquote (car exp) nesting)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >369: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >				(%expand-quasiquote (cdr exp) nesting)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >370: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >				exp))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >371: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >372: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >373: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'quasiquote </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >374: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >375: </td
+    ><td align="center"
+     >7.69% </td
+    ><td
+     ><pre style="background-color:#cf7faf"
+      >               (%eval (%expand-quasiquote (%cadr expr) 0) env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >376: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >377: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'unquote (lambda (expr env) (error "invalid context for unquote")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >378: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'unquote-splicing (lambda (expr env) (error "invalid context for unquote-splicing")))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >379: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >380: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; quote</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >381: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >382: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >383: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'quote </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >384: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >385: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (if (= 2 (%length expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >386: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%car (%cdr expr))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >387: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (error (string-append "Wrong number of arguments to quote: " (%as-string (%cdr expr)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >388: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >389: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; repeat</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >390: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >391: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >392: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'repeat</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >393: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >394: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let ((form (%cdr expr)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >395: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (let loop ()</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >396: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%eval-sequence form env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >397: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (loop)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >398: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >399: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; set!</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >400: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >401: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >402: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'set!</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >403: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >404: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (%set-variable! (%list-ref expr 1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >405: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (%eval (%list-ref expr 2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >406: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                      env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >407: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >408: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >409: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; time</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >410: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >411: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >412: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'time</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >413: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >414: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (time (%eval (%car (%cdr expr)) env))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >415: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >416: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >417: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; with-open-file</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >418: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ----------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >419: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; (with-open-file (var path {direction: 'input}) (do-stuff-to-file-stream var))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >420: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >421: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defspecial 'with-open-file</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >422: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (lambda (expr env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >423: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (let* ((spec (%list-ref expr 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >424: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (var (%car spec))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >425: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (path (%eval (%cadr spec) env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >426: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (keyargs (%drop 2 spec))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >427: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (direction (let ((keylen (%length keyargs)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >428: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (if (&lt;= keylen 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >429: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       'input</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >430: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       (if (and (= 2 keylen)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >431: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                                (eq? direction:))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >432: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           (%eval (%cadr keyargs) env)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >433: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                           (error (string-append "Invalid keyword arguments to with-open-file: "</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >434: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                                                 (%as-string keyargs)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >435: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (body (%cons 'begin (%drop 2 expr))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >436: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (case direction</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >437: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   ((input in) (call-with-input-file path</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >438: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 (lambda (in)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >439: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (let ((env (%add-binding env var in)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >440: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                     (%eval body env)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >441: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   ((output out) (call-with-output-file path</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >442: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (lambda (out)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >443: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                     (let ((env (%add-binding env var out)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >444: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                       (%eval body env)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >445: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (else (error (string-append "Invalid value for direction: argument: "</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >446: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                               (object-&gt;string direction))))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >447: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >448: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ></table
+  ></body
+ ></html
+>#!void

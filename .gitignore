@@ -38,3 +38,9 @@ interpreter/libBard.a
 doc/Bard~.iba
 c_api/objc_data0.scm
 builds//src/vm7/comp.scm~
+
+/builds/mac/bard
+/builds/mac/bard.dSYM/Contents/Resources/
+/builds/ios/simulator/libBard_sim.a
+/builds/ios/device/libBard_dev.a
+/bard-eval/

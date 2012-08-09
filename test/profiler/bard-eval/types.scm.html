@@ -1,0 +1,1898 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html
+ ><body
+  ><table cellspacing="0" cellpadding="0" border="0" style="font-size: 12px;"
+   ><tr
+    ><td
+     >1: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >2: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; FILE IDENTIFICATION</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >3: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >4: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Name:          types.scm</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >5: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Project:       Bard</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >6: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Purpose:       representation of Bard types</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >7: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Author:        mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >8: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Copyright:     2012 by mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >9: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >10: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >11: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >12: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >13: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; primitive type utilities</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >14: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >15: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >16: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%tag obj)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >17: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      > (let ((t (##type obj)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >18: </td
+    ><td align="center"
+     >5.56% </td
+    ><td
+     ><pre style="background-color:#cf7faf"
+      >   (cond ((fx= t 0) ; fixnum tag</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >19: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          32)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >20: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         ((fx= t 2) ; "special" tag</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >21: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (cond ((null? obj)    33)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >22: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                ((char? obj)    34)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >23: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                ((boolean? obj) 35)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >24: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (else           36)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >25: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (else</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >26: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (##subtype obj)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >27: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >28: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%find-bignum)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >29: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((i 2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >30: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (##bignum? i)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >31: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        i</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >32: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (loop (* i i)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >33: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >34: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$undefined (%tag #!unbound))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >35: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$null (%tag '()))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >36: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$boolean (%tag #t))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >37: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$character (%tag #\c))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >38: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$fixnum (%tag 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >39: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$bignum (%tag (%find-bignum)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >40: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$flonum (%tag 1.2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >41: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$ratnum (%tag 2/3))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >42: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$string (%tag "foo"))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >43: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$pair (%tag '(a . b)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >44: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$symbol (%tag 'foo))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >45: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$keyword (%tag foo:))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >46: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$procedure (%tag (lambda (x) x)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >47: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$structure (%tag (current-input-port)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >48: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$vector (%tag (vector)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >49: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$box (%tag (box 1)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >50: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define tags:$foreign-value 18)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >51: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >52: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >53: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; type definitions</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >54: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >55: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; primitive | structure | protocol | singleton | schema (user-defined)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >56: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >57: </td
+    ><td align="center"
+     >5.56% </td
+    ><td
+     ><pre style="background-color:#cf7faf"
+      >(define-type %type</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >58: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >59: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  extender: %defsubtype</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >60: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >61: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (name %type-name)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >62: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (tag %type-tag))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >63: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >64: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defsubtype %primitive-type constructor: %make-primitive-type)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >65: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >66: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defsubtype %standard-type constructor: %make-standard-type (prototype %type-prototype))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >67: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >68: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defsubtype %protocol constructor: %make-protocol)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >69: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >70: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%defsubtype %singleton</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >71: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  constructor: %make-singleton</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >72: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >73: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (value %singleton-value))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >74: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >75: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >76: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; bard's type table</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >77: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >78: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >79: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; types</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >80: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >81: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define $bard-types (make-table test: eqv?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >82: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define $bard-structure-tags (make-table test: eqv?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >83: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define $bard-max-type-tag 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >84: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >85: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%next-available-type-tag)(+ 1 $bard-max-type-tag))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >86: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >87: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%assert-type! tag tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >88: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (table-set! $bard-types tag tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >89: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (set! $bard-max-type-tag (max tag $bard-max-type-tag))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >90: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >91: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >92: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%define-primitive-type name tag)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >93: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%assert-type! tag (%make-primitive-type name tag)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >94: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >95: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%define-standard-type name prototype #!optional (tag (%next-available-type-tag)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >96: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((tp (%make-standard-type name tag prototype)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >97: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%assert-type! tag tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >98: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (table-set! $bard-structure-tags prototype tag)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >99: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    tp))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >100: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >101: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%define-protocol name #!optional (tag (%next-available-type-tag)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >102: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%assert-type! tag (%make-protocol name tag)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >103: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >104: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; singletons</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >105: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >106: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define $bard-singletons (make-table test: eqv?))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >107: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >108: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%singleton val)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >109: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((found (table-ref $bard-singletons (object-&gt;serial-number val) #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >110: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (or found</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >111: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (let ((s (%make-singleton (string-append "singleton " (object-&gt;string val)) (%tag val) val)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >112: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (table-set! $bard-singletons (object-&gt;serial-number val) s)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >113: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          s))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >114: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >115: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >116: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >117: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; basic types</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >118: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >119: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >120: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;undefined&gt; (%define-primitive-type '&lt;undefined&gt; tags:$undefined))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >121: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;null&gt; (%define-primitive-type '&lt;null&gt; tags:$null))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >122: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;character&gt; (%define-primitive-type '&lt;character&gt; tags:$character))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >123: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;boolean&gt; (%define-primitive-type '&lt;boolean&gt; tags:$boolean))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >124: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;symbol&gt; (%define-primitive-type '&lt;symbol&gt; tags:$symbol))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >125: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;keyword&gt; (%define-primitive-type '&lt;keyword&gt; tags:$keyword))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >126: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;flonum&gt; (%define-primitive-type '&lt;flonum&gt; tags:$flonum))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >127: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;ratnum&gt; (%define-primitive-type '&lt;ratnum&gt; tags:$ratnum))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >128: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;fixnum&gt; (%define-primitive-type '&lt;fixnum&gt; tags:$fixnum))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >129: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;bignum&gt; (%define-primitive-type '&lt;bignum&gt; tags:$bignum))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >130: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;primitive-procedure&gt; (%define-primitive-type '&lt;primitive-procedure&gt; tags:$procedure))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >131: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;string&gt; (%define-primitive-type '&lt;string&gt; tags:$string))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >132: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;list&gt; (%define-primitive-type '&lt;list&gt; tags:$pair))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >133: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;foreign-value&gt; (%define-primitive-type '&lt;foreign-value&gt; tags:$foreign-value))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >134: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >135: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;iostream&gt; (%define-standard-type '&lt;iostream&gt; (##structure-type (current-input-port))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >136: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define Anything (%define-protocol 'Anything))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >137: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define Type (%define-protocol 'Type))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >138: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &amp; (%define-protocol '&amp;)) ; type of optional args in method signatures</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >139: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >140: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >141: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; type operations</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >142: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >143: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >144: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%object-&gt;type-tag thing)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >145: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >146: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((%type? thing) (%type-tag thing))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >147: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((%schema-instance? thing)(%schema-tag (%schema-instance-schema thing)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >148: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((##structure? thing) (table-ref $bard-structure-tags (##structure-type thing) #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >149: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (else (%tag thing))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >150: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >151: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%object-&gt;bard-type thing)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >152: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (cond</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >153: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((%type? thing) Type)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >154: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((%schema-instance? thing)(let ((tag (%object-&gt;type-tag thing)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >155: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (if tag</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >156: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (table-ref $bard-types tag #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >157: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                   (error (string-append "Can't get the type of " (object-&gt;string thing))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >158: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   ((##structure? thing) (let ((tag (%object-&gt;type-tag thing)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >159: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                           (if tag</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >160: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (table-ref $bard-types tag #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >161: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (error (string-append "Can't get the type of " (object-&gt;string thing))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >162: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (else (table-ref $bard-types (%tag thing)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >163: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >164: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >165: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; type taxonomy</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >166: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >167: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >168: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%subtype? t1 t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >169: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (eq? t1 t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >170: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >171: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (eq? t2 Anything)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >172: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >173: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >174: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >175: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%instance-of? val tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >176: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (eq? tp Anything)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >177: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (%true)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >178: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (%singleton? tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >179: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (eq? (%singleton val) tp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >180: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (%subtype? (%object-&gt;bard-type val) tp))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >181: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >182: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%keyed-collection? op)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >183: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (or</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >184: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (%null? op)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >185: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (string? op)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >186: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (%list? op)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >187: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >   (%frame? op)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >188: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >189: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ></table
+  ></body
+ ></html
+>#!void

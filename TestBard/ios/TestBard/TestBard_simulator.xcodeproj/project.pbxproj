@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		970E43311577F28400B2A887 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E43301577F28400B2A887 /* libBard.a */; };
-		970E43351577F2D700B2A887 /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E43341577F2D700B2A887 /* libgambc.a */; };
 		970E433C1577FBB000B2A887 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E433B1577FBB000B2A887 /* Foundation.framework */; };
 		970E433E1577FBC900B2A887 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E433D1577FBC900B2A887 /* CoreGraphics.framework */; };
 		970E43401577FBE100B2A887 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E433F1577FBE100B2A887 /* UIKit.framework */; };
+		970F252015D36B6A00B7C0C5 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970F251F15D36B6A00B7C0C5 /* libBard.a */; };
+		970F252215D36B8000B7C0C5 /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970F252115D36B8000B7C0C5 /* libgambc.a */; };
 		974276851577EEEC002BBA8F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 974276831577EEEC002BBA8F /* InfoPlist.strings */; };
 		974276871577EEEC002BBA8F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 974276861577EEEC002BBA8F /* main.m */; };
 		9742768B1577EEEC002BBA8F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9742768A1577EEEC002BBA8F /* AppDelegate.m */; };
@@ -24,11 +24,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		970E43301577F28400B2A887 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../../../builds/ios/simulator/libBard.a; sourceTree = "<group>"; };
-		970E43341577F2D700B2A887 /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = ../../../../../../../../../../../usr/local/gambit/iosSimulator/lib/libgambc.a; sourceTree = "<group>"; };
 		970E433B1577FBB000B2A887 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		970E433D1577FBC900B2A887 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		970E433F1577FBE100B2A887 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		970F251E15D36B4C00B7C0C5 /* cbard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbard.h; path = ../../../../include/cbard.h; sourceTree = "<group>"; };
+		970F251F15D36B6A00B7C0C5 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../../../builds/ios/libBard.a; sourceTree = "<group>"; };
+		970F252115D36B8000B7C0C5 /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = ../../../../../../../../usr/local/gambit/ios/lib/libgambc.a; sourceTree = "<group>"; };
 		974276761577EEEC002BBA8F /* TestBard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974276821577EEEC002BBA8F /* TestBard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TestBard-Info.plist"; sourceTree = "<group>"; };
 		974276841577EEEC002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -44,7 +45,6 @@
 		974276961577EEEC002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MasterViewController_iPad.xib; sourceTree = "<group>"; };
 		974276991577EEEC002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController_iPhone.xib; sourceTree = "<group>"; };
 		9742769C1577EEEC002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController_iPad.xib; sourceTree = "<group>"; };
-		974276A31577EF20002BBA8F /* bard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bard.h; path = ../../../../include/bard.h; sourceTree = "<group>"; };
 		974276A41577EF38002BBA8F /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gambit.h; path = /usr/local/gambit/ios/include/gambit.h; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -53,11 +53,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				970E43311577F28400B2A887 /* libBard.a in Frameworks */,
-				970E43351577F2D700B2A887 /* libgambc.a in Frameworks */,
 				970E433C1577FBB000B2A887 /* Foundation.framework in Frameworks */,
 				970E433E1577FBC900B2A887 /* CoreGraphics.framework in Frameworks */,
 				970E43401577FBE100B2A887 /* UIKit.framework in Frameworks */,
+				970F252015D36B6A00B7C0C5 /* libBard.a in Frameworks */,
+				970F252215D36B8000B7C0C5 /* libgambc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,10 +124,10 @@
 		974276A51577EF40002BBA8F /* bard */ = {
 			isa = PBXGroup;
 			children = (
-				970E43341577F2D700B2A887 /* libgambc.a */,
-				970E43301577F28400B2A887 /* libBard.a */,
+				970F252115D36B8000B7C0C5 /* libgambc.a */,
+				970F251F15D36B6A00B7C0C5 /* libBard.a */,
+				970F251E15D36B4C00B7C0C5 /* cbard.h */,
 				974276A41577EF38002BBA8F /* gambit.h */,
-				974276A31577EF20002BBA8F /* bard.h */,
 			);
 			name = bard;
 			sourceTree = "<group>";
@@ -309,6 +309,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../builds/ios/simulator\"",
 					/usr/local/gambit/iosSimulator/lib,
+					"\"$(SRCROOT)/../../../builds/ios\"",
+					/usr/local/gambit/ios/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -329,6 +331,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../builds/ios/simulator\"",
 					/usr/local/gambit/iosSimulator/lib,
+					"\"$(SRCROOT)/../../../builds/ios\"",
+					/usr/local/gambit/ios/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

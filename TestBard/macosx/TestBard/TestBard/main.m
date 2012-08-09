@@ -8,8 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #define ___VERSION 406006
-#include "gambit.h"
-#include "bard.h"
+#include "cbard.h"
 
 #define SCHEME_LIBRARY_LINKER ____20_bard__
 
@@ -26,7 +25,7 @@ int main(int argc, char *argv[])
 	___setup (&setup_params);
     
     @autoreleasepool {
-    NSString* vers = bard_version();
+    const char* vers = bard_version();
     NSLog(@"bard version: %@",vers);
     
     int retval = NSApplicationMain(argc, (const char **)argv);

@@ -11,7 +11,7 @@ GSC=/usr/local/gambit/macosx/bin/gsc
 # the MRRescue project, we need the path
 # to the project
 
-INSTALL_PATH=/Users/mikel/Projects/nelson/nelson/project/MRRescue
+INSTALL_PATH=/Users/mikel/Projects/nelson/MRRescue
 
 # ----------------------------------------
 # Common
@@ -162,7 +162,6 @@ LIB_OBJECTS= \
 # ----------------------------------------
 
 all: lib
-	make tidy
 
 install: 
 	cp ${BUILD_DIR}/$(LIBRARY) ${INSTALL_PATH}/bard/lib/libBard.a

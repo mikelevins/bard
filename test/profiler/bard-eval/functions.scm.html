@@ -1,0 +1,2108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html
+ ><body
+  ><table cellspacing="0" cellpadding="0" border="0" style="font-size: 12px;"
+   ><tr
+    ><td
+     >1: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >2: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; FILE IDENTIFICATION</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >3: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >4: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Name:          functions.scm</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >5: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Project:       Bard</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >6: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Purpose:       representation of Bard functions</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >7: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Author:        mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >8: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; Copyright:     2012 by mikel evins</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >9: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >10: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;;; ***********************************************************************</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >11: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >12: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >13: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; method signatures</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >14: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >15: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >16: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%method-signature-matches? sig required-count rest-arg? args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >17: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((test (if rest-arg? &gt;= =)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >18: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (test (%length args) required-count)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >19: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (let loop ((i 0))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >20: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (if (&gt;= i required-count)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >21: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >22: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (if (%instance-of? (%list-ref args i)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >23: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 (%list-ref sig i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >24: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (loop (+ i 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >25: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >26: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        #f)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >27: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >28: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%type-more-specific? t1 t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >29: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (if (eq? t1 t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >30: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >31: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (%singleton? t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >32: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          #f</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >33: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (if (%singleton? t1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >34: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (%type-more-specific? (%object-&gt;bard-type (%singleton-value t1)) t2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >35: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (if (eq? t2 Anything)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >36: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >37: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  #f)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >38: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >39: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%method-signature-more-specific? sig1 sig2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >40: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let loop ((sig1 sig1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >41: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >             (sig2 sig2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >42: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (if (%null? sig1)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >43: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (%null? sig2)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >44: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            #t</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >45: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >46: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >        (if (%type-more-specific? (%car sig1)(%car sig2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >47: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (loop (%cdr sig1)(%cdr sig2))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >48: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            #f))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >49: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >50: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >51: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; methods</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >52: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >53: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >54: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define-type %method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >55: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  id: 927A1AD2-762A-4DE6-9900-C22857D20E5A</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >56: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  extender: %def-method-type</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >57: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >58: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (name %method-name)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >59: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (formals %method-formals)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >60: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (restarg %method-restarg)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >61: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (required-count %method-required-count))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >62: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >63: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%def-method-type %primitive-method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >64: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  constructor: %private-make-primitive-method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >65: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >66: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (function %method-function))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >67: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >68: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%make-primitive-method function  </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >69: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                #!key </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >70: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                (parameters %nil)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >71: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                (name #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >72: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                (required-count 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >73: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                (restarg #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >74: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%private-make-primitive-method name parameters restarg required-count function))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >75: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >76: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;primitive-method&gt;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >77: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%define-standard-type '&lt;primitive-method&gt; (##structure-type (%make-primitive-method #f))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >78: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >79: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(%def-method-type %interpreted-method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >80: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  constructor: %private-make-interpreted-method</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >81: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >82: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (environment %method-environment)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >83: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                  (body %method-body))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >84: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >85: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%make-interpreted-method parameters method-body  </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >86: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                  #!key </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >87: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                  (environment '())</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >88: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                  (name #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >89: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                  (required-count 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >90: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                  (restarg #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >91: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%private-make-interpreted-method name parameters restarg required-count environment method-body))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >92: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >93: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;interpreted-method&gt;</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >94: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%define-standard-type '&lt;interpreted-method&gt; (##structure-type (%make-interpreted-method '() '()))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >95: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >96: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%method-name? x)(or (symbol? x)(string? x)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >97: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >98: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >99: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; functions</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >100: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >101: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >102: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define-type %function</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >103: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  id: 0E7FE105-F4B7-4EE4-AA16-9475976B003D</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >104: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  constructor: %private-make-function</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >105: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >106: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (name %function-name)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >107: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-write:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >108: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (signatures %function-method-signatures %set-function-method-signatures!)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >109: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (formals %function-method-formals %set-function-method-formals!)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >110: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (methods %function-methods %set-function-methods!))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >111: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >112: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%make-function #!key (name #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >113: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%private-make-function name (%list) (%list) (%list)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >114: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >115: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;function&gt; (%define-standard-type '&lt;function&gt; (##structure-type (%make-function))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >116: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >117: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%function-max-method-index fn)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >118: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (- (%length (%function-method-signatures fn)) 1))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >119: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >120: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%function-nth-method-signature fn i)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >121: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (%list-ref (%function-method-signatures fn) i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >122: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >123: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%function-nth-method fn i)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >124: </td
+    ><td align="center"
+     >7.69% </td
+    ><td
+     ><pre style="background-color:#cf7faf"
+      >  (%list-ref (%function-methods fn) i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >125: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >126: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%function-best-method fn args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >127: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let ((last-method-index (%function-max-method-index fn)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >128: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (let loop ((i 0)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >129: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (m #f)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >130: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >               (best #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >131: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >      (if (&gt; i last-method-index)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >132: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (if best</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >133: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (values (%function-nth-method fn m) best)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >134: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >              (values #f #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >135: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >          (let* ((sig (%function-nth-method-signature fn i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >136: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (meth (%function-nth-method fn i))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >137: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (required-count (%method-required-count meth))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >138: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                 (rest? (%method-restarg meth)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >139: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >            (if (%method-signature-matches? sig required-count rest? args)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >140: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (if best</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >141: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                    (if (%method-signature-more-specific? sig best)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >142: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                        (loop (+ 1 i) i sig)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >143: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                        (loop (+ 1 i) m best))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >144: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                    (loop (+ 1 i) i sig))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >145: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                (loop (+ 1 i) m best)))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >146: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >147: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%add-method! fn msig method)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >148: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((found-pos (%position (lambda (s)(%every? equal? s msig)) </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >149: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (%function-method-signatures fn)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >150: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (sigs (if found-pos</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >151: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%function-method-signatures fn)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >152: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%append (%function-method-signatures fn) (%list msig))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >153: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (methods (if found-pos</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >154: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (%list-put (%function-methods fn) found-pos method)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >155: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (%append (%function-methods fn) (%list method)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >156: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%set-function-method-signatures! fn sigs)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >157: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%set-function-methods! fn methods)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >158: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    fn))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >159: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >160: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%add-primitive-method! fn msig params method-function #!key (name #f))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >161: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((method (%make-primitive-method method-function </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >162: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                         name: name parameters: params </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >163: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                         required-count: (%length params)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >164: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (found-pos (%position (lambda (s)(%every? equal? s msig)) </pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >165: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                               (%function-method-signatures fn)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >166: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (sigs (if found-pos</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >167: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%function-method-signatures fn)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >168: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                   (%append (%function-method-signatures fn) (%list msig))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >169: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (methods (if found-pos</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >170: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (%list-put (%function-methods fn) found-pos method)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >171: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                      (%append (%function-methods fn) (%list method)))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >172: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%set-function-method-signatures! fn sigs)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >173: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%set-function-methods! fn methods)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >174: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    fn))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >175: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >176: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >177: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; generators</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >178: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >;;; ---------------------------------------------------------------------</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >179: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >180: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define-type %generator</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >181: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  id: 32EDAE4A-BA00-4313-BC4F-1F3A1F7AC8C0</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >182: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  constructor: %make-generator</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >183: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-only:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >184: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (yield-expression %generator-yield-expression)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >185: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (then-expression %generator-then-expression)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >186: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  read-write:</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >187: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (environment %generator-environment %set-generator-environment!)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >188: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (bindings %generator-bindings %set-generator-bindings!))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >189: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >190: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define &lt;generator&gt; (%define-standard-type '&lt;generator&gt; (##structure-type (%make-generator '() '() '() '()))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >191: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      ></pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >192: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >(define (%next gen)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >193: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >  (let* ((env (%generator-environment gen))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >194: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (bindings (%generator-bindings gen))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >195: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (this-env (let loop ((bds bindings)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >196: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                              (e env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >197: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                     (if (%null? bds)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >198: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                         e</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >199: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                         (let ((bd (%car bds)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >200: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                           (loop (%cdr bds)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >201: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                 (%cons (%cons (%car bd)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >202: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                               (%cadr bd))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >203: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                                        e))))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >204: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (next-val (%eval-sequence (%generator-yield-expression gen) this-env))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >205: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >         (new-bindings (map (lambda (var val-exp)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >206: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                              (list var (%eval val-exp this-env)))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >207: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            (map %car bindings)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >208: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >                            (%generator-then-expression gen))))</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >209: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    (%set-generator-bindings! gen new-bindings)</pre
+     ></td
+    ></tr
+   ><tr
+    ><td
+     >210: </td
+    ><td align="center"
+     ></td
+    ><td
+     ><pre style="background-color:#ffffff"
+      >    next-val))</pre
+     ></td
+    ></tr
+   ></table
+  ></body
+ ></html
+>#!void

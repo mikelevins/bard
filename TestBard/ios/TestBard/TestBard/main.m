@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 
 #import "AppDelegate.h"
-#define ___VERSION 406001
-#include "gambit.h"
-#include "bard.h"
+#define ___VERSION 406006
+#include "cbard.h"
 
 #define SCHEME_LIBRARY_LINKER ____20_bard__
 
@@ -31,9 +30,8 @@ int main(int argc, char *argv[])
     
     int retval;
     @autoreleasepool {
-        NSString* bardVersion = bard_version();
-        NSLog(@"%@",bardVersion);
-        bool bardSucceeded=init_bard();
+        const char* bardVersion = bard_version();
+        NSLog(@"%s",bardVersion);
         retval=UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
     ___cleanup ();	

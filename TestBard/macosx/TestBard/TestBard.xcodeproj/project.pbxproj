@@ -19,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		970F251815D36AC900B7C0C5 /* cbard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbard.h; path = ../../../../include/cbard.h; sourceTree = "<group>"; };
 		9742760D1577E42C002BBA8F /* TestBard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974276111577E42C002BBA8F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		974276141577E42C002BBA8F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -33,7 +34,6 @@
 		974276241577E42C002BBA8F /* Document.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document.m; sourceTree = "<group>"; };
 		974276271577E42C002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Document.xib; sourceTree = "<group>"; };
 		9742762A1577E42D002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		974276371577E609002BBA8F /* bard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bard.h; path = ../../../../include/bard.h; sourceTree = "<group>"; };
 		974276381577E62E002BBA8F /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../../../builds/mac/libBard.a; sourceTree = "<group>"; };
 		9742763A1577E652002BBA8F /* gambit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gambit.h; path = ../../../../../../../../../../../usr/local/gambit/macosx/include/gambit.h; sourceTree = "<group>"; };
 		9742763B1577E773002BBA8F /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = ../../../../../../../../../../../usr/local/gambit/macosx/lib/libgambc.a; sourceTree = "<group>"; };
@@ -117,10 +117,10 @@
 		974276351577E5F8002BBA8F /* bard */ = {
 			isa = PBXGroup;
 			children = (
+				970F251815D36AC900B7C0C5 /* cbard.h */,
 				9742763B1577E773002BBA8F /* libgambc.a */,
 				9742763A1577E652002BBA8F /* gambit.h */,
 				974276381577E62E002BBA8F /* libBard.a */,
-				974276371577E609002BBA8F /* bard.h */,
 			);
 			name = bard;
 			sourceTree = "<group>";

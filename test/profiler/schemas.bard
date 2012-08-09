@@ -1,0 +1,194 @@
+;;;; ***********************************************************************)
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          schemas.bard
+;;;; Project:       MRRescue
+;;;; Purpose:       schemas used in MRRescue puzzles
+;;;; 
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; ---------------------------------------------------------------------
+;;; general data structures
+;;; ---------------------------------------------------------------------
+
+(define-schema <identifiable> () id:)
+
+(define-schema <platform-dependent-value> ()
+  iPhone: iPhoneRetina: iPad: iPadRetina:)
+
+(define-function (with-platform & args)
+  (apply make `(,<platform-dependent-value> ,@args)))
+
+(define-schema <point> () x: y:)
+
+(define-function (point x y)
+  (make <point> x: x y: y))
+
+(define-schema <color-rgba> () r: g: b: a:)
+
+(define-function (color-rgba & args)
+  (apply make `(,<color-rgba> ,@args)))
+
+;;; ---------------------------------------------------------------------
+;;; actions, rules, and timers
+;;; ---------------------------------------------------------------------
+
+(define-schema <rule> (<identifiable>)
+  method:)
+
+(define-schema <action> (<identifiable>)
+  target:
+  method:)
+
+(define-schema <timer> (<identifiable>)
+  name:
+  interval:
+  repeat:
+  target:
+  action:)
+
+;;; ---------------------------------------------------------------------
+;;; references to assets and resources
+;;; ---------------------------------------------------------------------
+
+(define-schema <asset> (<identifiable>)
+  type:
+  resourceName:)
+
+;;; ---------------------------------------------------------------------
+;;; screen: grouping
+;;; ---------------------------------------------------------------------
+
+(define-schema <layer> (<identifiable>)
+  zIndex:
+  contents:)
+
+(define-schema <button-group> (<identifiable>)
+  style:
+  members:)
+
+;;; ---------------------------------------------------------------------
+;;; graphics: text objects
+;;; ---------------------------------------------------------------------
+
+(define-schema <label> (<identifiable>)
+  font:
+  center:)
+
+(define-schema <floating-label> (<identifiable>)
+  font:
+  center:
+  path:
+  duration:)
+
+(define-schema <digital-counter> (<identifiable>)
+  dataSource:
+  font:
+  center:)
+
+(define-schema <digital-clock> (<identifiable>)
+  dataSource:
+  font:
+  center:)
+
+;;; ---------------------------------------------------------------------
+;;; graphics: vector images
+;;; ---------------------------------------------------------------------
+
+(define-schema <circle-sprite> (<identifiable>)
+  radius:
+  strokeWidth:
+  fillColor:
+  strokeColor:)
+
+(define-schema <round-rect-sprite> (<identifiable>)
+  center:
+  width:
+  height:
+  strokeWidth:
+  fillColor:
+  strokeColor:)
+
+;;; ---------------------------------------------------------------------
+;;; conceptual elements (made of one or more images and animations)
+;;; ---------------------------------------------------------------------
+
+(define-schema <stage> (<identifiable>)
+  costume:
+  center:)
+
+(define-schema <prop> (<identifiable>)
+  resourceName: resourceType: center:)
+
+(define-schema <hud-element> (<identifiable>)
+  parts:
+  center:)
+
+(define-schema <costume> (<identifiable>)
+  resourceType:
+  resourceName:
+  animationInterval:
+  animationFrames:)
+
+(define-schema <halo> (<identifiable>)
+  costume:)
+
+(define-schema <state> (<identifiable>)
+  name:
+  costume:
+  enabled:
+  halo:
+  effect:
+  display:)
+
+(define-function (state & args)
+  (apply make `(,<state> ,@args)))
+
+
+(define-schema <role> (<identifiable>)
+  name:
+  states:
+  transitions:)
+
+(define-schema <actor> (<identifiable>)
+  name:
+  properties:
+  role:
+  timers:
+  center:)
+
+(define-schema <button> (<identifiable>)
+  activeCostume:
+  inactiveCostume:
+  selectionStyle:
+  group:
+  action:
+  target:)
+
+(define-schema <transition> (<identifiable>)
+  costume:)
+
+;;; ---------------------------------------------------------------------
+;;; puzzles
+;;; ---------------------------------------------------------------------
+
+(define-schema <puzzle> (<identifiable>)
+  title:
+  levelNumber:
+  parameters:
+  scoringRule:
+  layers:
+  actions:
+  assets:
+  stage:
+  props:
+  roles:
+  actors:
+  HUD:
+  buttons:
+  groups:
+  timers:)
+
