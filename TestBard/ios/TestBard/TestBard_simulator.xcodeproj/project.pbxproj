@@ -307,8 +307,6 @@
 				INFOPLIST_FILE = "TestBard/TestBard-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../builds/ios/simulator\"",
-					/usr/local/gambit/iosSimulator/lib,
 					"\"$(SRCROOT)/../../../builds/ios\"",
 					/usr/local/gambit/ios/lib,
 				);
@@ -329,8 +327,6 @@
 				INFOPLIST_FILE = "TestBard/TestBard-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../builds/ios/simulator\"",
-					/usr/local/gambit/iosSimulator/lib,
 					"\"$(SRCROOT)/../../../builds/ios\"",
 					/usr/local/gambit/ios/lib,
 				);

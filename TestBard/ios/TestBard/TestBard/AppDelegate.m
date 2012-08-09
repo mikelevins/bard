@@ -33,24 +33,6 @@
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     
-    // Override point for customization after application launch.
-    NSString* respath = [[NSBundle mainBundle] resourcePath];
-    NSArray* bardPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@"bard" inDirectory:nil];
-    for (NSString* path in bardPaths) {
-        NSString* text = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:nil];
-        if (text == nil) {
-            NSLog(@"Unable to read Bard file: %@", path);
-        } else {
-            NSLog(@"Loading %@...", path);
-            bool succeeded = bard_load_from_string(text);
-            if (succeeded) {
-                NSLog(@"%@ loaded.", path);
-            } else {
-                NSLog(@"%@ failed to load.", path);
-            }
-        }
-    }
-        
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil] autorelease];
         self.navigationController = [[[UINavigationController alloc] initWithRootViewController:masterViewController] autorelease];
