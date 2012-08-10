@@ -12,6 +12,7 @@
 		970E43401577FBE100B2A887 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 970E433F1577FBE100B2A887 /* UIKit.framework */; };
 		970F252015D36B6A00B7C0C5 /* libBard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970F251F15D36B6A00B7C0C5 /* libBard.a */; };
 		970F252215D36B8000B7C0C5 /* libgambc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970F252115D36B8000B7C0C5 /* libgambc.a */; };
+		9713180115D3D5C900325085 /* BardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9713180015D3D5C900325085 /* BardTests.m */; };
 		974276851577EEEC002BBA8F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 974276831577EEEC002BBA8F /* InfoPlist.strings */; };
 		974276871577EEEC002BBA8F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 974276861577EEEC002BBA8F /* main.m */; };
 		9742768B1577EEEC002BBA8F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9742768A1577EEEC002BBA8F /* AppDelegate.m */; };
@@ -30,6 +31,9 @@
 		970F251E15D36B4C00B7C0C5 /* cbard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbard.h; path = ../../../../include/cbard.h; sourceTree = "<group>"; };
 		970F251F15D36B6A00B7C0C5 /* libBard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBard.a; path = ../../../../builds/ios/libBard.a; sourceTree = "<group>"; };
 		970F252115D36B8000B7C0C5 /* libgambc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgambc.a; path = ../../../../../../../../usr/local/gambit/ios/lib/libgambc.a; sourceTree = "<group>"; };
+		971317FF15D3D5C900325085 /* BardTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BardTests.h; sourceTree = "<group>"; };
+		9713180015D3D5C900325085 /* BardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BardTests.m; sourceTree = "<group>"; };
+		973AE6C315D3C6F0009E5B26 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		974276761577EEEC002BBA8F /* TestBard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974276821577EEEC002BBA8F /* TestBard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TestBard-Info.plist"; sourceTree = "<group>"; };
 		974276841577EEEC002BBA8F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -87,6 +91,7 @@
 				970E433F1577FBE100B2A887 /* UIKit.framework */,
 				970E433D1577FBC900B2A887 /* CoreGraphics.framework */,
 				970E433B1577FBB000B2A887 /* Foundation.framework */,
+				973AE6C315D3C6F0009E5B26 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -97,6 +102,8 @@
 				974276A51577EF40002BBA8F /* bard */,
 				974276891577EEEC002BBA8F /* AppDelegate.h */,
 				9742768A1577EEEC002BBA8F /* AppDelegate.m */,
+				971317FF15D3D5C900325085 /* BardTests.h */,
+				9713180015D3D5C900325085 /* BardTests.m */,
 				9742768C1577EEEC002BBA8F /* MasterViewController.h */,
 				9742768D1577EEEC002BBA8F /* MasterViewController.m */,
 				9742768F1577EEEC002BBA8F /* DetailViewController.h */,
@@ -201,6 +208,7 @@
 				9742768B1577EEEC002BBA8F /* AppDelegate.m in Sources */,
 				9742768E1577EEEC002BBA8F /* MasterViewController.m in Sources */,
 				974276911577EEEC002BBA8F /* DetailViewController.m in Sources */,
+				9713180115D3D5C900325085 /* BardTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

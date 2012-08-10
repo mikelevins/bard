@@ -11,8 +11,7 @@
 #import "MasterViewController.h"
 
 #import "DetailViewController.h"
-
-#include "cbard.h"
+#import "BardTests.h"
 
 
 @implementation AppDelegate
@@ -53,6 +52,10 @@
         self.window.rootViewController = self.splitViewController;
     }
     [self.window makeKeyAndVisible];
+    
+    BardTests* theTests = [[BardTests alloc] init];
+    [theTests run];
+    
     return YES;
 }
 

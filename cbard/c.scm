@@ -76,9 +76,6 @@
 
 (c-define (c:as-string obj) (scheme-object) 
           char-string "as_string" ""
-          (newline)
-          (display "as-string ")
-          (display obj)
           (cbard:as-string obj))
 
 ;;; ---------------------------------------------------------------------
