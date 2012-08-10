@@ -164,5 +164,9 @@
           scheme-object "bard_element" ""
           (list-ref obj index))
 
+(c-define (c:bard-cons obj1 obj2) (scheme-object scheme-object) 
+          scheme-object "bard_cons" ""
+          (cons obj1 obj2))
+
 
 

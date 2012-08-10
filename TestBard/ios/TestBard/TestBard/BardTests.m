@@ -284,71 +284,393 @@
     }
 }
 
+-(BOOL)testGet {
+    const char* test_frame_text = "{a: 1 b: 2 c: 3}";
+    const char* test_key_text = "b:";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {a: 1 b: 2 c: 3} b:) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {a: 1 b: 2 c: 3} b:) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+
+-(BOOL)testGetChar {
+    const char* test_frame_text = "{#\\a 1 #\\b 2 #\\c 3}";
+    const char* test_key_text = "#\\b";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {#\\a 1 #\\b 2 #\\c 3} #\\b) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {#\\a 1 #\\b 2 #\\c 3} #\\b) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetBool {
+    const char* test_frame_text = "{true 1 false 2}";
+    const char* test_key_text = "false";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {true 1 false 2} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {true 1 false 2} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetInt {
+    const char* test_frame_text = "{1 1 2 2 3 3}";
+    const char* test_key_text = "2";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {1 1 2 2 3 3} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {1 1 2 2 3 3} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetFloat {
+    const char* test_frame_text = "{1.0 1 2.0 2 3.0 3}";
+    const char* test_key_text = "2.0";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {1.0 1 2.0 2 3.0 3} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {1.0 1 2.0 2 3.0 3} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetSymbol {
+    const char* test_frame_text = "{'one 1 'two 2 'three 3}";
+    const char* test_key_text = "'two";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {'one 1 'two 2 'three 3} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {'one 1 'two 2 'three 3} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetKeyword {
+    const char* test_frame_text = "{one: 1 two: 2 three: 3}";
+    const char* test_key_text = "two:";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {one: 1 two: 2 three: 3} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {one: 1 two: 2 three: 3} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testGetString {
+    const char* test_frame_text = "{\"one\" 1 \"two\" 2 \"three\" 3}";
+    const char* test_key_text = "\"two\"";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_key_expr = bard_read(test_key_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_key = bard_eval(test_key_expr);
+    BardValue test_val = bard_get(test_frame, test_key);
+    int val_type = bard_type(test_val);
+    if (val_type!=BARD_INTEGER) {
+        NSLog(@"(get {\"one\" 1 \"two\" 2 \"three\" 3} false) FAILED: result is not an integer.");
+        return NO;
+    }
+    
+    int v = as_int(test_val);
+    if (v==2) {
+        return YES;
+    } else {
+        NSLog(@"(get {\"one\" 1 \"two\" 2 \"three\" 3} false) FAILED: result is not 2");
+        return NO;
+    }
+}
+
+-(BOOL)testKeys {
+    const char* test_frame_text = "{a: 1 b: 2 c: 3}";
+    BardValue test_frame_expr = bard_read(test_frame_text);
+    BardValue test_frame = bard_eval(test_frame_expr);
+    BardValue test_keys = bard_keys(test_frame);
+    int val_type = bard_type(test_keys);
+    if (val_type!=BARD_LIST) {
+        NSLog(@"(keys {a: 1 b: 2 c: 3} false) FAILED: result is not an list.");
+        return NO;
+    }
+    BardValue k = ___CAR(test_keys);
+    BardValue k2 = bard_read("a:");
+    BOOL same = ___EQP(k, k2);
+    if (!same) {
+        NSLog(@"(keys {a: 1 b: 2 c: 3} false) FAILED: first key is not a:");
+        return NO;
+    }
+    test_keys = ___CDR(test_keys);
+
+    k = ___CAR(test_keys);
+    k2 = bard_read("b:");
+    same = ___EQP(k, k2);
+    if (!same) {
+        NSLog(@"(keys {a: 1 b: 2 c: 3} false) FAILED: second key is not b:");
+        return NO;
+    }
+    test_keys = ___CDR(test_keys);
+    k = ___CAR(test_keys);
+    k2 = bard_read("c:");
+    same = ___EQP(k, k2);
+    if (!same) {
+        NSLog(@"(keys {a: 1 b: 2 c: 3} false) FAILED: third key is not c:");
+        return NO;
+    }
+    
+    return YES;
+}
+
+-(BOOL)testLists {
+    const char* test_list_text = "nothing";
+    BardValue test_expr = bard_read(test_list_text);
+    BardValue test_list = bard_eval(test_expr);
+    int test_list_type = bard_type(test_list);
+    
+    if (test_list_type!=BARD_NULL) {
+        NSLog(@"reading 'nothing' FAILED: result is not nothing");
+        return NO;
+    }
+    
+    const char* zero_text = "0";
+    BardValue zero_val = bard_read(zero_text);
+    BardValue test_list2 = bard_cons(zero_val, test_list);
+    int test_list2_type = bard_type(test_list2);
+    
+    if (test_list2_type!=BARD_LIST) {
+        NSLog(@"(cons 0 nothing) FAILED: result is not a list");
+        return NO;
+    }
+    
+    BardValue hd = ___CAR(test_list2);
+    int hdtype = bard_type(hd);
+    if (hdtype!=BARD_INTEGER) {
+        NSLog(@"testing lists FAILED: (car '(0)) is not an integer");
+        return NO;
+    }
+    int hdval = as_int(hd);
+    if (hdval!=0) {
+        NSLog(@"testing lists FAILED: (car '(0)) is not 0");
+        return NO;
+    }
+    
+    const char* one_text = "1";
+    BardValue one_val = bard_read(one_text);
+    BardValue test_list3 = bard_cons(one_val, test_list2);
+    int test_list3_type = bard_type(test_list3);
+    
+    if (test_list3_type!=BARD_LIST) {
+        NSLog(@"(cons 1 '(0)) FAILED: result is not a list");
+        return NO;
+    }
+    
+    BardValue elt_val = bard_element(test_list3, 1);
+    int elt_type = bard_type(elt_val);
+    if (elt_type!=BARD_INTEGER) {
+        NSLog(@"(elt '(1 0) 1) FAILED: result is not an integer");
+        return NO;
+    }
+    int elt_testval = as_int(elt_val);
+    if (elt_testval!=0) {
+        NSLog(@"(elt '(1 0) 1) FAILED: result is not zero");
+        return NO;
+    }
+    
+   
+    return YES;
+}
+
 
 -(void)run {
     [self reportTestResult:[self testVersion] 
-        withSuccessMessage:@"test: bard_version() succeeded" 
-         andFailureMessage:@"test: bard_version() FAILED"];
+        withSuccessMessage:@"testVersion: bard_version() succeeded" 
+         andFailureMessage:@"testVersion: bard_version() FAILED"];
     
     [self reportTestResult:[self testInit] 
-        withSuccessMessage:@"test: init_bard() succeeded" 
-         andFailureMessage:@"test: init_bard() FAILED"];
+        withSuccessMessage:@"testInit: init_bard() succeeded" 
+         andFailureMessage:@"testInit: init_bard() FAILED"];
     
     [self reportTestResult:[self testReadZero] 
-        withSuccessMessage:@"test: bard_read(0) succeeded" 
-         andFailureMessage:@"test: bard_read(0) FAILED"];
+        withSuccessMessage:@"testReadZero: bard_read(0) succeeded" 
+         andFailureMessage:@"testReadZero: bard_read(0) FAILED"];
     
     [self reportTestResult:[self testReadTypes] 
-        withSuccessMessage:@"test: reading several types succeeded" 
-         andFailureMessage:@"test: reading several types FAILED"];
+        withSuccessMessage:@"testReadTypes: reading several types succeeded" 
+         andFailureMessage:@"testReadTypes: reading several types FAILED"];
     
     [self reportTestResult:[self testIsNothing] 
-        withSuccessMessage:@"test: testing for nothing succeeded" 
-         andFailureMessage:@"test: testing for nothing FAILED"];
+        withSuccessMessage:@"testIsNothing: testing for nothing succeeded" 
+         andFailureMessage:@"testIsNothing: testing for nothing FAILED"];
     
     [self reportTestResult:[self testIsEmpty] 
-        withSuccessMessage:@"test: testing for empty succeeded" 
-         andFailureMessage:@"test: testing for empty FAILED"];
+        withSuccessMessage:@"testIsEmpty: testing for empty succeeded" 
+         andFailureMessage:@"testIsEmpty: testing for empty FAILED"];
     
     [self reportTestResult:[self testAsChar] 
-        withSuccessMessage:@"test: as_char() succeeded" 
-         andFailureMessage:@"test: as_char() FAILED"];
+        withSuccessMessage:@"testAsChar: as_char() succeeded" 
+         andFailureMessage:@"testAsChar: as_char() FAILED"];
     
     [self reportTestResult:[self testAsBool] 
-        withSuccessMessage:@"test: as_bool() succeeded" 
-         andFailureMessage:@"test: as_bool() FAILED"];
+        withSuccessMessage:@"testAsBool: as_bool() succeeded" 
+         andFailureMessage:@"testAsBool: as_bool() FAILED"];
     
     [self reportTestResult:[self testAsInt] 
-        withSuccessMessage:@"test: as_int() succeeded" 
-         andFailureMessage:@"test: as_int() FAILED"];
+        withSuccessMessage:@"testAsInt: as_int() succeeded" 
+         andFailureMessage:@"testAsInt: as_int() FAILED"];
     
     [self reportTestResult:[self testAsFloat] 
-        withSuccessMessage:@"test: as_float() succeeded" 
-         andFailureMessage:@"test: as_float() FAILED"];
+        withSuccessMessage:@"testAsFloat: as_float() succeeded" 
+         andFailureMessage:@"testAsFloat: as_float() FAILED"];
     
     [self reportTestResult:[self testAsString] 
-        withSuccessMessage:@"test: as_string() succeeded" 
-         andFailureMessage:@"test: as_string() FAILED"];
+        withSuccessMessage:@"testAsString: as_string() succeeded" 
+         andFailureMessage:@"testAsString: as_string() FAILED"];
     
     [self reportTestResult:[self testOid] 
-        withSuccessMessage:@"test: oid tests succeeded" 
-         andFailureMessage:@"test: oid tests FAILED"];
+        withSuccessMessage:@"testOid: oid tests succeeded" 
+         andFailureMessage:@"testOid: oid tests FAILED"];
     
     [self reportTestResult:[self testReadLines] 
-        withSuccessMessage:@"test: reading several lines succeeded" 
-         andFailureMessage:@"test: reading several lines FAILED"];
+        withSuccessMessage:@"testReadLines: reading several lines succeeded" 
+         andFailureMessage:@"testReadLines: reading several lines FAILED"];
     
     [self reportTestResult:[self testReadNonEmptyLines] 
-        withSuccessMessage:@"test: reading non-empty lines succeeded" 
-         andFailureMessage:@"test: reading non-empty lines FAILED"];
+        withSuccessMessage:@"testReadNonEmptyLines: reading non-empty lines succeeded" 
+         andFailureMessage:@"testReadNonEmptyLines: reading non-empty lines FAILED"];
     
     [self reportTestResult:[self testEval] 
-        withSuccessMessage:@"test: (eval '(+ 1 2)) succeeded" 
-         andFailureMessage:@"test: (eval '(+ 1 2)) FAILED"];
+        withSuccessMessage:@"testEval: (eval '(+ 1 2)) succeeded" 
+         andFailureMessage:@"testEval: (eval '(+ 1 2)) FAILED"];
     
     [self reportTestResult:[self testLoadFromString] 
-        withSuccessMessage:@"test: loading (begin (define x 5)(define y 6)(define z 7) y) succeeded" 
-         andFailureMessage:@"test: loading (begin (define x 5)(define y 6)(define z 7) y) FAILED"];
+        withSuccessMessage:@"testLoadFromString: loading (begin (define x 5)(define y 6)(define z 7) y) succeeded" 
+         andFailureMessage:@"testLoadFromString: loading (begin (define x 5)(define y 6)(define z 7) y) FAILED"];
+    
+    [self reportTestResult:[self testGet] 
+        withSuccessMessage:@"testGet: (get {a: 1 b: 2 c: 3} b:) succeeded" 
+         andFailureMessage:@"testGet: (get {a: 1 b: 2 c: 3} b:) FAILED"];
+    
+    [self reportTestResult:[self testGetChar] 
+        withSuccessMessage:@"testGetChar: (get {a: 1 b: 2 c: 3} #\\b) succeeded" 
+         andFailureMessage:@"testGetChar: (get {a: 1 b: 2 c: 3} #\\b) FAILED"];
+    
+    [self reportTestResult:[self testGetBool] 
+        withSuccessMessage:@"testGetBool: (get {true 1 false 2} false) succeeded" 
+         andFailureMessage:@"testGetBool: (get {true 1 false 2} false) FAILED"];
+    
+    [self reportTestResult:[self testGetInt] 
+        withSuccessMessage:@"testGetInt: testGetInt succeeded" 
+         andFailureMessage:@"testGetInt: testGetInt FAILED"];
+    
+    [self reportTestResult:[self testGetFloat] 
+        withSuccessMessage:@"testGetFloat: testGetFloat succeeded" 
+         andFailureMessage:@"testGetFloat: testGetFloat FAILED"];
+    
+    [self reportTestResult:[self testGetSymbol] 
+        withSuccessMessage:@"testGetSymbol: testGetSymbol succeeded" 
+         andFailureMessage:@"testGetSymbol: testGetSymbol FAILED"];
+    
+    [self reportTestResult:[self testGetKeyword] 
+        withSuccessMessage:@"testGetKeyword: testGetKeyword succeeded" 
+         andFailureMessage:@"testGetKeyword: testGetKeyword FAILED"];
+    
+    [self reportTestResult:[self testGetString] 
+        withSuccessMessage:@"testGetString: testGetString succeeded" 
+         andFailureMessage:@"testGetString: testGetString FAILED"];
+    
+    [self reportTestResult:[self testKeys] 
+        withSuccessMessage:@"testKeys: testKeys succeeded" 
+         andFailureMessage:@"testKeys: testKeys FAILED"];
+
+    [self reportTestResult:[self testLists] 
+        withSuccessMessage:@"testLists: testLists succeeded" 
+         andFailureMessage:@"testLists: testLists FAILED"];
 }
 
 

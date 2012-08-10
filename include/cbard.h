@@ -138,6 +138,7 @@ extern BardValue bard_keys(BardValue obj);
 
 extern int bard_length(BardValue obj);
 extern BardValue bard_element(BardValue obj,int index);
+extern BardValue bard_cons(BardValue obj1,BardValue obj2);
 
 
 
