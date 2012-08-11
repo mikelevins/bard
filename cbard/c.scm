@@ -78,6 +78,34 @@
           char-string "as_string" ""
           (cbard:as-string obj))
 
+(c-define (c:make-integer i) (int) 
+          scheme-object "make_integer" ""
+          i)
+
+(c-define (c:make-character ch) (char) 
+          scheme-object "make_character" ""
+          ch)
+
+(c-define (c:make-float f) (float) 
+          scheme-object "make_float" ""
+          f)
+
+(c-define (c:make-boolean b) (bool) 
+          scheme-object "make_boolean" ""
+          b)
+
+(c-define (c:make-string str) (char-string) 
+          scheme-object "make_string" ""
+          (string-copy str))
+
+(c-define (c:make-symbol str) (char-string) 
+          scheme-object "make_symbol" ""
+          (string->symbol str))
+
+(c-define (c:make-keyword str) (char-string) 
+          scheme-object "make_keyword" ""
+          (string->keyword str))
+
 ;;; ---------------------------------------------------------------------
 ;;; object ids
 ;;; ---------------------------------------------------------------------
@@ -121,7 +149,11 @@
 
 (c-define (c:bard-get obj key) (scheme-object scheme-object) 
           scheme-object "bard_get" ""
-          (%frame-get obj key))
+          (%get obj key))
+
+(c-define (c:bard-put obj key val) (scheme-object scheme-object scheme-object) 
+          scheme-object "bard_put" ""
+          (%put obj key val))
 
 (c-define (c:bard-get-char-key obj key) (scheme-object char) 
           scheme-object "bard_get_char_key" ""
@@ -152,6 +184,14 @@
           scheme-object "bard_get_string_key" ""
           (%frame-get obj key))
 
+(c-define (c:bard-get-keyword-symbol-or-string-key obj key) (scheme-object char-string) 
+          scheme-object "bard_get_keyword_symbol_or_string_key" ""
+          (%get-keyword-symbol-or-string-key obj key))
+
+(c-define (c:bard-get-path obj path) (scheme-object char-string) 
+          scheme-object "bard_get_path" ""
+          (%get-path obj (%parse-slot-path path)))
+
 (c-define (c:bard-keys obj) (scheme-object) 
           scheme-object "bard_keys" ""
           (%frame-keys obj))
@@ -167,6 +207,7 @@
 (c-define (c:bard-cons obj1 obj2) (scheme-object scheme-object) 
           scheme-object "bard_cons" ""
           (cons obj1 obj2))
+
 
 
 

@@ -142,9 +142,11 @@
 
 (define (cbard:as-string obj)
   (with-recorded-errors "#<Error converting an object to a string>"
-   (if (string? obj)
-      obj
-      (object->string obj))))
+   (cond
+    ((string? obj) obj)
+    ((symbol? obj) (symbol->string obj))
+    ((keyword? obj) (keyword->string obj))
+    (else (object->string obj)))))
 
 
 

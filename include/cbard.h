@@ -104,6 +104,15 @@ extern int as_int(BardValue expr);
 extern float as_float(BardValue expr);
 extern const char* as_string(BardValue expr);
 
+extern BardValue make_integer(int i);
+extern BardValue make_character(char ch);
+extern BardValue make_float(float f);
+extern BardValue make_boolean(bool b);
+extern BardValue make_string(const char* str);
+extern BardValue make_symbol(const char* str);
+extern BardValue make_keyword(const char* str);
+
+
 // object ids
 
 #define BARD_NO_OBJECT_ID 0
@@ -125,6 +134,8 @@ extern BardValue bard_eval(BardValue obj);
 // frames
 
 extern BardValue bard_get(BardValue obj, BardValue key);
+extern BardValue bard_put(BardValue obj, BardValue key, BardValue val);
+
 extern BardValue bard_get_char_key(BardValue obj, char key);
 extern BardValue bard_get_bool_key(BardValue obj, bool key);
 extern BardValue bard_get_int_key(BardValue obj, int key);
@@ -132,6 +143,10 @@ extern BardValue bard_get_float_key(BardValue obj, float key);
 extern BardValue bard_get_symbol_key(BardValue obj, const char* key);
 extern BardValue bard_get_keyword_key(BardValue obj, const char* key);
 extern BardValue bard_get_string_key(BardValue obj, const char* key);
+
+extern BardValue bard_get_keyword_symbol_or_string_key(BardValue obj, const char* key);
+extern BardValue bard_get_path(BardValue obj, const char* pathname);
+
 extern BardValue bard_keys(BardValue obj);
 
 // lists
@@ -139,6 +154,9 @@ extern BardValue bard_keys(BardValue obj);
 extern int bard_length(BardValue obj);
 extern BardValue bard_element(BardValue obj,int index);
 extern BardValue bard_cons(BardValue obj1,BardValue obj2);
+
+// strings, symbols, keywords
+
 
 
 

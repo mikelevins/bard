@@ -170,4 +170,23 @@
     (lambda (in)
       (apply string-append (interpose (string #\newline) (read-all in read-line))))))
 
+(define (string-char-position ch str)
+  (let ((len (string-length str)))
+    (let loop ((i 0))
+      (if (< i len)
+          (if (char=? ch (string-ref str i))
+              i
+              (loop (+ 1 i)))
+          #f))))
 
+(define (string-split-on ch str)
+  (let loop ((instr str)
+             (result '()))
+    (if (< (string-length instr) 1)
+        (reverse result)
+        (let ((chpos (string-char-position ch instr)))
+          (if chpos
+              (let ((seg (substring instr 0 chpos))
+                    (outstr (substring instr (+ 1 chpos) (string-length instr))))
+                (loop outstr (cons seg result)))
+              (loop "" (cons instr result)))))))

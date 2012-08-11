@@ -245,6 +245,12 @@
                      (list (list key value)))))
     (%private-make-frame new-slots)))
 
+(define (%list-get ls key #!optional (default (%nothing)))
+  (if (and (integer? key)
+           (< -1 key (length ls)))
+      (list-ref ls key)
+      default))
+
 (define (%list-put ls key value)
   (if (and (integer? key)
            (< -1 key (length ls)))
@@ -252,6 +258,12 @@
       (let* ((pairs (map list (iota (length ls)) ls))
              (fr (%private-make-frame pairs)))
         (%frame-put fr key value))))
+
+(define (%string-get str key #!optional (default (%nothing)))
+  (if (and (integer? key)
+           (< -1 key (string-length str)))
+      (string-ref str key)
+      default))
 
 (define (%string-put str k v)
   (if (and (integer? k)
@@ -265,6 +277,86 @@
 
 (define (%frame-keys fr)(map car (%frame-slots fr)))
 (define (%frame-vals fr)(map cadr (%frame-slots fr)))
+
+(define (%get obj key)
+  (cond
+   ((string? obj) (%string-get obj key))
+   ((pair? obj) (%list-get obj key))
+   ((%frame? obj) (%frame-get obj key))))
+
+(define (%parse-slot-path path)
+  (cond 
+   ((string? path)
+    (string-split-on #\. path))
+   ((list? path)
+    (if (every? string? path)
+        path
+        (error (string-append "Invalid slot path: "
+                              (object->string path)))))
+   (else (error (string-append "Invalid slot path: "
+                               (object->string path))))))
+
+(define (%get-any-of obj keys)
+  (let loop ((keys keys))
+    (if (null? keys)
+        (%nothing)
+        (let ((val (%get obj (car keys))))
+          (if (%something? val)
+              val
+              (loop (cdr keys)))))))
+
+(define (%as-keyword-key key)
+  (cond
+   ((keyword? key) key)
+   ((symbol? key) (string->keyword (symbol->string key)))
+   ((string? key)(string->keyword key))
+   (else (error (string-append "Invalid key: "
+                               (object->string key))))))
+
+(define (%as-symbol-key key)
+  (cond
+   ((keyword? key)(string->symbol (keyword->string key)))
+   ((symbol? key) key)
+   ((string? key)(string->symbol key))
+   (else (error (string-append "Invalid key: "
+                               (object->string key))))))
+
+(define (%as-string-key key)
+  (cond
+   ((keyword? key)(keyword->string key))
+   ((symbol? key)(symbol->string key))
+   ((string? key) key)
+   (else (error (string-append "Invalid key: "
+                               (object->string key))))))
+
+(define (%get-path obj path)
+  (if (null? path)
+      (%nothing)
+      (let* ((path (%parse-slot-path path))
+             (key (car path))
+             (keys (list (%as-keyword-key key)
+                         (%as-symbol-key key)
+                         (%as-string-key key)))
+             (new-obj (%get-any-of obj keys)))
+        (if new-obj
+            (if (null? (cdr path))
+                new-obj
+                (%get-path new-obj (cdr path)))
+            (%nothing)))))
+
+(define (%get-keyword-symbol-or-string-key obj key)
+  (if (or (null? key)(null? obj))
+      (%nothing)
+      (let ((keys (list (%as-keyword-key key)
+                        (%as-symbol-key key)
+                        (%as-string-key key))))
+        (%get-any-of obj keys))))
+
+(define (%put obj key val)
+  (cond
+   ((string? obj) (%string-put obj key val))
+   ((pair? obj) (%list-put obj key val))
+   ((%frame? obj) (%frame-put obj key val))))
 
 ;;; ---------------------------------------------------------------------
 ;;; schemas (user-defined types)
