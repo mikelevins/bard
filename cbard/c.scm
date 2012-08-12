@@ -208,6 +208,14 @@
           scheme-object "bard_cons" ""
           (cons obj1 obj2))
 
+;;; ---------------------------------------------------------------------
+;;; utils
+;;; ---------------------------------------------------------------------
 
+(c-define (c:bard-display obj) (scheme-object) 
+          void "bard_display" ""
+          (display (object->string obj)))
 
-
+(c-define (c:bard-newline) () 
+          void "bard_newline" ""
+          (newline))
