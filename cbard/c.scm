@@ -1,4 +1,30 @@
 ;;; ---------------------------------------------------------------------
+;;; memory management
+;;; ---------------------------------------------------------------------
+
+(define (%retainable? x)
+  (or (pair? x)
+      (##subtyped? x)))
+
+(define (%retain obj)
+  (if (%retainable? obj)
+      (##still-obj-refcount-inc! (##still-copy obj))
+      obj))
+
+(c-define (c:bard-retain obj) (scheme-object) 
+          scheme-object "bard_retain" ""
+          (%retain obj))
+
+(define (%release obj)
+  (if (%retainable? obj)
+      (##still-obj-refcount-dec! obj)
+      obj))
+
+(c-define (c:bard-release obj) (scheme-object) 
+          scheme-object "bard_release" ""
+          (%release obj))
+
+;;; ---------------------------------------------------------------------
 ;;; errors
 ;;; ---------------------------------------------------------------------
 

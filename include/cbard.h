@@ -79,6 +79,12 @@
 // API functions
 // ---------------------------------------------------------------------
 
+// memory management
+
+extern BardValue bard_retain(BardValue obj);
+extern BardValue bard_release(BardValue obj);
+
+
 // errors
 
 extern bool bard_error_status();
