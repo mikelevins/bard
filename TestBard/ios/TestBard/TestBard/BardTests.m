@@ -566,6 +566,58 @@
     return YES;
 }
 
+-(BOOL)testBoxes {
+    
+    BardValue null_val = bard_read("nothing");
+    BoxedBardValue* null_box = as_boxed(null_val);
+    int null_tag = null_box->type;
+    if (null_tag!=BARD_NULL) {NSLog(@"null box FAILED");return NO;} 
+    
+    BardValue char_val = bard_read("#\\C");
+    BoxedBardValue* char_box = as_boxed(char_val);
+    int char_tag = char_box->type;
+    if (char_tag!=BARD_CHARACTER) {NSLog(@"char box FAILED");return NO;} 
+    
+    BardValue bool_val = bard_read("false");
+    BoxedBardValue* bool_box = as_boxed(bool_val);
+    int bool_tag = bool_box->type;
+    if (bool_tag!=BARD_BOOLEAN) {NSLog(@"boolean box FAILED");return NO;} 
+    
+    BardValue int_val = bard_read("35");
+    BoxedBardValue* int_box = as_boxed(int_val);
+    int int_tag = int_box->type;
+    if (int_tag!=BARD_INTEGER) {NSLog(@"integer box FAILED");return NO;} 
+    
+    BardValue float_val = bard_read("123.45");
+    BoxedBardValue* float_box = as_boxed(float_val);
+    int float_tag = float_box->type;
+    if (float_tag!=BARD_FLOAT) {NSLog(@"float box FAILED");return NO;} 
+    
+    BardValue ratio_val = bard_read("2/3");
+    BoxedBardValue* ratio_box = as_boxed(ratio_val);
+    int ratio_tag = ratio_box->type;
+    if (ratio_tag!=BARD_FLOAT) {NSLog(@"ratio box FAILED");return NO;} 
+    
+    BardValue symbol_val = bard_read("Foo");
+    BoxedBardValue* symbol_box = as_boxed(symbol_val);
+    int symbol_tag = symbol_box->type;
+    if (symbol_tag!=BARD_SYMBOL) {NSLog(@"symbol box FAILED");return NO;} 
+    
+    BardValue keyword_val = bard_read("Bar:");
+    BoxedBardValue* keyword_box = as_boxed(keyword_val);
+    int keyword_tag = keyword_box->type;
+    if (keyword_tag!=BARD_KEYWORD) {NSLog(@"keyword box FAILED");return NO;} 
+    
+    BardValue text_val = bard_read("\"Baz!\"");
+    BoxedBardValue* text_box = as_boxed(text_val);
+    int text_tag = text_box->type;
+    if (text_tag!=BARD_TEXT) {NSLog(@"text box FAILED");return NO;} 
+    
+    
+return YES;
+}
+
+
 
 -(void)run {
     [self reportTestResult:[self testVersion] 
@@ -671,6 +723,14 @@
     [self reportTestResult:[self testLists] 
         withSuccessMessage:@"testLists: testLists succeeded" 
          andFailureMessage:@"testLists: testLists FAILED"];
+    
+    NSLog(@"-");
+    NSLog(@"-");
+    NSLog(@"-");
+    
+    [self reportTestResult:[self testBoxes] 
+        withSuccessMessage:@"testBoxes: testBoxes succeeded" 
+         andFailureMessage:@"testBoxes: testBoxes FAILED"];
 }
 
 

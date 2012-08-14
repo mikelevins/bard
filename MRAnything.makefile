@@ -168,26 +168,6 @@ install:
 	cp include/cbard.h ${INSTALL_PATH}/bard/include/cbard.h
 
 # -------------------
-# Housekeeping
-
-clean:
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${LIBRARY}
-	rm -f ${DEV_LIBRARY}
-	rm -f ${SIM_LIBRARY}
-
-tidy:
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${DEV_LIBRARY}
-	rm -f ${SIM_LIBRARY}
-
-# -------------------
 # components
 
 lib: device_lib sim_lib

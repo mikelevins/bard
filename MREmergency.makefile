@@ -146,6 +146,7 @@ LIB_SCHEME_SOURCES= \
 LIB_C_SOURCES= \
          cbard/cbard_errors.c \
          cbard/cbard.c \
+         cbard/csupport.c \
          cbard/c.c \
          src/bard.c \
          src/bard_.c 
@@ -153,6 +154,7 @@ LIB_C_SOURCES= \
 LIB_OBJECTS= \
          cbard_errors.o \
          cbard.o \
+         csupport.o \
          c.o \
          bard.o \
          bard_.o 
@@ -169,26 +171,6 @@ install:
 	cp include/cbard.h ${INSTALL_PATH}/bard/include/cbard.h
 
 # -------------------
-# Housekeeping
-
-clean:
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${LIBRARY}
-	rm -f ${DEV_LIBRARY}
-	rm -f ${SIM_LIBRARY}
-
-tidy:
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${DEV_LIBRARY}
-	rm -f ${SIM_LIBRARY}
-
-# -------------------
 # components
 
 lib: device_lib sim_lib
@@ -198,13 +180,23 @@ lib: device_lib sim_lib
 
 device_lib: 
 	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES}
-	${DEV_CC} ${DEV_CFLAGS} -c ${C_SOURCES} ${LIB_C_SOURCES}
+	${DEV_CC} ${DEV_CFLAGS} -I./include -c ${C_SOURCES} ${LIB_C_SOURCES}
 	${DEV_LIBTOOL} ${DEV_LDFLAGS} ${OBJECTS} ${LIB_OBJECTS}
 
 # Simulator
 
 sim_lib: 
 	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES} 
-	${SIM_CC} ${SIM_CFLAGS} -c ${C_SOURCES} ${LIB_C_SOURCES} 
+	${SIM_CC} ${SIM_CFLAGS} -I./include -c ${C_SOURCES} ${LIB_C_SOURCES} 
 	${SIM_LIBTOOL} ${SIM_LDFLAGS} ${OBJECTS} ${LIB_OBJECTS}
 
+# ----------------------------------------
+# housekeeping
+# ----------------------------------------
+
+clean:
+	rm -f *.o
+	rm -f cbard/c.c cbard/cbard.c cbard/cbard_errors.c cbard/cbardtest 
+	rm -f src/*.c 
+	rm -f lib/*.c 
+	rm -f src/eval/*.c src/repl/*.c src/util/*.c src/values/*.c 

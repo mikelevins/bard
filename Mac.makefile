@@ -138,25 +138,6 @@ MAIN_C_SOURCES= \
 all: mac_lib mac_main
 
 # -------------------
-# Housekeeping
-
-clean:
-	rm -f ${MAC_BUILD_DIR}/${MAC_EXECUTABLE}
-	rm -f ${MAC_BUILD_DIR}/$(MAC_LIBRARY)
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${MAIN_C_SOURCES}
-
-tidy:
-	rm -f ${OBJECTS}
-	rm -f ${LIB_OBJECTS}
-	rm -f ${C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -f ${MAIN_C_SOURCES}
-
-# -------------------
 # Bard Library
 
 mac_lib: tidy

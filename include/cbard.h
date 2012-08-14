@@ -3,6 +3,23 @@
 
 #define BardValue ___SCMOBJ
 
+struct BoxedBardValue {
+  int type;
+  void* value;
+};
+typedef struct BoxedBardValue BoxedBardValue;
+
+BoxedBardValue* bard_box_undefined();
+BoxedBardValue* bard_box_null();
+BoxedBardValue* bard_box_character(char ch);
+BoxedBardValue* bard_box_boolean(bool b);
+BoxedBardValue* bard_box_integer(int val);
+BoxedBardValue* bard_box_float(float val);
+BoxedBardValue* bard_box_ratio(int num, int denom);
+BoxedBardValue* bard_box_symbol(const char* str);
+BoxedBardValue* bard_box_keyword(const char* str);
+BoxedBardValue* bard_box_text(const char* str);
+
 // type tags
 #define BARD_UNDEFINED -1
 #define BARD_NULL 0
@@ -84,7 +101,6 @@
 extern BardValue bard_retain(BardValue obj);
 extern BardValue bard_release(BardValue obj);
 
-
 // errors
 
 extern bool bard_error_status();
@@ -109,6 +125,7 @@ extern bool as_bool(BardValue expr);
 extern int as_int(BardValue expr);
 extern float as_float(BardValue expr);
 extern const char* as_string(BardValue expr);
+extern BoxedBardValue* as_boxed(BardValue expr);
 
 extern BardValue make_integer(int i);
 extern BardValue make_character(char ch);
@@ -117,7 +134,6 @@ extern BardValue make_boolean(bool b);
 extern BardValue make_string(const char* str);
 extern BardValue make_symbol(const char* str);
 extern BardValue make_keyword(const char* str);
-
 
 // object ids
 
