@@ -1,28 +1,3 @@
-(c-declare
-#<<c-code
-
-struct BoxedBardValue {
-  int type;
-  void* value;
-};
-typedef struct BoxedBardValue BoxedBardValue;
-
-typedef signed char bool;
-
-BoxedBardValue* bard_box_undefined();
-BoxedBardValue* bard_box_null();
-BoxedBardValue* bard_box_character(char ch);
-BoxedBardValue* bard_box_boolean(bool b);
-BoxedBardValue* bard_box_integer(int val);
-BoxedBardValue* bard_box_float(float val);
-BoxedBardValue* bard_box_ratio(int num, int denom);
-BoxedBardValue* bard_box_symbol(const char* str);
-BoxedBardValue* bard_box_keyword(const char* str);
-BoxedBardValue* bard_box_text(const char* str);
-
-c-code
-)
-
 
 ;;; ---------------------------------------------------------------------
 ;;; memory management
@@ -129,113 +104,6 @@ c-code
 (c-define (c:as-string obj) (scheme-object) 
           char-string "as_string" ""
           (cbard:as-string obj))
-
-(define boxed-undefined
-  (c-lambda () (pointer "BoxedBardValue")
-#<<c-code
-  BoxedBardValue* box=bard_box_undefined();
-  ___result_voidstar=box;
-c-code
-))
-
-(define boxed-null
-  (c-lambda () (pointer "BoxedBardValue")
-#<<c-code
-  BoxedBardValue* box=bard_box_null();
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-character
-  (c-lambda (char) (pointer "BoxedBardValue")
-#<<c-code
-  char ch = ___arg1;
-  BoxedBardValue* box=bard_box_character(ch);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-boolean 
-  (c-lambda (bool) (pointer "BoxedBardValue")
-#<<c-code
-  bool b = ___arg1;
-  BoxedBardValue* box=bard_box_boolean(b);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-integer 
-  (c-lambda (int) (pointer "BoxedBardValue")
-#<<c-code
-  int i = ___arg1;
-  BoxedBardValue* box=bard_box_integer(i);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-float 
-  (c-lambda (float) (pointer "BoxedBardValue")
-#<<c-code
-  float f = ___arg1;
-  BoxedBardValue* box=bard_box_float(f);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-ratio 
-  (c-lambda (int int) (pointer "BoxedBardValue")
-#<<c-code
-  bool numerator = ___arg1;
-  bool denominator = ___arg2;
-  BoxedBardValue* box=bard_box_ratio(numerator,denominator);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-symbol
-  (c-lambda (char-string) (pointer "BoxedBardValue")
-#<<c-code
-  char* tx = ___arg1;
-  BoxedBardValue* box=bard_box_symbol(tx);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-keyword
-  (c-lambda (char-string) (pointer "BoxedBardValue")
-#<<c-code
-  char* tx = ___arg1;
-  BoxedBardValue* box=bard_box_keyword(tx);
-  ___result_voidstar=box;
-c-code
-))
-
-(define as-boxed-text
-  (c-lambda (char-string) (pointer "BoxedBardValue")
-#<<c-code
-  char* tx = ___arg1;
-  BoxedBardValue* box=bard_box_text(tx);
-  ___result_voidstar=box;
-c-code
-))
-
-(c-define (c:as-boxed obj) (scheme-object) 
-          (pointer "BoxedBardValue") "as_boxed" ""
-          (cond
-           ((eq? obj #!unbound)(boxed-undefined))
-           ((null? obj)(boxed-null))
-           ((char? obj)(as-boxed-character obj))
-           ((boolean? obj)(as-boxed-boolean obj))
-           ((integer? obj)(as-boxed-integer obj))
-           ((##flonum? obj)(as-boxed-float obj))
-           ((##ratnum? obj)(as-boxed-ratio (numerator obj)(denominator obj)))
-           ((symbol? obj)(as-boxed-symbol (symbol->string obj)))
-           ((keyword? obj)(as-boxed-keyword (keyword->string obj)))
-           ((string? obj)(as-boxed-text obj))
-           (else (error (string-append "Can't convert to a boxed value"
-                                       (object->string obj))))))
-
-
 
 (c-define (c:make-integer i) (int) 
           scheme-object "make_integer" ""
@@ -354,6 +222,10 @@ c-code
 (c-define (c:bard-keys obj) (scheme-object) 
           scheme-object "bard_keys" ""
           (%frame-keys obj))
+
+(c-define (c:bard-vals obj) (scheme-object) 
+          scheme-object "bard_vals" ""
+          (%frame-vals obj))
 
 (c-define (c:bard-length obj) (scheme-object) 
           int "bard_length" ""

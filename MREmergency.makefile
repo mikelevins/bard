@@ -146,7 +146,6 @@ LIB_SCHEME_SOURCES= \
 LIB_C_SOURCES= \
          cbard/cbard_errors.c \
          cbard/cbard.c \
-         cbard/csupport.c \
          cbard/c.c \
          src/bard.c \
          src/bard_.c 
@@ -154,7 +153,6 @@ LIB_C_SOURCES= \
 LIB_OBJECTS= \
          cbard_errors.o \
          cbard.o \
-         csupport.o \
          c.o \
          bard.o \
          bard_.o 
