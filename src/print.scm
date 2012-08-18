@@ -158,6 +158,9 @@
   (display (%as-string x))
   (newline))
 
+(define (bard:show x)
+  (%as-string x))
+
 (define (bard:print x #!optional (port (current-output-port)))
   (display (%as-string x) port)
   x)

@@ -167,6 +167,7 @@
   (%defglobal 'get bard:get)
 
   (%defglobal 'keys bard:keys)
+  (%defglobal 'vals bard:vals)
   ;; (%defglobal 'merge bard:merge)
 
   (%defglobal 'put bard:put)
@@ -202,8 +203,8 @@
   (%defglobal 'read-file prim:read-file)
   (%defglobal 'read-line bard:read-line)
   (%defglobal 'read-lines bard:read-lines)
-  ;; (%defglobal 'show bard:show)
-  ;; (%defglobal 'write bard:write)
+  (%defglobal 'show bard:show)
+  (%defglobal 'write bard:write)
 
   ;; Keyword
   ;; ---------------------------------------------------------------------
@@ -229,6 +230,7 @@
   ;; (%defglobal 'interleave bard:interleave)
   ;; (%defglobal 'interpose bard:interpose)
   ;; (%defglobal 'intersection bard:intersection)
+  (%defglobal 'join-strings bard:join-strings)
   (%defglobal 'last bard:last)
   (%defglobal 'length bard:length)
   ;; (%defglobal 'list? bard:list?)
@@ -247,6 +249,7 @@
   ;; (%defglobal 'slice bard:slice)
   ;; (%defglobal 'some? bard:some?)
   ;; (%defglobal 'sort bard:sort)
+  (%defglobal 'split-string bard:split-string)
   ;; (%defglobal 'tails bard:tails)
   (%defglobal 'take bard:take)
   ;; (%defglobal 'take-before bard:take-before)

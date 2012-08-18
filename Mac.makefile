@@ -10,6 +10,8 @@ GSC=/usr/local/gambit/macosx/bin/gsc
 # Mac
 # ----------------------------------------
 
+INSTALL_PATH=/Users/mikel/bin
+
 MAC_EXECUTABLE=bard
 MAC_LIBRARY=libBard.a
 MAC_BUILD_DIR=builds/mac
@@ -51,8 +53,8 @@ SCHEME_SOURCES= \
          src/eval/eval.scm \
          src/repl/error.scm \
          src/repl/toplevel.scm \
-         src/values/protocols.scm \
-         c_api/objc_data.scm
+         src/values/protocols.scm 
+
 
 
 C_SOURCES= \
@@ -72,8 +74,8 @@ C_SOURCES= \
          src/eval/eval.c \
          src/repl/error.c \
          src/repl/toplevel.c \
-         src/values/protocols.c \
-         c_api/objc_data.c
+         src/values/protocols.c 
+
 
 
 OBJECTS= \
@@ -93,8 +95,8 @@ OBJECTS= \
          eval.o \
          error.o \
          toplevel.o \
-         protocols.o \
-         objc_data.o
+         protocols.o 
+
 
 
 # ----------------------------------------
@@ -114,7 +116,6 @@ LIB_C_SOURCES= \
 
 LIB_OBJECTS= \
          bard_api.o \
-         bard_c_api.o \
          bard.o \
          bard_.o 
 
@@ -135,12 +136,15 @@ MAIN_C_SOURCES= \
 # make rules
 # ----------------------------------------
 
-all: mac_lib mac_main
+all: mac_main
+
+install: 
+	cp ${MAC_BUILD_DIR}/$(MAC_EXECUTABLE) ${INSTALL_PATH}/bard
 
 # -------------------
 # Bard Library
 
-mac_lib: tidy
+mac_lib: 
 	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES}
 	${MAC_CC} ${MAC_CFLAGS_LIB} -c ${C_SOURCES} ${LIB_C_SOURCES}
 	${MAC_LIBTOOL} ${MAC_LDFLAGS_LIB} ${OBJECTS} ${LIB_OBJECTS}
@@ -148,7 +152,7 @@ mac_lib: tidy
 # -------------------
 # Bard Executable
 
-mac_main: tidy
+mac_main: 
 	${GSC} -link ${SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
 	${MAC_CC} ${MAC_CFLAGS_MAIN} ${MAC_LDFLAGS_MAIN} ${C_SOURCES} ${MAIN_C_SOURCES}
 

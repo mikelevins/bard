@@ -209,6 +209,22 @@
    required-count: 1
    restarg: #f))
 
+;;; vals
+
+(define (%bard-vals fr)
+  (cond
+   ((%frame? fr)(%frame-vals fr))
+   ((%list? fr) fr)
+   ((string? fr) fr)
+   (else (%nothing))))
+
+(define bard:vals
+  (%make-primitive-method %bard-vals
+   name: 'vals
+   parameters: (%list 'frame)
+   required-count: 1
+   restarg: #f))
+
 ;;; put
 
 (define (%bard-put fr k v)
@@ -264,6 +280,26 @@
    parameters: (%list 'stream)
    required-count: 1
    restarg: #f))
+
+(define (%bard-write data out)
+  (let ((data (if (string? data)
+                  data
+                  (%as-string data))))
+    (cond
+     ((output-port? out)(write-substring data 0 (string-length data) out))
+     ((string? out)(call-with-output-file out 
+                     (lambda (out)
+                       (write-substring data 0 (string-length data) out))))
+     (else (error (string-append "Invalid output argument to write: "
+                                 (object->string out)))))))
+
+(define bard:write
+  (%make-primitive-method %bard-write
+   name: 'write
+   parameters: (%list 'data 'stream)
+   required-count: 2
+   restarg: #f))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; List
@@ -472,6 +508,24 @@
                         (%list 'ls)
                         %car
                         name: 'first)
+
+;;; join
+
+(define (%bard-join-strings cupola strs)
+  (if (null? strs)
+      ""
+      (apply string-append 
+             (cdr (apply append (map (lambda (s)(list cupola s))
+                                     strs))))))
+
+(define bard:join-strings (%make-function name: 'join-strings))
+
+(%add-primitive-method! bard:join-strings
+                        (%list <string>  <list>)
+                        (%list 'str 'strs)
+                        %bard-join-strings
+                        name: 'join-strings)
+
 
 ;;; last
 
@@ -739,7 +793,35 @@
                         (lambda (str)(substring str 1 (string-length str)))
                         name: 'rest)
 
+;;; split
 
+(define (%bard-split-string str ch)
+  (let ((len (string-length str)))
+    (let loop ((i 0)
+               (last-found #f)
+               (chunks '()))
+      (if (< i len)
+          (let ((foundch (string-ref str i)))
+            (if (char=? foundch ch)
+                (if last-found
+                    (let ((chunk (substring str (+ 1 last-found) i)))
+                      (loop (+ i 1) i (cons chunk chunks)))
+                    (let ((chunk (substring str 0 i)))
+                      (loop (+ i 1) i (cons chunk chunks))))
+                (loop (+ i 1) last-found chunks)))
+          (if last-found
+              (let ((chunk (substring str (+ 1 last-found) i)))
+                (reverse (cons chunk chunks)))
+              (let ((chunk (substring str 0 i)))
+                (reverse (cons chunk chunks))))))))
+
+(define bard:split-string (%make-function name: 'split-string))
+
+(%add-primitive-method! bard:split-string
+                        (%list <string>  <character>)
+                        (%list 'str 'ch)
+                        %bard-split-string
+                        name: 'split-string)
 ;;; take
 
 (define bard:take (%make-function name: 'take))
@@ -763,6 +845,8 @@
                         (%list 'n 'str)
                         (lambda (n str)(substring str 0 n))
                         name: 'take)
+
+
 
 ;;; ---------------------------------------------------------------------
 ;;; Null
