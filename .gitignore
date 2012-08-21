@@ -44,3 +44,4 @@ builds//src/vm7/comp.scm~
 /builds/ios/simulator/libBard_sim.a
 /builds/ios/device/libBard_dev.a
 /bard-eval/
+/vm/include/bytecode.h~
