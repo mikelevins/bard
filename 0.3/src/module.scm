@@ -281,5 +281,7 @@
                               (get-module registry mname)
                               (get-current-module registry)))
                   (var (table-ref (module-entries module) vname #f)))
-             (values module var))))
+             (if (and module var)
+                 (values mname vname)
+                 (values #f #f)))))
 
