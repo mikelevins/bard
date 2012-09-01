@@ -24,11 +24,7 @@
 (define $bard-files
   (paths $bard-root 
          "/src/utils.scm"
-         "/src/env.scm"
-         "/src/module.scm"
-         "/src/special.scm"
-         "/src/macro.scm"
-         "/src/compile.scm"
+         ;;"/src/vm.scm"
          ))
 
 ;;; load sources
@@ -39,7 +35,6 @@
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)
 
 

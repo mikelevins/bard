@@ -2,23 +2,16 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          load.scm
-;;;; Project:       Bard VM
-;;;; Purpose:       vm system loader
+;;;; Project:       Bard
+;;;; Purpose:       bard system loader
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-;;; ----------------------------------------------------------------------
-;;; project root
-;;; ----------------------------------------------------------------------
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "~/Projects/bard/bard")
-
-;;; ----------------------------------------------------------------------
-;;; set the proper readtable for Bard
-;;; ----------------------------------------------------------------------
+(define $bard-root  "/Users/mikel/Projects/bard/0.3")
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
@@ -30,21 +23,17 @@
 
 (define $bard-files
   (paths $bard-root 
-         "/src/vm/src/utils.scm"
-         "/src/vm/src/stretchy-vector.scm"
-         "/src/vm/src/env.scm"
-         "/src/vm/src/module.scm"
-         "/src/vm/src/types.scm"
-         "/src/vm/src/schema.scm"
-         "/src/vm/src/op.scm"
-         "/src/vm/src/vm.scm"
+         "/src/util.scm"
+         "/src/self-evaluating.scm"
+         "/src/env.scm"
+         "/src/special.scm"
+         "/src/variable.scm"
+         "/src/macro.scm"
+         "/src/application.scm"
+         "/src/gen.scm"
+         "/src/compile.scm"
+         "/src/vm.scm"
          ))
-
-;;; global utils
-;;; ----------------------------------------------------------------------
-
-(define not-yet-implemented 
-  (lambda args (error "function not yet implemented")))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
@@ -55,3 +44,5 @@
             $bard-files))
 
 ;;; (load-bard)
+
+
