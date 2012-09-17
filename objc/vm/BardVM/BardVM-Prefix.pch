@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'BardVM' target in the 'BardVM' project
-//
-
-#ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-#endif
