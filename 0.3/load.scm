@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/")
+(define $bard-root  "/Users/mikel/Projects/bard/0.3")
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
@@ -23,9 +23,9 @@
 
 (define $bard-files
   (paths $bard-root 
-         "src/version.scm"
-         "lib/uuid.scm"
-         "src/vm.scm"
+         "/src/version.scm"
+         "/lib/uuid.scm"
+         "/src/vm.scm"
          ))
 
 ;;; load sources
