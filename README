@@ -1,0 +1,37 @@
+Bard 
+A programming language
+by mikel evins
+
+Bard is a small, high-level, general-purpose programming language. It
+is interpreted, dynamic, and impurely functional. It has a unique
+object system influenced by, but different from, CLOS.
+
+Bard is a dialect of Lisp designed primarily to satisfy my
+preferences. It reflects my affection for a long-unavailable version
+of the Dylan programming language (that was still more obviously a
+Lisp), together with influences from Common Lisp, ML, Haskell, Python,
+Clojure, and other languages.
+
+Bard is a small Lisp. It has a small but useful set of built-in
+datatypes and functions.
+
+The 0.2.x version of Bard was used for a year in production in an
+educational game project, serving as a tool for writing simple
+compilers and as a runtime engine for evaluating rules and
+event-handlers. That version of Bard is a subset of the language,
+which omits several Bard features that were not needed for its use in
+the games.
+
+The 0.2.x versions of Bard were built as standalone interpreters on
+Mac OS X and Linux, and as a static library on Mac OS X and iOS.
+
+The 0.2.x series was a rather slow implementation.
+
+The 0.3 version represents current work on a vm-based version of the
+Bard that should deomnstrate improved performance, and also implement
+more of the language definition.
+
+A recent version of the Gambit Scheme compiler is needed to build
+Bard. iOS versions of Bard require Apple's iOS SDK and Xcode to build.
+
+
