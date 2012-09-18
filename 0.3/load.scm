@@ -25,6 +25,10 @@
   (paths $bard-root 
          "/src/version.scm"
          "/lib/uuid.scm"
+         "/src/op.scm"
+         "/src/instruction.scm"
+         "/src/code.scm"
+         "/src/applicable.scm"
          "/src/vm.scm"
          ))
 
@@ -36,9 +40,6 @@
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)
-;;; (%init-bard)
-;;; (bard:repl)
 
 
