@@ -28,7 +28,7 @@ Mac OS X and Linux, and as a static library on Mac OS X and iOS.
 The 0.2.x series was a rather slow implementation.
 
 The 0.3 version represents current work on a vm-based version of the
-Bard that should deomnstrate improved performance, and also implement
+Bard that should demonstrate improved performance, and also implement
 more of the language definition.
 
 A recent version of the Gambit Scheme compiler is needed to build
