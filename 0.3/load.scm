@@ -30,7 +30,7 @@
          "/src/vector-utils.scm"
          "/src/values.scm"
          "/src/globals.scm"
-         ;; "/src/environment.scm"
+         "/src/environment.scm"
          ;; "/src/primitives.scm"
          ;; "/src/op.scm"
          ;; "/src/return-record.scm"

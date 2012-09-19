@@ -31,6 +31,14 @@
             (error "count out of range")
             (loop (cdr elts)(- n 1))))))
 
+(define (position-if pred ls)
+  (let loop ((ls ls)
+             (i 0))
+    (if (null? ls)
+        #f
+        (if (pred (car ls))
+            i
+            (loop (cdr ls)(+ 1 i))))))
 
 #| tests
 
@@ -53,5 +61,11 @@ drop
 (drop 3 '(0 1 2 3 4 5))
 (drop 6 '(0 1 2 3 4 5))
 (drop 7 '(0 1 2 3 4 5)) ; should error
+
+position-if
+
+(position-if odd? '())
+(position-if odd? '(0 2 4 6 8))
+(position-if odd? '(0 2 4 6 8 9))
 
 |#
