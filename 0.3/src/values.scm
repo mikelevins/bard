@@ -21,3 +21,17 @@
 (define (logical-true? x)
   (not (logical-false? x)))
 
+
+#| tests
+
+(logical-false? #f)
+(logical-false? #t)
+(logical-false? #!unbound)
+(logical-false? '())
+
+(logical-true? #f)
+(logical-true? #t)
+(logical-true? #!unbound)
+(logical-true? '())
+
+|#
