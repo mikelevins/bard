@@ -30,3 +30,10 @@
 (define (arg3 instr)
   (list-ref instr 3))
 
+(define (link-instruction vmstate instruction)
+  (let* ((opcode (op instruction))
+         (opfn (opcode->opfn opcode)))
+    (cons opfn
+          (cons vmstate 
+                (cdr instruction)))))
+

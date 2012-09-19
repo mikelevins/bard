@@ -25,11 +25,19 @@
   (paths $bard-root 
          "/src/version.scm"
          "/lib/uuid.scm"
-         "/src/op.scm"
-         "/src/instruction.scm"
-         "/src/code.scm"
-         "/src/applicable.scm"
-         "/src/vm.scm"
+         "/src/list-utils.scm"
+         ;; "/src/string-utils.scm"
+         ;; "/src/vector-utils.scm"
+         ;; "/src/values.scm"
+         ;; "/src/globals.scm"
+         ;; "/src/environment.scm"
+         ;; "/src/primitives.scm"
+         ;; "/src/op.scm"
+         ;; "/src/return-record.scm"
+         ;; "/src/instruction.scm"
+         ;; "/src/code.scm"
+         ;; "/src/applicable.scm"
+         ;; "/src/vm.scm"
          ))
 
 ;;; load sources

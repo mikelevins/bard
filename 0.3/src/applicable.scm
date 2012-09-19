@@ -24,5 +24,6 @@
 
 (define-applicable primitive
   name
-  parameters
+  required-count
+  restarg?
   primitive-function)
