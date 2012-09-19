@@ -18,3 +18,15 @@
               (object->string (car args)))
           (string-append (str (car args))
                          (apply str (cdr args))))))
+
+
+#| tests
+
+str
+
+(str)
+(str 1)
+(str 1 2 3)
+(str "A random " "test" " phrase")
+
+|#

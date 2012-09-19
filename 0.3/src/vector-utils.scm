@@ -22,3 +22,13 @@
                                                         vecs)))
                 (loop (+ 1 i)))
               resultvec)))))
+
+#| tests
+
+(vector-map odd? (vector))
+(vector-map odd? (vector 0))
+(vector-map odd? (vector 0 1 2 3 4 5 6))
+(vector-map + (vector 0 0 1 2 3 5)(vector 0 1 2 3 5 8))
+(vector-map < (vector 0 1 2)(vector 1 2 3 4))
+
+|#
