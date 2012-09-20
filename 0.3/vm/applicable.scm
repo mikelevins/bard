@@ -26,4 +26,4 @@
   name
   required-count
   restarg?
-  primitive-function)
+  function)

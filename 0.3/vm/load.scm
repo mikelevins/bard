@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          load.scm
 ;;;; Project:       Bard
-;;;; Purpose:       bard system loader
+;;;; Purpose:       bard VM system loader
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -23,21 +23,21 @@
 
 (define $bard-files
   (paths $bard-root 
-         "/src/version.scm"
+         "/vm/version.scm"
          "/lib/uuid.scm"
-         "/src/list-utils.scm"
-         "/src/string-utils.scm"
-         "/src/vector-utils.scm"
-         "/src/values.scm"
-         "/src/globals.scm"
-         "/src/environment.scm"
-         ;; "/src/primitives.scm"
-         ;; "/src/op.scm"
-         ;; "/src/return-record.scm"
-         ;; "/src/instruction.scm"
-         ;; "/src/code.scm"
-         ;; "/src/applicable.scm"
-         ;; "/src/vm.scm"
+         "/common/list-utils.scm"
+         "/common/string-utils.scm"
+         "/common/vector-utils.scm"
+         "/vm/values.scm"
+         "/vm/globals.scm"
+         "/vm/environment.scm"
+         "/vm/primitives.scm"
+         ;; "/vm/op.scm"
+         ;; "/vm/return-record.scm"
+         ;; "/vm/instruction.scm"
+         ;; "/vm/code.scm"
+         ;; "/vm/applicable.scm"
+         ;; "/vm/vm.scm"
          ))
 
 ;;; load sources

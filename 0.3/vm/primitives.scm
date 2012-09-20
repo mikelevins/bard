@@ -10,5 +10,6 @@
 ;;;; ***********************************************************************
 
 (define (apply-primitive prim args)
-  )
+  (let ((op (primitive-function prim)))
+    (apply op args)))
 
