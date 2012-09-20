@@ -32,8 +32,17 @@
   (member op '(^ begin cond define if let loop
                  match method setter unless when)))
 
-(define (bard:compile-method expr env) #f)
-(define (bard:compile-begin expr env) #f)
+(define (parse-method-param-list plist)
+  plist)
+
+(define (bard:compile-method expr env)
+  (let ((param-list (parse-method-param-list (cadr expr)))
+        (body (drop 2 expr)))
+    `(make-method parameters: ',param-list body: ',body env: ',env)))
+
+(define (bard:compile-begin expr env)
+  )
+
 (define (bard:compile-cond expr env) #f)
 (define (bard:compile-define expr env) #f)
 (define (bard:compile-if expr env) #f)
