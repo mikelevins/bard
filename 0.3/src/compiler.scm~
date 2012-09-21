@@ -1,0 +1,10 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          load.scm
+;;;; Project:       Bard
+;;;; Purpose:       bard system loader
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************

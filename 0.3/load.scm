@@ -23,6 +23,7 @@
 
 (define $bard-files
   (paths $bard-root 
+         "/src/compiler.scm"
          "/src/vm.scm"
          ))
 
