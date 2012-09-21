@@ -60,9 +60,9 @@
   (list->table
    `(;; Variable/stack manipulation instructions:
      ((LREF)   (lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
-     ((LSET)   (lambda (vm)(push! vm (env-set! vm (arg1 vm)(arg2 vm)(arg3 vm)))))
+     ((LSETR)   (lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)(arg3 vm)))))
      ((GREF)   (lambda (vm)(push! vm (gref vm (arg1 vm)))))
-     ((GSET)   (lambda (vm)(push! vm (gset! vm (arg1 vm)(arg2 vm)))))
+     ((GSETR)   (lambda (vm)(push! vm (gsetter vm (arg1 vm)(arg2 vm)))))
      ((POP)    (lambda (vm)(pop! vm)))
      ((CONST)  (lambda (push! vm (arg1 vm))))
      
