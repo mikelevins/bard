@@ -59,83 +59,83 @@
 (define $opcode->opfn-table
   (list->table
    `(;; Variable/stack manipulation instructions:
-     ((LREF)   (lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
-     ((LSET)   (lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)(arg3 vm)))))
-     ((GREF)   (lambda (vm)(push! vm (gref vm (arg1 vm)))))
-     ((GSET)   (lambda (vm)(push! vm (gsetter vm (arg1 vm)(arg2 vm)))))
-     ((POP)    (lambda (vm)(pop! vm)))
-     ((CONST)  (lambda (push! vm (arg1 vm))))
+     (LREF .  ,(lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
+     (LSET .  ,(lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)(arg3 vm)))))
+     (GREF .  ,(lambda (vm)(push! vm (gref vm (arg1 vm)))))
+     (GSET .  ,(lambda (vm)(push! vm (gsetter vm (arg1 vm)(arg2 vm)))))
+     (POP  .  ,(lambda (vm)(pop! vm)))
+     (CONST . ,(lambda (vm)(push! vm (arg1 vm))))
      
      ;; Branching instructions:
-     ((JUMP)   (lambda (vm)(setpc! vm (arg1 vm))))
-     ((FJUMP)  (lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
-     ((TJUMP)  (lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
+     (JUMP .  ,(lambda (vm)(setpc! vm (arg1 vm))))
+     (FJUMP . ,(lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
+     (TJUMP . ,(lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
 
      ;; Function call/return instructions:
-     ((SAVE)   (lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
-     ((RETURN) ;; return value is top of stack; ret-addr is second
-      (lambda (vm)
-        (vm-function-set! vm (return-record-fn (second vm)))
-        (vm-code-set! vm (function-code (vm-function vm)))
-        (vm-env-set! vm (return-record-env (second vm)))
-        (vm-pc-set! vm (return-record-pc (second vm)))
-        ;; Get rid of the return address, but keep the value
-        (vm-stack-set! vm (cons (top vm)(cddr (vm-stack vm))))))
+     (SAVE .  ,(lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
+     (RETURN . ;; return value is top of stack; ret-addr is second
+             ,(lambda (vm)
+                (vm-function-set! vm (return-record-fn (second vm)))
+                (vm-code-set! vm (function-code (vm-function vm)))
+                (vm-env-set! vm (return-record-env (second vm)))
+                (vm-pc-set! vm (return-record-pc (second vm)))
+                ;; Get rid of the return address, but keep the value
+                (vm-stack-set! vm (cons (top vm)(cddr (vm-stack vm))))))
 
-     ((CALLJ)  
-      (lambda (vm)
-        (popenv! vm)
-        (vm-function-set! vm (pop! vm))
-        (vm-code-set! vm (function-code (vm-function vm)))
-        (vm -env-set! vm (function-env (vm-function vm)))
-        (vm-pc-set! vm 0)
-        (vm-nargs-set! vm (arg1 vm))))
+     (CALLJ . 
+            ,(lambda (vm)
+               (popenv! vm)
+               (vm-function-set! vm (pop! vm))
+               (vm-code-set! vm (function-code (vm-function vm)))
+               (vm -env-set! vm (function-env (vm-function vm)))
+               (vm-pc-set! vm 0)
+               (vm-nargs-set! vm (arg1 vm))))
 
-     ((ARGS)   
-      (lambda (vm)
-        (assert (= (vm-nargs vm) (arg1 vm))
-                (str "Wrong number of arguments:"
-                     (arg1 vm) " expected, "
-                     (vm-nargs vm) " supplied"))
-        ;; collect required args into a list and push it onto the env
-        (let loop ((i (vm-nargs vm))
-                   (result '()))
-          (if (<= i 0)
-              (pushenv! vm (list->vector (reverse result)))
-              (let ((v (pop! vm)))
-                (loop (- i 1)(cons v result)))))))
+     (ARGS .  
+           ,(lambda (vm)
+              (assert (= (vm-nargs vm) (arg1 vm))
+                      (str "Wrong number of arguments:"
+                           (arg1 vm) " expected, "
+                           (vm-nargs vm) " supplied"))
+              ;; collect required args into a list and push it onto the env
+              (let loop ((i (vm-nargs vm))
+                         (result '()))
+                (if (<= i 0)
+                    (pushenv! vm (list->vector (reverse result)))
+                    (let ((v (pop! vm)))
+                      (loop (- i 1)(cons v result)))))))
      
-     ((ARGS.)  
-      (lambda (vm)
-        (assert (= (vm-nargs vm) (arg1 vm))
-                (str "Wrong number of arguments:"
-                     (arg1 vm) " or more expected, "
-                     (vm-nargs vm) " supplied"))
-        ;; (arg1) is the number of required args
-        ;; nargs is the actual number of args passed
-        ;; collect optional args into a restarg, collect the
-        ;; required args, put the restarg at the end, push the
-        ;; result onto the env
-        (let ((required-count (arg1 vm)))
-          (let loop ((i (vm-nargs vm))
-                     (restarg '()))
-            (if (<= i required-count)
-                (let ((result (list->vector (reverse restarg))))
-                  (let loop2 ((i i)
-                              (args '()))
-                    (if (<= i 0)
-                        (pushenv! vm (reverse (cons result args)))
-                        (loop 2 (- i 1)(cons (pop! vm) args)))))
-                (loop (- i 1)(cons (pop! vm) restarg)))))))
+     (ARGS. . 
+            ,(lambda (vm)
+               (assert (= (vm-nargs vm) (arg1 vm))
+                       (str "Wrong number of arguments:"
+                            (arg1 vm) " or more expected, "
+                            (vm-nargs vm) " supplied"))
+               ;; (arg1) is the number of required args
+               ;; nargs is the actual number of args passed
+               ;; collect optional args into a restarg, collect the
+               ;; required args, put the restarg at the end, push the
+               ;; result onto the env
+               (let ((required-count (arg1 vm)))
+                 (let loop ((i (vm-nargs vm))
+                            (restarg '()))
+                   (if (<= i required-count)
+                       (let ((result (list->vector (reverse restarg))))
+                         (let loop2 ((i i)
+                                     (args '()))
+                           (if (<= i 0)
+                               (pushenv! vm (reverse (cons result args)))
+                               (loop 2 (- i 1)(cons (pop! vm) args)))))
+                       (loop (- i 1)(cons (pop! vm) restarg)))))))
      
-     ((FN)     (lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
+     (FN .    ,(lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
      
-     ((PRIM)   (lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
+     (PRIM .  ,(lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
      
      ;; Continuation instructions:
-     ((SET-CC) (lambda (vm)(vm-stack-set! vm (top vm))))
+     (SET-CC . ,(lambda (vm)(vm-stack-set! vm (top vm))))
      
-     ((CC)     (lambda (vm)
+     (CC .    ,(lambda (vm)
                  (push! vm
                         (make-function
                          env: (list (vector (vm-stack vm)))
@@ -143,7 +143,7 @@
                                  (LREF 0 0) (RETURN))))))
      
      ;; Other:
-     ((HALT) (lambda (vm)(vm-halted-set! vm #t))))
+     (HALT . ,(lambda (vm)(vm-halted-set! vm #t))))
    test: eq?))
 
 

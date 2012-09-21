@@ -9,7 +9,21 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define (bard:gen . args)
+  args)
 
+(define $bard-special-forms 
+  (list->table
+   `((begin . ,(lambda (expr env val? more?) #f))
+     (cond . ,(lambda (expr env val? more?) #f))
+     (define . ,(lambda (expr env val? more?) #f))
+     (let . ,(lambda (expr env val? more?) #f))
+     (loop . ,(lambda (expr env val? more?) #f))
+     (match . ,(lambda (expr env val? more?) #f))
+     (method . ,(lambda (expr env val? more?) #f))
+     (set! . ,(lambda (expr env val? more?) #f))
+     (unless . ,(lambda (expr env val? more?) #f))
+     (when . ,(lambda (expr env val? more?) #f)))))
 
 (define (special-form? expr)
   (table-ref $bard-special-forms (car expr) #f))
@@ -78,8 +92,35 @@
                ;; global variable
                (bard:gen 'GREF expr))))
 
+(define (self-evaluating? expr)
+  (or (null? expr)
+      (boolean? expr)
+      (number? expr)
+      (char? expr)
+      (string? expr)))
+
+(define (bard:compile-self-evaluating expr val? more?)
+  (if val?
+      (bard:gen 'CONST expr)
+      (list
+       (bard:gen 'CONST expr)
+       (bard:gen 'POP))))
+
 (define (bard:compile expr env val? more?)
   (cond
    ((self-evaluating? expr)(bard:compile-self-evaluating expr val? more?))
    ((symbol? expr)(bard:compile-variable-reference expr env val? more?))
    (else (bard:compile-list-expr expr env val? more?))))
+
+#| tests
+
+self-evaluating
+(bard:compile '() '() #t #f)
+(bard:compile #t '() #t #f)
+(bard:compile 1 '() #t #f)
+(bard:compile #\A '() #t #f)
+(bard:compile "Foobar" '() #t #f)
+
+
+
+|#
