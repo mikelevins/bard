@@ -59,21 +59,32 @@
 (define $opcode->opfn-table
   (list->table
    `(;; Variable/stack manipulation instructions:
-     (LREF .  ,(lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
-     (LSET .  ,(lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)(arg3 vm)))))
-     (GREF .  ,(lambda (vm)(push! vm (gref vm (arg1 vm)))))
-     (GSET .  ,(lambda (vm)(push! vm (gsetter vm (arg1 vm)(arg2 vm)))))
-     (POP  .  ,(lambda (vm)(pop! vm)))
-     (CONST . ,(lambda (vm)(push! vm (arg1 vm))))
+     (LREF . ; (LREF i j)
+           ,(lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
+     (LSETR . ; (LSETR i j)
+           ,(lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)))))
+     (GREF . ; (GREF gv)
+           ,(lambda (vm)(push! vm (gref vm (arg1 vm)))))
+     (GSETR . ; (GSETR gv)
+           ,(lambda (vm)(push! vm (gsetter vm (arg1 vm)))))
+     (POP  . ; (POP)
+           ,(lambda (vm)(pop! vm)))
+     (CONST . ; (CONST c)
+            ,(lambda (vm)(push! vm (arg1 vm))))
      
      ;; Branching instructions:
-     (JUMP .  ,(lambda (vm)(setpc! vm (arg1 vm))))
-     (FJUMP . ,(lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
-     (TJUMP . ,(lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
+     (JUMP . ; (JUMP dst)
+           ,(lambda (vm)(setpc! vm (arg1 vm))))
+     (FJUMP . ; (FJUMP dst)
+            ,(lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
+     (TJUMP . ; (TJUMP dst)
+            ,(lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
 
      ;; Function call/return instructions:
-     (SAVE .  ,(lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
-     (RETURN . ;; return value is top of stack; ret-addr is second
+     (SAVE . ; (SAVE continue)
+           ,(lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
+     (RETURN . ; (RETURN) 
+             ;; return value is top of stack; ret-addr is second
              ,(lambda (vm)
                 (vm-function-set! vm (return-record-fn (second vm)))
                 (vm-code-set! vm (function-code (vm-function vm)))
@@ -82,7 +93,7 @@
                 ;; Get rid of the return address, but keep the value
                 (vm-stack-set! vm (cons (top vm)(cddr (vm-stack vm))))))
 
-     (CALLJ . 
+     (CALLJ . ; (CALLJ argcount)
             ,(lambda (vm)
                (popenv! vm)
                (vm-function-set! vm (pop! vm))
@@ -91,7 +102,7 @@
                (vm-pc-set! vm 0)
                (vm-nargs-set! vm (arg1 vm))))
 
-     (ARGS .  
+     (ARGS . ; (ARGS argcount)
            ,(lambda (vm)
               (assert (= (vm-nargs vm) (arg1 vm))
                       (str "Wrong number of arguments:"
@@ -105,7 +116,7 @@
                     (let ((v (pop! vm)))
                       (loop (- i 1)(cons v result)))))))
      
-     (ARGS. . 
+     (ARGS. . ; (ARGS. argcount)
             ,(lambda (vm)
                (assert (= (vm-nargs vm) (arg1 vm))
                        (str "Wrong number of arguments:"
@@ -128,14 +139,18 @@
                                (loop 2 (- i 1)(cons (pop! vm) args)))))
                        (loop (- i 1)(cons (pop! vm) restarg)))))))
      
-     (FN .    ,(lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
+     (FN . ; (FN fn)
+         ,(lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
      
-     (PRIM .  ,(lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
+     (PRIM . ; (PRIM p)
+           ,(lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
      
      ;; Continuation instructions:
-     (SET-CC . ,(lambda (vm)(vm-stack-set! vm (top vm))))
+     (SET-CC . ; (SET-CC)
+             ,(lambda (vm)(vm-stack-set! vm (top vm))))
      
-     (CC .    ,(lambda (vm)
+     (CC . ; (CC)
+         ,(lambda (vm)
                  (push! vm
                         (make-function
                          env: (list (vector (vm-stack vm)))
@@ -143,7 +158,8 @@
                                  (LREF 0 0) (RETURN))))))
      
      ;; Other:
-     (HALT . ,(lambda (vm)(vm-halted-set! vm #t))))
+     (HALT . ; (HALT)
+           ,(lambda (vm)(vm-halted-set! vm #t))))
    test: eq?))
 
 
