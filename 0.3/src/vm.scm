@@ -56,45 +56,56 @@
 (define arg2 (lambda (vm)(list-ref (vm-instr vm) 2)))
 (define arg3 (lambda (vm)(list-ref (vm-instr vm) 3)))
 
-(define $opcode->opfn-table
-  (list->table
-   `(;; Variable/stack manipulation instructions:
-     (LREF . ; (LREF i j)
-           ,(lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
-     (LSETR . ; (LSETR i j)
-           ,(lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)))))
-     (GREF . ; (GREF gv)
-           ,(lambda (vm)(push! vm (gref vm (arg1 vm)))))
-     (GSETR . ; (GSETR gv)
-           ,(lambda (vm)(push! vm (gsetter vm (arg1 vm)))))
-     (POP  . ; (POP)
-           ,(lambda (vm)(pop! vm)))
-     (CONST . ; (CONST c)
-            ,(lambda (vm)(push! vm (arg1 vm))))
-     
-     ;; Branching instructions:
-     (JUMP . ; (JUMP dst)
-           ,(lambda (vm)(setpc! vm (arg1 vm))))
-     (FJUMP . ; (FJUMP dst)
-            ,(lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
-     (TJUMP . ; (TJUMP dst)
-            ,(lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
+(define $opcode->opfn-table (make-table test: eq?))
+(define $opfn->opcode-table (make-table test: eq?))
 
-     ;; Function call/return instructions:
-     (SAVE . ; (SAVE continue)
-           ,(lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
-     (RETURN . ; (RETURN) 
-             ;; return value is top of stack; ret-addr is second
-             ,(lambda (vm)
-                (vm-function-set! vm (return-record-fn (second vm)))
-                (vm-code-set! vm (function-code (vm-function vm)))
-                (vm-env-set! vm (return-record-env (second vm)))
-                (vm-pc-set! vm (return-record-pc (second vm)))
-                ;; Get rid of the return address, but keep the value
-                (vm-stack-set! vm (cons (top vm)(cddr (vm-stack vm))))))
+(define (defop opcode opfn)
+  (table-set! $opcode->opfn-table opcode opfn)
+  (table-set! $opfn->opcode-table opfn opcode)
+  opcode)
 
-     (CALLJ . ; (CALLJ argcount)
-            ,(lambda (vm)
+;;; (LREF i j)
+(defop 'LREF (lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
+
+;;; (LSETR i j)
+(defop 'LSETR (lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)))))
+
+;;; (GREF gv)
+(defop 'GREF (lambda (vm)(push! vm (gref vm (arg1 vm)))))
+
+;;; (GSETR gv)
+(defop 'GSETR (lambda (vm)(push! vm (gsetter vm (arg1 vm)))))
+
+;;; (POP)
+(defop 'POP (lambda (vm)(pop! vm)))
+
+;;; (CONST c)
+(defop 'CONST (lambda (vm)(push! vm (arg1 vm))))
+
+;;; (JUMP dst)
+(defop 'JUMP (lambda (vm)(setpc! vm (arg1 vm))))
+
+;;; (FJUMP dst)
+(defop 'FJUMP (lambda (vm)(if (logically-false? (pop! vm))(setpc! vm (arg1 vm)))))
+
+;;; (TJUMP dst)
+(defop 'TJUMP (lambda (vm)(if (logically-true? (pop! vm))(setpc! vm (arg1 vm)))))
+
+;;; (SAVE continue)
+(defop 'SAVE (lambda (vm)(push! vm (make-return-record pc: (arg1 vm) fn: (vm-function vm) :env (vm-env vm)))))
+
+;;; (RETURN) 
+(defop 'RETURN ; return value is top of stack; ret-addr is second
+  (lambda (vm)
+    (vm-function-set! vm (return-record-fn (second vm)))
+    (vm-code-set! vm (function-code (vm-function vm)))
+    (vm-env-set! vm (return-record-env (second vm)))
+    (vm-pc-set! vm (return-record-pc (second vm)))
+    ;; Get rid of the return address, but keep the value
+    (vm-stack-set! vm (cons (top vm)(cddr (vm-stack vm))))))
+
+;;; (CALLJ argcount)
+(defop 'CALLJ (lambda (vm)
                (popenv! vm)
                (vm-function-set! vm (pop! vm))
                (vm-code-set! vm (function-code (vm-function vm)))
@@ -102,8 +113,8 @@
                (vm-pc-set! vm 0)
                (vm-nargs-set! vm (arg1 vm))))
 
-     (ARGS . ; (ARGS argcount)
-           ,(lambda (vm)
+;;; (ARGS argcount)
+(defop 'ARGS (lambda (vm)
               (assert (= (vm-nargs vm) (arg1 vm))
                       (str "Wrong number of arguments:"
                            (arg1 vm) " expected, "
@@ -115,9 +126,9 @@
                     (pushenv! vm (list->vector (reverse result)))
                     (let ((v (pop! vm)))
                       (loop (- i 1)(cons v result)))))))
-     
-     (ARGS. . ; (ARGS. argcount)
-            ,(lambda (vm)
+
+;;; (ARGS. argcount)
+(defop 'ARGS. (lambda (vm)
                (assert (= (vm-nargs vm) (arg1 vm))
                        (str "Wrong number of arguments:"
                             (arg1 vm) " or more expected, "
@@ -138,34 +149,23 @@
                                (pushenv! vm (reverse (cons result args)))
                                (loop 2 (- i 1)(cons (pop! vm) args)))))
                        (loop (- i 1)(cons (pop! vm) restarg)))))))
-     
-     (FN . ; (FN fn)
-         ,(lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
-     
-     (PRIM . ; (PRIM p)
-           ,(lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
-     
-     ;; Continuation instructions:
-     (SET-CC . ; (SET-CC)
-             ,(lambda (vm)(vm-stack-set! vm (top vm))))
-     
-     (CC . ; (CC)
-         ,(lambda (vm)
-                 (push! vm
-                        (make-function
-                         env: (list (vector (vm-stack vm)))
-                         code: '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
-                                 (LREF 0 0) (RETURN))))))
-     
-     ;; Other:
-     (HALT . ; (HALT)
-           ,(lambda (vm)(vm-halted-set! vm #t))))
-   test: eq?))
 
+;;; (FN fn)
+(defop 'FN (lambda (vm)(push! vm (make-function code: (function-code (arg1 vm)) env: (vm-env vm)))))
 
-(define $opfn->opcode-table
-  (let* ((entries (table->list $opcode->opfn-table))
-         (tbl (list->table (map (lambda (entry)(cons (cdr entry)(car entry)))
-                                entries)
-                           test: eq?)))
-    tbl))
+;;; (PRIM p)
+(defop 'PRIM (lambda (vm)(push! vm (apply-primitive (arg1 vm)(popn! vm (vm-nargs vm))))))
+
+;;; (SET-CC)
+(defop 'SET-CC (lambda (vm)(vm-stack-set! vm (top vm))))
+
+;;; (CC)
+(defop 'CC (lambda (vm)
+            (push! vm
+                   (make-function
+                    env: (list (vector (vm-stack vm)))
+                    code: '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
+                            (LREF 0 0) (RETURN))))))
+
+;;; (HALT)
+(defop 'HALT (lambda (vm)(vm-halted-set! vm #t)))
