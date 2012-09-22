@@ -13,6 +13,9 @@
 ;;; code generation
 ;;; ---------------------------------------------------------------------
 
+(define (bard:gen-label)
+  `(label ,(gensym)))
+
 (define (bard:gen . args)
   args)
 
@@ -37,8 +40,34 @@
 (define (bard:compile-cond expr env val? more?) 
   #f)
 
-(define (bard:compile-define expr env val? more?) 
+(define (bard:compile-define-function expr env val? more?) 
   #f)
+
+(define (bard:compile-define-macro expr env val? more?) 
+  #f)
+
+(define (bard:compile-define-protocol expr env val? more?) 
+  #f)
+
+(define (bard:compile-define-schema expr env val? more?) 
+  #f)
+
+(define (bard:compile-define-variable expr env val? more?) 
+  #f)
+
+(define (bard:compile-define-vector expr env val? more?) 
+  #f)
+
+(define (bard:compile-define expr env val? more?) 
+  (let ((op (car expr)))
+    (case op
+      ((function)(bard:compile-define-function (cdr expr) env val? more?))
+      ((macro)(bard:compile-define-macro (cdr expr) env val? more?))
+      ((protocol)(bard:compile-define-protocol (cdr expr) env val? more?))
+      ((schema)(bard:compile-define-schema (cdr expr) env val? more?))
+      ((variable)(bard:compile-define-variable (cdr expr) env val? more?))
+      ((vector)(bard:compile-define-vector (cdr expr) env val? more?))
+      (else (error (str "Unrecognized definition type: define " op))))))
 
 (define (bard:compile-let expr env val? more?) 
   #f)
@@ -53,10 +82,30 @@
   #f)
 
 (define (bard:compile-unless expr env val? more?) 
-  #f)
+  (let ((test (bard:compile (car expr) env #t more?))
+        (body (bard:compile-begin (cdr expr) env val? more?))
+        (continue-before (bard:gen-label))
+        (continue-after (bard:gen-label)))
+    (append
+     (list test)
+     (list (bard:gen 'FJUMP continue-before))
+     (list (bard:gen 'JUMP continue-after))
+     (list continue-before)
+     body
+     (list continue-after))))
 
 (define (bard:compile-when expr env val? more?) 
-  #f)
+  (let ((test (bard:compile (car expr) env #t more?))
+        (body (bard:compile-begin (cdr expr) env val? more?))
+        (continue-before (bard:gen-label))
+        (continue-after (bard:gen-label)))
+    (append
+     (list test)
+     (list (bard:gen 'TJUMP continue-before))
+     (list (bard:gen 'JUMP continue-after))
+     (list continue-before)
+     body
+     (list continue-after))))
 
 (define $bard-special-forms 
   (list->table
@@ -254,5 +303,7 @@ symbol
 (bard:compile '(begin 1 2 3) $env #t #f)
 (bard:compile '(begin a c x) $env #t #f)
 
+4. compile unless
+(bard:compile '(unless #t 1) $env #t #f)
 
 |#
