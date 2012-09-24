@@ -247,8 +247,8 @@
    ((quote-form? expr)(bard:compile-quote-form expr env))
    ((quasiquote-form? expr)(bard:compile-quasiquote-form expr env))
    ((setter-form? expr)(bard:compile-setter-form expr env))
-   ((macro-form? expr)(bard:compile (bard:macroexpand expr) env))
    ((special-form? expr)(bard:compile-special-form expr env))
+   ((macro-form? expr)(bard:compile (bard:macroexpand expr) env))
    (t (bard:compile-funcall expr env))))
 
 ;;; ---------------------------------------------------------------------
@@ -294,6 +294,7 @@
 #| 
 
 self-evaluating
+---------------
 
 (bard:compile '() '())
 (bard:compile #t '())
@@ -302,6 +303,7 @@ self-evaluating
 (bard:compile "Foobar" '())
 
 symbol
+------
 
 1. set up lexical env
 (begin
@@ -313,27 +315,40 @@ symbol
   (set! $env (environment-add-frame $env (make-environment-frame (list (make-binding 'e 5 mutable: #f)
                                                                        (make-binding 'f 6 mutable: #t))))))
 
-2. compile variable references
+2. compile variable references and setters
 
 (bard:compile 'x $env)
 (bard:compile 'a $env)
 (bard:compile '(setter x) $env)
 (bard:compile '(setter a) $env)
 
-3. compile begin
+quotations
+----------
+
+(bard:compile '(quote x) $env)
+(bard:compile '(quasiquote x) $env)
+
+-------------
+special forms
+-------------
+
+begin
+-----
 
 (bard:compile '(begin 1) $env)
 (bard:compile '(begin 1 2 3) $env)
 (bard:compile '(begin a c x) $env)
 
-4. compile unless, when
-
-(bard:compile '(unless #t 1) $env)
-(bard:compile '(when #t 1) $env)
-
-5. compile if
+if
+--
 
 (bard:compile '(if a 1 0) $env)
 (bard:compile '(if a (begin 1 #t) (begin 0 #f)) $env)
+
+unless, when
+------------
+
+(bard:compile '(unless #t 1) $env)
+(bard:compile '(when #t 1) $env)
 
 |#

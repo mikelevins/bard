@@ -9,6 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; auxiliary functions
+;;; ---------------------------------------------------------------------
 
 (define (opcode instr)(car instr))
 
@@ -22,6 +25,10 @@
 
 (define (apply-primitive prim args) #f)
 
+;;; ---------------------------------------------------------------------
+;;; vm representation
+;;; ---------------------------------------------------------------------
+
 (define-type vm 
   function
   code
@@ -33,8 +40,13 @@
   instr
   halted)
 
+;;; ---------------------------------------------------------------------
+;;; vm accessors
+;;; ---------------------------------------------------------------------
+
 (define code-ref (lambda (vm n)(list-ref (vm-code vm) n)))
 (define incpc! (lambda (vm)(vm-pc-set! vm (+ (vm-pc vm) 1))))
+(define fetch! (lambda (vm)(vm-instr-set! vm (code-ref vm (vm-pc vm)))))
 (define push! (lambda (vm x)(vm-stack-set! vm (cons x (vm-stack vm)))))
 (define pop! (lambda (vm) (let ((v (car (vm-stack vm))))(vm-stack-set! (cdr (vm-stack vm))) v)))
 (define popn! (lambda (vm n)
@@ -52,9 +64,15 @@
 (define setpc! (lambda (vm x)(vm-pc-set! vm x)))
 (define gref (lambda (vm g)(table-ref (vm-globals vm) g #!unbound)))
 (define gset! (lambda (vm g v)(table-set! (vm-globals vm) g v)))
+(define op (lambda (vm)(car (vm-instr vm))))
 (define arg1 (lambda (vm)(list-ref (vm-instr vm) 1)))
 (define arg2 (lambda (vm)(list-ref (vm-instr vm) 2)))
 (define arg3 (lambda (vm)(list-ref (vm-instr vm) 3)))
+(define args (lambda (vm)(cdr (vm-instr vm))))
+
+;;; ---------------------------------------------------------------------
+;;; opcodes and opfns
+;;; ---------------------------------------------------------------------
 
 (define $opcode->opfn-table (make-table test: eq?))
 (define $opfn->opcode-table (make-table test: eq?))
@@ -64,8 +82,14 @@
   (table-set! $opfn->opcode-table opfn opcode)
   opcode)
 
+(define (opcode->opfn opcode)
+  (table-ref $opcode->opfn-table opcode #f))
+
+(define (opfn->opcode opfn)
+  (table-ref $opfn->opcode-table opfn #f))
+
 ;;; (LREF i j)
-(defop 'LREF (lambda (vm)(push! vm (env-ref vm (arg1 vm)(arg2 vm)))))
+(defop 'LREF (lambda (vm)(push! vm (binding-value (env-ref vm (arg1 vm)(arg2 vm))))))
 
 ;;; (LSETR i j)
 (defop 'LSETR (lambda (vm)(push! vm (env-setter vm (arg1 vm)(arg2 vm)))))
@@ -169,3 +193,55 @@
 
 ;;; (HALT)
 (defop 'HALT (lambda (vm)(vm-halted-set! vm #t)))
+
+;;; ---------------------------------------------------------------------
+;;; vm control
+;;; ---------------------------------------------------------------------
+
+;;; TODO: implement a loader that does the opcode lookup at load time,
+;;; so we don't have to do it during exec!
+(define (exec! vm)
+  (let ((opfn (opcode->opfn (op vm))))
+    (opfn vm)))
+
+(define (step! vm)
+  (fetch! vm)
+  (incpc! vm)
+  (exec! vm))
+
+(define (showvm vm)
+  (newline)
+  (display "Bard 0.3 VM")(newline)
+  (display (str "     pc: " (vm-pc vm)))(newline)
+  (display (str "  instr: " (vm-instr vm)))(newline)
+  (display (str "  stack: " (vm-stack vm)))(newline)
+  (display (str "  code: " (vm-code vm)))(newline)
+  (newline))
+
+;;; ---------------------------------------------------------------------
+;;; tests
+;;; ---------------------------------------------------------------------
+
+(define (make-testenv)
+  (let ((env (null-env)))
+    (set! env (extend-environment env `((a 1 #f)(b 2 #t))))
+    (set! env (extend-environment env `((c 3 #f)(d 4 #t))))
+    (set! env (extend-environment env `((e 5 #f)(f 6 #t))))
+    env))
+
+(define (make-testvm env)
+  (make-vm #f #f 0 env #f '() 0 #f #f))
+
+#|
+
+(define $env (make-testenv))
+(define $vm (make-testvm $env))
+(showvm $vm)
+
+(define $prog1 (bard:compile 'a $env))
+(vm-code-set! $vm $prog1)
+(showvm $vm)
+(step! $vm)
+(showvm $vm)
+
+|#

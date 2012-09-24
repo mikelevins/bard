@@ -71,6 +71,12 @@
 (define (environment-ref env i j)
   (environment-frame-ref (environment-frame env i) j))
 
+;;; (extend-environment $env `((a 0 #f)(b 1 #t)...))
+(define (extend-environment env bindings)
+  (let* ((maker (lambda (bnd)(make-binding (car bnd) (cadr bnd) mutable: (caddr bnd))))
+         (bindings (map maker bindings)))
+    (environment-add-frame env (make-environment-frame bindings))))
+
 ;;; returns a binding's value
 (define (lref env i j)
   (binding-value (environment-ref env i j)))

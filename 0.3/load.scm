@@ -24,6 +24,7 @@
 (define $bard-files
   (paths $bard-root 
          "/src/utils/list.scm"
+         "/src/utils/string.scm"
          "/src/environment.scm"
          "/src/compiler.scm"
          "/src/vm.scm"
