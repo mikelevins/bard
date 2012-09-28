@@ -59,14 +59,33 @@
 (define (bard:compile-define-macro expr env) 
   #f)
 
+(define (bard:make-protocol pname)(list 'protocol pname))
+(define (bard:protocol-add-function! protocol fn)
+  (set-cdr! protocol
+            (append (cdr protocol)
+                    (list fn))))
+
+(define (make-function fn-description #!optional (protocol #f))
+  (list 'function fn-description protocol))
+
 (define (bard:compile-define-protocol expr env) 
-  #f)
+  (let* ((pname (car expr))
+         (protocol (bard:make-protocol pname))
+         (pclause-forms (cdr expr))
+         (pclauses (map (lambda (c)(make-function c pname)) pclause-forms)))
+    (for-each (lambda (pc)(bard:protocol-add-function! protocol pc))
+              pclauses)
+    (append (bard:gen 'CONST protocol)
+            (bard:gen 'DEF pname))))
 
 (define (bard:compile-define-schema expr env) 
   #f)
 
 (define (bard:compile-define-variable expr env) 
-  #f)
+  (let ((var-form (car expr))
+        (val-form (cadr expr)))
+    (append (bard:compile val-form env)
+            (bard:gen 'DEF var-form))))
 
 (define (bard:compile-define-vector expr env) 
   #f)
@@ -265,7 +284,7 @@
    ((setter-form? expr)(bard:compile-setter-form expr env))
    ((special-form? expr)(bard:compile-special-form expr env))
    ((macro-form? expr)(bard:compile (bard:macroexpand expr) env))
-   (t (bard:compile-funcall expr env))))
+   (else (bard:compile-funcall expr env))))
 
 ;;; ---------------------------------------------------------------------
 ;;; var refs
@@ -354,6 +373,13 @@ begin
 (bard:compile '(begin 1) $env)
 (bard:compile '(begin 1 2 3) $env)
 (bard:compile '(begin a c x) $env)
+
+define
+------
+
+(bard:compile '(define protocol Rational ((numerator Ratio) Integer)((denominator Ratio) Integer)) $env)
+(bard:compile '(define variable x 5) $env)
+
 
 cond
 ----
