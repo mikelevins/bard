@@ -35,7 +35,23 @@
                                   result)))))))
 
 (define (bard:compile-cond expr env) 
-  #f)
+  (let* ((continue-return (bard:gen-label))
+         (clauses (map (lambda (c)
+                         (let ((test (bard:compile (car c) env))
+                               (then-body (bard:compile (cadr c) env))
+                               (continue-then (bard:gen-label))
+                               (continue-end-clause (bard:gen-label)))
+                           (append test 
+                                   (bard:gen 'TJUMP continue-then)
+                                   (bard:gen 'FJUMP continue-end-clause)
+                                   (list continue-then)
+                                   then-body
+                                   (bard:gen 'JUMP continue-return)
+                                   (list continue-end-clause))))
+                       expr)))
+    (append
+     (apply append clauses)
+     (list continue-return))))
 
 (define (bard:compile-define-function expr env) 
   #f)
@@ -338,6 +354,12 @@ begin
 (bard:compile '(begin 1) $env)
 (bard:compile '(begin 1 2 3) $env)
 (bard:compile '(begin a c x) $env)
+
+cond
+----
+
+(bard:compile '(cond (a 1)(b 2)) $env)
+
 
 if
 --
