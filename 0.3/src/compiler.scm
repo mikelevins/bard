@@ -53,13 +53,47 @@
      (apply append clauses)
      (list continue-return))))
 
+(define (bard:params->signature params)
+  (list 'signature
+        (map (lambda (p)
+               (cond
+                ((symbol? p) 'Anything)
+                ((list? p) (cadr p))
+                (else (error "Malformed method parameter" p))))
+             params)))
+
+(define (bard:params->formals params)
+  (list 'formals
+        (map (lambda (p)
+               (cond
+                ((symbol? p) p)
+                ((list? p) (car p))
+                (else (error "Malformed method parameter" p))))
+             params)))
+
+(define (bard:make-method formals code env)
+  (list 'method formals code env))
+
+;;; (define-function (fname arg1 arg2...) expr1 expr2 ...)
 (define (bard:compile-define-function expr env) 
-  #f)
+  (let* ((proto (car expr))
+         (fname (car proto))
+         (params (cdr proto))
+         (signature (bard:params->signature params))
+         (formals (bard:params->formals params))
+         (body (cdr expr))
+         (code (bard:compile-begin body env))
+         (method (bard:make-method formals code env)))
+    (append
+     (bard:gen 'CONST method)
+     (bard:gen 'CONST fname)
+     (bard:gen 'ADDM))))
 
 (define (bard:compile-define-macro expr env) 
   #f)
 
 (define (bard:make-protocol pname)(list 'protocol pname))
+
 (define (bard:protocol-add-function! protocol fn)
   (set-cdr! protocol
             (append (cdr protocol)
@@ -195,6 +229,14 @@
 ;;; primitives
 ;;; ---------------------------------------------------------------------
 
+(define $primitives (make-table test: eq?))
+
+(define (defprim pname p)
+  (table-set! $primitives pname p))
+
+(define (primitive? x)
+  (table-ref $primitives x #f))
+
 (define (bard:compile-primitive-call expr env)
   (let* ((op (car expr))
          (argforms (cdr expr))
@@ -207,10 +249,10 @@
 ;;; ---------------------------------------------------------------------
 
 (define (bard:compile-function-call expr env)
-  (let ((op (car expr))
-        (argforms (cdr expr))
-        (args (map (lambda (arg)(bard:compile args env))
-                   argforms)))
+  (let* ((op (car expr))
+         (argforms (cdr expr))
+         (args (map (lambda (arg)(bard:compile args env))
+                    argforms)))
     (let ((continue (bard:gen-label)))
       (append
        (bard:gen 'SAVE continue)
@@ -307,7 +349,8 @@
       (boolean? expr)
       (number? expr)
       (char? expr)
-      (string? expr)))
+      (string? expr)
+      (procedure? expr)))
 
 (define (bard:compile-self-evaluating expr)
   (bard:gen 'CONST expr))
@@ -377,6 +420,7 @@ begin
 define
 ------
 
+(bard:compile '(define function (add (x <fixnum>)(y <fixnum>)) (+ x y)) $env)
 (bard:compile '(define protocol Rational ((numerator Ratio) Integer)((denominator Ratio) Integer)) $env)
 (bard:compile '(define variable x 5) $env)
 
