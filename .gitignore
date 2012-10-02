@@ -47,3 +47,4 @@ builds//src/vm7/comp.scm~
 /vm/include/bytecode.h~
 /LICENSE~
 /README~
+*.txt~
