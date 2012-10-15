@@ -48,3 +48,5 @@ builds//src/vm7/comp.scm~
 /LICENSE~
 /README~
 *.txt~
+
+0.3/bard.lisp~
