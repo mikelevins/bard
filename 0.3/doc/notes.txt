@@ -1,0 +1,199 @@
+Bard's types are defined by three elements: schemas, protocols, and classes.
+
+A schema is a specification of how to lay out data. A schema describes
+the representation of a type.
+
+A protocol is a specification of a set of functions. A protocol
+describes operations on a type.
+
+The functions described in a protocol definition are generic. The
+arguments to these generic functions are classes, not schemas. A class
+is a type variable; it does not specify any particular schema, but
+instead can refer to any of an open set of schemas.
+
+The connection between a particular schema and a class referred to in
+a protocol definition is made by defining methods. When a method is
+defined on a function, and the method specializes on some specific
+schema, that method definition establishes that the schema is a member
+of the corresponding class mentioned in the protocol that defines the
+generic function.
+
+As an example, let's define a simple Rational protocol that uses a
+Ratio class, and then define a method that defines the schema <fixnum>
+as a member of Ratio.
+
+First, we'll declare the needed classes:
+
+(define class Ratio)
+(define class Integer)
+
+Next we define the Rational protocol:
+
+(define protocol Rational
+  ((numerator Ratio) => Integer)
+  ((denominator Ratio) => Integer))
+
+Finally, we establish that the schema <fixnum> is an instance of the
+class Ratio by defining a method for each of the Rational functions
+that specializes on <fixnum>:
+
+(define method (numerator x::<fixnum>) x)
+(define method (denominator x::<fixnum>) 1)
+
+Because of the definitions of  numerator and denominator, <fixnum> is
+now an instance of Ratio.
+
+Ratio, Integer, numerator, and denominator are module variables. Ratio
+and Integer are defined as classes--that is, as type variables that
+refer to some collections of schemas. numerator and denominator are
+bound to generic functions.
+
+If these symbols are already defined as module variables, then the
+result depends on their values. If Ratio and Integer are already
+classes, nothing is changed. If they are not, Bard signals a
+continuable error, allowing the programmer to replace their
+definitions if needed, or to cancel the definition and rewrite the
+code.
+
+Similarly, if numerator and denominator are already bound to generic
+functions then the definitions of those functions are augmented to
+accommodate the new definition provided by the protocol. If they are
+not functions then, as with classes, Bard offers the chance to either
+redefined the variables or abandon the definitions.
+
+Thes features work this way because classes and protocols are built
+using a simple process of composition of first-class elements. A class
+is just an extensible collection of schemas. A protocol is just an
+extensible collection of functions.  
+
+We can write the following lower-level code to get the same effects:
+
+(define variable Ratio (make <class>))
+(define variable Integer (make <class>))
+(define variable numerator (function [Ratio] => [Integer]))
+(define variable denominator (function [Ratio] => [Integer]))
+(define variable Rational (make <protocol> functions: [numerator denominator]))
+(add-method! numerator [<fixnum>] (λ (x) x))
+(add-method! denominator [<fixnum>] (λ (x) 1))
+
+We defined numerator as the function
+
+  (function [Ratio] => [Integer])
+
+We then added a method (λ (x) x) to numerator at the key
+[<fixnum>]. Adding the method to this function at this key implicitly
+asserts that <fixnum> is an instance of Ratio.
+
+Bard defines a built-in set of classes, called value classes, that can
+be instantiated, producing values:
+
+Character
+False
+Function
+List
+Null
+Number
+Stream
+Symbol
+Table
+Text
+True
+Undefined
+
+These value classes are astract, but each is guaranteed to be
+represented by at least one concrete schema. For each value class,
+Bard provides a literal syntax that can be used to write an instance
+of the class in text form. The Bard reader can read each literal
+syntax and construct the described value; it doesn't make any promises
+about the schema of the resulting value, except that it will be a
+schema that is a member of the correct class.
+
+Here are the value classes again, with examples of their literal syntaxes:
+
+Character
+  #\a #\B #\space #\u+0041
+
+False
+  false
+
+Function
+  (λ (x) (* x x))
+
+List
+  []
+  [0 1 2 3]
+
+Null
+  ()
+  []
+  {}
+  ""
+  nothing
+
+Number
+  0 1.2 2/3 1.3e+12 2+3i
+
+Stream
+  [add comprehensions here]
+
+Symbol
+  foo
+  Bar:
+  |foo bar|
+
+Table
+  {}
+  {a: 0 b: 1}
+
+Text
+  "Foo bar baz"
+
+True
+  true
+
+Undefined
+  undefined
+
+Bard also defines a standard set of protocols over the value classes,
+providing a built-in library of useful functions for each.
+
+Applicable - apply and friends
+Bits - bitwise ops on integers, bitfields, and bitstrings
+Boolean - logical operations
+Functions - combinators and functional conveniences
+IO - text and binary I/O, network I/O, serialization %
+     deserialization, IO streams, reader and printer
+List - indexable, foldable collections 
+Map - associative arrays
+Math - arithmetic and mathematical functions and constants
+Streams - lazy sequences
+Text - operations on text
+Types - defining schemas, reflective operations on types
+Values - value predicates, classification, conversion, etc.
+
+Bard has a fairly small number of constructs that are not values or
+protocol functions--its special forms. These provide its basic control
+structures, and include:
+
+ λ (aka ^, lambda, method)
+ begin
+ cond
+ define [class macro method protocol schema variable]
+ ensure
+ if
+ let
+ loop
+ macroexpand
+ match
+ quasiquote
+ quote
+ unless
+ unquote
+ unquote-splicing
+ when
+ with-exit 
+
+
+
+
+
