@@ -50,3 +50,5 @@ builds//src/vm7/comp.scm~
 *.txt~
 
 0.3/bard.lisp~
+
+/0.3/src/read.scm~
