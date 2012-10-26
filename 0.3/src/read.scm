@@ -89,11 +89,6 @@
 (define %append append)
 (define %reverse reverse)
 
-(define (show x) 
-  (newline)
-  (display (object->string x))
-  (newline))
-
 (define (%read-cons val)
   (cond
    ((null? val) (%nothing))

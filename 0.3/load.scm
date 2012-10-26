@@ -25,7 +25,9 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "src/utils.scm"
          "src/read.scm"
+         "src/print.scm"
          ))
 
 ;;; load sources
