@@ -73,14 +73,14 @@ We can write the following lower-level code to get the same effects:
 (define variable numerator (function [Ratio] => [Integer]))
 (define variable denominator (function [Ratio] => [Integer]))
 (define variable Rational (make <protocol> functions: [numerator denominator]))
-(add-method! numerator [<fixnum>] (λ (x) x))
-(add-method! denominator [<fixnum>] (λ (x) 1))
+(add-method! numerator [<fixnum>] (Î» (x) x))
+(add-method! denominator [<fixnum>] (Î» (x) 1))
 
 We defined numerator as the function
 
   (function [Ratio] => [Integer])
 
-We then added a method (λ (x) x) to numerator at the key
+We then added a method (Î» (x) x) to numerator at the key
 [<fixnum>]. Adding the method to this function at this key implicitly
 asserts that <fixnum> is an instance of Ratio.
 
@@ -117,7 +117,7 @@ False
   false
 
 Function
-  (λ (x) (* x x))
+  (^ (x) (* x x))
 
 List
   []
@@ -132,9 +132,6 @@ Null
 
 Number
   0 1.2 2/3 1.3e+12 2+3i
-
-Stream
-  [add comprehensions here]
 
 Symbol
   foo
@@ -153,6 +150,12 @@ True
 
 Undefined
   undefined
+
+The class Series is a peer to the value classes and in most ways
+similar. It represents potentially unbounded sequences of values, such
+as infinite lists or value streams. Because a Series may be infinite,
+there is no literal syntax for Series, but in other ways a Series is
+treated like a value class.
 
 Bard also defines a standard set of protocols over the value classes,
 providing a built-in library of useful functions for each.
