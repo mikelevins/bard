@@ -14,6 +14,7 @@
 (define $bard-root  "/Users/mikel/Projects/bard/0.3/")
 ;;;(define $bard-root  "c:/Users/mikel/Projects/bard/0.3/")
 
+
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
@@ -26,15 +27,15 @@
   (paths $bard-root 
          "src/version.scm"
          "src/utils.scm"
+         "src/types.scm"
          "src/read.scm"
-         "src/print.scm"
          ))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
 
 (define (load-bard)
-  (gc-report-set! #t)
+  ;;(gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 

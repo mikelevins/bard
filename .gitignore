@@ -52,3 +52,4 @@ builds//src/vm7/comp.scm~
 0.3/bard.lisp~
 
 /0.3/src/read.scm~
+/0.3/src/values.scm~
