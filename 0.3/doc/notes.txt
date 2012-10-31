@@ -142,6 +142,7 @@ data. They are:
 
 Character
 False
+Keyword
 List
 Method
 Null
@@ -162,10 +163,13 @@ Here are the Value classes again, but this time with example values,
 written using the lexical syntax provided for each class:
 
 Character
-  #\a #\B #\space #\u+0041
+  #\a #\B #\space #\u0041
 
 False
   false
+
+Keyword
+ Foo:
 
 List
   []
@@ -194,7 +198,7 @@ Series
 
 Symbol
   foo
-  Bar:
+  Bar
   |foo bar|
 
 Table

@@ -27,7 +27,7 @@
   (paths $bard-root 
          "src/version.scm"
          "src/utils.scm"
-         "src/types.scm"
+         "src/values.scm"
          "src/read.scm"
          ))
 
@@ -35,14 +35,11 @@
 ;;; ----------------------------------------------------------------------
 
 (define (load-bard)
-  ;;(gc-report-set! #t)
+  (gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)
-;;; (%init-bard)
-;;; (bard:repl)
 
 
 

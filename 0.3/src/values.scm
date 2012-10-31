@@ -9,177 +9,206 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (unit bard-values))
-(declare (uses bard-utils))
-
 ;;; ----------------------------------------------------------------------
-;;; Chicken Scheme prerequisites
+;;; Character
 ;;; ----------------------------------------------------------------------
 
-(require-extension coops)
-(require-extension coops-primitive-objects)
+(define %character? char?)
 
 ;;; ----------------------------------------------------------------------
-;;; undefined
+;;; False, True, and Boolean
 ;;; ----------------------------------------------------------------------
 
-(define-class <undefined> ()())
-(define-method (undefined? (x <standard-object>)) #f)
-(define-method (undefined? (x <primitive-object>)) #f)
-(define-method (undefined? (x <undefined>)) #t)
-(define (defined? x) (not (undefined? x)))
+(define (%false) #f)
 
-(define +undefined+ (make <undefined>))
-(define (undefined) +undefined+)
+(define (%false? x) 
+  (or (eqv? x (%false))
+      (%nothing? x)))
 
-(define-method (print-object (x <undefined>)(out <port>))
-  (display "undefined" out))
+(define (%true) #t)
+(define (%true? x) 
+  (and (not (%false? x))
+       (not (%undefined? x))))
 
-;;; ----------------------------------------------------------------------
-;;; nothing
-;;; ----------------------------------------------------------------------
-
-(define-method (nothing? (x <standard-object>)) #f)
-(define-method (nothing? (x <primitive-object>)) #f)
-(define-method (nothing? (x <null>)) #t)
-(define (something? x) (not (nothing? x)))
-
-(define +nothing+ '())
-(define (nothing) +nothing+)
-
-(define-method (print-object (x <null>)(out <port>))
-  (display "nothing" out))
+(define (%boolean? x)
+  (or (eqv? x (%false))
+      (eqv? x (%true))))
 
 ;;; ----------------------------------------------------------------------
-;;; Booleans
+;;; Keyword
 ;;; ----------------------------------------------------------------------
 
-(define-primitive-class <boolean> () boolean?)
-(define (true? x) (eqv? x #t))
-(define-primitive-class <true> (<boolean>) true?)
-(define (false? x) (eqv? x #f))
-(define-primitive-class <false> (<boolean>) false?)
+(define %keyword? keyword?)
 
-(define-method (print-object (x <true>)(out <port>))
-  (display "true" out))
+;;; ---------------------------------------------------------------------
+;;; List
+;;; ---------------------------------------------------------------------
 
-(define-method (print-object (x <false>)(out <port>))
-  (display "false" out))
+(define %nil '())
+(define %null? null?)
+(define %list? list?)
+(define %list list)
+(define %cons cons)
+(define %car car)
+(define %cdr cdr)
+(define %cadr cadr)
+(define %cddr cddr)
+(define %first car)
+(define (%last ls) (%list-ref ls (- (%length ls) 1)))
+(define %length length)
+(define %append append)
+(define %reverse reverse)
+(define (%drop n ls)(list-tail ls n))
 
-;;; ----------------------------------------------------------------------
-;;; characters
-;;; ----------------------------------------------------------------------
+(define (%take n ls)
+  (let loop ((n n) (ls ls))
+    (if (<= n 0)
+        '()
+        (cons (car ls)
+              (loop (- n 1)(cdr ls))))))
 
-(define-method (character? (x <char>)) #f)
-(define-method (character? (x <char>)) #f)
-(define-method (character? (x <char>)) #t)
-(define <character> <char>)
+(define (%remove pred ls)
+  (let loop ((items ls))
+    (if (%null? items)
+        %nil
+        (if (pred (%car items))
+            (loop (%cdr items))
+            (%cons (%car items) (loop (%cdr items)))))))
 
-(define-method (print-object (x <character>)(out <port>))
-  (write x out))
+(define %list-ref list-ref)
+(define %map map)
+(define %for-each for-each)
 
-;;; ----------------------------------------------------------------------
-;;; symbols
-;;; ----------------------------------------------------------------------
-
-(define-method (print-object (x <symbol>)(out <port>))
-  (display (symbol->string x) out))
-
-;;; ----------------------------------------------------------------------
-;;; keywords
-;;; ----------------------------------------------------------------------
-
-(define-method (print-object (x <keyword>)(out <port>))
-  (display (symbol->string x) out)
-  (display ":" out))
-
-;;; ----------------------------------------------------------------------
-;;; numbers
-;;; ----------------------------------------------------------------------
-
-(define-method (print-object (x <number>)(out <port>))
-  (display (number->string x) out))
+(define (%bard-list->cons x) x)
+(define (%cons->bard-list x) x)
 
 ;;; ----------------------------------------------------------------------
-;;; lists
+;;; Method
 ;;; ----------------------------------------------------------------------
 
-(define-method (print-object (x <pair>)(out <port>))
-  (if (null? x)
-      (display "[]" out)
-      (let ((hd (car x))
-            (tl (cdr x)))
-        (if (null? tl)
-            (begin
-              (display "[" out)
-              (print-object hd out)
-              (display "]" out))
-            (begin
-              (display "[" out)
-              (print-object hd out)
-              (let loop ((more tl))
-                (if (not (null? more))
-                    (begin
-                      (display " " out)
-                      (print-object (car more) out)
-                      (loop (cdr more)))))
-              (display "]" out))))))
+(define %primitive-procedure? procedure?)
 
 ;;; ----------------------------------------------------------------------
-;;; text
+;;; Null
 ;;; ----------------------------------------------------------------------
 
-(define-primitive-class <text> () string?)
-(define-method (text? (x <standard-object>)) #f)
-(define-method (text? (x <primitive-object>)) #f)
-(define-method (text? (x <text>)) #t)
-
-(define-method (print-object (x <text>)(out <port>))
-  (display "\"" out)
-  (display x out)
-  (display "\"" out))
+(define (%nothing) '())
+(define %nothing? %null?)
+(define (%something? x)(not (%nothing? x)))
 
 ;;; ----------------------------------------------------------------------
-;;; tables
+;;; Number
 ;;; ----------------------------------------------------------------------
-;;; this implementation of tables wraps alists. using alists keeps
-;;; the implementation simple, while enabling us to preserve the
-;;; table API requirement that keys appear in the order they were
-;;; added to the table, which in turn preserves stable behavior
-;;; under the List protocol. However, access is O(n), so
-;;; we may wish to add other table representations that use
-;;; more complicated data structures. 
 
-(define-class <simple-table> ()
-  ((entries reader: table-entries initform: '())))
+(define %fixnum? ##fixnum?)
+(define %fixnum? ##bignum?)
 
-(define-method (table? (x <standard-object>)) #f)
-(define-method (table? (x <primitive-object>)) #f)
-(define-method (table? (x <simple-table>)) #t)
+(define (%integer? x)
+  (or (##fixnum? x)
+      (##bignum? x)))
 
-(define-method (print-object (x <simple-table>)(out <port>))
-  (let ((entries (table-entries x)))
-    (if (null? entries)
-        (display "{}" out)
-        (let ((hd (car entries))
-              (tl (cdr entries))
-              (print-entry (lambda (k v)
-                             (print-object k out)
-                             (display " " out)
-                             (print-object v out))))
-          (if (null? tl)
-              (begin
-                (display "{" out)
-                (print-entry (car hd) (cdr hd))
-                (display "}" out))
-              (begin
-                (display "{" out)
-                (print-entry (car hd) (cdr hd))
-                (let loop ((more tl))
-                  (if (not (null? more))
-                      (begin
-                        (display " " out)
-                        (print-entry (car (car more)) (cdr (car more)))
-                        (loop (cdr more)))))
-                (display "}" out)))))))
+(define (%float? x)
+  (##flonum? x))
+
+(define (%ratio? x)
+  (##ratnum? x))
+
+(define %number? number?)
+
+;;; ----------------------------------------------------------------------
+;;; Series
+;;; ----------------------------------------------------------------------
+
+;;; ----------------------------------------------------------------------
+;;; Symbol
+;;; ----------------------------------------------------------------------
+
+(define %symbol? symbol?)
+
+(define (%name? x) 
+  (or (%symbol? x)
+      (%keyword? x)))
+
+;;; ---------------------------------------------------------------------
+;;; Table
+;;; ---------------------------------------------------------------------
+
+(define $empty-slots '())
+
+(define-type %table
+  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
+  extender: %define-table-type
+  constructor: %private-make-table
+  (slots %table-slots))
+
+(define $empty-table (%private-make-table $empty-slots))
+
+(define (%table-slot? x)
+  (and (%list? x)
+       (not (%null? x))
+       (not (%null? (%cdr x)))
+       (%null? (%cddr x))))
+
+(define (%plist->slots plist)
+  (let loop ((kvs plist))
+    (if (null? kvs)
+        '()
+        (if (null? (cdr kvs))
+            (error (str "Malformed plist: " plist))
+            (cons (list (car kvs)
+                        (cadr kvs))
+                  (loop (cddr kvs)))))))
+
+(define (%make-table kv-plist)
+  (let* ((slots (%plist->slots kv-plist)))
+    (%private-make-table slots)))
+
+(define (%maybe-slot-list->table slist)
+  (let loop ((slist slist)
+             (slots '())
+             (keys '()))
+    (if (null? slist)
+        (%private-make-table (reverse slots))
+        (let ((slot (car slist)))
+          (if (%table-slot? slot)
+              (let ((key (car slot)))
+                (if (member key keys)
+                    slist
+                    (loop (cdr slist)
+                          (cons slot slots)
+                          (cons key keys))))
+              slist)))))
+
+(define (%table . kv-plist)(%make-table kv-plist))
+
+(define (%table-get fr key #!optional (default (%nothing)))
+  (let ((slot (assoc key (%table-slots fr))))
+    (if slot (cadr slot) default)))
+
+(define (%table-put fr key value)
+  (let* ((new-slots (append
+                     (remove-if (lambda (slot)(equal? key (car slot)))
+                                (%table-slots fr))
+                     (list (list key value)))))
+    (%private-make-table new-slots)))
+
+(define (%table-keys fr)(map car (%table-slots fr)))
+(define (%table-vals fr)(map cadr (%table-slots fr)))
+
+;;; ----------------------------------------------------------------------
+;;; Text
+;;; ----------------------------------------------------------------------
+
+(define %string? string?)
+(define %text? string?)
+
+;;; ----------------------------------------------------------------------
+;;; Undefined
+;;; ----------------------------------------------------------------------
+
+(define (%undefined) #!unbound)
+(define (%undefined? x) (or (eqv? x #!unbound)(eqv? x #!void)))
+(define (%defined? x)(not (%undefined? x)))
+
+
 
