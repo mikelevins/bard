@@ -1,114 +1,165 @@
-Bard's types are defined by three elements: schemas, protocols, and classes.
+Types
+-----
 
-A schema is a specification of how to lay out data. A schema describes
-the representation of a type.
+Bard has two kinds of types, plus protocols that describe how they can
+be used and combined.
 
-A protocol is a specification of a set of functions. A protocol
-describes operations on a type.
+Schemas: records and vectors
+----------------------------
 
-The functions described in a protocol definition are generic. The
-arguments to these generic functions are classes, not schemas. A class
-is a type variable; it does not specify any particular schema, but
-instead can refer to any of an open set of schemas.
+Schemas are specifications of data structures. There are two kinds of
+schemas: records and vectors. A record describes a set of named
+fields. A vector describes an indexed sequence of elements. The fields
+of a record and the elements of a vector may have associated type
+constraints. 
 
-The connection between a particular schema and a class referred to in
-a protocol definition is made by defining methods. When a method is
-defined on a function, and the method specializes on some specific
-schema, that method definition establishes that the schema is a member
-of the corresponding class mentioned in the protocol that defines the
-generic function.
+A record may be closed or open. Instances of a closed record must have
+exactly the fields specified by the definition and no others. An open
+record must have at least the fields specified by the definition, but
+also allows a program to add additional fields.
 
-As an example, let's define a simple Rational protocol that uses a
-Ratio class, and then define a method that defines the schema <fixnum>
-as a member of Ratio.
+Similarly, a vector may be closed or open. A instance of a closed
+vector must have a sstatically-determined number of elements equal to
+the number specified in it s definition. An instance of an open vector
+must have at least the minimum number of elements, or zero if no
+minimum is specified, and no more than the maximum number, if a
+maximum is specified.
 
-First, we'll declare the needed classes:
+Classes
+-------
 
-(define class Ratio)
+A class is a declared name that refers to a collection of schemas and
+other classes, called the members of the class. 
+
+A class is only a name, plus the list of other classes and schemas
+that are its members; it has no additional structure. 
+
+Protocols
+---------
+
+A protocol is an object that describes a set of (generic)
+functions. 
+
+The members of a protocol are functions. Bard functions, like Common
+Lisp and Dylan generic functions, are abstract and generic; when one
+is applied, a method is selected to do the work of the function. If no
+suitable method is found, Bard raises an error.
+
+Protocols also establish the relation between classes and schemas. The
+mechanism used to define a schema as a member of a class is the
+definition of a method on a protocol function.
+
+As an example, let's define a simple Rational protocol and show how
+its classes are connected to schemas.
+
+First, let's suppose we already have a schema named <fixnum>,
+representing integers of a fixed size, and <ratnum>, representing
+ratios between integers. Associated with these schemas are some
+primitive methods; for example, we have %ratnum-numerator and
+%ratnum-denominator, primitive methods that operate on <ratnum>
+instances.
+
+Now let's define a simple Rational protocol. We begin by declaring the
+classes we're going to use:
+
 (define class Integer)
+(define class Ratio)
 
-Next we define the Rational protocol:
+These classes might exist already; if so, the declarations change
+nothing. If they don't already exist, then we need the declarations to
+inform Bard that we mean to use these symbols as the names of
+classes. That rule means that if we omit these declarations then Bard
+can warn us if we use an undeclared class.
+
+With the classes declared, we can define the protocol:
 
 (define protocol Rational
-  ((numerator Ratio) => Integer)
-  ((denominator Ratio) => Integer))
+  [(numerator Ratio => Integer)]
+  [(denominator Ratio => Integer)])
 
-Finally, we establish that the schema <fixnum> is an instance of the
-class Ratio by defining a method for each of the Rational functions
-that specializes on <fixnum>:
+The protocol definition defines two generic functions, bound to the
+variables numerator and denominator. In these functions, the type of
+the inputs is the class Ratio, and the type of the return value is
+Integer. 
 
-(define method (numerator x::<fixnum>) x)
-(define method (denominator x::<fixnum>) 1)
+The protocol definition doesn't--and can't--say what schemas are
+members of Ratio and Integer. If there are no existing definitions of
+Ratio and Integer, then there are at this point no members of either
+class. We add members to classes by defining methods.
 
-Because of the definitions of  numerator and denominator, <fixnum> is
-now an instance of Ratio.
+Let's make <ratnum> a member of Ratio.
 
-Ratio, Integer, numerator, and denominator are module variables. Ratio
-and Integer are defined as classes--that is, as type variables that
-refer to some collections of schemas. numerator and denominator are
-bound to generic functions.
+(define method (numerator (x <ratnum>))
+  (%ratnum-numerator x))
 
-If these symbols are already defined as module variables, then the
-result depends on their values. If Ratio and Integer are already
-classes, nothing is changed. If they are not, Bard signals a
-continuable error, allowing the programmer to replace their
-definitions if needed, or to cancel the definition and rewrite the
-code.
+(define method (denominator (x <ratnum>))
+  (%ratnum-denominator x))
 
-Similarly, if numerator and denominator are already bound to generic
-functions then the definitions of those functions are augmented to
-accommodate the new definition provided by the protocol. If they are
-not functions then, as with classes, Bard offers the chance to either
-redefined the variables or abandon the definitions.
+These method definitions add executable code to the functions
+numerator and denominator so that we can call them on instances of
+<ratnum>. They also implicitly assert that <ratnum> is a member of
+Ratio, because the arguments given for the Ratio position of the
+functions' input is specialized as <ratnum>. Bard matches the
+specializers against the parameter lists of the functions,
+establishing an equivalence between Ratio and <ratnum>.
 
-Thes features work this way because classes and protocols are built
-using a simple process of composition of first-class elements. A class
-is just an extensible collection of schemas. A protocol is just an
-extensible collection of functions.  
+We can do the same for any other schema:
 
-We can write the following lower-level code to get the same effects:
+(define method (numerator (x <fixnum>))
+  x)
 
-(define variable Ratio (make <class>))
-(define variable Integer (make <class>))
-(define variable numerator (function [Ratio] => [Integer]))
-(define variable denominator (function [Ratio] => [Integer]))
-(define variable Rational (make <protocol> functions: [numerator denominator]))
-(add-method! numerator [<fixnum>] (Î» (x) x))
-(add-method! denominator [<fixnum>] (Î» (x) 1))
+Now <fixnum> is also a member of Ratio.
 
-We defined numerator as the function
+We can ask Bard whether a schema is a member of a class:
 
-  (function [Ratio] => [Integer])
+? (member? <ratnum> Ratio)
+true
 
-We then added a method (Î» (x) x) to numerator at the key
-[<fixnum>]. Adding the method to this function at this key implicitly
-asserts that <fixnum> is an instance of Ratio.
+? (member? <simple-string> Ratio)
+false
 
-Bard defines a built-in set of classes, called value classes, that can
-be instantiated, producing values:
+? (member? <fixnum> Ratio)
+partial
+
+We get the result partial when we ask about <fixnum> because we
+defined a method on numerator, but not on denominator. Bard asserts
+that <fixnum> is a member of Ratio as soon as we define the <fixnum>
+version of numerator, but there are methods defined on <fixnum> for
+every function that mentions Ratio in its inputs, the membership is
+qualified as partial, and Bard will warn us that Ratio has an
+incomplete implementation in the Rational protocol.
+
+Built-in Classes
+----------------
+
+Bard defines a useful set of built-in classes, a set of built-in
+schemas, and a set of built-in protocols tying them together.
+
+The first important classes to know about are the Value classes. The
+Value classes are Bard classes that provide the basic set of useful
+types for use in Bard programs. These are Bard's building blocks for
+data. They are:
 
 Character
 False
-Function
 List
+Method
 Null
 Number
-Stream
+Series
 Symbol
 Table
 Text
 True
 Undefined
 
-These value classes are astract, but each is guaranteed to be
-represented by at least one concrete schema. For each value class,
-Bard provides a literal syntax that can be used to write an instance
-of the class in text form. The Bard reader can read each literal
-syntax and construct the described value; it doesn't make any promises
-about the schema of the resulting value, except that it will be a
-schema that is a member of the correct class.
+The important thing about this set of classes is that each one is
+guaranteed to have at least one member schema, and Bard provides a
+lexical syntax for writing values that are instances of the Value
+class.
 
-Here are the value classes again, with examples of their literal syntaxes:
+Here are the Value classes again, but this time with example values,
+written using the lexical syntax provided for each class:
 
 Character
   #\a #\B #\space #\u+0041
@@ -116,12 +167,12 @@ Character
 False
   false
 
-Function
-  (^ (x) (* x x))
-
 List
   []
   [0 1 2 3]
+
+Method
+  (^ (x) (* x x))
 
 Null
   ()
@@ -132,6 +183,14 @@ Null
 
 Number
   0 1.2 2/3 1.3e+12 2+3i
+
+Series
+  (~ x in: [1 2]) ; [1 2 1 2 1 2 1 2 ..]
+  (~ x in: NATURAL where: (odd? x)) ; [1 3 5 7 9 ..]
+  (~ x in: ASCII where: (and (> x '`')(< x #\{))) ; "abcdefghijklmnopqrstuvwxyzabcd..."
+  (~ with: [[x 0] [y 1]] 
+     yield: [x y]
+     then: [y (+ y 1)]) ; [[0 1] [1 2] [2 3] ..]
 
 Symbol
   foo
@@ -151,38 +210,103 @@ True
 Undefined
   undefined
 
-The class Series is a peer to the value classes and in most ways
-similar. It represents potentially unbounded sequences of values, such
-as infinite lists or value streams. Because a Series may be infinite,
-there is no literal syntax for Series, but in other ways a Series is
-treated like a value class.
+These are the basic working values of Bard programs.
 
-Bard also defines a standard set of protocols over the value classes,
-providing a built-in library of useful functions for each.
+These values are given as instances of classes, not schemas, because
+Bard does not define their schemas. Each Value class may be
+represented by any value whose schema belongs to the class. In other
+words, when you write "foo", you know that the returned value will be
+a Text instance, but you don't necessarily know the schema that will
+be used to represent it.
 
+This rule makes it easier for a Bard implementation to choose
+convenient representations for values. It also emphasizes that in
+Bard, type is a matter of protocol, rather than of representation.
+
+On the other hand, sometimes you may want to specify exactly which
+schema to use for a value. Bard provides a special form for doing
+that:
+
+? (the <fixnum> 5)
+5
+
+You can be sure that any value returned by the above expression is an
+instance of <fixnum>. If you ask for a value that cannot be
+represented by the schema you specify, Bard signals an error:
+
+? (the <simple-string> 5)
+ERROR: Incompatible types
+
+A Bard development environment may also provide preferences that
+enable you to set the default mapping of Value classes to schemas.
+
+Metaclasses
+-----------
+
+Bard's metaclasses are classes whose members are classes. The most
+important metaclass is Anything; all Bard classes (and transitively,
+all Bard types) are members of Anything. Bard function dispatch takes
+this into account; you can write default methods for functions by
+specializing on Anything:
+
+(define method (numerator (x Anything))
+  (error (str "Don't know how to take the numerator of " x)))
+
+This idiom is common enough that Bard allows a shortcut: you can omit
+the type qualification from a method definition and Bard will then
+assume the type is Anything:
+
+(define method (numerator x)
+  (error (str "Don't know how to take the numerator of " x)))
+
+Defining methods on Anything does not change the membership of any
+class.
+
+Built-in Protocols
+------------------
+
+Bard also provides a set of built-in protocols that operate on its
+Value classes. These protocols are designed to be extended to operate
+on user-defined classes.
+
+The built-in protocols include:
+
+Actor - spawning and comminuicating with concurrent and remote processes
 Applicable - apply and friends
 Bits - bitwise ops on integers, bitfields, and bitstrings
 Boolean - logical operations
 Functions - combinators and functional conveniences
-IO - text and binary I/O, network I/O, serialization %
+IO - text and binary I/O, serialization %
      deserialization, IO streams, reader and printer
 List - indexable, foldable collections 
 Map - associative arrays
 Math - arithmetic and mathematical functions and constants
-Streams - lazy sequences
+Net - network and socket operations
 Text - operations on text
 Types - defining schemas, reflective operations on types
 Values - value predicates, classification, conversion, etc.
 
+Special forms
+-------------
+
 Bard has a fairly small number of constructs that are not values or
-protocol functions--its special forms. These provide its basic control
-structures, and include:
+protocol functions, called "special forms". These special forms
+provide its basic control structures, and include:
 
  λ (aka ^, lambda, method)
  begin
  cond
- define [class macro method protocol schema variable]
+ define
+   define class
+   define macro
+   define method
+   define protocol
+   define record
+   define variable
+   define vector
  ensure
+   Guarantees that initial and final expressions are evaluated, even
+   if errors or other exceptions occur in a body
  if
  let
  loop
@@ -190,13 +314,68 @@ structures, and include:
  match
  quasiquote
  quote
+ receive
+ send
  unless
  unquote
  unquote-splicing
  when
  with-exit 
+   creates an exit function and binds it to a lexical variable
 
+Actors
+------
 
+An actor is a running Bard program, process, or thread. The Actor
+protocol defines an Actor class and functions send and receive. 
 
+The expression
 
+  (send my-actor 1)
 
+sends the integer 1 to the actor my-actor. The value is enqueued on a
+buffer that only the actor can see. The actor can retrieve the value
+by calling
+
+  (receive)
+
+Calling receive this way removes the next value from the actor's
+queue.
+
+Receive supports an alternate syntax, almost identical to the syntax
+of match, with the exception that no value expression is needed; the
+value in a receive form is implicitly the actor's queue. 
+
+  (receive
+    [['get ?requestor ?uri] -> (let ((resource (lookup ?uri my-repo)))
+                                  (if (something? resource)
+                                    (send ?requestor resource)
+                                    (send ?requestor (resource-error ?uri))))])
+
+The match form of receive succeeds if a pattern clauses matches a
+value in the actor's queue; in that case, the value is removed from
+the queue, and the body of the clause is evaluated with the pattern
+variables bound to the matched value (or its elements, if a
+destructuring pattern is used).
+
+If no match succeeds then no further subexpressions are executed, the
+receive form returns the value nothing, and the contents of the
+actor's queue are unaffected.
+
+An actor can be created on a thread within the current process, as a
+new local process, or as a remote process on some distant host. All of
+these cases look the same, but the Actor protocol provides functions
+that you can use to find out which kind of actor a given value is.
+
+Bard programs can use actors to implement concurrent and distributed
+algorithms and data structures. Bard's Net protocol enables a running
+Bard program to present itself for discovery, and to instantiate
+discovered Bard services as actors. Once instantiated, these actors
+can be passed as arguments and enqueued on other actors, enabling a
+network of Bard actors to dynamically construct and modify its own
+topology.
+
+Bard can send an instance of any value class, and can send an instance
+of any user-defined schema whose elements are instances of value
+classes. In practice, this means that almost any Bard value, with very
+few exceptions, can be sent to a remote actor.
