@@ -78,9 +78,9 @@ With the classes declared, we can define the protocol:
   [(denominator Ratio => Integer)])
 
 The protocol definition defines two generic functions, bound to the
-variables numerator and denominator. In these functions, the type of
-the inputs is the class Ratio, and the type of the return value is
-Integer. 
+variables Rational:numerator and Rational:denominator. In these
+functions, the type of the inputs is the class Ratio, and the type of
+the return value is Integer.
 
 The protocol definition doesn't--and can't--say what schemas are
 members of Ratio and Integer. If there are no existing definitions of
@@ -89,23 +89,23 @@ class. We add members to classes by defining methods.
 
 Let's make <ratnum> a member of Ratio.
 
-(define method (numerator (x <ratnum>))
+(define method (Rational:numerator (x <ratnum>))
   (%ratnum-numerator x))
 
-(define method (denominator (x <ratnum>))
+(define method (Rational:denominator (x <ratnum>))
   (%ratnum-denominator x))
 
 These method definitions add executable code to the functions
-numerator and denominator so that we can call them on instances of
-<ratnum>. They also implicitly assert that <ratnum> is a member of
-Ratio, because the arguments given for the Ratio position of the
-functions' input is specialized as <ratnum>. Bard matches the
+Rational:numerator and Rational:denominator so that we can apply them
+to instances of <ratnum>. They also implicitly assert that <ratnum> is
+a member of Ratio, because the arguments given for the Ratio position
+of the functions' input is specialized as <ratnum>. Bard matches the
 specializers against the parameter lists of the functions,
 establishing an equivalence between Ratio and <ratnum>.
 
 We can do the same for any other schema:
 
-(define method (numerator (x <fixnum>))
+(define method (Rational:numerator (x <fixnum>))
   x)
 
 Now <fixnum> is also a member of Ratio.
@@ -129,6 +129,56 @@ every function that mentions Ratio in its inputs, the membership is
 qualified as partial, and Bard will warn us that Ratio has an
 incomplete implementation in the Rational protocol.
 
+The notation Rational:numerator refers to the numerator function
+defined by the Rational protocol. Other protocols may define functions
+also called "numerator"; such definitions created distinct
+functions. Identifying a function with the protocol that defines it
+enables us to reuse natural names for common operations that may have
+different behaviors when implemented for different protocols. For
+example, consider List:get and Map:get.
+
+List:get retrieves an element from a List by its index:
+
+? (List:get ['zero 'one 'two] 1)
+one
+
+Map:get retrieves from a Map instance the value associated with a key:
+
+? (Map:get {'a 'apple 'b 'banana 'c 'cherry} 'b)
+banana
+
+But any List instance can be thought of as a Map that associates its
+elements with integer indexes:
+
+? (Map:get ['zero 'one 'two] 1)
+'one
+
+Similarly, any Map can be thought of as a List of key/value pairs:
+
+? (List:get {'a 'apple 'b 'banana 'c 'cherry} 1)
+[b banana]
+
+If there were only a single get function that served for both the List
+and the Map protocols, then it would be complicated or impossible to
+specify what we mean by this expression:
+
+  (get {3 'three 2 'two 1 'one} 1)
+
+Is the first argument a Map or a List? It can be treated as either
+one. If we treat it as a Map, then the above expression returns
+one. If we treat it as a List, then it returns [2 two]. 
+
+The answer in Bard is that the result returned depends on which
+protocol we invoke:
+
+? (List:get {3 'three 2 'two 1 'one} 1)
+[2 two]
+
+? (Map:get {3 'three 2 'two 1 'one} 1)
+one
+
+We get the full flexibility of differing implementations for differing
+interpretations, without losing any clarity about what we intend.
 
 Built-in Classes
 ----------------
@@ -368,3 +418,5 @@ Bard can send an instance of any value class, and can send an instance
 of any user-defined schema whose elements are instances of value
 classes. In practice, this means that almost any Bard value, with very
 few exceptions, can be sent to a remote actor.
+
+
