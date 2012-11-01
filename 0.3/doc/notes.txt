@@ -7,23 +7,53 @@ be used and combined.
 Schemas: records and vectors
 ----------------------------
 
-Schemas are specifications of data structures. There are two kinds of
-schemas: records and vectors. A record describes a set of named
-fields. A vector describes an indexed sequence of elements. The fields
-of a record and the elements of a vector may have associated type
-constraints. 
+Schemas are specifications of data structures. There are three kinds of
+schemas: records, vectors, and enumerations. 
+
+A record describes a set of named fields:
+
+(define record Point x y)
+
+A vector describes an indexed sequence of elements. 
+
+(define vector OSType 4)
+
+An enumeration explicitly lists a finite set of values:
+
+(define enumeration SwitchState ['on 'off])
+
+The fields of a record or a structure and the elements of a vector may
+have associated type constraints.
+
+An enumeration may include any Bard value, so long as it can be
+written as a literal. The elements of an enumeration are immutable
+constants.
 
 A record may be closed or open. Instances of a closed record must have
 exactly the fields specified by the definition and no others. An open
 record must have at least the fields specified by the definition, but
 also allows a program to add additional fields.
 
+You can define an open record like this:
+
+(define record UserAccount username password open: true)
+
+Passing open: false has the same effect as omitting the open:
+parameter.
+
 Similarly, a vector may be closed or open. A instance of a closed
-vector must have a sstatically-determined number of elements equal to
-the number specified in it s definition. An instance of an open vector
+vector must have a statically-determined number of elements equal to
+the number specified in its definition. An instance of an open vector
 must have at least the minimum number of elements, or zero if no
 minimum is specified, and no more than the maximum number, if a
 maximum is specified.
+
+Here are a few more examples, demonstrating the different options when
+defining vector schemas:
+
+(define vector ByteCodes minimum: 0 maximum: false type: <unsigned-word-8>)
+(define vector UTF8Sequence minimum: 1 maximum: 4 type: <unsigned-word-8>)
+(define vector ConsCell minimum: 2 maximum: 2 type: Anything)
 
 Classes
 -------
