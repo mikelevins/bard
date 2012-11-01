@@ -129,6 +129,7 @@ every function that mentions Ratio in its inputs, the membership is
 qualified as partial, and Bard will warn us that Ratio has an
 incomplete implementation in the Rational protocol.
 
+
 Built-in Classes
 ----------------
 
@@ -244,27 +245,96 @@ ERROR: Incompatible types
 A Bard development environment may also provide preferences that
 enable you to set the default mapping of Value classes to schemas.
 
-Metaclasses
------------
+Subclasses and superclasses
+---------------------------
 
-Bard's metaclasses are classes whose members are classes. The most
-important metaclass is Anything; all Bard classes (and transitively,
-all Bard types) are members of Anything. Bard function dispatch takes
-this into account; you can write default methods for functions by
-specializing on Anything:
+Bard arranges its built-in classes in a taxonomy of type relations in
+which some classes are subclasses of others. This taxonomy makes it
+much easier to write certain kinds of generic code. For example, if
+you want to create a protocol that is intended to operate on all
+numbers, then you can write it like this:
 
-(define method (numerator (x Anything))
-  (error (str "Don't know how to take the numerator of " x)))
+(define protocol Fooable
+  [(foo Number) -> Anything])
 
-This idiom is common enough that Bard allows a shortcut: you can omit
-the type qualification from a method definition and Bard will then
-assume the type is Anything:
+(define method (foo (x Number))
+  ...)
 
-(define method (numerator x)
-  (error (str "Don't know how to take the numerator of " x)))
+Now the foo function is defined for any x whose schema is a member of
+Number.
 
-Defining methods on Anything does not change the membership of any
-class.
+Bard does not implicitly create subclass/superclass relationships the
+way that defining methods implicitly asserts schema membership in a
+class. The reason for the difference is that graphs of subclasses and
+superclasses can grow quickly, and they can quickly become
+unexpectedly complex. Complex type graphs lead to method dispatch
+behavior that is unexpected and hard to reason about, so Bard gently
+discourages the development of complicated type graphs.
+
+It's possible to establish your own type taxonomies, but you must do
+so explicitly, by defining individual subclass/superclass relations:
+
+  (define class Integer [Ratio Number Atom Anything])
+
+This definition, which is the standard Bard definition for the class
+Integer, says that Integer is a member of Ratio, Number, Atom, and
+Anything. The order is significant; when deciding which of several
+defined methods to apply to a value, Bard will prefer methods defined
+on the leftmost superclass. In other words, if there is a foo method
+defined in Ratio and another one defined on Number, Bard will choose
+the one defined on Ratio.
+
+By default--that is, if no superclass list is offered--Bard assumes
+that the sole superclass of a new class is Anything. Most of the time,
+that's the best choice It's simpler than making a class part of a more
+complicated set of relations, and results in code that is easier to
+reason about.
+
+In the rarer cases where the benefits of more complicated superclass
+relations outweigh the costs, Bard enables you to explicitly establish
+the relations you need. You should always be careful when doing so,
+because setting up a taxonomy means you are affecting the semantics of
+method dispatch, and it can be hard to track down the cause of
+unexpected behavior that is caused by errors in a complicated graph of
+types.
+
+The default--every new class is a direct subclass of Anything--is
+therefore usually the right choice.
+
+Here are Bard's Value classes, arranged to show their relations with
+built-in superclasses and subclasses:
+
+Anything
+ Atom
+  Boolean
+   False
+   True
+  Character
+  Method
+  Name
+   Keyword
+   Symbol
+  Null
+  Number
+   Fraction
+     Float
+     Ratio
+   Integer
+    BigInteger
+    SmallInteger
+ Collection
+  Map
+  Null
+  Sequence
+   List
+     Text
+   Series
+ Undefined
+
+Note that Null is a subclass of both Atom and Collection. Its sole
+instance is <null>, and the sole instance of <null> is the unique
+value nothing, which can also be written "()", "[]", "{}", or as the
+empty text, "", or the empty series (~).
 
 Built-in Protocols
 ------------------
