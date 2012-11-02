@@ -50,6 +50,7 @@
    ;;((%primitive-schema? val)(%primitive-schema->string val))
    ;;((%protocol? val)(%protocol->string val))
    ;;((%schema? val)(%schema->string val))
+   ;;((%schema-instance? val)(%schema-instance->string val))
    ;;((%series? val)(%series->string val))
    ((%undefined? val) "undefined")
    (else (str "#<unrecognized value [" (object->string val) "]>"))))
