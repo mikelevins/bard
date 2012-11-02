@@ -69,6 +69,7 @@
 (define (bard:make-readtable)
   (let ((rt (##make-standard-readtable)))
     (readtable-keywords-allowed?-set rt #t)
+    (macro-readtable-paren-keyword-set! rt 'app)
     (macro-readtable-bracket-keyword-set! rt 'list)
     (macro-readtable-brace-keyword-set! rt 'table)
     rt))

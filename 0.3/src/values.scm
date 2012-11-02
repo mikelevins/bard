@@ -9,14 +9,51 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; <alist-table>
+;;; ---------------------------------------------------------------------
+
+(define-type %alist-table
+  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
+  constructor: %private-make-alist-table
+  (slots %alist-table-slots))
+
+(define $empty-alist-table (%private-make-alist-table '()))
+
+(define (%alist->alist-table kv-alist)
+  (%private-make-alist-table (copy-alist kv-alist)))
+
+(define (%plist->alist-table kv-plist)
+  (%alist->alist-table (plist->alist kv-plist)))
+
+(define (%alist-table-get fr key #!optional (default (%nothing)))
+  (let ((slot (assoc key (%alist-table-slots fr))))
+    (if slot (cadr slot) default)))
+
+(define (%alist-table-put fr key value)
+  (let* ((new-slots (append
+                     (remove-if (lambda (slot)(equal? key (car slot)))
+                                (%alist-table-slots fr))
+                     (list (list key value)))))
+    (%private-make-alist-table new-slots)))
+
+(define (%alist-table-keys fr)(map car (%alist-table-slots fr)))
+(define (%alist-table-vals fr)(map cadr (%alist-table-slots fr)))
+
 ;;; ----------------------------------------------------------------------
-;;; Character
+;;; <ascii-string>
 ;;; ----------------------------------------------------------------------
 
-(define %character? char?)
+(define %ascii-string? string?)
 
 ;;; ----------------------------------------------------------------------
-;;; False, True, and Boolean
+;;; <big-integer>
+;;; ----------------------------------------------------------------------
+
+(define %big-integer? ##bignum?)
+
+;;; ----------------------------------------------------------------------
+;;; <false>
 ;;; ----------------------------------------------------------------------
 
 (define (%false) #f)
@@ -25,185 +62,91 @@
   (or (eqv? x (%false))
       (%nothing? x)))
 
-(define (%true) #t)
-(define (%true? x) 
-  (and (not (%false? x))
-       (not (%undefined? x))))
+;;; ----------------------------------------------------------------------
+;;; <fixnum>
+;;; ----------------------------------------------------------------------
 
-(define (%boolean? x)
-  (or (eqv? x (%false))
-      (eqv? x (%true))))
+(define %fixnum? ##fixnum?)
 
 ;;; ----------------------------------------------------------------------
-;;; Keyword
+;;; <flonum>
+;;; ----------------------------------------------------------------------
+
+(define (%flonum? x) (##flonum? x))
+
+;;; ----------------------------------------------------------------------
+;;; <keyword>
 ;;; ----------------------------------------------------------------------
 
 (define %keyword? keyword?)
 
+;;; ----------------------------------------------------------------------
+;;; <null>
+;;; ----------------------------------------------------------------------
+
+(define (%nothing) '())
+(define %nothing? %null?)
+
 ;;; ---------------------------------------------------------------------
-;;; List
+;;; <pair>
 ;;; ---------------------------------------------------------------------
 
 (define %nil '())
 (define %null? null?)
-(define %list? list?)
-(define %list list)
+(define %pair? pair?)
 (define %cons cons)
-(define %car car)
-(define %cdr cdr)
-(define %cadr cadr)
-(define %cddr cddr)
-(define %first car)
-(define (%last ls) (%list-ref ls (- (%length ls) 1)))
-(define %length length)
+(define %left car)
+(define %right cdr)
 (define %append append)
-(define %reverse reverse)
-(define (%drop n ls)(list-tail ls n))
-
-(define (%take n ls)
-  (let loop ((n n) (ls ls))
-    (if (<= n 0)
-        '()
-        (cons (car ls)
-              (loop (- n 1)(cdr ls))))))
-
-(define (%remove pred ls)
-  (let loop ((items ls))
-    (if (%null? items)
-        %nil
-        (if (pred (%car items))
-            (loop (%cdr items))
-            (%cons (%car items) (loop (%cdr items)))))))
-
-(define %list-ref list-ref)
-(define %map map)
-(define %for-each for-each)
-
-(define (%bard-list->cons x) x)
-(define (%cons->bard-list x) x)
+(define %list list)
 
 ;;; ----------------------------------------------------------------------
-;;; Method
+;;; <primitive-input-stream>
+;;; ----------------------------------------------------------------------
+
+(define %primitive-input-stream? input-port?)
+
+;;; ----------------------------------------------------------------------
+;;; <primitive-output-stream>
+;;; ----------------------------------------------------------------------
+
+(define %primitive-output-stream? output-port?)
+
+;;; ----------------------------------------------------------------------
+;;; <primitive-method>
 ;;; ----------------------------------------------------------------------
 
 (define %primitive-procedure? procedure?)
 
 ;;; ----------------------------------------------------------------------
-;;; Null
+;;; <ratnum>
 ;;; ----------------------------------------------------------------------
 
-(define (%nothing) '())
-(define %nothing? %null?)
-(define (%something? x)(not (%nothing? x)))
+(define (%ratnum? x)(##ratnum? x))
 
 ;;; ----------------------------------------------------------------------
-;;; Number
+;;; <simple-character>
 ;;; ----------------------------------------------------------------------
 
-(define %fixnum? ##fixnum?)
-(define %fixnum? ##bignum?)
-
-(define (%integer? x)
-  (or (##fixnum? x)
-      (##bignum? x)))
-
-(define (%float? x)
-  (##flonum? x))
-
-(define (%ratio? x)
-  (##ratnum? x))
-
-(define %number? number?)
+(define %simple-character? char?)
 
 ;;; ----------------------------------------------------------------------
-;;; Series
-;;; ----------------------------------------------------------------------
-
-;;; ----------------------------------------------------------------------
-;;; Symbol
+;;; <symbol>
 ;;; ----------------------------------------------------------------------
 
 (define %symbol? symbol?)
 
-(define (%name? x) 
-  (or (%symbol? x)
-      (%keyword? x)))
-
-;;; ---------------------------------------------------------------------
-;;; Table
-;;; ---------------------------------------------------------------------
-
-(define $empty-slots '())
-
-(define-type %table
-  id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
-  extender: %define-table-type
-  constructor: %private-make-table
-  (slots %table-slots))
-
-(define $empty-table (%private-make-table $empty-slots))
-
-(define (%table-slot? x)
-  (and (%list? x)
-       (not (%null? x))
-       (not (%null? (%cdr x)))
-       (%null? (%cddr x))))
-
-(define (%plist->slots plist)
-  (let loop ((kvs plist))
-    (if (null? kvs)
-        '()
-        (if (null? (cdr kvs))
-            (error (str "Malformed plist: " plist))
-            (cons (list (car kvs)
-                        (cadr kvs))
-                  (loop (cddr kvs)))))))
-
-(define (%make-table kv-plist)
-  (let* ((slots (%plist->slots kv-plist)))
-    (%private-make-table slots)))
-
-(define (%maybe-slot-list->table slist)
-  (let loop ((slist slist)
-             (slots '())
-             (keys '()))
-    (if (null? slist)
-        (%private-make-table (reverse slots))
-        (let ((slot (car slist)))
-          (if (%table-slot? slot)
-              (let ((key (car slot)))
-                (if (member key keys)
-                    slist
-                    (loop (cdr slist)
-                          (cons slot slots)
-                          (cons key keys))))
-              slist)))))
-
-(define (%table . kv-plist)(%make-table kv-plist))
-
-(define (%table-get fr key #!optional (default (%nothing)))
-  (let ((slot (assoc key (%table-slots fr))))
-    (if slot (cadr slot) default)))
-
-(define (%table-put fr key value)
-  (let* ((new-slots (append
-                     (remove-if (lambda (slot)(equal? key (car slot)))
-                                (%table-slots fr))
-                     (list (list key value)))))
-    (%private-make-table new-slots)))
-
-(define (%table-keys fr)(map car (%table-slots fr)))
-(define (%table-vals fr)(map cadr (%table-slots fr)))
-
 ;;; ----------------------------------------------------------------------
-;;; Text
+;;; <true>
 ;;; ----------------------------------------------------------------------
 
-(define %string? string?)
-(define %text? string?)
+(define (%true) #t)
+(define (%true? x) 
+  (and (not (%false? x))
+       (not (%undefined? x))))
 
 ;;; ----------------------------------------------------------------------
-;;; Undefined
+;;; <undefined>
 ;;; ----------------------------------------------------------------------
 
 (define (%undefined) #!unbound)

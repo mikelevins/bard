@@ -29,6 +29,7 @@
          "src/utils.scm"
          "src/values.scm"
          "src/read.scm"
+         "src/print.scm"
          ))
 
 ;;; load sources
