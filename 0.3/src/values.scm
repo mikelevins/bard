@@ -13,6 +13,11 @@
 ;;; <actor>
 ;;; ---------------------------------------------------------------------
 
+(define-type %actor
+  id: 1C5796CD-37CD-497B-9A1C-7D4A52356BA2
+  constructor: %private-make-actor
+  (mailbox %actor-mailbox))
+
 ;;; ---------------------------------------------------------------------
 ;;; <alist-table>
 ;;; ---------------------------------------------------------------------
@@ -60,6 +65,12 @@
 ;;; <class>
 ;;; ----------------------------------------------------------------------
 
+(define-type %class
+  id: 9B7E7798-7531-4C8C-BE73-648519B355B0
+  constructor: %private-make-class
+  (name %class-name)
+  (members %class-members %set-class-members!))
+
 ;;; ----------------------------------------------------------------------
 ;;; <false>
 ;;; ----------------------------------------------------------------------
@@ -86,6 +97,11 @@
 ;;; <function>
 ;;; ----------------------------------------------------------------------
 
+(define-type %function
+  id: 13281261-08E9-445E-935A-B2B1D00413BB
+  constructor: %private-make-function
+  (name %function-name))
+
 ;;; ----------------------------------------------------------------------
 ;;; <keyword>
 ;;; ----------------------------------------------------------------------
@@ -95,6 +111,13 @@
 ;;; ----------------------------------------------------------------------
 ;;; <method>
 ;;; ----------------------------------------------------------------------
+
+(define-type %method
+  id: 0D6913D2-C217-432A-A87C-A1E67CEF2919
+  constructor: %private-make-method
+  (lambda-list %method-lambda-list)
+  (body %method-body)
+  (environment %method-environment))
 
 ;;; ----------------------------------------------------------------------
 ;;; <null>
@@ -138,9 +161,20 @@
 ;;; <primitive-schema>
 ;;; ----------------------------------------------------------------------
 
+(define-type %primitive-schema
+  id: 95629F62-1E53-489A-8881-F3C3BE7F0BCC
+  constructor: %private-make-primitive-schema
+  (name %primitive-schema-name)
+  (predicate %primitive-schema-predicate))
+
 ;;; ----------------------------------------------------------------------
 ;;; <protocol>
 ;;; ----------------------------------------------------------------------
+
+(define-type %protocol
+  id: 104759D5-467B-4EF6-9ECD-BE4DEE6350A9
+  constructor: %private-make-protocol
+  (name %protocol-name))
 
 ;;; ----------------------------------------------------------------------
 ;;; <ratnum>
@@ -152,13 +186,29 @@
 ;;; <schema>
 ;;; ----------------------------------------------------------------------
 
+(define-type %schema
+  id: D1459849-11E5-47BC-ACA2-6D53C35513E1
+  constructor: %private-make-schema
+  (name %schema-name))
+
 ;;; ----------------------------------------------------------------------
 ;;; <schema-instance>
 ;;; ----------------------------------------------------------------------
 
+(define-type %schema-instance
+  id: 788A9504-5387-47C1-BF30-E5C1D2CBA12E
+  constructor: %private-make-schema-instance
+  (schema %instance-schema))
+
 ;;; ----------------------------------------------------------------------
 ;;; <series>
 ;;; ----------------------------------------------------------------------
+
+(define-type %series
+  id: 788A9504-5387-47C1-BF30-E5C1D2CBA12E
+  constructor: %private-make-series
+  (generator %series-generator)
+  (cache %series-cache %set-series-cache!))
 
 ;;; ----------------------------------------------------------------------
 ;;; <simple-character>

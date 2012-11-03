@@ -26,6 +26,7 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "lib/uuid.scm"
          "src/utils.scm"
          "src/values.scm"
          "src/read.scm"
