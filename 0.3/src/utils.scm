@@ -17,6 +17,9 @@
   (map (lambda (p)(cons (car p)(cdr p)))
        alist))
 
+(define (drop n ls)
+  (list-tail ls n))
+
 (define (interpose val items)
   (if (or (null? items)
           (null? (cdr items)))
