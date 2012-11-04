@@ -86,7 +86,9 @@
    ((eq? 'syntax:app (car val)) (cond 
                                  ((null? (cdr val)) '(syntax:empty-app))
                                  ((eq? '~ (cadr val))
-                                  (cons 'syntax:series (map %read-value->bard-syntax (cddr val))))
+                                  (if (null? (cddr val))
+                                      '(syntax:empty-series)
+                                      (cons 'syntax:series (map %read-value->bard-syntax (cddr val)))))
                                  ((member (cadr val) '(λ ^ lambda method))
                                   (cons 'syntax:method 
                                         (cons (cons 'syntax:lambda-list (drop 1 (caddr val)))
