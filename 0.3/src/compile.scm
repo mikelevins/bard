@@ -9,106 +9,335 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; ABOUT
+;;; ---------------------------------------------------------------------
+;;; borrowing from the structure of the Larceny compiler, we have the
+;;; following compiler passes:
+;;; 1. standardize syntax
+;;; 2. optimize syntax
+;;; 3. generate abstract code
+;;; 4. perform local optimizations
+;;; 5. generate relocatable bytecode
+;;; 6. load-time linking for the VM
+
+;;; ---------------------------------------------------------------------
+;;; macroexpanders
+;;; ---------------------------------------------------------------------
+
+(define $macroxpanders (make-table test: eq?))
+
+(define (%set-macroexpander-for! mname mfun)
+  (table-set! $macroxpanders mname mfun))
+
+(define (%macroexpander-for mname)
+  (table-ref $macroxpanders mname #f))
+
+(%set-macroexpander-for! 'and
+                         (lambda (exp)
+                           (let* ((sval (%syntax-value exp))
+                                  (opform (car sval))
+                                  (argforms (cdr sval)))
+                             (if (null? argforms)
+                                 `(syntax:true #t)
+                                 (let* ((test1 (car argforms))
+                                        (more-tests (cdr argforms))
+                                        (then (%macroexpand `(syntax:app 
+                                                              ((syntax:symbol and)
+                                                               ,@more-tests)))))
+                                   `(syntax:app
+                                     ((syntax:symbol:if)
+                                      ,test1
+                                      ,then
+                                      (syntax:false #f))))))))
+
+;;; ---------------------------------------------------------------------
+;;; 1. standardize syntax
+;;; ---------------------------------------------------------------------
+
 (define (%syntax-type expr)
   (car expr))
 
-(define (%const-syntax->value expr)
-  (let ((stype (%syntax-type expr)))
-    (case stype
-    ((syntax:character) (cadr expr))
-    ((syntax:empty-app) '())
-    ((syntax:empty-list) '())
-    ((syntax:empty-string) '())
-    ((syntax:empty-table) '())
-    ((syntax:false) #f)
-    ((syntax:keyword) (cadr expr))
-    ((syntax:nothing) '())
-    ((syntax:number) (cadr expr))
-    ((syntax:self-evaluating) (cadr expr))
-    ((syntax:table) (cadr expr))
-    ((syntax:text) (cadr expr))
-    ((syntax:true) #t)
-    ((syntax:undefined) #!unbound)
-    (else (error (str "Invalid constant syntax: " expr))))))
+(define (%syntax-value expr)
+  (cadr expr))
 
-(define (%compile-app expr env)
-  `(ir:APP ,expr))
+(define (%macro-form? expr)
+  (and (eq? 'syntax:app (%syntax-type expr))
+       (eq? 'syntax:symbol (%syntax-type (car (%syntax-value expr))))
+       (and (%macroexpander-for (%syntax-value (car (%syntax-value expr))))
+            #t)))
 
-(define (%compile-character expr env)
-  `(ir:CHARACTER ,(cadr expr)))
+(define (%macroexpand expr)
+  (let ((_expand (%macroexpander-for (%syntax-value (car (%syntax-value expr))))))
+    (if _expand
+        (_expand expr)
+        (error (str "Undefined macro " (%syntax-value (car (%syntax-value expr))))))))
 
-(define (%compile-number expr env)
-  (let ((num (cadr expr)))
-    (cond
-     ((##bignum? num) `(ir:BIGNUM num))
-     ((##fixnum? num) `(ir:FIXNUM num))
-     ((##flonum? num) `(ir:FLONUM num))
-     ((##ratnum? num) `(ir:RATNUM num))
-     (else (error (str "Invalid number syntax: " expr))))))
+;;; the only change we make in this pass is macroexpansion
+(define (%expand-app-syntax expr)
+  (if (%macro-form? expr)
+      (%macroexpand expr)
+      expr))
 
-(define (%compile-list expr env)
-  (cons 'ir:LIST (map (lambda (x)(%compile x env)) (cdr expr))))
+(define (%expand-character-syntax expr)
+  expr)
 
-(define (%compile-table expr env)
-  (cons 'ir:TABLE (map (lambda (x)(%compile x env)) (cdr expr))))
+(define (%expand-false-syntax expr)
+  expr)
 
-(define (%compile-self-evaluating expr env)
-  `(ir:CONST ,(%const-syntax->value expr)))
+(define (%expand-list-syntax expr)
+  expr)
 
-(define (%compile-method-lambda-list expr env)
-  (cdr expr))
+(define (%expand-method-syntax expr)
+  expr)
 
-(define (%compile-method expr env)
-  `(ir:METHOD ,expr))
+(define (%expand-nothing-syntax expr)
+  expr)
 
-(define (%compile-series-expression expr env)
-  `(ir:SERIES ,expr))
+(define (%expand-bignum-syntax expr)
+  expr)
 
-(define (%compile-variable-reference expr env)
-  `(ir:VAR ,(cadr expr)))
+(define (%expand-fixnum-syntax expr)
+  expr)
 
-(define (%compile-nothing expr env)
-  `(ir:NOTHING))
+(define (%expand-flonum-syntax expr)
+  expr)
 
-(define (%compile-false expr env)
-  `(ir:FALSE))
+(define (%expand-ratnum-syntax expr)
+  expr)
 
-(define (%compile-true expr env)
-  `(ir:TRUE))
+(define (%expand-self-evaluating-syntax expr)
+  expr)
 
-(define (%compile-undefined expr env)
-  `(ir:UNDEFINED))
+(define (%expand-series-expression-syntax expr)
+  expr)
 
-(define (%get-compiler-for stype)
+(define (%expand-table-syntax expr)
+  expr)
+
+(define (%expand-true-syntax expr)
+  expr)
+
+(define (%expand-undefined-syntax expr)
+  expr)
+
+(define (%expand-variable-reference-syntax expr)
+  expr)
+
+(define (%get-syntax-expander-for stype)
   (case stype
-    ((syntax:app) %compile-app)
-    ((syntax:character) %compile-character)
-    ((syntax:empty-app) %compile-nothing)
-    ((syntax:empty-list) %compile-nothing)
-    ((syntax:empty-string) %compile-nothing)
-    ((syntax:empty-table) %compile-nothing)
-    ((syntax:empty-series) %compile-nothing)
-    ((syntax:false) %compile-false)
-    ((syntax:keyword) %compile-self-evaluating)
-    ((syntax:lambda-list) %compile-method-lambda-list)
-    ((syntax:list) %compile-list)
-    ((syntax:method) %compile-method)
-    ((syntax:nothing) %compile-nothing)
-    ((syntax:number) %compile-number)
-    ((syntax:self-evaluating) %compile-self-evaluating)
-    ((syntax:series) %compile-series-expression)
-    ((syntax:symbol) %compile-variable-reference)
-    ((syntax:table) %compile-table)
-    ((syntax:text) %compile-self-evaluating)
-    ((syntax:true) %compile-true)
-    ((syntax:undefined) %compile-undefined)
+    ((syntax:app) %expand-app-syntax)
+    ((syntax:character) %expand-character-syntax)
+    ((syntax:empty-app) %expand-nothing-syntax)
+    ((syntax:empty-list) %expand-nothing-syntax)
+    ((syntax:empty-string) %expand-nothing-syntax)
+    ((syntax:empty-table) %expand-nothing-syntax)
+    ((syntax:empty-series) %expand-nothing-syntax)
+    ((syntax:false) %expand-false-syntax)
+    ((syntax:keyword) %expand-self-evaluating-syntax)
+    ((syntax:list) %expand-list-syntax)
+    ((syntax:method) %expand-method-syntax)
+    ((syntax:nothing) %expand-nothing-syntax)
+    ((syntax:bignum) %expand-bignum-syntax)
+    ((syntax:fixnum) %expand-fixnum-syntax)
+    ((syntax:flonum) %expand-flonum-syntax)
+    ((syntax:ratnum) %expand-ratnum-syntax)
+    ((syntax:self-evaluating) %expand-self-evaluating-syntax)
+    ((syntax:series) %expand-series-expression-syntax)
+    ((syntax:symbol) %expand-variable-reference-syntax)
+    ((syntax:table) %expand-table-syntax)
+    ((syntax:text) %expand-self-evaluating-syntax)
+    ((syntax:true) %expand-true-syntax)
+    ((syntax:undefined) %expand-undefined-syntax)
     (else #f)))
 
-(define (%compile expr env)
-  (let ((_compile (%get-compiler-for (%syntax-type expr)))) 
-    (if _compile
-        (_compile expr env)
+(define (%expand-syntax expr)
+  (let ((_expand (%get-syntax-expander-for (%syntax-type expr)))) 
+    (if _expand
+        (_expand expr)
         (error (str "Syntax error: " expr)))))
+
+;;; (%expand-syntax (bard:read-from-string "#\\C"))
+;;; (%expand-syntax (bard:read-from-string "false"))
+;;; (%expand-syntax (bard:read-from-string "Foo:"))
+;;; (%expand-syntax (bard:read-from-string "nothing"))
+;;; (%expand-syntax (bard:read-from-string "()"))
+;;; (%expand-syntax (bard:read-from-string "[]"))
+;;; (%expand-syntax (bard:read-from-string "{}"))
+;;; (%expand-syntax (bard:read-from-string "\"\""))
+;;; (%expand-syntax (bard:read-from-string "[0 1 2 3]"))
+;;; (%expand-syntax (bard:read-from-string "99999999999999999999999999999999999999999999999999999999999"))
+;;; (%expand-syntax (bard:read-from-string "999"))
+;;; (%expand-syntax (bard:read-from-string "9.99"))
+;;; (%expand-syntax (bard:read-from-string "1.3e+12"))
+;;; (%expand-syntax (bard:read-from-string "2/3"))
+;;; (%expand-syntax (bard:read-from-string "|Foo Bar|"))
+;;; (%expand-syntax (bard:read-from-string "{a: 1 b: 2}"))
+;;; (%expand-syntax (bard:read-from-string "(~)"))
+;;; (%expand-syntax (bard:read-from-string "(~ x in: [1 2])"))
+;;; (%expand-syntax (bard:read-from-string "(~ x in: NATURAL where: (odd? x))"))
+;;; (%expand-syntax (bard:read-from-string "(~ [(x 0) (y 1)] yield: [x y] then: [y (+ y 1)])"))
+;;; (%expand-syntax (bard:read-from-string "\"Foo bar baz\""))
+;;; (%expand-syntax (bard:read-from-string "undefined"))
+;;; (%expand-syntax (bard:read-from-string "(and true false )"))
+;;; (%expand-syntax (bard:read-from-string "(and (> 2 3) (< 2 3) )"))
+
+
+
+;;; ---------------------------------------------------------------------
+;;; 2. optimize syntax
+;;; ---------------------------------------------------------------------
+
+(define (%optimize-syntax standardized-expr env)
+  standardized-expr)
+
+;;; ---------------------------------------------------------------------
+;;; 3. generate abstract code
+;;; ---------------------------------------------------------------------
+
+(define (%gen-app expr env)
+  `(bogus app code for ,expr))
+
+(define (%gen-const k)
+  `((CONST ,k)))
+
+(define (%gen-list lexpr env)
+  (let* ((elts (map (lambda (lx)(%gen lx env))
+                   lexpr))
+         (eltcount (length elts)))
+    (append (apply append elts)
+            (list `(LIST ,eltcount)))))
+
+(define (%gen-method mexpr env)
+  `(bogus method code for ,mexpr))
+
+(define (%gen-series sexpr env)
+  `(bogus series code for ,sexpr))
+
+(define (%gen-variable-reference vexpr env)
+  (let ((vref (%find-var-in-env (%syntax-value vexpr) env)))
+    (if vref
+        `((LREF ,(car vref) ,(cdr vref)))
+        `((GREF ,(%syntax-value vexpr))))))
+
+(define (%gen-table texpr env)
+  `(bogus table code for ,texpr))
+
+
+(define (%gen expr env)
+  (case (%syntax-type expr)
+    ((syntax:app) (%gen-app expr env))
+    ((syntax:character) (%gen-const (%syntax-value expr)))
+    ((syntax:empty-app) (%gen-const (%nothing)))
+    ((syntax:empty-list) (%gen-const (%nothing)))
+    ((syntax:empty-string) (%gen-const (%nothing)))
+    ((syntax:empty-table) (%gen-const (%nothing)))
+    ((syntax:empty-series) (%gen-const (%nothing)))
+    ((syntax:false) (%gen-const #f))
+    ((syntax:keyword) (%gen-const (%syntax-value expr)))
+    ((syntax:list) (%gen-list (%syntax-value expr) env))
+    ((syntax:method) (%gen-method (%syntax-value expr) env))
+    ((syntax:nothing) (%gen-const (%nothing)))
+    ((syntax:bignum) (%gen-const (%syntax-value expr)))
+    ((syntax:fixnum) (%gen-const (%syntax-value expr)))
+    ((syntax:flonum) (%gen-const (%syntax-value expr)))
+    ((syntax:ratnum) (%gen-const (%syntax-value expr)))
+    ((syntax:self-evaluating) (%gen-const (%syntax-value expr)))
+    ((syntax:series) (%gen-series (%syntax-value expr) env))
+    ((syntax:symbol) (%gen-variable-reference (%syntax-value expr) env))
+    ((syntax:table) (%gen-table (%syntax-value expr) env))
+    ((syntax:text) (%gen-const (%syntax-value expr)))
+    ((syntax:true) (%gen-const #t))
+    ((syntax:undefined) (%gen-const #!unbound))
+    (else (error (str "Unrecognized syntax: " expr)))))
+
+;;; (%gen (%expand-syntax (bard:read-from-string "#\\C")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "false")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "Foo:")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "nothing")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "[0 1 2 3]")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "99999999999999999999999999999999999999999999999999999999999")) '())
+;;; (%expand-syntax (bard:read-from-string "999"))
+;;; (%expand-syntax (bard:read-from-string "9.99"))
+;;; (%expand-syntax (bard:read-from-string "1.3e+12"))
+;;; (%expand-syntax (bard:read-from-string "2/3"))
+;;; (%expand-syntax (bard:read-from-string "|Foo Bar|"))
+;;; (%expand-syntax (bard:read-from-string "{a: 1 b: 2}"))
+;;; (%expand-syntax (bard:read-from-string "(~)"))
+;;; (%expand-syntax (bard:read-from-string "(~ x in: [1 2])"))
+;;; (%expand-syntax (bard:read-from-string "(~ x in: NATURAL where: (odd? x))"))
+;;; (%expand-syntax (bard:read-from-string "(~ [(x 0) (y 1)] yield: [x y] then: [y (+ y 1)])"))
+;;; (%expand-syntax (bard:read-from-string "\"Foo bar baz\""))
+;;; (%expand-syntax (bard:read-from-string "undefined"))
+
+;;; returns an actor that simply prints all messages received; the actor is replaced with the 
+;;; last value returned from its body, in this example the special pseudovariable this, which
+;;; is the actor itself:
+;;; (%expand-syntax (bard:read-from-string "(@ (begin (display (receive)) this))"))
+;;; (%expand-syntax (bard:read-from-string "(^ [x] (* x x))"))
+;;; (%expand-syntax (bard:read-from-string "(lambda [x] (* x x))"))
+;;; (%expand-syntax (bard:read-from-string "(method [x] (* x x))"))
+;;; (%expand-syntax (bard:read-from-string "(begin 1 2 3)"))
+;;; (%expand-syntax (bard:read-from-string "(cond (true 'yes)(false 'no))"))
+;;; (%expand-syntax (bard:read-from-string "(define class )"))
+;;; (%expand-syntax (bard:read-from-string "(define macro )"))
+;;; (%expand-syntax (bard:read-from-string "(define method )"))
+;;; (%expand-syntax (bard:read-from-string "(define protocol )"))
+;;; (%expand-syntax (bard:read-from-string "(define record )"))
+;;; (%expand-syntax (bard:read-from-string "(define variable )"))
+;;; (%expand-syntax (bard:read-from-string "(define vector )"))
+;;; (%expand-syntax (bard:read-from-string "(ensure )"))
+;;; (%expand-syntax (bard:read-from-string "(if )"))
+;;; (%expand-syntax (bard:read-from-string "(let )"))
+;;; (%expand-syntax (bard:read-from-string "(loop )"))
+;;; (%expand-syntax (bard:read-from-string "(macroexpand )"))
+;;; (%expand-syntax (bard:read-from-string "(match )"))
+;;; (%expand-syntax (bard:read-from-string "(quasiquote )"))
+;;; (%expand-syntax (bard:read-from-string "(quote )"))
+;;; (%expand-syntax (bard:read-from-string "(send )"))
+;;; (%expand-syntax (bard:read-from-string "(time )"))
+;;; (%expand-syntax (bard:read-from-string "(unless )"))
+;;; (%expand-syntax (bard:read-from-string "(unquote )"))
+;;; (%expand-syntax (bard:read-from-string "(unquote-splicing )"))
+;;; (%expand-syntax (bard:read-from-string "(when )"))
+;;; (%expand-syntax (bard:read-from-string "(with-exit )"))
+
+;;; (%expand-syntax (bard:read-from-string "(and true false )"))
+;;; (%expand-syntax (bard:read-from-string "(and (> 2 3) (< 2 3) )"))
+
+;;; ---------------------------------------------------------------------
+;;; 4. perform local optimizations
+;;; ---------------------------------------------------------------------
+
+(define (%optimize-locally ir env)
+  #f)
+
+;;; ---------------------------------------------------------------------
+;;; 5. generate relocatable bytecode
+;;; ---------------------------------------------------------------------
+
+(define (%generate-bytecode optimized-ir)
+  #f)
+
+;;; ---------------------------------------------------------------------
+;;; 6. load-time linking for the VM
+;;; ---------------------------------------------------------------------
+;;; replace symbolic labels with actual offsets; replace symbolic
+;;; vm ops with actual procedures
+
+(define (%load bytecode vm)
+  #f)
+
+;;; ---------------------------------------------------------------------
+;;; toplevel interface to the compiler
+;;; ---------------------------------------------------------------------
+
+(define (%compile expr env)
+  (let* ((standardized-expr (%expand-syntax expr))
+         (optimized-expr (%optimize-syntax standardized-expr))
+         (ir (%gen optimized-expr env))
+         (optimized-ir (%optimize-locally ir env)))
+    (%generate-bytecode optimized-ir)))
 
 ;;; (%compile (bard:read-from-string "#\\C") '())
 ;;; (%compile (bard:read-from-string "#\\space") '())

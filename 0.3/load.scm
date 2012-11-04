@@ -30,7 +30,7 @@
          "src/utils.scm"
          "src/values.scm"
          "src/read.scm"
-         ;;"src/compile.scm"
+         "src/compile.scm"
          "src/print.scm"
          ))
 
