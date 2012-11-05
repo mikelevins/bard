@@ -57,3 +57,16 @@
   (if (null? args)
       ""
       (apply string-append (map ->str args))))
+
+;;; ---------------------------------------------------------------------
+;;; Vectors
+;;; ---------------------------------------------------------------------
+
+(define (vector-position item vec #!key (test eq?))
+  (let loop ((i 0))
+    (if (>= i (vector-length vec))
+        #f
+        (let ((it (vector-ref vec i)))
+          (if (test item it)
+              i
+              (loop (+ i 1)))))))

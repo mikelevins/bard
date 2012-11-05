@@ -199,7 +199,7 @@
   `(bogus app code for ,expr))
 
 (define (%gen-const k)
-  `((CONST ,k)))
+  `((VAL ,k)))
 
 (define (%gen-list lexpr env)
   (let* ((elts (map (lambda (lx)(%gen lx env))
@@ -208,17 +208,31 @@
     (append (apply append elts)
             (list `(LIST ,eltcount)))))
 
+(define (%lambda-list-syntax->lambda-list lambda-list-expr)
+  (map %syntax-value (%syntax-value lambda-list-expr)))
+
+(define (%lambda-list->env lambda-list env)
+  (%add-frame env (%make-frame (map (lambda (p)(%make-lvar p #!unbound #f)) lambda-list))))
+
+(define (%gen-method-body body-expr env)
+  (apply append (map (lambda (x)(%gen x env)) body-expr)))
+
 (define (%gen-method mexpr env)
-  `(bogus method code for ,mexpr))
+  (let* ((lambda-list-expr (car mexpr))
+         (lambda-list (%lambda-list-syntax->lambda-list lambda-list-expr))
+         (menv (%lambda-list->env lambda-list env))
+         (body-expr (cdr mexpr))
+         (body (%gen-method-body body-expr menv)))
+    `((VAL ,menv)(VAL ,lambda-list)(VAL ,body)(METHOD))))
 
 (define (%gen-series sexpr env)
   `(bogus series code for ,sexpr))
 
-(define (%gen-variable-reference vexpr env)
-  (let ((vref (%find-var-in-env (%syntax-value vexpr) env)))
+(define (%gen-variable-reference vnm env)
+  (let ((vref (%find-var-in-env vnm env)))
     (if vref
         `((LREF ,(car vref) ,(cdr vref)))
-        `((GREF ,(%syntax-value vexpr))))))
+        `((GREF ,vnm)))))
 
 (define (%gen-table texpr env)
   `(bogus table code for ,texpr))
@@ -251,59 +265,21 @@
     ((syntax:undefined) (%gen-const #!unbound))
     (else (error (str "Unrecognized syntax: " expr)))))
 
+;;; (define $env (%add-frame (%null-env) (%make-frame (list (%make-lvar 'x 0 #f)(%make-lvar 'y 1 #t)))))
 ;;; (%gen (%expand-syntax (bard:read-from-string "#\\C")) '())
 ;;; (%gen (%expand-syntax (bard:read-from-string "false")) '())
 ;;; (%gen (%expand-syntax (bard:read-from-string "Foo:")) '())
 ;;; (%gen (%expand-syntax (bard:read-from-string "nothing")) '())
 ;;; (%gen (%expand-syntax (bard:read-from-string "[0 1 2 3]")) '())
 ;;; (%gen (%expand-syntax (bard:read-from-string "99999999999999999999999999999999999999999999999999999999999")) '())
-;;; (%expand-syntax (bard:read-from-string "999"))
-;;; (%expand-syntax (bard:read-from-string "9.99"))
-;;; (%expand-syntax (bard:read-from-string "1.3e+12"))
-;;; (%expand-syntax (bard:read-from-string "2/3"))
-;;; (%expand-syntax (bard:read-from-string "|Foo Bar|"))
-;;; (%expand-syntax (bard:read-from-string "{a: 1 b: 2}"))
-;;; (%expand-syntax (bard:read-from-string "(~)"))
-;;; (%expand-syntax (bard:read-from-string "(~ x in: [1 2])"))
-;;; (%expand-syntax (bard:read-from-string "(~ x in: NATURAL where: (odd? x))"))
-;;; (%expand-syntax (bard:read-from-string "(~ [(x 0) (y 1)] yield: [x y] then: [y (+ y 1)])"))
-;;; (%expand-syntax (bard:read-from-string "\"Foo bar baz\""))
-;;; (%expand-syntax (bard:read-from-string "undefined"))
-
-;;; returns an actor that simply prints all messages received; the actor is replaced with the 
-;;; last value returned from its body, in this example the special pseudovariable this, which
-;;; is the actor itself:
-;;; (%expand-syntax (bard:read-from-string "(@ (begin (display (receive)) this))"))
-;;; (%expand-syntax (bard:read-from-string "(^ [x] (* x x))"))
-;;; (%expand-syntax (bard:read-from-string "(lambda [x] (* x x))"))
-;;; (%expand-syntax (bard:read-from-string "(method [x] (* x x))"))
-;;; (%expand-syntax (bard:read-from-string "(begin 1 2 3)"))
-;;; (%expand-syntax (bard:read-from-string "(cond (true 'yes)(false 'no))"))
-;;; (%expand-syntax (bard:read-from-string "(define class )"))
-;;; (%expand-syntax (bard:read-from-string "(define macro )"))
-;;; (%expand-syntax (bard:read-from-string "(define method )"))
-;;; (%expand-syntax (bard:read-from-string "(define protocol )"))
-;;; (%expand-syntax (bard:read-from-string "(define record )"))
-;;; (%expand-syntax (bard:read-from-string "(define variable )"))
-;;; (%expand-syntax (bard:read-from-string "(define vector )"))
-;;; (%expand-syntax (bard:read-from-string "(ensure )"))
-;;; (%expand-syntax (bard:read-from-string "(if )"))
-;;; (%expand-syntax (bard:read-from-string "(let )"))
-;;; (%expand-syntax (bard:read-from-string "(loop )"))
-;;; (%expand-syntax (bard:read-from-string "(macroexpand )"))
-;;; (%expand-syntax (bard:read-from-string "(match )"))
-;;; (%expand-syntax (bard:read-from-string "(quasiquote )"))
-;;; (%expand-syntax (bard:read-from-string "(quote )"))
-;;; (%expand-syntax (bard:read-from-string "(send )"))
-;;; (%expand-syntax (bard:read-from-string "(time )"))
-;;; (%expand-syntax (bard:read-from-string "(unless )"))
-;;; (%expand-syntax (bard:read-from-string "(unquote )"))
-;;; (%expand-syntax (bard:read-from-string "(unquote-splicing )"))
-;;; (%expand-syntax (bard:read-from-string "(when )"))
-;;; (%expand-syntax (bard:read-from-string "(with-exit )"))
-
-;;; (%expand-syntax (bard:read-from-string "(and true false )"))
-;;; (%expand-syntax (bard:read-from-string "(and (> 2 3) (< 2 3) )"))
+;;; (%gen (%expand-syntax (bard:read-from-string "999")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "9.99")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "1.3e+12")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "2/3")) '())
+;;; (%gen (%expand-syntax (bard:read-from-string "x")) $env)
+;;; (%gen (%expand-syntax (bard:read-from-string "y")) $env)
+;;; (%gen (%expand-syntax (bard:read-from-string "z")) $env)
+;;; (%gen (%expand-syntax (bard:read-from-string "(^ [x] (* x x))")) $env)
 
 ;;; ---------------------------------------------------------------------
 ;;; 4. perform local optimizations

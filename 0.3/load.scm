@@ -30,6 +30,7 @@
          "src/utils.scm"
          "src/values.scm"
          "src/read.scm"
+         "src/env.scm"
          "src/compile.scm"
          "src/print.scm"
          ))
