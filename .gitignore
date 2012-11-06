@@ -55,3 +55,4 @@ builds//src/vm7/comp.scm~
 /0.3/src/values.scm~
 /0.2.x/.DS_Store
 /0.3/src/env.scm~
+/0.3/src/hlvm.scm~
