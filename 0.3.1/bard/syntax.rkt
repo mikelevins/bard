@@ -3,7 +3,7 @@
   (provide (except-out (all-from-out racket) define let)
            (rename-out (def define))
            (rename-out (bind let))
-           λ loop unless when)
+           ^ loop method unless when)
   
   ;;; define
   ;;; TODO: add:
