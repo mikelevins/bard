@@ -1,4 +1,5 @@
 (module bard-semantics racket
+  (require data/gvector)
   (provide make-bard-class bard-class-members set-bard-class-members!
            make-bard-series bard-series-cache bard-series-ref)
 
@@ -20,17 +21,16 @@
      (generator)))
   
   (define (make-bard-series generator)
-    (bard-series '() generator))
+    (bard-series (make-gvector) generator))
   
   (define (bard-series-ref ser i)
-    (let loop ((k (length (bard-series-cache ser))))
+    (let loop ((k (gvector-count (bard-series-cache ser))))
       (if (> k i)
-          (list-ref (bard-series-cache ser) 
-                    (- (- k 1) i))
+          (gvector-ref (bard-series-cache ser) i)
           (let* ((gen (bard-series-generator ser))
                  (next (gen)))
-            (set-bard-series-cache! ser (cons next (bard-series-cache ser)))
-            (loop (length (bard-series-cache ser)))))))
+            (gvector-add! (bard-series-cache ser) next)
+            (loop (gvector-count (bard-series-cache ser)))))))
   
   ;; vectors
   
