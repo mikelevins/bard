@@ -1,9 +1,11 @@
 (module bard-syntax racket
   (require racket/generator)
+  (require "bard-semantics.rkt")
   (provide (except-out (all-from-out racket) define let)
            (rename-out (def define))
            (rename-out (bind let))
-           ^ loop method unless when)
+           ^ loop method unless when
+           (all-from-out "bard-semantics.rkt"))
   
   ;;; define
   ;;; TODO: add:
@@ -12,7 +14,7 @@
   (define-syntax def
     (syntax-rules (class macro method protocol -> record variable vector)
       ((def class classname)
-       (display '(define classname (make-bard-class))))
+       (define classname (make-bard-class)))
       ((def method (fname (arg type) ...) expr ...)
        (display '(bard-add-method! fname (list type ...) (lambda (arg ...) expr ...))))
       ((def protocol pname [(fname pclass ...) -> (rclass ...)] ...)
@@ -52,15 +54,15 @@
   ;;; series
   (define-syntax ~
     (syntax-rules (in where yield then)
-      ((~ x in vals)(generator () 
-                               (let loop ((items vals)) 
-                                 (if (null? items)
-                                     (begin
-                                       (yield (car vals))
-                                       (loop (cdr vals)))
-                                     (begin
-                                       (yield (car items))
-                                       (loop (cdr items)))))))
+      ((~ x in vals)(make-bard-series (generator () 
+                                                 (let loop ((items vals)) 
+                                                   (if (null? items)
+                                                       (begin
+                                                         (yield (car vals))
+                                                         (loop (cdr vals)))
+                                                       (begin
+                                                         (yield (car items))
+                                                         (loop (cdr items))))))))
       ))
   
   ;;; unless

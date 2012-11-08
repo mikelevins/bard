@@ -1,3 +1,0 @@
-#lang racket
-(define (make-bard-readtable)
-  )
