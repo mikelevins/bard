@@ -4,21 +4,20 @@
   (provide (except-out (all-from-out racket) define let)
            (rename-out (def define))
            (rename-out (bind let))
-           ^ loop method unless when
+           ^ function loop method series unless when
            (all-from-out "bard-semantics.rkt"))
   
   ;;; define
-  ;;; TODO: add:
-  ;;;  macro
-  ;;;  vector
   (define-syntax def
     (syntax-rules (class macro method protocol -> record variable vector)
       ((def class classname)
        (define classname (make-bard-class)))
+      ((def macro mname expander)
+       (display '(bard-define-macroexpander mname expander)))
       ((def method (fname (arg type) ...) expr ...)
        (display '(bard-add-method! fname (list type ...) (lambda (arg ...) expr ...))))
       ((def protocol pname [(fname pclass ...) -> (rclass ...)] ...)
-       (display '(define pname (make-protocol (list (make-function fname (list pclass ...)(list rclass ...)) ...)))))
+       (display '(define pname (make-bard-protocol (list `(fname . ,(make-bard-function (list pclass ...)(list rclass ...))) ...)))))
       ((def record rname () sname ...)
        (display '(define rname (bard-make-record-schema '() (list (make-slot sname) ...)))))
       ((def record rname (include ...) sname ...)
@@ -34,6 +33,11 @@
        (let* ((v val) ...) expr ...))
       ((bind ((a b ... val)) expr ...)
        (let*-values (((a b ...) val)) expr ...))))
+  
+  (define-syntax function
+    (syntax-rules (->)
+      ((function (pclass ...) -> (rclass ...))
+       (make-bard-function (list pclass ...) (list rclass ...)))))
   
   ;;; loop
   (define-syntax loop
@@ -52,18 +56,16 @@
        (lambda lambda-list body ...))))
   
   ;;; series
-  (define-syntax ~
+  (define-syntax series
     (syntax-rules (in where yield then)
-      ((~ x in vals)(make-bard-series (generator () 
-                                                 (let loop ((items vals)) 
-                                                   (if (null? items)
-                                                       (begin
-                                                         (yield (car vals))
-                                                         (loop (cdr vals)))
-                                                       (begin
-                                                         (yield (car items))
-                                                         (loop (cdr items))))))))
-      ))
+      ((series x in vals)(make-bard-series (display '(generate-values vals))))
+      ((series x in vals where expr)(make-bard-series (display '(generate-filtered-values (lambda (x) expr) vals))))
+      ((series ((x xval) ...) yield: valexpr then: (nextx ...))
+       (make-bard-series (display '(bard-generator ((x xval) ...)
+                                                   (yield valexpr)
+                                                   (then nextx ...)))))))
+
+  
   
   ;;; unless
   (define-syntax unless
