@@ -26,11 +26,12 @@
 
 (defun read-square-bracket (stream char)
   (let ((expr (cl:read-delimited-list #\] stream nil)))
-    (list->bard-list expr)))
+    (fset:convert 'fset:seq expr)))
 
 (defun read-curly-bracket (stream char)
   (let ((expr (cl:read-delimited-list #\} stream nil)))
-    (list->bard-table expr)))
+    (assert (evenp (length expr))() "Malformed table values: ~A" expr)
+    (fset:convert 'fset:map (loop for (k v . rest) on expr by #'cddr collect (cons k v)))))
 
 (defun bard-character-delimiter? (ch)
   (or (not (standard-char-p ch))
@@ -100,6 +101,30 @@
 (defmethod bard-read ((instr string))
   (with-input-from-string (in instr)
     (bard-read in)))
+
+#| tests
+
+(bard-read "undefined")
+(bard-read "nothing")
+(bard-read "true")
+(bard-read "false")
+(bard-read "0")
+(bard-read "1.2")
+(bard-read "1/2")
+(bard-read "1.2e3")
+(bard-read "\\A")
+(bard-read "\\tab")
+(bard-read "\\u+03bb")
+(bard-read "Foo")
+(bard-read "|Foo bar|")
+(bard-read ":Foo")
+(bard-read "\"Foo bar baz\"")
+(bard-read "(Foo bar (baz))")
+(bard-read "[Foo bar [baz]]")
+(bard-read "{Foo bar baz {grault quux}}")
+
+
+|#
 
 ;;; ---------------------------------------------------------------------
 ;;; evaluator
