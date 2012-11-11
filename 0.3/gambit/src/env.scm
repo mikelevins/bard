@@ -1,4 +1,4 @@
-;;;; ***********************************************************************
+';;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          env.scm
@@ -35,8 +35,6 @@
               (if mutable?
                   %mutable-var-setter
                   %immutable-var-setter))))
-
-(define %lref %var-value)
 
 (define (%vset! var val)
   ((%var-setter var) var val))

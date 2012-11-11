@@ -39,6 +39,14 @@
 ;;; loaded and resumed.
 
 ;;; ---------------------------------------------------------------------
+;;; compiler utils
+;;; ---------------------------------------------------------------------
+
+;;; TODO: replace with a proper implementation
+(define (%make-method-function params body env)
+  `(method ,params ,body ,env))
+
+;;; ---------------------------------------------------------------------
 ;;; self-evaluating expressions
 ;;; ---------------------------------------------------------------------
 
@@ -48,7 +56,7 @@
            (not (symbol? expr)))))
 
 (define (%compile-self-evaluating expr env) 
-  `((CONST ,expr)))
+  `(CODE (CONST ,expr)))
 
 ;;; ---------------------------------------------------------------------
 ;;; special forms
@@ -66,10 +74,10 @@
 (define (%compile-lambda expr env)
   (let ((params (cadr expr))
         (body (cddr expr)))
-    `((METHOD ,params ,body ,env))))
+    `(CODE (CONST ,(%make-method-function params body env)))))
 
 (define (%compile-sequence exprs env)
-  `((SEQ ,@(map (lambda (e)(%compile-expression e env)) exprs))))
+  `(CODE (SEQ ,@(map (lambda (e)(%compile-expression e env)) exprs))))
 
 (define (%compile-begin expr env)
   (%compile-sequence (cdr expr) env))
@@ -82,15 +90,123 @@
                                             (%compile-expression (car c) env))
                                         (%compile-sequence (cdr c) env)))
                                 clauses)))
-    `((COND ,@compiled-clauses))))
+    `(CODE (COND ,@compiled-clauses))))
 
-(define (%compile-define-class expr env) #f)
-(define (%compile-define-macro expr env) #f)
-(define (%compile-define-method expr env) #f)
-(define (%compile-define-protocol expr env) #f)
-(define (%compile-define-record expr env) #f)
-(define (%compile-define-variable expr env) #f)
-(define (%compile-define-vector expr env) #f)
+(define (%compile-define-class expr env)
+  (let ((classname (list-ref expr 2)))
+    `(CODE (DEF ,classname ,(%make-class classname) ,env))))
+
+(define (%compile-define-macro expr env) 
+  (let ((prototype (list-ref expr 2))
+        (expansion (cdddr expr)))
+    `(CODE (MACRO ,prototype ,@expansion))))
+
+(define (%param->formal exp)
+  (if (symbol? exp)
+      exp
+      (if (pair? exp)
+          (car exp)
+          (error (str "invalid method parameter: " exp)))))
+
+(define (%param->type exp)
+  (cond
+   ((symbol? exp) 'Anything)
+   ((pair? exp)(let ((exp-type (cadr exp)))
+                 (cond
+                  ((symbol? exp-type) exp-type)
+                  ((and (pair? exp-type)
+                        (eq? 'singleton (car exp-type))) exp-type)
+                  (else (error (str "invalid method parameter: " exp))))))
+   (else (error (str "invalid method parameter: " exp)))))
+
+(define (%compile-define-method expr env)
+  (let* ((prototype (list-ref expr 2))
+         (fname (car prototype))
+         (params (cdr prototype))
+         (formals (map %param->formal params))
+         (types (map %param->type params))
+         (body (cdddr expr))
+         (method-fn (%make-method-function formals body env)))
+    `(CODE (DEFMETHOD ',fname ',types ,method-fn))))
+
+(define (%parse-protocol-function expr)
+  (let* ((fproto (list-ref expr 0))
+         (arrow (list-ref expr 1))
+         (fname (car fproto))
+         (in-types (cdr fproto))
+         (out-types (list-ref expr 2)))
+    (if (eq? '-> arrow)
+        `(,fname ,in-types ,out-types)
+        (error (str "Malformed protocol function: " expr)))))
+
+(define (%compile-define-protocol expr env)
+  (let* ((pname (list-ref expr 2))
+         (fprotos (map %parse-protocol-function (cdddr expr))))
+    `(CODE (DEFPROTOCOL ',pname ',fprotos))))
+
+(define (%parse-slot-spec spec)
+  (let* ((spec (cond
+                ((symbol? spec)(list spec))
+                ((pair? spec) spec)
+                (else (error "Malformed slot spec: " spec))))
+         (slotname (car spec))
+         (default (let ((found (memq default: (cdr spec))))
+                    (if found
+                        (cadr found)
+                        (%nothing))))
+         (mutable? (let ((found (memq mutable: (cdr spec))))
+                    (if found
+                        (cadr found)
+                        (%false)))))
+    `(,slotname ,default ,mutable?)))
+
+(define (%compile-define-record expr env) 
+  (let ((rname (list-ref expr 2))
+        (includes (list-ref expr 3))
+        (slotspecs (map %parse-slot-spec (cddddr expr))))
+    `(CODE (DEFRECORD ',rname ',includes ',slotspecs))))
+
+(define (%compile-define-variable expr env)
+  (let* ((vname (list-ref expr 2))
+        (val-expr (list-ref expr 3))
+        (val (%compile-expression val-expr env)))
+    `(CODE (DEF ',vname ,val))))
+
+
+(define (%compile-define-vector expr env) 
+  (let* ((vname (list-ref expr 2))
+         (params (cdddr expr))
+         (count (let ((found (memq count: params)))
+                  (if found
+                      (cadr found)
+                      #f)))
+         (min (let ((found (memq minimum-count: params)))
+                (if found
+                    (cadr found)
+                    #f)))
+         (max (let ((found (memq maximum-count: params)))
+                (if found
+                    (cadr found)
+                    #f)))
+         (type (let ((found (memq type: params)))
+                 (if found
+                     (cadr found)
+                     'Anything))))
+    (if count
+        (if min
+            (error (str "found count: but also minimum-count:"))))
+    (if count
+        (if max
+            (error (str "found count: but also maximum-count:"))))
+    (if min
+        (if count
+            (error (str "found minimum-count: but also count:"))))
+    (if max
+        (if count
+            (error (str "found minimum-count: but also count:"))))
+    (let ((min (or min count 0))
+          (max (or max count #f)))
+      `(CODE (DEFVECTOR ',vname ,min ,max ,type)))))
 
 (define (%compile-define expr env)
   (let ((key (cadr expr)))
@@ -111,7 +227,7 @@
       ((vector) (%compile-define-vector expr env))
       (else (error (str "Unrecognized defining form: " key))))))
 
-(define (%compile-ensure) #f)
+(define (%compile-ensure expr env) #f)
 
 (define (%compile-if expr env) 
   (let ((test (list-ref expr 1))
@@ -121,14 +237,13 @@
                        (%nothing))))
     (%compile-cond `(cond (,test ,consequent)(else ,alternate)) env)))
 
-(define (%compile-let) #f)
-(define (%compile-loop) #f)
-(define (%compile-macroexpand) #f)
-(define (%compile-match) #f)
-(define (%compile-quasiquote) #f)
+(define (%compile-let expr env) #f)
+(define (%compile-loop expr env) #f)
+(define (%compile-match expr env) #f)
+(define (%compile-quasiquote expr env) #f)
 
 (define (%compile-quote expr env)
-  `((CONST ,(cadr expr))))
+  `(CODE (CONST ,(cadr expr))))
 
 (define (%compile-unless expr env) 
   (let ((test (list-ref expr 1))
@@ -136,8 +251,8 @@
         (alternate (cddr expr)))
     (%compile-cond `(cond (,test ,@consequent)(else ,@alternate)) env)))
 
-(define (%compile-unquote) #f)
-(define (%compile-unquote-splicing) #f)
+(define (%compile-unquote expr env) #f)
+(define (%compile-unquote-splicing expr env) #f)
 
 (define (%compile-when expr env) 
   (let ((test (list-ref expr 1))
@@ -145,7 +260,7 @@
         (alternate (%nothing)))
     (%compile-cond `(cond (,test ,@consequent)(else ,@alternate)) env)))
 
-(define (%compile-with-exit) #f)
+(define (%compile-with-exit expr env) #f)
 
 (%define-special-form 'λ %compile-lambda)
 (%define-special-form '^ %compile-lambda)
@@ -219,6 +334,18 @@
 ;;; (%compile-expression '(^ (x) (* x x)) $env)
 ;;; (%compile-expression '(begin 1 2 3) $env)
 ;;; (%compile-expression '(cond (1 1)(2 2)) $env)
+;;; (%compile-expression '(define class Point) $env)
+;;; (%compile-expression '(define macro (and a b) `(if ,a (if ,b ,b false) false)) $env)
+;;; (%compile-expression '(define method (add a b) (= a b)) $env)
+;;; (%compile-expression '(define method (add (a <fixnum>) (b <fixnum>)) (= a b)) $env)
+;;; (%compile-expression '(define protocol Ratio ((num Ratio) -> (Integer)) ((denom Ratio) -> (Integer))) $env)
+;;; (%compile-expression '(define record Point () x y) $env)
+;;; (%compile-expression '(define record Point3D (Point) (z default: 0 mutable: true)) $env)
+;;; (%compile-expression '(define variable Foo 0) $env)
+;;; (%compile-expression '(define vector Flags count: 8 type: '<bit>) '())
+;;; (%compile-expression '(define vector OSType count: 4 type: '<word8>) '())
+;;; (%compile-expression '(define vector Cons count: 2 type: 'Anything) '())
+;;; (%compile-expression '(define vector Stack minimum-count: 0 maximum-count: false type: 'Anything) '())
 ;;; (%compile-expression '(if 1 1 2) $env)
 ;;; (%compile-expression '(quote x) $env)
 ;;; (%compile-expression '(unless 1 1 2) $env)
