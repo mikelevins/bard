@@ -11,8 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/0.3/")
-;;;(define $bard-root  "c:/Users/mikel/Projects/bard/0.3/")
+(define $bard-root  "/Users/mikel/Projects/bard/0.3/gambit/")
 
 
 ;;; ----------------------------------------------------------------------
@@ -26,13 +25,10 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
-         "lib/uuid.scm"
-         "src/utils.scm"
          "src/values.scm"
-         "src/read.scm"
          "src/env.scm"
-         "src/compile.scm"
-         "src/print.scm"
+         "src/specials.scm"
+         "src/eval.scm"
          ))
 
 ;;; load sources
