@@ -25,10 +25,11 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "src/utils.scm"
          "src/values.scm"
+         "src/var.scm"
+         "src/globals.scm"
          "src/env.scm"
-         "src/specials.scm"
-         "src/eval.scm"
          ))
 
 ;;; load sources
@@ -40,7 +41,3 @@
             $bard-files))
 
 ;;; (load-bard)
-
-
-
-

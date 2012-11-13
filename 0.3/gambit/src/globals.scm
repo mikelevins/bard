@@ -1,14 +1,23 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.scm
+;;;; Name:          globals.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard interpreter version string
+;;;; Purpose:       bard vm globals
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
+(define (%bard-globals)
+  (make-table test: eq?))
 
-(define $bard-version-string "Bard version 0.3.0")
+(define (%global-ref globals name)
+  (table-ref globals name #!unbound))
+
+(define (%global-set! globals name val)
+  (table-set! globals name val))
+
+
+
 
