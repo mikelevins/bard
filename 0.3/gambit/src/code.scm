@@ -11,14 +11,12 @@
 
 (define %code-ref vector-ref)
 
-(define (%link vm code)
-  (let ((len (vector-length code)))
-    (let loop ((i 0))
-      (if (< i len)
-          (let ((instr (%code-ref code i)))
-            (set-car! instr (%opname->op vm (car instr)))
-            (loop (+ 1 i)))
-          code))))
+(define (%link-instruction instr)
+  (cons (%opcode->op (%op instr))
+        (%args instr)))
 
-(define (%code . instructions)
+(define (%link code)
+  (vector-map %link-instruction code))
+
+(define (->code . instructions)
   (list->vector instructions))

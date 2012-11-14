@@ -30,6 +30,9 @@
          "src/var.scm"
          "src/globals.scm"
          "src/env.scm"
+         "src/code.scm"
+         "src/instructions.scm"
+         "src/vm.scm"
          ))
 
 ;;; load sources

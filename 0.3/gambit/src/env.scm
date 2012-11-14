@@ -11,18 +11,4 @@
 
 (define (%null-env) '())
 
-(define (%make-frame count)
-  )
-
-(define (%list->frame ls)
-  )
-
-(define (%frame-fill! frame start vars)
-  )
-
-(define (%frame-ref frame index #!key (default #!unbound))
-  )
-
-(define (%frame-set! frame index val)
-  )
 
