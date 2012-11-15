@@ -31,7 +31,7 @@
          "src/globals.scm"
          "src/env.scm"
          "src/code.scm"
-         "src/instructions.scm"
+         "src/fn.scm"
          "src/vm.scm"
          ))
 

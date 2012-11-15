@@ -12,8 +12,8 @@
 (define %code-ref vector-ref)
 
 (define (%link-instruction instr)
-  (cons (%opcode->op (%op instr))
-        (%args instr)))
+  (cons (%opname->op (car instr))
+        (cdr instr)))
 
 (define (%link code)
   (vector-map %link-instruction code))
