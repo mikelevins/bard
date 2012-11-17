@@ -46,6 +46,9 @@
         (exitfn (%exitfn state)))
     (%private-make-vmstate instr code pc fn env globals vstack cstack exitfn)))
 
+(define (%copystate! srcstate deststate)
+  )
+
 (define (%op state)(car (%instr state)))
 (define (%arg1 state)(list-ref (%instr state) 1))
 (define (%arg2 state)(list-ref (%instr state) 2))
@@ -56,19 +59,9 @@
 (define (%pushc! state val)(%setcstack! state (cons val (%cstack state))))
 (define (%topc! state)(car (%cstack state)))
 (define (%popc! state)(let ((saved (car (%cstack state)))) (%setcstack! state (cdr (%cstack state))) saved))
-(define (%save state)(%pushc! state (%make-saved state)))
+(define (%cc state)(%pushv! state (%make-saved state)))
+(define (%setcc! state)(%copystate! (%popv! state) state))
 
-(define (%restore state)
-  (let ((saved (%popc! state)))
-    (%set-instr! vmstate (%instr saved))
-    (%set-code! vmstate (%code saved))
-    (%set-pc! vmstate (%pc saved))
-    (%set-fn! vmstate (%fn saved))
-    (%set-env! vmstate (%env saved))
-    (%set-globals! vmstate (%globals saved))
-    (%set-vstack! vmstate (%vstack saved))
-    (%set-cstack! vmstate (%cstack saved))
-    (%set-exitfn! vmstate (%exitfn saved))))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm ops
@@ -86,18 +79,21 @@
 (define (%opname->op opname)
   (table-ref $opname->opfn-table opname))
 
-(%defop NOP   identity)
-(%defop HALT  (lambda (state) ((%exitfn state)(%topv state))))
-(%defop CONST (lambda (state) (%pushv! state (%arg1 state))))
-(%defop LREF  (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
-(%defop LSET  (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
-(%defop GREF  (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
-(%defop GSET  (lambda (state) (%pushv! state (%gset! (%env state) (%arg1 state)(%topv state)))))
+(%defop NOP    identity)
+(%defop HALT   (lambda (state) ((%exitfn state)(%topv state))))
+(%defop CONST  (lambda (state) (%pushv! state (%arg1 state))))
+(%defop LREF   (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
+(%defop LSET   (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
+(%defop GREF   (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
+(%defop GSET   (lambda (state) (%pushv! state (%gset! (%env state) (%arg1 state)(%topv state)))))
 (%defop POPV   %popv!)
 (%defop POPC   %popc!)
-(%defop JUMP  (lambda (state) (%setpc! state (%arg1 state))))
-(%defop FJUMP (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
-(%defop TJUMP (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
+(%defop PRIM   (lambda (state) (%pushv! state (apply (%op state)(%takeallv! state)))))
+(%defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
+(%defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
+(%defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
+(%defop CALL   (lambda (state) ))
+(%defop RETURN (lambda (state) ))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution
