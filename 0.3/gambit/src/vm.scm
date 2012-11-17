@@ -47,7 +47,15 @@
     (%private-make-vmstate instr code pc fn env globals vstack cstack exitfn)))
 
 (define (%copystate! srcstate deststate)
-  )
+  (%setinstr! deststate (%instr srcstate))
+  (%setcode! deststate (%code srcstate))
+  (%setpc! deststate (%pc srcstate))
+  (%setfn! deststate (%fn srcstate))
+  (%setenv! deststate (%env srcstate))
+  (%setglobals! deststate (%globals srcstate))
+  (%setvstack! deststate (%vstack srcstate))
+  (%setcstack! deststate (%cstack srcstate))
+  (%setexitfn! deststate (%exitfn srcstate)))
 
 (define (%op state)(car (%instr state)))
 (define (%arg1 state)(list-ref (%instr state) 1))
@@ -92,8 +100,8 @@
 (%defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
 (%defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
 (%defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
-(%defop CALL   (lambda (state) ))
-(%defop RETURN (lambda (state) ))
+;;;(%defop CALL   (lambda (state) ))
+;;;(%defop RETURN (lambda (state) ))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution

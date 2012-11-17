@@ -32,6 +32,7 @@
          "src/env.scm"
          "src/code.scm"
          "src/fn.scm"
+         "src/compile.scm"
          "src/vm.scm"
          ))
 

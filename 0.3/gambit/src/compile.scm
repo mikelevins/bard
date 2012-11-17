@@ -10,13 +10,10 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; utils
+;;; stubs
 ;;; ---------------------------------------------------------------------
 
-(define-macro (unless test . body)
-  `(if (not ,test)
-       (begin
-         ,@body)))
+(define (%find-variable env expr) (values #f #f))
 
 ;;; ---------------------------------------------------------------------
 ;;; discriminating expression types
@@ -34,8 +31,12 @@
 (define (%macro-form? expr)
   #f)
 
+(define (%lambda-expression? expr)
+  (and (pair? expr)
+       (memq (car expr) '(λ ^ lambda method))))
+
 ;;; ---------------------------------------------------------------------
-;;; expression compilers
+;;; code generators
 ;;; ---------------------------------------------------------------------
 
 (define (%seq . code)
@@ -44,28 +45,42 @@
 (define (%gen opcode . args)
   (list (cons opcode args)))
 
+(define %next-label-number #f)
+(let ((_labelnum 0))
+  (set! %next-label-number
+        (lambda ()
+          (set! _labelnum (+ 1 _labelnum))
+          _labelnum)))
+
+(define (%gen-label #!optional (name 'L))
+  (string->symbol (str name (%next-label-number))))
+
 (define (%gen-none) '())
 
 (define (%gen-var expr env) 
   (receive (i j)(%find-variable env expr)
            (if i
                (%gen 'LREF i j "; " expr)
-               (%GEN 'GREF expr))))
+               (%gen 'GREF expr))))
+
+;;; ---------------------------------------------------------------------
+;;; expression compilers
+;;; ---------------------------------------------------------------------
 
 (define (%compile-not-yet-implemented name expr env val? more?)
   (error (str "Compiler not yet implemented for " name)))
 
 (define (%compile-application fexpr argexprs env val? more?)
-  (let ((prim (%primitive? fexpr env (length argexprs))))
+  (let ((prim (%primitive? fexpr)))
     (cond
-     (prim (if (and (not val?)(not (%primitive-side-effects? prim)))
+     (prim (if (and (not val?)(not (%prim-side-effects? prim)))
                ;; side-effect free primitive call, value not needed
                (%compile-begin argexprs env #f more?)
                ;; value or side-effect needed
-               (%seq (%compile-list argexprs env)
-                     (%gen (%primitive-opcode prim))
-                     (unless val? (%gen 'POP))
-                     (unless more? (%gen 'RETURN)))))
+               (%seq (%compile-list argexprs env val? more?)
+                     (%gen (%prim-opname prim)(length argexprs))
+                     (if val? '() (%gen 'POP))
+                     (if more? '() (%gen 'RETURN)))))
      ((and (%lambda-expression? fexpr)
            (null? (cadr fexpr)))
       ;; (lambda () . body) -> (begin . body)
@@ -74,13 +89,13 @@
      (more? ;; must save the return continuation
       (let ((k (%gen-label 'k)))
         (%seq (%gen 'SAVE k)
-              (%compile-list argexprs env)
+              (%compile-list argexprs env val? more?)
               (%compile fexpr env #t #t)
               (%gen 'CALLJ (length argexprs))
               (list k)
-              (unless val? (%gen 'POP)))))
+              (if val? '() (%gen 'POP)))))
      (else ;; the function call is a simple jump 
-      (%seq (%compile-list argexprs env)
+      (%seq (%compile-list argexprs env val? more?)
             (%compile fexpr env #t #t)
             (%gen 'CALLJ (length argexprs)))))))
 
@@ -96,11 +111,8 @@
 
 (define (%compile-constant expr env val? more?)
   (if val?
-      (%seq (if (memv expr '(#!unbound () #t #f -1 0 1 2))
-                (%gen expr)
-                (%gen 'CONST expr))
-            (unless more?
-                    (%gen 'RETURN)))
+      (%seq (%gen 'CONST expr)
+            (if more? '() (%gen 'RETURN)))
       (%gen-none)))
 
 (define (%compile-define-class expr env val? more?)
@@ -150,24 +162,30 @@
                               (%gen 'TJUMP L2)
                               elsecode
                               (list L2)
-                              (unless more? (%gen 'RETURN)))))
+                              (if more? '() (%gen 'RETURN)))))
      ((null? elsecode)(let ((L1 (%gen-label)))
                         (%seq testcode
                               (%gen 'FJUMP L1)
                               thencode
-                              (unless more? (%gen 'RETURN)))))
+                              (if more? '() (%gen 'RETURN)))))
      (else (let ((L1 (%gen-label))
-                 (L2 (if more? (%gen-label))))
+                 (L2 (if more? (%gen-label) '())))
              (%seq testcode
                    (%gen 'FJUMP L1)
                    thencode
-                   (if more? (%gen 'JUMP L2))
+                   (if more? (%gen 'JUMP L2) '())
                    (list L1)
                    elsecode
-                   (if more? (list L2))))))))
+                   (if more? (list L2) '())))))))
 
 (define (%compile-let expr env val? more?)
   (%compile-not-yet-implemented 'let expr env val? more?))
+
+(define (%compile-list expr env val? more?)
+  (if (null? expr)
+      '()
+      (%seq (%compile (car expr) env #t #t)
+            (%compile-list (cdr expr) env val? more?))))
 
 (define (%compile-loop expr env val? more?)
   (%compile-not-yet-implemented 'loop expr env val? more?))
@@ -201,7 +219,8 @@
 (define (%compile-variable expr env val? more?)
   (if val? 
       (%seq (%gen-var expr env)
-            (unless more? (%gen 'RETURN)))))
+            (if more? '() (%gen 'RETURN)))
+      '()))
 
 (define (%compile-when expr env val? more?)
   (%compile-not-yet-implemented 'when expr env val? more?))
@@ -254,6 +273,3 @@
    (else (%compile-application (car expr) (cdr expr) env val? more?))))
 
 
-;;; (%compile '() '() #t #f)
-;;; (%compile 1 '() #t #f)
-;;; (%compile '(begin 1 2 3) '() #t #f)
