@@ -44,6 +44,16 @@
             (error (str "index out of range: " n))
             (loop (- i 1) (cdr items))))))
 
+(define (position item ls #!key (test eq?))
+  (let loop ((items ls)
+             (i 0))
+    (if (null? items)
+        #f
+        (if (test item (car items))
+            i
+            (loop (cdr items)
+                  (+ i 1))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; string utils
 ;;; ---------------------------------------------------------------------

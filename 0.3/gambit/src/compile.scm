@@ -14,6 +14,8 @@
 ;;; ---------------------------------------------------------------------
 
 (define (%find-variable env expr) (values #f #f))
+(define (%add-frame env frame) #f)
+(define (%params->frame params) #f)
 
 ;;; ---------------------------------------------------------------------
 ;;; discriminating expression types
@@ -44,6 +46,27 @@
 
 (define (%gen opcode . args)
   (list (cons opcode args)))
+
+;;; this generator handles ensuring that we know how many arguments
+;;; a compiled method expects. we count the required arguments
+;;; here, and generate either an ARGS or ARGS. instruction, depending
+;;; on whether the method allows restargs. how do we know how many
+;;; restargs to collect? the app compiler counts the args passed
+;;; in the application and passes that sum as an argument to CALLJ
+;;; the legal lambda list forms for methods are:
+;;; (^ () ...)
+;;; (^ args ...)
+;;; (^ (a b ... n))
+;;; (^ (a b & rest))
+(define (%gen-args arglist)
+  (cond
+   ((null? arglist)(%gen 'ARGS 0))
+   ((symbol? arglist)(%gen 'ARGS. 0))
+   ((pair? arglist)(let ((restpos (position '& arglist)))
+                     (if restpos
+                         (%gen 'ARGS. restpos)
+                         (%gen 'ARGS (length arglist)))))
+   (else (error (str "Invalid method argument list: " arglist)))))
 
 (define %next-label-number #f)
 (let ((_labelnum 0))
@@ -131,7 +154,14 @@
   (%compile-not-yet-implemented '(define record) expr env val? more?))
 
 (define (%compile-define-variable expr env val? more?)
-  (%compile-not-yet-implemented '(define variable) expr env val? more?))
+  (let ((varname (car expr))
+        (valexpr (cadr expr)))
+    (assert (symbol? varname)
+            (str "Non-symbol given as a variable name in define variable: " varname))
+    (%seq (%compile valexpr env #t #t)
+          (%gen 'GSET varname)
+          (if val? '() (%gen 'POP))
+          (if more? '() (%gen 'RETURN)))))
 
 (define (%compile-define-vector expr env val? more?)
   (%compile-not-yet-implemented '(define vector) expr env val? more?))
@@ -194,8 +224,8 @@
   (%compile-not-yet-implemented 'match expr env val? more?))
 
 (define (%compile-method params body env val? more?)
-  (%make-fn env: env parameters: params 
-            code: (%seq (%gen-args params 0)
+  (%makefn env: env parameters: params 
+            code: (%seq (%gen-args params)
                         (%compile-begin body (%add-frame env (%params->frame params)) #t #f))))
 
 (define (%compile-quasiquote expr env val? more?)
@@ -221,9 +251,6 @@
       (%seq (%gen-var expr env)
             (if more? '() (%gen 'RETURN)))
       '()))
-
-(define (%compile-when expr env val? more?)
-  (%compile-not-yet-implemented 'when expr env val? more?))
 
 (define (%compile-with-exit expr env val? more?)
   (%compile-not-yet-implemented 'with-exit expr env val? more?))
@@ -251,14 +278,18 @@
     ((unless)(%compile-if (list 'not
                                 (list-ref expr 1))
                           (cons 'begin (drop 2 expr))
+                          '()
                           env val? more?))
     ((unquote)(%compile-unquote expr env val? more?))
     ((unquote-splicing)(%compile-unquote-splicing expr env val? more?))
     ((when)(%compile-if (list-ref expr 1)
                         (cons 'begin (drop 2 expr))
+                        '()
                         env val? more?))
     ((with-exit)(%compile-with-exit expr env val? more?))
     (else (error (str "Unrecognized special form: " (car expr))))))
+
+
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
