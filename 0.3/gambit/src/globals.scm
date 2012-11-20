@@ -12,11 +12,31 @@
 (define (%bard-globals)
   (make-table test: eq?))
 
-(define (%global-ref globals name)
-  (table-ref globals name #!unbound))
+(define (%defglobal! gtable gname gval #!key (mutable #f))
+  (let ((var (%make-var val name #!key (mutable #f))))
+    (table-set! gtable gname var)
+    val))
 
-(define (%global-set! globals name val)
+(define (%get-global globals name #!optional (default #!unbound))
+  (table-ref globals name default))
+
+(define (%set-global! globals name val)
   (table-set! globals name val))
+
+(define (%global-mutable? globals name)
+  (%var-mutable? (%get-global globals name)))
+
+(define (%gref globals name)
+  (let ((var (%get-global globals name #f)))
+    (if var
+        (%var-value var)
+        #!unbound)))
+
+(define (%gset! globals name val)
+  (let ((var (%get-global globals name #f)))
+    (if var
+        ((%var-setter var) val)
+        (error (str "Undefined variable " name)))))
 
 
 

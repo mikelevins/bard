@@ -9,22 +9,19 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define (%var-val var)
-  (car var))
+;;; a var is represented as: (val . (name . setter-function))
+;;; if setter-function is #f, then the var is read-only
 
-(define (%set-var-val! var val)
-  (set-car! var val))
-
-(define (%var-name var)
-  (cadr var))
-
-(define (%var-setter var)
-  (cddr var))
-
-(define (%make-var val name #!key (mutable #f))
-  (let ((var (cons val (cons name #f))))
+(define (%make-var name val #!key (mutable #f))
+  (let* ((meta (cons name #f))
+         (var (cons val meta)))
     (if mutable
-        (let ((setter (lambda (v)(set-car! var v))))
-          (set-cdr! (cdr var) setter)))
+        (set-cdr! meta (lambda (x)(set-car! var x))))
     var))
+
+(define (%var-val v)(car v))
+(define (%var-name v)(cadr v))
+(define (%var-setter v)(cddr v))
+(define (%var-mutable? v)(and (cddr v) #t))
+
 

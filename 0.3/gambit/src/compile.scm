@@ -10,14 +10,6 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; stubs
-;;; ---------------------------------------------------------------------
-
-(define (%find-variable env expr) (values #f #f))
-(define (%add-frame env frame) #f)
-(define (%params->frame params) #f)
-
-;;; ---------------------------------------------------------------------
 ;;; discriminating expression types
 ;;; ---------------------------------------------------------------------
 
@@ -48,12 +40,11 @@
   (list (cons opcode args)))
 
 ;;; this generator handles ensuring that we know how many arguments
-;;; a compiled method expects. we count the required arguments
-;;; here, and generate either an ARGS or ARGS. instruction, depending
-;;; on whether the method allows restargs. how do we know how many
-;;; restargs to collect? the app compiler counts the args passed
-;;; in the application and passes that sum as an argument to CALLJ
-;;; the legal lambda list forms for methods are:
+;;; and what argument names a compiled method expects, and arranges to
+;;; extend the method environment to accommodte them. how do we know
+;;; how many restargs to collect? the app compiler counts the args
+;;; passed in the application and passes that sum as an argument to
+;;; CALLJ the legal lambda list forms for methods are:
 ;;; (^ () ...)
 ;;; (^ args ...)
 ;;; (^ (a b ... n))
@@ -64,8 +55,8 @@
    ((symbol? arglist)(%gen 'ARGS. 0))
    ((pair? arglist)(let ((restpos (position '& arglist)))
                      (if restpos
-                         (%gen 'ARGS. restpos)
-                         (%gen 'ARGS (length arglist)))))
+                         (%gen 'ARGS restpos)
+                         (%gen 'ARGS. restpos))))
    (else (error (str "Invalid method argument list: " arglist)))))
 
 (define %next-label-number #f)
@@ -129,8 +120,20 @@
    (else (%seq (%compile (car exprs) env #f #t)
                (%compile-begin (cdr exprs) env val? more?)))))
 
+
+(define (%cond-clauses->if expr)
+  (if (null? expr)
+      '()
+      (if (null? (cdr expr))
+          `(if ,(caar expr) (begin ,@(cdar expr)))
+          (let* ((c1 (car expr))
+                 (test (car c1))
+                 (then `(begin ,@(cdr c1)))
+                 (more (%cond-clauses->if (cdr expr))))
+            `(if ,test ,then ,more)))))
+
 (define (%compile-cond expr env val? more?)
-  (%compile-not-yet-implemented 'cond expr env val? more?))
+  (%compile (%cond-clauses->if expr) env val? more?))
 
 (define (%compile-constant expr env val? more?)
   (if val?
@@ -185,7 +188,7 @@
          (thencode (%compile then env val? more?))
          (elsecode (%compile else env val? more?)))
     (cond
-     ((equal? thencode elsecode)(%seq (%compile test env nil t)
+     ((equal? thencode elsecode)(%seq (%compile test env #f #t)
                                       elsecode))
      ((null? thencode)(let ((L2 (%gen-label)))
                         (%seq testcode
@@ -223,10 +226,41 @@
 (define (%compile-match expr env val? more?)
   (%compile-not-yet-implemented 'match expr env val? more?))
 
+;;; compile-method
+;;; in order to compile a method form we must do several things:
+;;; 1. parse the formal parameters into an environment frame that can
+;;;    be used to construct the compile-time environment so that
+;;;    references to the formal parameters are treated as references to
+;;;    lexical variables
+;;; 2. store the constructed compile-time environment frame so that
+;;;    when the method is actually called, we can augment the actual
+;;;    runtime environment with bindings of the formal parameters to
+;;;    the passed parameters
+;;; 3. compile the body of the method in the compile-time environment,
+;;;    generating code at the beginning of the method body that
+;;;    replaces the top frame of the method environment with a frame
+;;;    constructed by binding the actual parameters to the arguments
+;;;    passed in the method call.
+;;; 
+;;; method parameter lists can take any of the following forms:
+;;;
+;;; () ; no arguments accepted
+;;; args ; any and all arguments bound as a list to args
+;;; (& args)  ; any and all arguments bound as a list to args
+;;; (& {key1: val1 key2: val2 ...}) ; any and all args treated as 
+;;;                                 ; a plist of keyword arguments with
+;;;                                 ; default values
+;;; (arg1 arg2 ...) ; required arguments
+;;; (arg1 arg2 ... & more) ; required arguments plus rest arguments bound to more
+;;; (arg1 arg2 ... & {key1: val1 key2: val2 ...}) ; required arguments plus
+;;;                                               ; keyword arguments with default values
+
+
 (define (%compile-method params body env val? more?)
-  (%makefn env: env parameters: params 
+  (let ((menv (%add-frame env (%method-parameters->frame params))))
+    (%makefn env: menv parameters: params 
             code: (%seq (%gen-args params)
-                        (%compile-begin body (%add-frame env (%params->frame params)) #t #f))))
+                        (%compile-begin body menv #t #f)))))
 
 (define (%compile-quasiquote expr env val? more?)
   (%compile-not-yet-implemented 'quasiquote expr env val? more?))
@@ -259,7 +293,7 @@
   (case (car expr)
     ((λ ^ lambda method)(%compile-method (cadr expr) (cddr expr) env val? more?))
     ((begin)(%compile-begin (cdr expr) env val? more?))
-    ((cond)(%compile-cond expr env val? more?))
+    ((cond)(%compile-cond (cdr expr) env val? more?))
     ((define)(%compile-define expr env val? more?))
     ((ensure)(%compile-ensure expr env val? more?))
     ((if)(%compile-if (list-ref expr 1)

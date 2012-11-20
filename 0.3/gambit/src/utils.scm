@@ -9,14 +9,21 @@
 ;;;;
 ;;;; ***********************************************************************
 
+
 ;;; ---------------------------------------------------------------------
-;;; general utils
+;;; macros
 ;;; ---------------------------------------------------------------------
 
 (define-macro (unless test . body)
   `(if (not ,test)
        (begin
          ,@body)))
+
+;;; ---------------------------------------------------------------------
+;;; general utils
+;;; ---------------------------------------------------------------------
+
+(define (identity x) x)
 
 ;;; ---------------------------------------------------------------------
 ;;; debugging utils
@@ -35,6 +42,14 @@
 ;;; list utils
 ;;; ---------------------------------------------------------------------
 
+(define (copy-tree ls)
+  (if (pair? ls)
+      (if (null? ls)
+          ls
+          (cons (copy-tree (car ls))
+                (copy-tree (cdr ls))))
+      ls))
+
 (define (drop n ls)
   (let loop ((i n)
              (items ls))
@@ -43,6 +58,14 @@
         (if (null? ls)
             (error (str "index out of range: " n))
             (loop (- i 1) (cdr items))))))
+
+(define (find-association key entries #!key (test equal?))
+  (let loop ((entries entries))
+    (if (null? entries)
+        #f
+        (if (test key (car entries))
+            (car entries)
+            (loop (cdr entries))))))
 
 (define (position item ls #!key (test eq?))
   (let loop ((items ls)
@@ -53,6 +76,22 @@
             i
             (loop (cdr items)
                   (+ i 1))))))
+
+(define (remove test entries)
+  (let loop ((entries entries))
+    (if (null? entries)
+        '()
+        (if (test (car entries))
+            (loop (cdr entries))
+            (cons (car entries)
+                  (loop (cdr entries)))))))
+
+(define (take n ls)
+  (if (<= n 0)
+      '()
+      (cons (car ls)
+            (take (- n 1)
+                  (cdr ls)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; string utils

@@ -54,33 +54,6 @@
 ;;; general utils
 ;;; ---------------------------------------------------------------------
 
-(define (identity x) x)
-
-(define (copy-tree ls)
-  (if (pair? ls)
-      (if (null? ls)
-          ls
-          (cons (copy-tree (car ls))
-                (copy-tree (cdr ls))))
-      ls))
-
-(define (find-association key entries #!key (test equal?))
-  (let loop ((entries entries))
-    (if (null? entries)
-        #f
-        (if (test key (car entries))
-            (car entries)
-            (loop (cdr entries))))))
-
-(define (remove test entries)
-  (let loop ((entries entries))
-    (if (null? entries)
-        '()
-        (if (test key (car entries))
-            (loop (cdr entries))
-            (cons (car entries)
-                  (loop (cdr entries)))))))
-
 ;;; ---------------------------------------------------------------------
 ;;; Gambit runtime utils
 ;;; ---------------------------------------------------------------------

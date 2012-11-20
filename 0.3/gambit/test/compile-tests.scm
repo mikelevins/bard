@@ -7,6 +7,11 @@
 ;;; begin
 (%compile '(begin 1 2 3) '() #t #f)
 
+;;; cond
+(%cond-clauses->if '((1 1)(2 2 3)(3 3 4 5)))
+(%compile '(cond (1 1)) '() #t #f)
+(%compile '(cond (1 1)(2 2 3)(3 3 4 5)) '() #t #f)
+
 ;;; constant
 (%compile '() '() #t #f)
 (%compile 1 '() #t #f)
@@ -22,6 +27,7 @@
 
 ;;; method
 (%compile '(^ (x) x) '() #t #f)
+(%compile '(^ (x y & more) (list x y)) '() #t #f)
 
 ;;; quote
 (%compile '(quote x) '() #t #f)
