@@ -1,0 +1,98 @@
+the Bard development environment
+
+The current 0.3 line of development of Bard is designed to support a
+particular type of development environment, with the intention of
+providing it on a certain set of target platforms.
+
+Platforms
+
+The target platforms are:
+
+1. The web
+2. OSX
+3. Linux
+4. Mobile platforms, including iOS
+5. Windows
+
+Supporting the Bard runtime on OSX, Linux, and Windows is quite
+straightforward: it's simply an executable VM that runs Bard programs.
+
+On mobile platforms--specifically on iOS--it's slightly less
+straightforward because of Apple's rules, but still not particularly
+troublesome. Bard is built the same way as for OSX, Linux, and
+Windows, but any app-store versions of the system will be forced by
+Apple's policies to disable the ability to download and run code.
+That necessity means that Bard cannot be marketed to the public as a
+development platform for iOS *on* iOS, but I can still use it to
+develop programs for iOS, and can offer development for iOS, provided
+that the development environment runs on the desktop.
+
+The least-well specified, but most interesting, target is the web. The
+current trends in OSX and Windows OS development are noxious, which
+makes the Web important for the future as an open platform. Even
+leaving aside those reasons to prefer the Web as a platform, it's
+strictly preferable anyway, because it provides a zero-install,
+zero-configuration, hardware- and OS-neutral environment for running
+end-user software.
+
+The problem, of course, is that the Web is a horribly clunky
+platform. It is, nevertheless, *possible* (however painful) to create
+nice end-user experiences using the Web. The only downside is that it
+will take a ton of work to make a fluent development environment for
+it.
+
+Development Environment
+
+The type of development environment I intend has the following
+characteristics:
+
+- image-based
+  It's a live, running system whose tools are presented by
+  a Lisp heap image that can be saved and restored at
+  arbitrary points, preserving the full state of the system.
+  Like Smalltalk systems, the Bard system image is based on
+  portable VM object code, and can be loaded by a Bard system
+  independent of OS or hardware.
+
+- SK8-like presentation
+  the dev environment's presentation model is borrowed from SK8: the
+  display is treated as a container called a "stage"; visual elements
+  are presented by adding them to this container. Complex interactive
+  objects are assembled by composing them in containment relations.
+  Event-handling is dispatched by walking the containment hierarchy
+  searching for objects that have registered interest in the type
+  of event being handled.
+
+- bauhuas-like extensible event system
+  the system provides an event model for all standard events (mouse
+  movement and button actions; touches and multitouches; keystrokes;
+  device activation and deactivation; network events). The event
+  system is extensible, providing the ability to define new
+  kinds of events specified by patterns, and using pattern-matching
+  to express mappings from events to event handlers
+
+- Bard containers
+  the Bard runtime itself is modeled as a container: it contains
+  VM tasks. The VM is single-threaded--one VM per thread; however,
+  a Bard process can contain and execute more than one VM. A VM
+  can spawn additional VMS, either in-process or in additional
+  spawned processes, depending on the desires of the programmer
+  and the capabilities of the underlying platform. Bard VMs 
+  communicate with one another using messages (consisting of 
+  arbitrary Bard values) sent to mailboxes.
+
+- platform-independent
+  The same Bard environment is presented regardless of the
+  underlying platform. whether running on OSX, Linux, or
+  the Web, the Bard environment appears, as far as technically
+  possible, the same. This feature is an intentional move
+  back to the old idea of Lisp and Smalltalk as languages that
+  behave like operating systems; it reflects my desire for a
+  ubiquitous computing environment that transcends individual
+  devices and locations, and presents the same virtual environment
+  no matter which device I choose to use, and no matter
+  in what location I use it.
+
+
+
+
