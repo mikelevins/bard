@@ -100,8 +100,8 @@
 (%defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
 (%defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
 (%defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
-;;;(%defop CALL   (lambda (state) ))
-;;;(%defop RETURN (lambda (state) ))
+(%defop CALL   (lambda (state) (error "CALL not yet implemented")))
+(%defop RETURN (lambda (state) (error "RETURN not yet implemented")))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution

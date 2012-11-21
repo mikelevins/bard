@@ -52,3 +52,10 @@
           opname: 'ADD
           side-effects: #f
           opfn: +)
+
+(%defprim 'version
+          required-arguments: 0
+          rest-arguments: #f
+          opname: 'VERSION
+          side-effects: #f
+          opfn: (lambda () $bard-version))

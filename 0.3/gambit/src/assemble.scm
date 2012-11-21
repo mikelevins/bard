@@ -1,15 +1,14 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          code.scm
+;;;; Name:          assemble.scm
 ;;;; Project:       Bard
-;;;; Purpose:       representation of vm code
+;;;; Purpose:       the Bard assembler
+;;;;                output is symbolic code vectors
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(define %code-ref vector-ref)
-
-(define (->code . instructions)
-  (list->vector instructions))
+(define (%assemble code)
+  (list->vector code))

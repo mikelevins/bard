@@ -34,6 +34,8 @@
          "src/fn.scm"
          "src/prim.scm"
          "src/compile.scm"
+         "src/assemble.scm"
+         "src/link.scm"
          "src/vm.scm"
          ))
 

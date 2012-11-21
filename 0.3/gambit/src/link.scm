@@ -1,15 +1,19 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          code.scm
+;;;; Name:          link.scm
 ;;;; Project:       Bard
-;;;; Purpose:       representation of vm code
+;;;; Purpose:       the Bard linker
+;;;;                converts object code to executable code
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(define %code-ref vector-ref)
+(define (%link-instruction instr)
+  (cons (%opname->op (car instr))
+        (cdr instr)))
 
-(define (->code . instructions)
-  (list->vector instructions))
+(define (%link code)
+  (vector-map %link-instruction code))
+

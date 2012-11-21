@@ -10,5 +10,11 @@
 ;;;; ***********************************************************************
 
 
-(define $bard-version-string "Bard version 0.3.0")
+(define $bard-version (vector 0 3 0))
+(define $bard-version-string
+  (string-append (object->string (vector-ref $bard-version 0))
+                 "."
+                 (object->string (vector-ref $bard-version 1))
+                 "."
+                 (object->string (vector-ref $bard-version 2))))
 

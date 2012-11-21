@@ -44,7 +44,7 @@
 ;;; extend the method environment to accommodte them. how do we know
 ;;; how many restargs to collect? the app compiler counts the args
 ;;; passed in the application and passes that sum as an argument to
-;;; CALLJ the legal lambda list forms for methods are:
+;;; CALL the legal lambda list forms for methods are:
 ;;; (^ () ...)
 ;;; (^ args ...)
 ;;; (^ (a b ... n))
@@ -92,7 +92,7 @@
                (%compile-begin argexprs env #f more?)
                ;; value or side-effect needed
                (%seq (%compile-list argexprs env val? more?)
-                     (%gen (%prim-opname prim)(length argexprs))
+                     (%gen 'PRIM (%prim-opname prim)(length argexprs))
                      (if val? '() (%gen 'POP))
                      (if more? '() (%gen 'RETURN)))))
      ((and (%lambda-expression? fexpr)
@@ -105,13 +105,13 @@
         (%seq (%gen 'SAVE k)
               (%compile-list argexprs env val? more?)
               (%compile fexpr env #t #t)
-              (%gen 'CALLJ (length argexprs))
+              (%gen 'CALL (length argexprs))
               (list k)
               (if val? '() (%gen 'POP)))))
      (else ;; the function call is a simple jump 
       (%seq (%compile-list argexprs env val? more?)
             (%compile fexpr env #t #t)
-            (%gen 'CALLJ (length argexprs)))))))
+            (%gen 'CALL (length argexprs)))))))
 
 (define (%compile-begin exprs env val? more?)
   (cond
@@ -142,7 +142,12 @@
       (%gen-none)))
 
 (define (%compile-define-class expr env val? more?)
-  (%compile-not-yet-implemented '(define class) expr env val? more?))
+  (let ((cname (car expr)))
+    (assert (symbol? cname)
+            (str "Non-symbol given as a class name in define class: " cname))
+    (%seq (%gen 'CLASS cname)
+          (if val? '() (%gen 'POP))
+          (if more? '() (%gen 'RETURN)))))
 
 (define (%compile-define-macro expr env val? more?)
   (%compile-not-yet-implemented '(define macro) expr env val? more?))

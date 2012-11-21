@@ -1,8 +1,14 @@
 
 
 ;;; application
-(%compile '(= 2 3) '() #t #f)
-(%compile '(+ 2 3 4 5) '() #t #f)
+(define $bap (%compile '(+ 2 3) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+
+
+(define $bap (%compile '(+ 2 3 4 5) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
 
 ;;; begin
 (%compile '(begin 1 2 3) '() #t #f)
@@ -15,6 +21,9 @@
 ;;; constant
 (%compile '() '() #t #f)
 (%compile 1 '() #t #f)
+
+;;; define class
+(%compile '(define class Ratio) '() #t #f)
 
 ;;; define variable
 (%compile '(define variable x 5) '() #t #f)
