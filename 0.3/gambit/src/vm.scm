@@ -64,12 +64,19 @@
 (define (%pushv! state val)(%setvstack! state (cons val (%vstack state))))
 (define (%topv! state)(car (%vstack state)))
 (define (%popv! state)(let ((val (car (%vstack state)))) (%setvstack! state (cdr (%vstack state))) val))
+(define (%takeallv! state)(let ((vals (%vstack state))) (%setvstack! state '()) vals))
 (define (%pushc! state val)(%setcstack! state (cons val (%cstack state))))
 (define (%topc! state)(car (%cstack state)))
 (define (%popc! state)(let ((saved (car (%cstack state)))) (%setcstack! state (cdr (%cstack state))) saved))
 (define (%cc state)(%pushv! state (%make-saved state)))
 (define (%setcc! state)(%copystate! (%popv! state) state))
 
+(define (%apply-prim state)
+  (let* ((pname (%arg1 state))
+         (prim (%getprim pname))
+         (pfn (%prim-opfn prim))
+         (args (%takeallv! state)))
+    (apply pfn args)))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm ops
@@ -78,7 +85,7 @@
 (define $opname->opfn-table (make-table test: eq?))
 (define $opfn->opname-table (make-table test: eq?))
 
-(define-macro (%defop opname opfn)
+(define-macro (defop opname opfn)
   `(begin
      (table-set! $opname->opfn-table ',opname ,opfn)
      (table-set! $opfn->opname-table ,opfn ',opname)
@@ -87,21 +94,21 @@
 (define (%opname->op opname)
   (table-ref $opname->opfn-table opname))
 
-(%defop NOP    identity)
-(%defop HALT   (lambda (state) ((%exitfn state)(%topv state))))
-(%defop CONST  (lambda (state) (%pushv! state (%arg1 state))))
-(%defop LREF   (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
-(%defop LSET   (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
-(%defop GREF   (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
-(%defop GSET   (lambda (state) (%pushv! state (%gset! (%env state) (%arg1 state)(%topv state)))))
-(%defop POPV   %popv!)
-(%defop POPC   %popc!)
-(%defop PRIM   (lambda (state) (%pushv! state (apply (%op state)(%takeallv! state)))))
-(%defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
-(%defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
-(%defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
-(%defop CALL   (lambda (state) (error "CALL not yet implemented")))
-(%defop RETURN (lambda (state) (error "RETURN not yet implemented")))
+(defop NOP    identity)
+(defop HALT   (lambda (state) ((%exitfn state)(%topv state))))
+(defop CONST  (lambda (state) (%pushv! state (%arg1 state))))
+(defop LREF   (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
+(defop LSET   (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
+(defop GREF   (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
+(defop GSET   (lambda (state) (%pushv! state (%gset! (%env state) (%arg1 state)(%topv state)))))
+(defop POPV   %popv!)
+(defop POPC   %popc!)
+(defop PRIM   (lambda (state) (%pushv! state (%apply-prim state))))
+(defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
+(defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
+(defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
+(defop CALL   (lambda (state) (error "CALL not yet implemented")))
+(defop RETURN (lambda (state) (error "RETURN not yet implemented")))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution

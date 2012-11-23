@@ -58,3 +58,4 @@ builds//src/vm7/comp.scm~
 /0.3/src/hlvm.scm~
 /0.3/src/.DS_Store
 *.rkt~
+/0.3/gambit/TAGS

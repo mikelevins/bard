@@ -1,20 +1,26 @@
 
 
 ;;; application
-(define $bap (%compile '(+ 2 3) '() #t #t))
+(define $bap (%compile '(fx+ 2 3) '() #t #t))
 (define $bo (%assemble $bap))
 (define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(%stepvm $vm)
 
-
-(define $bap (%compile '(+ 2 3 4 5) '() #t #t))
+(define $bap (%compile '(fx+ 2 3 4 5) '() #t #t))
 (define $bo (%assemble $bap))
 (define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(%stepvm $vm)
 
 ;;; begin
 (%compile '(begin 1 2 3) '() #t #f)
 
 ;;; cond
-(%cond-clauses->if '((1 1)(2 2 3)(3 3 4 5)))
 (%compile '(cond (1 1)) '() #t #f)
 (%compile '(cond (1 1)(2 2 3)(3 3 4 5)) '() #t #f)
 

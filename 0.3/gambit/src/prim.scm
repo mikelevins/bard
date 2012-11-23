@@ -46,10 +46,13 @@
 (define (%primitive? p)
   (table-ref $primitives p #f))
 
-(%defprim '+ 
+(define (%getprim p)
+  (table-ref $primitives p #f))
+
+(%defprim 'fx+
           required-arguments: 0
           rest-arguments: #t
-          opname: 'ADD
+          opname: 'fx+
           side-effects: #f
           opfn: +)
 
