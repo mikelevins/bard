@@ -137,8 +137,10 @@
 
 (define (%compile-constant expr env val? more?)
   (if val?
-      (%seq (%gen 'CONST expr)
-            (if more? '() (%gen 'RETURN)))
+      (if more?
+          (%gen 'CONST expr)
+          (%seq (%gen 'CONST expr)
+                (%gen 'RETURN)))
       (%gen-none)))
 
 (define (%compile-define-class expr env val? more?)

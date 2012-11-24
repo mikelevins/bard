@@ -10,6 +10,20 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
+;;; macros
+;;; ---------------------------------------------------------------------
+
+(define-macro (unless test . body)
+  `(if (not ,test)
+       (begin
+         ,@body)))
+
+(define-macro (when test . body)
+  `(if ,test
+       (begin
+         ,@body)))
+
+;;; ---------------------------------------------------------------------
 ;;; vmstate
 ;;; ---------------------------------------------------------------------
 
@@ -62,7 +76,7 @@
 (define (%arg2 state)(list-ref (%instr state) 2))
 (define (%code-ref state i)(vector-ref (%code state) i))
 (define (%pushv! state val)(%setvstack! state (cons val (%vstack state))))
-(define (%topv! state)(car (%vstack state)))
+(define (%topv state)(car (%vstack state)))
 (define (%popv! state)(let ((val (car (%vstack state)))) (%setvstack! state (cdr (%vstack state))) val))
 (define (%takeallv! state)(let ((vals (%vstack state))) (%setvstack! state '()) vals))
 (define (%pushc! state val)(%setcstack! state (cons val (%cstack state))))
@@ -86,13 +100,16 @@
 (define $opfn->opname-table (make-table test: eq?))
 
 (define-macro (defop opname opfn)
-  `(begin
+  `(let ()
      (table-set! $opname->opfn-table ',opname ,opfn)
-     (table-set! $opfn->opname-table ,opfn ',opname)
+     (table-set! $opfn->opname-table (table-ref $opname->opfn-table ',opname) ',opname)
      ',opname))
 
 (define (%opname->op opname)
   (table-ref $opname->opfn-table opname))
+
+(define (%opfn->opname opfn)
+  (table-ref $opfn->opname-table opfn 'HALT))
 
 (defop NOP    identity)
 (defop HALT   (lambda (state) ((%exitfn state)(%topv state))))
@@ -105,7 +122,7 @@
 (defop POPC   %popc!)
 (defop PRIM   (lambda (state) (%pushv! state (%apply-prim state))))
 (defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
-(defop FJUMP  (lambda (state) (unless (%topv state)(%set-pc! state (%arg1 state)))))
+(defop FJUMP  (lambda (state) (unless (%popv! state)(%set-pc! state (%arg1 state)))))
 (defop TJUMP  (lambda (state) (when (%topv state)(%set-pc! state (%arg1 state)))))
 (defop CALL   (lambda (state) (error "CALL not yet implemented")))
 (defop RETURN (lambda (state) (error "RETURN not yet implemented")))
@@ -129,21 +146,39 @@
   (%exec! state)
   state)
 
+;;; ---------------------------------------------------------------------
+;;; vm debug displays
+;;; ---------------------------------------------------------------------
+
+(define (%instruction->string instr)
+  (if (pair? instr)
+      (let* ((opfn (car instr))
+             (args (cdr instr))
+             (opnm (%opfn->opname opfn)))
+        (object->string `(,opnm ,@args)))
+      (object->string instr)))
+
+(define (%code->string code)
+  (str "("
+       (apply str
+              (interpose " " 
+                         (map %instruction->string (vector->list code))))
+       ")"))
+
+(define (%fn->string fn)
+  (str "#<fn "
+       (or (%fn-name fn) "An anonymous function")
+       ">"))
+
 (define (%printstate state)
   (newline)
   (display "Bard VM v 0.3.0")(newline)
-  (display (str " instr: " (%instr state)))(newline)
-  (display (str " code: " (%code state)))(newline)
+  (display (str " instr: " (%instruction->string (%instr state))))(newline)
+  (display (str " code: " (%code->string (%code state))))(newline)
   (display (str " pc: " (%pc state)))(newline)
-  (display (str " fn: " (%fn state)))(newline)
+  (display (str " fn: " (%fn->string (%fn state))))(newline)
   (display (str " env: " (%env state)))(newline)
   (display (str " globals: " (%globals state)))(newline)
   (display (str " vstack: " (%vstack state)))(newline)
   (display (str " cstack: " (%cstack state)))(newline)
   (display (str " exitfn: " (%exitfn state)))(newline))
-
-;;; (define $code (%link (->code `(CONST 3) `(CONST 2) `(POPV) `(HALT))))
-;;; (define $fn (%makefn '() $code name: 'testfn))
-;;; (define $vmstate (%makevmstate $fn (%null-env) '()))
-;;; (%printstate $vmstate)
-;;; (%stepvm $vmstate)

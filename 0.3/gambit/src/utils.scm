@@ -67,6 +67,22 @@
             (car entries)
             (loop (cdr entries))))))
 
+(define (interpose item ls)
+  (if (or (null? ls)
+          (null? (cdr ls)))
+      ls
+      (cons (car ls)
+            (cons item
+                  (interpose item (cdr ls))))))
+
+(define (iota n)
+  (let loop ((i 0)
+             (ls '()))
+    (if (<= n i)
+        (reverse ls)
+        (loop (+ 1 i)
+              (cons i ls)))))
+
 (define (position item ls #!key (test eq?))
   (let loop ((items ls)
              (i 0))
@@ -85,6 +101,16 @@
             (loop (cdr entries))
             (cons (car entries)
                   (loop (cdr entries)))))))
+
+(define (set-nth-car! ls n v)
+  (let loop ((i 0)
+             (items ls))
+    (if (null? items)
+        (error "Index out of range")
+        (if (= i n)
+            (set-car! items v)
+            (loop (+ 1 i)(cdr items))))
+    ls))
 
 (define (take n ls)
   (if (<= n 0)
@@ -110,6 +136,15 @@
 ;;; ---------------------------------------------------------------------
 ;;; vector utils
 ;;; ---------------------------------------------------------------------
+
+(define (vector-for-each proc vec)
+  (let ((len (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i len)
+          (begin
+            (proc (vector-ref vec i))
+            (loop (+ i 1)))
+          vec))))
 
 (define (vector-map proc vec)
   (list->vector (map proc (vector->list vec))))
