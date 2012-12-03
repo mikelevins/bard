@@ -135,7 +135,9 @@
       ""
       (let ((s (if (string? (car args))
                    (car args)
-                   (object->string (car args)))))
+                   (if (char? (car args))
+                       (string (car args))
+                       (object->string (car args))))))
         (if (null? (cdr args))
             s
             (string-append s (apply str (cdr args)))))))

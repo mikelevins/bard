@@ -70,7 +70,7 @@
   (%printstate $vm))
 
 ;;; define variable
-(define $bap (%compile '(define variable x 5) '() #t #t))
+(define $bap (%compile '(define variable x 5 mutable: #t) '() #t #t))
 (define $bo (%assemble $bap))
 (define $bx (%link $bo))
 (define $fn (%makefn code: $bx))

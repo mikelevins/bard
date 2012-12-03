@@ -121,7 +121,7 @@
 (defop LREF   (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
 (defop LSET   (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
 (defop GREF   (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
-(defop DEF    (lambda (state) (%pushv! state (%defglobal! (%globals state) (%arg1 state)(%popv! state)))))
+(defop DEF    (lambda (state) (%pushv! state (%defglobal! (%globals state) (%arg1 state)(%popv! state) mutable: (%arg2 state)))))
 (defop GSET   (lambda (state) (%pushv! state (%gset! (%globals state) (%arg1 state)(%topv state)))))
 (defop POPV   %popv!)
 (defop POPC   %popc!)
@@ -175,6 +175,20 @@
        (or (%fn-name fn) "An anonymous function")
        ">"))
 
+(define (%globals->string globals)
+  (with-output-to-string 
+    '()
+    (lambda ()
+      (if (> (table-length globals) 0)
+          (begin
+            (table-for-each (lambda (k v)
+                              (newline)
+                              (display "  ")
+                              (display k)
+                              (display ": ")
+                              (display (object->string v)))
+                            globals))))))
+
 (define (%printstate state)
   (newline)
   (display "Bard VM v 0.3.0")(newline)
@@ -183,7 +197,7 @@
   (display (str " pc: " (%pc state)))(newline)
   (display (str " fn: " (%fn->string (%fn state))))(newline)
   (display (str " env: " (%env state)))(newline)
-  (display (str " globals: " (%globals state)))(newline)
+  (display (str " globals: " (%globals->string (%globals state))))(newline)
   (display (str " vstack: " (%vstack state)))(newline)
   (display (str " cstack: " (%cstack state)))(newline)
   (display (str " exitfn: " (%exitfn state)))(newline))

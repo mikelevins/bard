@@ -13,7 +13,7 @@
   (make-table test: eq?))
 
 (define (%defglobal! gtable gname gval #!key (mutable #f))
-  (let ((var (%make-var gval gname mutable: mutable)))
+  (let ((var (%make-var gname gval mutable: mutable)))
     (table-set! gtable gname var)
     gval))
 
