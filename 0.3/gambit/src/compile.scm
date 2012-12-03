@@ -326,10 +326,9 @@
     ((quote)(%compile-quote (cadr expr) env val? more?))
     ((setter)(%compile-setter expr env val? more?))
     ((set!)(%compile-set! expr env val? more?))
-    ((unless)(%compile-if (list 'not
-                                (list-ref expr 1))
-                          (cons 'begin (drop 2 expr))
+    ((unless)(%compile-if (list-ref expr 1)
                           '()
+                          (cons 'begin (drop 2 expr))
                           env val? more?))
     ((unquote)(%compile-unquote expr env val? more?))
     ((unquote-splicing)(%compile-unquote-splicing expr env val? more?))

@@ -123,12 +123,36 @@
   (%printstate $vm))
 
 ;;; quote
-(%compile '(quote x) '() #t #f)
+(define $bap (%compile '(quote x) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; unless
-(%compile '(unless #t 1 2 3) '() #t #f)
+(define $bap (%compile '(unless #t 1 2 3) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; when
-(%compile '(when #t 1 2 3) '() #t #f)
+(define $bap (%compile '(when #t 1 2 3) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 
