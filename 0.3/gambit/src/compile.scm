@@ -55,8 +55,8 @@
    ((symbol? arglist)(%gen 'ARGS. 0))
    ((pair? arglist)(let ((restpos (position '& arglist)))
                      (if restpos
-                         (%gen 'ARGS restpos)
-                         (%gen 'ARGS. restpos))))
+                         (%gen 'ARGS. restpos)
+                         (%gen 'ARGS (length arglist)))))
    (else (error (str "Invalid method argument list: " arglist)))))
 
 (define %next-label-number #f)
@@ -169,7 +169,7 @@
     (assert (symbol? varname)
             (str "Non-symbol given as a variable name in define variable: " varname))
     (%seq (%compile valexpr env #t #t)
-          (%gen 'GSET varname)
+          (%gen 'DEF varname)
           (if val? '() (%gen 'POP))
           (if more? '() (%gen 'RETURN)))))
 
@@ -213,10 +213,11 @@
              (%seq testcode
                    (%gen 'FJUMP L1)
                    thencode
-                   (if more? (%gen 'JUMP L2) '())
+                   (%gen 'JUMP L2)
                    (list L1)
                    elsecode
-                   (if more? (list L2) '())))))))
+                   (%gen 'JUMP L2)
+                   (list L2)))))))
 
 (define (%compile-let expr env val? more?)
   (%compile-not-yet-implemented 'let expr env val? more?))
@@ -262,12 +263,21 @@
 ;;; (arg1 arg2 ... & {key1: val1 key2: val2 ...}) ; required arguments plus
 ;;;                                               ; keyword arguments with default values
 
+(define (%&-position params)
+  (position '& params test: eq?))
+
+(define (%method-parameters->env-frame params env)
+  (cond
+   ((null? params)(%empty-frame))
+   ((%&-position params)(error (str "rest arguments are not yet implemented: " params)))
+   ((every? symbol? params)(%make-frame params))
+   (else (error (str "Invalid parameter list: " params)))))
 
 (define (%compile-method params body env val? more?)
-  (let ((menv (%add-frame env (%method-parameters->frame params))))
-    (%makefn env: menv parameters: params 
-            code: (%seq (%gen-args params)
-                        (%compile-begin body menv #t #f)))))
+  (let ((menv (%add-frame env (%method-parameters->env-frame params env))))
+    `((CONST ,(%makefn env: menv parameters: params 
+                      code: (%seq (%gen-args params)
+                                  (%compile-begin body menv #t #f)))))))
 
 (define (%compile-quasiquote expr env val? more?)
   (%compile-not-yet-implemented 'quasiquote expr env val? more?))

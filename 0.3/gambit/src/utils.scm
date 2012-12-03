@@ -59,6 +59,13 @@
             (error (str "index out of range: " n))
             (loop (- i 1) (cdr items))))))
 
+(define (every? pred ls)
+  (if (null? ls)
+      #t
+      (if (pred (car ls))
+          (every? pred (cdr ls))
+          #f)))
+
 (define (find-association key entries #!key (test equal?))
   (let loop ((entries entries))
     (if (null? entries)

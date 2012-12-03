@@ -45,6 +45,8 @@
              (else (error (str "Invalid variable description: " vspec)))))
           (error (str "Invalid variable description: " vspec)))))
 
+(define (%empty-frame)(vector))
+
 (define (%make-frame vspecs)
   (list->vector (map %vspec->var vspecs)))
 

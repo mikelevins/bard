@@ -13,9 +13,9 @@
   (make-table test: eq?))
 
 (define (%defglobal! gtable gname gval #!key (mutable #f))
-  (let ((var (%make-var val name #!key (mutable #f))))
+  (let ((var (%make-var gval gname mutable: mutable)))
     (table-set! gtable gname var)
-    val))
+    gval))
 
 (define (%get-global globals name #!optional (default #!unbound))
   (table-ref globals name default))

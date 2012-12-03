@@ -48,24 +48,79 @@
   (%printstate $vm))
 
 ;;; constant
-(%compile '() '() #t #f)
-(%compile 1 '() #t #f)
+(define $bap (%compile 1 '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; define class
-(%compile '(define class Ratio) '() #t #f)
+(define $bap (%compile '(define class Ratio) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; define variable
-(%compile '(define variable x 5) '() #t #f)
-(%compile '(define variable x 5) '() #t #t)
+(define $bap (%compile '(define variable x 5) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; if
-(%compile '(if #t 'true) '() #t #f)
-(%compile '(if #t 'true) '() #t #t)
-(%compile '(if (foo? x) 'true 'false) '() #t #t)
+(define $bap (%compile '(if #t 'true) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
+
+(define $bap (%compile '(if #f 'false) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; method
-(%compile '(^ (x) x) '() #t #f)
-(%compile '(^ (x y & more) (list x y)) '() #t #f)
+(define $bap (%compile '(^ (x) x) '() #t #f))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
+
+(define $bap (%compile '(^ (x y) (fx+ x y)) '() #t #t))
+(define $bo (%assemble $bap))
+(define $bx (%link $bo))
+(define $fn (%makefn code: $bx))
+(define $vm (%makevmstate $fn (%null-env) (%bard-globals)))
+(%printstate $vm)
+(begin
+  (%stepvm $vm)
+  (%printstate $vm))
 
 ;;; quote
 (%compile '(quote x) '() #t #f)
