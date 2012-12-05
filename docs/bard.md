@@ -129,10 +129,11 @@ it applies the method to the arguments.  If it doesn't, it raises an
 exception. Functions choose methods based on the types of their
 arguments.
 
-These are Bard's basic built-in types. It has a few more with more
-specialized uses, and most of these don't have standard literal syntax
-defined for them. These more specialized classes include:
+### Specialized classes
 
+Besides Bard's basic built-in classes, it has a few more types with
+more specialized uses, and most of these don't have standard literal
+syntax defined for them. These more specialized classes include:
 
 **Stream**
 
