@@ -25,13 +25,13 @@ kinds of expressions: atoms and lists.
 A list is a sequence of zero or more expressions enclosed in
 parentheses, like this:
 
-  (foo bar baz)
+    (foo bar baz)
 
 An atom is any expression that is not a list:
 
-  foo
-  1
-  5.7
+    foo
+    1
+    5.7
   
 ...and so on.
 
@@ -39,11 +39,11 @@ Like other dialects of Lisp, Bard treats a list as a function call,
 unless you tell it not to. You can tell it not to by quoting the
 list. Thus, this:
 
-  (foo bar baz)
+    (foo bar baz)
 
 ...is a function call, but this:
 
-  '(foo bar baz)
+    '(foo bar baz)
 
 ...is not.
 
@@ -59,49 +59,49 @@ Here they are:
 
 **Undefined**
 
-undefined
+    undefined
 
 The class of unknown, or undefined values.
 
 **Null**       
 
-nothing
+    nothing
 
 The absent or empty value.
 
 **Boolean**    
 
-true, false
+    true, false
 
 Logical true and false values.
 
 **Number**     
 
-0, 1.2, 2/3
+    0, 1.2, 2/3
 
 Magnitudes and other numeric values.
 
 **Text**       
 
-'foo, 'Bar, baz:, "Fred and Barney"
+    'foo, 'Bar, baz:, "Fred and Barney"
 
 Symbols, keywords, and strings.
 
 **Pair**
 
-[1 2], ['a 'b]
+    [1 2], ['a 'b]
 
 A class that represents a pair or an association of arbitrary values.
 
 **List**
 
-'(), '(0 1 2 3 4)
+    '(), '(0 1 2 3 4)
 
 An orderd sequence of values
 
 **Table**
 
-{a: 0 b: 1}
+    {a: 0 b: 1}
 
 A mapping from keys to values. Both keys and values may be arbitrary
 Bard objects, with two restrictions: neither keys nor values may be
@@ -110,15 +110,15 @@ list of pairs, though it isn't necessarily represented that way.
 
 **Method**
 
-(^ (x) x)          
-(^ (x y) (+ x y))
+    (^ (x) x)          
+    (^ (x y) (+ x y))
 
 A callable object that executes some code when applied to zero or more
 arguments.
 
 **Function**
 
-(-> Number Number)
+    (-> Number Number)
 
 An abstract, polymorphic, callable object.  Functions are like
 methods, except that they don't have any code of their own to
