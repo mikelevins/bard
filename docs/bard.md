@@ -59,60 +59,75 @@ Here they are:
 
 **Undefined**
 
-undefined          The class of unknown, or undefined values.
+undefined
+
+The class of unknown, or undefined values.
 
 **Null**       
 
-nothing            The absent or empty value.
+nothing
+
+The absent or empty value.
 
 **Boolean**    
 
-true, false        Logical true and false values.
+true, false
+
+Logical true and false values.
 
 **Number**     
 
-0, 1.2, 2/3        Magnitudes and other numeric values.
+0, 1.2, 2/3
+
+Magnitudes and other numeric values.
 
 **Text**       
 
-'foo, 'Bar, baz:,  Symbols, keywords, and strings.
-"Fred and Barney"
+'foo, 'Bar, baz:, "Fred and Barney"
+
+Symbols, keywords, and strings.
 
 **Pair**
 
-[1 2], ['a 'b]     A class that represents a pair or an association 
-                   of arbitrary values.
+[1 2], ['a 'b]
+
+A class that represents a pair or an association of arbitrary values.
 
 **List**
 
-'(), '(0 1 2 3 4)  An orderd sequence of values
+'(), '(0 1 2 3 4)
+
+An orderd sequence of values
 
 **Table**
 
-{a: 0 b: 1}        A mapping from keys to values. Both keys and values
-                   may be arbitrary Bard objects, with two restrictions:
-                   neither keys nor values may be undefined, and keys
-                   may not be nothing. A table may be treated as a
-                   list of pairs, though it isn't necessarily represented
-                   that way.
+{a: 0 b: 1}
+
+A mapping from keys to values. Both keys and values may be arbitrary
+Bard objects, with two restrictions: neither keys nor values may be
+undefined, and keys may not be nothing. A table may be treated as a
+list of pairs, though it isn't necessarily represented that way.
 
 **Method**
 
-(^ (x) x)          A callable object that executes some code when applied
-(^ (x y) (+ x y))  to one or more arguments.
+(^ (x) x)          
+(^ (x y) (+ x y))
+
+A callable object that executes some code when applied to zero or more
+arguments.
 
 **Function**
 
-(-> Number Number) An abstract, polymorphic, callable object.
-                   Functions are like methods, except that they don't
-                   have any code of their own to execute. Instead, they
-                   have methods that they know about. When a function 
-                   is applied to some arguments, it inspects the arguments
-                   looking for a match to a method it knows about. If
-                   if finds a match, it applies the method to the arguments.
-                   If it doesn't, it raises an exception. Functions choose
-                   methods based on the types of their arguments.
+(-> Number Number)
 
+An abstract, polymorphic, callable object.  Functions are like
+methods, except that they don't have any code of their own to
+execute. Instead, they have methods that they know about. When a
+function is applied to some arguments, it inspects the arguments
+looking for a match to a method it knows about. If if finds a match,
+it applies the method to the arguments.  If it doesn't, it raises an
+exception. Functions choose methods based on the types of their
+arguments.
 
 These are Bard's basic built-in types. It has a few more with more
 specialized uses, and most of these don't have standard literal syntax
