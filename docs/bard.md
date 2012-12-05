@@ -57,62 +57,93 @@ each one.
 
 Here they are:
 
-Undefined  undefined          The class of unknown, or undefined values.
+**Undefined**
 
-Null       nothing            The absent or empty value.
+undefined          The class of unknown, or undefined values.
 
-Boolean    true, false        Logical true and false values.
+**Null**       
 
-Number     0, 1.2, 2/3        Magnitudes and other numeric values.
+nothing            The absent or empty value.
 
-Text       'foo, 'Bar, baz:,  Symbols, keywords, and strings.
-           "Fred and Barney"
+**Boolean**    
 
-Pair       [1 2], ['a 'b]     A class that represents a pair or an association 
-                              of arbitrary values.
+true, false        Logical true and false values.
 
-List       '(), '(0 1 2 3 4)  An orderd sequence of values
+**Number**     
 
-Table      {a: 0 b: 1}        A mapping from keys to values. Both keys and values
-                              may be arbitrary Bard objects, with two restrictions:
-                              neither keys nor values may be undefined, and keys
-                              may not be nothing. A table may be treated as a
-                              list of pairs, though it isn't necessarily represented
-                              that way.
+0, 1.2, 2/3        Magnitudes and other numeric values.
 
-Method     (^ (x) x)          A callable object that executes some code when applied
-           (^ (x y) (+ x y))  to one or more arguments.
+**Text**       
 
-Function   (-> Number Number) An abstract, polymorphic, callable object.
-                              Functions are like methods, except that they don't
-                              have any code of their own to execute. Instead, they
-                              have methods that they know about. When a function 
-                              is applied to some arguments, it inspects the arguments
-                              looking for a match to a method it knows about. If
-                              if finds a match, it applies the method to the arguments.
-                              If it doesn't, it raises an exception. Functions choose
-                              methods based on the types of their arguments.
+'foo, 'Bar, baz:,  Symbols, keywords, and strings.
+"Fred and Barney"
+
+**Pair**
+
+[1 2], ['a 'b]     A class that represents a pair or an association 
+                   of arbitrary values.
+
+**List**
+
+'(), '(0 1 2 3 4)  An orderd sequence of values
+
+**Table**
+
+{a: 0 b: 1}        A mapping from keys to values. Both keys and values
+                   may be arbitrary Bard objects, with two restrictions:
+                   neither keys nor values may be undefined, and keys
+                   may not be nothing. A table may be treated as a
+                   list of pairs, though it isn't necessarily represented
+                   that way.
+
+**Method**
+
+(^ (x) x)          A callable object that executes some code when applied
+(^ (x y) (+ x y))  to one or more arguments.
+
+**Function**
+
+(-> Number Number) An abstract, polymorphic, callable object.
+                   Functions are like methods, except that they don't
+                   have any code of their own to execute. Instead, they
+                   have methods that they know about. When a function 
+                   is applied to some arguments, it inspects the arguments
+                   looking for a match to a method it knows about. If
+                   if finds a match, it applies the method to the arguments.
+                   If it doesn't, it raises an exception. Functions choose
+                   methods based on the types of their arguments.
+
 
 These are Bard's basic built-in types. It has a few more with more
 specialized uses, and most of these don't have standard literal syntax
 defined for them. These more specialized classes include:
 
-Stream     Objects that serve as sources or sinks for data. Objects
-           that belong to the Stream class include input ports, 
-           output ports, and generators.
 
-Class      An object that represents a class
+**Stream**
 
-Schema     An object that described a concrete arrangement of data.  A
-           schema describes how a value is actually represented; Bard
-           provides tools with which users can define their own
-           schemas and associate them with classes.
+Objects that serve as sources or sinks for data. Objects that belong
+to the Stream class include input ports, output ports, and generators.
 
-Singleton  An object that presents a data value as if it were a type.
-           Singletons make it possible for functions to dispatch on individual
-           values, as well as types of values.
+**Class**
 
-Type       Objects that serve the purpose of types. Types include classes,
-           singletons, and schemas, among other possibilities.
+An object that represents a class
+
+**Schema**
+
+An object that described a concrete arrangement of data.  A schema
+describes how a value is actually represented; Bard provides tools
+with which users can define their own schemas and associate them with
+classes.
+
+**Singleton**
+
+An object that presents a data value as if it were a type.  Singletons
+make it possible for functions to dispatch on individual values, as
+well as types of values.
+
+**Type**
+
+Objects that serve the purpose of types. Types include classes,
+singletons, and schemas, among other possibilities.
 
 
