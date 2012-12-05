@@ -6,32 +6,69 @@ Bard is a small, high-level, general-purpose programming language. It
 is interpreted, dynamic, and impurely functional. It has a unique
 object system influenced by, but different from, CLOS.
 
-Bard is a dialect of Lisp designed primarily to satisfy my
-preferences. It reflects my affection for a long-unavailable version
-of the Dylan programming language (that was still more obviously a
-Lisp), together with influences from Common Lisp, ML, Haskell, Python,
-Clojure, and other languages.
+Bard is a dialect of Lisp, because Lisp is the family of languages
+that offer me the most pleasure in programming. Bard is designed
+primarily to make me happy--to make my work more pleasant. If someone
+else likes it or finds it interesting, that's a good thing, but it is
+not a goal.
 
-Bard is a small Lisp. It has a small but useful set of built-in
-datatypes and functions.
+Bard is a small Lisp heavily influenced by Common Lisp, Scheme, and
+Dylan. It discards many features of those older languages, though, and
+adds just a few new ones. It's also influenced to various degrees by
+Smalltalk, Haskell, Lua, Erlang, Clojure, and other languages.
 
-The 0.2.x version of Bard was used for a year in production in an
-educational game project, serving as a tool for writing simple
-compilers and as a runtime engine for evaluating rules and
-event-handlers. That version of Bard is a subset of the language,
-which omits several Bard features that were not needed for its use in
-the games.
+The earliest running Bard implementation was a virtual machine and
+compiler that I got running in 2002. Before the 0.2 version, you would
+have had to know me personally to get a working copy.
 
-The 0.2.x versions of Bard were built as standalone interpreters on
-Mac OS X and Linux, and as a static library on Mac OS X and iOS.
+Bard 0.2 was used as the primary scripting and tools language for an
+educational games project funded by the STEM initiative through the
+Office of Naval Research, delivering games to the iOS platform. It
+served us well for over a year, but is a pretty slow interpreter for a
+subset of the language.
 
-The 0.2.x series was a rather slow implementation.
+It's still possible to build Bard 0.2 for OSX, iOS, and Linux, though
+you'll probably need my help to do it. Feel free to contact me if you
+want to do that.
 
-The 0.3 version represents current work on a vm-based version of the
-Bard that should demonstrate improved performance, and also implement
-more of the language definition.
+Bard 0.3 is intended to be a more complete implementation with better
+performance. It is again based on a virtual machine with am
+incremental compiler. Bard 0.3 compiles all of the core language, and
+the VM can execute most of it, but it's not ready for release yet; it
+lacks some basic amenities that would be needed for doing anything
+other than testing the compiler and VM. Once I've supplied the missing
+pieces and written a halfway decent read-eval-print loop for it, I'll
+make a release.
 
-A recent version of the Gambit Scheme compiler is needed to build
-Bard. iOS versions of Bard require Apple's iOS SDK and Xcode to build.
+Bard is designed to be a specific type of programming-language
+implementation--an "image-based" development environment. Once upon a
+time, that kind of environment was reasonably common and
+fashionable. Smalltalk-80 was one example of that kind of
+environment. Lisp Machines and several implementations of Common Lisp
+are other examples. 
 
+That kind of development environment is pretty rare these days, but it
+has some great advantages. Smalltalk systems still work that way, as
+do the more traditional Lisp implementations. The Factor language is
+an example of a nice newer language that works that way.
+
+By building Bard on a VM that runs abstract, platform-independent
+object code, I can easily port it to almost any platform, and provide
+a rich, common, standard library across all platforms. Although a
+VM-based design does sacrifice some performance, it's probably not
+enough to be a problem in the long run. There are straightforward ways
+to dramatically improve the performance of a VM-based system:
+improvements in the performance of the VM itself, using clever
+implementation strategies; Just-in-time compilation to native code,
+which has become popular and well-known, thanks to Java and Javascript
+implementations; and a simpler, older compilation strategy used by
+implementaitons like MacScheme: a VM that knows how to compile
+individual functions to native code and run a mixed system consisting
+of both interpreted and compiled functions.
+
+My forward progress on Bard is slow, but it's steady. I haven't lost
+interest in it for a dozen years, so it's unlikely I ever will. This
+repo represents the current state of its evolution. You can learn more
+about the language, its deisng, and its implementation by consulting
+the contents of the docs directory.
 
