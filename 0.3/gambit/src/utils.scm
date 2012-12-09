@@ -59,6 +59,13 @@
             (error (str "index out of range: " n))
             (loop (- i 1) (cdr items))))))
 
+(define (drop-while pred ls)
+  (if (null? ls)
+      ls
+      (if (pred (car ls))
+          (drop-while pred (cdr ls))
+          ls)))
+
 (define (every? pred ls)
   (if (null? ls)
       #t
@@ -125,6 +132,14 @@
       (cons (car ls)
             (take (- n 1)
                   (cdr ls)))))
+
+(define (take-while pred ls)
+  (if (null? ls)
+      '()
+      (if (pred (car ls))
+          (cons (car ls)
+                (take-while pred (cdr ls)))
+          '())))
 
 ;;; ---------------------------------------------------------------------
 ;;; string utils

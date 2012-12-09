@@ -20,7 +20,7 @@
 (define (%special-form? expr)
   (memq expr '(λ ^ lambda method begin cond define ensure if let loop
                  match quasiquote quote setter set! unless unquote
-                 unquote-splicing when with-exit)))
+                 unquote-splicing values when with-exit)))
 
 (define (%macro-form? expr)
   #f)
@@ -201,7 +201,7 @@
     ((record)(%compile-define-record (cddr expr) env val? more?))
     ((variable)(%compile-define-variable (cddr expr) env val? more?))
     ((vector)(%compile-define-vector (cddr expr) env val? more?))
-    (else (error (str "Unrecognized definition: define" (cadr expr))))))
+    (else (error (str "Unrecognized definition: define " (cadr expr))))))
 
 (define (%compile-ensure expr env val? more?)
   (%compile-not-yet-implemented 'ensure expr env val? more?))
@@ -235,8 +235,23 @@
                    (%gen 'JUMP L2)
                    (list L2)))))))
 
+;;; (let () 1) -> (begin 1)
+;;; (let ((x 1)) x) -> (%let1 (x 0) x)
+;;; (let ((x 1) (y 2)) (+ x y)) -> (%let1 (x 1) (%let1 (y 2) (+ x y)))
+;;; (let ((x y (values 1 2))) (+ x y)) -> (%letm (x y)(values 1 2) (+ x y))
+
 (define (%compile-let expr env val? more?)
-  (%compile-not-yet-implemented 'let expr env val? more?))
+  (let ((bindings (car expr))
+        (body (cdr expr)))
+    (if (null? bindings)
+        (%compile (cons 'begin body) env val? more?)
+        (let* ((binding (car bindings))
+               (vars (take-while symbol? binding))
+               (valform (drop-while symbol? binding))
+               (valexpr (if (null? valform) '() (car valform))))
+          (if (= 1 (length bindings))
+              (%compile `((^ ,vars (begin ,@body)) ,valexpr) env val? more?)
+              (%compile `((^ ,vars (let ,(cdr bindings) ,@body)) ,valexpr) env val? more?))))))
 
 (define (%compile-list expr env val? more?)
   (if (null? expr)
@@ -313,6 +328,13 @@
 (define (%compile-unquote-splicing expr env val? more?)
   (%compile-not-yet-implemented 'unquote-splicing expr env val? more?))
 
+(define (%compile-values exprs env val? more?)
+  (cond
+   ((null? exprs)(%compile-constant '() env val? more?))
+   ((= 1 (length exprs))(%compile (car exprs) env #t more?))
+   (else (%seq (%compile (car exprs) env #t #t)
+               (%compile-values (cdr exprs) env val? more?)))))
+
 (define (%compile-variable expr env val? more?)
   (if val? 
       (%seq (%gen-var expr env)
@@ -335,7 +357,7 @@
                           '()
                           (list-ref expr 3))
                       env val? more?))
-    ((let)(%compile-let expr env val? more?))
+    ((let)(%compile-let (cdr expr) env val? more?))
     ((loop)(%compile-loop expr env val? more?))
     ((match)(%compile-match expr env val? more?))
     ((quasiquote)(%compile-quasiquote expr env val? more?))
@@ -348,6 +370,7 @@
                           env val? more?))
     ((unquote)(%compile-unquote expr env val? more?))
     ((unquote-splicing)(%compile-unquote-splicing expr env val? more?))
+    ((values)(%compile-values (cdr expr) env val? more?))
     ((when)(%compile-if (list-ref expr 1)
                         (cons 'begin (drop 2 expr))
                         '()

@@ -101,8 +101,16 @@
   (%stepvm $vm)
   (%printstate $vm))
 
+;;; let
+(define $bap (%compile ' (let () 1)'() #t #t))
+(define $bap (%compile ' (let ((x 1)) x)'() #t #t))
+(define $bap (%compile ' (let ((x 1)(y 2)(z 3)) z)'() #t #t))
+(define $bap (%compile ' (let ((x y z (values 1 2 3))) z)'() #t #t))
+
+
+
 ;;; method
-(define $bap (%compile '(^ (x) x) '() #t #f))
+(define $bap (%compile '(^ (x) x) '() #t #T))
 (define $bo (%assemble $bap))
 (define $bx (%link $bo))
 (define $fn (%makefn code: $bx))
