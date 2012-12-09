@@ -32,12 +32,13 @@
         (%var-value var)
         #!unbound)))
 
-(define (%gset! globals name val)
-  (let ((var (%get-global globals name #f)))
-    (if var
-        ((%var-setter var) val)
-        (error (str "Undefined variable " name)))))
+(define (%gsetter globals nm)
+  (%var-setter (%get-global globals nm)))
 
-
-
-
+(define (%gset! globals nm v)
+  (let* ((setter (%gsetter globals nm)))
+    (if setter
+        (begin
+          (setter v)
+          v)
+        (error (str "Cannot assign to an immutable variable: " nm)))))

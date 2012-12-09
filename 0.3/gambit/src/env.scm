@@ -70,5 +70,14 @@
               (values i varpos)
               (loop (+ 1 i)(cdr frames)))))))
 
+(define (%lsetter env i j)
+  (%var-setter (%env-ref env i j)))
 
+(define (%lset! env i j v)
+  (let* ((setter (%lsetter env i j)))
+    (if setter
+        (begin
+          (setter v)
+          v)
+        (error (str "Cannot assign to an immutable variable: " (%var-name (%env-ref env i j)))))))
 

@@ -316,11 +316,22 @@
 (define (%compile-quote expr env val? more?)
   (%compile-constant expr env val? more?))
 
+;;; (setter x)) ; x a local or global var; get var accessor
+;;; (setter (foo x)) ; x a table; use table accessor
 (define (%compile-setter expr env val? more?)
-  (%compile-not-yet-implemented 'setter expr env val? more?))
+  (let ((place (cadr expr)))
+    (cond
+     ((symbol? place)(receive (i j)(%find-variable env place)
+                              (if i
+                                  (%gen 'LSETR i j "; " place)
+                                  (%gen 'GSETR place))))
+     ((pair? place)(let ((getter-var (car place))
+                         (table-var (cadr place)))
+                     (%compile `(table-setter ',getter-var ,table-var) env val? more?)))
+     (else (error (str "Can't get the setter of " place))))))
 
 (define (%compile-set! expr env val? more?)
-  (%compile-not-yet-implemented 'set! expr env val? more?))
+  (%compile `((setter ,(list-ref expr 1)) ,(list-ref expr 2)) env val? more?))
 
 (define (%compile-unquote expr env val? more?)
   (%compile-not-yet-implemented 'unquote expr env val? more?))
