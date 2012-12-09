@@ -133,6 +133,9 @@
 (defop TJUMP  (lambda (state) (when (%topv state)(%setpc! state (%arg1 state)))))
 (defop CALL   (lambda (state) (error "CALL not yet implemented")))
 (defop RETURN (lambda (state) (error "RETURN not yet implemented")))
+(defop SPAWN (lambda (state) (error "SPAWN not yet implemented"))) ; create an actor
+(defop SEND (lambda (state) (error "SEND not yet implemented"))) ; send a value to an actor (enqueue it on the target's mailbox)
+(defop RECV (lambda (state) (error "RECV not yet implemented"))) ; pop a value from the VM's mailbox
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution

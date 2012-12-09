@@ -19,8 +19,8 @@
 
 (define (%special-form? expr)
   (memq expr '(λ ^ lambda method begin cond define ensure if let loop
-                 match quasiquote quote setter set! unless unquote
-                 unquote-splicing values when with-exit)))
+                 match quasiquote quote receive send setter set! spawn 
+                 unless unquote unquote-splicing values when with-exit)))
 
 (define (%macro-form? expr)
   #f)
@@ -316,6 +316,16 @@
 (define (%compile-quote expr env val? more?)
   (%compile-constant expr env val? more?))
 
+;;; (receive) ; returns the next message in the Bard VM's mailbox
+;;;             (i.e. the next datum enqueued by a send)
+(define (%compile-receive expr env val? more?)
+  (%compile-not-yet-implemented 'receive expr env val? more?))
+
+;;; (send foo 'some-data) ; foo is an actor (i.e. bard's abstraction for a thread, 
+;;; process, or remote process; 'some-data is an arbitrary serializable value)
+(define (%compile-send expr env val? more?)
+  (%compile-not-yet-implemented 'send expr env val? more?))
+
 ;;; (setter x)) ; x a local or global var; get var accessor
 ;;; (setter (foo x)) ; x a table; use table accessor
 (define (%compile-setter expr env val? more?)
@@ -332,6 +342,20 @@
 
 (define (%compile-set! expr env val? more?)
   (%compile `((setter ,(list-ref expr 1)) ,(list-ref expr 2)) env val? more?))
+
+;;; (spawn (^ (parent-actor) ...) on: host)
+;;; parent-actor is bound to the executing process (the bard process that creates the spawn)
+;;; code in the spawn's body can use parent-actor to send messages back to its creator
+;;; ... is an arbitrary code body
+;;; host is one of:
+;;; - false (the default): the new actor gets a lightweight thread in the
+;;;                        process that created it
+;;; - true : the new actor gets a separate OS process on the same host
+;;; - a remote actor: the new actor gets a new OS process on the
+;;;                   host where the argument actor is running
+
+(define (%compile-spawn expr env val? more?)
+  (%compile-not-yet-implemented 'spawn expr env val? more?))
 
 (define (%compile-unquote expr env val? more?)
   (%compile-not-yet-implemented 'unquote expr env val? more?))
@@ -373,8 +397,11 @@
     ((match)(%compile-match expr env val? more?))
     ((quasiquote)(%compile-quasiquote expr env val? more?))
     ((quote)(%compile-quote (cadr expr) env val? more?))
+    ((receive)(%compile-receive expr env val? more?))
     ((setter)(%compile-setter expr env val? more?))
+    ((send)(%compile-send expr env val? more?))
     ((set!)(%compile-set! expr env val? more?))
+    ((spawn)(%compile-spawn expr env val? more?))
     ((unless)(%compile-if (list-ref expr 1)
                           '()
                           (cons 'begin (drop 2 expr))
