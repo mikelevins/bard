@@ -99,9 +99,9 @@
 (define $opname->opfn-table (make-table test: eq?))
 (define $opfn->opname-table (make-table test: eq?))
 
-(define-macro (defop opname opfn)
-  `(let ()
-     (table-set! $opname->opfn-table ',opname ,opfn)
+(define-macro (defop opname args . body)
+  `(let ((opfn (lambda (vmstate ,@args) (let ((%state (lambda () vmstate))) ,@body))))
+     (table-set! $opname->opfn-table ',opname opfn)
      (table-set! $opfn->opname-table (table-ref $opname->opfn-table ',opname) ',opname)
      ',opname))
 
@@ -111,50 +111,50 @@
 (define (%opfn->opname opfn)
   (table-ref $opfn->opname-table opfn 'HALT))
 
-(defop NOP    identity)
-(defop HALT   (lambda (state) ((%exitfn state)(%topv state))))
-(defop CONST  (lambda (state) (%pushv! state (%arg1 state))))
-(defop CLASS  (lambda (state) (let* ((cname (%arg1 state))
-                                     (class (%make-class cname)))
-                                (%defglobal! (%globals state) cname class mutable: #t)
-                                (%pushv! state cname))))
-(defop LREF   (lambda (state) (%pushv! state (%lref (%env state) (%arg1 state)(%arg2 state)))))
-(defop LSET   (lambda (state) (%pushv! state (%lset! (%env state) (%arg1 state)(%arg2 state)(%topv state)))))
-(defop LSETR  (lambda (state) (%pushv! state (%lsetter (%env state) (%arg1 state)(%arg2 state)))))
-(defop GREF   (lambda (state) (%pushv! state (%gref (%env state) (%arg1 state)))))
-(defop DEF    (lambda (state) (%pushv! state (%defglobal! (%globals state) (%arg1 state)(%popv! state) mutable: (%arg2 state)))))
-(defop GSET   (lambda (state) (%pushv! state (%gset! (%globals state) (%arg1 state)(%topv state)))))
-(defop GSETR  (lambda (state) (%pushv! state (%gsetter (%globals state) (%arg1 state)))))
-(defop POPV   %popv!)
-(defop POPC   %popc!)
-(defop PRIM   (lambda (state) (%pushv! state (%apply-prim state))))
-(defop JUMP   (lambda (state) (%setpc! state (%arg1 state))))
-(defop FJUMP  (lambda (state) (unless (%popv! state)(%setpc! state (%arg1 state)))))
-(defop TJUMP  (lambda (state) (when (%topv state)(%setpc! state (%arg1 state)))))
-(defop CALL   (lambda (state) (error "CALL not yet implemented")))
-(defop RETURN (lambda (state) (error "RETURN not yet implemented")))
-(defop SPAWN (lambda (state) (error "SPAWN not yet implemented"))) ; create an actor
-(defop SEND (lambda (state) (error "SEND not yet implemented"))) ; send a value to an actor (enqueue it on the target's mailbox)
-(defop RECV (lambda (state) (error "RECV not yet implemented"))) ; pop a value from the VM's mailbox
+(defop NOP    ()     (%state))
+(defop HALT   ()     ((%exitfn (%state))(%state)))
+(defop CONST  (k)    (%pushv! (%state) k))
+(defop CLASS  (nm)   (%pushv! (%state)(%defglobal! (%globals (%state)) nm (%make-class nm) mutable: #t)))
+(defop LREF   (i j)  (%pushv! (%state) (%lref (%env (%state)) i j)))
+(defop LSET   (i j)  (%lset! (%env state) i j (%topv (%state))))
+(defop LSETR  (i j)  (%pushv! (%state) (%lsetter (%env state) i j)))
+(defop GREF   (g)    (%pushv! (%state) (%gref (%env state) g)))
+(defop DEF    (g m?) (%pushv! (%state) (%gdef! (%globals state) g (%popv! state) mutable: m?)))
+(defop GSET   (g)    (%pushv! (%state) (%gset! (%globals state) g (%topv state))))
+(defop GSETR  (g)    (%pushv! (%state) (%gsetter (%globals state) g)))
+(defop POPV   ()     (%popv! (%state)))
+(defop POPC   ()     (%popc! (%state)))
+(defop PRIM   ()     (%pushv! (%state) (%apply-prim (%state))))
+(defop JUMP   (d)    (%setpc! (%state) d))
+(defop FJUMP  (d)    (unless (%popv! (%state))(%setpc! (%state) d)))
+(defop TJUMP  (d)    (when (%popv! state)(%setpc! (%state) d)))
+(defop CALL   () (error "CALL not yet implemented"))
+(defop RETURN () (error "RETURN not yet implemented"))
+(defop SPAWN  () (error "SPAWN not yet implemented")) ; create an actor
+(defop SEND   () (error "SEND not yet implemented")) ; send a value to an actor (enqueue it on the target's mailbox)
+(defop RECV   () (error "RECV not yet implemented")) ; pop a value from the VM's mailbox
+(defop READ   () (%pushv! (%state) (bard:read (%popv! (%state)))))
+(defop WRITE  () (error "WRITE not yet implemented")) ; write a Bard object to a port
 
 ;;; ---------------------------------------------------------------------
 ;;; vm execution
 ;;; ---------------------------------------------------------------------
 
-(define (%fetch! state)
-  (%setinstr! state (%code-ref state (%pc state))))
+(define (%decode instruction)
+  (values (car instruction)
+          (cdr instruction)))
 
-(define (%inc! state)
-  (%setpc! state (+ 1 (%pc state))))
+(define (%fetch vmstate n)
+  (let ((instr (%code-ref (%code vmstate) n)))
+    (%inc! vmstate)
+    instr))
 
-(define (%exec! state)
-  ((%op state) state))
+(define (%exec! instruction vmstate)
+  (receive (op args)(%decode instruction)
+           (op args vmstate)))
 
-(define (%stepvm state)
-  (%fetch! state)
-  (%inc! state)
-  (%exec! state)
-  state)
+(define (%step! vmstate)
+  (%exec! (%fetch! vmstate (%pc vmstate)) vmstate))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm debug displays

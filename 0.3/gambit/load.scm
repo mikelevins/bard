@@ -36,6 +36,7 @@
          "src/compile.scm"
          "src/assemble.scm"
          "src/link.scm"
+         "src/read.scm"
          "src/vm.scm"
          ))
 
@@ -48,3 +49,4 @@
             $bard-files))
 
 ;;; (load-bard)
+

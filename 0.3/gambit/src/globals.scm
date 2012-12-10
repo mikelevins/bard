@@ -12,28 +12,24 @@
 (define (%bard-globals)
   (make-table test: eq?))
 
-(define (%defglobal! gtable gname gval #!key (mutable #f))
-  (let ((var (%make-var gname gval mutable: mutable)))
-    (table-set! gtable gname var)
-    gval))
+(define (%gdef! gtable gname gval #!key (mutable #f))
+  (table-set! gtable gname (%make-var gname gval mutable: mutable))
+  gval)
 
-(define (%get-global globals name #!optional (default #!unbound))
+(define (%gget globals name #!optional (default #!unbound))
   (table-ref globals name default))
 
-(define (%set-global! globals name val)
-  (table-set! globals name val))
-
-(define (%global-mutable? globals name)
-  (%var-mutable? (%get-global globals name)))
+(define (%gmutable? globals name)
+  (%var-mutable? (%gget globals name)))
 
 (define (%gref globals name)
-  (let ((var (%get-global globals name #f)))
+  (let ((var (%gget globals name #f)))
     (if var
         (%var-value var)
         #!unbound)))
 
 (define (%gsetter globals nm)
-  (%var-setter (%get-global globals nm)))
+  (%var-setter (%gget globals nm)))
 
 (define (%gset! globals nm v)
   (let* ((setter (%gsetter globals nm)))
