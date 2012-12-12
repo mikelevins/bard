@@ -49,16 +49,8 @@
     (%private-make-vmstate instr code pc fn env globals vstack cstack exitfn)))
 
 (define (%make-saved state)
-  (let ((instr (%instr state))
-        (code (%code state))
-        (pc (%pc state))
-        (fn (%fn state))
-        (env (%env state))
-        (globals (%globals state))
-        (vstack (%vstack state))
-        (cstack (%cstack state))
-        (exitfn (%exitfn state)))
-    (%private-make-vmstate instr code pc fn env globals vstack cstack exitfn)))
+  (%private-make-vmstate (%instr state) (%code state) (%pc state) (%fn state) (%env state)
+                         (%globals state) (%vstack state) (%cstack state) (%exitfn state)))
 
 (define (%copystate! srcstate deststate)
   (%setinstr! deststate (%instr srcstate))
