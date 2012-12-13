@@ -26,53 +26,116 @@
        (begin
          ,@body)))
 
+(define-macro (prog1 form . forms)
+  `(let ((val ,form))
+     (begin ,@forms)
+     val))
+
 ;;; ---------------------------------------------------------------------
 ;;; vmstate
 ;;; ---------------------------------------------------------------------
 
+(define-type vmstate
+  constructor: %private-make-vmstate
+  (code %code %setcode!)
+  (pc %pc %setpc!)
+  (instr %instr %setinstr!)
+  (fn %fn %setfn!)
+  (nargs %nargs %setnargs!)
+  (env %env %setenv!)
+  (globals %globals %setglobals!)
+  (stack %stack %setstack!)
+  (exit %exit %setexit!))
+
 (define (%makevmstate fn env globals exitfn)
   (let* ((code (%fn-code fn))
+         (nargs (%fn-nargs fn))
          (pc 0)
          (instr #f)
          (stack '()))
-    (vector code pc instr fn env globals stack exitfn)))
+    (%private-make-vmstate code pc instr fn nargs env globals stack exitfn)))
 
-(define (%make-saved-vmstate vmstate)(vector-copy vmstate))
-(define (%copy-vmstate! src dest)(subvector-move! src 0 (vector-length src) dest 0))
+(define-type savedstate
+  constructor: %private-make-saved
+  (code %saved-code %set-saved-code!)
+  (pc %saved-pc %set-saved-pc!)
+  (fn %saved-fn %set-saved-fn!)
+  (env %saved-env %set-saved-env!))
 
-;;; ---------------------------------------------------------------------
-;;; vmstate accessors
-;;; ---------------------------------------------------------------------
+(define (%make-saved vmstate)
+  (vector (%fn vmstate)(%code vmstate)(%env vmstate)(%pc vmstate)))
 
-(define (%code vmstate)(vector-ref vmstate 0))
-(define (%pc vmstate)(vector-ref vmstate 1))
-(define (%instr vmstate)(vector-ref vmstate 2))
-(define (%fn vmstate)(vector-ref vmstate 3))
-(define (%env vmstate)(vector-ref vmstate 4))
-(define (%globals vmstate)(vector-ref vmstate 5))
-(define (%stack vmstate)(vector-ref vmstate 6))
-(define (%exit vmstate)(vector-ref vmstate 7))
+(define (%restore-saved! vmstate saved)
+  (%setfn! vmstate (%saved-fn saved))
+  (%setcode! vmstate (%saved-code saved))
+  (%setenv! vmstate (%saved-env saved))
+  (%setpc! vmstate (%saved-pc saved)))
 
-(define (%setcode! vmstate v)(vector-set! vmstate 0 v))
-(define (%setpc! vmstate v)(vector-set! vmstate 1 v))
-(define (%setinstr! vmstate v)(vector-set! vmstate 2 v))
-(define (%setfn! vmstate v)(vector-set! vmstate 3 v))
-(define (%setenv! vmstate v)(vector-set! vmstate 4 v))
-(define (%setglobals! vmstate v)(vector-set! vmstate 5 v))
-(define (%setstack! vmstate v)(vector-set! vmstate 6 v))
-(define (%setexit! vmstate v)(vector-set! vmstate 7 v))
-
-;;; ---------------------------------------------------------------------
-;;; vm ops
+;;; accessors
 ;;; ---------------------------------------------------------------------
 
-;;; increment pc
-(define (%incvm! state) #f)
+(define (%incvm! state)(%setpc! state (+ 1 (%pc vm))))
+(define (%push! state v)(%setstack! state (cons v (%stack state))))
+(define (%top state)(car (%stack state)))
+(define (%pop! state)(prog1 (%top state)(%setstack! state (cdr (%stack state)))))
+(define (%swap! state)(%setstack! state (cons (cadr (%stack state))(cons (car (%stack state))(cddr (%stack state))))))
+(define (%popenv! state)(prog1 (car (%env state))(%setenv! state (cdr (%env state)))))
 
-;;; value-stack ops
-(define (%push! state v) #f)
-(define (%pop! state) #f)
-(define (%top state) #f)
+;;; ---------------------------------------------------------------------
+;;; vmops
+;;; ---------------------------------------------------------------------
+
+(define $opname->opfn-table (make-table test: eq?))
+(define $opfn->opname-table (make-table test: eq?))
+
+(define-macro (defop opname args . body)
+  `(let ((opfn (lambda ,args ,@body)))
+     (table-set! $opname->opfn-table ',opname opfn)
+     (table-set! $opfn->opname-table opfn ',opname)
+     ',opname))
+
+(define (%opname->opfn opname)(table-ref $opname->opfn-table opname))
+(define (%opfn->opname opfn)(table-ref $opfn->opname-table opfn 'HALT))
+
+;;; ---------------------------------------------------------------------
+
+(defop NOP    (s)   s)
+(defop HALT   (s)   ((%exit s)))
+(defop CONST  (s k) (%push! s k))
+(defop CLASS  (s c) (%push! s (%gset! (%globals s) c (%make-class c))))
+(defop LREF   (s l) (%push! s (%lref (%env s) l)))
+(defop LSET   (s l) (%push! s (%lset! (%env s) l (%pop! s))))
+(defop GREF   (s g) (%push! s (%gref (%globals s) g)))
+(defop GSET   (s g) (%push! s (%gset! (%globals s) g (%pop! s))))
+(defop POP    (s)   (%pop! s))
+(defop PRIM   (s p) (%push! state (%apply-prim state p)))
+(defop JUMP   (s d) (%setpc! state d))
+(defop FJUMP  (s d) (unless (%pop! s)(%setpc! s d)))
+(defop TJUMP  (s d) (when (%pop! s)(%setpc! s d)))
+(defop SAVE   (s d) (let ((saved (%make-saved s)))
+                      (%set-saved-pc! saved d)
+                      (%push! s saved)))
+(defop CALL   (s n) (%popenv! s)
+                    (let ((f (%pop! s)))
+                      (%setfn! s f)
+                      (%setcode! s (%fn-code f))
+                      (%setenv! s (%fn-env f))
+                      (%setpc! s 0)
+                      (%setnargs! s n)))
+(defop RETURN (s)   (%swap! s)(%restore-saved! s (%pop! s)))
+(defop CC     (s)   (%push! s (let ((stack (%stack state))
+                                    (saved (%make-saved state)))
+                                (%makeprim name: "An anonymous continuation"
+                                           required-arguments: #f
+                                           rest-arguments: #t
+                                           opname: 'cc
+                                           side-effects: #t
+                                           opfn: (lambda args
+                                                   (%setstack! s stack)
+                                                   (for-each (lambda (arg)(%push! s arg))
+                                                             args)
+                                                   (%restore-saved! s saved))))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; the vm
@@ -85,11 +148,14 @@
   (values (car instruction)
           (cdr instruction)))
 
-(define (%linkfn fn opvec)
+(define (%linkfn vmstate fn)
   (%makefn parameters: (%fn-parameters fn)
            code: (vector-for-each (lambda (instr)
-                                    (cons (vector-ref opvec (vector-position (car instr) opvec))
-                                          (cdr instr)))
+                                    (if (eq? 'HALT (car instr))
+                                        (cons (%exit vmstate)
+                                              (cdr instr))
+                                        (cons (%opname->opfn (car instr))
+                                              (cdr instr))))
                                   (%fn-code fn))
            name: (%fn-name fn)
            env: (%fn-env fn)))
@@ -101,34 +167,7 @@
        (let* ((state (%makevmstate fn env globals exit))
               (_step! #f))
 
-         (letrec ((NOP    (^ ()     state))
-                  (HALT   (^ ()     (exit state)))
-                  (CONST  (^ (k)    (%push! state k)))
-                  (CLASS  (^ (nm)   (%push! state (%gset! (%globals state) nm (%make-class nm)))))
-                  (LREF   (^ (nm)   (%push! state (%lref (%env state) nm))))
-                  (LSET   (^ (nm)   (%lset! (%env state) nm (%top state))))
-                  (GREF   (^ (g)    (%push! state (%gref (%env state) g))))
-                  (GSET   (^ (g)    (%push! state (%gset! (%globals state) g (%top state)))))
-                  (POP    (^ ()     (%pop! state)))
-                  (PRIM   (^ ()     (%push! state (%apply-prim state))))
-                  (JUMP   (^ (d)    (%setpc! state d)))
-                  (FJUMP  (^ (d)    (unless (%pop! state)(%setpc! state d))))
-                  (TJUMP  (^ (d)    (when (%pop! state)(%setpc! state d))))
-                  (CALL   (^ ()     (%push! state (%make-saved-vmstate state))
-                                    (%setfn! state (%pop! state))
-                                    (%seten! state (%activate-method-env (%fn-env (%fn state)) (%env state)))
-                                    (%setpc! state 0)))
-                  (RETURN (^ ()     (let ((stack (%stack state)))
-                                      (%copy-vmstate! (%pop! state) state)
-                                      (%setstack! state stack)
-                                      (%incvm! state))))
-                  (CC     (^ ()     (error "CC not yet implemented")))
-                  (SETCC  (^ ()     (%setstack! state (%top state))))
-
-                  
-                  ($_vmops (vector NOP HALT CONST CLASS LREF LSET GREF GSET POP PRIM JUMP FJUMP TJUMP CALL RETURN CC SETCC))
-
-                  (_link       (lambda (f)(%linkfn f $_vmops)))
+         (letrec ((_link       (lambda (f)(%linkfn state f)))
                   (_fetch!     (lambda ()(%setinstr! state (%code-ref (%fn-code (%fn state))(%pc state)))))
                   (_inc!       (lambda ()(%setpc! state (+ 1 (%pc state)))))
                   (_exec!      (lambda ()(receive (op args)(%decode (%instr state))
