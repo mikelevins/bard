@@ -15,7 +15,7 @@
   (name %fn-name)
   (parameters %fn-parameters)
   (env %fn-env)
-  (code %fn-code))
+  (code %fn-code %set-fn-code!))
 
 (define (%makefn #!key (parameters '()) (code #f) (name "An anonymous primitive function")(env (%null-env)))
   (assert code (str "Cannot create a function with no body"))

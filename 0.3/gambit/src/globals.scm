@@ -12,29 +12,10 @@
 (define (%bard-globals)
   (make-table test: eq?))
 
-(define (%gdef! gtable gname gval #!key (mutable #f))
-  (table-set! gtable gname (%make-var gname gval mutable: mutable))
+(define (%gset! gtable gname gval)
+  (table-set! gtable gname gval)
   gval)
 
-(define (%gget globals name #!optional (default #!unbound))
-  (table-ref globals name default))
-
-(define (%gmutable? globals name)
-  (%var-mutable? (%gget globals name)))
-
 (define (%gref globals name)
-  (let ((var (%gget globals name #f)))
-    (if var
-        (%var-value var)
-        #!unbound)))
+  (table-ref gtable gname #!unbound))
 
-(define (%gsetter globals nm)
-  (%var-setter (%gget globals nm)))
-
-(define (%gset! globals nm v)
-  (let* ((setter (%gsetter globals nm)))
-    (if setter
-        (begin
-          (setter v)
-          v)
-        (error (str "Cannot assign to an immutable variable: " nm)))))
