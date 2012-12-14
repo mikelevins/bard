@@ -186,6 +186,31 @@
               (loop (+ i 1)))
           #f))))
 
+(define (words str)
+  (let ((len (string-length str))
+        (word-breaks '(#\space #\newline #\tab #\( #\) #\{ #\} #\[ #\] #\; #\" #\' #\,)))
+    (let loop ((i 0)
+               (word '())
+               (words '()))
+      (if (< i len)
+          (let ((ch (string-ref str i)))
+            (if (member ch word-breaks)
+                (loop (+ 1 i)
+                      '()
+                      (if (null? word)
+                          words
+                          (cons (apply string-append
+                                       (map string (reverse word)))
+                                words)))
+                (loop (+ 1 i)
+                      (cons ch word)
+                      words)))
+          (if (null? word)
+              (reverse words)
+              (reverse (cons (apply string-append
+                                       (map string (reverse word)))
+                             words)))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; vector utils
 ;;; ---------------------------------------------------------------------

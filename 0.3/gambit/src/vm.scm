@@ -45,7 +45,7 @@
   (env %env %setenv!)
   (globals %globals %setglobals!)
   (stack %stack %setstack!)
-  (exit %exit %setexit!))
+  (cmd %cmd %setcmd!))
 
 (define (%makevmstate fn env globals exitfn)
   (let* ((code (if fn (%fn-code fn) #f))
@@ -100,7 +100,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defop NOP    (s)   s)
-(defop HALT   (s)   ((%exit s)))
+(defop HALT   (s)   ((%cmd s) 'exit))
 (defop CONST  (s k) (%push! s k))
 (defop CLASS  (s c) (%push! s (%gset! (%globals s) c (%make-class c))))
 (defop LREF   (s l) (%push! s (%lref (%env s) l)))
@@ -141,8 +141,75 @@
 ;;; the vm
 ;;; ---------------------------------------------------------------------
 
-(define (%show-vmstate vmstate)
-  (display "Bard VM v. 0.3"))
+(define (%instruction->string instr)
+  (if (pair? instr)
+      (let* ((opfn (car instr))
+             (args (cdr instr))
+             (opnm (%opfn->opname opfn)))
+        (object->string `(,opnm ,@args)))
+      (object->string instr)))
+
+(define (%code->string code pc)
+  (if code
+      (let* ((code-strings (map %instruction->string (vector->list code)))
+             (code-lines (map (lambda (c)(list "  " c (string #\newline))) code-strings)))
+        (if pc (set-cdr! (list-ref code-lines pc) "->"))
+        (str "(" (apply str (map (lambda (cl)(apply str cl)) code-lines)) ")"))
+      "()"))
+
+(define (%fn->string fn)
+  (if fn
+      (str "#<fn "
+           (or (%fn-name fn) "An anonymous function")
+           ">")
+      ""))
+
+(define (%globals->string globals)
+  (with-output-to-string 
+    '()
+    (lambda ()
+      (if (> (table-length globals) 0)
+          (begin
+            (table-for-each (lambda (k v)
+                              (newline)
+                              (display "  ")
+                              (display k)
+                              (display ": ")
+                              (display (object->string v)))
+                            globals))))))
+
+(define (%env->string env)
+  (with-output-to-string 
+    '()
+    (lambda ()
+      (if (> (length env) 0)
+          (begin
+            (for-each (lambda (entry)
+                        (let ((k (car entry))
+                              (v (cdr entry)))
+                          (newline)
+                          (display "  ")
+                          (display k)
+                          (display ": ")
+                          (display (object->string v))))
+                      globals))))))
+
+(define (%stack->string s)
+  (object->string s))
+
+
+(define (%show-vmstate state)
+  (newline)
+  (display "Bard VM v. 0.3")(newline)
+  (display (str " instr: " (%instruction->string (%instr state))))(newline)
+  (display (str " pc: " (%pc state)))(newline)
+  (display (str " code: " (%code->string (%code state)(%pc state))))(newline)
+  (display (str " fn: " (%fn->string (%fn state))))(newline)
+  (display (str " nargs: " (object->string (%nargs state))))(newline)
+  (display (str " env: " (%env->string (%env state))))(newline)
+  (display (str " globals: " (%globals->string (%globals state))))(newline)
+  (display (str " stack: " (%stack->string (%stack state))))(newline)
+  (newline))
 
 (define (%decode instruction)
   (values (car instruction)
@@ -166,19 +233,35 @@
   (read-line))
 
 (define (%handlecmd cmd-line vmstate vmops)
-  (let* ((trimmed-cmd (ltrim cmd-line)))
-    (cond
-     ((string-starts-with? trimmed-cmd "version")
-      (newline)(display "Bard VM v. 0.3"))
-     ((string-starts-with? trimmed-cmd "show")
-      (%show-vmstate vmstate))
-     ((string-starts-with? trimmed-cmd "quit")
-      ((%exit vmstate)))
-     (else (newline)
-           (display (str "ERROR: unrecognized command: " trimmed-cmd))))))
+  (let ((cmdlist (words (ltrim cmd-line))))
+    (if (not (null? cmdlist))
+        (let ((cmd (car cmdlist))
+              (args (cdr cmdlist)))
+          (cond
+           ((string=? "version" cmd)(newline)(display "Bard VM v. 0.3"))
+           ((string=? "load" cmd) #f)
+           ((string=? "run" cmd) #f)
+           ((string=? "step" cmd) #f)
+           ((string=? "show" cmd)(%show-vmstate vmstate))
+           ((string=? "quit" cmd)((%cmd vmstate) 'quit))
+           ((or (string=? "help" cmd)
+                (string=? "?" cmd))(%print-vm-help))
+           (else (newline)
+                 (display (str "ERROR: unrecognized command: " trimmed-cmd))))))))
+
+(define (%print-vm-help)
+  (newline)
+  (display "  version - print the VM version")(newline)
+  (display "  load PATH - load the Bard object-code file at PATH")(newline)
+  (display "  run - start execution of the currently-loaded program")(newline)
+  (display "  step - execute a single instruction and then print the VM state")(newline)
+  (display "  show - print the current state of the VM")(newline)
+  (display "  quit - exit the VM")(newline)
+  (display "  help - print this help message")(newline)
+  )
 
 (define (%makevm #!key (fn #f)(env (%null-env))(globals (%bard-globals)))
-  (lambda (cmd . args)
+  (lambda ()
     (call/cc 
      (lambda (exit)
        (let* ((state (%makevmstate fn env globals exit))
@@ -194,15 +277,15 @@
                   (_stepshowfn (lambda ()(_fetch!)(_inc!)(_exec!)(_show)))
                   (_run!       (lambda ()(let loop ()(_step!)(loop))))
                   ($_ops (vector _link _fetch! _inc! _exec! _show _step! _run!))
-                  (_shell      (lambda ()(let loop ()(%handlecmd (%promptread) state $_ops)(loop)))))
+                  (_shell      (lambda ()(let loop ()(%handlecmd (%promptread) state $_ops)(loop))))
+                  (_cmd        (lambda msg
+                                 (let ((cmd (car msg))
+                                       (args (cdr msg)))
+                                   (case cmd
+                                     ((quit)(exit))
+                                     (else (newline)(display (str "ERROR: unrecognized VM command: " cmd))))))))
 
-           (case cmd
-             ((load!)      (%setfn! state (_link (car args))))
-             ((showsteps!) (if (car args)(set! _step! _stepfn)(set! _step! _stepshowfn)))
-             ((step)       (_step!))
-             ((run)        (_run!))
-             ((shell)      (_shell))
-             (else         (error (str "Unrecognized Bard VM command: " cmd))))))))))
+           (%setcmd! state _cmd)
+           (_shell)))))))
 
-(define (%runvm #!optional (vm (%makevm)))
-  (vm 'shell))
+(define (%runvm #!optional (vm (%makevm)))(vm))
