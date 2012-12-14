@@ -48,8 +48,8 @@
   (exit %exit %setexit!))
 
 (define (%makevmstate fn env globals exitfn)
-  (let* ((code (%fn-code fn))
-         (nargs (%fn-nargs fn))
+  (let* ((code (if fn (%fn-code fn) #f))
+         (nargs (if fn (%fn-nargs fn) 0))
          (pc 0)
          (instr #f)
          (stack '()))
@@ -160,7 +160,24 @@
            name: (%fn-name fn)
            env: (%fn-env fn)))
 
-(define (%makevm #!key (fn #f)(env (%nullenv))(globals (%bard-globals)))
+(define (%promptread)
+  (newline)
+  (display "bardvm> ")
+  (read-line))
+
+(define (%handlecmd cmd-line vmstate vmops)
+  (let* ((trimmed-cmd (ltrim cmd-line)))
+    (cond
+     ((string-starts-with? trimmed-cmd "version")
+      (newline)(display "Bard VM v. 0.3"))
+     ((string-starts-with? trimmed-cmd "show")
+      (%show-vmstate vmstate))
+     ((string-starts-with? trimmed-cmd "quit")
+      ((%exit vmstate)))
+     (else (newline)
+           (display (str "ERROR: unrecognized command: " trimmed-cmd))))))
+
+(define (%makevm #!key (fn #f)(env (%null-env))(globals (%bard-globals)))
   (lambda (cmd . args)
     (call/cc 
      (lambda (exit)
@@ -175,11 +192,17 @@
                   (_show       (lambda ()(%show-vmstate state)))
                   (_stepfn     (lambda ()(_fetch!)(_inc!)(_exec!)))
                   (_stepshowfn (lambda ()(_fetch!)(_inc!)(_exec!)(_show)))
-                  (_run!       (lambda ()(let loop ()(_step!)(loop)))))
+                  (_run!       (lambda ()(let loop ()(_step!)(loop))))
+                  ($_ops (vector _link _fetch! _inc! _exec! _show _step! _run!))
+                  (_shell      (lambda ()(let loop ()(%handlecmd (%promptread) state $_ops)(loop)))))
 
            (case cmd
              ((load!)      (%setfn! state (_link (car args))))
              ((showsteps!) (if (car args)(set! _step! _stepfn)(set! _step! _stepshowfn)))
              ((step)       (_step!))
              ((run)        (_run!))
+             ((shell)      (_shell))
              (else         (error (str "Unrecognized Bard VM command: " cmd))))))))))
+
+(define (%runvm #!optional (vm (%makevm)))
+  (vm 'shell))

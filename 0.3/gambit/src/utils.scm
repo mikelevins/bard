@@ -145,6 +145,26 @@
 ;;; string utils
 ;;; ---------------------------------------------------------------------
 
+(define (ltrim s)
+  (let ((pos (string-position #\a s 
+                              test: (lambda (ignore ch)
+                                      (not (char-whitespace? ch))))))
+    (if pos
+        (substring s pos (string-length s))
+        "")))
+
+(define (string-starts-with? s pref)
+  (let ((len (string-length pref)))
+    (if (< (string-length s) len)
+        #f
+        (let loop ((i 0))
+          (if (< i len)
+              (if (char=? (string-ref s i)
+                          (string-ref pref i))
+                  (loop (+ i 1))
+                  #f)
+              #t)))))
+
 (define (str . args)
   (if (null? args)
       ""
@@ -156,6 +176,15 @@
         (if (null? (cdr args))
             s
             (string-append s (apply str (cdr args)))))))
+
+(define (string-position ch s #!key (test char=?))
+  (let ((len (string-length s)))
+    (let loop ((i 0))
+      (if (< i len)
+          (if (test ch (string-ref s i))
+              i
+              (loop (+ i 1)))
+          #f))))
 
 ;;; ---------------------------------------------------------------------
 ;;; vector utils
