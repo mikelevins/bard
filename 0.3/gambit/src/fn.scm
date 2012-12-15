@@ -9,32 +9,46 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; callable objects
+;;; ---------------------------------------------------------------------
 
-(define-type %fn
-  constructor: %private-make-fn
-  extender: %defn
+(define-type %callable
+  extender: %defcallable
   (name %fn-name))
 
-(%defn method
-       constructor: %private-make-method
-       (parameters %fn-parameters)
-       (env %fn-env)
-       (code %method-code %set-method-code!))
+(%defcallable primitive
+              constructor: %make-primitive
+              (required-arg-count %prim-required-arg-count)
+              (restargs? %prim-restargs?)
+              (function %prim-function))
 
-(define (%make-method parameters code #!key (env (%null-env))(name '|An anonymous method|))
-  (%private-make-method name parameters env code))
-
-(%defn continuation
-  constructor: %private-make-continuation
-  (vmstate %cc-vmstate)
-  (stack %cc-stack))
+(%defcallable continuation
+              constructor: %make-continuation
+              (vmstate %cc-vmstate)
+              (stack %cc-stack))
 
 (define (%makecc vm pc)
   (let ((vmstate (%vmstate (%fn vm)(%code vm) pc (%env vm))))
     (%private-make-continuation name vmstate (%stack vm))))
 
-(define (%fn-code f)
-  (if (method? f)
-      (%method-code f)
-      (error (str "Don't know how to get the fn-code from this value: " f))))
+(%defcallable function
+              constructor: %make-function
+              (parameters %function-parameters)
+              (dispatcher %function-dispatcher))
+
+;;; ---------------------------------------------------------------------
+;;; callables with bodies of Bard code
+;;; ---------------------------------------------------------------------
+
+(%defcallable method
+              constructor: %private-make-method
+              (parameters %method-parameters)
+              (env %method-env)
+              (code %method-code))
+
+(define (%make-method parameters code #!key (env (%null-env))(name '|An anonymous method|))
+  (%private-make-method name parameters env code))
+
+
 

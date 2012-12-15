@@ -158,7 +158,7 @@
     (%setinitfn! vm (lambda ()
                       (call/cc
                        (lambda (exit)
-                         (letrec ((_fetch! (^ ()(%setinstr! vm (%code-ref (%fn-code (%fn vm))(%pc vm)))))
+                         (letrec ((_fetch! (^ ()(%setinstr! vm (%code-ref (%method-code (%fn vm))(%pc vm)))))
                                   (_inc! (^ ()(%setpc! vm (+ 1 (%pc vm)))))
                                   (_exec! (^ ()(receive (op args)(%decode (%instr vm))
                                                         (op vm args)))))
