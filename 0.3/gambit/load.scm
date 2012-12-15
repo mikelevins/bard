@@ -37,6 +37,7 @@
          "src/assemble.scm"
          "src/link.scm"
          "src/read.scm"
+         "src/instr.scm"
          "src/vm.scm"
          ))
 
