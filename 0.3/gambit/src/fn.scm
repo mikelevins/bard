@@ -12,12 +12,29 @@
 
 (define-type %fn
   constructor: %private-make-fn
-  (name %fn-name)
-  (parameters %fn-parameters)
-  (env %fn-env)
-  (code %fn-code %set-fn-code!))
+  extender: %defn
+  (name %fn-name))
 
-(define (%makefn #!key (parameters '()) (code #f) (name "An anonymous primitive function")(env (%null-env)))
-  (assert code (str "Cannot create a function with no body"))
-  (%private-make-fn name parameters env code))
+(%defn method
+       constructor: %private-make-method
+       (parameters %fn-parameters)
+       (env %fn-env)
+       (code %method-code %set-method-code!))
+
+(define (%make-method parameters code #!key (env (%null-env))(name '|An anonymous method|))
+  (%private-make-method name parameters env code))
+
+(%defn continuation
+  constructor: %private-make-continuation
+  (vmstate %cc-vmstate)
+  (stack %cc-stack))
+
+(define (%makecc vm pc)
+  (let ((vmstate (%vmstate (%fn vm)(%code vm) pc (%env vm))))
+    (%private-make-continuation name vmstate (%stack vm))))
+
+(define (%fn-code f)
+  (if (method? f)
+      (%method-code f)
+      (error (str "Don't know how to get the fn-code from this value: " f))))
 
