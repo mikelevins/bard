@@ -29,7 +29,9 @@
   (initfn %initfn %setinitfn!)
   (exitfn %exitfn %setexitfn!)
   (stepfn %stepfn %setstepfn!)
-  (runfn %runfn %setrunfn!))
+  (runfn %runfn %setrunfn!)
+  (prompt %prompt %setprompt!)
+  (shellfn %shellfn %setshellfn!))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm operations
@@ -45,13 +47,32 @@
 
 (define (%make-saved vm pc)(%vmstate (%fn vm) pc (%env vm)))
 
+(define (%showvm vm)
+  (newline)
+  (display (str "Bard VM v" $bard-version-string)))
+
+(define (%promptread vm)
+  (newline)
+  (display (%prompt vm))
+  (read-line))
+
+(define (%handlevmcmd vm cmdstr)
+  (let ((cmd-line (words (ltrim cmdstr))))
+    (if (null? cmd-line)
+        (values)
+        (let ((cmd (car cmd-line))
+              (args (cdr cmd-line)))
+          (cond
+           ((string=? "show" cmd)(%showvm vm))
+           ((string=? "quit" cmd)(%exitvm vm))
+           (else (error (str "Unrecognized VM command: " cmd))))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm constructor
 ;;; ---------------------------------------------------------------------
 
 (define (%makevm #!key (fn #f)(env (%null-env))(globals (%bard-globals)))
-  (let* ((vm (%private-make-vm fn 0 env #f '() '() globals #f #f #f #f)))
+  (let* ((vm (%private-make-vm fn 0 env #f '() '() globals #f #f #f #f "bard> " #f)))
     (%setinitfn! vm (lambda ()
                       (call/cc
                        (lambda (exit)
@@ -61,7 +82,8 @@
                                                         (op vm args)))))
                            (%setexitfn! vm exit)
                            (%setstepfn! vm (lambda ()(_fetch!)(_inc!)(_exec!)))
-                           (%setrunfn! vm (lambda ()(let loop ()(_fetch!)(_inc!)(_exec!)(loop)))))))))
+                           (%setrunfn! vm (lambda ()(let loop ()(_fetch!)(_inc!)(_exec!)(loop))))
+                           (%setshellfn! vm (lambda ()(let loop ()(%handlevmcmd vm (%promptread vm))(loop)))))))))
     vm))
 
 ;;; ---------------------------------------------------------------------
@@ -72,14 +94,23 @@
   ((%initfn vm))
   vm)
 
+(define (%exitvm vm)
+  ((%exitfn vm))
+  vm)
+
 (define (%step! vm)
   ((%stepfn vm))
+  vm)
+
+(define (%startvm vm)
+  ((%shellfn vm))
   vm)
 
 
 ;;; (define $fn (%make-method '() (%assemble (%compile '(fx+ 2 3) '() #t #t))))
 ;;; (define $vm (%makevm fn: $fn))
 ;;; (%initvm! $vm)
+;;; (%startvm $vm)
 
 
 
