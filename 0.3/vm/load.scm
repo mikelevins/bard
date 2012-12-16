@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/0.3/gambit/")
+(define $bard-root  "/Users/mikel/Projects/bard/0.3/")
 
 
 ;;; ----------------------------------------------------------------------
@@ -24,30 +24,28 @@
 
 (define $bard-files
   (paths $bard-root 
-         "src/version.scm"
-         "src/utils.scm"
-         "src/values.scm"
-         "src/var.scm"
-         "src/globals.scm"
-         "src/env.scm"
-         "src/code.scm"
-         "src/fn.scm"
-         "src/prim.scm"
-         "src/compile.scm"
-         "src/assemble.scm"
-         "src/link.scm"
-         "src/read.scm"
-         "src/instr.scm"
-         "src/vm.scm"
+         "vm/src/version.scm"
+         "common/src/utils.scm"
+         "common/src/values.scm"
+         "common/src/var.scm"
+         "common/src/globals.scm"
+         "common/src/env.scm"
+         "common/src/code.scm"
+         "common/src/fn.scm"
+         "common/src/prim.scm"
+         "common/src/assemble.scm"
+         "vm/src/instr.scm"
+         "vm/src/link.scm"
+         "vm/src/vm.scm"
          ))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
 
-(define (load-bard)
+(define (loadvm)
   (gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load-bard)
+;;; (loadvm)
 
