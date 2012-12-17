@@ -54,8 +54,8 @@
     (%setstack! vm (%cc-stack k))
     (%setpc! vm (%pc (%cc-vmstate k)))))
 
-(define NOP    (^ (vm )  vm))
-(define HALT   (^ (vm )  ((%exitfn vm))))
+(define NOP    (^ (vm)  vm))
+(define HALT   (^ (vm)  ((%exitfn vm))))
 (define CONST  (^ (vm k) (%pushv! k vm)))
 (define PRIM   (^ (vm p) (%pushv! (%apply-prim p (%popnv! (%nargs vm) vm)) vm)))
 (define LREF   (^ (vm l) (%pushv! (%lref (%env vm) l) vm)))
@@ -69,7 +69,7 @@
 (define CALL   (^ (vm n) (%op_call vm n)))
 (define RETURN (^ (vm)   (%op_return vm)))
 (define CC     (^ (vm d) (%pushv! (%makecc vm d) vm)))
-(define SETCC  (^ (vm)   (%op_setcc vm)))
+(define SETCC  (^ (vm )  (%op_setcc vm)))
 
 (define (%decode instruction)
   (values (car instruction)

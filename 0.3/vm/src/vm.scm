@@ -144,6 +144,8 @@
            ((string=? "en" cmd)(%showenv vm))
            ((string=? "showglobals" cmd)(%showglobals vm))
            ((string=? "gl" cmd)(%showglobals vm))
+           ((string=? "step" cmd)(%step! vm))
+           ((string=? "st" cmd)(%step! vm))
            (else (begin
                    (newline)
                    (display (str "Unrecognized VM command: " cmd)))))))))
@@ -160,7 +162,7 @@
                          (letrec ((_fetch! (lambda ()(%setinstr! vm (%code-ref (%method-code (%fn vm))(%pc vm)))))
                                   (_inc! (lambda ()(%setpc! vm (+ 1 (%pc vm)))))
                                   (_exec! (lambda ()(receive (op args)(%decode (%instr vm))
-                                                        (op vm args)))))
+                                                             (apply op vm args)))))
                            (%setexitfn! vm exit)
                            (%setstepfn! vm (lambda ()(_fetch!)(_inc!)(_exec!)))
                            (%setrunfn! vm (lambda ()(let loop ()(_fetch!)(_inc!)(_exec!)(loop))))
