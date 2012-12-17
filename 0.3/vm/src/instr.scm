@@ -114,3 +114,12 @@
    ((eq? opfn SETCC) 'SETCC)
    ((eq? opfn CC) 'CC)
    (else (error (str "Unrecognized VM op name: " opname)))))
+
+(define (%instr->string instr)
+  (if instr
+      (receive (op args)(%decode instr)
+               (cond
+                ((procedure? op)(%instr->string (cons (%opfn->opname op) args)))
+                ((symbol? op)(object->string instr))
+                (else (error (str "Unrecognized instruction: " instr)))))
+      ""))

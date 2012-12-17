@@ -45,7 +45,7 @@
               constructor: %private-make-method
               (parameters %method-parameters)
               (env %method-env)
-              (code %method-code))
+              (code %method-code %set-method-code!))
 
 (define (%make-method parameters code #!key (env (%null-env))(name '|An anonymous method|))
   (%private-make-method name parameters env code))

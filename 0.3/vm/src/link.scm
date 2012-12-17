@@ -25,7 +25,7 @@
   (let ((found-entry (assoc e label-map)))
     (and found-entry (cdr found-entry))))
 
-(define (%link-instruction! instruction label-map)
+(define (%link-instruction! instruction #!optional (label-map '()))
   ;; resolve labels
   (for-each
    (lambda (i)
@@ -35,7 +35,7 @@
            (set-nth-car! instruction i (+ 1 label-index)))))
    (iota (length instruction)))
   ;; link ops
-  (set-car! instruction (%opname->op (car instruction)))
+  (set-car! instruction (%opname->opfn (car instruction)))
   instruction)
 
 (define (%link-instructions! code label-map)

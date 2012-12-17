@@ -49,12 +49,81 @@
 
 (define (%showvm vm)
   (newline)
-  (display (str "Bard VM v" $bard-version-string)))
+  (display (str "Bard VM v" $bard-version-string))(newline)
+  (display (str "pc: " (object->string (%pc vm))))(newline)
+  (display (str "instr: " (%instr->string (%instr vm))))(newline)
+  (display (str "vals: " (object->string (%vals vm)))))
+
+(define (%showenv vm)
+  (newline)
+  (let ((env (%env vm)))
+    (display (str "env:"))
+    (if env
+        (for-each (lambda (entry)
+                    (let ((k (car entry))
+                          (v (cdr entry)))
+                      (newline)
+                      (display (str "  " k ": " v))))
+                  env))
+    (newline)))
+
+(define (%showglobals vm)
+  (newline)
+  (let ((globals (%globals vm)))
+    (display (str "globals:"))
+    (if globals
+        (table-for-each (lambda (k v)
+                          (newline)
+                            (display (str "  " k ": " v)))
+                        globals))
+    (newline)))
+
+(define (%showcode vm)
+  (newline)
+  (let* ((pc (%pc vm))
+         (fn (%fn vm))
+         (code (if fn (%method-code fn) #f)))
+    (display (str "code:"))
+    (if code
+        (let ((codelen (vector-length code)))
+          (let loop ((i 0))
+            (if (< i codelen)
+                (begin
+                  (newline)
+                  (if (= i pc)(display "->")(display "  "))
+                  (display (%instr->string (vector-ref code i)))
+                  (loop (+ 1 i)))))))
+    (newline)))
 
 (define (%promptread vm)
   (newline)
   (display (%prompt vm))
   (read-line))
+
+(define (%ensure-fn! vm)
+  (if (%fn vm)
+      #t
+      (let ((newfn (%make-method '() (vector))))
+        (%setfn! vm newfn)
+        #t)))
+
+(define (%fn-append-instruction! vm new-instr)
+  (let* ((old-code (%method-code (%fn vm)))
+         (new-code (list->vector (append (vector->list old-code) (list (%link-instruction! new-instr))))))
+    (%set-method-code! (%fn vm) new-code)
+    (%fn vm)))
+
+(define (%insert-instruction vm cmd-args)
+  (if (null? cmd-args)
+      (begin
+        (newline)
+        (display (str "ERROR: missing argument to insert")))
+      (let* ((rd (lambda (s)(call-with-input-string s read)))
+             (op (rd (car cmd-args)))
+             (args (map rd (cdr cmd-args))))
+        (%ensure-fn! vm)
+        (%fn-append-instruction! vm (cons op args))
+        (%fn vm))))
 
 (define (%handlevmcmd vm cmdstr)
   (let ((cmd-line (words (ltrim cmdstr))))
@@ -63,9 +132,21 @@
         (let ((cmd (car cmd-line))
               (args (cdr cmd-line)))
           (cond
-           ((string=? "show" cmd)(%showvm vm))
+           ((string=? "insert" cmd)(%insert-instruction vm args))
+           ((string=? "in" cmd)(%insert-instruction vm args))
            ((string=? "quit" cmd)(%exitvm vm))
-           (else (error (str "Unrecognized VM command: " cmd))))))))
+           ((string=? "q" cmd)(%exitvm vm))
+           ((string=? "show" cmd)(%showvm vm))
+           ((string=? "sh" cmd)(%showvm vm))
+           ((string=? "showcode" cmd)(%showcode vm))
+           ((string=? "cd" cmd)(%showcode vm))
+           ((string=? "showenv" cmd)(%showenv vm))
+           ((string=? "en" cmd)(%showenv vm))
+           ((string=? "showglobals" cmd)(%showglobals vm))
+           ((string=? "gl" cmd)(%showglobals vm))
+           (else (begin
+                   (newline)
+                   (display (str "Unrecognized VM command: " cmd)))))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; vm constructor
@@ -107,8 +188,8 @@
   vm)
 
 
-;;; (define $fn (%make-method '() (%assemble (%compile '(fx+ 2 3) '() #t #t))))
-;;; (define $vm (%makevm fn: $fn))
+;;; (loadvm)
+;;; (define $vm (%makevm))
 ;;; (%initvm! $vm)
 ;;; (%startvm $vm)
 
