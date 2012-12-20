@@ -126,6 +126,16 @@
             (loop (+ 1 i)(cdr items))))
     ls))
 
+(define (split-list ls n)
+  (let loop ((left '())
+             (right ls)
+             (count 0))
+    (if (<= n count)
+        (values (reverse left) right)
+        (loop (cons (car right) left)
+              (cdr right)
+              (+ count 1)))))
+
 (define (take n ls)
   (if (<= n 0)
       '()

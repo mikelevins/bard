@@ -24,18 +24,14 @@
 
 (define $bard-files
   (paths $bard-root 
-         "vm/src/version.scm"
          "common/src/utils.scm"
-         "common/src/values.scm"
-         "common/src/var.scm"
-         "common/src/globals.scm"
          "common/src/env.scm"
-         "common/src/code.scm"
-         "common/src/fn.scm"
-         "common/src/prim.scm"
-         "common/src/assemble.scm"
+         "common/src/globals.scm"
+         "common/src/callable.scm"
+         "vm/src/code.scm"
          "vm/src/instr.scm"
-         "vm/src/link.scm"
+         "vm/src/instr-utils.scm"
+         "vm/src/vm-aux.scm"
          "vm/src/vm.scm"
          ))
 

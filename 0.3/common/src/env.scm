@@ -17,7 +17,7 @@
   (assq vname env))
 
 (define (%lref env vname)
-  (let ((entry (lfind env vname)))
+  (let ((entry (%lfind env vname)))
     (if entry
         (cdr entry)
         #!unbound)))
@@ -32,3 +32,14 @@
   (cons (cons vname val)
         env))
 
+(define (%merge-environments . envs)
+  (if (null? envs)
+      (%null-env)
+      (let ((env1 (car envs)))
+        (if (null? (cdr envs))
+            env1
+            (let ((env2 (cadr envs))
+                  (more (cddr envs)))
+              (apply %merge-environments
+                     (append env1 env2)
+                     more))))))
