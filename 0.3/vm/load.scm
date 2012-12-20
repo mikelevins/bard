@@ -33,6 +33,7 @@
          "vm/src/instr-utils.scm"
          "vm/src/vm-aux.scm"
          "vm/src/vm.scm"
+         "vm/src/vmshell.scm"
          ))
 
 ;;; load sources
