@@ -1,0 +1,158 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compiler.bard
+;;;; Project:       Bard
+;;;; Purpose:       bard compiler
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************
+;;;; bard compiler in bard; target is the accompanying vm
+
+(define +special-form-names+
+  '(^ begin cond define ensure if let loop match quasiquote quote receive send
+      setter set! spawn unless unquote unquote-splicing values when with-exit))
+
+(define +macro-forms+
+  {'and (method (expr) 
+                (if (empty? (rest expr))
+                    true
+                    `(if ,(element expr 1)
+                         (and ,@(drop 2 expr))
+                         false)))
+   })
+
+(define-function (self-evaluating? expr) false)
+(define-function (self-evaluating? (expr <undefined>)) true)
+(define-function (self-evaluating? (expr <null>)) true)
+(define-function (self-evaluating? (expr <character>)) true)
+(define-function (self-evaluating? (expr <boolean>)) true)
+(define-function (self-evaluating? (expr <keyword>)) true)
+(define-function (self-evaluating? (expr <flonum>)) true)
+(define-function (self-evaluating? (expr <ratnum>)) true)
+(define-function (self-evaluating? (expr <fixnum>)) true)
+(define-function (self-evaluating? (expr <bignum>)) true)
+(define-function (self-evaluating? (expr <primitive-procedure>)) true)
+(define-function (self-evaluating? (expr <string>)) true)
+(define-function (self-evaluating? (expr <iostream>)) true)
+(define-function (self-evaluating? (expr <frame>)) true)
+(define-function (self-evaluating? (expr <schema>)) true)
+(define-function (self-evaluating? (expr Type)) true)
+
+(define-function (compile-self-evaluating expr) expr)
+
+(define-function (compile-special-form (op (singleton '^)) expr) 
+  `(lambda ,(element expr 1) ,(compile (add-first 'begin (drop 2 expr)))))
+
+(define-function (compile-special-form (op (singleton 'begin)) expr)
+  (add-first 'begin (map compile (drop 1 expr))))
+
+(define-function (compile-special-form (op (singleton 'cond)) expr)
+  `(cond
+    ,@(map (method (clause)
+                   [(compile (first clause))
+                    (compile (add-first 'begin (rest clause)))]) 
+           (rest expr))))
+
+(define-function (compile-special-form (op (singleton 'define)) expr) 
+  (let ((kind (element expr 1)))
+    (cond
+     ((= kind 'variable) `(define ,(element expr 2) ,(compile (element expr 3))))
+     (else: (error ["Unrecognized define form:" 'define kind])))))
+
+(define-function (compile-special-form (op (singleton 'ensure)) expr) 
+  (let ((before (element expr 1))
+        (during (element expr 2))
+        (after (element expr 3)))
+    `(dynamic-wind (lambda () ,(compile before))
+                   (lambda () ,(compile during))
+                   (lambda () ,(compile after)))))
+
+(define-function (compile-special-form (op (singleton 'if)) expr) 
+  (let ((test-form (element expr 1))
+        (then-form (element expr 2))
+        (else-form (if (empty? (drop 3 expr))
+                       nothing
+                       (element expr 3))))
+    `(if ,(compile test-form)
+         ,(compile then-form)
+         ,(compile else-form))))
+
+(define-function (compile-special-form (op (singleton 'let)) expr) 
+  '(let not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'loop)) expr) 
+  '(loop not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'match)) expr) 
+  '(match not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'quasiquote)) expr) 
+  '(quasiquote not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'quote)) expr) 
+  '(quote not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'receive)) expr) 
+  '(receive not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'send)) expr) 
+  '(send not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'setter)) expr) 
+  '(setter not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'set!)) expr) 
+  '(set! not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'spawn)) expr) 
+  '(spawn not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'unless)) expr) 
+  '(unless not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'unquote)) expr) 
+  '(unquote not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'unquote-splicing)) expr) 
+  '(unquote-splicing not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'values)) expr) 
+  '(values not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'when)) expr) 
+  '(when not yet implemented))
+
+(define-function (compile-special-form (op (singleton 'with-exit)) expr) 
+  '(with-exit not yet implemented))
+
+
+(define-function (compile-variable-reference expr) expr)
+
+(define-function (special-form? expr)
+  (let ((op (first expr)))
+    (and (symbol? op)
+         (not (empty? (filter (method (nm)(= nm op)) 
+                              +special-form-names+))))))
+
+(define-function (macro-form? expr)
+  (let ((op (first expr)))
+    (and (symbol? op)
+         (something? (get +macro-forms+ op)))))
+
+(define-function (macroexpand expr)
+  (let ((expand (get +macro-forms+ (first expr))))
+    (expand expr)))
+
+(define-function (compile-application expr)
+  )
+
+(define-function (compile expr)
+  (cond
+   ((self-evaluating? expr) (compile-self-evaluating expr))
+   ((symbol? expr)(compile-variable-reference expr))
+   ((special-form? expr)(compile-special-form (first expr) expr))
+   ((macro-form? expr)(compile (macroexpand expr)))
+   ((list? expr) (compile-application expr))
+   (else: expr)))

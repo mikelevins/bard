@@ -27,6 +27,7 @@
 ;;; system primitives
 ;;; ---------------------------------------------------------------------
 
+  (%defglobal 'error prim:error)
   (%defglobal 'exit prim:exit)
   (%defglobal 'gc prim:gc)
   (%defglobal 'quit prim:quit)
@@ -100,6 +101,7 @@
   (%defglobal '<string> <string>)
   (%defglobal '<iostream> <iostream>)
   (%defglobal '<frame> <frame>)
+  (%defglobal '<schema> <schema>)
   (%defglobal '<function> <function>)
   (%defglobal '<primitive-method> <primitive-method>)
   (%defglobal '<interpreted-method> <interpreted-method>)
@@ -299,7 +301,7 @@
 
   ;; Symbol
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'symbol? bard:symbol?)
+  (%defglobal 'symbol? bard:symbol?)
 
   ;; Text
   ;; ---------------------------------------------------------------------

@@ -1,0 +1,11 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compiler.bard
+;;;; Project:       Bard
+;;;; Purpose:       bard compiler
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************
+;;;; bard compiler in bard; target is the accompanying vm

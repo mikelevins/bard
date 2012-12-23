@@ -849,6 +849,24 @@
 
 
 ;;; ---------------------------------------------------------------------
+;;; Name
+;;; ---------------------------------------------------------------------
+
+(define bard:symbol? (%make-function name: 'symbol?))
+
+(%add-primitive-method! bard:symbol?
+                        (%list Anything)
+                        (%list 'x)
+                        (constantly (%false))
+                        name: 'symbol?)
+
+(%add-primitive-method! bard:symbol?
+                        (%list <symbol>)
+                        (%list 'x)
+                        (constantly (%true))
+                        name: 'symbol?)
+
+;;; ---------------------------------------------------------------------
 ;;; Null
 ;;; ---------------------------------------------------------------------
 

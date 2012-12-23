@@ -262,6 +262,19 @@
    restarg: #f
    ))
 
+(define prim:error
+  (%make-primitive-method
+   (lambda (msg)
+     (let ((msg (if (string? msg)
+                    msg
+                    (object->string msg))))
+       (display (string-append "ERROR: " msg))))
+   name: 'error
+   parameters: '(err)
+   required-count: 1
+   restarg: #f
+   ))
+
 (define prim:exit
   (%make-primitive-method
    exit
