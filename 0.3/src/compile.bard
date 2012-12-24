@@ -37,9 +37,46 @@
       (gen 'LREF expr)
       (gen 'GREF expr)))
 
+(define compile-^ (method (expr env)(error "Not yet implemented")))
+(define compile-begin (method (expr env)(error "Not yet implemented")))
+(define compile-cond (method (expr env)(error "Not yet implemented")))
+(define compile-define (method (expr env)(error "Not yet implemented")))
+(define compile-ensure (method (expr env)(error "Not yet implemented")))
+(define compile-if (method (expr env)(error "Not yet implemented")))
+(define compile-let (method (expr env)(error "Not yet implemented")))
+(define compile-loop (method (expr env)(error "Not yet implemented")))
+(define compile-match (method (expr env)(error "Not yet implemented")))
+(define compile-quasiquote (method (expr env)(error "Not yet implemented")))
+(define compile-quote (method (expr env)(gen 'CONST (element expr 1))))
+(define compile-set! (method (expr env)(error "Not yet implemented")))
+(define compile-setter (method (expr env)(error "Not yet implemented")))
+(define compile-unless (method (expr env)(error "Not yet implemented")))
+(define compile-unquote (method (expr env)(error "Not yet implemented")))
+(define compile-unquote-splicing (method (expr env)(error "Not yet implemented")))
+(define compile-values (method (expr env)(error "Not yet implemented")))
+(define compile-when (method (expr env)(error "Not yet implemented")))
+(define compile-with-exit (method (expr env)(error "Not yet implemented")))
+
 (define +special-forms+ 
-  { 'quote (method (expr env)(gen 'CONST (element expr 1)))
-   })
+  { '^ compile-^
+   'begin compile-begin
+   'begin compile-cond
+   'begin compile-define
+   'begin compile-ensure
+   'begin compile-if
+   'begin compile-let
+   'begin compile-loop
+   'begin compile-match
+   'begin compile-quasiquote
+   'quote compile-quote
+   'set! compile-set!
+   'setter compile-setter
+   'unless compile-unless
+   'unquote compile-unquote
+   'unquote-splicing compile-unquote-splicing
+   'values compile-values
+   'when compile-when
+   'with-exit compile-with-exit})
 
 (define-function (special-form? expr) false)
 
@@ -51,7 +88,15 @@
   (let ((comp (get +special-forms+ (left expr))))
     (comp expr env)))
 
-(define +macro-forms+ {})
+(define macroexpand-and (method (expr)(error "Not yet implemented")))
+(define macroexpand-not (method (expr)(error "Not yet implemented")))
+(define macroexpand-or (method (expr)(error "Not yet implemented")))
+
+(define +macro-forms+ 
+  {'and macroexpand-and
+   'not macroexpand-not
+   'or macroexpand-or
+   })
 
 (define-function (macro-form? expr) false)
 
@@ -63,15 +108,17 @@
   (let ((expand (get +macro-forms+ (left expr))))
     (expand expr)))
 
-(define +primitives+ {})
+(define +primitives+ 
+  ['%fx+ '%fx- '%fx* '%fx/])
 
 (define-function (primitive? expr) false)
 
-(define-function (primitive? (expr <pair>))
-  (and (something? (get +primitives+ (left expr)))
+(define-function (primitive? (expr <symbol>))
+  (and (not (empty? (filter (method (p)(= p expr)) 
+                            +primitives+)))
        true))
 
-(define-function (compile-primitive-funcall op argexprs)
+(define-function (compile-primitive-funcall op argexprs env)
   (gen-seq (compile-list argexprs env)
            (gen 'PRIM op (length argexprs))))
 
@@ -90,7 +137,7 @@
   (let ((fexpr (left expr))
         (argexprs (right expr)))
     (if (primitive? fexpr)
-        (compile-primitive-funcall op argexprs)
+        (compile-primitive-funcall fexpr argexprs env)
         (let ((op (compile fexpr env)))
           (if (applicable-datum? op)
               (if (= 1 (length argexprs))
