@@ -31,7 +31,7 @@
                               (object->string (object->serial-number x))
                               ">")))
 
-(%defprinter <frame> 
+(%defprinter <table> 
              (lambda (fr)
                (with-output-to-string '() 
                                       (lambda () 
@@ -40,8 +40,8 @@
                                                (item (lambda (x)
                                                        (display (%as-string x))
                                                        (space)
-                                                       (display (%as-string (%frame-get fr x)))))
-                                               (keys (%frame-keys fr)))
+                                                       (display (%as-string (%table-get fr x)))))
+                                               (keys (%table-keys fr)))
                                           (if (not (%null? keys))
                                               (begin
                                                 (item (%car keys))
@@ -154,7 +154,7 @@
         (printer x)
         (let ((xtype (%object->bard-type x)))
           (if (%schema? xtype)
-              (let ((printer (table-ref $bard-printers <frame> #f)))
+              (let ((printer (table-ref $bard-printers <table> #f)))
                 (if printer
                     (printer x)
                     (error (string-append "No Bard printer defined for value: " (object->string x))))))))))
@@ -184,9 +184,9 @@
 ;;; (show *)
 ;;; (show (current-input-port))
 ;;; (show (current-output-port))
-;;; (show (%make-frame '()))
-;;; (show (%make-frame '(name: "Fred" age: 101)))
-;;; (show <frame>)
+;;; (show (%make-table '()))
+;;; (show (%make-table '(name: "Fred" age: 101)))
+;;; (show <table>)
 ;;; (show Anything)
 ;;; (show (%singleton 5))
 

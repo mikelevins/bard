@@ -69,10 +69,10 @@
   (%defglobal 'list? bard:list?)
 
 ;;; ---------------------------------------------------------------------
-;;; Frame primitives
+;;; Table primitives
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'frame prim:frame)
+  (%defglobal 'table prim:table)
 
 ;;; ---------------------------------------------------------------------
 ;;; generator primitives
@@ -100,7 +100,7 @@
   (%defglobal '<pair> <pair>)
   (%defglobal '<string> <string>)
   (%defglobal '<iostream> <iostream>)
-  (%defglobal '<frame> <frame>)
+  (%defglobal '<table> <table>)
   (%defglobal '<schema> <schema>)
   (%defglobal '<function> <function>)
   (%defglobal '<primitive-method> <primitive-method>)
@@ -160,9 +160,9 @@
   ;; ---------------------------------------------------------------------
   (%defglobal 'foreign-value? bard:foreign-value?)
 
-  ;; Frame
+  ;; Table
   ;; ---------------------------------------------------------------------
-  (%defglobal 'frame? bard:frame?)
+  (%defglobal 'table? bard:table?)
   ;; (%defglobal 'contains-key? bard:contains-key?)
   ;; (%defglobal 'contains-value? bard:contains-value?)
 

@@ -181,22 +181,22 @@
 (define (%cons->bard-list x) x)
 
 ;;; ---------------------------------------------------------------------
-;;; frame
+;;; table
 ;;; ---------------------------------------------------------------------
 
 (define $empty-slots '())
 
-(define-type %frame
+(define-type %table
   id: 87DD4EB3-09F7-41A4-BEED-0B74FF5C92CE
-  extender: %define-frame-type
-  constructor: %private-make-frame
-  (slots %frame-slots))
+  extender: %define-table-type
+  constructor: %private-make-table
+  (slots %table-slots))
 
-(define $empty-frame (%private-make-frame $empty-slots))
+(define $empty-table (%private-make-table $empty-slots))
 
-(define <frame> (%define-standard-type '<frame> (##structure-type (%private-make-frame $empty-slots))))
+(define <table> (%define-standard-type '<table> (##structure-type (%private-make-table $empty-slots))))
 
-(define (%frame-slot? x)
+(define (%table-slot? x)
   (and (%list? x)
        (not (%null? x))
        (not (%null? (%cdr x)))
@@ -212,18 +212,18 @@
                         (cadr kvs))
                   (loop (cddr kvs)))))))
 
-(define (%make-frame kv-plist)
+(define (%make-table kv-plist)
   (let* ((slots (%plist->slots kv-plist)))
-    (%private-make-frame slots)))
+    (%private-make-table slots)))
 
-(define (%maybe-slot-list->frame slist)
+(define (%maybe-slot-list->table slist)
   (let loop ((slist slist)
              (slots '())
              (keys '()))
     (if (null? slist)
-        (%private-make-frame (reverse slots))
+        (%private-make-table (reverse slots))
         (let ((slot (car slist)))
-          (if (%frame-slot? slot)
+          (if (%table-slot? slot)
               (let ((key (car slot)))
                 (if (member key keys)
                     slist
@@ -232,18 +232,18 @@
                           (cons key keys))))
               slist)))))
 
-(define (%frame . kv-plist)(%make-frame kv-plist))
+(define (%table . kv-plist)(%make-table kv-plist))
 
-(define (%frame-get fr key #!optional (default (%nothing)))
-  (let ((slot (assoc key (%frame-slots fr))))
+(define (%table-get fr key #!optional (default (%nothing)))
+  (let ((slot (assoc key (%table-slots fr))))
     (if slot (cadr slot) default)))
 
-(define (%frame-put fr key value)
+(define (%table-put fr key value)
   (let* ((new-slots (append
                      (remove-if (lambda (slot)(equal? key (car slot)))
-                                (%frame-slots fr))
+                                (%table-slots fr))
                      (list (list key value)))))
-    (%private-make-frame new-slots)))
+    (%private-make-table new-slots)))
 
 (define (%list-get ls key #!optional (default (%nothing)))
   (if (and (integer? key)
@@ -256,8 +256,8 @@
            (< -1 key (length ls)))
       (append (take key ls) (list value) (drop (+ 1 key) ls))
       (let* ((pairs (map list (iota (length ls)) ls))
-             (fr (%private-make-frame pairs)))
-        (%frame-put fr key value))))
+             (fr (%private-make-table pairs)))
+        (%table-put fr key value))))
 
 (define (%string-get str key #!optional (default (%nothing)))
   (if (and (integer? key)
@@ -272,17 +272,17 @@
       (string-append (substring str 0 k) (string v) (substring str (+ k 1)(string-length str)))
       (let* ((chars (string->list str))
              (pairs (map list (iota (string-length str)) chars))
-             (fr (%private-make-frame pairs)))
-        (%frame-put fr k v))))
+             (fr (%private-make-table pairs)))
+        (%table-put fr k v))))
 
-(define (%frame-keys fr)(map car (%frame-slots fr)))
-(define (%frame-vals fr)(map cadr (%frame-slots fr)))
+(define (%table-keys fr)(map car (%table-slots fr)))
+(define (%table-vals fr)(map cadr (%table-slots fr)))
 
 (define (%get obj key)
   (cond
    ((string? obj) (%string-get obj key))
    ((pair? obj) (%list-get obj key))
-   ((%frame? obj) (%frame-get obj key))))
+   ((%table? obj) (%table-get obj key))))
 
 (define (%parse-slot-path path)
   (cond 
@@ -356,7 +356,7 @@
   (cond
    ((string? obj) (%string-put obj key val))
    ((pair? obj) (%list-put obj key val))
-   ((%frame? obj) (%frame-put obj key val))))
+   ((%table? obj) (%table-put obj key val))))
 
 ;;; ---------------------------------------------------------------------
 ;;; schemas (user-defined types)
@@ -372,7 +372,7 @@
 ;;; (set! (quux x) 101)
 ;;; (quux x) => 101
 
-(%define-frame-type %schema
+(%define-table-type %schema
  constructor: %private-make-schema
  name
  includes
@@ -382,7 +382,7 @@
 (define <schema> 
   (%define-standard-type '<schema> (##structure-type (%private-make-schema $empty-slots #f '() '() -1))))
 
-(define (%all-slots schema) (%frame-slots schema))
+(define (%all-slots schema) (%table-slots schema))
 
 (define (%spec->slot spec)
   (let* ((sname (car spec))
@@ -416,12 +416,12 @@
     sc))
 
 
-(%define-frame-type %schema-instance
+(%define-table-type %schema-instance
  constructor: %private-make-schema-instance
  schema)
 
 (define (%validate-initargs schema initargs)
-  (let ((specs (%frame-slots schema)))
+  (let ((specs (%table-slots schema)))
     (let loop ((inits initargs))
       (if (null? inits)
           #t
@@ -435,7 +435,7 @@
 
 (define (%make schema . initargs)
   (%validate-initargs schema initargs)
-  (let loop ((specs (%frame-slots schema))
+  (let loop ((specs (%table-slots schema))
              (slots '()))
     (if (null? specs)
         (%private-make-schema-instance (reverse slots) schema)

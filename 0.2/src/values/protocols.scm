@@ -163,14 +163,14 @@
    restarg: #f))
 
 ;;; ---------------------------------------------------------------------
-;;; Frame
+;;; Table
 ;;; ---------------------------------------------------------------------
 
-;;; frame?
+;;; table?
 
-(define bard:frame?
-  (%make-primitive-method %frame?
-   name: 'frame?
+(define bard:table?
+  (%make-primitive-method %table?
+   name: 'table?
    parameters: (%list 'thing)
    required-count: 1
    restarg: #f))
@@ -179,7 +179,7 @@
 
 (define (%bard-get fr k)
   (cond
-   ((%frame? fr)(%frame-get fr k))
+   ((%table? fr)(%table-get fr k))
    ((%list? fr)(if (integer? k)
                    (list-ref fr k)
                    (getf k fr (%nothing))))
@@ -189,7 +189,7 @@
 (define bard:get
   (%make-primitive-method %bard-get
    name: 'get
-   parameters: (%list 'frame 'key)
+   parameters: (%list 'table 'key)
    required-count: 2
    restarg: #f))
 
@@ -197,7 +197,7 @@
 
 (define (%bard-keys fr)
   (cond
-   ((%frame? fr)(%frame-keys fr))
+   ((%table? fr)(%table-keys fr))
    ((%list? fr)(iota (%length fr)))
    ((string? fr)(iota (string-length fr)))
    (else (%nothing))))
@@ -205,7 +205,7 @@
 (define bard:keys
   (%make-primitive-method %bard-keys
    name: 'keys
-   parameters: (%list 'frame)
+   parameters: (%list 'table)
    required-count: 1
    restarg: #f))
 
@@ -213,7 +213,7 @@
 
 (define (%bard-vals fr)
   (cond
-   ((%frame? fr)(%frame-vals fr))
+   ((%table? fr)(%table-vals fr))
    ((%list? fr) fr)
    ((string? fr) fr)
    (else (%nothing))))
@@ -221,7 +221,7 @@
 (define bard:vals
   (%make-primitive-method %bard-vals
    name: 'vals
-   parameters: (%list 'frame)
+   parameters: (%list 'table)
    required-count: 1
    restarg: #f))
 
@@ -229,15 +229,15 @@
 
 (define (%bard-put fr k v)
   (cond
-   ((%frame? fr)(%frame-put fr k v))
+   ((%table? fr)(%table-put fr k v))
    ((%list? fr)(%list-put fr k v))
    ((string? fr)(%string-put fr k v))
-   (else (%frame value: fr k v))))
+   (else (%table value: fr k v))))
 
 (define bard:put
   (%make-primitive-method %bard-put
    name: 'put
-   parameters: (%list 'frame 'key 'value)
+   parameters: (%list 'table 'key 'value)
    required-count: 3
    restarg: #f))
 
@@ -583,12 +583,12 @@
                         name: 'last)
 
 (%add-primitive-method! bard:last
-                        (%list <frame>)
-                        (%list 'frame)
-                        (lambda (frame)
-                          (let* ((keys (%frame-keys frame))
+                        (%list <table>)
+                        (%list 'table)
+                        (lambda (table)
+                          (let* ((keys (%table-keys table))
                                  (key (%list-ref keys (- (%length keys) 1))))
-                            (%frame key (%frame-get frame key (%nothing)))))
+                            (%table key (%table-get table key (%nothing)))))
                         name: 'last)
 
 ;;; length
@@ -614,9 +614,9 @@
                         name: 'length)
 
 (%add-primitive-method! bard:length
-                        (%list <frame>)
-                        (%list 'frame)
-                        (lambda (frame)(%length (%frame-keys frame)))
+                        (%list <table>)
+                        (%list 'table)
+                        (lambda (table)(%length (%table-keys table)))
                         name: 'length)
 
 ;;; list?
@@ -733,34 +733,34 @@
                         %bard-map-string
                         name: 'map)
 
-;;; <frame>
+;;; <table>
 
-(define (%bard-map-frame fn fr)
-  (let loop ((ks (%frame-keys fr))
+(define (%bard-map-table fn fr)
+  (let loop ((ks (%table-keys fr))
              (out '()))
     (if (%null? ks)
-        (%maybe-slot-list->frame (reverse out))
+        (%maybe-slot-list->table (reverse out))
         (let* ((k (%car ks))
-               (v (%frame-get fr k)))
+               (v (%table-get fr k)))
           (loop (%cdr ks)
                 (%cons (%funcall fn k v) out))))))
 
 (%add-primitive-method! bard:map
-                        (%list <primitive-method> <frame>)
+                        (%list <primitive-method> <table>)
                         (%list 'fn 'ls)
-                        %bard-map-frame
+                        %bard-map-table
                         name: 'map)
 
 (%add-primitive-method! bard:map
-                        (%list <interpreted-method> <frame>)
+                        (%list <interpreted-method> <table>)
                         (%list 'fn 'ls)
-                        %bard-map-frame
+                        %bard-map-table
                         name: 'map)
 
 (%add-primitive-method! bard:map
-                        (%list <function> <frame>)
+                        (%list <function> <table>)
                         (%list 'fn 'ls)
-                        %bard-map-frame
+                        %bard-map-table
                         name: 'map)
 
 ;;; reduce

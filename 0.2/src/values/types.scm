@@ -184,6 +184,6 @@
    (%null? op)
    (string? op)
    (%list? op)
-   (%frame? op)))
+   (%table? op)))
 
 

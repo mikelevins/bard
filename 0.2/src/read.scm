@@ -70,7 +70,7 @@
   (let ((rt (##make-standard-readtable)))
     (readtable-keywords-allowed?-set rt #t)
     (macro-readtable-bracket-keyword-set! rt 'list)
-    (macro-readtable-brace-keyword-set! rt 'frame)
+    (macro-readtable-brace-keyword-set! rt 'table)
     rt))
 
 (define +bard-readtable+ (bard:make-readtable))
@@ -83,7 +83,7 @@
   (cond
    ((null? val) (%nothing))
    ((eq? 'list (car val)) (%cons 'list (%read-cons (cdr val))))
-   ((eq? 'frame (car val)) (%cons 'frame (%read-cons (cdr val))))
+   ((eq? 'table (car val)) (%cons 'table (%read-cons (cdr val))))
    (else (let loop ((items val)
                     (ls %nil))
            (if (null? items)
@@ -136,7 +136,7 @@
 ;;; (show (bard:read-from-string "{0 1 2 3 4 [01 2 3] 5 {a: 1 b: 2}}"))
 ;;; (show (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}"))
 ;;; (show (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")))
-;;; (show (%frame-get (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")) friends:))
+;;; (show (%table-get (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")) friends:))
 ;;; (show (%eval (bard:read-from-string "(list 0 1 2 3 4 5)")))
 
 

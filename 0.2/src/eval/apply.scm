@@ -15,7 +15,7 @@
        ((%null? op) %nil)
        ((string? op)(string-ref op (%car args)))
        ((%list? op)(%list-ref op (%car args)))
-       ((%frame? op)(%frame-get op (%car args)))
+       ((%table? op)(%table-get op (%car args)))
        (else (error (string-append "Not an applicable object: " (%as-string op)))))
       (error (string-append "Too many arguments: " (%as-string args)))))
 

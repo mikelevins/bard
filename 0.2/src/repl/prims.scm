@@ -225,13 +225,13 @@
    restarg: 'more
    ))
 
-;;; Frame
+;;; Table
 ;;; ---------------------------------------------------------------------
 
-(define prim:frame
+(define prim:table
   (%make-primitive-method
-   (lambda args (%make-frame (%cons->bard-list args)))
-   name: 'frame
+   (lambda args (%make-table (%cons->bard-list args)))
+   name: 'table
    parameters: %nil
    required-count: 0
    restarg: 'more
