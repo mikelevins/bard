@@ -40,7 +40,16 @@
       (gen 'GREF expr)))
 
 (define compile-^ (method (expr env)(error "Not yet implemented")))
-(define compile-begin (method (expr env)(error "Not yet implemented")))
+
+(define-function (compile-begin-aux exprs env) 
+  (cond
+   ((empty? exprs)(compile-self-evaluating nothing))
+   ((= 1 (length exprs))(compile (first exprs) env))
+   (else: (gen-seq (compile (first exprs) env)
+                   (compile-begin-aux (rest exprs) env)))))
+
+(define compile-begin (method (expr env)(compile-begin-aux (rest expr) env)))
+
 (define compile-cond (method (expr env)(error "Not yet implemented")))
 (define compile-define (method (expr env)(error "Not yet implemented")))
 (define compile-ensure (method (expr env)(error "Not yet implemented")))
