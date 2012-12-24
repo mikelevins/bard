@@ -19,6 +19,8 @@
 (define-function (gen opcode & args)
   (list (add-first opcode args)))
 
+(define-function (gen-label)(gensym))
+
 (define-function (gen-seq & args)
   (if (empty? args)
       []
@@ -42,12 +44,34 @@
 (define compile-cond (method (expr env)(error "Not yet implemented")))
 (define compile-define (method (expr env)(error "Not yet implemented")))
 (define compile-ensure (method (expr env)(error "Not yet implemented")))
-(define compile-if (method (expr env)(error "Not yet implemented")))
+
+(define compile-if (method (expr env)
+                           (let ((test-form (element expr 1))
+                                 (testcode (compile test-form env))
+                                 (then-form (element expr 2))
+                                 (thencode (compile then-form env))
+                                 (else-form (if (> (length expr)
+                                                   3)
+                                                (element expr 3)
+                                                nothing))
+                                 (elsecode (compile else-form env)))
+                             (let ((L1 (gen-label))
+                                   (L2 (gen-label)))
+                               (gen-seq testcode
+                                        (gen 'FGO L1)
+                                        thencode
+                                        (gen 'GO L2)
+                                        [L1]
+                                        elsecode
+                                        [L2])))))
+
 (define compile-let (method (expr env)(error "Not yet implemented")))
 (define compile-loop (method (expr env)(error "Not yet implemented")))
 (define compile-match (method (expr env)(error "Not yet implemented")))
 (define compile-quasiquote (method (expr env)(error "Not yet implemented")))
+
 (define compile-quote (method (expr env)(gen 'CONST (element expr 1))))
+
 (define compile-set! (method (expr env)(error "Not yet implemented")))
 (define compile-setter (method (expr env)(error "Not yet implemented")))
 (define compile-unless (method (expr env)(error "Not yet implemented")))
@@ -60,14 +84,14 @@
 (define +special-forms+ 
   { '^ compile-^
    'begin compile-begin
-   'begin compile-cond
-   'begin compile-define
-   'begin compile-ensure
-   'begin compile-if
-   'begin compile-let
-   'begin compile-loop
-   'begin compile-match
-   'begin compile-quasiquote
+   'cond compile-cond
+   'define compile-define
+   'ensure compile-ensure
+   'if compile-if
+   'let compile-let
+   'loop compile-loop
+   'match compile-match
+   'quasiquote compile-quasiquote
    'quote compile-quote
    'set! compile-set!
    'setter compile-setter
@@ -95,8 +119,7 @@
 (define +macro-forms+ 
   {'and macroexpand-and
    'not macroexpand-not
-   'or macroexpand-or
-   })
+   'or macroexpand-or})
 
 (define-function (macro-form? expr) false)
 

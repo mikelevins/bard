@@ -30,6 +30,7 @@
   (%defglobal 'error prim:error)
   (%defglobal 'exit prim:exit)
   (%defglobal 'gc prim:gc)
+  (%defglobal 'gensym prim:gensym)
   (%defglobal 'quit prim:quit)
   (%defglobal 'room prim:room)
   (%defglobal 'version prim:version)

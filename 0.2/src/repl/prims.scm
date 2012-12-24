@@ -249,6 +249,15 @@
    restarg: #f
    ))
 
+(define prim:gensym
+  (%make-primitive-method
+   (lambda ()(gensym))
+   name: 'gensym
+   parameters: %nil
+   required-count: 0
+   restarg: #f
+   ))
+
 (define prim:room
   (%make-primitive-method
    (lambda ()
