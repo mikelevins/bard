@@ -1,0 +1,13 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compile.bard
+;;;; Project:       Bard
+;;;; Purpose:       bard compiler in bard, targeting the bard vm
+;;;; Author:        mikel evins
+;;;; Copyright:     2012 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+(define-function (compile expr env)
+  )
