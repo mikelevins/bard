@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/")
+(define $bard-root  "/Users/mikel/Projects/bard/0.2/")
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development

@@ -38,10 +38,10 @@ ___DEF_GLO(0," version")
 ___DEF_GLO(1,"$bard-version-string")
 ___END_GLO
 
-___DEF_SUB_STR(___X0,18)
+___DEF_SUB_STR(___X0,19)
                ___STR8(66,97,114,100,32,118,101,114)
                ___STR8(115,105,111,110,32,48,46,50)
-               ___STR2(46,57)
+               ___STR3(46,49,48)
 
 ___BEGIN_SUB
  ___DEF_SUB(___X0)

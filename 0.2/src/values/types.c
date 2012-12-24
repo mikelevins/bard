@@ -110,8 +110,8 @@
 "<foreign-value>"
 "<iostream>"
 "<keyword>"
-"<list>"
 "<null>"
+"<pair>"
 "<primitive-procedure>"
 "<ratnum>"
 "<string>"
@@ -284,8 +284,8 @@ ___NEED_GLO(___G__3c_flonum_3e_)
 ___NEED_GLO(___G__3c_foreign_2d_value_3e_)
 ___NEED_GLO(___G__3c_iostream_3e_)
 ___NEED_GLO(___G__3c_keyword_3e_)
-___NEED_GLO(___G__3c_list_3e_)
 ___NEED_GLO(___G__3c_null_3e_)
+___NEED_GLO(___G__3c_pair_3e_)
 ___NEED_GLO(___G__3c_primitive_2d_procedure_3e_)
 ___NEED_GLO(___G__3c_ratnum_3e_)
 ___NEED_GLO(___G__3c_string_3e_)
@@ -421,8 +421,8 @@ ___DEF_GLO(40,"<flonum>")
 ___DEF_GLO(41,"<foreign-value>")
 ___DEF_GLO(42,"<iostream>")
 ___DEF_GLO(43,"<keyword>")
-___DEF_GLO(44,"<list>")
-___DEF_GLO(45,"<null>")
+___DEF_GLO(44,"<null>")
+___DEF_GLO(45,"<pair>")
 ___DEF_GLO(46,"<primitive-procedure>")
 ___DEF_GLO(47,"<ratnum>")
 ___DEF_GLO(48,"<string>")
@@ -1164,7 +1164,7 @@ ___DEF_SLBL(35,___L35__20_types)
    ___SET_R0(___LBL(36))
    ___JUMPGLOSAFE(___SET_NARGS(2),10,___G__25_define_2d_primitive_2d_type)
 ___DEF_SLBL(36,___L36__20_types)
-   ___SET_GLO(45,___G__3c_null_3e_,___R1)
+   ___SET_GLO(44,___G__3c_null_3e_,___R1)
    ___SET_R2(___GLO(57,___G_tags_3a__24_character))
    ___SET_R1(___SYM(10,___S__3c_character_3e_))
    ___SET_R0(___LBL(37))
@@ -1230,7 +1230,7 @@ ___DEF_SLBL(46,___L46__20_types)
    ___SET_R0(___LBL(47))
    ___JUMPGLOSAFE(___SET_NARGS(2),10,___G__25_define_2d_primitive_2d_type)
 ___DEF_SLBL(47,___L47__20_types)
-   ___SET_GLO(44,___G__3c_list_3e_,___R1)
+   ___SET_GLO(45,___G__3c_pair_3e_,___R1)
    ___SET_R2(___GLO(60,___G_tags_3a__24_foreign_2d_value))
    ___SET_R1(___SYM(13,___S__3c_foreign_2d_value_3e_))
    ___SET_R0(___LBL(48))

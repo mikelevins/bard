@@ -73,22 +73,29 @@
                                           (display ">"))))))
 
 
-(%defprinter <list> 
+(%defprinter <pair> 
              (lambda (ls)
                (with-output-to-string '() 
                                       (lambda () 
                                         (display "(")
                                         (let ((space (lambda ()(display " ")))
+                                              (dot (lambda ()(display ".")))
                                               (item (lambda (x)(display (%as-string x)))))
                                           (if (not (%null? ls))
                                               (begin
                                                 (item (%car ls))
                                                 (let loop ((items (%cdr ls)))
                                                   (if (not (%null? items))
-                                                      (begin
-                                                        (space)
-                                                        (item (%car items))
-                                                        (loop (%cdr items))))))))
+                                                      (if (list? items)
+                                                          (begin
+                                                            (space)
+                                                            (item (%car items))
+                                                            (loop (%cdr items)))
+                                                          (begin
+                                                            (space)
+                                                            (dot)
+                                                            (space)
+                                                            (item items))))))))
                                         (display ")")))))
 
 (%defprinter <foreign-value> 

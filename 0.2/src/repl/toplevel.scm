@@ -97,7 +97,7 @@
   (%defglobal '<fixnum> <fixnum>)
   (%defglobal '<bignum> <bignum>)
   (%defglobal '<primitive-procedure> <primitive-procedure>)
-  (%defglobal '<list> <list>)
+  (%defglobal '<pair> <pair>)
   (%defglobal '<string> <string>)
   (%defglobal '<iostream> <iostream>)
   (%defglobal '<frame> <frame>)
@@ -262,6 +262,12 @@
   ;; Method
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'method? bard:method?)
+
+  ;; Pair
+  ;; ---------------------------------------------------------------------
+  (%defglobal 'pair bard:pair)
+  (%defglobal 'left bard:left)
+  (%defglobal 'right bard:right)
 
   ;; Name
   ;; ---------------------------------------------------------------------

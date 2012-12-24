@@ -9,5 +9,101 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define-function (contains-variable? (env <null>)(expr <symbol>)) false)
+
+(define-function (contains-variable? (env <pair>)(expr <symbol>))
+  (if (= expr (left (first env)))
+      true
+      (contains-variable? (rest env) expr)))
+
+(define-function (gen opcode & args)
+  (list (add-first opcode args)))
+
+(define-function (gen-seq & args)
+  (if (empty? args)
+      []
+      (append (first args)
+              (apply gen-seq (rest args)))))
+
+(define-function (self-evaluating? expr) true)
+(define-function (self-evaluating? (expr <symbol>)) false)
+(define-function (self-evaluating? (expr <pair>)) false)
+
+(define-function (compile-self-evaluating expr)
+  (gen 'CONST expr))
+
+(define-function (compile-variable-reference expr env)
+  (if (contains-variable? env expr)
+      (gen 'LREF expr)
+      (gen 'GREF expr)))
+
+(define +special-forms+ 
+  { 'quote (method (expr env)(gen 'CONST (element expr 1)))
+   })
+
+(define-function (special-form? expr) false)
+
+(define-function (special-form? (expr <pair>))
+  (and (something? (get +special-forms+ (left expr)))
+       true))
+
+(define-function (compile-special-form (expr <pair>) env)
+  (let ((comp (get +special-forms+ (left expr))))
+    (comp expr env)))
+
+(define +macro-forms+ {})
+
+(define-function (macro-form? expr) false)
+
+(define-function (macro-form? (expr <pair>))
+  (and (something? (get +macro-forms+ (left expr)))
+       true))
+
+(define-function (macroexpand (expr <pair>))
+  (let ((expand (get +macro-forms+ (left expr))))
+    (expand expr)))
+
+(define +primitives+ {})
+
+(define-function (primitive? expr) false)
+
+(define-function (primitive? (expr <pair>))
+  (and (something? (get +primitives+ (left expr)))
+       true))
+
+(define-function (compile-primitive-funcall op argexprs)
+  (gen-seq (compile-list argexprs env)
+           (gen 'PRIM op (length argexprs))))
+
+(define-function (applicable-datum? d) false)
+(define-function (applicable-datum? <string>) true)
+(define-function (applicable-datum? <frame>) true)
+(define-function (applicable-datum? <pair>) false)
+
+(define-function (compile-list (exprs <null>) env) [])
+
+(define-function (compile-list (exprs <pair>) env)
+  (gen-seq (compile (left exprs) env)
+           (compile-list (right exprs) env)))
+
+(define-function (compile-application-form (expr <pair>) env)
+  (let ((fexpr (left expr))
+        (argexprs (right expr)))
+    (if (primitive? fexpr)
+        (compile-primitive-funcall op argexprs)
+        (let ((op (compile fexpr env)))
+          (if (applicable-datum? op)
+              (if (= 1 (length argexprs))
+                  (compile `(get ,op ,(left argexprs)) env)
+                  (error ["Too many arguments in application of datum: " argexprs]))
+              (gen-seq (compile-list argexprs env)
+                       (compile fexpr env)
+                       (gen 'CALL (length argexprs))))))))
+
 (define-function (compile expr env)
-  )
+  (cond
+   ((self-evaluating? expr)(compile-self-evaluating expr))
+   ((symbol? expr)(compile-variable-reference expr env))
+   ((special-form? expr)(compile-special-form expr env))
+   ((macro-form? expr)(compile (macroexpand expr) env))
+   (else: (compile-application-form expr env))))

@@ -190,3 +190,15 @@
                     (outstr (substring instr (+ 1 chpos) (string-length instr))))
                 (loop outstr (cons seg result)))
               (loop "" (cons instr result)))))))
+
+(define (str . args)
+  (if (null? args)
+      ""
+      (let ((s (if (string? (car args))
+                   (car args)
+                   (if (char? (car args))
+                       (string (car args))
+                       (object->string (car args))))))
+        (if (null? (cdr args))
+            s
+            (string-append s (apply str (cdr args)))))))

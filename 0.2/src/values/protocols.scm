@@ -75,7 +75,7 @@
                         name: 'as)
 
 (%add-primitive-method! bard:as
-                        (%list (%singleton <list>) <string>)
+                        (%list (%singleton <pair>) <string>)
                         (%list 'type 'thing)
                         (lambda (type thing)(%cons->bard-list (string->list thing)))
                         name: 'as)
@@ -87,7 +87,7 @@
                         name: 'as)
 
 (%add-primitive-method! bard:as
-                        (%list (%singleton <string>) <list>)
+                        (%list (%singleton <string>) <pair>)
                         (%list 'type 'thing)
                         (lambda (type thing)(list->string (%bard-list->cons thing)))
                         name: 'as)
@@ -300,6 +300,39 @@
    required-count: 2
    restarg: #f))
 
+;;; ---------------------------------------------------------------------
+;;; Pair
+;;; ---------------------------------------------------------------------
+
+;;; pair
+
+(define bard:pair (%make-function name: 'pair))
+
+(%add-primitive-method! bard:pair
+                        (%list Anything Anything)
+                        (%list 'l 'r)
+                        %cons
+                        name: 'pair)
+
+;;; left
+
+(define bard:left (%make-function name: 'left))
+
+(%add-primitive-method! bard:left
+                        (%list <pair>)
+                        (%list 'p)
+                        car
+                        name: 'left)
+
+;;; right
+
+(define bard:right (%make-function name: 'right))
+
+(%add-primitive-method! bard:right
+                        (%list <pair>)
+                        (%list 'p)
+                        cdr
+                        name: 'right)
 
 ;;; ---------------------------------------------------------------------
 ;;; List
@@ -316,7 +349,7 @@
                         name: 'add-first)
 
 (%add-primitive-method! bard:add-first
-                        (%list Anything <list>)
+                        (%list Anything <pair>)
                         (%list 'thing 'ls)
                         %cons
                         name: 'add-first)
@@ -338,9 +371,12 @@
                         name: 'add-last)
 
 (%add-primitive-method! bard:add-last
-                        (%list <list> Anything)
+                        (%list <pair> Anything)
                         (%list 'ls 'thing)
-                        (lambda (ls thing)(%append ls (%list thing)))
+                        (lambda (ls thing)
+                          (if (%list? ls)
+                              (%append ls (%list thing))
+                              (error (str "Improper list: " ls))))
                         name: 'add-last)
 
 (%add-primitive-method! bard:add-last
@@ -354,9 +390,12 @@
 (define bard:any (%make-function name: 'any))
 
 (%add-primitive-method! bard:any
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
-                        (lambda (ls)(%list-ref ls (random-integer (%length ls))))
+                        (lambda (ls)
+                          (if (%list? ls)
+                              (%list-ref ls (random-integer (%length ls)))
+                              (error (str "Improper list: " ls))))
                         name: 'any)
 
 (%add-primitive-method! bard:any
@@ -376,19 +415,19 @@
                         name: 'append)
 
 (%add-primitive-method! bard:append
-                        (%list <null>  <list>)
+                        (%list <null>  <pair>)
                         (%list 'ls1 'ls2)
                         (lambda (ls1 ls2) ls2)
                         name: 'append)
 
 (%add-primitive-method! bard:append
-                        (%list <list>  <null>)
+                        (%list <pair>  <null>)
                         (%list 'ls1 'ls2)
                         (lambda (ls1 ls2) ls1)
                         name: 'append)
 
 (%add-primitive-method! bard:append
-                        (%list <list>  <list>)
+                        (%list <pair>  <pair>)
                         (%list 'ls1 'ls2)
                         %append
                         name: 'append)
@@ -404,7 +443,7 @@
 (define bard:drop (%make-function name: 'drop))
 
 (%add-primitive-method! bard:drop
-                        (%list <fixnum>  <list>)
+                        (%list <fixnum>  <pair>)
                         (%list 'n 'ls)
                         (lambda (n ls)
                           (let loop ((items ls)
@@ -427,7 +466,7 @@
 (define bard:element (%make-function name: 'element))
 
 (%add-primitive-method! bard:element
-                        (%list <list> <fixnum>)
+                        (%list <pair> <fixnum>)
                         (%list 'ls 'n)
                         %list-ref
                         name: 'element)
@@ -449,7 +488,7 @@
                         name: 'empty?)
 
 (%add-primitive-method! bard:empty?
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
                         (constantly (%false))
                         name: 'empty?)
@@ -482,19 +521,19 @@
                         name: 'filter)
 
 (%add-primitive-method! bard:filter
-                        (%list <primitive-method> <list>)
+                        (%list <primitive-method> <pair>)
                         (%list 'fn 'ls)
                         %bard-filter
                         name: 'filter)
 
 (%add-primitive-method! bard:filter
-                        (%list <interpreted-method> <list>)
+                        (%list <interpreted-method> <pair>)
                         (%list 'fn 'ls)
                         %bard-filter
                         name: 'filter)
 
 (%add-primitive-method! bard:filter
-                        (%list <function> <list>)
+                        (%list <function> <pair>)
                         (%list 'fn 'ls)
                         %bard-filter
                         name: 'filter)
@@ -504,7 +543,7 @@
 (define bard:first (%make-function name: 'first))
 
 (%add-primitive-method! bard:first
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
                         %car
                         name: 'first)
@@ -521,7 +560,7 @@
 (define bard:join-strings (%make-function name: 'join-strings))
 
 (%add-primitive-method! bard:join-strings
-                        (%list <string>  <list>)
+                        (%list <string>  <pair>)
                         (%list 'str 'strs)
                         %bard-join-strings
                         name: 'join-strings)
@@ -532,7 +571,7 @@
 (define bard:last (%make-function name: 'last))
 
 (%add-primitive-method! bard:last
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
                         %last
                         name: 'last)
@@ -563,7 +602,7 @@
                         name: 'length)
 
 (%add-primitive-method! bard:length
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
                         %length
                         name: 'length)
@@ -597,9 +636,9 @@
                         name: 'list?)
 
 (%add-primitive-method! bard:list?
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
-                        (constantly (%true))
+                        (lambda (ls)(%list? ls))
                         name: 'list?)
 
 (%add-primitive-method! bard:list?
@@ -644,19 +683,19 @@
                     result)))))
 
 (%add-primitive-method! bard:map
-                        (%list <primitive-method> <list>)
+                        (%list <primitive-method> <pair>)
                         (%list 'fn 'ls)
                         %bard-map-list
                         name: 'map)
 
 (%add-primitive-method! bard:map
-                        (%list <interpreted-method> <list>)
+                        (%list <interpreted-method> <pair>)
                         (%list 'fn 'ls)
                         %bard-map-list
                         name: 'map)
 
 (%add-primitive-method! bard:map
-                        (%list <function> <list>)
+                        (%list <function> <pair>)
                         (%list 'fn 'ls)
                         %bard-map-list
                         name: 'map)
@@ -755,19 +794,19 @@
                         name: 'reduce)
 
 (%add-primitive-method! bard:reduce
-                        (%list <primitive-method> Anything <list>)
+                        (%list <primitive-method> Anything <pair>)
                         (%list 'fn 'init 'ls)
                         %bard-reduce
                         name: 'reduce)
 
 (%add-primitive-method! bard:reduce
-                        (%list <interpreted-method> Anything <list>)
+                        (%list <interpreted-method> Anything <pair>)
                         (%list 'fn 'init 'ls)
                         %bard-reduce
                         name: 'reduce)
 
 (%add-primitive-method! bard:reduce
-                        (%list <function> Anything <list>)
+                        (%list <function> Anything <pair>)
                         (%list 'fn 'init 'ls)
                         %bard-reduce
                         name: 'reduce)
@@ -782,7 +821,7 @@
                         name: 'rest)
 
 (%add-primitive-method! bard:rest
-                        (%list <list>)
+                        (%list <pair>)
                         (%list 'ls)
                         %cdr
                         name: 'rest)
@@ -827,7 +866,7 @@
 (define bard:take (%make-function name: 'take))
 
 (%add-primitive-method! bard:take
-                        (%list <fixnum>  <list>)
+                        (%list <fixnum>  <pair>)
                         (%list 'n 'ls)
                         (lambda (n ls)
                           (let loop ((items ls)
