@@ -316,7 +316,7 @@ by calling the exit function.
 
 A Bard datatype is made up of three parts:
 
-- a **schema** describes the layout of buts and bytes
+- a **schema** describes the layout of bits and bytes
 - a **protocol** describes functions that operate on the type
 - a **class** identifies values that can be used in a protocol
 
