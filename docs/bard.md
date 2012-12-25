@@ -324,7 +324,7 @@ Here's a very simple example:
 
 We start by defining a schema named `<ratio>`:
 
-    (define schema <ratio> numerator denominator)
+    (define schema <ratio> num denom)
 
 Defining the schema adds a method to the `make` function for creating
 instances of the schema. We can now create instances of `<ratio>`:
