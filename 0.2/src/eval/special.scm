@@ -63,13 +63,19 @@
 ;;; define
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'define
-             (lambda (expr env)
-               (%defglobal (%list-ref expr 1) (%eval (%list-ref expr 2) env))
-               (%list-ref expr 1)))
+(define (%eval-define-variable expr env)
+  (%defglobal (%list-ref expr 2) (%eval (%list-ref expr 3) env))
+               (%list-ref expr 2))
 
-;;; define-schema
-;;; ----------------------------------------------------------------------
+(define (%eval-define-schema expr env)
+  (let* ((sname (list-ref expr 2))
+         (includes (map (lambda (e)(%eval e env))
+                        (list-ref expr 3)))
+         (slot-specs (drop 4 expr))
+         (slots (%parse-slot-descriptions slot-specs env))
+         (sc (%make-schema sname includes slots)))
+    (table-set! $bard-global-variables sname sc)
+    sc))
 
 (define (%canonicalize-slot-spec spec)
   (let ((spec (if (or (symbol? spec)(string? spec)(keyword? spec))
@@ -91,40 +97,15 @@
     (map (lambda (s) (%parse-canonical-slot-description s env))
          specs)))
 
-(%defspecial 'define-schema
-             (lambda (expr env)
-               (let* ((sname (list-ref expr 1))
-                      (includes (map (lambda (e)(%eval e env))
-                                     (list-ref expr 2)))
-                      (slot-specs (drop 3 expr))
-                      (slots (%parse-slot-descriptions slot-specs env))
-                      (sc (%make-schema sname includes slots)))
-                 (table-set! $bard-global-variables sname sc)
-                 sc)))
-
-;;; define-macro prototype & body
-;;; ----------------------------------------------------------------------
-
-(%defspecial 'define-macro
-             (lambda (expr env)
-               (let* ((proto (cadr expr))
-                      (body (cddr expr))
-                      (mname (car proto))
-                      (marglist (cdr proto))
-                      (expander (%eval `(method ,marglist (begin ,@body)) env)))
-                 (%define-macro-function mname
-                                         (lambda (expr)
-                                           (%apply expander (%cdr expr)))))))
-
-;;; define-function
-;;; ----------------------------------------------------------------------
-
-;;; (show (%eval (bard:read-from-string "(define-function (always-true) true)")))
-;;; (show (%eval (bard:read-from-string "(define-function (itself x) x)")))
-;;; (show (%eval (bard:read-from-string "(define-function (my-list & args) args)")))
-;;; (show (%eval (bard:read-from-string "(define-function (foo {a: 1 b: 2}) (list a b))")))
-;;; (show (%eval (bard:read-from-string "(define-function (elt (ls <list>)(i <fixnum>)) (%list-ref ls i))")))
-;;; (show (%eval (bard:read-from-string "(define-function (frob (x <list>)(y <fixnum>) & more-args) (%list-ref ls i))")))
+(define (%eval-define-macro expr env)
+  (let* ((proto (caddr expr))
+         (body (cdddr expr))
+         (mname (car proto))
+         (marglist (cdr proto))
+         (expander (%eval `(method ,marglist (begin ,@body)) env)))
+    (%define-macro-function mname
+                            (lambda (expr)
+                              (%apply expander (%cdr expr))))))
 
 (define %fparams %list)
 
@@ -173,12 +154,8 @@
 (define (%fproto-restarg fp)(%list-ref fp 3))
 (define (%fproto-framearg fp)(%list-ref fp 4))
 
-
-;;; TODO: define-function can now parse frame args, e.g.:
-;;; (define-function (x y {a: "default1" b: "default2"})...)
-;;; but functions do not yet handle them
-(define (%define-function expr #!optional (env (%null-environment)))
-  (let* ((prototype (%parse-function-prototype (%list-ref expr 1) env))
+(define (%eval-define-method expr #!optional (env (%null-environment)))
+  (let* ((prototype (%parse-function-prototype (%list-ref expr 2) env))
          (fname (%fproto-name prototype))
          (fn (or (table-ref $bard-global-variables fname #f)
                  (let ((f (%make-function name: fname)))
@@ -190,7 +167,7 @@
          (restarg (%fproto-restarg prototype))
          (framearg (%fproto-framearg prototype))
          (required-count (%length types))
-         (body (%cons 'begin (%drop 2 expr)))
+         (body (%cons 'begin (%drop 3 expr)))
          (method-signature types)
          (method (%make-interpreted-method formals body
                                            environment: env
@@ -200,7 +177,16 @@
     (%add-method! fn method-signature method)
     fname))
 
-(%defspecial 'define-function %define-function)
+(%defspecial 'define
+             (lambda (expr env)
+               (let ((kind (list-ref expr 1)))
+                 (cond
+                  ((eq? 'variable kind)(%eval-define-variable expr env))
+                  ((eq? 'macro kind)(%eval-define-macro expr env))
+                  ((eq? 'method kind)(%eval-define-method expr env))
+                  ((eq? 'schema kind)(%eval-define-schema expr env))
+                  (else (error ["Unrecognized definition type: " kind]))))))
+
 
 ;;; function
 ;;; ----------------------------------------------------------------------

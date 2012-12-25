@@ -1,0 +1,1 @@
+(define method (contains-variable? (env <null>)(expr <symbol>)) false)
