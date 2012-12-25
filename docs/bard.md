@@ -14,7 +14,7 @@ Dylan. It also takes influence from several other programming
 languages, including Smalltalk, Haskell, Lua, Erlang, Clojure, and
 others.
 
-This document is a brief overview of the language.
+This document is a brief overview and basic refernce for the language.
 
 ## Syntax and built-in classes
 
@@ -27,7 +27,7 @@ parentheses, like this:
 
     (foo bar baz)
 
-An atom is any expression that is not a list:
+An atom is any valid expression that is not a list:
 
     foo
     1
@@ -48,14 +48,10 @@ list. Thus, this:
 ...is not.
 
 Besides parentheses to identify lists, Bard supplies a lexical syntax
-for each of its basic built-in types. In Bard, these types are called
-"classes"; there's more to types than just classes, and Bard classes
-are a little different from classes in other languages, but for now,
-all you need to know is that Bard provides around a dozen built-in
-types called "classes", and it provides a literal lexical syntax for
-each one.
+for each of its basic built-in datatypes. These types are called
+"classes". 
 
-Here they are:
+Here are the basic built-in classes, with example values of each:
 
 **Undefined**
 
@@ -67,13 +63,13 @@ The class of unknown, or undefined values.
 
     nothing
 
-The absent or empty value.
+The value that represents an empty collection or the absence of a value.
 
 **Boolean**    
 
     true, false
 
-Logical true and false values.
+Values that represent the Boolean values true and false.
 
 **Number**     
 
@@ -97,45 +93,38 @@ A class that represents a pair or an association of arbitrary values.
 
     '(), '(0 1 2 3 4)
 
-An orderd sequence of values
+An ordered sequence of values
 
 **Table**
 
     {a: 0 b: 1}
 
-A mapping from keys to values. Both keys and values may be arbitrary
-Bard objects, with two restrictions: neither keys nor values may be
-undefined, and keys may not be nothing. A table may be treated as a
-list of pairs, though it isn't necessarily represented that way.
+A mapping from keys to values. 
 
 **Method**
 
     (^ (x) x)          
     (^ (x y) (+ x y))
 
-A callable object that executes some code when applied to zero or more
-arguments.
-
-**Function**
-
-    (-> Number Number)
-
-An abstract, polymorphic, callable object.  Functions are like
-methods, except that they don't have any code of their own to
-execute. Instead, they have methods that they know about. When a
-function is applied to some arguments, it inspects the arguments
-looking for a match to a method it knows about. If if finds a match,
-it applies the method to the arguments.  If it doesn't, it raises an
-exception. Functions choose methods based on the types of their
-arguments.
+A callable object that executes some code when applied to arguments.
 
 ### Specialized classes
 
-Besides Bard's basic built-in classes, it has a few more types with
-more specialized uses, and most of these don't have standard literal
-syntax defined for them. These more specialized classes include:
+Besides the basic built-in classes, Bard has a few more types with more
+specialized uses, and most of these don't have standard literal syntax
+defined for them. These more specialized classes include:
 
-**Actors**
+**Function**
+
+A function is a callable object, similar to a method. Unlike a method,
+a function has no code of its own; instead, it has a set of methods
+that are associated with argument types. When applied to arguments,
+the function finds the method that is defined for those types and
+applies it to compute a result. Functions are therefore
+polymorphic--that is, the same function can execute different code,
+depending on the types of its arguments.
+
+**Actor**
 
 Objects that represent a running Bard process. A Bard program can create
 actors that run in the same process as the creating Bard process, or in a
@@ -150,51 +139,60 @@ to the Stream class include input ports, output ports, and generators.
 
 **Class**
 
-An object that represents a class
+Classes are Bard's abstract data types. They define how datatypes are
+related to each other, but they don't specify anything about how they
+are represented.
 
 **Schema**
 
-An object that described a concrete arrangement of data.  A schema
-describes how a value is actually represented; Bard provides tools
-with which users can define their own schemas and associate them with
-classes.
+Schemas are Bard's concrete datatypes. They define how bits and butes
+are arranged to represent values, but they don't specify anything
+about how different types are related to one another.
 
 **Singleton**
 
-An object that presents a data value as if it were a type.  Singletons
-make it possible for functions to dispatch on individual values, as
-well as types of values.
+Objects that represent data values as types. For example, the value
+
+    (singleton 3)
+
+is equivalent in every way to the integer 3, except that Bard
+considers it a type, rather than a value. Bard functions choose the
+code to run based on the types of their arguments. Using singletons,
+you can make them also choose different methods for different specific
+values. For example, you could write a function that runs one method
+for the number 3 and a different method for the number 5.
 
 **Type**
 
-Objects that serve the purpose of types. Types include classes,
-singletons, and schemas, among other possibilities.
+The class Type describes all objects that serve the purpose of
+datatypes. Instances of Type include classes, singletons, and schemas,
+among other possibilities.
 
 ## Bard's basic vocabulary
 
-In order to write programs in a language, you need to know, in
-addition to the data structures it provides, its basic vocabulary of
-operations. As in other Lisps, Bard's operations fall into three
-general categories: **functions**, **special forms**, and **macros**.
+Besides the data structures Bard provides, a programmer needs to know
+its vocabulary of basic operations. As in other Lisps, Bard's
+operations fall into three general categories: **functions**,
+**special forms**, and **macros**.
 
 The differences between functions, special forms, and macros have to
-do with the way that the handle evaluation of their arguments. The
-details are not important here, so this section won't call out whether
-a particular operation is a function, a special form, or a macro. The
-important point is that all three kinds of expressions look similar:
-like function calls.
+do with the details of how they handle their arguments. Those details
+aren't important here, so this section doesn't distinguish the
+different kinds of operations. The important point here is that all
+three kinds of expressions look similar: that is, they all look like
+function calls.
 
 Here is Bard's basic vocabulary of operations:
 
 `^`
 
-The `^` special form can also be spelled `method` or `lambda`. It
-creates a method object.
+The `^` special form can also be spelled `method`. It creates a method
+object.
 
 `begin`
 
 The basic sequencing form. Begin evaluates a series of expressions
-from left to right, returning the last value returned.
+from left to right, returning the last value.
 
 `cond`
 
@@ -203,7 +201,29 @@ works like the form of the same name in Scheme and Common Lisp.
 
 `define`
 
-Defines a global variable. 
+Defines a global name, binding it to one of several different
+kinds of objects.
+
+    (define variable x y)
+      defines a global variable named x whose value is the value of y
+
+    (define macro (mname args...) body...)
+      defines a new macro. The code in `body` describes how to construct 
+      the code that Bard actually executes. 
+
+    (define method (fname args...) body...)  
+      Adds a new method to the function `fname`, arguments are given
+      by `args`, and whose behavior is given by `body`. If `fname` is
+      not defined, creates that variable and binds a new function to
+      it.
+
+    (define schema sname slots...)
+
+      defines a global variable named `sname` whose value is a new
+      schema. The schema describes how to create new values; the
+      values are instances of the schema. The schema's slots describe
+      how to create the fields of the instances. 
+      
 
 `ensure`
 
@@ -213,16 +233,14 @@ code exits abnormally.
 
 `if`
 
-With `cond`, the basic flow control in Bard. Evaluates one alternative
-if a test returns true, and the other if the test returns false.
+Along with `cond`, the basic flow-control form in Bard. Evaluates one
+alternative if a test returns true, and the other if the test returns
+false.
 
 `let`
 
-Bard's basic binding form. `let` creates a local lexical environment
-in which some variables are bound to initial values. It combines
-features of several similar binding forms from earlier Lisps,
-including Scheme's letrec and Common Lisp's LET* and
-MULTIPLE-VALUE-BIND.
+Bard's basic binding form. `let` creates a scope in which some local
+variables are bound to initial values.
 
 `loop`
 
@@ -231,29 +249,43 @@ Bard's basic iteration form. `loop` works like Scheme's named let.
 `match`
 
 Bard's pattern-matcher. `match` is a binding form, like `let`, but
-supports pattern-matching expressions that can deconstruct data and
-bind its parts to variables in a pattern.
+supports pattern-matching expressions that can take values apart and
+bind the parts to variables given in the patterns.
 
 `receive`
 
-Accepts the next message from the mailbox of the Bard
-process. `receive` is the message-reception side of Bard's actor
-abstraction.
+Accepts an Actor's next message. An Actor is a Bard process. Each Bard
+process can send messages to other Bard processes, and can receive
+messages from other Bard processes. `receive` is the receiving side of
+such exchanges. A message can be nearly any Bard value.
 
 `send`
 
-Adds a message to the mailbox of an actor. `send` is the
-message-origination side of Bard's actor abstraction.
+Sends a message to an Actor. An Actor is a Bard process. Each Bard
+process can send messages to other Bard processes, and can receive
+messages from other Bard processes. `send` is the seinding side of
+such exchanges. A message can be nearly any Bard value.
 
 `spawn`
 
-Creates a new actor. The new actor executes in a new thread, either in
-the same process as the creating Bard process, or a new one. The
-returned object can be used as the target of `send` calls.
+Creates and returns a new Actor. The Actor represents a new Bard
+process. The creating process can send messages to it and receive
+messages from it. Depending on details of the Bard implementation, the
+new Actor may represent a Bard process running in the same
+operating-system process as its creator, or in a different OS process,
+or even on a different machine.
 
 `unless`
 
-A synonym for `(if (not...`.
+A variant of `if`; the expression
+
+    (unless x a b c)
+
+means the same thing as 
+
+    (if (not x)
+      (begin a b c)
+      nothing)
 
 `values`
 
@@ -263,13 +295,20 @@ values returned by functions.
 
 `when`
 
-A synonym for `(if ...` in the case that there is no form to execute
-if the test returns false.
+A variant of `if`; the expression
+
+    (when x a b c)
+
+means the same thing as 
+
+    (if x
+      (begin a b c)
+      nothing)
 
 `with-exit`
 
-Binds a variable to an exit function, then executes its
-body. `with-exit` implements a restrictired form of continuations,
-enabling Bard that executes within the `with-exit` body to at any time
-exit the form by calling the exit function.
+Binds a variable to an exit function, then executes the body. Code in
+the body of the `with-exit` form can jump out of it, return any value,
+by calling the exit function.
+
 

@@ -185,7 +185,7 @@
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'schema kind)(%eval-define-schema expr env))
-                  (else (error ["Unrecognized definition type: " kind]))))))
+                  (else (error (str "Unrecognized definition type: " kind)))))))
 
 
 ;;; function

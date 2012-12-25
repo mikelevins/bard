@@ -39,57 +39,95 @@
 ;;; expression compilers 
 ;;; ---------------------------------------------------------------------
 
-(define method (self-evaluating? expr) true)
-(define method (self-evaluating? (expr <symbol>)) false)
-(define method (self-evaluating? (expr <pair>)) false)
+;;; constants 
+;;; ---------------------------------------------------------------------
 
-(define method (compile-self-evaluating expr)
+(define method (constant? expr) true)
+(define method (constant? (expr <symbol>)) false)
+(define method (constant? (expr <pair>)) false)
+
+(define method (compile-constant expr)
   (gen 'CONST expr))
+
+;;; variables 
+;;; ---------------------------------------------------------------------
 
 (define method (compile-variable-reference expr env)
   (if (contains-variable? env expr)
       (gen 'LREF expr)
       (gen 'GREF expr)))
 
-(define variable compile-^ (method (expr env)(error "Not yet implemented")))
+;;; method 
+;;; ---------------------------------------------------------------------
+
+(define variable compile-method (method (expr env)(error "Not yet implemented")))
+
+;;; begin 
+;;; ---------------------------------------------------------------------
 
 (define method (compile-begin-aux exprs env) 
   (cond
-   ((empty? exprs)(compile-self-evaluating nothing))
+   ((empty? exprs)(compile-constant nothing))
    ((= 1 (length exprs))(compile (first exprs) env))
    (else: (gen-seq (compile (first exprs) env)
                    (compile-begin-aux (rest exprs) env)))))
 
 (define variable compile-begin (method (expr env)(compile-begin-aux (rest expr) env)))
 
+;;; cond 
+;;; ---------------------------------------------------------------------
+
 (define variable compile-cond (method (expr env)(error "Not yet implemented")))
-(define variable compile-define (method (expr env)(error "Not yet implemented")))
+
+;;; define 
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-variable expr env)
+  (let ((vname (element expr 2))
+        (valexpr (element expr 3)))
+    (gen-seq (compile valexpr env)
+             (gen 'CONST vname)
+             (gen 'GSET))))
+
+(define method (compile-define expr env)
+  (let ((kind (element expr 1)))
+    (cond
+     ((= 'variable kind)(compile-define-variable expr env))
+     (else: (error ["Unrecognized definition type: " kind])))))
+
 (define variable compile-ensure (method (expr env)(error "Not yet implemented")))
 
-(define variable compile-if (method (expr env)
-                                    (let ((test-form (element expr 1))
-                                          (testcode (compile test-form env))
-                                          (then-form (element expr 2))
-                                          (thencode (compile then-form env))
-                                          (else-form (if (> (length expr)
-                                                            3)
-                                                         (element expr 3)
-                                                         nothing))
-                                          (elsecode (compile else-form env)))
-                                      (let ((L1 (gen-label))
-                                            (L2 (gen-label)))
-                                        (gen-seq testcode
-                                                 (gen 'FGO L1)
-                                                 thencode
-                                                 (gen 'GO L2)
-                                                 [L1]
-                                                 elsecode
-                                                 [L2])))))
+;;; if 
+;;; ---------------------------------------------------------------------
+
+(define variable compile-if 
+  (method (expr env)
+          (let ((test-form (element expr 1))
+                (testcode (compile test-form env))
+                (then-form (element expr 2))
+                (thencode (compile then-form env))
+                (else-form (if (> (length expr)
+                                  3)
+                               (element expr 3)
+                               nothing))
+                (elsecode (compile else-form env)))
+            (let ((L1 (gen-label))
+                  (L2 (gen-label)))
+              (gen-seq testcode
+                       (gen 'FGO L1)
+                       thencode
+                       (gen 'GO L2)
+                       [L1]
+                       elsecode
+                       [L2])))))
 
 (define variable compile-let (method (expr env)(error "Not yet implemented")))
 (define variable compile-loop (method (expr env)(error "Not yet implemented")))
 (define variable compile-match (method (expr env)(error "Not yet implemented")))
 (define variable compile-quasiquote (method (expr env)(error "Not yet implemented")))
+
+;;; quote 
+;;; ---------------------------------------------------------------------
 
 (define variable compile-quote (method (expr env)(gen 'CONST (element expr 1))))
 
@@ -107,7 +145,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define variable +special-forms+ 
-  { '^ compile-^
+  { '^ compile-method
    'begin compile-begin
    'cond compile-cond
    'define compile-define
@@ -116,6 +154,7 @@
    'let compile-let
    'loop compile-loop
    'match compile-match
+   'method compile-method
    'quasiquote compile-quasiquote
    'quote compile-quote
    'set! compile-set!
@@ -164,8 +203,7 @@
 ;;; primitives 
 ;;; ---------------------------------------------------------------------
 
-(define variable +primitives+ 
-  ['%fx+ '%fx- '%fx* '%fx/])
+(define variable +primitives+ ['%fx+ '%fx- '%fx* '%fx/])
 
 (define method (primitive? expr) false)
 
@@ -213,7 +251,7 @@
 
 (define method (compile expr env)
   (cond
-   ((self-evaluating? expr)(compile-self-evaluating expr))
+   ((constant? expr)(compile-constant expr))
    ((symbol? expr)(compile-variable-reference expr env))
    ((special-form? expr)(compile-special-form expr env))
    ((macro-form? expr)(compile (macroexpand expr) env))

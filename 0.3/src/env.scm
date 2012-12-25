@@ -32,6 +32,7 @@
   (cons (cons vname val)
         env))
 
+
 (define (%merge-environments . envs)
   (if (null? envs)
       (%null-env)
