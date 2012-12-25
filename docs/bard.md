@@ -344,17 +344,14 @@ We can use the `get` function to retrieve the values in the fields of
     bard> (get r 'denom)
     5
 
-The next step in making `<ratio>` part of a full-fledged type is making
-it participate in a protocol. In this case, we'll do it by creating
-new protocol just for it.
+The next step in making `<ratio>` part of a full-fledged type is
+making it participate in a protocol. In this case, we'll do it by
+creating new protocol, but we could also have written methods to
+connect it to existing protocols.
 
   (define protocol Rational
     (numerator Ratio) -> Integer
     (denominator Ratio) -> Integer)
-
-You don't necessarily have to create a new protocol for each new
-schema. It works just as well to create a schema and make it
-participate in existing protocols.
 
 To make <ratio> participate in the new Rational protocol, we write
 methods that specialize the protocol's methods for <ratio>. Here's
