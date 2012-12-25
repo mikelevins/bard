@@ -312,3 +312,64 @@ the body of the `with-exit` form can jump out of it, return any value,
 by calling the exit function.
 
 
+## Schemas, Protocols, and Classes
+
+A Bard datatype is made up of three parts:
+
+- a **schema** describes the layout of buts and bytes
+- a **protocol** describes functions that operate on the type
+- a **class** identifies values that can be used in a protocol
+
+Here's a very simple example:
+
+We start by defining a schema named <ratio>:
+
+    (define schema <ratio> numerator denominator)
+
+Defining the schema adds a method to the `make` function for creating
+instances of the schema. We can now create instances of `<ratio>`:
+
+    bard> (make <ratio> num: 1 denom: 2)
+    #<ratio num: 1 denom: 2>
+
+We can use the `get` function to retrieve the values in the fields of
+<ratio> instances:
+
+    bard> (define variable r (make <ratio> num: 3 denom: 5))
+    #<ratio num: 3 denom: 5>
+
+    bard> (get r 'num)
+    3
+
+    bard> (get r 'denom)
+    5
+
+The next step in making `<ratio>` part of a full-fledged type is making
+it participate in a protocol. In this case, we'll do it by creating
+new protocol just for it.
+
+  (define protocol Rational
+    (numerator Ratio) -> Integer
+    (denominator Ratio) -> Integer)
+
+You don't necessarily have to create a new protocol for each new
+schema. It works just as well to create a schema and make it
+participate in existing protocols.
+
+To make <ratio> participate in the new Rational protocol, we write
+methods that specialize the protocol's methods for <ratio>. Here's
+what that looks like:
+
+    (define method (numerator (r <ratio>))
+      (get r 'num))
+
+    (define method (denominator (r <ratio>))
+      (get r 'denom))
+
+The protocol says that numerator accpets an argument of type
+Ratio. The method definition says that it's specialized for an
+argument of type <ratio>. Taken together, those two definitions make
+the schema <ratio> a member of the class Ratio. 
+
+We've created a new type consisting of a class, a protocol it
+participates in, and a schema that represents it.
