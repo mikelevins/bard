@@ -353,7 +353,7 @@ connect it to existing protocols.
       (numerator Ratio) -> Integer
       (denominator Ratio) -> Integer)
 
-To make <ratio> participate in the new Rational protocol, we write
+To make `<ratio>` participate in the new Rational protocol, we write
 methods that specialize the protocol's methods for <ratio>. Here's
 what that looks like:
 
