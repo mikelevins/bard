@@ -346,7 +346,7 @@ We can use the `get` function to retrieve the values in the fields of
 
 The next step in making `<ratio>` part of a full-fledged type is
 making it participate in a protocol. In this case, we'll do it by
-creating new protocol, but we could also have written methods to
+creating a new protocol, but we could also have written methods to
 connect it to existing protocols.
 
   (define protocol Rational
