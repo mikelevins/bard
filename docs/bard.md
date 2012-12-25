@@ -349,9 +349,9 @@ making it participate in a protocol. In this case, we'll do it by
 creating a new protocol, but we could also have written methods to
 connect it to existing protocols.
 
-  (define protocol Rational
-    (numerator Ratio) -> Integer
-    (denominator Ratio) -> Integer)
+    (define protocol Rational
+      (numerator Ratio) -> Integer
+      (denominator Ratio) -> Integer)
 
 To make <ratio> participate in the new Rational protocol, we write
 methods that specialize the protocol's methods for <ratio>. Here's
