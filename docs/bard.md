@@ -318,11 +318,11 @@ A Bard datatype is made up of three parts:
 
 - a **schema** describes the layout of bits and bytes
 - a **protocol** describes functions that operate on the type
-- a **class** identifies values that can be used in a protocol
+- a **class** identifies values that can be used in the protocol
 
 Here's a very simple example:
 
-We start by defining a schema named <ratio>:
+We start by defining a schema named `<ratio>`:
 
     (define schema <ratio> numerator denominator)
 
