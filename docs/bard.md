@@ -2,6 +2,10 @@
 ## A programming language
 ### by mikel evins
 
+NOTE: Bard 0.3.0 is under active development. Expect to find
+discrepancies between this reference and the current behavior of the
+interpreter.
+
 ## Introduction
 
 Bard is a small, simple dialect of Lisp with a small but useful set of
@@ -244,7 +248,7 @@ variables are bound to initial values.
 
 `loop`
 
-Bard's basic iteration form. `loop` works like Scheme's named let.
+Bard's basic iteration form. `loop` works like Scheme's named let. 
 
 `match`
 
@@ -258,6 +262,17 @@ Accepts an Actor's next message. An Actor is a Bard process. Each Bard
 process can send messages to other Bard processes, and can receive
 messages from other Bard processes. `receive` is the receiving side of
 such exchanges. A message can be nearly any Bard value.
+
+`repeat`
+
+Evaluates the expressions in its body repeatedly. Repeat doesn't test
+for an exit condition, and will loop without terminating unless you
+arrange for control to exit somehow. The simplest way to do that is to
+place a repeat inside a `with-exit` form and call the bound exit
+function. This idiom makes it extremely simple to write loops, and
+extremely easy to see them in code (but it's not particularly
+compatible with functional programming; for a more functional approach
+to iteration, see the `loop` form).
 
 `send`
 
