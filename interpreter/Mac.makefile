@@ -39,42 +39,42 @@ MAC_LDFLAGS_MAIN=-arch ${MAC_ARCH} -isysroot ${MAC_SYSROOT} -mmacosx-version-min
 SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
-         src/util/general.scm \
-         src/values/types.scm \
-         src/values/values.scm \
-         src/eval/env.scm \
-         src/values/functions.scm \
-         src/repl/prims.scm \
+         src/general.scm \
+         src/types.scm \
+         src/values.scm \
+         src/env.scm \
+         src/functions.scm \
+         src/prims.scm \
          src/read.scm \
          src/print.scm \
-         src/eval/special.scm \
-         src/eval/macro.scm \
-         src/eval/apply.scm \
-         src/eval/eval.scm \
-         src/repl/error.scm \
-         src/repl/toplevel.scm \
-         src/values/protocols.scm 
+         src/special.scm \
+         src/macro.scm \
+         src/apply.scm \
+         src/eval.scm \
+         src/error.scm \
+         src/toplevel.scm \
+         src/protocols.scm 
 
 
 
 C_SOURCES= \
          src/version.c \
          lib/uuid.c \
-         src/util/general.c \
-         src/values/types.c \
-         src/values/values.c \
-         src/eval/env.c   \
-         src/values/functions.c \
-         src/repl/prims.c \
+         src/general.c \
+         src/types.c \
+         src/values.c \
+         src/env.c   \
+         src/functions.c \
+         src/prims.c \
          src/read.c \
          src/print.c \
-         src/eval/special.c \
-         src/eval/macro.c \
-         src/eval/apply.c \
-         src/eval/eval.c \
-         src/repl/error.c \
-         src/repl/toplevel.c \
-         src/values/protocols.c 
+         src/special.c \
+         src/macro.c \
+         src/apply.c \
+         src/eval.c \
+         src/error.c \
+         src/toplevel.c \
+         src/protocols.c 
 
 
 
@@ -141,6 +141,12 @@ all: mac_main
 install: 
 	cp ${MAC_BUILD_DIR}/$(MAC_EXECUTABLE) ${INSTALL_PATH}/bard
 
+clean:
+	rm -f ${C_SOURCES}
+	rm -f ${MAIN_C_SOURCES}
+	rm -f ${LIB_C_SOURCES}
+	rm -rf ${MAC_BUILD_DIR}/*
+
 # -------------------
 # Bard Library
 
@@ -155,5 +161,6 @@ mac_lib:
 mac_main: 
 	${GSC} -link ${SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
 	${MAC_CC} ${MAC_CFLAGS_MAIN} ${MAC_LDFLAGS_MAIN} ${C_SOURCES} ${MAIN_C_SOURCES}
+
 
 

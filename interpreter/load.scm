@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Projects/bard/0.2/")
+(define $bard-root  "/Users/mikel/Projects/bard/interpreter/")
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
@@ -25,21 +25,21 @@
   (paths $bard-root 
          "src/version.scm"
          "lib/uuid.scm"
-         "src/util/general.scm"
-         "src/values/types.scm"
-         "src/values/values.scm"
-         "src/eval/env.scm"
-         "src/values/functions.scm"
-         "src/repl/prims.scm"
+         "src/general.scm"
+         "src/types.scm"
+         "src/values.scm"
+         "src/env.scm"
+         "src/functions.scm"
+         "src/prims.scm"
          "src/read.scm"
          "src/print.scm"
-         "src/eval/special.scm"
-         "src/eval/macro.scm"
-         "src/eval/apply.scm"
-         "src/eval/eval.scm"
-         "src/repl/error.scm"
-         "src/repl/toplevel.scm"
-         "src/values/protocols.scm"
+         "src/special.scm"
+         "src/macro.scm"
+         "src/apply.scm"
+         "src/eval.scm"
+         "src/error.scm"
+         "src/toplevel.scm"
+         "src/protocols.scm"
          "src/bard.scm"
          ))
 
