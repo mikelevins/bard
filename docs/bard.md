@@ -2,10 +2,6 @@
 ## A programming language
 ### by mikel evins
 
-NOTE: Bard 0.3.0 is under active development. Expect to find
-discrepancies between this reference and the current behavior of the
-interpreter.
-
 ## Introduction
 
 Bard is a small, simple dialect of Lisp with a small but useful set of
