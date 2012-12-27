@@ -87,12 +87,6 @@ Magnitudes and other numeric values.
 
 Symbols, keywords, and strings.
 
-**Pair**
-
-    [1 2], ['a 'b]
-
-A class that represents a pair or an association of arbitrary values.
-
 **List**
 
     '(), '(0 1 2 3 4)
