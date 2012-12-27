@@ -377,10 +377,10 @@ what that looks like:
     (define method (denominator (r <ratio>))
       (get r 'denom))
 
-The protocol says that numerator accpets an argument of type
+The protocol says that numerator accepts an argument of type
 Ratio. The method definition says that it's specialized for an
-argument of type <ratio>. Taken together, those two definitions make
-the schema <ratio> a member of the class Ratio. 
+argument of type `<ratio>`. Taken together, those two definitions make
+the schema `<ratio>` a member of the class Ratio. 
 
 We've created a new type consisting of a class, a protocol it
 participates in, and a schema that represents it.
