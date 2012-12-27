@@ -89,7 +89,7 @@ Symbols, keywords, and strings.
 
 **List**
 
-    '(), '(0 1 2 3 4)
+    [], [0 1 2 3 4]
 
 An ordered sequence of values
 
