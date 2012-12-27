@@ -9,66 +9,26 @@ object system influenced by, but different from, CLOS.
 Bard is a dialect of Lisp, because Lisp is the family of languages
 that offer me the most pleasure in programming. Bard is designed
 primarily to make me happy--to make my work more pleasant. If someone
-else likes it or finds it interesting, that's a good thing, but it is
+else likes it or finds it interesting that's a good thing, but it is
 not a goal.
 
-Bard is a small Lisp heavily influenced by Common Lisp, Scheme, and
-Dylan. It discards many features of those older languages, though, and
-adds just a few new ones. It's also influenced to various degrees by
-Smalltalk, Haskell, Lua, Erlang, Clojure, and other languages.
+You can learn more about Bard by reading the Bard Wiki at
 
-The earliest running Bard implementation was a virtual machine and
-compiler that I got running in 2002. Before the 0.2 version, you would
-have had to know me personally to get a working copy.
+  https://github.com/mikelevins/bard/wiki
 
-Bard 0.2 was used as the primary scripting and tools language for an
-educational games project funded by the STEM initiative through the
-Office of Naval Research, delivering games to the iOS platform. It
-served us well for over a year, but is a pretty slow interpreter for a
-subset of the language.
+and by reading the reference page at
 
-It's still possible to build Bard 0.2 for OSX, iOS, and Linux, though
-you'll probably need my help to do it. Feel free to contact me if you
-want to do that.
+  https://github.com/mikelevins/bard/blob/master/docs/bard.md
 
-Bard 0.3 is intended to be a more complete implementation with better
-performance. It is again based on a virtual machine with am
-incremental compiler. Bard 0.3 compiles all of the core language, and
-the VM can execute most of it, but it's not ready for release yet; it
-lacks some basic amenities that would be needed for doing anything
-other than testing the compiler and VM. Once I've supplied the missing
-pieces and written a halfway decent read-eval-print loop for it, I'll
-make a release.
+A prebuilt binary for Mac OS X is available from the git repository at
 
-Bard is designed to be a specific type of programming-language
-implementation--an "image-based" development environment. Once upon a
-time, that kind of environment was reasonably common and
-fashionable. Smalltalk-80 was one example of that kind of
-environment. Lisp Machines and several implementations of Common Lisp
-are other examples. 
+  https://github.com/mikelevins/bard/blob/master/interpreter/builds/mac/bard
 
-That kind of development environment is pretty rare these days, but it
-has some great advantages. Smalltalk systems still work that way, as
-do the more traditional Lisp implementations. The Factor language is
-an example of a nice newer language that works that way.
+A simple and limited Emacs interface to the Bard interpreter is at
 
-By building Bard on a VM that runs abstract, platform-independent
-object code, I can easily port it to almost any platform, and provide
-a rich, common, standard library across all platforms. Although a
-VM-based design does sacrifice some performance, it's probably not
-enough to be a problem in the long run. There are straightforward ways
-to dramatically improve the performance of a VM-based system:
-improvements in the performance of the VM itself, using clever
-implementation strategies; Just-in-time compilation to native code,
-which has become popular and well-known, thanks to Java and Javascript
-implementations; and a simpler, older compilation strategy used by
-implementaitons like MacScheme: a VM that knows how to compile
-individual functions to native code and run a mixed system consisting
-of both interpreted and compiled functions.
+  https://github.com/mikelevins/bard/blob/master/emacs/bard-mode.el
 
-My forward progress on Bard is slow, but it's steady. I haven't lost
-interest in it for a dozen years, so it's unlikely I ever will. This
-repo represents the current state of its evolution. You can learn more
-about the language, its deisng, and its implementation by consulting
-the contents of the docs directory.
+Previous versions of Bard have been built for Linux, Windows, and
+iOS. Contact mikel evins at the address mevins at me dot com if you
+want help building them.
 
