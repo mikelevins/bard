@@ -85,9 +85,18 @@ Symbols, keywords, and strings.
 
 **List**
 
+    (), (0 1 2 3 4)
     [], [0 1 2 3 4]
 
-An ordered sequence of values
+An ordered sequence of values. The two syntaxes shown are
+interchangeable, except that the second tells Bard not to interpret
+the list as a function call. The expression
+
+    [0 1 2 3 4]
+
+is equivalent to 
+
+    (list 0 1 2 3 4)
 
 **Table**
 
