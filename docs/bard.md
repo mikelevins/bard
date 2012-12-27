@@ -138,7 +138,7 @@ other actors.
 **Stream**
 
 Objects that serve as sources or sinks for data. Objects that belong
-to the Stream class include input ports, output ports, and generators.
+to the Stream class include input streams and output streams.
 
 **Class**
 
@@ -148,7 +148,7 @@ are represented.
 
 **Schema**
 
-Schemas are Bard's concrete datatypes. They define how bits and butes
+Schemas are Bard's concrete datatypes. They define how bits and bytes
 are arranged to represent values, but they don't specify anything
 about how different types are related to one another.
 
