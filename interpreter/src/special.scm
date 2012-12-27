@@ -69,11 +69,9 @@
 
 (define (%eval-define-schema expr env)
   (let* ((sname (list-ref expr 2))
-         (includes (map (lambda (e)(%eval e env))
-                        (list-ref expr 3)))
-         (slot-specs (drop 4 expr))
+         (slot-specs (drop 3 expr))
          (slots (%parse-slot-descriptions slot-specs env))
-         (sc (%make-schema sname includes slots)))
+         (sc (%make-schema sname slots)))
     (table-set! $bard-global-variables sname sc)
     sc))
 
@@ -188,6 +186,19 @@
                   (else (error (str "Unrecognized definition type: " kind)))))))
 
 
+;;; ensure
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'ensure
+             (lambda (expr env)
+               (let* ((before `(,@(list-ref expr 1)))
+                      (during `(,@(list-ref expr 2)))
+                      (after `(,@(list-ref expr 3))))
+                 (dynamic-wind 
+                     (lambda ()(%eval before env))
+                     (lambda ()(%eval during env))
+                     (lambda ()(%eval after env))))))
+
 ;;; function
 ;;; ----------------------------------------------------------------------
 
@@ -196,31 +207,6 @@
                (if (> (%length expr) 1)
                    (%make-function name: (%list-ref expr 1))
                    (%make-function))))
-
-;;; generate
-;;; ----------------------------------------------------------------------
-;;; (generate ((x 1))
-;;;           (yield (* x x))
-;;;           (then (+ x 1)))
-
-(%defspecial 'generate
-             (lambda (expr env)
-               (let* ((env (%copy-environment env))
-                      (bindings (map (lambda (binding)
-                                       (%list (%car binding)
-                                              (%eval (%cadr binding) env)))
-                                     (%list-ref expr 1)))
-                      (yield-expr (let ((xp (%list-ref expr 2)))
-                                    (if (eq? 'yield (car xp))
-                                        (cdr xp)
-                                        (error (string-append "Invalid yield form in generate: "
-                                                              (object->string xp))))))
-                      (then-expr (let ((xp (%list-ref expr 3)))
-                                   (if (eq? 'then (car xp))
-                                       (cdr xp)
-                                       (error (string-append "Invalid then form in generate: "
-                                                             (object->string xp)))))))
-                 (%make-generator yield-expr then-expr env bindings))))
 
 ;;; if
 ;;; ----------------------------------------------------------------------
@@ -245,6 +231,35 @@
                      (body (%drop 2 expr)))
                  (%eval-sequence body (%add-let-bindings env bindings)))))
 
+
+;;; loop
+;;; ----------------------------------------------------------------------
+;;; (loop foo ((x 1))
+;;;   (if (>= x 10)
+;;;     x
+;;;     (loop (+ x 1))))
+
+(define (%loop-name expr)(list-ref expr 1))
+(define (%loop-bindings expr)(list-ref expr 2))
+(define (%loop-vars bindings)(map car bindings))
+(define (%loop-vals bindings)(map cadr bindings))
+(define (%loop-body expr)(drop 3 expr))
+
+(%defspecial 'loop
+             (lambda (expr env)
+               (let* ((loopname (%loop-name expr))
+                      (bindings (%loop-bindings expr))
+                      (loopvars (%loop-vars bindings))
+                      (loopvals (%loop-vals bindings))
+                      (loopbody (%loop-body expr))
+                      (loopenv (%add-binding env loopname #f))
+                      (loopmethod (%make-interpreted-method loopvars (cons 'begin loopbody) 
+                                                            environment: env
+                                                            name: loopname
+                                                            required-count: (%length loopvars)
+                                                            restarg: #f)))
+                 (%set-method-environment! loopmethod (%add-binding (%method-environment loopmethod) loopname loopmethod))
+                 (%eval `(,loopmethod ,@loopvals) loopenv))))
 
 ;;; method
 ;;; ----------------------------------------------------------------------
@@ -284,18 +299,21 @@
 (define (%mdesc-get-restarg mdesc)(%list-ref mdesc 2))
 (define (%mdesc-get-body mdesc)(%list-ref mdesc 3))
 
-(%defspecial 'method
-             (lambda (expr env)
-               (let* ((mdesc (%parse-method-form expr))
-                      (mname (%mdesc-get-name mdesc))
-                      (formals (%mdesc-get-formals mdesc))
-                      (restarg (%mdesc-get-restarg mdesc))
-                      (body (%mdesc-get-body mdesc)))
-                 (%make-interpreted-method formals body 
-                                           environment: env
-                                           name: mname
-                                           required-count: (%length formals)
-                                           restarg: restarg))))
+(define %eval-method-form
+  (lambda (expr env)
+    (let* ((mdesc (%parse-method-form expr))
+           (mname (%mdesc-get-name mdesc))
+           (formals (%mdesc-get-formals mdesc))
+           (restarg (%mdesc-get-restarg mdesc))
+           (body (%mdesc-get-body mdesc)))
+      (%make-interpreted-method formals body 
+                                environment: env
+                                name: mname
+                                required-count: (%length formals)
+                                restarg: restarg))))
+
+(%defspecial '^ %eval-method-form)
+(%defspecial 'method %eval-method-form)
 
 ;;; not
 ;;; ----------------------------------------------------------------------
@@ -398,6 +416,28 @@
 (%defspecial 'time
              (lambda (expr env)
                (time (%eval (%car (%cdr expr)) env))))
+
+;;; unless
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'unless
+             (lambda (expr env)
+               (let ((test (%list-ref expr 1))
+                     (body (cons 'begin (drop 2 expr))))
+                 (if (%false? (%eval test env))
+                     (%eval body env)
+                     (%nothing)))))
+
+;;; when
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'when
+             (lambda (expr env)
+               (let ((test (%list-ref expr 1))
+                     (body (cons 'begin (drop 2 expr))))
+                 (if (%true? (%eval test env))
+                     (%eval body env)
+                     (%nothing)))))
 
 
 ;;; with-open-file

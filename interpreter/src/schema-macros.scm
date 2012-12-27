@@ -9,8 +9,8 @@
                                                (object->string s)))))) 
                 slot-specs)))
 
-(define-macro (define-schema sname includes . slot-specs)
+(define-macro (define-schema sname . slot-specs)
   `(begin
-      (define ,sname (%make-schema ',sname (list ,@includes) ,(%parse-slots-for-%define slot-specs)))
+      (define ,sname (%make-schema ',sname ,(%parse-slots-for-%define slot-specs)))
       ,sname))
 

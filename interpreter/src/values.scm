@@ -362,7 +362,7 @@
 ;;; schemas (user-defined types)
 ;;; ---------------------------------------------------------------------
 ;;;
-;;; (define-schema <foo> (<bar> <baz>)
+;;; (define-schema <foo> 
 ;;;   grault
 ;;;   (quux :default 0 :mutable true)
 ;;;   (wibble :initializer (method (instance supplied-value) ...)))
@@ -375,12 +375,11 @@
 (%define-table-type %schema
  constructor: %private-make-schema
  name
- includes
  slot-names
  tag)
 
 (define <schema> 
-  (%define-standard-type '<schema> (##structure-type (%private-make-schema $empty-slots #f '() '() -1))))
+  (%define-standard-type '<schema> (##structure-type (%private-make-schema $empty-slots #f '() -1))))
 
 (define (%all-slots schema) (%table-slots schema))
 
@@ -390,31 +389,16 @@
          (default (getf default: attrs (%nothing))))
     (cons sname default)))
 
-(define (%ensure-no-conflicting-slots slots)
-  (let loop ((ss slots)
-             (keys '()))
-    (if (null? ss)
-        slots
-        (let ((slot (car ss)))
-          (if (member (car slot) keys)
-              (error (string-append "Duplicate key in schema slot-descriptions: " (car slot)))
-              (loop (cdr ss) 
-                    (cons (car slot)
-                          keys)))))))
+(define (%assemble-schema-slots slot-specs)
+  (map %spec->slot slot-specs))
 
-(define (%assemble-schema-slots includes slot-specs)
-  (let* ((included-slots (apply append (map %all-slots includes)))
-         (new-slots (map %spec->slot slot-specs)))
-    (%ensure-no-conflicting-slots (append included-slots new-slots))))
-
-(define (%make-schema name includes slot-specs)
-  (let* ((slots (%assemble-schema-slots includes slot-specs))
+(define (%make-schema name slot-specs)
+  (let* ((slots (%assemble-schema-slots slot-specs))
          (slot-names (map car slots))
          (tag (%next-available-type-tag))
-         (sc (%private-make-schema slots name includes slot-names tag)))
+         (sc (%private-make-schema slots name slot-names tag)))
     (%assert-type! tag sc)
     sc))
-
 
 (%define-table-type %schema-instance
  constructor: %private-make-schema-instance

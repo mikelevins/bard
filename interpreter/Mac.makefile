@@ -39,7 +39,7 @@ MAC_LDFLAGS_MAIN=-arch ${MAC_ARCH} -isysroot ${MAC_SYSROOT} -mmacosx-version-min
 SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
-         src/general.scm \
+         src/utils.scm \
          src/types.scm \
          src/values.scm \
          src/env.scm \
@@ -60,7 +60,7 @@ SCHEME_SOURCES= \
 C_SOURCES= \
          src/version.c \
          lib/uuid.c \
-         src/general.c \
+         src/utils.c \
          src/types.c \
          src/values.c \
          src/env.c   \
@@ -81,7 +81,7 @@ C_SOURCES= \
 OBJECTS= \
          version.o \
          uuid.o \
-         general.o \
+         utils.o \
          types.o \
          values.o  \
          env.o   \

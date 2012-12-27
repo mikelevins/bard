@@ -25,7 +25,7 @@
   (paths $bard-root 
          "src/version.scm"
          "lib/uuid.scm"
-         "src/general.scm"
+         "src/utils.scm"
          "src/types.scm"
          "src/values.scm"
          "src/env.scm"
@@ -55,5 +55,6 @@
 ;;; (load-bard)
 ;;; (%init-bard)
 ;;; (bard:repl)
+
 
 

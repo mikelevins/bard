@@ -79,7 +79,7 @@
 (%def-method-type %interpreted-method
                   constructor: %private-make-interpreted-method
                   read-only:
-                  (environment %method-environment)
+                  (environment %method-environment %set-method-environment!)
                   (body %method-body))
 
 (define (%make-interpreted-method parameters method-body  

@@ -1,3 +1,17 @@
+0.3.0
+
+
+
+0.2.10
+
+- began implementation of compiler in Bard; changes in types to support the compiler; 
+  name of <frame> changed to <table>; updated "define-foo" to be "define foo";
+  implemented ^, ensure, loop, repeat, unless, and when
+
+0.2.9
+
+- many small changes, none user-visible; added bard emacs mode
+
 0.2.8
 
 - enable schemas to use strings and keywords as keys
