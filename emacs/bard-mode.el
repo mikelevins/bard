@@ -129,11 +129,12 @@ path."
 (setq bard-constants '("false" "nothing" "true" "undefined"))
 (setq bard-constants-regexp (regexp-opt bard-constants 'words))
 
-(setq bard-definitions '("define" "define-function" "define-macro" "define-schema"))
+(setq bard-definitions '("define" "method" "macro" "schema" "variable"))
 (setq bard-definitions-regexp (regexp-opt bard-definitions 'words))
 
-(setq bard-control-forms '("and" "apply" "begin" "cond" "else" "eval" "if" "let" "load" 
-                           "not" "or" "with-exit" "with-open-file"))
+(setq bard-control-forms '("and" "apply" "begin" "cond" "ensure" "eval" "if" "let" 
+                           "load" "loop" "match" "not" "or" "receive" "repeat" "send"
+                           "spawn" "unless" "values" "when" "with-exit" "with-open-file"))
 (setq bard-control-forms-regexp (regexp-opt bard-control-forms 'words))
 
 (setq bard-font-lock-keywords

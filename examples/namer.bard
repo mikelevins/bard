@@ -1,0 +1,63 @@
+;;; bard implementation of mikel's namer
+
+;;; (load "namer.bard")
+;;; (read-names "us.names")
+
+(define variable $name-starts nothing)
+(define variable $name-parts nothing)
+
+(define method (triples (x <string>))
+    (if (< (length x) 3)
+        (list x)
+        (add-first (take 3 x)
+                   (triples (drop 1 x)))))
+
+(define method (read-names path)
+    (let ((lines (with-open-file (in path)
+                   (read-lines in)))
+          (triples-list (map triples lines)))
+      (set! $name-starts (map first triples-list))
+      (set! $name-parts (reduce append nothing (filter something? (map rest triples-list))))
+      path))
+
+(define method (choose-name-start)(any $name-starts))
+
+(define method (mergeable? left-name right-name) false)
+(define method (mergeable? (left-name <string>)(right-name <string>))
+  (let ((left-len (length left-name)))
+    (and (> left-len 2)
+         (= (element right-name 0)(element left-name (- left-len 2)))
+         (= (element right-name 1)(element left-name (- left-len 1))))))
+
+(define method (choose-name-next part)
+  (let ((picks (filter (^ (p)(mergeable? part p))
+                       $name-parts)))
+    (if (something? picks)
+        (any picks)
+        nothing)))
+
+(define variable *max-name-length* 16)
+
+(define method (merge-name-segment name segment)
+  (append name (drop 2 segment)))
+
+(define method (merge-name segments)
+  (reduce merge-name-segment (first segments) (rest segments)))
+
+(define method (build-name)
+  (loop gen ((name [])
+             (segment (choose-name-start)))
+        (if (or (nothing? segment)
+                (>= (apply + (map length name)) *max-name-length*))
+            (merge-name name)
+            (gen (append name [segment])
+                 (choose-name-next segment)))))
+
+(define method (build-names n)
+  (loop build ((names [])
+               (i 0))
+        (if (< i n)
+            (build (add-first (build-name) names) 
+                   (+ i 1))
+            names)))
+
