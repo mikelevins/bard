@@ -2,10 +2,6 @@
 ## A programming language
 ### by mikel evins
 
-NOTE: Bard 0.3.0 is under active development. Expect to find
-discrepancies between this reference and the current behavior of the
-interpreter.
-
 ## Introduction
 
 Bard is a small, simple dialect of Lisp with a small but useful set of
@@ -87,15 +83,9 @@ Magnitudes and other numeric values.
 
 Symbols, keywords, and strings.
 
-**Pair**
-
-    [1 2], ['a 'b]
-
-A class that represents a pair or an association of arbitrary values.
-
 **List**
 
-    '(), '(0 1 2 3 4)
+    [], [0 1 2 3 4]
 
 An ordered sequence of values
 
