@@ -145,7 +145,6 @@ clean:
 	rm -f ${C_SOURCES}
 	rm -f ${MAIN_C_SOURCES}
 	rm -f ${LIB_C_SOURCES}
-	rm -rf ${MAC_BUILD_DIR}/*
 
 # -------------------
 # Bard Library
