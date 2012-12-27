@@ -1,0 +1,36 @@
+TO DO
+
+- special forms to implement
+  - define class
+  - define protocol
+  - define vector
+  - match
+  - receive
+  - send
+  - spawn
+
+- classes to implement
+  - Actor
+
+- protocols to implement
+  - Actor
+  - Make  
+  - Stream
+  - Table (all values are tables)
+
+- representation work
+  - give schema instances their own representation (they are currently represented as tables)
+
+- system work
+  - serialization/deserialization
+  - process control
+  - network primitives
+  - image save/load
+  - OS/runtime/windowing/events work
+
+- performance
+  - move interpretation tasks out of the main interpreter loop, make them statically precomputed
+    (this work will proceed in phases)
+
+
+
