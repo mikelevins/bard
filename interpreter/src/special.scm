@@ -33,9 +33,6 @@
 ;;; special forms defined
 ;;; ----------------------------------------------------------------------
 
-;;; and
-;;; ----------------------------------------------------------------------
-
 ;;; begin
 ;;; ----------------------------------------------------------------------
 
@@ -241,10 +238,6 @@
 
 ;;; loop
 ;;; ----------------------------------------------------------------------
-;;; (loop foo ((x 1))
-;;;   (if (>= x 10)
-;;;     x
-;;;     (loop (+ x 1))))
 
 (define (%loop-name expr)(list-ref expr 1))
 (define (%loop-bindings expr)(list-ref expr 2))
@@ -278,13 +271,6 @@
 
 ;;; method
 ;;; ----------------------------------------------------------------------
-
-;;; method-form => (method-name formals restarg body)
-;;; (method (x y) (+ x y)) => (#f (x y) #f (begin (+ x y)))
-;;; (method foo (x y) (+ x y)) => (foo (x y) #f (begin (+ x y)))
-;;; (method foo (x y) (begin (+ x y))) => (foo (x y) #f (begin (+ x y)))
-;;; (method foo (x y) (+ x y)(* x y)) => (foo (x y) #f (begin (+ x y)(* x y)))
-;;; (method (x y & more) (+ x y)) => (#f (x y) more (begin (+ x y)))
 
 (define (%parse-method-parameters params)
   (let loop ((ps params)

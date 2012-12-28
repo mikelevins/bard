@@ -26,10 +26,7 @@
 (%defprinter <symbol> object->string)
 (%defprinter <keyword> object->string)
 (%defprinter <primitive-procedure> 
-             (lambda (x)
-               (string-append "#<primitive-procedure "
-                              (object->string (object->serial-number x))
-                              ">")))
+             (lambda (x)(string-append "#<primitive-procedure " (object->string (object->serial-number x)) ">")))
 
 (%defprinter <table> 
              (lambda (fr)
@@ -115,11 +112,6 @@
                       (string-append "#<function " (object->string nm) ">")
                       (string-append "#<anonymous function " (object->string (object->serial-number x)) ">")))))
 
-;; (%defprinter <generator> 
-;;              (lambda (x)
-;;                (string-append "#<generator " (object->string (object->serial-number x)) ">")))
-
-
 (%defprinter <primitive-method> 
              (lambda (x)
                (let ((nm (%debug-name x)))
@@ -168,22 +160,5 @@
   (display (%as-string x) port)
   x)
 
-;;; (show 4)
-;;; (show (%undefined))
-;;; (show '())
-;;; (show #\C)
-;;; (show (%true))
-;;; (show (%false))
-;;; (show 'Foo)
-;;; (show FooBar:)
-;;; (show +)
-;;; (show *)
-;;; (show (current-input-port))
-;;; (show (current-output-port))
-;;; (show (%make-table '()))
-;;; (show (%make-table '(name: "Fred" age: 101)))
-;;; (show <table>)
-;;; (show Anything)
-;;; (show (%singleton 5))
 
 

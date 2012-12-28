@@ -76,12 +76,6 @@
   (%defglobal 'table prim:table)
 
 ;;; ---------------------------------------------------------------------
-;;; generator primitives
-;;; ---------------------------------------------------------------------
-
-;;;  (%defglobal 'next prim:next)
-
-;;; ---------------------------------------------------------------------
 ;;; types
 ;;; ---------------------------------------------------------------------
 
@@ -164,22 +158,17 @@
   ;; Table
   ;; ---------------------------------------------------------------------
   (%defglobal 'table? bard:table?)
-  ;; (%defglobal 'contains-key? bard:contains-key?)
-  ;; (%defglobal 'contains-value? bard:contains-value?)
-
+  (%defglobal 'contains-key? bard:contains-key?)
+  (%defglobal 'contains-value? bard:contains-value?)
   (%defglobal 'get bard:get)
-
   (%defglobal 'keys bard:keys)
   (%defglobal 'vals bard:vals)
-  ;; (%defglobal 'merge bard:merge)
-
+  (%defglobal 'merge bard:merge)
   (%defglobal 'put bard:put)
-
-  ;; (%defglobal 'vals bard:vals)
 
   ;; Function
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'function? bard:function?)
+  (%defglobal 'function? bard:function?)
 
   ;; Integer
   ;; ---------------------------------------------------------------------

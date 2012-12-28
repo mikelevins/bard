@@ -104,6 +104,14 @@
             (cons (car items)
                   (remove-if test (cdr items)))))))
 
+(define (some? fn ls)
+  (let loop ((items ls))
+    (if (null? items)
+        #f
+        (if (fn (car items))
+            (car items)
+            (loop (cdr items))))))
+
 (define (take n ls)
   (let loop ((ls ls)
              (n n))

@@ -66,14 +66,6 @@
    required-count: 2
    restarg: #f))
 
-;; (define prim:next
-;;   (%make-primitive-method
-;;    (lambda (gen)(%next gen))
-;;    name: 'next
-;;    parameters: (%list 'gen)
-;;    required-count: 1
-;;    restarg: #f))
-
 (define prim:print
   (%make-primitive-method
    (lambda (thing #!optional (out (current-output-port)))
@@ -81,8 +73,7 @@
    name: 'print
    parameters: (%list 'thing)
    required-count: 1
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:newline
   (%make-primitive-method
@@ -90,8 +81,7 @@
    name: 'newline
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:load
   (%make-primitive-method
@@ -99,8 +89,7 @@
    name: 'load
    parameters: (%list 'path)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 ;;; Number
 ;;; ---------------------------------------------------------------------
@@ -111,8 +100,7 @@
    name: '+
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:-
   (%make-primitive-method
@@ -120,8 +108,7 @@
    name: '-
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:*
   (%make-primitive-method
@@ -129,8 +116,7 @@
    name: '*
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:/
   (%make-primitive-method
@@ -138,8 +124,7 @@
    name: '/
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:=
   (%make-primitive-method
@@ -147,8 +132,7 @@
    name: '=
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:>
   (%make-primitive-method
@@ -156,8 +140,7 @@
    name: '>
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:<
   (%make-primitive-method
@@ -165,8 +148,7 @@
    name: '<
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:>=
   (%make-primitive-method
@@ -174,8 +156,7 @@
    name: '>=
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:<=
   (%make-primitive-method
@@ -183,8 +164,7 @@
    name: '<=
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 (define prim:odd?
   (%make-primitive-method
@@ -192,8 +172,7 @@
    name: 'odd?
    parameters: (%list 'n)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:even?
   (%make-primitive-method
@@ -201,8 +180,7 @@
    name: 'even?
    parameters: (%list 'n)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:random
   (%make-primitive-method
@@ -210,8 +188,7 @@
    name: 'random
    parameters: (%list 'n)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 ;;; List
 ;;; ---------------------------------------------------------------------
@@ -222,8 +199,7 @@
    name: 'list
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 ;;; Table
 ;;; ---------------------------------------------------------------------
@@ -234,8 +210,7 @@
    name: 'table
    parameters: %nil
    required-count: 0
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 ;;; System 
 ;;; ---------------------------------------------------------------------
@@ -246,8 +221,7 @@
    name: 'gc
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:gensym
   (%make-primitive-method
@@ -255,8 +229,7 @@
    name: 'gensym
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:room
   (%make-primitive-method
@@ -268,8 +241,7 @@
    name: 'room
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:error
   (%make-primitive-method
@@ -281,8 +253,7 @@
    name: 'error
    parameters: '(err)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:exit
   (%make-primitive-method
@@ -290,8 +261,7 @@
    name: 'exit
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:quit
   (%make-primitive-method
@@ -299,8 +269,7 @@
    name: 'quit
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:version
   (%make-primitive-method
@@ -308,8 +277,7 @@
    name: 'version
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:uuid
   (%make-primitive-method
@@ -317,8 +285,7 @@
    name: 'uuid
    parameters: %nil
    required-count: 0
-   restarg: #f
-   ))
+   restarg: #f))
 
 ;;; functions
 ;;; ---------------------------------------------------------------------
@@ -329,8 +296,7 @@
    name: 'identity
    parameters: (%list 'x)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:complement 
   (%make-primitive-method
@@ -344,8 +310,7 @@
    name: 'complement
    parameters: (%list 'fn)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:constantly 
   (%make-primitive-method
@@ -359,8 +324,7 @@
    name: 'constantly
    parameters: (%list 'x)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:flip 
   (%make-primitive-method
@@ -374,8 +338,7 @@
    name: 'flip
    parameters: (%list 'fn)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:partial 
   (%make-primitive-method
@@ -389,8 +352,7 @@
    name: 'partial
    parameters: (%list 'fn)
    required-count: 1
-   restarg: 'more
-   ))
+   restarg: 'more))
 
 ;;; type system
 ;;; ---------------------------------------------------------------------
@@ -401,8 +363,7 @@
    name: 'type?
    parameters: (%list 'thing)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:type
   (%make-primitive-method
@@ -410,8 +371,7 @@
    name: 'type
    parameters: (%list 'thing)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:instance-of?
   (%make-primitive-method
@@ -419,8 +379,7 @@
    name: 'instance-of?
    parameters: (%list 'thing 'tp)
    required-count: 2
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:singleton?
   (%make-primitive-method
@@ -428,8 +387,7 @@
    name: 'singleton?
    parameters: (%list 'thing)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:singleton
   (%make-primitive-method
@@ -437,8 +395,7 @@
    name: 'singleton
    parameters: (%list 'thing)
    required-count: 1
-   restarg: #f
-   ))
+   restarg: #f))
 
 (define prim:make
   (%make-primitive-method

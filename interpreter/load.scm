@@ -52,7 +52,6 @@
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load (string-append $bard-root "/load.scm"))
 ;;; (load-bard)
 ;;; (%init-bard)
 ;;; (bard:repl)

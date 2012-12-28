@@ -112,31 +112,5 @@
 (define (bard:read-from-string s)
   (call-with-input-string s (lambda (in)(bard:read in))))
 
-;;; (show (bard:read-from-string "undefined"))
-;;; (show (bard:read-from-string "nothing"))
-;;; (show (bard:read-from-string "true"))
-;;; (show (bard:read-from-string "false"))
-;;; (show (bard:read-from-string "5"))
-;;; (show (bard:read-from-string "5.4"))
-;;; (show (bard:read-from-string "5/4"))
-;;; (show (bard:read-from-string "888888888"))
-;;; (show (bard:read-from-string "#\\C"))
-;;; (show (bard:read-from-string "#\\space"))
-;;; (show (bard:read-from-string "#\\u0041"))
-;;; (show (bard:read-from-string "\"Fred and Barney\""))
-;;; (show (bard:read-from-string "Fred"))
-;;; (show (bard:read-from-string "name:"))
-;;; (show (bard:read-from-string "(list 0 1 2 3)"))
-;;; (show (bard:read-from-string "[0 1 2 3]"))
-;;; (show (bard:read-from-string "{a: 1 b: 2 c: [1 2 3]}"))
-;;; (show (bard:read-from-string "{a: 1 b: [1 2 3]}"))
-
-
-;;; (show (bard:read-from-string "{0 1 2 3 4 {a: 1 b: 2}}"))
-;;; (show (bard:read-from-string "{0 1 2 3 4 [01 2 3] 5 {a: 1 b: 2}}"))
-;;; (show (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}"))
-;;; (show (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")))
-;;; (show (%table-get (%eval (bard:read-from-string "{name: 'test age: 101 friends: ['a 'b 'c]}")) friends:))
-;;; (show (%eval (bard:read-from-string "(list 0 1 2 3 4 5)")))
 
 
