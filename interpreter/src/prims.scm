@@ -66,13 +66,13 @@
    required-count: 2
    restarg: #f))
 
-(define prim:next
-  (%make-primitive-method
-   (lambda (gen)(%next gen))
-   name: 'next
-   parameters: (%list 'gen)
-   required-count: 1
-   restarg: #f))
+;; (define prim:next
+;;   (%make-primitive-method
+;;    (lambda (gen)(%next gen))
+;;    name: 'next
+;;    parameters: (%list 'gen)
+;;    required-count: 1
+;;    restarg: #f))
 
 (define prim:print
   (%make-primitive-method

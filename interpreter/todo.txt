@@ -7,7 +7,7 @@ TO DO
   - match
   - receive
   - send
-  - spawn
+  - spawn or (make <actor>)
 
 - classes to implement
   - Actor

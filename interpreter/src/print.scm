@@ -110,27 +110,27 @@
 
 (%defprinter <function> 
              (lambda (x)
-               (let ((nm (%function-name x)))
+               (let ((nm (%debug-name x)))
                  (if  nm
                       (string-append "#<function " (object->string nm) ">")
                       (string-append "#<anonymous function " (object->string (object->serial-number x)) ">")))))
 
-(%defprinter <generator> 
-             (lambda (x)
-               (string-append "#<generator " (object->string (object->serial-number x)) ">")))
+;; (%defprinter <generator> 
+;;              (lambda (x)
+;;                (string-append "#<generator " (object->string (object->serial-number x)) ">")))
 
 
 (%defprinter <primitive-method> 
              (lambda (x)
-               (let ((nm (%method-name x)))
+               (let ((nm (%debug-name x)))
                  (if  nm
                       (string-append "#<primitive-method " (object->string nm) ">")
                       (string-append "#<anonymous primitive method " (object->string (object->serial-number x)) ">")))))
 
 (%defprinter <interpreted-method> 
              (lambda (x)
-               (let ((nm (or (and (%method-name x)
-                                  (%as-string (%method-name x)))
+               (let ((nm (or (and (%debug-name x)
+                                  (%as-string (%debug-name x)))
                              ""))
                      (formals (%method-formals x))
                      (body (%method-body x)))

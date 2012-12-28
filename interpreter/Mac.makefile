@@ -43,13 +43,14 @@ SCHEME_SOURCES= \
          src/types.scm \
          src/values.scm \
          src/env.scm \
-         src/functions.scm \
+         src/callable.scm \
          src/prims.scm \
          src/read.scm \
          src/print.scm \
          src/special.scm \
          src/macro.scm \
          src/apply.scm \
+         src/compile.scm \
          src/eval.scm \
          src/error.scm \
          src/toplevel.scm \
@@ -64,13 +65,14 @@ C_SOURCES= \
          src/types.c \
          src/values.c \
          src/env.c   \
-         src/functions.c \
+         src/callable.c \
          src/prims.c \
          src/read.c \
          src/print.c \
          src/special.c \
          src/macro.c \
          src/apply.c \
+         src/compile.c \
          src/eval.c \
          src/error.c \
          src/toplevel.c \
@@ -85,13 +87,14 @@ OBJECTS= \
          types.o \
          values.o  \
          env.o   \
-         functions.o \
+         callable.o \
          prims.o \
          read.o \
          print.o \
          special.o \
          macro.o \
          apply.o \
+         compile.o \
          eval.o \
          error.o \
          toplevel.o \

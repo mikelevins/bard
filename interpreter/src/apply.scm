@@ -80,10 +80,10 @@
             (%eval body env))))))
 
 (define (%apply-function fn params)
-  (receive (best-method signature) (%function-best-method fn params)
-           (if best-method
-               (%apply best-method params)
-               (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string params))))))
+  (let ((best-method (%function-best-method fn params)))
+    (if best-method
+        (%apply best-method params)
+        (error (string-append "No applicable method for " (%as-string fn) " with arguments " (%as-string params))))))
 
 (define (%apply op args)
   (cond

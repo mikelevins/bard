@@ -103,13 +103,20 @@
 
 ;;; singletons
 
-(define $bard-singletons (make-table test: eqv?))
+(define $bard-singletons (make-table test: equal?))
+
+(define (%existing-singleton val)
+  (let ((found (table-ref $bard-singletons val #f)))
+    (or found
+        #f)))
 
 (define (%singleton val)
-  (let ((found (table-ref $bard-singletons (object->serial-number val) #f)))
+  (let ((found (table-ref $bard-singletons val #f)))
     (or found
-        (let ((s (%make-singleton (string-append "singleton " (object->string val)) (%tag val) val)))
-          (table-set! $bard-singletons (object->serial-number val) s)
+        (let ((s (%make-singleton (string-append "singleton " (object->string val))
+                                  (%tag val)
+                                  val)))
+          (table-set! $bard-singletons val s)
           s))))
 
 

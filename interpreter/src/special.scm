@@ -175,14 +175,21 @@
     (%add-method! fn method-signature method)
     fname))
 
+(define (%eval-define-class expr env) (error "define class not implemented"))
+(define (%eval-define-protocol expr env) (error "define protocol not implemented"))
+(define (%eval-define-vector expr env) (error "define vector not implemented"))
+
 (%defspecial 'define
              (lambda (expr env)
                (let ((kind (list-ref expr 1)))
                  (cond
-                  ((eq? 'variable kind)(%eval-define-variable expr env))
+                  ((eq? 'class kind)(%eval-define-class expr env))
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
+                  ((eq? 'protocol kind)(%eval-define-protocol expr env))
                   ((eq? 'schema kind)(%eval-define-schema expr env))
+                  ((eq? 'variable kind)(%eval-define-variable expr env))
+                  ((eq? 'vector kind)(%eval-define-vector expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))
 
 
@@ -260,6 +267,14 @@
                                                             restarg: #f)))
                  (%set-method-environment! loopmethod (%add-binding (%method-environment loopmethod) loopname loopmethod))
                  (%eval `(,loopmethod ,@loopvals) loopenv))))
+
+;;; match
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'match 
+             (lambda (expr env)
+               (error "match not yet implemented")))
+
 
 ;;; method
 ;;; ----------------------------------------------------------------------
@@ -390,6 +405,13 @@
                    (%car (%cdr expr))
                    (error (string-append "Wrong number of arguments to quote: " (%as-string (%cdr expr)))))))
 
+;;; receive
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'receive 
+             (lambda (expr env)
+               (error "receive not yet implemented")))
+
 ;;; repeat
 ;;; ----------------------------------------------------------------------
 
@@ -399,6 +421,13 @@
                  (let loop ()
                    (%eval-sequence form env)
                    (loop)))))
+
+;;; send
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'send 
+             (lambda (expr env)
+               (error "send not yet implemented")))
 
 ;;; set!
 ;;; ----------------------------------------------------------------------
