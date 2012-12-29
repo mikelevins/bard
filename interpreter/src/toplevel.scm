@@ -172,22 +172,19 @@
 
   ;; Integer
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'integer? bard:integer?)
+  (%defglobal 'integer? bard:integer?)
 
   ;; IOStream
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'close bard:close)
+  ;; (%defglobal 'open bard:open)
   (%defglobal 'current-input bard:current-input)
   (%defglobal 'current-output bard:current-output)
-  ;; (%defglobal 'display bard:display)
-  ;; (%defglobal 'input-stream? bard:input-stream?)
-  ;; (%defglobal 'iostream? bard:iostream?)
-
+  (%defglobal 'display bard:display)
+  (%defglobal 'input-stream? bard:input-stream?)
+  (%defglobal 'iostream? bard:iostream?)
   (%defglobal 'load %bard-load)
-
-  ;; (%defglobal 'open bard:open)
-  ;; (%defglobal 'output-stream? bard:output-stream?)
-
+  (%defglobal 'output-stream? bard:output-stream?)
   (%defglobal 'print prim:print)
   (%defglobal 'newline prim:newline)
   (%defglobal 'read prim:read)

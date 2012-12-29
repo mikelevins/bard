@@ -190,6 +190,35 @@
    required-count: 0
    restarg: #f))
 
+(define bard:display
+  (%make-primitive-method display
+   name: 'display
+   parameters: (%list 'x)
+   required-count: 1
+   restarg: #f))
+
+(define bard:input-stream?
+  (%make-primitive-method input-port?
+   name: 'input-stream?
+   parameters: (%list 'x)
+   required-count: 1
+   restarg: #f))
+
+(define bard:iostream?
+  (%make-primitive-method 
+   (lambda (x)(or (input-port? x)(output-port? x)))
+   name: 'iostream?
+   parameters: (%list 'x)
+   required-count: 1
+   restarg: #f))
+
+(define bard:output-stream?
+  (%make-primitive-method output-port?
+   name: 'output-stream?
+   parameters: (%list 'x)
+   required-count: 1
+   restarg: #f))
+
 (define bard:read-line
   (%make-primitive-method 
    read-line
@@ -229,6 +258,17 @@
    name: 'write
    parameters: (%list 'data 'stream)
    required-count: 2
+   restarg: #f))
+
+;;; ---------------------------------------------------------------------
+;;; Integer
+;;; ---------------------------------------------------------------------
+
+(define bard:integer?
+  (%make-primitive-method integer?
+   name: 'integer?
+   parameters: (%list 'x)
+   required-count: 1
    restarg: #f))
 
 ;;; ---------------------------------------------------------------------
