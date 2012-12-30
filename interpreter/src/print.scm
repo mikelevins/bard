@@ -55,7 +55,7 @@
                (with-output-to-string '() 
                                       (lambda () 
                                         (let ((schema-name (%schema-name sc))
-                                              (slot-names (%schema-slot-names sc)))
+                                              (slot-names (%record-slot-names sc)))
                                           (display "#<")
                                           (if schema-name
                                               (begin (display "schema ")(display schema-name))
@@ -99,11 +99,11 @@
 
 (%defprinter <iostream> object->string)
 
-(%defprinter Type 
+(%defprinter Schema 
              (lambda (x)
                (if (%singleton? x)
                    (string-append "(singleton " (%as-string (%singleton-value x)) ")")
-                   (object->string (%type-name x)))))
+                   (object->string (%schema-name x)))))
 
 (%defprinter <function> 
              (lambda (x)

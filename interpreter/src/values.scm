@@ -194,7 +194,7 @@
 
 (define $empty-table (%private-make-table $empty-slots))
 
-(define <table> (%define-standard-type '<table> (##structure-type (%private-make-table $empty-slots))))
+(define <table> (%define-structure '<table> (##structure-type (%private-make-table $empty-slots))))
 
 (define (%table-slot? x)
   (and (%list? x)

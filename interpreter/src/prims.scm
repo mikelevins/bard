@@ -357,22 +357,6 @@
 ;;; type system
 ;;; ---------------------------------------------------------------------
 
-(define prim:type?
-  (%make-primitive-method
-   %type?
-   name: 'type?
-   parameters: (%list 'thing)
-   required-count: 1
-   restarg: #f))
-
-(define prim:type
-  (%make-primitive-method
-   %object->bard-type
-   name: 'type
-   parameters: (%list 'thing)
-   required-count: 1
-   restarg: #f))
-
 (define prim:instance-of?
   (%make-primitive-method
    %instance-of?

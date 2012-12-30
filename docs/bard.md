@@ -326,61 +326,153 @@ the body of the `with-exit` form can jump out of it, return any value,
 by calling the exit function.
 
 
-## Schemas, Protocols, and Classes
+## Types, Procedures, and Protocols
 
-A Bard datatype is made up of three parts:
+There are two kinds of types in Bard: schemas and classes.
 
-- a **schema** describes the layout of bits and bytes
-- a **protocol** describes functions that operate on the type
-- a **class** identifies values that can be used in the protocol
+There are also two kinds of procedures: functions and methods.
 
-Here's a very simple example:
+Finally, there are protocols to connect types and procedures and give
+each of them meaning.
 
-We start by defining a schema named `<ratio>`:
+### Schemas and Classes
 
-    (define schema <ratio> num denom)
+Schemas are concrete types that describe the bits and bytes used to
+represent values. Classes are abstract types that refer to collections
+of values. A Class may refer to several different schemas. For
+example, <fixnum> and <bignum> are two different schemas that
+represent integers. The details of their memory layout differ, and
+they have different performance characteristics. The class Integer
+refers to values belonging to both schemas.
 
-Defining the schema adds a method to the `make` function for creating
-instances of the schema. We can now create instances of `<ratio>`:
+Why have two kinds of types? Because the representation of data is a
+different concern from the role it plays in procedures. Schemas
+describe representation; classes identify roles. 
 
-    bard> (make <ratio> num: 1 denom: 2)
-    #<ratio num: 1 denom: 2>
+By separating the concerns, we can express one without making
+committments about the other. For example, we can describe a set of
+named fields or a tuple of values without restricting its role in
+procedures.
 
-We can use the `get` function to retrieve the values in the fields of
-<ratio> instances:
+A tuple of two values, for instance, can be an element of an
+associative array, or the building block of a linked list, or value
+and an associated label. The same schema can be used for all purposes
+without violating the spirit of the definition, because the schema
+doesn't describe a role.
 
-    bard> (define variable r (make <ratio> num: 3 denom: 5))
-    #<ratio num: 3 denom: 5>
+Separating representation from role also simplifies the roles. When we
+define a class like Name or List, we identify roles we expect values
+to fill, but we don't limit the representations that can fill
+them. Any schema can be a member of a class, as long as the necessary
+functions are defined. 
 
-    bard> (get r 'num)
-    3
+A List might be a chain of pairs--a singly-linked list like those
+common in Lisp dialects. One the other hand, it might be a contiguous
+sequence of memory locations, like an array in C. Either
+representation has advantages, depending on the intended use of the
+data. Both support the same operations; the important difference is
+that one is more efficient for some operations and the other is more
+efficient for others.
 
-    bard> (get r 'denom)
-    5
+A Bard List might be represented by either one. To put it another way,
+you can use any suitable schema as a List, so long as the needed
+functions are defined for that schema. You can also invent your own
+schema, define the functions specified by the List protocol, and your
+schema is a List.
 
-The next step in making `<ratio>` part of a full-fledged type is
-making it participate in a protocol. In this case, we'll do it by
-creating a new protocol, but we could also have written methods to
-connect it to existing protocols.
+### Methods and Functions
 
-    (define protocol Rational
-      (numerator Ratio) -> Integer
-      (denominator Ratio) -> Integer)
+A method is a procedure that accepts values as inputs and computes
+outputs. 
 
-To make `<ratio>` participate in the new Rational protocol, we write
-methods that specialize the protocol's methods for `<ratio>`. Here's
-what that looks like:
+A function is a procedure that accepts values as inputs, examines
+their types, and on that basis selects a method to apply to
+them. 
 
-    (define method (numerator (r <ratio>))
-      (get r 'num))
+Functions are polymorphic; that is, they can do different things for
+inputs of different types. Methods are monomorphic; that is, a method
+always runs the same code regardless of the types of its inputs.
 
-    (define method (denominator (r <ratio>))
-      (get r 'denom))
+There are two kinds of procedures because there are two parts of the
+job of making polymorphic procedures work: first, we must chooses the
+right code for the values we get, and second we must run that
+code. The function's job is to examine the inputs and determine which
+method matches them; the method's job is to accept the inputs and
+compute a result.
 
-The protocol says that numerator accepts an argument of type
-Ratio. The method definition says that it's specialized for an
-argument of type `<ratio>`. Taken together, those two definitions make
-the schema `<ratio>` a member of the class Ratio. 
+Polymorphic functions simplify working with data by making it
+convenient to use the same function to compute the same kinds of
+results with inputs using different representations. As a simple and
+obvious example, consider adding two numbers together.
 
-We've created a new type consisting of a class, a protocol it
-participates in, and a schema that represents it.
+The conventional name for that operation is "+". What should the types
+of the arguments to the "+" operation be? There are many different
+representations for numbers. There are simple integers represented
+directly by machine words; there are integers with unbounded precision
+represented by variable-sized arrays of machine words; there are
+decimal numbers of various kinds and precisions; there are ratios,
+complex numbers, and so on. 
+
+Each kind of number has a different representation; depending on the
+platform, some may have several.
+
+The "+" operation is supposed to work on all of them. If procedures
+are not polymorphic then we have a choice between coming up with a
+distinct flavor of "+" for each possible combination of different
+representations, or defining a grand comprehensive "+" that implements
+addition for all of the possible combinations.
+
+Taking the first option yields an explosion of different versions of
+"+". The second requires us to rewrite "+" every time someone wants to
+support a new representation for numbers.
+
+That's the problem that polymorphic functions solve. A polymorphic
+function is an extensible function that can choose the right code for
+the representations it receives. With polymorphism, there's just one
+"+" function. When you feed numbers to it, the function chooses an
+implenentation of addition appropriate to the representations it
+receives. Because it's extensible, you don't have to rewrite it in
+order to support a new representation; you just have to write the
+methods for the new kinds of numbers.
+
+### Protocols
+
+On the one hand we have types--that is, classes and schemas. On the
+other hand, we have procedures--that is, functions and methods. The
+connection between them is protocols.
+
+A protocol is a collection of functions defined over classes. For
+example, here's a very simple protocol called Rational:
+
+    (protocol Rational
+      (numerator Ratio -> Integer)
+      (denominator Ratio -> Integer))
+
+In this definition, Rational is a protocol; Ratio and Integer are
+classes; numerator and denominator are functions. The protocol
+establishes a relationship between the classes and the
+functions. Rational establishes that numerator and denominator accept
+Ratio values as inputs and produce Integer values as outputs.
+
+What schemas belong to Ratio and Integer? To put it another way, what
+concrete values can we actually pass to numerator and denominator? 
+
+The protocol doesn't say. It also doesn't say how numerator and
+denominator work. A protocol just defines the relationships between
+the classes and functions.
+
+To define the schemas that belong to the classes, we have to define
+some methods for those functions--methods that work on some specific
+schemas. Here's an example:
+
+    (define method (numerator (r <ratnum>))
+      (ratnum:num r))
+
+    (define method (denominator (r <ratnum>))
+      (ratnum:denom r))
+
+These expressions define implementations of numerator and denominator
+where the input value is an instance of the schema `<ratnum>`. That
+means that `<ratnum>` is a member of `Ratio`.
+
+

@@ -41,13 +41,10 @@
 ;;; type-system primitives
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'Type Type)
-  (%defglobal 'type? prim:type?)
-  (%defglobal 'type prim:type)
+  (%defglobal 'Schema Schema)
   (%defglobal 'instance-of? prim:instance-of?)
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'singleton? prim:singleton?)
-  (%defglobal '%primitive-type-tag %type-tag)
 
 ;;; ---------------------------------------------------------------------
 ;;; number primitives
@@ -116,10 +113,10 @@
 
   (%defglobal 'Anything Anything)
 
-  ;; Type
+  ;; Schema
   ;; ---------------------------------------------------------------------
 
-  (%defglobal 'Type Type)
+  (%defglobal 'Schema Schema)
 
   ;; Applicable
   ;; ---------------------------------------------------------------------

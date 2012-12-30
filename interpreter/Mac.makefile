@@ -40,7 +40,13 @@ SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
          src/utils.scm \
-         src/types.scm \
+         src/singleton-tree.scm \
+         src/primitive-types.scm \
+         src/schemas.scm \
+         src/schemas-base.scm \
+         src/schemas-class.scm \
+         src/schemas-protocol.scm \
+         src/schemas-structure.scm \
          src/values.scm \
          src/env.scm \
          src/callable.scm \
@@ -62,9 +68,15 @@ C_SOURCES= \
          src/version.c \
          lib/uuid.c \
          src/utils.c \
-         src/types.c \
+         src/singleton-tree.c \
+         src/primitive-types.c \
+         src/schemas.c \
+         src/schemas-base.c \
+         src/schemas-class.c \
+         src/schemas-protocol.c \
+         src/schemas-structure.c \
          src/values.c \
-         src/env.c   \
+         src/env.c \
          src/callable.c \
          src/prims.c \
          src/read.c \
@@ -84,9 +96,15 @@ OBJECTS= \
          version.o \
          uuid.o \
          utils.o \
-         types.o \
-         values.o  \
-         env.o   \
+         singleton-tree.o \
+         primitive-types.o \
+         schemas.o \
+         schemas-base.o \
+         schemas-class.o \
+         schemas-protocol.o \
+         schemas-structure.o \
+         values.o \
+         env.o \
          callable.o \
          prims.o \
          read.o \

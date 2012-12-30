@@ -10,53 +10,6 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; singleton-trees
-;;; ---------------------------------------------------------------------
-;;; used for storing function methods
-
-(define-type %singleton-tree
-  id: 3623F664-68ED-4642-BB14-B6FDCA33618C
-  (entries %singleton-tree-entries))
-
-(define (%singleton-tree)
-  (make-%singleton-tree (make-table test: eq?)))
-
-(define (%singleton-tree-ref tree key)
-  (if (%singleton-tree? tree)
-      (table-ref (%singleton-tree-entries tree) key #f)
-      #f))
-
-(define (%singleton-tree-get tree . keys)
-  (if (%singleton-tree? tree)
-      (if (null? keys)
-          #f
-          (let* ((entries (%singleton-tree-entries tree))
-                 (subtree (table-ref entries (car keys) #f)))
-            (if subtree
-                (if (null? (cdr keys))
-                    subtree
-                    (apply %singleton-tree-get subtree (cdr keys)))
-                #f)))
-      #f))
-
-(define (%singleton-tree-put! val tree . keys)
-  (if (%singleton-tree? tree)
-      (if (null? keys)
-          (error (str "Invalid search path for %singleton-tree: " keys))
-          (let* ((first-key (car keys))
-                 (rest-keys (cdr keys))
-                 (entries-table (%singleton-tree-entries tree)))
-            (if (null? rest-keys)
-                (table-set! entries-table first-key val)
-                (let ((subtree (table-ref entries-table first-key #f)))
-                  (if (not (%singleton-tree? subtree))
-                      (begin
-                        (set! subtree (%singleton-tree))
-                        (table-set! entries-table first-key subtree)))
-                  (apply %singleton-tree-put! val subtree (cdr keys))))))
-      (error (str "Not a %singleton-tree: " tree))))
-
-;;; ---------------------------------------------------------------------
 ;;; callable objects
 ;;; ---------------------------------------------------------------------
 
@@ -93,8 +46,7 @@
                                 (restarg #f))
   (%private-make-primitive-method name parameters restarg required-count function))
 
-(define <primitive-method>
-  (%define-standard-type '<primitive-method> (##structure-type (%make-primitive-method #f))))
+(define <primitive-method> (%define-structure '<primitive-method> (##structure-type (%make-primitive-method #f))))
 
 (%def-method-type %interpreted-method
                   constructor: %private-make-interpreted-method
@@ -111,7 +63,7 @@
   (%private-make-interpreted-method name parameters restarg required-count environment method-body))
 
 (define <interpreted-method>
-  (%define-standard-type '<interpreted-method> (##structure-type (%make-interpreted-method '() '()))))
+  (%define-structure '<interpreted-method> (##structure-type (%make-interpreted-method '() '()))))
 
 (define (%method-name? x)(or (symbol? x)(string? x)))
 
@@ -127,7 +79,7 @@
     (%set-debug-name! fn name)
     fn))
 
-(define <function> (%define-standard-type '<function> (##structure-type (%make-function))))
+(define <function> (%define-structure '<function> (##structure-type (%make-function))))
 
 (define (%add-method! fn signature method)
   (let ((method-tree (%function-methods fn)))
