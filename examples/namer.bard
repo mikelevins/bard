@@ -5,6 +5,7 @@
 
 (define variable $name-starts nothing)
 (define variable $name-parts nothing)
+(define variable $name-parts-count 0)
 
 (define method (triples (x <string>))
   (take-by 3 1 x))
@@ -19,37 +20,42 @@
       (set! $name-parts (reduce append []
                                 (map (partial filter long-enough?)
                                      (map rest triples-list))))
+      (set! $name-parts-count (length $name-parts))
       path))
 
 (define method (choose-name-start)(any $name-starts))
 
 (define method (choose-name-next part)
   (let ((part1 (next-last part))
-        (part2 (last part))
-        (first-picks (filter (^ (p)(= part1 (first p))) $name-parts ))
-        (second-picks (if (something? first-picks)
-                          (filter (^ (p)(= part2 (second p))) first-picks)
-                          nothing)))
-    (if (something? second-picks)
-        (any second-picks)
-        nothing)))
+        (part2 (last part)))
+    (some? (^ (p) (and (= part1 (first p))
+                       (= part2 (second p))))
+
+           (drop (random $name-parts-count)
+                 $name-parts))))
 
 (define variable *max-name-length* 16)
 
 (define method (merge-name-segment name segment)
   (append name (drop 2 segment)))
 
+(define variable $max-tries 1000)
+
 (define method (build-name)
-  (loop gen ((name (choose-name-start)))
-        (let ((count (length name)))
-          (if (> count *max-name-length*)
-              name
-              (let ((seg (choose-name-next name)))
-                (if (and (something? seg))
-                    (if (> (length seg) 2)
-                        (gen (merge-name-segment name seg))
-                        (merge-name-segment name seg))
-                    name))))))
+  (loop gen ((name (choose-name-start))
+             (try-count 0))
+        (if (< try-count $max-tries)
+            (let ((count (length name)))
+              (if (> count *max-name-length*)
+                  name
+                  (let ((seg (choose-name-next name)))
+                    (if (something? seg)
+                        (if (> (length seg) 2)
+                            (gen (merge-name-segment name seg)
+                                 (+ try-count 1))
+                            (merge-name-segment name seg))
+                        (gen name (+ try-count 1))))))
+            name)))
 
 (define method (build-names n)
   (loop build ((names [])

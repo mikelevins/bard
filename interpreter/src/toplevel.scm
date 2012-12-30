@@ -235,7 +235,7 @@
   ;; (%defglobal 'select bard:select)
   ;; (%defglobal 'shuffle bard:shuffle)
   ;; (%defglobal 'slice bard:slice)
-  ;; (%defglobal 'some? bard:some?)
+  (%defglobal 'some? bard:some?)
   ;; (%defglobal 'sort bard:sort)
   (%defglobal 'split-string bard:split-string)
   ;; (%defglobal 'tails bard:tails)

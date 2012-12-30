@@ -76,7 +76,7 @@
 (%add-primitive-method! bard:as
                         (list (%singleton <pair>) <string>)
                         (list 'type 'thing)
-                        (lambda (type thing)(%cons->bard-list (string->list thing)))
+                        (lambda (type thing)(string->list thing))
                         name: 'as)
 
 (%add-primitive-method! bard:as
@@ -327,6 +327,12 @@
 (define bard:any (%make-function name: 'any))
 
 (%add-primitive-method! bard:any
+                        (list <null>)
+                        (list 'ls)
+                        (constantly (%nothing))
+                        name: 'any)
+
+(%add-primitive-method! bard:any
                         (list <pair>)
                         (list 'ls)
                         (lambda (ls)
@@ -477,7 +483,7 @@
   (let loop ((items ls)
              (result '()))
     (if (%null? items)
-        (%cons->bard-list (reverse result))
+        (reverse result)
         (if (%funcall test (car items))
             (loop (cdr items)
                   (cons (car items) result))
@@ -653,7 +659,7 @@
   (let loop ((items ls)
              (result '()))
     (if (%null? items)
-        (%cons->bard-list (reverse result))
+        (reverse result)
         (loop (cdr items)
               (cons (%funcall fn (car items))
                     result)))))
@@ -823,6 +829,42 @@
                         (list 's)
                         (lambda (s)(string-ref s 1))
                         name: 'second)
+
+;;; some?
+
+(define bard:some? (%make-function name: 'some?))
+
+(define (%bard-some? test ls)
+  (let loop ((items ls))
+    (if (%null? items)
+        (%nothing)
+        (if (%funcall test (car items))
+            (car items)
+            (loop (cdr items))))))
+
+(%add-primitive-method! bard:some?
+                        (list Anything <null>)
+                        (list 'test 'ls)
+                        (constantly (%nothing))
+                        name: 'some?)
+
+(%add-primitive-method! bard:some?
+                        (list <primitive-method> <pair>)
+                        (list 'test 's)
+                        %bard-some?
+                        name: 'some?)
+
+(%add-primitive-method! bard:some?
+                        (list <interpreted-method> <pair>)
+                        (list 'test 'ls)
+                        %bard-some?
+                        name: 'some?)
+
+(%add-primitive-method! bard:some?
+                        (list <function> <pair>)
+                        (list 'test 'ls)
+                        %bard-some?
+                        name: 'some?)
 
 ;;; split
 
