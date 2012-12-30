@@ -64,6 +64,40 @@
 ;;; list utils
 ;;; ---------------------------------------------------------------------
 
+(define (by n ls)
+  (cond
+   ((<= n 0) '())
+   ((= n 1) (map list ls))
+   (else (let ((_drop (lambda (c l)
+                        (let loop ((l l)
+                                   (c c))
+                          (if (<= c 0)
+                              l
+                              (if (null? l)
+                                  l
+                                  (loop (cdr l)
+                                        (- c 1)))))))
+               (_take (lambda (c l)
+                        (let loop ((l l)
+                                   (c c))
+                          (if (<= c 0)
+                              '()
+                              (if (null? l)
+                                  l
+                                  (cons (car l)
+                                        (loop (cdr l)
+                                              (- c 1)))))))))
+           (let loop ((ls ls)
+                      (result '()))
+             (if (null? ls)
+                 (reverse result)
+                 (loop (_drop n ls)
+                       (cons (_take n ls)
+                             result))))))))
+
+
+
+
 (define (drop n ls)
   (list-tail ls n))
 
@@ -95,6 +129,15 @@
             (cons item
                   (interpose item (cdr ls))))))
 
+(define (next-last ls)
+  (if (null? ls)
+      (error "next-last: out of range")
+      (if (null? (cdr ls))
+          (error "next-last: out of range")
+          (if (null? (cddr ls))
+              (car ls)
+              (next-last (cdr ls))))))
+
 (define (remove-if test ls)
   (let loop ((items ls))
     (if (null? items)
@@ -122,6 +165,36 @@
             (cons (car ls)
                   (loop (cdr ls)
                         (- n 1)))))))
+
+(define (take-by len advance ls)
+  (cond
+   ((<= len 0) '())
+   (else (let ((_drop (lambda (c l)
+                        (let loop ((l l)
+                                   (c c))
+                          (if (<= c 0)
+                              l
+                              (if (null? l)
+                                  l
+                                  (loop (cdr l)
+                                        (- c 1)))))))
+               (_take (lambda (c l)
+                        (let loop ((l l)
+                                   (c c))
+                          (if (<= c 0)
+                              '()
+                              (if (null? l)
+                                  l
+                                  (cons (car l)
+                                        (loop (cdr l)
+                                              (- c 1)))))))))
+           (let loop ((ls ls)
+                      (result '()))
+             (if (null? ls)
+                 (reverse result)
+                 (loop (_drop advance ls)
+                       (cons (_take len ls)
+                             result))))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; alist utils
@@ -225,6 +298,9 @@
         (if (null? (cdr args))
             s
             (string-append s (apply str (cdr args)))))))
+
+(define (string-next-last str)
+  (string-ref str (- (string-length str) 2)))
 
 
 (define (trim-whitespace str)

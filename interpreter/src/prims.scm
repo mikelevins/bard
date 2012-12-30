@@ -184,7 +184,10 @@
 
 (define prim:random
   (%make-primitive-method
-   random-integer
+   (let ((rs (make-random-source)))
+     (random-source-randomize! rs)
+     (let ((ri (random-source-make-integers rs)))
+       (lambda (n)(ri n))))
    name: 'random
    parameters: (%list 'n)
    required-count: 1

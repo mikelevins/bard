@@ -16,10 +16,8 @@
 (define-type %callable
   id: E8EC72A9-7E1C-499D-A468-69D73C857B6C
   extender: defcallable
-  (name %debug-name %set-debug-name!))
-
-;;(defcallable %continuation)
-;;(defcallable %prim)
+  (name %debug-name %set-debug-name!)
+  (function %callable-function %set-callable-function!))
 
 ;;; ---------------------------------------------------------------------
 ;;; methods
@@ -33,10 +31,7 @@
   (restarg %method-restarg)
   (required-count %method-required-count))
 
-(%def-method-type %primitive-method
-                  constructor: %private-make-primitive-method
-                  read-only:
-                  (function %method-function))
+(%def-method-type %primitive-method constructor: %private-make-primitive-method)
 
 (define (%make-primitive-method function  
                                 #!key 
@@ -44,7 +39,7 @@
                                 (name #f)
                                 (required-count 0)
                                 (restarg #f))
-  (%private-make-primitive-method name parameters restarg required-count function))
+  (%private-make-primitive-method name function parameters restarg required-count))
 
 (define <primitive-method> (%define-structure '<primitive-method> (##structure-type (%make-primitive-method #f))))
 
@@ -54,13 +49,41 @@
                   (environment %method-environment %set-method-environment!)
                   (body %method-body))
 
+(define (%method-lexical-environment env params rest vals)
+  (let loop ((env env)
+             (formals params)
+             (args vals))
+    (if (%null? args)
+        ;; out of args
+        (if (%null? formals)
+            (if (%true? rest)
+                (%add-binding env rest args)
+                env)
+            (error (string-append "Not enough arguments: " (%as-string vals))))
+        ;; more args to process
+        (if (%null? formals)
+            (if (%true? rest)
+                (%add-binding env rest args)
+                (error (string-append "Too many arguments: " (%as-string vals))))
+            (loop (%add-binding env (%car formals)(%car args))
+                  (%cdr formals)
+                  (%cdr args))))))
+
 (define (%make-interpreted-method parameters method-body  
                                   #!key 
                                   (environment '())
                                   (name #f)
                                   (required-count 0)
                                   (restarg #f))
-  (%private-make-interpreted-method name parameters restarg required-count environment method-body))
+  (let* ((method (%private-make-interpreted-method name #f parameters restarg required-count environment method-body))
+         (method-function (lambda args
+                            (let* ((argcount (%length args)))
+                              (if (< argcount required-count)
+                                  (error (str "Expected " required-count "arguments, but found " (length args)))
+                                  (let* ((env (%method-lexical-environment (%method-environment method) parameters restarg args)))
+                                    (%eval method-body env)))))))
+    (%set-callable-function! method method-function)
+    method))
 
 (define <interpreted-method>
   (%define-structure '<interpreted-method> (##structure-type (%make-interpreted-method '() '()))))
@@ -75,8 +98,13 @@
   (thunk-method %function-thunk-method %set-function-thunk-method!))
 
 (define (%make-function #!key (name 'anonymous-function))
-  (let ((fn (%private-make-function name (%singleton-tree) #f)))
-    (%set-debug-name! fn name)
+  (let* ((fn (%private-make-function name #f (%singleton-tree) #f))
+         (fn-function (lambda args
+                        (let ((best-method (%function-best-method fn args)))
+                          (if best-method
+                              (%apply best-method args)
+                              (error (str "No applicable method for " fn " with arguments " args)))))))
+    (%set-callable-function! fn fn-function)
     fn))
 
 (define <function> (%define-structure '<function> (##structure-type (%make-function))))
@@ -122,3 +150,4 @@
   (if (null? vals)
       (%function-thunk-method fn)
       (%search-method-tree-for-values (%function-methods fn) vals)))
+

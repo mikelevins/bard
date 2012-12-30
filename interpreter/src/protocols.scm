@@ -375,6 +375,39 @@
                         string-append
                         name: 'append)
 
+;;; next-last
+
+(define bard:next-last (%make-function name: 'next-last))
+
+(%add-primitive-method! bard:next-last
+                        (list <pair>)
+                        (list 'ls)
+                        next-last
+                        name: 'next-last)
+
+(%add-primitive-method! bard:next-last
+                        (list <string>)
+                        (list 'string)
+                        string-next-last
+                        name: 'next-last)
+
+;;; by
+
+(define bard:by (%make-function name: 'by))
+
+(%add-primitive-method! bard:by
+                        (list <fixnum> <pair>)
+                        (list 'n 'ls)
+                        by
+                        name: 'by)
+
+(%add-primitive-method! bard:by
+                        (list <fixnum> <string>)
+                        (list 'n 's)
+                        (lambda (n s)(map (lambda (i)(list->string i))
+                                          (by n (string->list s))))
+                        name: 'by)
+
 ;;; drop
 
 (define bard:drop (%make-function name: 'drop))
@@ -483,6 +516,12 @@
                         (list <pair>)
                         (list 'ls)
                         car
+                        name: 'first)
+
+(%add-primitive-method! bard:first
+                        (list <string>)
+                        (list 's)
+                        (lambda (s)(string-ref s 0))
                         name: 'first)
 
 ;;; join
@@ -769,6 +808,22 @@
                         (lambda (str)(substring str 1 (string-length str)))
                         name: 'rest)
 
+;;; second
+
+(define bard:second (%make-function name: 'second))
+
+(%add-primitive-method! bard:second
+                        (list <pair>)
+                        (list 'ls)
+                        cadr
+                        name: 'second)
+
+(%add-primitive-method! bard:second
+                        (list <string>)
+                        (list 's)
+                        (lambda (s)(string-ref s 1))
+                        name: 'second)
+
 ;;; split
 
 (define (%bard-split-string str ch)
@@ -822,6 +877,23 @@
                         (lambda (n str)(substring str 0 n))
                         name: 'take)
 
+
+;;; take-by
+
+(define bard:take-by (%make-function name: 'take-by))
+
+(%add-primitive-method! bard:take-by
+                        (list <fixnum>  <fixnum> <pair>)
+                        (list 'len 'advance 'ls)
+                        take-by
+                        name: 'take-by)
+
+(%add-primitive-method! bard:take-by
+                        (list <fixnum> <fixnum> <string>)
+                        (list 'len 'advance 's)
+                        (lambda (len advance s)(map (lambda (i)(list->string i))
+                                                    (take-by len advance (string->list s))))
+                        name: 'take-by)
 
 
 ;;; ---------------------------------------------------------------------
