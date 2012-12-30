@@ -13,8 +13,7 @@
                    (triples (drop 1 x)))))
 
 (define method (read-names path)
-    (let ((lines (with-open-file (in path)
-                   (read-lines in)))
+    (let ((lines (with-open-file (in path)(read-lines in)))
           (triples-list (map triples lines)))
       (set! $name-starts (map first triples-list))
       (set! $name-parts (reduce append nothing (filter something? (map rest triples-list))))

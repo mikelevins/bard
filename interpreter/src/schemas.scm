@@ -99,16 +99,6 @@
          (default (getf default: attrs (%nothing))))
     (cons sname default)))
 
-(define (%assemble-schema-slots slot-specs)
-  (map %spec->slot slot-specs))
-
-(define (%make-schema name slot-specs #!optional (tag (%next-available-schema-tag)))
-  (let* ((slots (%assemble-schema-slots slot-specs))
-         (slot-names (map car slots))
-         (sc (%private-make-schema slots name slot-names tag)))
-    (%assert-schema! sc)
-    sc))
-
 (defschema %record-instance
  constructor: %private-make-record-instance
  (schema %instance-schema)
