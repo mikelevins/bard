@@ -113,11 +113,6 @@
 
   (%defglobal 'Anything Anything)
 
-  ;; Schema
-  ;; ---------------------------------------------------------------------
-
-  (%defglobal 'Schema Schema)
-
   ;; Applicable
   ;; ---------------------------------------------------------------------
   (%defglobal 'applicable? bard:applicable?)
@@ -129,12 +124,14 @@
 
   ;; Boolean
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Boolean Boolean)
   (%defglobal 'boolean? bard:boolean?)
   (%defglobal 'false? bard:false?)
   (%defglobal 'true? bard:true?)
 
   ;; Character
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Character Character)
   (%defglobal 'character? bard:character?)
 
   ;; Equal
@@ -145,29 +142,25 @@
 
   ;; Float
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Float Float)
   (%defglobal 'float? bard:float?)
 
   ;; ForeignValue
   ;; ---------------------------------------------------------------------
   (%defglobal 'foreign-value? bard:foreign-value?)
 
-  ;; Table
+  ;; Fraction
   ;; ---------------------------------------------------------------------
-  (%defglobal 'table? bard:table?)
-  (%defglobal 'contains-key? bard:contains-key?)
-  (%defglobal 'contains-value? bard:contains-value?)
-  (%defglobal 'get bard:get)
-  (%defglobal 'keys bard:keys)
-  (%defglobal 'vals bard:vals)
-  (%defglobal 'merge bard:merge)
-  (%defglobal 'put bard:put)
+  (%defglobal 'Fraction Fraction)
 
   ;; Function
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Function Function)
   (%defglobal 'function? bard:function?)
 
   ;; Integer
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Integer Integer)
   (%defglobal 'integer? bard:integer?)
 
   ;; IOStream
@@ -193,10 +186,12 @@
 
   ;; Keyword
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Keyword Keyword)
   ;; (%defglobal 'keyword? bard:keyword?)
 
   ;; List
   ;; ---------------------------------------------------------------------
+  (%defglobal 'List List)
   (%defglobal 'add-first bard:add-first)
   (%defglobal 'add-last bard:add-last)
   (%defglobal 'any bard:any)
@@ -248,10 +243,12 @@
 
   ;; Method
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Method Method)
   ;; (%defglobal 'method? bard:method?)
 
   ;; Pair
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Pair Pair)
   (%defglobal 'pair bard:pair)
   (%defglobal 'left bard:left)
   (%defglobal 'right bard:right)
@@ -262,12 +259,13 @@
 
   ;; Null
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Null Null)
   (%defglobal 'nothing? bard:nothing?)
   (%defglobal 'something? bard:something?)
 
   ;;  Number
   ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'Number Number)
+  (%defglobal 'Number Number)
   ;; (%defglobal 'number? bard:number?)
 
   ;; ---------------------------------------------------------------------
@@ -290,18 +288,46 @@
 
   ;; Ratio
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Ratio Ratio)
   ;; (%defglobal 'ratio? bard:ratio?)
+
+  ;; Schema
+  ;; ---------------------------------------------------------------------
+
+  (%defglobal 'Schema Schema)
+
+  ;; Stream
+  ;; ---------------------------------------------------------------------
+
+  (%defglobal 'Stream Stream)
+  (%defglobal 'InputStream InputStream)
+  (%defglobal 'OutputStream OutputStream)
 
   ;; Symbol
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Symbol Symbol)
   (%defglobal 'symbol? bard:symbol?)
+
+  ;; Table
+  ;; ---------------------------------------------------------------------
+  (%defglobal 'Table Table)
+  (%defglobal 'table? bard:table?)
+  (%defglobal 'contains-key? bard:contains-key?)
+  (%defglobal 'contains-value? bard:contains-value?)
+  (%defglobal 'get bard:get)
+  (%defglobal 'keys bard:keys)
+  (%defglobal 'vals bard:vals)
+  (%defglobal 'merge bard:merge)
+  (%defglobal 'put bard:put)
 
   ;; Text
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Text Text)
   (%defglobal 'text? %text?)
 
   ;; Undefined
   ;; ---------------------------------------------------------------------
+  (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'undefined? bard:undefined?)
 
