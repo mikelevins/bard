@@ -50,7 +50,7 @@
                                                         (loop (%cdr keys))))))))
                                         (display "}")))))
 
-(%defprinter <schema> 
+(%defprinter <record> 
              (lambda (sc)
                (with-output-to-string '() 
                                       (lambda () 

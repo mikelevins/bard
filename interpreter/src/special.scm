@@ -64,11 +64,11 @@
   (%defglobal (%list-ref expr 2) (%eval (%list-ref expr 3) env))
                (%list-ref expr 2))
 
-(define (%eval-define-schema expr env)
+(define (%eval-define-record expr env)
   (let* ((sname (list-ref expr 2))
          (slot-specs (drop 3 expr))
          (slots (%parse-slot-descriptions slot-specs env))
-         (sc (%make-schema sname slots)))
+         (sc (%make-record sname slots)))
     (table-set! $bard-global-variables sname sc)
     sc))
 
@@ -184,7 +184,7 @@
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))
-                  ((eq? 'schema kind)(%eval-define-schema expr env))
+                  ((eq? 'record kind)(%eval-define-record expr env))
                   ((eq? 'variable kind)(%eval-define-variable expr env))
                   ((eq? 'vector kind)(%eval-define-vector expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))

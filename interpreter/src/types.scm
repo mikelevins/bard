@@ -52,7 +52,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; type definitions
 ;;; ---------------------------------------------------------------------
-;;; primitive | structure | protocol | singleton | schema (user-defined)
+;;; primitive | structure | protocol | singleton | record
 
 (define-type %type
   id: EE47736A-3F6E-4AEE-899D-09EFA0DEB5E4
@@ -151,14 +151,14 @@
 (define (%object->type-tag thing)
   (cond
    ((%type? thing) (%type-tag thing))
-   ((%schema-instance? thing)(%schema-tag (%schema-instance-schema thing)))
+   ((%record-instance? thing)(%schema-tag (%record-instance-schema thing)))
    ((##structure? thing) (table-ref $bard-structure-tags (##structure-type thing) #f))
    (else (%tag thing))))
 
 (define (%object->bard-type thing)
   (cond
    ((%type? thing) Type)
-   ((%schema-instance? thing)(let ((tag (%object->type-tag thing)))
+   ((%record-instance? thing)(let ((tag (%object->type-tag thing)))
                                (if tag
                                    (table-ref $bard-types tag #f)
                                    (error (string-append "Can't get the type of " (object->string thing))))))

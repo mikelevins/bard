@@ -48,7 +48,6 @@
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'singleton? prim:singleton?)
   (%defglobal '%primitive-type-tag %type-tag)
-  (%defglobal 'make prim:make)
 
 ;;; ---------------------------------------------------------------------
 ;;; number primitives
@@ -96,7 +95,7 @@
   (%defglobal '<string> <string>)
   (%defglobal '<iostream> <iostream>)
   (%defglobal '<table> <table>)
-  (%defglobal '<schema> <schema>)
+  (%defglobal '<record> <record>)
   (%defglobal '<function> <function>)
   (%defglobal '<primitive-method> <primitive-method>)
   (%defglobal '<interpreted-method> <interpreted-method>)

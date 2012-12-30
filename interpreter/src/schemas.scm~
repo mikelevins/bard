@@ -1,14 +1,10 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          function.scm
+;;;; Name:          values.scm
 ;;;; Project:       Bard
-;;;; Purpose:       bard functions: representation and dispatch
+;;;; Purpose:       representation of basic Bard values
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
-
-(define $bard-type-precedence-lists
-  (make-table test: eqv?))
-

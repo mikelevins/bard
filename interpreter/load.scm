@@ -27,6 +27,7 @@
          "lib/uuid.scm"
          "src/utils.scm"
          "src/types.scm"
+         "src/schemas.scm"
          "src/values.scm"
          "src/env.scm"
          "src/callable.scm"
