@@ -7,19 +7,16 @@
 (define variable $name-parts nothing)
 (define variable $name-parts-count 0)
 
-(define method (triples (x <string>))
-  (take-by 3 1 x))
+(define method (triples (x <string>)) (take-by 3 1 x))
 
-(define method (long-enough? (s <string>))
-  (> (length s) 1))
+(define method (long-enough? (s <string>)) (> (length s) 1))
 
 (define method (read-names path)
     (let ((lines (with-open-file (in path)(read-lines in)))
           (triples-list (map triples lines)))
       (set! $name-starts (filter long-enough? (map first triples-list)))
-      (set! $name-parts (reduce append []
-                                (map (partial filter long-enough?)
-                                     (map rest triples-list))))
+      (set! $name-parts (reduce append [] (map (partial filter long-enough?)
+                                               (map rest triples-list))))
       (set! $name-parts-count (length $name-parts))
       path))
 
@@ -30,7 +27,6 @@
         (part2 (last part)))
     (some? (^ (p) (and (= part1 (first p))
                        (= part2 (second p))))
-
            (drop (random $name-parts-count)
                  $name-parts))))
 
@@ -39,7 +35,7 @@
 (define method (merge-name-segment name segment)
   (append name (drop 2 segment)))
 
-(define variable $max-tries 1000)
+(define variable $max-tries 100)
 
 (define method (build-name)
   (loop gen ((name (choose-name-start))
