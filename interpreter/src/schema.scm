@@ -269,7 +269,7 @@
                         (argument-count 0)
                         (restarg #f)
                         (debug-name 'an-anonymous-function))
-  (error "make-interpreted-method not yet implemented"))
+  (error "make-primitive not yet implemented"))
 
 ;;; accessors
 
