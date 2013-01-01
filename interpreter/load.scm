@@ -30,7 +30,6 @@
          "src/tags.scm"
          "src/schema.scm"
          "src/schemas-primitive.scm"
-         "src/schemas-structure.scm"
          ;; "src/values.scm"
          ;; "src/env.scm"
          ;; "src/callable.scm"

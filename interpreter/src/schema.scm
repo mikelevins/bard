@@ -134,7 +134,7 @@
 ;;; files.
 
 (define-type schema extender: define-schema name tag)
-(define-type schema-instance extender: define-instance name schema)
+(define-type schema-instance extender: define-instance schema)
 
 ;;; tagged schemas
 
@@ -187,19 +187,89 @@
   (slots alist-table-instance-slots set-alist-table-instance-slots!))
 
 ;;; constructor
+
+(define (%make-alist-table slots-alist)
+  (let ((slots (map (lambda (s)(cons (car s)(cdr s)))
+                    slots-alist)))
+    (make-alist-table-instance <alist-table> slots)))
+
 ;;; accessors
+
+(define (alist-table-get table key)
+  (let* ((slots (alist-table-instance-slots table))
+         (slot (assoc key slots)))
+    (if slot
+        (cdr slot)
+        '())))
+
+(define (alist-table-put table key val)
+  (make-alist-table-instance <alist-table> 
+                             (cons (cons key val)
+                                   (alist-table-instance-slots table))))
 
 ;;; function
 ;;; ----------------------------------------------------------------------
+
+(define tags:$bard-function (next-bard-structure-tag))
+(define <function> (make-base-schema '<function> tags:$bard-function))
+
+(define-instance function-instance
+  constructor: make-function-instance
+  name proc thunk-method method-tree)
+
 ;;; constructor
+
+(define (make-function #!key (debug-name 'an-anonymous-function))
+  (error "make-function not yet implemented"))
+
 ;;; accessors
 
-;;; method
+(define (function-name fn)(function-instance-name fn))
+(define (function-proc fn)(function-instance-proc fn))
+(define (function-thunk-method fn)(function-instance-thunk-method fn))
+(define (set-function-thunk-method! fn method)(function-instance-thunk-method-set! fn method))
+(define (function-method-tree fn)(function-instance-method-tree fn))
+
+;;; interpreted-method
 ;;; ----------------------------------------------------------------------
+
+(define tags:$bard-interpreted-method (next-bard-structure-tag))
+(define <interpreted-method> (make-base-schema '<interpreted-method> tags:$bard-interpreted-method))
+
+(define-instance interpreted-method-instance
+  constructor: make-interpreted-method-instance
+  name proc formals restarg environment body)
+
 ;;; constructor
+
+(define (make-interpreted-method #!key
+                                 (formal-parameters '())
+                                 (restarg #f)
+                                 (body '(begin))
+                                 (debug-name 'an-anonymous-function)
+                                 (environment (%null-environment)))
+  (error "make-interpreted-method not yet implemented"))
+
 ;;; accessors
 
 ;;; primitive
 ;;; ----------------------------------------------------------------------
+
+(define tags:$bard-primitive (next-bard-structure-tag))
+(define <primitive> (make-base-schema '<primitive> tags:$bard-primitive))
+
+(define-instance primitive-instance
+  constructor: make-primitive-instance
+  name argument-count restarg proc)
+
 ;;; constructor
+
+(define (make-primitive #!key
+                        (procedure #f)
+                        (argument-count 0)
+                        (restarg #f)
+                        (debug-name 'an-anonymous-function))
+  (error "make-interpreted-method not yet implemented"))
+
 ;;; accessors
+
