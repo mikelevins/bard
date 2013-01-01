@@ -1,0 +1,39 @@
+Gambit ##type distinguishes:
+
+0: fixnum
+1: "mem1"       subtype
+   vector      0
+   ratnum      2
+   cpxnum      3
+   structure   4
+   box         5
+   symbol      8
+   keyword     9
+   procedure  14
+   string     19
+   s8vector   20
+   u8vector   21
+   s16vector  22
+   u16vector  23
+   s32vector  24
+   u32vector  25
+   s64vector  26
+   u64vector  27
+   f32vector  28
+   f64vector  29
+   flonum     30
+   bignum     31
+2: "special" immediate values
+   #!void
+   #!unbound
+   #!eof
+   null
+   boolean
+   char
+3: "mem2"
+   pair
+
+
+
+
+
