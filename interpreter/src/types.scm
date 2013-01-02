@@ -25,6 +25,25 @@
         (loop (* i i)))))
 
 ;;; ---------------------------------------------------------------------
+;;; built-in schema types
+;;; ---------------------------------------------------------------------
+
+(define-type schema extender: define-schema name tag)
+(define-type schema-instance extender: define-instance (schema instance-schema))
+
+(define-schema primitive-schema)
+(define-schema structure-schema prototype)
+(define-schema base-schema)
+(define-schema record-schema)
+(define-instance record-instance slots)
+(define-schema tuple-schema)
+(define-instance tuple-instance elements)
+(define-schema union-schema)
+(define-instance union-instance variants)
+
+(define-schema foreign-schema type-name)
+
+;;; ---------------------------------------------------------------------
 ;;; gambit type tags
 ;;; ---------------------------------------------------------------------
 
@@ -52,7 +71,7 @@
 ;;; use tags for that purpose, and we want a uniform type id
 
 (define $max-bard-special-number 255)
-(define $unercognized-bard-special-number $max-bard-special-tag)
+(define $unercognized-bard-special-number $max-bard-special-number)
 
 (define (%bard-special-number object)
   (cond
@@ -62,7 +81,7 @@
    ((eqv? #!void object) 3)
    ((eqv? #!unbound object) 4)
    ((eqv? #!eof object) 5)
-   (else $max-bard-special-tag)))
+   (else $max-bard-special-number)))
 
 ;;; =====================================================================
 ;;; obtaining tags
@@ -90,17 +109,23 @@
 ;;; tags.  reserve bits 0-9 for gambit type and subtype, and bits
 ;;; 10-29 for bard type numbers.
 
+(define $next-bard-type-number (+ 1 $max-bard-special-number))
+(define (%next-bard-type-number)
+  (let ((num $next-bard-type-number))
+    (set! $next-bard-type-number (+ 1 $next-bard-type-number))
+    num))
+
 (define $bard-type-mask #b111111111111111111110000000000)
 
 (define (integer->bard-type n)(arithmetic-shift n 10))
-(define (bard-type>integer n)(arithmetic-shift n -10))
+(define (bard-type->integer n)(arithmetic-shift n -10))
 
 (define (%make-tag type-tag subtype-tag #!optional (bard-tag 0))
   (+ type-tag
-     (integer->subtype-tag subtype-tag)
-     (integer->bard-type-tag bard-tag)))
+     (integer->subtype subtype-tag)
+     (integer->bard-type bard-tag)))
 
-(define (tag->bard-type n)(bard-type-tag->integer (bitwise-and n $bard-type-tag-mask)))
+(define (tag->bard-type n)(bard-type->integer (bitwise-and n $bard-type-mask)))
 
 (define (%tag val)
   (if (schema-instance? val)
@@ -111,7 +136,9 @@
             (if schema
                 (schema-tag schema)
                 #f))
-          (%make-tag (%gambit-type val) (%gambit-subtype val)))))
+          (if (%gambit-special? val)
+              (%make-tag (%gambit-type val) 0 (%bard-special-number val))
+              (%make-tag (%gambit-type val) (%gambit-subtype val))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; well-known gambit types
@@ -183,21 +210,6 @@
 ;;; schema definitions
 ;;; =====================================================================
 
-(define-type schema extender: define-schema name tag)
-(define-type schema-instance extender: define-instance (schema instance-schema))
-
-(define-schema primitive-schema)
-(define-schema structure-schema prototype)
-(define-schema base-schema)
-(define-schema record-schema)
-(define-instance record-instance slots)
-(define-schema tuple-schema)
-(define-instance tuple-instance elements)
-(define-schema union-schema)
-(define-instance union-instance variants)
-
-(define-schema foreign-schema type-name)
-
 ;;; ---------------------------------------------------------------------
 ;;; primitive schemas
 ;;; ---------------------------------------------------------------------
@@ -236,7 +248,7 @@
 ;;; alist table
 ;;; ----------------------------------------------------------------------
 
-(define tags:$bard-alist-table (next-bard-structure-tag))
+(define tags:$bard-alist-table (%next-bard-type-number))
 (define <alist-table> (make-base-schema '<alist-table> tags:$bard-alist-table))
 
 (define-instance alist-table-instance
@@ -267,7 +279,7 @@
 ;;; function
 ;;; ----------------------------------------------------------------------
 
-(define tags:$bard-function (next-bard-structure-tag))
+(define tags:$bard-function (%next-bard-type-number))
 (define <function> (make-base-schema '<function> tags:$bard-function))
 
 (define-instance function-instance
@@ -341,7 +353,7 @@
 ;;; interpreted-method
 ;;; ----------------------------------------------------------------------
 
-(define tags:$bard-interpreted-method (next-bard-structure-tag))
+(define tags:$bard-interpreted-method (%next-bard-type-number))
 (define <interpreted-method> (make-base-schema '<interpreted-method> tags:$bard-interpreted-method))
 
 (define-instance interpreted-method-instance
@@ -401,7 +413,7 @@
 ;;; primitive
 ;;; ----------------------------------------------------------------------
 
-(define tags:$bard-primitive (next-bard-structure-tag))
+(define tags:$bard-primitive (%next-bard-type-number))
 (define <primitive> (make-base-schema '<primitive> tags:$bard-primitive))
 
 (define-instance primitive-instance
@@ -432,7 +444,7 @@
 ;;; singleton
 ;;; ----------------------------------------------------------------------
 
-(define tags:$bard-singleton (next-bard-structure-tag))
+(define tags:$bard-singleton (%next-bard-type-number))
 (define <singleton> (make-base-schema '<singleton> tags:$bard-singleton))
 
 (define-instance singleton-instance constructor: make-singleton-instance value)
