@@ -245,6 +245,24 @@
 ;;; base schemas
 ;;; ----------------------------------------------------------------------
 
+;;; class
+;;; ----------------------------------------------------------------------
+
+(define tags:$bard-class (%next-bard-type-number))
+(define <class> (make-base-schema '<class> tags:$bard-class))
+
+(define-instance class-instance constructor: make-class-instance (name class-name))
+
+;;; constructor
+
+(define (%make-class name)(make-class-instance <class> name))
+
+;;; classes
+;;; ----------------------------------------------------------------------
+
+(define Anything (%make-class 'Anything))
+
+
 ;;; alist table
 ;;; ----------------------------------------------------------------------
 
@@ -291,13 +309,14 @@
 
 (define (%add-method! fn argtypes method)
   (let ((method-tree (function-method-tree fn)))
-    (if (null? signature)
+    (if (null? argtypes)
         (set-function-thunk-method! fn method)
         (apply %singleton-tree-put! method method-tree argtypes))
     fn))
 
-(define (%add-primitive-method! fn argtypes required-count method-proc #!key (debug-name #f)(restarg #f))
-  (let* ((method (make-primitive debug-name: debug-name
+(define (%add-primitive-method! fn argtypes method-proc #!key (debug-name #f)(restarg #f))
+  (let* ((required-count (length argtypes))
+         (method (make-primitive debug-name: debug-name
                                  procedure: method-proc
                                  required-count: required-count
                                  restarg: restarg)))
@@ -344,6 +363,7 @@
 
 ;;; accessors
 
+(define function? function-instance?)
 (define function-name function-instance-name)
 (define function-proc function-instance-proc)
 (define set-function-proc! function-instance-proc-set!)

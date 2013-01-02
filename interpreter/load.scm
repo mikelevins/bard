@@ -32,15 +32,14 @@
          "src/primitives.scm"
          "src/read.scm"
          "src/print.scm"
-         ;; "src/special.scm"
-         ;; "src/macro.scm"
-         ;; "src/apply.scm"
-         ;; "src/compile.scm"
-         ;; "src/eval.scm"
-         ;; "src/error.scm"
-         ;; "src/toplevel.scm"
-         ;; "src/protocols.scm"
-         ;; "src/bard.scm"
+         "src/special.scm"
+         "src/macro.scm"
+         "src/apply.scm"
+         "src/eval.scm"
+         "src/error.scm"
+         "src/protocols.scm"
+         "src/toplevel.scm"
+         "src/bard.scm"
          ))
 
 ;;; load sources
