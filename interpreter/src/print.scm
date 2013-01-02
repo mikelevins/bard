@@ -9,156 +9,124 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define $bard-printers (make-table test: eqv?))
+(define +printer-functions+ (make-table test: eqv?))
 
-(define (%defprinter type printfn)
-  (table-set! $bard-printers type printfn))
+(define (define-printer-function tag fn)
+  (table-set! +printer-functions+ tag fn))
 
-(%defprinter <undefined> (constantly "undefined"))
-(%defprinter <null> (constantly "nothing"))
-(%defprinter <boolean> (lambda (b)(if b "true" "false")))
-(%defprinter <character> object->string)
-(%defprinter <fixnum> object->string)
-(%defprinter <bignum> object->string)
-(%defprinter <flonum> object->string)
-(%defprinter <ratnum> object->string)
-(%defprinter <string> object->string)
-(%defprinter <symbol> object->string)
-(%defprinter <keyword> object->string)
-(%defprinter <primitive-procedure> 
-             (lambda (x)(string-append "#<primitive-procedure " (object->string (object->serial-number x)) ">")))
-
-(%defprinter <table> 
-             (lambda (fr)
-               (with-output-to-string '() 
-                                      (lambda () 
-                                        (display "{")
-                                        (let* ((space (lambda ()(display " ")))
-                                               (item (lambda (x)
-                                                       (display (%as-string x))
-                                                       (space)
-                                                       (display (%as-string (%table-get fr x)))))
-                                               (keys (%table-keys fr)))
-                                          (if (not (%null? keys))
-                                              (begin
-                                                (item (%car keys))
-                                                (let loop ((keys (%cdr keys)))
-                                                  (if (not (%null? keys))
-                                                      (begin
-                                                        (space)
-                                                        (item (%car keys))
-                                                        (loop (%cdr keys))))))))
-                                        (display "}")))))
-
-(%defprinter <record> 
-             (lambda (sc)
-               (with-output-to-string '() 
-                                      (lambda () 
-                                        (let ((schema-name (%schema-name sc))
-                                              (slot-names (%record-slot-names sc)))
-                                          (display "#<")
-                                          (if schema-name
-                                              (begin (display "schema ")(display schema-name))
-                                              (display "an anonymous schema"))
-                                          (display " ( ")
-                                          (for-each (lambda (sn)(display sn)(display " ")) slot-names)
-                                          (display ") ")
-                                          (display ">"))))))
-
-
-(%defprinter <pair> 
-             (lambda (ls)
-               (with-output-to-string '() 
-                                      (lambda () 
-                                        (display "(")
-                                        (let ((space (lambda ()(display " ")))
-                                              (dot (lambda ()(display ".")))
-                                              (item (lambda (x)(display (%as-string x)))))
-                                          (if (not (%null? ls))
-                                              (begin
-                                                (item (%car ls))
-                                                (let loop ((items (%cdr ls)))
-                                                  (if (not (%null? items))
-                                                      (if (list? items)
-                                                          (begin
-                                                            (space)
-                                                            (item (%car items))
-                                                            (loop (%cdr items)))
-                                                          (begin
-                                                            (space)
-                                                            (dot)
-                                                            (space)
-                                                            (item items))))))))
-                                        (display ")")))))
-
-(%defprinter <foreign-value> 
-             (lambda (x)
-               (string-append "#<foreign value "
-                              (object->string (object->serial-number x))
-                              ">")))
-
-(%defprinter <iostream> object->string)
-
-(%defprinter Schema 
-             (lambda (x)
-               (if (%singleton? x)
-                   (string-append "(singleton " (%as-string (%singleton-value x)) ")")
-                   (object->string (%schema-name x)))))
-
-(%defprinter <function> 
-             (lambda (x)
-               (let ((nm (%debug-name x)))
-                 (if  nm
-                      (string-append "#<function " (object->string nm) ">")
-                      (string-append "#<anonymous function " (object->string (object->serial-number x)) ">")))))
-
-(%defprinter <primitive-method> 
-             (lambda (x)
-               (let ((nm (%debug-name x)))
-                 (if  nm
-                      (string-append "#<primitive-method " (object->string nm) ">")
-                      (string-append "#<anonymous primitive method " (object->string (object->serial-number x)) ">")))))
-
-(%defprinter <interpreted-method> 
-             (lambda (x)
-               (let ((nm (or (and (%debug-name x)
-                                  (%as-string (%debug-name x)))
-                             ""))
-                     (formals (%method-formals x))
-                     (body (%method-body x)))
-                 (with-output-to-string '() 
-                                        (lambda () 
-                                          (display "(method ")
-                                          (display nm)
-                                          (if (> (string-length nm) 0) (display " "))
-                                          (display (interpose " " (%bard-list->cons formals)))
-                                          (if (> (%length body) 0) (display " "))
-                                          (display (%as-string body))
-                                          (display ")"))))))
+(define (get-printer-function tag)
+  (table-ref +printer-functions+ tag #f))
 
 (define (%as-string x)
-  (let ((printer (table-ref $bard-printers (%object->bard-type x) #f)))
-    (if printer
-        (printer x)
-        (let ((xtype (%object->bard-type x)))
-          (if (%schema? xtype)
-              (let ((printer (table-ref $bard-printers <table> #f)))
-                (if printer
-                    (printer x)
-                    (error (string-append "No Bard printer defined for value: " (object->string x))))))))))
+  (let ((printer (get-printer-function (%tag x))))
+    (printer x)))
 
-
-(define (show x)
-  (newline)
-  (display (%as-string x))
-  (newline))
-
-(define (bard:show x)
-  (%as-string x))
+(define (bard:show x)(%as-string x))
 
 (define (bard:print x #!optional (port (current-output-port)))
   (display (%as-string x) port)
   x)
 
+;;; ---------------------------------------------------------------------
+;;; printer definitions
+;;; ---------------------------------------------------------------------
 
+(define-printer-function (schema-tag <undefined>) (constantly "undefined"))
+(define-printer-function (schema-tag <null>) (constantly "nothing"))
+(define-printer-function (schema-tag <boolean>) (lambda (b)(if b "true" "false")))
+(define-printer-function (schema-tag <character>) object->string)
+(define-printer-function (schema-tag <fixnum>) object->string)
+(define-printer-function (schema-tag <bignum>) object->string)
+(define-printer-function (schema-tag <flonum>) object->string)
+(define-printer-function (schema-tag <ratnum>) object->string)
+(define-printer-function (schema-tag <string>) object->string)
+(define-printer-function (schema-tag <symbol>) object->string)
+(define-printer-function (schema-tag <keyword>) object->string)
+(define-printer-function (schema-tag <primitive-procedure>) 
+  (lambda (x)(string-append "#<primitive-procedure " (object->string (object->serial-number x)) ">")))
 
+(define-printer-function (schema-tag <alist-table>) 
+  (lambda (tbl)
+    (with-output-to-string 
+      '() 
+      (lambda () 
+        (display "{")
+        (let loop ((slots (alist-table-slots tbl))
+                   (already '()))
+          (if (not (null? slots))
+              (let ((slot (car slots))
+                    (more (cdr slots)))
+                (if (member (car slot) already)
+                    (loop more (cons (car slot) already))
+                    (begin 
+                      (if (not (null? already))(display " "))
+                      (display (%as-string (car slot)))
+                      (display " ")
+                      (display (%as-string (cdr slot)))
+                      (if (not (null? more))
+                          (loop more (cons (car slot) already))))))))
+        (display "}")))))
+
+(define-printer-function (schema-tag <pair>) 
+  (lambda (ls)
+    (with-output-to-string
+      '() 
+      (lambda () 
+        (display "(")
+        (let loop ((items ls)
+                   (already? #f))
+          (if (not (null? items))
+              (let ((item (car items))
+                    (more (cdr items)))
+                (if already? (display " "))
+                (display (%as-string item))
+                (if (pair? more)
+                    (loop more #t)
+                    (if (not (null? more))
+                        (begin
+                          (display " . ")
+                          (display (%as-string more))))))))
+        (display ")")))))
+
+(define-printer-function (schema-tag <function>) 
+  (lambda (fn)
+    (let ((nm (function-name fn)))
+      (if  nm
+           (string-append "#<function " (object->string nm) ">")
+           (string-append "#<an-anonymous-function " (object->string (object->serial-number x)) ">")))))
+
+(define-printer-function (schema-tag <interpreted-method>) 
+  (lambda (m)
+    (with-output-to-string
+      '() 
+      (lambda () 
+        (let* ((name (interpreted-method-name m))
+               (formals (interpreted-method-formals m))
+               (restarg (interpreted-method-restarg m))
+               (params (if restarg
+                           (append formals (list '& restarg))
+                           formals))
+               (env (interpreted-method-environment m))
+               (body (interpreted-method-body m)))
+          (display "#:<interpreted-method>")
+          (if (null? env)
+              (begin
+                (display "(method ")
+                (display params)
+                (display body))
+              (let ((bindings (map (lambda (b)(list (car b)(cdr b)))
+                                   env)))
+                (display "(let ")
+                (display bindings)
+                (begin
+                  (display "(method ")
+                  (display params)
+                  (display body))
+                (display ")"))))))))
+
+(define-printer-function (schema-tag <primitive>) 
+  (lambda (pr)
+    (let ((nm (primitive-name pr)))
+      (if  nm
+           (string-append "#<primitive " (object->string nm) ">")
+           (string-append "#<an-anonymous-primitive " (object->string (object->serial-number x)) ">")))))

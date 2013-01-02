@@ -251,9 +251,7 @@
 (define tags:$bard-alist-table (%next-bard-type-number))
 (define <alist-table> (make-base-schema '<alist-table> tags:$bard-alist-table))
 
-(define-instance alist-table-instance
-  constructor: make-alist-table-instance
-  (slots alist-table-instance-slots set-alist-table-instance-slots!))
+(define-instance alist-table-instance constructor: make-alist-table-instance slots)
 
 ;;; constructor
 
@@ -263,6 +261,9 @@
     (make-alist-table-instance <alist-table> slots)))
 
 ;;; accessors
+
+(define alist-table-slots alist-table-instance-slots)
+(define set-alist-table-slots! alist-table-instance-slots-set!)
 
 (define (alist-table-get table key)
   (let* ((slots (alist-table-instance-slots table))
