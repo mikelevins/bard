@@ -245,13 +245,6 @@
   (%defglobal 'Method Method)
   ;; (%defglobal 'method? bard:method?)
 
-  ;; Pair
-  ;; ---------------------------------------------------------------------
-  (%defglobal 'Pair Pair)
-  (%defglobal 'pair bard:pair)
-  (%defglobal 'left bard:left)
-  (%defglobal 'right bard:right)
-
   ;; Name
   ;; ---------------------------------------------------------------------
   ;; (%defglobal 'name? bard:name?)
@@ -280,6 +273,13 @@
   (%defglobal '< bard:<)
   (%defglobal '>= bard:>=)
   (%defglobal '<= bard:<=)
+
+  ;; Pair
+  ;; ---------------------------------------------------------------------
+  (%defglobal 'Pair Pair)
+  (%defglobal 'pair bard:pair)
+  (%defglobal 'left bard:left)
+  (%defglobal 'right bard:right)
 
   ;; Procedure
   ;; ---------------------------------------------------------------------

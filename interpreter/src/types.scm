@@ -261,6 +261,25 @@
 ;;; ----------------------------------------------------------------------
 
 (define Anything (%make-class 'Anything))
+(define Boolean (%make-class 'Boolean))
+(define Character (%make-class 'Character))
+(define Float (%make-class 'Float))
+(define Fraction (%make-class 'Fraction))
+(define Function (%make-class 'Function))
+(define Integer (%make-class 'Integer))
+(define Keyword (%make-class 'Keyword))
+(define List (%make-class 'List))
+(define Method (%make-class 'Method))
+(define Null (%make-class 'Null))
+(define Number (%make-class 'Number))
+(define Pair (%make-class 'Pair))
+(define Ratio (%make-class 'Ratio))
+(define Schema (%make-class 'Schema))
+(define Stream (%make-class 'Stream))
+(define Symbol (%make-class 'Symbol))
+(define Table (%make-class 'Table))
+(define Text (%make-class 'Text))
+(define Undefined (%make-class 'Undefined))
 
 
 ;;; alist table
