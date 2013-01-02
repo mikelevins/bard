@@ -470,6 +470,7 @@
 ;;; accessors
 
 (define singleton-value singleton-instance-value)
+(define %singleton? singleton-instance?)
 
 ;;; ----------------------------------------------------------------------
 ;;; structure schemas

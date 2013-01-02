@@ -42,7 +42,6 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'Schema Schema)
-  (%defglobal 'instance-of? prim:instance-of?)
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'singleton? prim:singleton?)
 
