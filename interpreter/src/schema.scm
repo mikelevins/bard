@@ -298,16 +298,25 @@
 
 (define-instance primitive-instance
   constructor: make-primitive-instance
-  name argument-count restarg proc)
+  name proc required-count restarg)
 
 ;;; constructor
 
 (define (make-primitive #!key
                         (procedure #f)
-                        (argument-count 0)
+                        (required-count 0)
                         (restarg #f)
-                        (debug-name 'an-anonymous-function))
-  (error "make-primitive not yet implemented"))
+                        (debug-name 'an-anonymous-primitive))
+  (assert (procedure? procedure) "Can't create a primitive without a Scheme procedure to implement it")
+  (let* ((prim (make-primitive-instance <primitive> debug-name #f required-count restarg))
+         (prim-proc (lambda args (apply procedure args))))
+    (set-primitive-proc! prim prim-proc)
+    prim))
 
 ;;; accessors
 
+(define primitive-name primitive-instance-name)
+(define primitive-proc primitive-instance-proc)
+(define set-primitive-proc! primitive-instance-proc-set!)
+(define primitive-restarg primitive-instance-restarg)
+(define primitive-required-count primitive-instance-required-count)
