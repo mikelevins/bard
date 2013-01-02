@@ -10,44 +10,8 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; callable objects
-;;; ---------------------------------------------------------------------
-
-(define-type %callable
-  id: E8EC72A9-7E1C-499D-A468-69D73C857B6C
-  extender: defcallable
-  (name %debug-name %set-debug-name!)
-  (function %callable-function %set-callable-function!))
-
-;;; ---------------------------------------------------------------------
 ;;; methods
 ;;; ---------------------------------------------------------------------
-
-(defcallable %method
-  id: 927A1AD2-762A-4DE6-9900-C22857D20E5A
-  extender: %def-method-type
-  read-only:
-  (formals %method-formals)
-  (restarg %method-restarg)
-  (required-count %method-required-count))
-
-(%def-method-type %primitive-method constructor: %private-make-primitive-method)
-
-(define (%make-primitive-method function  
-                                #!key 
-                                (parameters %nil)
-                                (name #f)
-                                (required-count 0)
-                                (restarg #f))
-  (%private-make-primitive-method name function parameters restarg required-count))
-
-(define <primitive-method> (%define-structure '<primitive-method> (##structure-type (%make-primitive-method #f))))
-
-(%def-method-type %interpreted-method
-                  constructor: %private-make-interpreted-method
-                  read-only:
-                  (environment %method-environment %set-method-environment!)
-                  (body %method-body))
 
 (define (%method-lexical-environment env params rest vals)
   (let loop ((env env)

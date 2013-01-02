@@ -238,19 +238,57 @@
 
 (define-instance interpreted-method-instance
   constructor: make-interpreted-method-instance
-  name proc formals restarg environment body)
+  name proc formals restarg required-count environment body)
 
 ;;; constructor
+
+(define (%method-lexical-environment env params rest vals)
+  (let loop ((env env)
+             (formals params)
+             (args vals))
+    (if (null? args)
+        ;; out of args
+        (if (null? formals)
+            (if rest (%add-binding env rest args) env)
+            (error (str "Not enough arguments: " vals)))
+        ;; more args to process
+        (if (null? formals)
+            (if rest
+                (%add-binding env rest args)
+                (error (str "Too many arguments: " vals)))
+            (loop (%add-binding env (car formals)(car args))
+                  (cdr formals)
+                  (cdr args))))))
 
 (define (make-interpreted-method #!key
                                  (formal-parameters '())
                                  (restarg #f)
                                  (body '(begin))
-                                 (debug-name 'an-anonymous-function)
+                                 (debug-name 'an-anonymous-interpreted-method)
                                  (environment (%null-environment)))
-  (error "make-interpreted-method not yet implemented"))
+  (let* ((required-count (length formal-parameters))
+         (method (make-interpreted-method-instance 
+                  <interpreted-method> debug-name #f formal-parameters restarg required-count environment body))
+         (method-proc (lambda args
+                        (let* ((argcount (length args)))
+                          (if (< argcount required-count)
+                              (error (str "Expected " required-count "arguments, but found " (length args)))
+                              (let* ((env (%method-lexical-environment (interpreted-method-environment method)
+                                                                       formal-parameters restarg args)))
+                                (%eval body env)))))))
+    (set-interpreted-method-proc! method method-proc)
+    method))
 
 ;;; accessors
+
+(define interpreted-method-name interpreted-method-instance-name)
+(define interpreted-method-proc interpreted-method-instance-proc)
+(define set-interpreted-method-proc! interpreted-method-instance-proc-set!)
+(define interpreted-method-formals interpreted-method-instance-formals)
+(define interpreted-method-restarg interpreted-method-instance-restarg)
+(define interpreted-method-required-count interpreted-method-instance-required-count)
+(define interpreted-method-environment interpreted-method-instance-environment)
+(define interpreted-method-body interpreted-method-instance-body)
 
 ;;; primitive
 ;;; ----------------------------------------------------------------------
