@@ -219,16 +219,67 @@
 
 ;;; constructor
 
+(define (%add-method! fn argtypes method)
+  (let ((method-tree (function-method-tree fn)))
+    (if (null? signature)
+        (set-function-thunk-method! fn method)
+        (apply %singleton-tree-put! method method-tree argtypes))
+    fn))
+
+(define (%add-primitive-method! fn argtypes required-count method-proc #!key (debug-name #f)(restarg #f))
+  (let* ((method (make-primitive debug-name: debug-name
+                                 procedure: method-proc
+                                 required-count: required-count
+                                 restarg: restarg)))
+    (%add-method! fn argtypes method)
+    fn))
+
+(define (%search-method-tree-for-value mtree val)
+  (let* ((sing (%existing-singleton val))
+         (found (if sing (%singleton-tree-ref mtree sing) #f)))
+    (or found
+        (let* ((tp (%object->bard-type val))
+               (found (%singleton-tree-ref mtree tp)))
+          (or found
+              (%singleton-tree-ref mtree Anything))))))
+
+(define (%search-method-tree-for-values mtree vals)
+  (if (null? vals)
+      #f
+      (let ((found (%search-method-tree-for-value mtree (car vals))))
+        (if found
+            (if (null? (cdr vals))
+                (if (%singleton-tree? found)
+                    #f
+                    found)
+                (if (%singleton-tree? found)
+                    (%search-method-tree-for-values found (cdr vals))
+                    #f))
+            #f))))
+
+(define (%function-best-method fn vals)
+  (if (null? vals)
+      (function-thunk-method fn)
+      (%search-method-tree-for-values (function-method-tree fn) vals)))
+
 (define (make-function #!key (debug-name 'an-anonymous-function))
-  (error "make-function not yet implemented"))
+  (let* ((fn (make-function-instance <function> debug-name #f #f (%singleton-tree)))
+         (fn-proc (lambda args
+                    (let ((best-method (%function-best-method fn args)))
+                      (if best-method
+                          (%apply best-method args)
+                          (error (str "No applicable method for " fn " with arguments " args)))))))
+    (set-function-proc! fn fn-proc)
+    fn))
 
 ;;; accessors
 
-(define (function-name fn)(function-instance-name fn))
-(define (function-proc fn)(function-instance-proc fn))
-(define (function-thunk-method fn)(function-instance-thunk-method fn))
-(define (set-function-thunk-method! fn method)(function-instance-thunk-method-set! fn method))
-(define (function-method-tree fn)(function-instance-method-tree fn))
+(define function-name function-instance-name)
+(define function-proc function-instance-proc)
+(define set-function-proc! function-instance-proc-set!)
+(define function-thunk-method function-instance-thunk-method)
+(define set-function-thunk-method! function-instance-thunk-method-set!)
+(define function-method-tree function-instance-method-tree)
 
 ;;; interpreted-method
 ;;; ----------------------------------------------------------------------
