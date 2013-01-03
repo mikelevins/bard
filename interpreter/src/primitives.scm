@@ -196,7 +196,7 @@
               #t
               (loop (cdr slots)))))))
 
-(define bard:alist-table-contains-value?
+(define prim:alist-table-contains-value?
   (make-primitive
    procedure: %bard-alist-table-contains-value?
    debug-name: 'prim:alist-table-contains-value?
@@ -238,9 +238,9 @@
 (define (%merge-alist-tables t1 t2)
   (%private-make-table (%merge-slots (%table-slots t1)(%table-slots t2))))
 
-(define bard:alist-table-merge
+(define prim:alist-table-merge
   (make-primitive
-   procedure: 
+   procedure: %merge-alist-tables
    debug-name: 'prim:alist-table-merge
    required-count: 2
    restarg: #f))

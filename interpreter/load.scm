@@ -37,12 +37,10 @@
          "src/apply.scm"
          "src/eval.scm"
          "src/error.scm"
-         "src/protocol-applying.scm"
          "src/protocol-comparing.scm"
          "src/protocol-converting.scm"
-         "src/protocol-equating.scm"
          "src/protocol-listing.scm"
-         "src/protocol-mapping.scm"
+         "src/protocol-ordering.scm"
          "src/protocol-pairing.scm"
          "src/protocol-typing.scm"
          "src/init.scm"
@@ -60,4 +58,3 @@
 ;;; (load-bard)
 ;;; (%init-bard)
 ;;; (bard:repl)
-

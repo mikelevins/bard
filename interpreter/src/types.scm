@@ -317,14 +317,15 @@
 
 (define Applying       (%make-protocol 'Applying))       ; applying function-like values
 (define Calculating    (%make-protocol 'Calculating))    ; performing arithmetic and other calculating tasks
-(define Comparing      (%make-protocol 'Comparing))      ; ordering values
+(define Comparing      (%make-protocol 'Comparing))      ; comparing values for equality
 (define Constructing   (%make-protocol 'Constructing))   ; constructing values
 (define Converting     (%make-protocol 'Converting))     ; producing values of one type based on inputs of another
-(define Equating       (%make-protocol 'Equating))       ; testing whether values are the same
 (define Listing        (%make-protocol 'Listing))        ; arranging values in lists
-(define Mapping        (%make-protocol 'Mapping))        ; arranging values tables
-(define Pairing        (%make-protocol 'Pairing))        ; arranging values tables
+(define Mapping        (%make-protocol 'Mapping))        ; arranging values in tables
+(define Ordering       (%make-protocol 'Ordering))       ; arranging values by magnitude
+(define Pairing        (%make-protocol 'Pairing))        ; arranging values in pairs
 (define Reading        (%make-protocol 'Reading))        ; getting values from input streams
+(define System         (%make-protocol 'System))         ; system tools
 (define TextProcessing (%make-protocol 'TextProcessing)) ; processing text
 (define Typing         (%make-protocol 'Typing))         ; discriminating values by type
 (define Writing        (%make-protocol 'Writing))        ; putting values into output streams
