@@ -18,13 +18,13 @@
   (table-set! $bard-macro-functions name mfun))
 
 (define (%macro-form? expr)
-  (and (%list? expr)
-       (not (%null? expr))
-       (table-ref $bard-macro-functions (%car expr) #f)
+  (and (list? expr)
+       (not (null expr))
+       (table-ref $bard-macro-functions (car expr) #f)
        #t))
 
 (define (%macroexpand expr)
-  (let* ((expander (table-ref $bard-macro-functions (%car expr) #f)))
+  (let* ((expander (table-ref $bard-macro-functions (car expr) #f)))
     (if expander
         (%funcall expander expr)
         (error "undefined macro in expression" expr))))
@@ -39,17 +39,17 @@
 (%define-macro-function 'and
                         (lambda (expr)
                           (let ((var (gensym)))
-                            (if (%null? (%cdr expr))
-                                (%true)
-                                (if (%null? (%cddr expr))
-                                    `(let ((,var ,(%cadr expr))) (if ,var ,var ,(%false)))
-                                    `(let ((,var ,(%cadr expr))) (if ,var (and ,@(%cddr expr)) ,(%false))))))))
+                            (if (null (cdr expr))
+                                #t
+                                (if (null? (cddr expr))
+                                    `(let ((,var ,(cadr expr))) (if ,var ,var #f))
+                                    `(let ((,var ,(cadr expr))) (if ,var (and ,@(cddr expr)) #f)))))))
 
 (%define-macro-function 'or
                         (lambda (expr)
                           (let ((var (gensym)))
-                            (if (%null? (%cdr expr))
-                                (%false)
-                                (if (%null? (%cddr expr))
-                                    `(let ((,var ,(%cadr expr))) (if ,var ,var ,(%false)))
-                                    `(let ((,var ,(%cadr expr))) (if ,var ,var (or ,@(%cddr expr)))))))))
+                            (if (null? (cdr expr))
+                                #f
+                                (if (null? (cddr expr))
+                                    `(let ((,var ,(cadr expr))) (if ,var ,var #f))
+                                    `(let ((,var ,(cadr expr))) (if ,var ,var (or ,@(cddr expr)))))))))

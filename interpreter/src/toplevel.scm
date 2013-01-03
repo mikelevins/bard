@@ -90,18 +90,18 @@
   (%defglobal '<pair> <pair>)
   (%defglobal '<string> <string>)
   (%defglobal '<iostream> <iostream>)
-  (%defglobal '<table> <table>)
-  (%defglobal '<record> <record>)
+  (%defglobal '<alist-table> <alist-table>)
+;;;  (%defglobal '<record> <record>)
   (%defglobal '<function> <function>)
-  (%defglobal '<primitive-method> <primitive-method>)
+  (%defglobal '<primitive> <primitive>)
   (%defglobal '<interpreted-method> <interpreted-method>)
 
   ;; constants
 
-  (%defglobal 'undefined (%undefined))
-  (%defglobal 'nothing (%nothing))
-  (%defglobal 'true (%true))
-  (%defglobal 'false (%false))
+  (%defglobal 'undefined #!unbound)
+  (%defglobal 'nothing '())
+  (%defglobal 'true #t)
+  (%defglobal 'false #f)
 
   ;; ---------------------------------------------------------------------
   ;; protocols
@@ -131,7 +131,7 @@
   ;; Character
   ;; ---------------------------------------------------------------------
   (%defglobal 'Character Character)
-  (%defglobal 'character? bard:character?)
+  (%defglobal 'char? bard:char?)
 
   ;; Equal
   ;; ---------------------------------------------------------------------
@@ -322,7 +322,7 @@
   ;; Text
   ;; ---------------------------------------------------------------------
   (%defglobal 'Text Text)
-  (%defglobal 'text? %text?)
+  (%defglobal 'text? bard:text?)
 
   ;; Undefined
   ;; ---------------------------------------------------------------------

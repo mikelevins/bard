@@ -241,6 +241,9 @@
 (define <pair> (make-primitive-schema '<pair> tags:$pair))
 (%register-primitive-schema! <pair> tags:$pair)
 
+(define (%undefined? x)(eqv? x #!unbound))
+(define (%defined? x)(not (%undefined? x)))
+
 ;;; ----------------------------------------------------------------------
 ;;; base schemas
 ;;; ----------------------------------------------------------------------
@@ -266,12 +269,14 @@
 (define Float (%make-class 'Float))
 (define Fraction (%make-class 'Fraction))
 (define Function (%make-class 'Function))
+(define InputStream (%make-class 'InputStream))
 (define Integer (%make-class 'Integer))
 (define Keyword (%make-class 'Keyword))
 (define List (%make-class 'List))
 (define Method (%make-class 'Method))
 (define Null (%make-class 'Null))
 (define Number (%make-class 'Number))
+(define OutputStream (%make-class 'OutputStream))
 (define Pair (%make-class 'Pair))
 (define Ratio (%make-class 'Ratio))
 (define Schema (%make-class 'Schema))
@@ -515,6 +520,9 @@
 ;;; ----------------------------------------------------------------------
 ;;; structure schemas
 ;;; ----------------------------------------------------------------------
+
+(define <iostream> (make-structure-schema '<iostream> (%next-bard-type-number) (##structure-type (current-input-port))))
+(%register-structure-schema! (structure-schema-prototype <iostream>) <iostream>)
 
 ;;; ---------------------------------------------------------------------
 ;;; getting bard types for values

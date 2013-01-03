@@ -85,11 +85,11 @@
    ((eq? 'list (car val)) (%cons 'list (%read-cons (cdr val))))
    ((eq? 'table (car val)) (%cons 'table (%read-cons (cdr val))))
    (else (let loop ((items val)
-                    (ls %nil))
+                    (ls '()))
            (if (null? items)
                ls
                (loop (cdr items)
-                     (%append ls (%list (%read-value->bard-value (car items))))))))))
+                     (append ls (list (%read-value->bard-value (car items))))))))))
 
 (define (%read-value->bard-value val)
   (cond

@@ -1162,3 +1162,20 @@
    required-count: 2
    restarg: #f))
 
+;;; ---------------------------------------------------------------------
+;;; Table
+;;; ---------------------------------------------------------------------
+
+(define bard:text? (make-function debug-name: 'text?))
+
+(%add-primitive-method! bard:text?
+                        (list Anything) 
+                        (constantly #f)
+                        debug-name: 'text?)
+
+(%add-primitive-method! bard:text?
+                        (list <string>) 
+                        (constantly #t)
+                        debug-name: 'text?)
+
+

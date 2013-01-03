@@ -26,8 +26,7 @@
          (evaluator (table-ref $special-forms-table op #f)))
     (if evaluator
         (evaluator expr env)
-        (error (string-append "unrecognized special form" (%as-string (car expr)))))))
-
+        (error (str "unrecognized special form: " (car expr))))))
 
 ;;; ----------------------------------------------------------------------
 ;;; special forms defined
@@ -47,7 +46,7 @@
              (lambda (expr env)
                (let loop ((clauses (cdr expr)))
                  (if (null? clauses)
-                     (%nothing)
+                     '()
                      (let* ((clause (car clauses))
                             (test (car clause))
                             (conseq (cdr clause)))
@@ -64,6 +63,7 @@
   (%defglobal (list-ref expr 2) (%eval (list-ref expr 3) env))
                (list-ref expr 2))
 
+#| TODO: records not ready yet
 (define (%eval-define-record expr env)
   (let* ((sname (list-ref expr 2))
          (slot-specs (drop 3 expr))
@@ -74,23 +74,24 @@
 
 (define (%canonicalize-slot-spec spec)
   (let ((spec (if (or (symbol? spec)(string? spec)(keyword? spec))
-                  (list spec default: (%nothing))
+                  (list spec default: '())
                   (if (list? spec)
                       (list (car spec)
                             default:
-                            (getf default: spec (%nothing)))
+                            (getf default: spec '()))
                       (error (string-append "Invalid slot spec: "
                                             (object->string spec)))))))
     spec))
 
 (define (%parse-canonical-slot-description spec env)
   (cons (car spec)
-        (%eval (getf default: spec (%nothing)) env)))
+        (%eval (getf default: spec '()) env)))
 
 (define (%parse-slot-descriptions specs env)
   (let ((specs (map %canonicalize-slot-spec specs)))
     (map (lambda (s) (%parse-canonical-slot-description s env))
          specs)))
+|#
 
 (define (%eval-define-macro expr env)
   (let* ((proto (caddr expr))
@@ -141,7 +142,7 @@
 (define (%parse-function-prototype proto env)
   (let* ((name (car proto))
          (params (cdr proto)))
-    (%cons name (%parse-function-parameters params env))))
+    (cons name (%parse-function-parameters params env))))
 
 (define (%fproto-name fp)(list-ref fp 0))
 (define (%fproto-formals fp)(list-ref fp 1))
@@ -153,20 +154,19 @@
   (let* ((prototype (%parse-function-prototype (list-ref expr 2) env))
          (fname (%fproto-name prototype))
          (fn (or (table-ref $bard-global-variables fname #f)
-                 (let ((f (%make-function name: fname)))
+                 (let ((f (make-function name: fname)))
                    (%defglobal fname f)
                    f)))
          (formals (%fproto-formals prototype))
          (types (map (lambda (p)(%eval p env))(%fproto-types prototype)))
          (restarg (%fproto-restarg prototype))
          (framearg (%fproto-framearg prototype))
-         (required-count (length types))
          (body (cons 'begin (drop 3 expr)))
          (method-signature types)
-         (method (%make-interpreted-method formals body
+         (method (%make-interpreted-method formal-parameters: formals
+                                           body: body
                                            environment: env
                                            name: fname
-                                           required-count: required-count
                                            restarg: restarg)))
     (%add-method! fn method-signature method)
     fname))
@@ -183,7 +183,7 @@
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))
-                  ((eq? 'record kind)(%eval-define-record expr env))
+                  ;;((eq? 'record kind)(%eval-define-record expr env))
                   ((eq? 'variable kind)(%eval-define-variable expr env))
                   ((eq? 'vector kind)(%eval-define-vector expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))
@@ -208,8 +208,8 @@
 (%defspecial 'function
              (lambda (expr env)
                (if (> (length expr) 1)
-                   (%make-function name: (list-ref expr 1))
-                   (%make-function))))
+                   (make-function debug-name: (list-ref expr 1))
+                   (make-function))))
 
 ;;; if
 ;;; ----------------------------------------------------------------------
@@ -223,7 +223,7 @@
                      (%eval conseq env)
                      (if alt?
                          (%eval (list-ref expr 3) env)
-                         (%nothing))))))
+                         '())))))
 
 ;;; let
 ;;; ----------------------------------------------------------------------
@@ -252,12 +252,12 @@
                       (loopvals (%loop-vals bindings))
                       (loopbody (%loop-body expr))
                       (loopenv (%add-binding env loopname #f))
-                      (loopmethod (%make-interpreted-method loopvars (cons 'begin loopbody) 
-                                                            environment: env
-                                                            name: loopname
-                                                            required-count: (length loopvars)
-                                                            restarg: #f)))
-                 (%set-method-environment! loopmethod (%add-binding (%method-environment loopmethod) loopname loopmethod))
+                      (loopmethod (make-interpreted-method formal-parameters: loopvars
+                                                           body: (cons 'begin loopbody) 
+                                                           environment: env
+                                                           debug-name: loopname
+                                                           restarg: #f)))
+                 (%set-method-environment! loopmethod (%add-binding (interpreted-method-environment loopmethod) loopname loopmethod))
                  (%eval `(,loopmethod ,@loopvals) loopenv))))
 
 ;;; match
@@ -306,11 +306,11 @@
            (formals (%mdesc-get-formals mdesc))
            (restarg (%mdesc-get-restarg mdesc))
            (body (%mdesc-get-body mdesc)))
-      (%make-interpreted-method formals body 
-                                environment: env
-                                name: mname
-                                required-count: (length formals)
-                                restarg: restarg))))
+      (make-interpreted-method formal-parameters: formals
+                               body: body 
+                               environment: env
+                               name: mname
+                               restarg: restarg))))
 
 (%defspecial '^ %eval-method-form)
 (%defspecial 'method %eval-method-form)
@@ -321,9 +321,8 @@
 (%defspecial 'not
              (lambda (expr env)
                (if (%true? (%eval (car (cdr expr)) env))
-                   (%false)
-                   (%true))))
-
+                   #f
+                   #t)))
 
 ;;; quasiquote
 ;;; ----------------------------------------------------------------------
@@ -347,31 +346,31 @@
    (else (list 'add-first left right))))
 
 (define (%expand-quasiquote exp nesting)
-      (cond
-       ((not (pair? exp)) 
-	(if (constant? exp) exp (list 'quote exp)))
-       ((and (eq? (car exp) 'unquote) (= (length exp) 2))
-	(if (= nesting 0)
-	    (cadr exp)
-	    (combine-skeletons ''unquote 
-			       (%expand-quasiquote (cdr exp) (- nesting 1))
-			       exp)))
-       ((and (eq? (car exp) 'quasiquote) (= (length exp) 2))
-	(combine-skeletons ''quasiquote 
-			   (%expand-quasiquote (cdr exp) (+ nesting 1))
-			   exp))
-       ((and (pair? (car exp))
-	     (eq? (caar exp) 'unquote-splicing)
-	     (= (length (car exp)) 2))
-	(if (= nesting 0)
-	    (list 'append (cadr (car exp))
-		  (%expand-quasiquote (cdr exp) nesting))
-	    (combine-skeletons (%expand-quasiquote (car exp) (- nesting 1))
-			       (%expand-quasiquote (cdr exp) nesting)
-			       exp)))
-       (else (combine-skeletons (%expand-quasiquote (car exp) nesting)
-				(%expand-quasiquote (cdr exp) nesting)
-				exp))))
+  (cond
+   ((not (pair? exp)) 
+    (if (constant? exp) exp (list 'quote exp)))
+   ((and (eq? (car exp) 'unquote) (= (length exp) 2))
+    (if (= nesting 0)
+        (cadr exp)
+        (combine-skeletons ''unquote 
+                           (%expand-quasiquote (cdr exp) (- nesting 1))
+                           exp)))
+   ((and (eq? (car exp) 'quasiquote) (= (length exp) 2))
+    (combine-skeletons ''quasiquote 
+                       (%expand-quasiquote (cdr exp) (+ nesting 1))
+                       exp))
+   ((and (pair? (car exp))
+         (eq? (caar exp) 'unquote-splicing)
+         (= (length (car exp)) 2))
+    (if (= nesting 0)
+        (list 'append (cadr (car exp))
+              (%expand-quasiquote (cdr exp) nesting))
+        (combine-skeletons (%expand-quasiquote (car exp) (- nesting 1))
+                           (%expand-quasiquote (cdr exp) nesting)
+                           exp)))
+   (else (combine-skeletons (%expand-quasiquote (car exp) nesting)
+                            (%expand-quasiquote (cdr exp) nesting)
+                            exp))))
 
 
 (%defspecial 'quasiquote 
@@ -388,7 +387,7 @@
              (lambda (expr env)
                (if (= 2 (length expr))
                    (car (cdr expr))
-                   (error (string-append "Wrong number of arguments to quote: " (%as-string (cdr expr)))))))
+                   (error (str "Wrong number of arguments to quote: " (cdr expr))))))
 
 ;;; receive
 ;;; ----------------------------------------------------------------------
@@ -440,7 +439,7 @@
                      (body (cons 'begin (drop 2 expr))))
                  (if (%false? (%eval test env))
                      (%eval body env)
-                     (%nothing)))))
+                     '()))))
 
 ;;; when
 ;;; ----------------------------------------------------------------------
@@ -451,7 +450,7 @@
                      (body (cons 'begin (drop 2 expr))))
                  (if (%true? (%eval test env))
                      (%eval body env)
-                     (%nothing)))))
+                     '()))))
 
 
 ;;; with-open-file
@@ -470,8 +469,8 @@
                                        (if (and (= 2 keylen)
                                                 (eq? direction:))
                                            (%eval (cadr keyargs) env)
-                                           (error (string-append "Invalid keyword arguments to with-open-file: "
-                                                                 (%as-string keyargs)))))))
+                                           (error (str "Invalid keyword arguments to with-open-file: "
+                                                       keyargs))))))
                       (body (cons 'begin (drop 2 expr))))
                  (case direction
                    ((input in) (call-with-input-file path
@@ -482,7 +481,7 @@
                                    (lambda (out)
                                      (let ((env (%add-binding env var out)))
                                        (%eval body env)))))
-                   (else (error (string-append "Invalid value for direction: argument: "
-                                               (object->string direction))))))))
+                   (else (error (str "Invalid value for direction: argument: "
+                                     direction)))))))
 
 

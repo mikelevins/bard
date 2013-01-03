@@ -10,20 +10,21 @@
 ;;;; ***********************************************************************
 
 (define (%apply-keyed-collection op args)
-  (if (= 1 (%length args))
+  (if (= 1 (length args))
       (cond
-       ((%null? op) %nil)
-       ((string? op)(string-ref op (%car args)))
-       ((%list? op)(%list-ref op (%car args)))
-       ((%table? op)(%table-get op (%car args)))
-       (else (error (string-append "Not an applicable object: " (%as-string op)))))
-      (error (string-append "Too many arguments: " (%as-string args)))))
+       ((null? op) %nil)
+       ((string? op)(string-ref op (car args)))
+       ((list? op)(list-ref op (car args)))
+       ((alist-table? op)(alist-table-get op (car args)))
+       (else (error (str "Not an applicable object: " op))))
+      (error (str "Too many arguments: " args))))
 
 (define (%apply op args)
   (cond
    ((%keyed-collection? op)(%apply-keyed-collection op args))
-   ((%callable? op)(apply (%callable-function op) args))
+   ((function? op)(apply (function-proc op) args))
+   ((interpreted-method-instance? op)(apply (interpreted-method-proc op) args))
    ((procedure? op)(apply op (%bard-list->cons args)))
-   (else (error (string-append "not an applicable object: " (object->string op) "; args: " (object->string args))))))
+   (else (error (str "not an applicable object: " op "; args: " args)))))
 
 (define %funcall (lambda (fn . args)(%apply fn args)))

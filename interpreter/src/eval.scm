@@ -23,15 +23,15 @@
 (define (%eval-sequence seq env)
   (let loop ((exprs seq)
              (val (%nothing)))
-    (if (%null? exprs)
+    (if (null? exprs)
         val
         (loop (cdr exprs)
-              (%eval (%car exprs) env)))))
+              (%eval (car exprs) env)))))
 
 (define (%eval-function-application expr env)
-  (let* ((op (%eval (%car expr) env))
+  (let* ((op (%eval (car expr) env))
          (args (map (lambda (x)(%eval x env))
-                    (%cdr expr))))
+                    (cdr expr))))
     (%apply op args)))
 
 (define (%eval-application expr env)
@@ -43,12 +43,12 @@
 
 (define (%eval expr #!optional (env '()))
   (cond
-   ((%symbol? expr) (%eval-variable expr env))
-   ((%list? expr) (cond
-                   ((%null? expr) expr)
-                   ((eq? 'with-exit (%car expr))
-                    (let* ((form (%cdr expr))
-                           (exit-var (%car (%car form)))
+   ((symbol? expr) (%eval-variable expr env))
+   ((list? expr) (cond
+                   ((null? expr) expr)
+                   ((eq? 'with-exit (car expr))
+                    (let* ((form (cdr expr))
+                           (exit-var (car (car form)))
                            (body (%cons 'begin (%drop 1 form))))
                       (call/cc (lambda (k)(%eval body (%add-binding env exit-var k))))))
                    (else (%eval-application expr env))))
