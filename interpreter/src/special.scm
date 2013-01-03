@@ -204,6 +204,9 @@
 
 ;;; function
 ;;; ----------------------------------------------------------------------
+;;; TODO: make functions accept protocol signatures, eg:
+;;; (function Ratio -> Integer)
+;;; and enforce them when define method is being executed
 
 (%defspecial 'function
              (lambda (expr env)
@@ -257,15 +260,16 @@
                                                            environment: env
                                                            debug-name: loopname
                                                            restarg: #f)))
-                 (%set-method-environment! loopmethod (%add-binding (interpreted-method-environment loopmethod) loopname loopmethod))
+                 (set-interpreted-method-environment! loopmethod
+                                                      (%add-binding
+                                                       (interpreted-method-environment loopmethod)
+                                                       loopname loopmethod))
                  (%eval `(,loopmethod ,@loopvals) loopenv))))
 
 ;;; match
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'match 
-             (lambda (expr env)
-               (error "match not yet implemented")))
+(%defspecial 'match (lambda (expr env) (error "match not yet implemented")))
 
 
 ;;; method
@@ -309,7 +313,7 @@
       (make-interpreted-method formal-parameters: formals
                                body: body 
                                environment: env
-                               name: mname
+                               debug-name: mname
                                restarg: restarg))))
 
 (%defspecial '^ %eval-method-form)
@@ -392,9 +396,7 @@
 ;;; receive
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'receive 
-             (lambda (expr env)
-               (error "receive not yet implemented")))
+(%defspecial 'receive (lambda (expr env) (error "receive not yet implemented")))
 
 ;;; repeat
 ;;; ----------------------------------------------------------------------
@@ -409,9 +411,7 @@
 ;;; send
 ;;; ----------------------------------------------------------------------
 
-(%defspecial 'send 
-             (lambda (expr env)
-               (error "send not yet implemented")))
+(%defspecial 'send (lambda (expr env)(error "send not yet implemented")))
 
 ;;; set!
 ;;; ----------------------------------------------------------------------

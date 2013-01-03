@@ -43,7 +43,7 @@
 
 (%add-primitive-method! bard:as
                         (list (%singleton <string>) <pair>)
-                        (lambda (type thing)(list->string (%bard-list->cons thing)))
+                        (lambda (type thing)(list->string thing))
                         debug-name: 'as)
 
 

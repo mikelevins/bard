@@ -45,6 +45,7 @@
          "src/protocol-mapping.scm"
          "src/protocol-pairing.scm"
          "src/protocol-reading.scm"
+         "src/protocol-typing.scm"
          "src/protocol-writing.scm"
          "src/toplevel.scm"
          "src/bard.scm"

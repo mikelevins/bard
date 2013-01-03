@@ -14,7 +14,7 @@
    ((function? op)(apply (function-proc op) args))
    ((interpreted-method-instance? op)(apply (interpreted-method-proc op) args))
    ((primitive-instance? op)(apply (primitive-proc op) args))
-   ((procedure? op)(apply op (%bard-list->cons args)))
+   ((procedure? op)(apply op args))
    (else (error (str "not an applicable object: " op "; args: " args)))))
 
 (define %funcall (lambda (fn . args)(%apply fn args)))

@@ -31,6 +31,7 @@
 ;;; printer definitions
 ;;; ---------------------------------------------------------------------
 
+(define-printer-function (%tag #!void) (constantly ""))
 (define-printer-function (schema-tag <undefined>) (constantly "undefined"))
 (define-printer-function (schema-tag <null>) (constantly "nothing"))
 (define-printer-function (schema-tag <boolean>) (lambda (b)(if b "true" "false")))

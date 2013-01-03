@@ -393,7 +393,7 @@
   (let* ((sing (%existing-singleton val))
          (found (if sing (%singleton-tree-ref mtree sing) #f)))
     (or found
-        (let* ((tp (%object->bard-type val))
+        (let* ((tp (%object->schema val))
                (found (%singleton-tree-ref mtree tp)))
           (or found
               (%singleton-tree-ref mtree Anything))))))
@@ -495,6 +495,7 @@
 (define interpreted-method-restarg interpreted-method-instance-restarg)
 (define interpreted-method-required-count interpreted-method-instance-required-count)
 (define interpreted-method-environment interpreted-method-instance-environment)
+(define set-interpreted-method-environment! interpreted-method-instance-environment-set!)
 (define interpreted-method-body interpreted-method-instance-body)
 
 ;;; primitive

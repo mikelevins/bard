@@ -49,7 +49,7 @@
                    ((eq? 'with-exit (car expr))
                     (let* ((form (cdr expr))
                            (exit-var (car (car form)))
-                           (body (cons 'begin (%drop 1 form))))
+                           (body (cons 'begin (drop 1 form))))
                       (call/cc (lambda (k)(%eval body (%add-binding env exit-var k))))))
                    (else (%eval-application expr env))))
    (else expr)))
