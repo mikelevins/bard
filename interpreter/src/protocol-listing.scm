@@ -140,7 +140,7 @@
                                      (i 0))
                             (if (>= i n)
                                 items
-                                (if (%null? items)
+                                (if (null? items)
                                     (error (string-append "Count out of bounds: " (%as-string n)))
                                     (loop (cdr items)(+ i 1))))))
                         debug-name: 'drop)
@@ -196,7 +196,7 @@
 (define (%bard-filter test ls)
   (let loop ((items ls)
              (result '()))
-    (if (%null? items)
+    (if (null? items)
         (reverse result)
         (if (%funcall test (car items))
             (loop (cdr items)
@@ -352,7 +352,7 @@
 (define (%bard-map-list fn ls)
   (let loop ((items ls)
              (result '()))
-    (if (%null? items)
+    (if (null? items)
         (reverse result)
         (loop (cdr items)
               (cons (%funcall fn (car items))
@@ -407,29 +407,29 @@
 ;;; <alist-table>
 ;;; ---------------------------------------------------------------------
 
-(define (%bard-map-table fn fr)
-  (let loop ((ks (%table-keys fr))
+(define (%bard-map-alist-table fn fr)
+  (let loop ((ks (alist-table-keys fr))
              (out '()))
-    (if (%null? ks)
-        (%maybe-slot-list->table (reverse out))
+    (if (null? ks)
+        (%make-alist-table (reverse out))
         (let* ((k (car ks))
-               (v (%table-get fr k)))
+               (v (alist-table-get fr k)))
           (loop (cdr ks)
                 (cons (%funcall fn k v) out))))))
 
 (%add-primitive-method! bard:map
                         (list <primitive> <alist-table>)
-                        %bard-map-table
+                        %bard-map-alist-table
                         debug-name: 'map)
 
 (%add-primitive-method! bard:map
                         (list <interpreted-method> <alist-table>)
-                        %bard-map-table
+                        %bard-map-alist-table
                         debug-name: 'map)
 
 (%add-primitive-method! bard:map
                         (list <function> <alist-table>)
-                        %bard-map-table
+                        %bard-map-alist-table
                         debug-name: 'map)
 
 ;;; ---------------------------------------------------------------------
@@ -457,7 +457,7 @@
 (define (%bard-reduce fn init ls)
   (let loop ((items ls)
              (result init))
-    (if (%null? items)
+    (if (null? items)
         result
         (loop (cdr items)
               (%funcall fn result (car items))))))
@@ -537,7 +537,7 @@
 
 (define (%bard-some? test ls)
   (let loop ((items ls))
-    (if (%null? items)
+    (if (null? items)
         '()
         (if (%funcall test (car items))
             (car items)
@@ -608,7 +608,7 @@
                                      (result '()))
                             (if (>= i n)
                                 result
-                                (if (%null? items)
+                                (if (null? items)
                                     (error (string-append "Count out of bounds: " (%as-string n)))
                                     (loop (cdr items)(+ i 1)(append result (list (car items))))))))
                         debug-name: 'take)

@@ -11,7 +11,7 @@
 
 (define (%eval-variable var env)
   (if (eq? var 'undefined)
-      (%undefined)
+      #!unbound
       (let ((val (%lookup-variable-value env var)))
         (if (%defined? val)
             val

@@ -41,7 +41,7 @@
       body: `(begin ,c)
       debug-name: #f
       formal-parameters: '(& more)
-      environment: (%null-enviroment)
+      environment: (%null-environment)
       restarg: 'more))
    debug-name: 'constantly
    required-count: 1
@@ -170,7 +170,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define (%bard-alist-table-contains-key? fr k)
-  (let loop ((slots (%table-slots fr)))
+  (let loop ((slots (alist-table-slots fr)))
     (if (null? slots)
         #f
         (let ((slot (car slots))
@@ -187,7 +187,7 @@
    restarg: #f))
 
 (define (%bard-alist-table-contains-value? fr v)
-  (let loop ((slots (%table-slots fr)))
+  (let loop ((slots (alist-table-slots fr)))
     (if (null? slots)
         #f
         (let ((slot (car slots))
@@ -217,7 +217,7 @@
    required-count: 1
    restarg: #f))
 
-(define (%table->list t)(%table-slots t))
+(define (%table->list t)(alist-table-slots t))
 
 (define (%merge-slots s1 s2)
   (let loop ((slots1 s1)
@@ -236,7 +236,7 @@
                           result)))))))
 
 (define (%merge-alist-tables t1 t2)
-  (%private-make-table (%merge-slots (%table-slots t1)(%table-slots t2))))
+  (%make-alist-table (%merge-slots (alist-table-instance-slots t1)(alist-table-instance-slots t2))))
 
 (define prim:alist-table-merge
   (make-primitive

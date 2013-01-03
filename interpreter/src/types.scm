@@ -98,8 +98,8 @@
 (define (integer->subtype n)(arithmetic-shift n 2))
 (define (subtype->integer n)(arithmetic-shift n -2))
 
-(define (tag->gambit-type n)(bitwise-and n $type-tag-mask))
-(define (tag->gambit-subtype n)(subtype-tag->integer (bitwise-and n $subtype-tag-mask)))
+(define (tag->gambit-type n)(bitwise-and n $type-mask))
+(define (tag->gambit-subtype n)(subtype->integer (bitwise-and n $subtype-mask)))
 
 ;;; bard type numbers
 ;;; ---------------------------------------------------------------------

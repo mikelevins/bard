@@ -41,26 +41,23 @@ SCHEME_SOURCES= \
          lib/uuid.scm \
          src/utils.scm \
          src/singleton-tree.scm \
-         src/primitive-types.scm \
-         src/schemas.scm \
-         src/schemas-base.scm \
-         src/schemas-class.scm \
-         src/schemas-protocol.scm \
-         src/schemas-structure.scm \
-         src/values.scm \
+         src/types.scm \
          src/env.scm \
-         src/callable.scm \
-         src/prims.scm \
+         src/primitives.scm \
          src/read.scm \
          src/print.scm \
          src/special.scm \
          src/macro.scm \
          src/apply.scm \
-         src/compile.scm \
          src/eval.scm \
          src/error.scm \
-         src/toplevel.scm \
-         src/protocols.scm 
+         src/protocol-comparing.scm \
+         src/protocol-converting.scm \
+         src/protocol-listing.scm \
+         src/protocol-ordering.scm \
+         src/protocol-pairing.scm \
+         src/protocol-typing.scm \
+         src/init.scm \
 
 
 
@@ -69,26 +66,23 @@ C_SOURCES= \
          lib/uuid.c \
          src/utils.c \
          src/singleton-tree.c \
-         src/primitive-types.c \
-         src/schemas.c \
-         src/schemas-base.c \
-         src/schemas-class.c \
-         src/schemas-protocol.c \
-         src/schemas-structure.c \
-         src/values.c \
+         src/types.c \
          src/env.c \
-         src/callable.c \
-         src/prims.c \
+         src/primitives.c \
          src/read.c \
          src/print.c \
          src/special.c \
          src/macro.c \
          src/apply.c \
-         src/compile.c \
          src/eval.c \
          src/error.c \
-         src/toplevel.c \
-         src/protocols.c 
+         src/protocol-comparing.c \
+         src/protocol-converting.c \
+         src/protocol-listing.c \
+         src/protocol-ordering.c \
+         src/protocol-pairing.c \
+         src/protocol-typing.c \
+         src/init.c \
 
 
 
@@ -97,26 +91,23 @@ OBJECTS= \
          uuid.o \
          utils.o \
          singleton-tree.o \
-         primitive-types.o \
-         schemas.o \
-         schemas-base.o \
-         schemas-class.o \
-         schemas-protocol.o \
-         schemas-structure.o \
-         values.o \
+         types.o \
          env.o \
-         callable.o \
-         prims.o \
+         primitives.o \
          read.o \
          print.o \
          special.o \
          macro.o \
          apply.o \
-         compile.o \
          eval.o \
          error.o \
-         toplevel.o \
-         protocols.o 
+         protocol-comparing.o \
+         protocol-converting.o \
+         protocol-listing.o \
+         protocol-ordering.o \
+         protocol-pairing.o \
+         protocol-typing.o \
+         init.o \
 
 
 

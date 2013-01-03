@@ -94,7 +94,7 @@
     (let ((nm (function-name fn)))
       (if  nm
            (string-append "#<function " (object->string nm) ">")
-           (string-append "#<an-anonymous-function " (object->string (object->serial-number x)) ">")))))
+           (string-append "#<an-anonymous-function " (object->string (object->serial-number fn)) ">")))))
 
 (define-printer-function (schema-tag <interpreted-method>) 
   (lambda (m)
