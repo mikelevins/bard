@@ -356,10 +356,36 @@
         (cdr slot)
         '())))
 
+(define (alist-table-keys table)
+  (let loop ((slots (alist-table-instance-slots table))
+             (keys '()))
+    (if (null? slots)
+        (reverse keys)
+        (let ((slot (car slots))
+              (more (cdr slots)))
+          (if (member (car slot) keys)
+              (loop more keys)
+              (loop more (cons (car slot) keys)))))))
+
 (define (alist-table-put table key val)
   (make-alist-table-instance <alist-table> 
                              (cons (cons key val)
                                    (alist-table-instance-slots table))))
+
+(define (alist-table-vals table)
+  (let loop ((slots (alist-table-instance-slots table))
+             (keys '())
+             (vals '()))
+    (if (null? slots)
+        (reverse vals)
+        (let ((slot (car slots))
+              (more (cdr slots)))
+          (if (member (car slot) keys)
+              (loop more keys vals)
+              (loop more
+                    (cons (car slot) keys)
+                    (cons (cdr slot) vals)))))))
+
 
 ;;; function
 ;;; ----------------------------------------------------------------------
@@ -488,6 +514,7 @@
 
 ;;; accessors
 
+(define interpreted-method? interpreted-method-instance?)
 (define interpreted-method-name interpreted-method-instance-name)
 (define interpreted-method-proc interpreted-method-instance-proc)
 (define set-interpreted-method-proc! interpreted-method-instance-proc-set!)

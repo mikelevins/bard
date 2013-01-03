@@ -9,13 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define bard:pair (make-function debug-name: 'pair))
-
-(%add-primitive-method! bard:pair
-                        (list Anything Anything)
-                        cons
-                        debug-name: 'pair)
-
 (define bard:left (make-function debug-name: 'left))
 
 (%add-primitive-method! bard:left

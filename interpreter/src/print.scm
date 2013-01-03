@@ -21,9 +21,9 @@
   (let ((printer (get-printer-function (%tag x))))
     (printer x)))
 
-(define (bard:show x)(%as-string x))
+(define (%show x)(%as-string x))
 
-(define (bard:print x #!optional (port (current-output-port)))
+(define (%print x #!optional (port (current-output-port)))
   (display (%as-string x) port)
   x)
 

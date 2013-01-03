@@ -44,10 +44,8 @@
          "src/protocol-listing.scm"
          "src/protocol-mapping.scm"
          "src/protocol-pairing.scm"
-         "src/protocol-reading.scm"
          "src/protocol-typing.scm"
-         "src/protocol-writing.scm"
-         "src/toplevel.scm"
+         "src/init.scm"
          "src/bard.scm"
          ))
 
@@ -62,6 +60,4 @@
 ;;; (load-bard)
 ;;; (%init-bard)
 ;;; (bard:repl)
-
-
 
