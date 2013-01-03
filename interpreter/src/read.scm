@@ -82,8 +82,8 @@
 (define (%read-cons val)
   (cond
    ((null? val) (%nothing))
-   ((eq? 'list (car val)) (%cons 'list (%read-cons (cdr val))))
-   ((eq? 'table (car val)) (%cons 'table (%read-cons (cdr val))))
+   ((eq? 'list (car val)) (cons 'list (%read-cons (cdr val))))
+   ((eq? 'table (car val)) (cons 'table (%read-cons (cdr val))))
    (else (let loop ((items val)
                     (ls '()))
            (if (null? items)

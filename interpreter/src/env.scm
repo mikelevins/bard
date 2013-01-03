@@ -23,7 +23,7 @@
   var)
 
 (define (%global-value var)
-  (table-ref $bard-global-variables var (%undefined)))
+  (table-ref $bard-global-variables var #!unbound))
 
 ;;; ---------------------------------------------------------------------
 ;;; lexical environments
@@ -35,14 +35,14 @@
   (cons (cons var val) env))
 
 (define (%add-let-bindings env bindings)
-  (if (%null? bindings)
+  (if (null? bindings)
       env
-      (let ((binding (%car bindings)))
+      (let ((binding (car bindings)))
         (%add-let-bindings (%add-binding env
-                                         (%car binding)
-                                         (%eval (%cadr binding)
+                                         (car binding)
+                                         (%eval (cadr binding)
                                                 env))
-                           (%cdr bindings)))))
+                           (cdr bindings)))))
 
 (define (%extend-environment env plist)
   (if (null? plist)
@@ -57,16 +57,16 @@
   (append env2 env1))
 
 (define (%copy-environment env)
-  (if (%null? env)
+  (if (null? env)
       '()
-      (let ((binding (%car env)))
-        (%cons (%cons (%car binding)
-                      (%cdr binding))
-            (%copy-environment (%cdr env))))))
+      (let ((binding (car env)))
+        (cons (cons (car binding)
+                      (cdr binding))
+            (%copy-environment (cdr env))))))
 
 (define (%lookup-variable-value env var)
   (let ((binding (assq var env)))
-    (if binding (cdr binding) (%undefined))))
+    (if binding (cdr binding) #!unbound)))
 
 (define (%set-variable! var val env)
   (let ((binding (assq var env)))

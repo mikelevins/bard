@@ -19,7 +19,7 @@
 
 (define (%macro-form? expr)
   (and (list? expr)
-       (not (null expr))
+       (not (null? expr))
        (table-ref $bard-macro-functions (car expr) #f)
        #t))
 
@@ -39,7 +39,7 @@
 (%define-macro-function 'and
                         (lambda (expr)
                           (let ((var (gensym)))
-                            (if (null (cdr expr))
+                            (if (null? (cdr expr))
                                 #t
                                 (if (null? (cddr expr))
                                     `(let ((,var ,(cadr expr))) (if ,var ,var #f))
