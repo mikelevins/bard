@@ -300,7 +300,16 @@
 
 ;;; constructor
 
-(define (%make-protocol name #!key (functions '()))(make-protocol-instance <protocol> name functions))
+(define (%make-protocol name)(make-protocol-instance <protocol> name (make-table test: eq?)))
+
+;;; accessors
+
+(define (%protocol-ref p fn-name)
+  (table-ref (protocol-functions p) fn-name #f))
+
+(define (%protocol-add! p fn-name fn)
+  (table-set! (protocol-functions p) fn-name fn)
+  p)
 
 ;;; definitions of protocols
 ;;; ----------------------------------------------------------------------
@@ -309,11 +318,15 @@
 (define Applying       (%make-protocol 'Applying))       ; applying function-like values
 (define Calculating    (%make-protocol 'Calculating))    ; performing arithmetic and other calculating tasks
 (define Comparing      (%make-protocol 'Comparing))      ; ordering values
+(define Constructing   (%make-protocol 'Constructing))   ; constructing values
+(define Converting     (%make-protocol 'Converting))     ; producing values of one type based on inputs of another
 (define Equating       (%make-protocol 'Equating))       ; testing whether values are the same
 (define Listing        (%make-protocol 'Listing))        ; arranging values in lists
 (define Mapping        (%make-protocol 'Mapping))        ; arranging values tables
+(define Pairing        (%make-protocol 'Pairing))        ; arranging values tables
 (define Reading        (%make-protocol 'Reading))        ; getting values from input streams
-(define TextProcessing (%make-protocol 'TextProcessing)) ; getting values from input streams
+(define TextProcessing (%make-protocol 'TextProcessing)) ; processing text
+(define Typing         (%make-protocol 'Typing))         ; discriminating values by type
 (define Writing        (%make-protocol 'Writing))        ; putting values into output streams
 
 ;;; alist table

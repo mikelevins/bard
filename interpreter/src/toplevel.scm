@@ -135,11 +135,14 @@
   (%defglobal 'Applying       Applying)
   (%defglobal 'Calculating    Calculating)
   (%defglobal 'Comparing      Comparing)
+  (%defglobal 'Constructing   Constructing)
   (%defglobal 'Equating       Equating)
   (%defglobal 'Listing        Listing)
   (%defglobal 'Mapping        Mapping)
+  (%defglobal 'Pairing        Pairing)
   (%defglobal 'Reading        Reading)
   (%defglobal 'TextProcessing TextProcessing)
+  (%defglobal 'Typing         Typing)
   (%defglobal 'Writing        Writing)
 
   ;;; ---------------------------------------------------------------------
