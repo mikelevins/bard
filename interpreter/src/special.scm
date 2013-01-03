@@ -63,7 +63,7 @@
   (%defglobal (list-ref expr 2) (%eval (list-ref expr 3) env))
                (list-ref expr 2))
 
-#| TODO: records not ready yet
+#| TODO: records not ready yet -------------------------
 (define (%eval-define-record expr env)
   (let* ((sname (list-ref expr 2))
          (slot-specs (drop 3 expr))
@@ -91,6 +91,7 @@
   (let ((specs (map %canonicalize-slot-spec specs)))
     (map (lambda (s) (%parse-canonical-slot-description s env))
          specs)))
+----------------------------------------------------------
 |#
 
 (define (%eval-define-macro expr env)
@@ -154,7 +155,7 @@
   (let* ((prototype (%parse-function-prototype (list-ref expr 2) env))
          (fname (%fproto-name prototype))
          (fn (or (table-ref $bard-global-variables fname #f)
-                 (let ((f (make-function name: fname)))
+                 (let ((f (make-function debug-name: fname)))
                    (%defglobal fname f)
                    f)))
          (formals (%fproto-formals prototype))
@@ -163,11 +164,11 @@
          (framearg (%fproto-framearg prototype))
          (body (cons 'begin (drop 3 expr)))
          (method-signature types)
-         (method (%make-interpreted-method formal-parameters: formals
-                                           body: body
-                                           environment: env
-                                           name: fname
-                                           restarg: restarg)))
+         (method (make-interpreted-method formal-parameters: formals
+                                          body: body
+                                          environment: env
+                                          debug-name: fname
+                                          restarg: restarg)))
     (%add-method! fn method-signature method)
     fname))
 
