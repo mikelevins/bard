@@ -37,7 +37,6 @@
          "src/apply.scm"
          "src/eval.scm"
          "src/error.scm"
-         "src/protocols.scm"
          "src/toplevel.scm"
          "src/bard.scm"
          ))

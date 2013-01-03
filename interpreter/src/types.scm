@@ -167,7 +167,7 @@
 ;;; the data structures and functions here enable us to recover a schema
 ;;; given one of its instances.
 
-;;; primitive schemas
+;;; handling primitive schemas
 ;;; ---------------------------------------------------------------------
 
 (define +tag->schema-registry+ (make-table test: eqv?))
@@ -182,7 +182,7 @@
 (define (%tag->schema tag)
   (table-ref +tag->schema-registry+ tag #f))
 
-;;; structure schemas
+;;; handling structure schemas
 ;;; ---------------------------------------------------------------------
 ;;; recover the structure used to create the instance using
 ;;; ##structure-type, then recover the schema from the structure
@@ -196,7 +196,7 @@
 (define (%structure->schema struct)
   (table-ref +structure->schema-registry+ struct #f))
 
-;;; foreign schemas
+;;; handling foreign schemas
 ;;; ---------------------------------------------------------------------
 ;;; registry for foreign schemas
 (define +foreign-name->schema-registry+ (make-table test: eqv?))
@@ -248,7 +248,7 @@
 ;;; base schemas
 ;;; ----------------------------------------------------------------------
 
-;;; class
+;;; classes
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-class (%next-bard-type-number))
@@ -260,8 +260,9 @@
 
 (define (%make-class name)(make-class-instance <class> name))
 
-;;; classes
+;;; definitions of classes
 ;;; ----------------------------------------------------------------------
+;;; convention: class names are nouns
 
 (define Anything (%make-class 'Anything))
 (define Boolean (%make-class 'Boolean))
@@ -286,6 +287,34 @@
 (define Text (%make-class 'Text))
 (define Undefined (%make-class 'Undefined))
 
+;;; protocols
+;;; ----------------------------------------------------------------------
+
+(define tags:$bard-protocol (%next-bard-type-number))
+(define <protocol> (make-base-schema '<protocol> tags:$bard-protocol))
+
+(define-instance protocol-instance 
+  constructor: make-protocol-instance
+  (name protocol-name)
+  (functions protocol-functions))
+
+;;; constructor
+
+(define (%make-protocol name #!key (functions '()))(make-protocol-instance <protocol> name functions))
+
+;;; definitions of protocols
+;;; ----------------------------------------------------------------------
+;;; convention: protocol names are present participles
+
+(define Applying       (%make-protocol 'Applying))       ; applying function-like values
+(define Calculating    (%make-protocol 'Calculating))    ; performing arithmetic and other calculating tasks
+(define Comparing      (%make-protocol 'Comparing))      ; ordering values
+(define Equating       (%make-protocol 'Equating))       ; testing whether values are the same
+(define Listing        (%make-protocol 'Listing))        ; arranging values in lists
+(define Mapping        (%make-protocol 'Mapping))        ; arranging values tables
+(define Reading        (%make-protocol 'Reading))        ; getting values from input streams
+(define TextProcessing (%make-protocol 'TextProcessing)) ; getting values from input streams
+(define Writing        (%make-protocol 'Writing))        ; putting values into output streams
 
 ;;; alist table
 ;;; ----------------------------------------------------------------------

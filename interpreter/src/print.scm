@@ -133,3 +133,6 @@
 
 (define-printer-function (schema-tag <class>) 
   (lambda (class)(object->string (class-name class))))
+
+(define-printer-function (schema-tag <protocol>) 
+  (lambda (p)(object->string (protocol-name p))))

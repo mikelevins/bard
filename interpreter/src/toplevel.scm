@@ -70,102 +70,135 @@
 
   (%defglobal 'table prim:table)
 
-;;; ---------------------------------------------------------------------
-;;; types
-;;; ---------------------------------------------------------------------
-
-  ;; representations
-
-  (%defglobal '<undefined> <undefined>)
-  (%defglobal '<null> <null>)
-  (%defglobal '<character> <character>)
-  (%defglobal '<boolean> <boolean>)
-  (%defglobal '<symbol> <symbol>)
-  (%defglobal '<keyword> <keyword>)
-  (%defglobal '<flonum> <flonum>)
-  (%defglobal '<ratnum> <ratnum>)
-  (%defglobal '<fixnum> <fixnum>)
-  (%defglobal '<bignum> <bignum>)
-  (%defglobal '<primitive-procedure> <primitive-procedure>)
-  (%defglobal '<pair> <pair>)
-  (%defglobal '<string> <string>)
-  (%defglobal '<iostream> <iostream>)
-  (%defglobal '<alist-table> <alist-table>)
-;;;  (%defglobal '<record> <record>)
-  (%defglobal '<function> <function>)
-  (%defglobal '<primitive> <primitive>)
-  (%defglobal '<interpreted-method> <interpreted-method>)
-
-  ;; constants
-
+  ;;; ---------------------------------------------------------------------
+  ;;; constants
+  ;;; ---------------------------------------------------------------------
+  
   (%defglobal 'undefined #!unbound)
   (%defglobal 'nothing '())
   (%defglobal 'true #t)
   (%defglobal 'false #f)
 
-  ;; ---------------------------------------------------------------------
-  ;; protocols
-  ;; ---------------------------------------------------------------------
+  ;;; ---------------------------------------------------------------------
+  ;;; types
+  ;;; ---------------------------------------------------------------------
+  
+  ;;; schemas
 
-  ;; Anything
-  ;; ---------------------------------------------------------------------
+  (%defglobal '<alist-table>         <alist-table>)
+  (%defglobal '<bignum>              <bignum>)
+  (%defglobal '<boolean>             <boolean>)
+  (%defglobal '<character>           <character>)
+  (%defglobal '<fixnum>              <fixnum>)
+  (%defglobal '<flonum>              <flonum>)
+  (%defglobal '<function>            <function>)
+  (%defglobal '<interpreted-method>  <interpreted-method>)
+  (%defglobal '<iostream>            <iostream>)
+  (%defglobal '<keyword>             <keyword>)
+  (%defglobal '<null>                <null>)
+  (%defglobal '<pair>                <pair>)
+  (%defglobal '<primitive-procedure> <primitive-procedure>)
+  (%defglobal '<primitive>           <primitive>)
+  (%defglobal '<ratnum>              <ratnum>)
+  (%defglobal '<string>              <string>)
+  (%defglobal '<symbol>              <symbol>)
+  (%defglobal '<undefined>           <undefined>)
+  ;;;  (%defglobal '<record> <record>)
 
-  (%defglobal 'Anything Anything)
+  ;;; classes
 
-  ;; Applicable
-  ;; ---------------------------------------------------------------------
+  (%defglobal 'Anything     Anything) 
+  (%defglobal 'Boolean      Boolean)
+  (%defglobal 'Character    Character)
+  (%defglobal 'Float        Float)
+  (%defglobal 'Fraction     Fraction)
+  (%defglobal 'Function     Function)    
+  (%defglobal 'InputStream  InputStream) 
+  (%defglobal 'Integer      Integer)
+  (%defglobal 'Keyword      Keyword)
+  (%defglobal 'List         List)
+  (%defglobal 'Method       Method)
+  (%defglobal 'Null         Null)
+  (%defglobal 'Number       Number)
+  (%defglobal 'OutputStream OutputStream)
+  (%defglobal 'Pair         Pair)
+  (%defglobal 'Ratio        Ratio)
+  (%defglobal 'Schema       Schema)
+  (%defglobal 'Stream       Stream)
+  (%defglobal 'Symbol       Symbol)
+  (%defglobal 'Table        Table)
+  (%defglobal 'Text         Text)
+  (%defglobal 'Undefined    Undefined)
+
+  ;;; protocols
+
+  (%defglobal 'Applying       Applying)
+  (%defglobal 'Calculating    Calculating)
+  (%defglobal 'Comparing      Comparing)
+  (%defglobal 'Equating       Equating)
+  (%defglobal 'Listing        Listing)
+  (%defglobal 'Mapping        Mapping)
+  (%defglobal 'Reading        Reading)
+  (%defglobal 'TextProcessing TextProcessing)
+  (%defglobal 'Writing        Writing)
+
+  ;;; ---------------------------------------------------------------------
+  ;;; protocol functions
+  ;;; ---------------------------------------------------------------------
+
+  ;;; Applying
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'applicable? bard:applicable?)
   (%defglobal 'apply bard:apply)
 
-  ;; As
-  ;; ---------------------------------------------------------------------
+  ;;; As
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'as bard:as)
 
-  ;; Boolean
-  ;; ---------------------------------------------------------------------
-  (%defglobal 'Boolean Boolean)
+  ;;; Boolean
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'boolean? bard:boolean?)
   (%defglobal 'false? bard:false?)
   (%defglobal 'true? bard:true?)
 
-  ;; Character
-  ;; ---------------------------------------------------------------------
+  ;;; Character
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Character Character)
   (%defglobal 'char? bard:char?)
 
-  ;; Equal
-  ;; ---------------------------------------------------------------------
+  ;;; Equal
+  ;;; ---------------------------------------------------------------------
 
   (%defglobal 'primitive:= prim:=)
   (%defglobal '= bard:=)
 
-  ;; Float
-  ;; ---------------------------------------------------------------------
+  ;;; Float
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Float Float)
   (%defglobal 'float? bard:float?)
 
-  ;; ForeignValue
-  ;; ---------------------------------------------------------------------
+  ;;; ForeignValue
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'foreign-value? bard:foreign-value?)
 
-  ;; Fraction
-  ;; ---------------------------------------------------------------------
+  ;;; Fraction
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Fraction Fraction)
 
-  ;; Function
-  ;; ---------------------------------------------------------------------
+  ;;; Function
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Function Function)
   (%defglobal 'function? bard:function?)
 
-  ;; Integer
-  ;; ---------------------------------------------------------------------
+  ;;; Integer
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Integer Integer)
   (%defglobal 'integer? bard:integer?)
 
-  ;; IOStream
-  ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'close bard:close)
-  ;; (%defglobal 'open bard:open)
+  ;;; IOStream
+  ;;; ---------------------------------------------------------------------
+  ;;; (%defglobal 'close bard:close)
+  ;;; (%defglobal 'open bard:open)
   (%defglobal 'current-input bard:current-input)
   (%defglobal 'current-output bard:current-output)
   (%defglobal 'display bard:display)
@@ -183,13 +216,13 @@
   (%defglobal 'show bard:show)
   (%defglobal 'write bard:write)
 
-  ;; Keyword
-  ;; ---------------------------------------------------------------------
+  ;;; Keyword
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Keyword Keyword)
-  ;; (%defglobal 'keyword? bard:keyword?)
+  ;;; (%defglobal 'keyword? bard:keyword?)
 
-  ;; List
-  ;; ---------------------------------------------------------------------
+  ;;; List
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'List List)
   (%defglobal 'add-first bard:add-first)
   (%defglobal 'add-last bard:add-last)
@@ -240,29 +273,29 @@
   ;; (%defglobal 'unzip bard:unzip)
   ;; (%defglobal 'zip bard:zip)
 
-  ;; Method
-  ;; ---------------------------------------------------------------------
+  ;;; Method
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Method Method)
-  ;; (%defglobal 'method? bard:method?)
+  ;;; (%defglobal 'method? bard:method?)
 
-  ;; Name
-  ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'name? bard:name?)
+  ;;; Name
+  ;;; ---------------------------------------------------------------------
+  ;;; (%defglobal 'name? bard:name?)
 
-  ;; Null
-  ;; ---------------------------------------------------------------------
+  ;;; Null
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Null Null)
   (%defglobal 'nothing? bard:nothing?)
   (%defglobal 'something? bard:something?)
 
-  ;;  Number
-  ;; ---------------------------------------------------------------------
+  ;;;  Number
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Number Number)
-  ;; (%defglobal 'number? bard:number?)
+  ;;; (%defglobal 'number? bard:number?)
 
-  ;; ---------------------------------------------------------------------
-  ;; Ordered
-  ;; ---------------------------------------------------------------------
+  ;;; ---------------------------------------------------------------------
+  ;;; Ordered
+  ;;; ---------------------------------------------------------------------
 
   (%defglobal 'primitive:> prim:>)
   (%defglobal 'primitive:< prim:<)
@@ -274,41 +307,39 @@
   (%defglobal '>= bard:>=)
   (%defglobal '<= bard:<=)
 
-  ;; Pair
-  ;; ---------------------------------------------------------------------
+  ;;; Pair
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Pair Pair)
   (%defglobal 'pair bard:pair)
   (%defglobal 'left bard:left)
   (%defglobal 'right bard:right)
 
-  ;; Procedure
-  ;; ---------------------------------------------------------------------
-  ;; (%defglobal 'procedure? bard:procedure?)
+  ;;; Procedure
+  ;;; ---------------------------------------------------------------------
+  ;;; (%defglobal 'procedure? bard:procedure?)
 
-  ;; Ratio
-  ;; ---------------------------------------------------------------------
+  ;;; Ratio
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Ratio Ratio)
   ;; (%defglobal 'ratio? bard:ratio?)
 
-  ;; Schema
-  ;; ---------------------------------------------------------------------
-
+  ;;; Schema
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Schema Schema)
 
-  ;; Stream
-  ;; ---------------------------------------------------------------------
-
+  ;;; Stream
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Stream Stream)
   (%defglobal 'InputStream InputStream)
   (%defglobal 'OutputStream OutputStream)
 
-  ;; Symbol
-  ;; ---------------------------------------------------------------------
+  ;;; Symbol
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Symbol Symbol)
   (%defglobal 'symbol? bard:symbol?)
 
-  ;; Table
-  ;; ---------------------------------------------------------------------
+  ;;; Table
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Table Table)
   (%defglobal 'table? bard:table?)
   (%defglobal 'contains-key? bard:contains-key?)
@@ -319,13 +350,13 @@
   (%defglobal 'merge bard:merge)
   (%defglobal 'put bard:put)
 
-  ;; Text
-  ;; ---------------------------------------------------------------------
+  ;;; Text
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Text Text)
   (%defglobal 'text? bard:text?)
 
-  ;; Undefined
-  ;; ---------------------------------------------------------------------
+  ;;; Undefined
+  ;;; ---------------------------------------------------------------------
   (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'Undefined Undefined)
   ;; (%defglobal 'undefined? bard:undefined?)
