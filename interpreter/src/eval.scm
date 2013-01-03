@@ -22,7 +22,7 @@
 
 (define (%eval-sequence seq env)
   (let loop ((exprs seq)
-             (val (%nothing)))
+             (val '()))
     (if (null? exprs)
         val
         (loop (cdr exprs)
