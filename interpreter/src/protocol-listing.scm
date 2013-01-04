@@ -13,7 +13,9 @@
 ;;; add-first
 ;;; ---------------------------------------------------------------------
 
-(define bard:add-first (make-function debug-name: 'add-first))
+(define bard:add-first (make-function debug-name: 'add-first
+                                      input-classes: `(,Anything ,List)
+                                      output-classes: `(,List)))
 
 (%add-primitive-method! bard:add-first
                         (list Anything <null>)
@@ -34,7 +36,9 @@
 ;;; add-last
 ;;; ---------------------------------------------------------------------
 
-(define bard:add-last (make-function debug-name: 'add-last))
+(define bard:add-last (make-function debug-name: 'add-last
+                                     input-classes: `(,List ,Anything)
+                                     output-classes: `(,List)))
 
 (%add-primitive-method! bard:add-last
                         (list <null> Anything)
@@ -59,7 +63,9 @@
 ;;; any
 ;;; ---------------------------------------------------------------------
 
-(define bard:any (make-function debug-name: 'any))
+(define bard:any (make-function debug-name: 'any
+                                input-classes: `(,List)
+                                output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:any
                         (list <null>)
@@ -83,7 +89,9 @@
 ;;; append
 ;;; ---------------------------------------------------------------------
 
-(define bard:append (make-function debug-name: 'append))
+(define bard:append (make-function debug-name: 'append
+                                   input-classes: `(,List ,List)
+                                   output-classes: `(,List)))
 
 (%add-primitive-method! bard:append
                         (list <null>  <null>)
@@ -114,7 +122,9 @@
 ;;; by
 ;;; ---------------------------------------------------------------------
 
-(define bard:by (make-function debug-name: 'by))
+(define bard:by (make-function debug-name: 'by
+                               input-classes: `(,Integer ,List)
+                               output-classes: `(,List)))
 
 (%add-primitive-method! bard:by
                         (list <fixnum> <pair>)
@@ -131,7 +141,9 @@
 ;;; drop
 ;;; ---------------------------------------------------------------------
 
-(define bard:drop (make-function debug-name: 'drop))
+(define bard:drop (make-function debug-name: 'drop
+                                 input-classes: `(,Integer ,List)
+                                 output-classes: `(,List)))
 
 (%add-primitive-method! bard:drop
                         (list <fixnum>  <pair>)
@@ -154,7 +166,9 @@
 ;;; element
 ;;; ---------------------------------------------------------------------
 
-(define bard:element (make-function debug-name: 'element))
+(define bard:element (make-function debug-name: 'element
+                                    input-classes: `(,List ,Integer)
+                                    output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:element
                         (list <pair> <fixnum>)
@@ -170,7 +184,9 @@
 ;;; empty?
 ;;; ---------------------------------------------------------------------
 
-(define bard:empty? (make-function debug-name: 'empty?))
+(define bard:empty? (make-function debug-name: 'empty?
+                                   input-classes: `(,List)
+                                   output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:empty?
                         (list <null>)
@@ -191,7 +207,9 @@
 ;;; filter
 ;;; ---------------------------------------------------------------------
 
-(define bard:filter (make-function debug-name: 'filter))
+(define bard:filter (make-function debug-name: 'filter
+                                   input-classes: `(,Applicable ,List)
+                                   output-classes: `(,List)))
 
 (define (%bard-filter test ls)
   (let loop ((items ls)
@@ -228,7 +246,9 @@
 ;;; first
 ;;; ---------------------------------------------------------------------
 
-(define bard:first (make-function debug-name: 'first))
+(define bard:first (make-function debug-name: 'first
+                                  input-classes: `(,List)
+                                  output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:first
                         (list <pair>)
@@ -244,26 +264,30 @@
 ;;; join
 ;;; ---------------------------------------------------------------------
 
-(define (%bard-join-strings cupola strs)
+(define (%bard-join-text cupola strs)
   (if (null? strs)
       ""
       (apply string-append 
              (cdr (apply append (map (lambda (s)(list cupola s))
                                      strs))))))
 
-(define bard:join-strings (make-function debug-name: 'join-strings))
+(define bard:join-text (make-function debug-name: 'join-text
+                                      input-classes: `(,Text ,List)
+                                      output-classes: `(,Text)))
 
-(%add-primitive-method! bard:join-strings
-                        (list <string>  <pair>)
-                        %bard-join-strings
-                        debug-name: 'join-strings)
+(%add-primitive-method! bard:join-text
+                        (list <string> <pair>)
+                        %bard-join-text
+                        debug-name: 'join-text)
 
 
 ;;; ---------------------------------------------------------------------
 ;;; last
 ;;; ---------------------------------------------------------------------
 
-(define bard:last (make-function debug-name: 'last))
+(define bard:last (make-function debug-name: 'last
+                                 input-classes: `(,List)
+                                 output-classes: `(,Anything)))
 
 (define (%pair-last p)
   (if (null? (cdr p))
@@ -300,7 +324,9 @@
 ;;; length
 ;;; ---------------------------------------------------------------------
 
-(define bard:length (make-function debug-name: 'length))
+(define bard:length (make-function debug-name: 'length
+                                   input-classes: `(,List)
+                                   output-classes: `(,Integer)))
 
 (%add-primitive-method! bard:length
                         (list <null>)
@@ -326,7 +352,9 @@
 ;;; map
 ;;; ---------------------------------------------------------------------
 
-(define bard:map (make-function debug-name: 'map))
+(define bard:map (make-function debug-name: 'map
+                                input-classes: `(,Applicable ,List)
+                                output-classes: `(,List)))
 
 ;;; <null>
 ;;; ---------------------------------------------------------------------
@@ -436,7 +464,9 @@
 ;;; next-last
 ;;; ---------------------------------------------------------------------
 
-(define bard:next-last (make-function debug-name: 'next-last))
+(define bard:next-last (make-function debug-name: 'next-last
+                                      input-classes: `(,List)
+                                      output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:next-last
                         (list <pair>)
@@ -452,7 +482,9 @@
 ;;; reduce
 ;;; ---------------------------------------------------------------------
 
-(define bard:reduce (make-function debug-name: 'reduce))
+(define bard:reduce (make-function debug-name: 'reduce
+                                   input-classes: `(,Applicable ,Anything ,List)
+                                   output-classes: `(,Anything)))
 
 (define (%bard-reduce fn init ls)
   (let loop ((items ls)
@@ -496,7 +528,9 @@
 ;;; rest 
 ;;; ---------------------------------------------------------------------
 
-(define bard:rest (make-function debug-name: 'rest))
+(define bard:rest (make-function debug-name: 'rest
+                                 input-classes: `(,List)
+                                 output-classes: `(,List)))
 
 (%add-primitive-method! bard:rest
                         (list <null>)
@@ -517,7 +551,9 @@
 ;;; second
 ;;; ---------------------------------------------------------------------
 
-(define bard:second (make-function debug-name: 'second))
+(define bard:second (make-function debug-name: 'second
+                                   input-classes: `(,List)
+                                   output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:second
                         (list <pair>)
@@ -533,7 +569,9 @@
 ;;; some?
 ;;; ---------------------------------------------------------------------
 
-(define bard:some? (make-function debug-name: 'some?))
+(define bard:some? (make-function debug-name: 'some?
+                                  input-classes: `(,Applicable ,List)
+                                  output-classes: `(,Anything)))
 
 (define (%bard-some? test ls)
   (let loop ((items ls))
@@ -587,18 +625,22 @@
               (let ((chunk (substring str 0 i)))
                 (reverse (cons chunk chunks))))))))
 
-(define bard:split-string (make-function debug-name: 'split-string))
+(define bard:split-text (make-function debug-name: 'split-text
+                                       input-classes: `(,Text ,Character)
+                                       output-classes: `(,List)))
 
-(%add-primitive-method! bard:split-string
+(%add-primitive-method! bard:split-text
                         (list <string>  <character>)
                         %bard-split-string
-                        debug-name: 'split-string)
+                        debug-name: 'split-text)
 
 ;;; ---------------------------------------------------------------------
 ;;; take
 ;;; ---------------------------------------------------------------------
 
-(define bard:take (make-function debug-name: 'take))
+(define bard:take (make-function debug-name: 'take
+                                 input-classes: `(,Integer ,List)
+                                 output-classes: `(,List)))
 
 (%add-primitive-method! bard:take
                         (list <fixnum>  <pair>)
@@ -622,7 +664,9 @@
 ;;; take-by
 ;;; ---------------------------------------------------------------------
 
-(define bard:take-by (make-function debug-name: 'take-by))
+(define bard:take-by (make-function debug-name: 'take-by
+                                    input-classes: `(,Integer ,Integer ,List)
+                                    output-classes: `(,List)))
 
 (%add-primitive-method! bard:take-by
                         (list <fixnum>  <fixnum> <pair>)

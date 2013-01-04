@@ -264,9 +264,12 @@
 ;;; ----------------------------------------------------------------------
 ;;; convention: class names are nouns
 
+(define & (%make-class '&)) ; the class of optional arguments
 (define Anything (%make-class 'Anything))
+(define Applicable (%make-class 'Applicable))
 (define Boolean (%make-class 'Boolean))
 (define Character (%make-class 'Character))
+(define Class (%make-class 'Class))
 (define Float (%make-class 'Float))
 (define Fraction (%make-class 'Fraction))
 (define Function (%make-class 'Function))
@@ -277,14 +280,17 @@
 (define Method (%make-class 'Method))
 (define Null (%make-class 'Null))
 (define Number (%make-class 'Number))
+(define Orderable (%make-class 'Orderable))
 (define OutputStream (%make-class 'OutputStream))
 (define Pair (%make-class 'Pair))
+(define Protocol (%make-class 'Protocol))
 (define Ratio (%make-class 'Ratio))
 (define Schema (%make-class 'Schema))
 (define Stream (%make-class 'Stream))
 (define Symbol (%make-class 'Symbol))
 (define Table (%make-class 'Table))
 (define Text (%make-class 'Text))
+(define Type (%make-class 'Type))
 (define Undefined (%make-class 'Undefined))
 
 ;;; protocols
@@ -396,7 +402,7 @@
 
 (define-instance function-instance
   constructor: make-function-instance
-  name proc thunk-method method-tree)
+  name proc input-classes output-classes thunk-method method-tree)
 
 ;;; constructor
 
@@ -444,8 +450,11 @@
       (function-thunk-method fn)
       (%search-method-tree-for-values (function-method-tree fn) vals)))
 
-(define (make-function #!key (debug-name 'an-anonymous-function))
-  (let* ((fn (make-function-instance <function> debug-name #f #f (%singleton-tree)))
+(define (make-function #!key 
+                       (debug-name 'an-anonymous-function)
+                       (input-classes '())
+                       (output-classes `(,Anything)))
+  (let* ((fn (make-function-instance <function> debug-name #f input-classes output-classes #f (%singleton-tree)))
          (fn-proc (lambda args
                     (let ((best-method (%function-best-method fn args)))
                       (if best-method
@@ -458,6 +467,8 @@
 
 (define function? function-instance?)
 (define function-name function-instance-name)
+(define function-input-classes function-instance-input-classes)
+(define function-output-classes function-instance-output-classes)
 (define function-proc function-instance-proc)
 (define set-function-proc! function-instance-proc-set!)
 (define function-thunk-method function-instance-thunk-method)

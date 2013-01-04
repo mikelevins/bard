@@ -9,14 +9,18 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define bard:left (make-function debug-name: 'left))
+(define bard:left (make-function debug-name: 'left
+                                 input-classes: `(,Pair)
+                                 output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:left
                         (list <pair>)
                         car
                         debug-name: 'left)
 
-(define bard:right (make-function debug-name: 'right))
+(define bard:right (make-function debug-name: 'right
+                                  input-classes: `(,Pair)
+                                  output-classes: `(,Anything)))
 
 (%add-primitive-method! bard:right
                         (list <pair>)

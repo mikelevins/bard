@@ -9,7 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define bard:= (make-function debug-name: '=))
+(define bard:= (make-function debug-name: '=
+                              input-classes: `(,Anything ,Anything)
+                              output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:=
                         (list Anything Anything)

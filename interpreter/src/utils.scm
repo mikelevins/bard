@@ -138,6 +138,19 @@
               (car ls)
               (next-last (cdr ls))))))
 
+(define (position test ls #!key (start 0)(end #f))
+  (let ((end (or end (length ls))))
+    (let loop ((items (drop start ls))
+               (i start))
+      (if (or (null? items)
+              (>= i end))
+          #f
+          (let ((item (car items))
+                (more (cdr items)))
+            (if (test item)
+                i
+                (loop more (+ 1 i))))))))
+
 (define (remove-if test ls)
   (let loop ((items ls))
     (if (null? items)

@@ -11,7 +11,9 @@
 
 ;;; list?
 
-(define bard:list? (make-function debug-name: 'list?))
+(define bard:list? (make-function debug-name: 'list?
+                                  input-classes: `(,Anything)
+                                  output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:list?
                         (list Anything)
@@ -38,7 +40,9 @@
                         (constantly #t)
                         debug-name: 'list?)
 
-(define bard:symbol? (make-function debug-name: 'symbol?))
+(define bard:symbol? (make-function debug-name: 'symbol?
+                                    input-classes: `(,Anything)
+                                    output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:symbol?
                         (list Anything)
@@ -50,7 +54,9 @@
                         (constantly #t)
                         debug-name: 'symbol?)
 
-(define bard:nothing? (make-function debug-name: 'nothing?))
+(define bard:nothing? (make-function debug-name: 'nothing?
+                                     input-classes: `(,Anything)
+                                     output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:nothing?
                         (list Anything)
@@ -62,7 +68,9 @@
                         (constantly #t)
                         debug-name: 'nothing?)
 
-(define bard:something? (make-function debug-name: 'something?))
+(define bard:something? (make-function debug-name: 'something?
+                                       input-classes: `(,Anything)
+                                       output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:something?
                         (list Anything)
@@ -74,7 +82,9 @@
                         (constantly #f)
                         debug-name: 'something?)
 
-(define bard:table? (make-function debug-name: 'table?))
+(define bard:table? (make-function debug-name: 'table?
+                                   input-classes: `(,Anything)
+                                   output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:table?
                         (list Anything)
@@ -86,7 +96,9 @@
                         (constantly #t)
                         debug-name: 'table?)
 
-(define bard:text? (make-function debug-name: 'text?))
+(define bard:text? (make-function debug-name: 'text?
+                                  input-classes: `(,Anything)
+                                  output-classes: `(,Boolean)))
 
 (%add-primitive-method! bard:text?
                         (list Anything) 
@@ -95,6 +107,16 @@
 
 (%add-primitive-method! bard:text?
                         (list <string>) 
+                        (constantly #t)
+                        debug-name: 'text?)
+
+(%add-primitive-method! bard:text?
+                        (list <symbol>) 
+                        (constantly #t)
+                        debug-name: 'text?)
+
+(%add-primitive-method! bard:text?
+                        (list <keyword>) 
                         (constantly #t)
                         debug-name: 'text?)
 

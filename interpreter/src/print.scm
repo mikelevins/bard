@@ -91,10 +91,26 @@
 
 (define-printer-function (schema-tag <function>) 
   (lambda (fn)
-    (let ((nm (function-name fn)))
-      (if  nm
-           (string-append "#<function " (object->string nm) ">")
-           (string-append "#<an-anonymous-function " (object->string (object->serial-number fn)) ">")))))
+    (let ((in (function-input-classes fn))
+          (out (function-output-classes fn)))
+      (with-output-to-string
+        '()
+        (lambda ()
+          (display "(function ")
+          (if (not (null? in)) 
+              (begin
+                (display (%as-string (car in)))
+                (if (not (null? (cdr in))) 
+                    (for-each (lambda (c)(display (str " " (%as-string c))))
+                              (cdr in)))))
+          (display " -> ")
+          (if (not (null? out))
+              (begin
+                (display (%as-string (car out)))
+                (if (not (null? (cdr out))) 
+                    (for-each (lambda (c)(display (str " " (%as-string c))))
+                              (cdr out)))))
+          (display ")"))))))
 
 (define-printer-function (schema-tag <interpreted-method>) 
   (lambda (m)
@@ -137,3 +153,9 @@
 
 (define-printer-function (schema-tag <protocol>) 
   (lambda (p)(object->string (protocol-name p))))
+
+(define-printer-function (schema-tag <singleton>) 
+  (lambda (s)
+    (with-output-to-string
+        '()
+        (lambda ()(display (str "(singleton " (singleton-value s) ")"))))))

@@ -154,12 +154,19 @@
 (define (%eval-define-method expr #!optional (env (%null-environment)))
   (let* ((prototype (%parse-function-prototype (list-ref expr 2) env))
          (fname (%fproto-name prototype))
-         (fn (or (table-ref $bard-global-variables fname #f)
-                 (let ((f (make-function debug-name: fname)))
-                   (%defglobal fname f)
-                   f)))
          (formals (%fproto-formals prototype))
          (types (map (lambda (p)(%eval p env))(%fproto-types prototype)))
+         (in-classes (map (lambda (t)
+                            (cond
+                             ((class-instance? t) t)
+                             (else Anything))) 
+                          types))
+         (fn (or (table-ref $bard-global-variables fname #f)
+                 (let ((f (make-function debug-name: fname
+                                         input-classes: `(,@in-classes)
+                                         output-classes: `(,Anything))))
+                   (%defglobal fname f)
+                   f)))
          (restarg (%fproto-restarg prototype))
          (framearg (%fproto-framearg prototype))
          (body (cons 'begin (drop 3 expr)))
@@ -205,15 +212,19 @@
 
 ;;; function
 ;;; ----------------------------------------------------------------------
-;;; TODO: make functions accept protocol signatures, eg:
-;;; (function Ratio -> Integer)
-;;; and enforce them when define method is being executed
 
 (%defspecial 'function
              (lambda (expr env)
                (if (> (length expr) 1)
-                   (make-function debug-name: (list-ref expr 1))
-                   (make-function))))
+                   (let ((arrow-pos (position (lambda (x)(eq? '-> x)) expr)))
+                     (if arrow-pos
+                         (let ((in-classes (drop 1 (take arrow-pos expr)))
+                               (out-classes (drop (+ 1 arrow-pos) expr)))
+                           (make-function debug-name: (list-ref expr 1)
+                                          input-classes: `(,@in-classes)
+                                          output-classes: `(,@out-classes)))
+                         (error (str "Invalid function syntax: " expr))))
+                   (error (str "Invalid function syntax: " expr)))))
 
 ;;; if
 ;;; ----------------------------------------------------------------------

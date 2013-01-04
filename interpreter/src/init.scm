@@ -50,9 +50,12 @@
 
   ;;; classes
 
+  (%defglobal '&            &) 
   (%defglobal 'Anything     Anything) 
+  (%defglobal 'Applicable   Applicable) 
   (%defglobal 'Boolean      Boolean)
   (%defglobal 'Character    Character)
+  (%defglobal 'Class        Class)
   (%defglobal 'Float        Float)
   (%defglobal 'Fraction     Fraction)
   (%defglobal 'Function     Function)    
@@ -63,14 +66,17 @@
   (%defglobal 'Method       Method)
   (%defglobal 'Null         Null)
   (%defglobal 'Number       Number)
+  (%defglobal 'Orderable    Orderable)
   (%defglobal 'OutputStream OutputStream)
   (%defglobal 'Pair         Pair)
+  (%defglobal 'Protocol     Protocol)
   (%defglobal 'Ratio        Ratio)
   (%defglobal 'Schema       Schema)
   (%defglobal 'Stream       Stream)
   (%defglobal 'Symbol       Symbol)
   (%defglobal 'Table        Table)
   (%defglobal 'Text         Text)
+  (%defglobal 'Type         Type)
   (%defglobal 'Undefined    Undefined)
 
   ;;; protocols
@@ -144,7 +150,7 @@
   (%defglobal 'empty? bard:empty?)
   (%defglobal 'filter bard:filter)
   (%defglobal 'first bard:first)
-  (%defglobal 'join-strings bard:join-strings)
+  (%defglobal 'join-text bard:join-text)
   (%defglobal 'last bard:last)
   (%defglobal 'length bard:length)
   (%defglobal 'list prim:list)
@@ -156,7 +162,7 @@
   (%defglobal 'rest bard:rest)
   (%defglobal 'second bard:second)
   (%defglobal 'some? bard:some?)
-  (%defglobal 'split-string bard:split-string)
+  (%defglobal 'split-text bard:split-text)
   (%defglobal 'take bard:take)
   (%defglobal 'take-by bard:take-by)
 
