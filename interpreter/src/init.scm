@@ -109,13 +109,13 @@
 ;;; protocol: Calculating
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'prim:* prim:*)
-  (%defglobal 'prim:+ prim:+)
-  (%defglobal 'prim:- prim:-)
-  (%defglobal 'prim:/ prim:/)
-  (%defglobal 'prim:even? prim:even?)
-  (%defglobal 'prim:odd? prim:odd?)
-  (%defglobal 'prim:random prim:random)
+  (%defglobal '* prim:*)
+  (%defglobal '+ prim:+)
+  (%defglobal '- prim:-)
+  (%defglobal '/ prim:/)
+  (%defglobal 'even? prim:even?)
+  (%defglobal 'odd? prim:odd?)
+  (%defglobal 'random prim:random)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Comparing
@@ -177,10 +177,10 @@
 ;;; protocol: Ordering
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'prim:< bard:<)
-  (%defglobal 'prim:<= bard:<=)
-  (%defglobal 'prim:> bard:>)
-  (%defglobal 'prim:>= bard:>=)
+  (%defglobal '< bard:<)
+  (%defglobal '<= bard:<=)
+  (%defglobal '> bard:>)
+  (%defglobal '>= bard:>=)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Pairing
@@ -230,6 +230,8 @@
   (%defglobal 'iostream? prim:iostream?)
   (%defglobal 'nothing? bard:nothing?)
   (%defglobal 'output-stream? prim:output-stream?)
+  (%defglobal 'singleton singleton)
+  (%defglobal 'something? bard:something?)
   (%defglobal 'symbol? bard:symbol?)
   (%defglobal 'table? bard:table?)
   (%defglobal 'text? bard:text?)

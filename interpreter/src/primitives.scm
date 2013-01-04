@@ -552,7 +552,7 @@
    required-count: 1
    restarg: #f))
 
-(define prim:singleton
+(define singleton
   (make-primitive
    procedure: %singleton
    debug-name: 'singleton

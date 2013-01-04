@@ -130,7 +130,7 @@
     (let ((nm (primitive-name pr)))
       (if  nm
            (string-append "#<primitive " (object->string nm) ">")
-           (string-append "#<an-anonymous-primitive " (object->string (object->serial-number x)) ">")))))
+           (string-append "#<an-anonymous-primitive " (object->string (object->serial-number pr)) ">")))))
 
 (define-printer-function (schema-tag <class>) 
   (lambda (class)(object->string (class-name class))))

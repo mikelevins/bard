@@ -1,10 +1,8 @@
 ;;; the obligatory fib implementation
 
-;;;(define method (fib (n (singleton 0))) 1)
-;;;(define method (fib (n (singleton 1))) 1)
+(define method (fib (n (singleton 0))) 1)
+(define method (fib (n (singleton 1))) 1)
 
 (define method (fib (n <fixnum>))
-  (if (prim:< n 2)
-      1
-      (prim:+ (fib (prim:- n 1))(fib (prim:- n 2)))))
+  (+ (fib (- n 1))(fib (- n 2))))
 
