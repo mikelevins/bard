@@ -1,10 +1,6 @@
 TO DO
 
-- bugs
-  Printing of schema types is broken
-
 - special forms to implement
-  - define class
   - define protocol
   - define vector
   - match
@@ -20,9 +16,6 @@ TO DO
   - Make  
   - Stream
   - Table (all values are tables)
-
-- representation work
-  - give schema instances their own representation (they are currently represented as tables)
 
 - system work
   - serialization/deserialization

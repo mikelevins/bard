@@ -61,7 +61,7 @@
 
 (define (%eval-define-variable expr env)
   (%defglobal (list-ref expr 2) (%eval (list-ref expr 3) env))
-               (list-ref expr 2))
+  (list-ref expr 2))
 
 #| TODO: records not ready yet -------------------------
 (define (%eval-define-record expr env)
@@ -179,7 +179,12 @@
     (%add-method! fn method-signature method)
     fname))
 
-(define (%eval-define-class expr env) (error "define class not implemented"))
+(define (%eval-define-class expr env)
+  (let* ((cname (list-ref expr 2))
+         (class (%make-class cname)))
+    (%defglobal cname class)
+    class))
+
 (define (%eval-define-protocol expr env) (error "define protocol not implemented"))
 (define (%eval-define-vector expr env) (error "define vector not implemented"))
 
