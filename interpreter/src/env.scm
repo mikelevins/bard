@@ -81,3 +81,20 @@
                 val)
               (error (string-append "Undefined variable: " (symbol->string var))))))))
 
+;;; ---------------------------------------------------------------------
+;;; variable utils
+;;; ---------------------------------------------------------------------
+
+(define (%globally-bound? varname)
+  (let* ((not-found (gensym))
+         (val (table-ref $bard-global-variables varname not-found)))
+    (if (eq? not-found val)
+        #f
+        #t)))
+
+(define (%bound? varname #!optional (env (%null-environment)))
+  (if (assq varname env)
+      #t
+      (%globally-bound? varname)))
+
+

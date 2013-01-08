@@ -163,7 +163,89 @@
     (%defglobal cname class)
     class))
 
-(define (%eval-define-protocol expr env) (error "define protocol not implemented"))
+
+;;; (define protocol Rational
+;;;   (numerator Ratio -> Integer)
+;;;   (denominator Ratio -> Integer))
+
+;;; when defining a protocol, we define a global variable with the
+;;; protocol's name and bind the protocol object to it.  we also
+;;; create a function corresponding to each function specified in the
+;;; define protocol expression, and add each function to the new
+;;; protocol. Finally, we also define a global variable for each
+;;; function name and bind it to the corresponding function.
+
+;;; a couple of things can complicate matters:
+
+;;; if the protocol already exists, then we don't create a new
+;;; one. Instead, we attempt to add functions to the existing
+;;; protocol.
+
+;;; if a function of the same name already exists, we check the
+;;; signatures. If they differ, we don't replace the existing one;
+;;; instead, we print a warning that it was skipped and move on. In
+;;; that case the programmer must undefine the existing function
+;;; before executing the new definition.
+
+;;; If the signatures are the same, we silently skip the function
+;;; definition, and we add it to the protocol only if it's not already
+;;; there, because functions with equal signatures are for all
+;;; practical purposes identical.
+
+(define (%make-named-protocol-function nm spec env)
+  (cons nm (%eval (cons 'function spec) env)))
+
+(define (%maybe-make-named-protocol-function nm spec env)
+  (if (%globally-bound? nm)
+      (let ((found-val (%global-value nm)))
+        (if (%function? found-val)
+            (if (equal? spec (%function-signature found-val))
+                (cons nm found-val)
+                (begin
+                  (warn (str "the function " nm " is defined with a different signature: "
+                             (%function-signature found-val) "; definition not changed"))
+                  #f))
+            (begin
+              (warn (str nm " is defined, and is not a function; definition not changed"))
+              #f)))
+      (%make-named-protocol-function nm spec env)))
+
+(define (%build-protocol-functions-alist protocol function-specs env)
+  (let* ((fnames (map car function-specs))
+         (fspecs (map cdr function-specs))
+         (named-fns (map (lambda (nm spec)(%maybe-make-named-protocol-function nm spec env))
+                         fnames fspecs)))
+    (remv #f named-fns)))
+
+(define (%maybe-add-protocol-function! protocol fname/fn)
+  (let* ((fname (car fname/fn))
+        (fn (cdr fname/fn))
+        (already (table-ref (protocol-instance-functions protocol) fname #f)))
+    (if already
+        (if (equal? (%function-signature fn) (%function-signature already))
+            already
+            (begin
+              (warn (str fname " is defined on protocol" (protocol-instance-name protocol) 
+                         " with an incompatible signature; definition not changed"))
+              #f))
+        (begin
+          (%protocol-add! protocol fname fn)
+          fn))))
+
+(define (%eval-define-protocol expr env) 
+  (let* ((pname (list-ref expr 2))
+         (function-specs (drop 3 expr))
+         (protocol (if (%globally-bound? pname)
+                       (%eval pname env)
+                       (%make-protocol pname)))
+         (functions-alist (%build-protocol-functions-alist protocol function-specs env)))
+    (for-each (lambda (fname/fn)(%maybe-add-protocol-function! protocol fname/fn))
+              functions-alist)
+    (if (not (and (%globally-bound? pname)
+                  (eq? protocol (%global-value pname))))
+        (%defglobal pname protocol))
+    protocol))
+
 (define (%eval-define-record expr env) (error "define record not implemented"))
 (define (%eval-define-vector expr env) (error "define vector not implemented"))
 
@@ -175,7 +257,7 @@
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))
-                  ;;((eq? 'record kind)(%eval-define-record expr env))
+                  ((eq? 'record kind)(%eval-define-record expr env))
                   ((eq? 'variable kind)(%eval-define-variable expr env))
                   ((eq? 'vector kind)(%eval-define-vector expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))

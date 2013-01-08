@@ -303,8 +303,8 @@
 
 (define-instance protocol-instance 
   constructor: make-protocol-instance
-  (name protocol-name)
-  (functions protocol-functions))
+  name
+  functions)
 
 ;;; constructor
 
@@ -313,10 +313,14 @@
 ;;; accessors
 
 (define (%protocol-ref p fn-name)
-  (table-ref (protocol-functions p) fn-name #f))
+  (table-ref (protocol-instance-functions p) fn-name #f))
 
 (define (%protocol-add! p fn-name fn)
-  (table-set! (protocol-functions p) fn-name fn)
+  (table-set! (protocol-instance-functions p) fn-name fn)
+  p)
+
+(define (%protocol-remove! p fn-name)
+  (table-set! (protocol-instance-functions p) fn-name)
   p)
 
 ;;; definitions of protocols
@@ -478,6 +482,11 @@
 (define function-thunk-method function-instance-thunk-method)
 (define set-function-thunk-method! function-instance-thunk-method-set!)
 (define function-method-tree function-instance-method-tree)
+
+(define (%function-signature fn)
+  (let ((in (function-input-classes fn))
+        (out (function-output-classes fn)))
+    `(,@in -> ,@out)))
 
 ;;; ----------------------------------------------------------------------
 ;;; <interpreted-method>

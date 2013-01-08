@@ -1,7 +1,6 @@
 TO DO
 
 - special forms to implement
-  - define protocol
   - define record
   - define vector
   - table-args in define method (define method (foo a b & {baz: 1 grault: 2}) ...)
