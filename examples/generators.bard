@@ -1,0 +1,25 @@
+;;;
+
+;;; all the natural numbers
+(generate ((x 1))
+  (yield x)
+  (resume (+ x 1)))
+
+;;; fibonacci sequence
+(generate ((x 1)
+           (y 1))
+  (yield x)
+  (resume y (+ x y)))
+
+;;; primes
+(generate ((primes (list 3 2 1))
+           (i 4))
+  (if (some? (partial divisible-by? i) primes)
+      (resume primes (+ i 1))
+      (begin
+       (yield i)
+       (resume (cons i primes)
+               (+ i 1)))))
+
+
+

@@ -226,6 +226,19 @@
                          (error (str "Invalid function syntax: " expr))))
                    (error (str "Invalid function syntax: " expr)))))
 
+;;; generate
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'generate 
+             (lambda (expr env)
+               (let* ((bindings (list-ref expr 1))
+                      (vars (map car bindings))
+                      (initvals (map (lambda (v)(%eval v env))
+                                     (map cadr bindings)))
+                      (body (drop 2 expr)))
+                 (make-generator vars initvals body env))))
+
+
 ;;; if
 ;;; ----------------------------------------------------------------------
 

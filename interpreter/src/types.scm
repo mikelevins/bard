@@ -244,10 +244,11 @@
 (define (%undefined? x)(eqv? x #!unbound))
 (define (%defined? x)(not (%undefined? x)))
 
-;;; ----------------------------------------------------------------------
+;;; =====================================================================
 ;;; base schemas
-;;; ----------------------------------------------------------------------
+;;; =====================================================================
 
+;;; ----------------------------------------------------------------------
 ;;; classes
 ;;; ----------------------------------------------------------------------
 
@@ -293,7 +294,8 @@
 (define Type (%make-class 'Type))
 (define Undefined (%make-class 'Undefined))
 
-;;; protocols
+;;; ----------------------------------------------------------------------
+;;; <protocol>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-protocol (%next-bard-type-number))
@@ -336,7 +338,8 @@
 (define Typing         (%make-protocol 'Typing))         ; discriminating values by type
 (define Writing        (%make-protocol 'Writing))        ; putting values into output streams
 
-;;; alist table
+;;; ----------------------------------------------------------------------
+;;; <alist-table>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-alist-table (%next-bard-type-number))
@@ -394,7 +397,8 @@
                     (cons (cdr slot) vals)))))))
 
 
-;;; function
+;;; ----------------------------------------------------------------------
+;;; <function>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-function (%next-bard-type-number))
@@ -475,7 +479,8 @@
 (define set-function-thunk-method! function-instance-thunk-method-set!)
 (define function-method-tree function-instance-method-tree)
 
-;;; interpreted-method
+;;; ----------------------------------------------------------------------
+;;; <interpreted-method>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-interpreted-method (%next-bard-type-number))
@@ -537,7 +542,8 @@
 (define set-interpreted-method-environment! interpreted-method-instance-environment-set!)
 (define interpreted-method-body interpreted-method-instance-body)
 
-;;; primitive
+;;; ----------------------------------------------------------------------
+;;; <primitive>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-primitive (%next-bard-type-number))
@@ -554,7 +560,6 @@
                         (required-count 0)
                         (restarg #f)
                         (debug-name 'an-anonymous-primitive))
-  (assert (procedure? procedure) "Can't create a primitive without a Scheme procedure to implement it")
   (let* ((prim (make-primitive-instance <primitive> debug-name #f required-count restarg))
          (prim-proc (lambda args (apply procedure args))))
     (set-primitive-proc! prim prim-proc)
@@ -568,7 +573,8 @@
 (define primitive-restarg primitive-instance-restarg)
 (define primitive-required-count primitive-instance-required-count)
 
-;;; singleton
+;;; ----------------------------------------------------------------------
+;;; <singleton>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-singleton (%next-bard-type-number))
@@ -600,15 +606,76 @@
 (define %singleton? singleton-instance?)
 
 ;;; ----------------------------------------------------------------------
-;;; structure schemas
+;;; <generator>
 ;;; ----------------------------------------------------------------------
+
+(define tags:$bard-generator (%next-bard-type-number))
+(define <generator> (make-base-schema '<generator> tags:$bard-generator))
+
+(define-instance generator-instance 
+  constructor: make-generator-instance
+  results)
+
+;;; accessors
+
+(define generator-results generator-instance-results)
+(define set-generator-results! generator-instance-results-set!)
+
+;;; constructor
+
+(define (make-generator vars initvals body env)
+  (let* ((gen (make-generator-instance <generator> '())))
+    (let* ((returnc #f)
+           (resumec #f)
+           (loopc #f)
+           (args initvals)
+           (results '())
+           (yield (make-primitive
+                   procedure: (lambda args 
+                                (call/cc
+                                 (lambda (resume)
+                                   (begin
+                                     (set! resumec resume)
+                                     (apply returnc args)))))
+                   debug-name: 'yield
+                   required-count: 0
+                   restarg: 'more))
+           (resume (make-primitive
+                    procedure: (lambda vals (begin (set! args vals)(loopc)))
+                    debug-name: 'resume
+                    required-count: 0
+                    restarg: 'more))
+           (env (%add-let-bindings env
+                                   `((yield ,yield)
+                                     (resume ,resume))))
+           (method (%eval `(method ,vars ,@body) env)))
+      (lambda ()
+        (call/cc 
+         (lambda (return)
+           (set! returnc return)
+           (if resumec
+               (resumec)
+               (let loop ()
+                 (set! loopc loop)
+                 (%apply method args)
+                 (loop)))))))
+    gen))
+
+;;; (define $g (make-generator '(x y) '(1 1) '((yield x)(resume y (+ x y))) '()))
+;;; (next $g)
+
+(define (next g)(g))
+
+;;; =====================================================================
+;;; structure schemas
+;;; =====================================================================
 
 (define <iostream> (make-structure-schema '<iostream> (%next-bard-type-number) (##structure-type (current-input-port))))
 (%register-structure-schema! (structure-schema-prototype <iostream>) <iostream>)
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; getting bard types for values
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (define (%object->schema val)
   (if (schema-instance? val)
@@ -616,3 +683,5 @@
       (if (##structure? val)
           (%structure->schema (##structure-type val))
           (%tag->schema (%tag val)))))
+
+

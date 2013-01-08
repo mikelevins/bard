@@ -44,6 +44,9 @@
 
 (define (constantly x) (lambda args x))
 
+(define (current-continuation)
+  (call/cc (lambda (cc) (cc cc))))
+
 (define (identity x) x)
 
 (define (flip fn)(lambda (x y)(fn y x)))
@@ -96,7 +99,17 @@
                              result))))))))
 
 
-
+(define (copy-tree ls)
+  (if (null? ls)
+      '()
+      (let ((head (car ls))
+            (tail (cdr ls)))
+        (cons (if (pair? head)
+                  (copy-tree head)
+                  head)
+              (if (pair? tail)
+                  (copy-tree tail)
+                  tail)))))
 
 (define (drop n ls)
   (list-tail ls n))
@@ -208,6 +221,8 @@
                  (loop (_drop advance ls)
                        (cons (_take len ls)
                              result))))))))
+
+(define (zip l1 l2)(map cons l1 l2))
 
 ;;; ---------------------------------------------------------------------
 ;;; alist utils
