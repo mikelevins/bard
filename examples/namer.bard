@@ -53,12 +53,12 @@
                         (gen name (+ try-count 1))))))
             name)))
 
-(define method (build-names n)
-  (loop build ((names [])
-               (i 0))
-        (if (< i n)
-            (build (add-first (build-name) names) 
-                   (+ i 1))
-            names)))
+(define method (build-names)
+  (generate ((nms []))
+    (let ((nm (build-name)))
+      (yield nm)
+      (resume (add-first nm nms)))))
 
-
+;;; (read-names "us.names")
+;;; (define variable $names (build-names))
+;;; (take 10 $names)
