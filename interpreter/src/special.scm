@@ -56,43 +56,21 @@
                                (%eval-sequence conseq env)
                                (loop (cdr clauses)))))))))
 
+;;; def
+;;; ----------------------------------------------------------------------
+
+(define (%eval-def expr env)
+  (%defglobal (list-ref expr 1) (%eval (list-ref expr 2) env))
+  (list-ref expr 2))
+
+(%defspecial 'def (lambda (expr env) (%eval-def expr env)))
+
 ;;; define
 ;;; ----------------------------------------------------------------------
 
 (define (%eval-define-variable expr env)
   (%defglobal (list-ref expr 2) (%eval (list-ref expr 3) env))
   (list-ref expr 2))
-
-#| TODO: records not ready yet -------------------------
-(define (%eval-define-record expr env)
-  (let* ((sname (list-ref expr 2))
-         (slot-specs (drop 3 expr))
-         (slots (%parse-slot-descriptions slot-specs env))
-         (sc (%make-record sname slots)))
-    (table-set! $bard-global-variables sname sc)
-    sc))
-
-(define (%canonicalize-slot-spec spec)
-  (let ((spec (if (or (symbol? spec)(string? spec)(keyword? spec))
-                  (list spec default: '())
-                  (if (list? spec)
-                      (list (car spec)
-                            default:
-                            (getf default: spec '()))
-                      (error (string-append "Invalid slot spec: "
-                                            (object->string spec)))))))
-    spec))
-
-(define (%parse-canonical-slot-description spec env)
-  (cons (car spec)
-        (%eval (getf default: spec '()) env)))
-
-(define (%parse-slot-descriptions specs env)
-  (let ((specs (map %canonicalize-slot-spec specs)))
-    (map (lambda (s) (%parse-canonical-slot-description s env))
-         specs)))
-----------------------------------------------------------
-|#
 
 (define (%eval-define-macro expr env)
   (let* ((proto (caddr expr))
@@ -186,6 +164,7 @@
     class))
 
 (define (%eval-define-protocol expr env) (error "define protocol not implemented"))
+(define (%eval-define-record expr env) (error "define record not implemented"))
 (define (%eval-define-vector expr env) (error "define vector not implemented"))
 
 (%defspecial 'define

@@ -165,6 +165,16 @@
    required-count: 1
    restarg: #f))
 
+(define (bard:range-from start)
+  (%eval `(generate ((i ,start)) (yield i)(resume (+ i 1))) '()))
+
+(define prim:range-from
+  (make-primitive
+   procedure: bard:range-from
+   debug-name: 'range-from
+   required-count: 1
+   restarg: #f))
+
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Listing
 ;;; ---------------------------------------------------------------------
@@ -175,6 +185,25 @@
    debug-name: 'list
    required-count: 0
    restarg: 'more))
+
+(define (bard:range start end)
+  (if (= start end)
+      (list start)
+      (let ((op (if (< start end) + -))
+            (test (if (< start end) >= <=)))
+        (let loop ((i start)
+                   (result '()))
+          (if (test i end)
+              (reverse result)
+              (loop (op i 1)
+                    (cons i result)))))))
+
+(define prim:range
+  (make-primitive
+   procedure: bard:range
+   debug-name: 'range
+   required-count: 2
+   restarg: #f))
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Mapping

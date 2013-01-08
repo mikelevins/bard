@@ -142,6 +142,7 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'next prim:next)
+  (%defglobal 'range-from prim:range-from)
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Listing
@@ -166,6 +167,7 @@
   (%defglobal 'prim:alist-table-merge prim:alist-table-merge)
   (%defglobal 'next-last bard:next-last)
   (%defglobal 'reduce bard:reduce)
+  (%defglobal 'range bard:range)
   (%defglobal 'rest bard:rest)
   (%defglobal 'second bard:second)
   (%defglobal 'some? bard:some?)

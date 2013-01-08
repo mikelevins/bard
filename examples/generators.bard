@@ -15,7 +15,7 @@
     (yield x)
     (resume y (+ x y))))
 
-(take 8 $fibs)
+(take 12 $fibs)
 
 
 

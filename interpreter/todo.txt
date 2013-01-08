@@ -2,7 +2,9 @@ TO DO
 
 - special forms to implement
   - define protocol
+  - define record
   - define vector
+  - table-args in define method (define method (foo a b & {baz: 1 grault: 2}) ...)
   - match
   - receive
   - send
@@ -12,10 +14,12 @@ TO DO
   - Actor
 
 - protocols to implement
-  - Actor
-  - Make  
-  - Stream
-  - Table (all values are tables)
+  - Communicating (Actor)
+  - Creating (make)
+  - Streaming
+  - Mapping (all values are tables)
+
+=== release can happen here ===
 
 - system work
   - serialization/deserialization
@@ -24,9 +28,6 @@ TO DO
   - image save/load
   - OS/runtime/windowing/events work
 
-- performance
-  - move interpretation tasks out of the main interpreter loop, make them statically precomputed
-    (this work will proceed in phases)
 
 
 
