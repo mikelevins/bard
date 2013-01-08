@@ -180,6 +180,18 @@
                         string-ref
                         debug-name: 'element)
 
+(%add-primitive-method! bard:element
+                        (list <generator> <fixnum>)
+                        (lambda (gen n)
+                          (let loop ((len (length (generator-results gen))))
+                            (if (< n len)
+                                (list-ref (generator-results gen)
+                                          (- len (+ n 1)))
+                                (begin
+                                  (next gen)
+                                  (loop (+ len 1))))))
+                        debug-name: 'element)
+
 ;;; ---------------------------------------------------------------------
 ;;; empty?
 ;;; ---------------------------------------------------------------------
@@ -258,6 +270,15 @@
 (%add-primitive-method! bard:first
                         (list <string>)
                         (lambda (s)(string-ref s 0))
+                        debug-name: 'first)
+
+(%add-primitive-method! bard:first
+                        (list <generator>)
+                        (lambda (gen)
+                          (if (null? (generator-results gen))
+                              (next gen))
+                          (list-ref (generator-results gen)
+                                    (- (length (generator-results gen)) 1)))
                         debug-name: 'first)
 
 ;;; ---------------------------------------------------------------------
@@ -658,6 +679,17 @@
 (%add-primitive-method! bard:take
                         (list <fixnum>  <string>)
                         (lambda (n str)(substring str 0 n))
+                        debug-name: 'take)
+
+(%add-primitive-method! bard:take
+                        (list <fixnum>  <generator>)
+                        (lambda (n gen)
+                          (let loop ((len (length (generator-results gen))))
+                            (if (< n len)
+                                (take n (reverse (generator-results gen)))
+                                (begin
+                                  (next gen)
+                                  (loop (+ len 1))))))
                         debug-name: 'take)
 
 ;;; ---------------------------------------------------------------------

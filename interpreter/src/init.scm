@@ -35,6 +35,7 @@
   (%defglobal '<fixnum>              <fixnum>)
   (%defglobal '<flonum>              <flonum>)
   (%defglobal '<function>            <function>)
+  (%defglobal '<generator>           <generator>)
   (%defglobal '<interpreted-method>  <interpreted-method>)
   (%defglobal '<iostream>            <iostream>)
   (%defglobal '<keyword>             <keyword>)
@@ -135,6 +136,12 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'as bard:as)
+
+;;; ---------------------------------------------------------------------
+;;; Protocol: Generating
+;;; ---------------------------------------------------------------------
+
+  (%defglobal 'next prim:next)
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Listing

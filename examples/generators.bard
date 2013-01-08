@@ -1,25 +1,21 @@
 ;;;
 
 ;;; all the natural numbers
-(generate ((x 1))
-  (yield x)
-  (resume (+ x 1)))
+(define variable $ints
+  (generate ((x 1))
+    (yield x)
+    (resume (+ x 1))))
+
+(take 5 $ints)
 
 ;;; fibonacci sequence
-(generate ((x 1)
-           (y 1))
-  (yield x)
-  (resume y (+ x y)))
+(define variable $fibs
+  (generate ((x 1)
+             (y 1))
+    (yield x)
+    (resume y (+ x y))))
 
-;;; primes
-(generate ((primes (list 3 2 1))
-           (i 4))
-  (if (some? (partial divisible-by? i) primes)
-      (resume primes (+ i 1))
-      (begin
-       (yield i)
-       (resume (cons i primes)
-               (+ i 1)))))
+(take 8 $fibs)
 
 
 

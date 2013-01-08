@@ -148,6 +148,9 @@
            (string-append "#<primitive " (object->string nm) ">")
            (string-append "#<an-anonymous-primitive " (object->string (object->serial-number pr)) ">")))))
 
+(define-printer-function (schema-tag <generator>) 
+  (lambda (gen)(string-append "#<generator " (object->string (object->serial-number gen)) ">")))
+
 (define-printer-function (schema-tag <class>) 
   (lambda (class)(object->string (class-name class))))
 
