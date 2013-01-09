@@ -358,7 +358,7 @@ signature notation to indicate the inputs and outputs of protocol
 functions.
 
 When a function accepts or returns any number of values, but they must
-all be of a specific type, we right the signature like this:
+all be of a specific type, we write the signature like this:
 
     quux [Text]& -> [Integer]&
 
