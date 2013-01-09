@@ -393,7 +393,7 @@ conflicts either by renaming functions, changing their signatures to
 match the existing functions, or undefining the existing functions or
 protocols.
 
-**define record**
+**define record** _Not yet implemented_
 
 define record _schema-name_ ( _slot-name_ [ _slot-option_ ] ...) ...
 
@@ -535,9 +535,9 @@ loop _loopname_ ([( _var_ _val-expression1_ ) ...]) [ _expression_ ] ... [( _loo
 
 make _type_ [ _init-argument1_ ] ...
 
-**match**
+**match** _Not yet implemented_
 
-match ([ _pattern_ _value-expression_ ] ...) [ _expression_ ] ... _Not yet implemented_
+match ([ _pattern_ _value-expression_ ] ...) [ _expression_ ] ...
 
 **method**
 
@@ -559,21 +559,21 @@ quasiquote _form_
 
 quote _form_
 
-**receive**
+**receive**  _Not yet implemented_
 
-receive  _Not yet implemented_
+receive
 
-**remove-function!**
+**remove-function!** _Not yet implemented_
 
-remove-function! _protocol_ _function-name_  _Not yet implemented_
+remove-function! _protocol_ _function-name_
 
 **repeat**
 
 repeat _expression_
 
-**send**
+**send** _Not yet implemented_
 
-send _actor_ _value_  _Not yet implemented_
+send _actor_ _value_
 
 **set!**
 
@@ -795,21 +795,21 @@ Arranging values into ordered sequences.
 
 Arranging values into sets of key/value pairs.
 
-    contains-key? Table -> Boolean [*Not yet implemented*]
+    contains-key? Table -> Boolean (Not yet implemented)
 
-    contains-value? Table -> Boolean [*Not yet implemented*]
+    contains-value? Table -> Boolean (Not yet implemented)
 
-    get Table Anything -> Anything [*Not yet implemented*]
+    get Table Anything -> Anything (Not yet implemented)
 
-    keys Table -> List [*Not yet implemented*]
+    keys Table -> List (Not yet implemented)
 
-    merge [Table]& -> Table [*Not yet implemented*]
+    merge [Table]& -> Table (Not yet implemented)
 
-    put Table Anything Anything -> Table [*Not yet implemented*]
+    put Table Anything Anything -> Table (Not yet implemented)
 
     table & -> Table
 
-    vals Table -> List [*Not yet implemented*]
+    vals Table -> List (Not yet implemented)
 
 **Ordering**
 
@@ -880,15 +880,15 @@ Distinguishing the types of values from one another.
 
     boolean? Anything -> Boolean
 
-    character? Anything -> Boolean [*Not yet implemented*]
+    character? Anything -> Boolean (Not yet implemented)
 
-    class? Anything -> Boolean [*Not yet implemented*]
+    class? Anything -> Boolean (Not yet implemented)
 
     false? Anything -> Boolean
 
     float? Anything -> Boolean
 
-    fraction? Anything -> Boolean [*Not yet implemented*]
+    fraction? Anything -> Boolean (Not yet implemented)
 
     foreign-value? Anything -> Boolean
 
@@ -900,33 +900,33 @@ Distinguishing the types of values from one another.
 
     iostream? Anything -> Boolean
 
-    keyword? Anything -> Boolean [*Not yet implemented*]
+    keyword? Anything -> Boolean (Not yet implemented)
 
     list? Anything -> Boolean
 
-    method? Anything -> Boolean [*Not yet implemented*]
+    method? Anything -> Boolean (Not yet implemented)
 
     nothing? Anything -> Boolean
 
-    number? Anything -> Boolean [*Not yet implemented*]
+    number? Anything -> Boolean (Not yet implemented)
 
-    orderable? Anything -> Boolean [*Not yet implemented*]
+    orderable? Anything -> Boolean (Not yet implemented)
 
     output-stream? Anything -> Boolean
 
-    pair? Anything -> Boolean [*Not yet implemented*]
+    pair? Anything -> Boolean (Not yet implemented)
 
-    protocol? Anything -> Boolean [*Not yet implemented*]
+    protocol? Anything -> Boolean (Not yet implemented)
 
-    ratio? Anything -> Boolean [*Not yet implemented*]
+    ratio? Anything -> Boolean (Not yet implemented)
 
-    schema? Anything -> Boolean [*Not yet implemented*]
+    schema? Anything -> Boolean (Not yet implemented)
 
     singleton Anything -> Singleton
 
     something? Anything -> Boolean
 
-    stream? Anything -> Boolean [*Not yet implemented*]
+    stream? Anything -> Boolean (Not yet implemented)
 
     symbol? Anything -> Boolean
 
@@ -936,9 +936,9 @@ Distinguishing the types of values from one another.
 
     true? Anything -> Boolean
 
-    type? Anything -> Boolean [*Not yet implemented*]
+    type? Anything -> Boolean (Not yet implemented)
 
-    undefined? Anything -> Boolean [*Not yet implemented*]
+    undefined? Anything -> Boolean (Not yet implemented)
 
 **Writing**
 
