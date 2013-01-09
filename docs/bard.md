@@ -19,9 +19,9 @@ This document is a brief overview and basic reference for the language.
 ## Examples
 
 Programmers like to see example code, so that they can see what a
-language looks like in use. Here are a couple of short examples
-written in Bard. These are taken from the examples directory of the
-repository, and are part of Bard's tests.
+language looks like in use. Here are a few short examples written in
+Bard. These are taken from the examples directory of the repository,
+and are part of Bard's tests.
 
 **Recursive fibonacci**
 
@@ -35,7 +35,7 @@ repository, and are part of Bard's tests.
 
     (define protocol Rational
       (numerator Ratio -> Integer)
-      (denominator Ration -> Integer))
+      (denominator Ratio -> Integer))
 
 **Iterative fibonacci using generators**
 
