@@ -99,14 +99,14 @@ MAIN_C_SOURCES= \
 # make rules
 # ----------------------------------------
 
-BUILD_DIR=builds
+BUILD_DIR=builds/linux
 EXECUTABLE=bard
-INSTALL_PATH=/home/mikel/bin
+INSTALL_PATH=~/bin
 
 all: main
 
 install: 
-	cp src/main ${INSTALL_PATH}/bard
+	cp ${BUILD_DIR}/bard ${INSTALL_PATH}/bard
 
 clean:
 	rm -f ${C_SOURCES}
@@ -118,3 +118,4 @@ clean:
 
 main: 
 	${GSC} -exe ${SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
+	mv src/main ${BUILD_DIR}/bard

@@ -1,7 +1,6 @@
 ;;; bard implementation of mikel's namer
-
-;;; (load "namer.bard")
-;;; (read-names "us.names")
+;;; TODO: try a prefix-tree version
+;;;       might want to add <hash-table> or <wb-tree-table> to support it
 
 (define variable $name-starts nothing)
 (define variable $name-parts nothing)
@@ -27,7 +26,7 @@
         (part2 (last part)))
     (some? (^ (p) (and (= part1 (first p))
                        (= part2 (second p))))
-           (drop (random $name-parts-count)
+           (drop (random (- $name-parts-count 1))
                  $name-parts))))
 
 (define variable *max-name-length* 16)
