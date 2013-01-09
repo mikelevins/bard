@@ -241,7 +241,7 @@ among other possibilities.
 
 ## Bard's basic vocabulary
 
-To use a programming languge, you need to know its basic
+To use a programming language, you need to know its basic
 vocabulary--the basic words and phrases you can use to direct
 computation. 
 
