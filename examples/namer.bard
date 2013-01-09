@@ -59,10 +59,6 @@
       (yield nm)
       (resume (add-first nm nms)))))
 
-;;; (read-names "us.names")
-;;; (define variable $names (build-names))
-;;; (take 10 $names)
-
 (define method (names path n)
   (read-names path)
   (let ((nms (build-names)))
