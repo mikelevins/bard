@@ -252,9 +252,7 @@ other operations.
 
 **and**
 
-    and [ form ] ...
-
-Example:
+and [ _form_ ] ...
 
     bard> (and (odd? 3)(even? 2)(number? "Not a number")(odd? 5))
     false
@@ -265,9 +263,7 @@ returns the value of the last form.
 
 **begin**
 
-    begin [form] ...
-
-Example:
+begin [ _form_ ] ...
 
     (begin (newline)
        (display "Hello")
@@ -282,9 +278,7 @@ returned are discarded, except for the last one, which is returned.
 
 **cond**
 
-    cond (test result) ... [(else: result)]
-
-Example:
+cond ( _test_ _result_) ... [(else: _result_ )]
 
     (cond
       ((= (today) 'Monday) "Someone has a case of the Mondays.")
@@ -302,63 +296,126 @@ that the last clause is executed if no earlier one was.
 
 **def**
 
-    def variable value-expression
+def _variable-name_ _value-expression_
 
-    define class classname 
+    (def *answer* 42))
 
-    define macro (macroname parameter ...) expression ...
+Evaluates the value expression and assigns the result to the global
+variable whose name is given by variable-name, creating the variable
+if it doesn't already exist, and replacing its current value
+otherwise.
 
-    define method (methodname [parameter] ...) expression ...
+**define class**
 
-    define protocol protocol-name [(function-name [class] ... -> [class] ...)] ...
+define class _classname_ 
 
-    define record schema-name (slot-name [slot-option] ...) ...
+**define macro**
 
-    define variable variable value-expression
+define macro ( _macroname_ _parameter_ ...) _expression_ ...
 
-    define vector schema-name (slot-option ...) ...
+**define method**
 
-    ensure before-expression during-expression after-expression
+define method (methodname [parameter] ...) expression ...
 
-    function [class] ... -> [class]
+**define protocol**
 
-    generate ([(var val-expression) ...]) [expression] ... [(yield [expression] ...)] ... [(resume [val-expression ...])]
+define protocol protocol-name [(function-name [class] ... -> [class] ...)] ...
 
-    if test-expression then-expression [else-expression]
+**define record**
 
-    let ([(var val-expression) ...]) [expression] ...
+define record schema-name (slot-name [slot-option] ...) ...
 
-    loop loopname ([(var val-expression) ...]) [expression] ... [(loopname val-expression ...)] ...
-    
-    match ([pattern value-expression] ...) [expression] ...  Not yet implemented
+**define variable**
 
-    method ([parameter] ...) [expression] ...
+define variable variable value-expression
 
-    not form
+**define vector**
 
-    or [form] ...
+define vector schema-name (slot-option ...) ...
 
-    quasiquote form
+**ensure**
 
-    quote form
+ensure before-expression during-expression after-expression
 
-    receive  Not yet implemented
+**function**
 
-    repeat expression
+function [class] ... -> [class]
 
-    send  Not yet implemented
+**generate**
 
-    set! variable value-expression
+generate ([(var val-expression) ...]) [expression] ... [(yield [expression] ...)] ... [(resume [val-expression ...])]
 
-    time expression
+**if**
 
-    unless test-expression [then-expression] ...
+if test-expression then-expression [else-expression]
 
-    when test-expression [then-expression] ...
+**let**
 
-    with-exit (var) [expression] ...
+let ([(var val-expression) ...]) [expression] ...
 
-    with-open-file ([(var pathname) [direction] [mode]]) [expression] ...
+**loop**
+
+loop loopname ([(var val-expression) ...]) [expression] ... [(loopname val-expression ...)] ...
+
+**match**
+
+match ([pattern value-expression] ...) [expression] ...  Not yet implemented
+
+**method**
+
+method ([parameter] ...) [expression] ...
+
+**not**
+
+not form
+
+**or**
+
+or [form] ...
+
+**quasiquote**
+
+quasiquote form
+
+**quote**
+
+quote form
+
+**receive**
+
+receive  Not yet implemented
+
+**repeat**
+
+repeat expression
+
+**send**
+
+send  Not yet implemented
+
+**set!**
+
+set! variable value-expression
+
+**time**
+
+time expression
+
+**unless**
+
+unless test-expression [then-expression] ...
+
+**when**
+
+when test-expression [then-expression] ...
+
+**with-exit**
+
+with-exit (var) [expression] ...
+
+**with-open-file**
+
+with-open-file ([(var pathname) [direction] [mode]]) [expression] ...
 
 **Built-in protocols**
 
