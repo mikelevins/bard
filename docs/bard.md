@@ -374,7 +374,7 @@ Text argument.
 
 **Applying**
 
-The protocol that handles applying functions and methods to arguments.
+Applying functions and methods to arguments.
 
     apply Applicable Anything & => &
 
@@ -392,7 +392,7 @@ The protocol that handles applying functions and methods to arguments.
 
 **Calculating**
 
-The protocol that handles arithmetic and other mathematical functions.
+Arithmetic and other math.
 
     * [Number]& -> Number
 
@@ -410,14 +410,13 @@ The protocol that handles arithmetic and other mathematical functions.
 
 **Comparing**
 
-The protocol that handles comparing values for equality and
-equivalence.
+Comparing values for equality and equivalence.
 
     = [Number]& -> Boolean
 
 **Constructing**
 
-The protocol that handles constructing and initializing new values.
+Constructing and initializing new values.
 
     initialize Anything & -> Anything
 
@@ -425,7 +424,7 @@ The protocol that handles constructing and initializing new values.
 
 **Listing**
 
-The protocol that handles arranging values into ordered sequences.
+Arranging values into ordered sequences.
 
     add-first Anything List -> List
 
@@ -477,8 +476,7 @@ The protocol that handles arranging values into ordered sequences.
 
 **Mapping**
 
-The protocol that handles arranging values into sets of key/value
-pairs.
+Arranging values into sets of key/value pairs.
 
     contains-key? Table -> Boolean [*Not yet implemented*]
 
@@ -498,7 +496,7 @@ pairs.
 
 **Ordering**
 
-The protocol that handles sorting values into stable orders. 
+Sorting values into stable orders. 
 
     < [Orderable]& -> Boolean
 
@@ -510,7 +508,7 @@ The protocol that handles sorting values into stable orders.
 
 **Pairing**
 
-The protocol that handles associating one value with another.
+Associating one value with another.
 
     left Pair -> Anything
 
@@ -520,7 +518,7 @@ The protocol that handles associating one value with another.
 
 **Reading**
 
-The protocol that handles input of various kinds. 
+Input of various kinds. 
 
     current-input -> InputStream
 
@@ -539,8 +537,7 @@ The protocol that handles input of various kinds.
 
 **System**
 
-The protocol that handles operations on the Bard runtime and its
-underlying host system.
+Operations on the Bard runtime and its underlying host system.
 
     error Anything -> Anything
 
@@ -560,8 +557,7 @@ underlying host system.
 
 **Typing**
 
-The protocol that handles distinguishing the types of values from one
-another.
+Distinguishing the types of values from one another.
 
     applicable? Anything -> Boolean
 
@@ -629,7 +625,7 @@ another.
 
 **Writing**
 
-The protocol that handles output of various kinds. 
+Output of various kinds. 
 
     current-output -> OutputStream
 
