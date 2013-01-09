@@ -198,7 +198,7 @@
 (define (%maybe-make-named-protocol-function nm spec env)
   (if (%globally-bound? nm)
       (let ((found-val (%global-value nm)))
-        (if (%function? found-val)
+        (if (function? found-val)
             (if (equal? spec (%function-signature found-val))
                 (cons nm found-val)
                 (begin

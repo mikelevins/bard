@@ -61,7 +61,7 @@
   (r6rs-compatible-read?          unprintable: read-write:)
   (r6rs-compatible-write?         unprintable: read-write:)
   (here-strings-allowed?          unprintable: read-write:)
-  (comment-handler                unprintable: read-write:) ; new field in latest gambit sources
+  ;(comment-handler                unprintable: read-write:) ; new field in latest gambit sources
 )
 ;;;---------------------------------------------------------------------
 ;;; the Bard readtable

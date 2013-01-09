@@ -87,3 +87,6 @@
   (let ((msg (error->string err)))
     (display (string-append (string #\newline) "ERROR: " msg " " (string #\newline)))))
 
+(define (warn msg)
+  (display (string-append (string #\newline) "Warning: " msg " " (string #\newline))))
+
