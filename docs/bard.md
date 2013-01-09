@@ -302,7 +302,7 @@ cases, where following it would be contrived or awkward, and so, for
 example, the protocol that is concerned with system operations is
 named `System`.
 
-**Reading function signature**
+**Reading function signatures**
 
 A **function signature** shows the types of values a function accepts
 as input, and the types of values it can be expected to produce as
