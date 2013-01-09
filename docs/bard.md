@@ -248,7 +248,9 @@ computation.
 This section briefly lists and explains Bard's basic functions and
 other operations.
 
-**Control and special forms**
+###Control and special forms**
+
+**and**
 
     and [ form ] ...
 
@@ -261,17 +263,44 @@ Evaluates each form from left to right. If any form returns a false
 value `and` stops evaluation and returns the false value. Otherwise it
 returns the value of the last form.
 
+**begin**
 
     begin [form] ...
+
+Example:
+
+    (begin (newline)
+       (display "Hello")
+       (display ",World!")
+       (newline)
+       (* 2 3))
 
 Evaluates each form from left to right, returning the value of the
 last form. `begin` is most often used to run proceudres with
 side-effects, such as printing something to the screen. Any values
 returned are discarded, except for the last one, which is returned.
 
+**cond**
+
     cond (test result) ... [(else: result)]
 
-Evaluates the 
+Example:
+
+    (cond
+      ((= (today) 'Monday) "Someone has a case of the Mondays.")
+      ((= (today) 'Friday) "Thank God!")
+      ((= (today) 'Saturday) "ZZZZZZ....")
+      ((= (today) 'Sunday) "Where does the time go?")
+      (else: "Isn't it quitting time yet?"))
+
+Evaluates the first test; if it returns a true value then Bard
+evaluates the corresponding result. Otherwise, it repeats the process
+with the next `(test result)` form. If no test succeeds, `cond`
+returns `nothing`. Conventionally, the last test is the keyword
+`else:`, which is logically true in Bard, and therefore guarantees
+that the last clause is executed if no earlier one was.
+
+**def**
 
     def variable value-expression
 
