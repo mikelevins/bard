@@ -141,6 +141,21 @@ anything except `undefined`.
 A procedure. A callable object that executes some code when applied to
 arguments. Methods are the basic tools in Bard for computing results.
 
+The operator `^` can also be spelled `method`:
+
+    (method (x y) (+ x y))
+
+In some cases code is clearer when you use the name `method`; in
+others, when you use `^`. The two operators are identical; use
+whichever one makes your code easier to read.
+
+The first argument after the `^` or `method` is a list of formal
+parameters. Everything after the parameter list is the **body** of the
+method. When you apply a method to some arguments, Bard binds the
+argument values to the parameters and then evaluates the expressions
+in the body one after another. It returns the value (or values) of the
+last expression evaluated.
+
 **Function**
 
     (function  -> List)          
@@ -148,14 +163,27 @@ arguments. Methods are the basic tools in Bard for computing results.
     (function Integer Integer -> Integer)          
 
 A function is a callable object, similar to a method, but unlike a
-method it can't compute results on its own. A function relies on
+method it can't compute results on its own. Instead, it relies on
 methods to do its computation.
 
 When you call a function, it examines its arguments and chooses a
-method based on their types, then applies that method to the arguments
+method based on their types, then applies the method to the arguments
 to compute its results. Because a function can choose a different
 method for different arguments, a single function can work with a
 variety of different types of data.
+
+A function literal, like this one:
+
+    (function Ratio -> Integer)          
+
+describes a function that accepts arguments whose class is Ratio and
+returns values whose class is Integer. Didn't I just say that
+functions can work on arguments of different types? Yes; classes in
+Bard are abstract types that can stand for any number of concrete
+types. The type Ratio indicates that this function can accept a value
+of any type, as long as it belongs to the Ratio class.
+
+Classes and other types are explained more thoroughly later.
 
 ### Specialized classes
 
