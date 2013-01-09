@@ -222,69 +222,69 @@ other operations.
 
 **Control and special forms**
 
-    and [ *form* ] ...
+    and [ form ] ...
 
-    begin [_form_] ...
+    begin [form] ...
 
-    cond (_test_ _result_) ... [(else: _result_)]
+    cond (test result) ... [(else: result)]
 
-    def _variable_ _value-expression_
+    def variable value-expression
 
-    define class _classname_ 
+    define class classname 
 
-    define macro (_macroname_ _parameter_ ...) _expression_ ...
+    define macro (macroname parameter ...) expression ...
 
-    define method (_methodname_ [_parameter_] ...) _expression_ ...
+    define method (methodname [parameter] ...) expression ...
 
-    define protocol _protocol-name_ [(_function-name_ [_class_] ... -> [_class_] ...)] ...
+    define protocol protocol-name [(function-name [class] ... -> [class] ...)] ...
 
-    define record _schema-name_ (_slot-name_ [_slot-option_] ...) ...
+    define record schema-name (slot-name [slot-option] ...) ...
 
-    define variable _variable_ _value-expression_
+    define variable variable value-expression
 
-    define vector _schema-name_ (_slot-option_ ...) ...
+    define vector schema-name (slot-option ...) ...
 
-    ensure _before-expression_ _during-expression_ _after-expression_
+    ensure before-expression during-expression after-expression
 
-    function [_class_] ... -> [_class_]
+    function [class] ... -> [class]
 
-    generate ([(_var_ _val-expression_) ...]) [_expression_] ... [(yield [_expression_] ...)] ... [(resume [_val-expression_ ...])]
+    generate ([(var val-expression) ...]) [expression] ... [(yield [expression] ...)] ... [(resume [val-expression ...])]
 
-    if _test-expression_ _then-expression_ [_else-expression_]
+    if test-expression then-expression [else-expression]
 
-    let ([(_var_ _val-expression_) ...]) [_expression_] ...
+    let ([(var val-expression) ...]) [expression] ...
 
-    loop _loopname_ ([(_var_ _val-expression_) ...]) [_expression_] ... [(_loopname_ _val-expression_ ...)] ...
+    loop loopname ([(var val-expression) ...]) [expression] ... [(loopname val-expression ...)] ...
     
-    match ([_pattern_ _value-expression_] ...) [_expression_] ...  _Not yet implemented_
+    match ([pattern value-expression] ...) [expression] ...  Not yet implemented
 
-    method ([_parameter_] ...) [_expression_] ...
+    method ([parameter] ...) [expression] ...
 
-    not _form_
+    not form
 
-    or [_form_] ...
+    or [form] ...
 
-    quasiquote _form_
+    quasiquote form
 
-    quote _form_
+    quote form
 
-    receive  _Not yet implemented_
+    receive  Not yet implemented
 
-    repeat _expression_
+    repeat expression
 
-    send  _Not yet implemented_
+    send  Not yet implemented
 
-    set! _variable_ _value-expression_
+    set! variable value-expression
 
-    time _expression_
+    time expression
 
-    unless _test-expression_ [_then-expression_] ...
+    unless test-expression [then-expression] ...
 
-    when _test-expression_ [_then-expression_] ...
+    when test-expression [then-expression] ...
 
-    with-exit (_var_) [_expression_] ...
+    with-exit (var) [expression] ...
 
-    with-open-file ([(_var_ _pathname_) [_direction_] [_mode_]]) [_expression_] ...
+    with-open-file ([(var pathname) [direction] [mode]]) [expression] ...
 
 **Built-in protocols**
 
