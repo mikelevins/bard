@@ -278,7 +278,7 @@ returned are discarded, except for the last one, which is returned.
 
 **cond**
 
-cond ( _test_ _result_) ... [(else: _result_ )]
+cond ( _test_ _result1_) ... [(else: _resultN_ )]
 
     (cond
       ((= (today) 'Monday) "Someone has a case of the Mondays.")
@@ -298,7 +298,7 @@ that the last clause is executed if no earlier one was.
 
 def _variable-name_ _value-expression_
 
-    (def *answer* 42))
+    (def *answer* 42)
 
 Evaluates the value expression and assigns the result to the global
 variable whose name is given by variable-name, creating the variable
@@ -315,107 +315,107 @@ define macro ( _macroname_ _parameter_ ...) _expression_ ...
 
 **define method**
 
-define method (methodname [parameter] ...) expression ...
+define method ( _methodname_ [ _parameter_ ] ...) _expression_ ...
 
 **define protocol**
 
-define protocol protocol-name [(function-name [class] ... -> [class] ...)] ...
+define protocol _protocol-name_ [( _function-name1_ [ _class1_ ] ... -> [ _classN_ ] ...)] ...
 
 **define record**
 
-define record schema-name (slot-name [slot-option] ...) ...
+define record _schema-name_ ( _slot-name_ [ _slot-option_ ] ...) ...
 
 **define variable**
 
-define variable variable value-expression
+define variable _variable-name_ _value-expression_
 
 **define vector**
 
-define vector schema-name (slot-option ...) ...
+define vector _schema-name_ ( _slot-option_ ...) ...
 
 **ensure**
 
-ensure before-expression during-expression after-expression
+ensure _before-expression_ _during-expression_ _after-expression_
 
 **function**
 
-function [class] ... -> [class]
+function [ _class1_ ] ... -> [ _classN_ ]
 
 **generate**
 
-generate ([(var val-expression) ...]) [expression] ... [(yield [expression] ...)] ... [(resume [val-expression ...])]
+generate ([( _var1_ _val-expression1_ ) ...]) [ _expression1_ ] ... [(yield [ _expressionK_ ] ...)] ... [(resume [ _val-expression_ ...])]
 
 **if**
 
-if test-expression then-expression [else-expression]
+if _test-expression_ _then-expression_ [ _else-expression_ ]
 
 **let**
 
-let ([(var val-expression) ...]) [expression] ...
+let ([( _var_ _val-expression_) ...]) [ _expression_ ] ...
 
 **loop**
 
-loop loopname ([(var val-expression) ...]) [expression] ... [(loopname val-expression ...)] ...
+loop _loopname_ ([( _var_ _val-expression1_ ) ...]) [ _expression_ ] ... [( _loopname_ _val-expressionN_ ...)] ...
 
 **match**
 
-match ([pattern value-expression] ...) [expression] ...  Not yet implemented
+match ([ _pattern_ _value-expression_ ] ...) [ _expression_ ] ... _Not yet implemented_
 
 **method**
 
-method ([parameter] ...) [expression] ...
+method ([ _parameter_ ] ...) [ _expression_ ] ...
 
 **not**
 
-not form
+not _form_
 
 **or**
 
-or [form] ...
+or [ _form_ ] ...
 
 **quasiquote**
 
-quasiquote form
+quasiquote _form_
 
 **quote**
 
-quote form
+quote _form_
 
 **receive**
 
-receive  Not yet implemented
+receive  _Not yet implemented_
 
 **repeat**
 
-repeat expression
+repeat _expression_
 
 **send**
 
-send  Not yet implemented
+send _actor_ _value_  _Not yet implemented_
 
 **set!**
 
-set! variable value-expression
+set! _variable-name_ _value-expression_
 
 **time**
 
-time expression
+time _expression_
 
 **unless**
 
-unless test-expression [then-expression] ...
+unless _test-expression_ [ _then-expression_ ] ...
 
 **when**
 
-when test-expression [then-expression] ...
+when _test-expression_ [ _then-expression_ ] ...
 
 **with-exit**
 
-with-exit (var) [expression] ...
+with-exit ( _var_ ) [ _expression_ ] ...
 
 **with-open-file**
 
-with-open-file ([(var pathname) [direction] [mode]]) [expression] ...
+with-open-file ([( _var_ _pathname_) [ _direction_ ] [ _mode_ ]]) [ _expression_ ] ...
 
 **Built-in protocols**
 
