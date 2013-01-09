@@ -300,54 +300,228 @@ def _variable-name_ _value-expression_
 
     (def *answer* 42)
 
-Evaluates the value expression and assigns the result to the global
-variable whose name is given by variable-name, creating the variable
-if it doesn't already exist, and replacing its current value
-otherwise.
+Evaluates _value-expression_ and assigns the result to the global
+variable _variable-name_, creating the variable if necessary, and
+replacing its current value otherwise.
+
+You can also write this expression as 
+
+    (define variable *answer* 42)
+
+Sometimes the shorter version is more convenient, especially when
+terseness is helpful; sometimes the longer version is better,
+especially when you want variable definitions to stand out
+visually. Use whichever form works best in your code; the effects of
+both forms are identical.
 
 **define class**
 
 define class _classname_ 
 
+    (define class Person)
+
+Defines a new class named _classname_. `define class` is extremely
+simple because Bard classes are extremely simple: they are simply
+names for collections of other types.
+
 **define macro**
 
 define macro ( _macroname_ _parameter_ ...) _expression_ ...
 
+    (define macro (switch x y)
+      `(let ((z ,y))
+         (set! ,y ,x)
+         (set! ,x z)))
+
+    bard> (def x 1)
+    1
+
+    bard> (def y 2)
+    2
+
+    bard> (switch x y)
+    2
+
+    bard> x
+    2    
+
+    bard> y
+    1
+
+Defines a new macro named _macroname_. The macro constructs a Bard
+expression and returns it; the returned expression is evaluated in
+place of the original macro call. Used cautiously, macros enable a
+programmer to conveniently extend the syntax of Bard.
+
 **define method**
 
-define method ( _methodname_ [ _parameter_ ] ...) _expression_ ...
+define method ( _function-name_ [ _parameter_ ] ...) _expression_ ...
+
+    (define method (add (left <string>) (right <string>))
+      (append left right))
+
+Defines a new method and adds it to the function _function-name_. If
+no such function exists, then Bard creates one. When the function is
+subsequently applied, if its arguments match the types given in
+_parameter_... then the new method is called.
+
+If _parameter_ is a symbol then the type of the parameter is
+`Anything`, and value will match that argument. If it's a list then it
+can be either of the following forms:
+
+    ( _parameter-name_ _type_ )
+
+    ( _parameter-name_ (singleton _value_ ))
+
+The first form causes the argument to match values of type _type_; the
+second causes it to match only values equal to _value_.
 
 **define protocol**
 
 define protocol _protocol-name_ [( _function-name1_ [ _class1_ ] ... -> [ _classN_ ] ...)] ...
 
+    (define protocol Rational
+      (numerator Ratio -> Integer)
+      (denominator Ratio -> Integer))
+
+Defines a new protocol named _protocol-name_, and in the process
+defines any new functions that are mentioned in the body of the
+expression. Existing function definitions are not replaced; if there's
+an existing function with a conflicting signature, Bard issues a
+warning and abandons the protocol definition. You can correct
+conflicts either by renaming functions, changing their signatures to
+match the existing functions, or undefining the existing functions or
+protocols.
+
 **define record**
 
 define record _schema-name_ ( _slot-name_ [ _slot-option_ ] ...) ...
+
+    (define record <mailing-address> 
+      name street-address city province country postal-code)
+
+    (define record <point> 
+      (x default: 0)
+      (y default: 0))
+
+Defines a new schema--that is, a concrete type--that consists of a set
+of named fields. You can then craeted instances of the new type using
+`make`. 
+
+An instance of a record schema implements the Mapping protocol--that
+is, it behaves as if it's a table with a fixed set of keys.
 
 **define variable**
 
 define variable _variable-name_ _value-expression_
 
+    (define variable *answer* 42)
+
+Evaluates _value-expression_ and assigns the result to the global
+variable _variable-name_, creating the variable if necessary, and
+replacing its current value otherwise.
+
+You can also write this expression as 
+
+    (def *answer* 42)
+
+Sometimes the shorter version is more convenient, especially when
+terseness is helpful; sometimes the longer version is better,
+especially when you want variable definitions to stand out
+visually. Use whichever form works best in your code; the effects of
+both forms are identical.
+
 **define vector**
 
 define vector _schema-name_ ( _slot-option_ ...) ...
+
+    (define vector <cons> length: 2)
+
+    (define vector <ostype> length: 4 element-type: <char>)
+
+Defines a new schema--that is, a concrete type--that consists of a
+ordered sequence of fields accessible by index. You can then create
+instances of the new type with `make`.
+
+An instance of a vector schema implements the Listing protocol; that is,
+it behaves as if it's a fixed-length list.
 
 **ensure**
 
 ensure _before-expression_ _during-expression_ _after-expression_
 
+    (ensure (set! *occupied* true)
+            (perform-risky-operation)
+            (set! *occupied* false))
+
+Evaluates _before-expression_, then _during-expression_, then
+_after-expression_. Importantly, _after-expression_ is evaluated even
+if control leaves _during-expression_ abnormally--for example, if
+_during-expression_ signals an error.
+
+Thus, in the example, the variable will be set to false even if
+`perform-risky-operation` aborts because of an error.
+
 **function**
 
 function [ _class1_ ] ... -> [ _classN_ ]
+
+    (function Number Number -> List)
+
+Creates and returns a new function. The new function is not bound to a
+global variable and has no assocaited methods, so it's not useful in
+and of itself. Neverhtless, it can be useful to be able to construct
+functions dynamically and add methods to them after they're
+constructed.
 
 **generate**
 
 generate ([( _var1_ _val-expression1_ ) ...]) [ _expression1_ ] ... [(yield [ _expressionK_ ] ...)] ... [(resume [ _val-expression_ ...])]
 
+    ;;; fibonacci sequence
+    (define variable $fibs
+      (generate ((x 1)
+                 (y 1))
+        (yield x)
+        (resume y (+ x y))))
+
+    bard> (take 12 $fibs)
+    (1 1 2 3 5 8 13 21 34 55 89 144)
+
+Creates and returns a new generator. A generator is a value that
+behaves like a list whose contents are computed as they are
+needed. The example computes any number of values from the Fibonacci
+sequence, but only as many as are requested.
+
+The first argument after the name `generate` is a list of
+bindings. The bindings create local variables with initial values
+given by the binding form. In the example, `x` is initially bound to 1
+and so is `y`. 
+
+Everything after the bindings is the **body** of the `generate`
+form. The expressions in the body are evaluated from left to right, as
+in a `begin` form, and the last value is returned.
+
+In the body of a `generate` form there are two special operators:
+`yield` and `resume`. If Bard encounters a `yield` form, it
+immediately returns from the body, producing the `yield`'s arguments
+as results. 
+
+After a `yield`, you can restart a generator by applying the `next`
+method to it. When you do, the body of the generator continues from
+the point just after the `yield`.
+
+The `resume` method starts the generator over again from the top, but
+first it replaces the initial values of the local variables with the
+values of its arguments.
+
 **if**
 
 if _test-expression_ _then-expression_ [ _else-expression_ ]
+
+**initialize**
+
+initialize _value_ [ _init-argument1_ ] ...
 
 **let**
 
@@ -356,6 +530,10 @@ let ([( _var_ _val-expression_) ...]) [ _expression_ ] ...
 **loop**
 
 loop _loopname_ ([( _var_ _val-expression1_ ) ...]) [ _expression_ ] ... [( _loopname_ _val-expressionN_ ...)] ...
+
+**make**
+
+make _type_ [ _init-argument1_ ] ...
 
 **match**
 
@@ -385,6 +563,10 @@ quote _form_
 
 receive  _Not yet implemented_
 
+**remove-function!**
+
+remove-function! _protocol_ _function-name_  _Not yet implemented_
+
 **repeat**
 
 repeat _expression_
@@ -400,6 +582,10 @@ set! _variable-name_ _value-expression_
 **time**
 
 time _expression_
+
+**undefine**
+
+undefine _variable-name_
 
 **unless**
 
@@ -681,7 +867,7 @@ Operations on the Bard runtime and its underlying host system.
     quit -> 
 
     room -> 
-
+    
     uuid -> Symbol
 
     version -> Text
@@ -769,155 +955,5 @@ Output of various kinds.
     show Anything -> Text
 
     write Anything OutputStream -> 
-
-
-## Types, Procedures, and Protocols
-
-There are two kinds of types in Bard: schemas and classes.
-
-There are also two kinds of procedures: functions and methods.
-
-Finally, there are protocols to connect types and procedures and give
-each of them meaning.
-
-### Schemas and Classes
-
-Schemas are concrete types that describe the bits and bytes used to
-represent values. Classes are abstract types that refer to collections
-of values. A Class may refer to several different schemas. For
-example, <fixnum> and <bignum> are two different schemas that
-represent integers. The details of their memory layout differ, and
-they have different performance characteristics. The class Integer
-refers to values belonging to both schemas.
-
-Why have two kinds of types? Because the representation of data is a
-different concern from the role it plays in procedures. Schemas
-describe representation; classes identify roles. 
-
-By separating the concerns, we can express one without making
-committments about the other. For example, we can describe a set of
-named fields or a tuple of values without restricting its role in
-procedures.
-
-A tuple of two values, for instance, can be an element of an
-associative array, or the building block of a linked list, or value
-and an associated label. The same schema can be used for all purposes
-without violating the spirit of the definition, because the schema
-doesn't describe a role.
-
-Separating representation from role also simplifies the roles. When we
-define a class like Name or List, we identify roles we expect values
-to fill, but we don't limit the representations that can fill
-them. Any schema can be a member of a class, as long as the necessary
-functions are defined. 
-
-A List might be a chain of pairs--a singly-linked list like those
-common in Lisp dialects. One the other hand, it might be a contiguous
-sequence of memory locations, like an array in C. Either
-representation has advantages, depending on the intended use of the
-data. Both support the same operations; the important difference is
-that one is more efficient for some operations and the other is more
-efficient for others.
-
-A Bard List might be represented by either one. To put it another way,
-you can use any suitable schema as a List, so long as the needed
-functions are defined for that schema. You can also invent your own
-schema, define the functions specified by the List protocol, and your
-schema is a List.
-
-### Methods and Functions
-
-A method is a procedure that accepts values as inputs and computes
-outputs. 
-
-A function is a procedure that accepts values as inputs, examines
-their types, and on that basis selects a method to apply to
-them. 
-
-Functions are polymorphic; that is, they can do different things for
-inputs of different types. Methods are monomorphic; that is, a method
-always runs the same code regardless of the types of its inputs.
-
-There are two kinds of procedures because there are two parts of the
-job of making polymorphic procedures work: first, we must chooses the
-right code for the values we get, and second we must run that
-code. The function's job is to examine the inputs and determine which
-method matches them; the method's job is to accept the inputs and
-compute a result.
-
-Polymorphic functions simplify working with data by making it
-convenient to use the same function to compute the same kinds of
-results with inputs using different representations. As a simple and
-obvious example, consider adding two numbers together.
-
-The conventional name for that operation is "+". What should the types
-of the arguments to the "+" operation be? There are many different
-representations for numbers. There are simple integers represented
-directly by machine words; there are integers with unbounded precision
-represented by variable-sized arrays of machine words; there are
-decimal numbers of various kinds and precisions; there are ratios,
-complex numbers, and so on. 
-
-Each kind of number has a different representation; depending on the
-platform, some may have several.
-
-The "+" operation is supposed to work on all of them. If procedures
-are not polymorphic then we have a choice between coming up with a
-distinct flavor of "+" for each possible combination of different
-representations, or defining a grand comprehensive "+" that implements
-addition for all of the possible combinations.
-
-Taking the first option yields an explosion of different versions of
-"+". The second requires us to rewrite "+" every time someone wants to
-support a new representation for numbers.
-
-That's the problem that polymorphic functions solve. A polymorphic
-function is an extensible function that can choose the right code for
-the representations it receives. With polymorphism, there's just one
-"+" function. When you feed numbers to it, the function chooses an
-implenentation of addition appropriate to the representations it
-receives. Because it's extensible, you don't have to rewrite it in
-order to support a new representation; you just have to write the
-methods for the new kinds of numbers.
-
-### Protocols
-
-On the one hand we have types--that is, classes and schemas. On the
-other hand, we have procedures--that is, functions and methods. The
-connection between them is protocols.
-
-A protocol is a collection of functions defined over classes. For
-example, here's a very simple protocol called Rational:
-
-    (protocol Rational
-      (numerator Ratio -> Integer)
-      (denominator Ratio -> Integer))
-
-In this definition, Rational is a protocol; Ratio and Integer are
-classes; numerator and denominator are functions. The protocol
-establishes a relationship between the classes and the
-functions. Rational establishes that numerator and denominator accept
-Ratio values as inputs and produce Integer values as outputs.
-
-What schemas belong to Ratio and Integer? To put it another way, what
-concrete values can we actually pass to numerator and denominator? 
-
-The protocol doesn't say. It also doesn't say how numerator and
-denominator work. A protocol just defines the relationships between
-the classes and functions.
-
-To define the schemas that belong to the classes, we have to define
-some methods for those functions--methods that work on some specific
-schemas. Here's an example:
-
-    (define method (numerator (r <ratnum>))
-      (ratnum:num r))
-
-    (define method (denominator (r <ratnum>))
-      (ratnum:denom r))
-
-These expressions define implementations of numerator and denominator
-where the input value is an instance of the schema `<ratnum>`. That
-means that `<ratnum>` is a member of `Ratio`.
 
 
