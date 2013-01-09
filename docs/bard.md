@@ -252,16 +252,15 @@ other operations.
 
     and [ form ] ...
 
-Evaluates each form from left to right. If any form returns a false
-value `and` stops evaluation and returns the false value. Otherwise it
-returns the value of the last form.
-
 Example:
 
     bard> (and (odd? 3)(even? 2)(number? "Not a number")(odd? 5))
     false
 
- 
+Evaluates each form from left to right. If any form returns a false
+value `and` stops evaluation and returns the false value. Otherwise it
+returns the value of the last form.
+
 
     begin [form] ...
 
