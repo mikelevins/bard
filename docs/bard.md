@@ -14,12 +14,12 @@ Dylan. It also takes influence from several other programming
 languages, including Smalltalk, Haskell, Lua, Erlang, Clojure, and
 others.
 
-This document is a brief overview and basic refernce for the language.
+This document is a brief overview and basic reference for the language.
 
 ## Syntax and built-in classes
 
-Bard is a Lisp. That means that, first, every valid piece of Bard code
-is an expression that returns a value, and, second, that there are two
+Bard is a Lisp, and like other Lisps, is a language made of
+expressions that are evaluated to return values. There are two basic
 kinds of expressions: atoms and lists.
 
 A list is a sequence of zero or more expressions enclosed in
@@ -35,9 +35,8 @@ An atom is any valid expression that is not a list:
   
 ...and so on.
 
-Like other dialects of Lisp, Bard treats a list as a function call,
-unless you tell it not to. You can tell it not to by quoting the
-list. Thus, this:
+As in other dialects of Lisp, a list is treated as a function call
+unless you tell the language not to. Thus, this:
 
     (foo bar baz)
 
@@ -45,19 +44,19 @@ list. Thus, this:
 
     '(foo bar baz)
 
-...is not.
+...is not; the quote mark tells Bard not to evaluate that list, but
+instead to treat it as literal data.
 
-Besides parentheses to identify lists, Bard supplies a lexical syntax
-for each of its basic built-in datatypes. These types are called
-"classes". 
+Bard provides a lexical syntax for almost all of its basic built-in
+datatypes. These built-in types are called **classes**.
 
-Here are the basic built-in classes, with example values of each:
+Here's a list of the basic built-in classes, with example values for each:
 
 **Undefined**
 
     undefined
 
-The class of unknown, or undefined values.
+The class of unknown or undefined values.
 
 **Null**       
 
@@ -69,13 +68,13 @@ The value that represents an empty collection or the absence of a value.
 
     true, false
 
-Values that represent the Boolean values true and false.
+Values that represent truth and falsehood.
 
 **Number**     
 
     0, 1.2, 2/3
 
-Magnitudes and other numeric values.
+Various types of numeric values.
 
 **Text**       
 
@@ -86,11 +85,33 @@ Symbols, keywords, and strings.
 **List**
 
     (), (0 1 2 3 4)
-    [], [0 1 2 3 4]
 
-An ordered sequence of values. The two syntaxes shown are
-interchangeable, except that the second tells Bard not to interpret
-the list as a function call. The expression
+An ordered sequence of values. Bard, like other Lisps, treats a list
+as a function call unless you tell it not to. That means that an
+expression like
+
+    (0 1 2 3 4)
+
+will cause an error because the zero is not a function. 
+
+One way to tell Bard not to treat a list as a function call is to
+quote it:
+
+    '(0 1 2 3 4)
+
+The quote signals that the list is data, not code. Bard constructs the
+list but doesn't try to treat it as a function call.
+
+Another way to treat a list as data is to build it with the list
+constructor:
+
+    (list 0 1 2 3 4)
+
+The list expression is a function call; the `list` function builds a
+list from its arguments and returns it.
+
+Bard provides one more syntax for creating list values and treating
+them as data:
 
     [0 1 2 3 4]
 
@@ -100,34 +121,52 @@ is equivalent to
 
 **Table**
 
+    {}
+    {0 1 2 3}
     {a: 0 b: 1}
 
-A mapping from keys to values. 
+A mapping from keys to values. The first item in each table is a key;
+the second is a value. The third is a key; the fourth is a
+value. Items continue alternating roles. A table must have an even
+number of items in order to be well-formed.
+
+Keys can be any value except `nothing` or `undefined`. Values can be
+anything except `undefined`.
 
 **Method**
 
     (^ (x) x)          
     (^ (x y) (+ x y))
 
-A callable object that executes some code when applied to arguments.
-
-### Specialized classes
-
-Besides the basic built-in classes, Bard has a few more types with more
-specialized uses, and most of these don't have standard literal syntax
-defined for them. These more specialized classes include:
+A procedure. A callable object that executes some code when applied to
+arguments. Methods are the basic tools in Bard for computing results.
 
 **Function**
 
-A function is a callable object, similar to a method. Unlike a method,
-a function has no code of its own; instead, it has a set of methods
-that are associated with argument types. When applied to arguments,
-the function finds the method that is defined for those types and
-applies it to compute a result. Functions are therefore
-polymorphic--that is, the same function can execute different code,
-depending on the types of its arguments.
+    (function  -> List)          
+    (function Ratio -> Integer)          
+    (function Integer Integer -> Integer)          
+
+A function is a callable object, similar to a method, but unlike a
+method it can't compute results on its own. A function relies on
+methods to do its computation.
+
+When you call a function, it examines its arguments and chooses a
+method based on their types, then applies that method to the arguments
+to compute its results. Because a function can choose a different
+method for different arguments, a single function can work with a
+variety of different types of data.
+
+### Specialized classes
+
+Besides the basic built-in classes, Bard has a few others with more
+specialized uses. These other classes don't have standard literal
+syntaxes defined for them. 
+
+These classes are:
 
 **Actor**
+*Not yet implemented*
 
 Objects that represent a running Bard process. A Bard program can create
 actors that run in the same process as the creating Bard process, or in a
@@ -136,6 +175,7 @@ messages can contain arbitrary Bard data--even functions, methods, or
 other actors.
 
 **Stream**
+*Not yet implemented*
 
 Objects that serve as sources or sinks for data. Objects that belong
 to the Stream class include input streams and output streams.
@@ -173,157 +213,435 @@ among other possibilities.
 
 ## Bard's basic vocabulary
 
-Besides the data structures Bard provides, a programmer needs to know
-its vocabulary of basic operations. As in other Lisps, Bard's
-operations fall into three general categories: **functions**,
-**special forms**, and **macros**.
+To use a programming languge, you need to know its basica
+vocabulary--the basic words and phrases you can use to direct
+computation. 
 
-The differences between functions, special forms, and macros have to
-do with the details of how they handle their arguments. Those details
-aren't important here, so this section doesn't distinguish the
-different kinds of operations. The important point here is that all
-three kinds of expressions look similar: that is, they all look like
-function calls.
+This section briefly lists and explains Bard's basic functions and
+other operations.
 
-Here is Bard's basic vocabulary of operations:
+**Control and special forms**
 
-`^`
+    and [*form*] ...
 
-The `^` special form can also be spelled `method`. It creates a method
-object.
+    begin [*form*] ...
 
-`begin`
+    cond (*test* *result*) ... [(else: *result*)]
 
-The basic sequencing form. Begin evaluates a series of expressions
-from left to right, returning the last value.
+    def *variable* *value-expression*
 
-`cond`
+    define class *classname* 
 
-Along with `if`, the basic form of flow control in Bard. Bard's `cond`
-works like the form of the same name in Scheme and Common Lisp.
+    define macro (*macroname* *parameter* ...) *expression* ...
 
-`define`
+    define method (*methodname* [*parameter*] ...) *expression* ...
 
-Defines a global name, binding it to one of several different
-kinds of objects.
+    define protocol *protocol-name* [(*function-name* [*class*] ... -> [*class*] ...)] ...
 
-    (define variable x y)
-      defines a global variable named x whose value is the value of y
+    define record *schema-name* (*slot-name* [*slot-option*] ...) ...
 
-    (define macro (mname args...) body...)
-      defines a new macro. The code in `body` describes how to construct 
-      the code that Bard actually executes. 
+    define variable *variable* *value-expression*
 
-    (define method (fname args...) body...)  
-      Adds a new method to the function `fname`, arguments are given
-      by `args`, and whose behavior is given by `body`. If `fname` is
-      not defined, creates that variable and binds a new function to
-      it.
+    define vector *schema-name* (*slot-option* ...) ...
 
-    (define schema sname slots...)
+    ensure *before-expression* *during-expression* *after-expression*
 
-      defines a global variable named `sname` whose value is a new
-      schema. The schema describes how to create new values; the
-      values are instances of the schema. The schema's slots describe
-      how to create the fields of the instances. 
-      
+    function [*class*] ... -> [*class*]
 
-`ensure`
+    generate ([(*var* *val-expression*) ...]) [*expression*] ... [(yield [*expression*] ...)] ... [(resume [*val-expression* ...])]
 
-Provides a way to execute a piece of code that might signal an error,
-and ensure that a cleanup form is executed aftward, even if the risky
-code exits abnormally.
+    if *test-expression* *then-expression* [*else-expression*]
 
-`if`
+    let ([(*var* *val-expression*) ...]) [*expression*] ...
 
-Along with `cond`, the basic flow-control form in Bard. Evaluates one
-alternative if a test returns true, and the other if the test returns
-false.
+    loop *loopname* ([(*var* *val-expression*) ...]) [*expression*] ... [(*loopname* *val-expression* ...)] ...
+    
+    match ([*pattern* *value-expression*] ...) [*expression*] ...  *Not yet implemented*
 
-`let`
+    method ([*parameter*] ...) [*expression*] ...
 
-Bard's basic binding form. `let` creates a scope in which some local
-variables are bound to initial values.
+    not *form*
 
-`loop`
+    or [*form*] ...
 
-Bard's basic iteration form. `loop` works like Scheme's named let. 
+    quasiquote *form*
 
-`match`
+    quote *form*
 
-Bard's pattern-matcher. `match` is a binding form, like `let`, but
-supports pattern-matching expressions that can take values apart and
-bind the parts to variables given in the patterns.
+    receive  *Not yet implemented*
 
-`receive`
+    repeat *expression*
 
-Accepts an Actor's next message. An Actor is a Bard process. Each Bard
-process can send messages to other Bard processes, and can receive
-messages from other Bard processes. `receive` is the receiving side of
-such exchanges. A message can be nearly any Bard value.
+    send  *Not yet implemented*
 
-`repeat`
+    set! *variable* *value-expression*
 
-Evaluates the expressions in its body repeatedly. Repeat doesn't test
-for an exit condition, and will loop without terminating unless you
-arrange for control to exit somehow. The simplest way to do that is to
-place a repeat inside a `with-exit` form and call the bound exit
-function. This idiom makes it extremely simple to write loops, and
-extremely easy to see them in code (but it's not particularly
-compatible with functional programming; for a more functional approach
-to iteration, see the `loop` form).
+    time *expression*
 
-`send`
+    unless *test-expression* [*then-expression*] ...
 
-Sends a message to an Actor. An Actor is a Bard process. Each Bard
-process can send messages to other Bard processes, and can receive
-messages from other Bard processes. `send` is the seinding side of
-such exchanges. A message can be nearly any Bard value.
+    when *test-expression* [*then-expression*] ...
 
-`spawn`
+    with-exit (*var*) [*expression*] ...
 
-Creates and returns a new Actor. The Actor represents a new Bard
-process. The creating process can send messages to it and receive
-messages from it. Depending on details of the Bard implementation, the
-new Actor may represent a Bard process running in the same
-operating-system process as its creator, or in a different OS process,
-or even on a different machine.
+    with-open-file ([(*var* *pathname*) [*direction*] [*mode*]]) [*expression*] ...
 
-`unless`
+**Built-in protocols**
 
-A variant of `if`; the expression
+Most of Bard's built-in vocabulary is collected in
+**protocols**--groups of functions that share a common purpose. This
+section lists and explains Bard's built-in protocols and the functions
+they provide.
 
-    (unless x a b c)
+Bard uses a naming convention that protocols are named with present
+participles that generally describe their purposes. For example, the
+protocol concerned with arithmetic and other mathematical functions is
+named `Calculating`, and the protocol that deals with input is called
+`Reading`. The built-in protocols break this convention in a few
+cases, where following it would be contrived or awkward, and so, for
+example, the protocol that is concerned with system operations is
+named `System`.
 
-means the same thing as 
+**Reading function signature**
 
-    (if (not x)
-      (begin a b c)
-      nothing)
+A **function signature** shows the types of values a function accepts
+as input, and the types of values it can be expected to produce as
+outputs. Here's a simple example:
 
-`values`
+    foo Integer -> Symbol
 
-Returns zero or more values. Bard functions may return any number of
-values, and its binding forms can bind variables to any number of
-values returned by functions.
+This signature describes a function named `foo` that accepts a single
+argument of type `Integer` and returns a single result of type
+`Symbol`.
 
-`when`
+Some functions accept no arguments; this type of function is often
+called a `thunk`. Here's an example of a thunk's signature:
 
-A variant of `if`; the expression
+    bar -> Integer
 
-    (when x a b c)
+The thunk `bar` accepts no arguments, and returns an integer when
+called.
 
-means the same thing as 
+A function can also return no values. Functions that take no inputs
+and produce no outputs are rare, but if you had one, its signature
+would look like this:
 
-    (if x
-      (begin a b c)
-      nothing)
+    grault ->
 
-`with-exit`
+Functions can return more than one result. Suppose we had a function
+that accepted one argument and returned two results. Its signature
+would look something like this:
 
-Binds a variable to an exit function, then executes the body. Code in
-the body of the `with-exit` form can jump out of it, return any value,
-by calling the exit function.
+    wibble Text -> Integer Boolean
+
+A few functions can return any number of results. Here's an example:
+
+    quux Anything -> &
+
+The ampersand symbol (`&`) means that `quux` may return any number of
+values. You can also say that a function returns at least on value,
+and optionally more:
+
+    quux Anything -> Anything &
+
+The same rules apply to input arguments; signatures can express that a
+function accepts any number of arguments, or at least a certain
+number, plus optionally more:
+
+    frobbozz & -> Anything
+    frobbozz Anything & -> Anything
+    frobbozz Anything Integer & -> Anything
+    frobbozz Anything Integer Symbol & -> Anything
+
+The sections below, which describe Bard's built-in protocols, use this
+signature notation to indicate the inputs and outputs of protocol
+functions.
+
+When a function accepts or returns any number of values, but they must
+all be of a specific type, we right the signature like this:
+
+    quux [Text]& -> [Integer]&
+
+When a function accepts optional arguments, we write them like this:
+
+    quux [Text] [Integer] -> Anything
+
+When a function accepts more than one optional argument, it isn't
+possible to pass a value as the second or greater argument without
+also passing one as the first. For example, there's no way to pass the
+Integer argument to the `quux` function above unless you also pass the
+Text argument.
+
+**Applying**
+
+The protocol that handles applying functions and methods to arguments.
+
+    apply Applicable Anything & => &
+
+    complement Applicable -> Applicable
+
+    constantly Anything -> Anything
+
+    eval Anything -> &
+
+    flip Applicable -> Applicable
+
+    identity Anything -> Anything
+
+    partial Applicable & -> Applicable
+
+**Calculating**
+
+The protocol that handles arithmetic and other mathematical functions.
+
+    * [Number]& -> Number
+
+    + [Number]& -> Number
+
+    - [Number]& -> Number
+
+    / [Number]& -> Number
+
+    even? Integer -> Boolean
+
+    odd? Integer -> Boolean
+
+    random Integer -> Integer
+
+**Comparing**
+
+The protocol that handles comparing values for equality and
+equivalence.
+
+    = [Number]& -> Boolean
+
+**Constructing**
+
+The protocol that handles constructing and initializing new values.
+
+    initialize Anything & -> Anything
+
+    make Type & -> Anything
+
+**Listing**
+
+The protocol that handles arranging values into ordered sequences.
+
+    add-first Anything List -> List
+
+    add-last List Anything -> List
+
+    any List -> Anything
+
+    append List & -> List
+
+    by Integer List -> List
+
+    drop Integer List -> List
+
+    element List Integer -> Anything
+
+    empty? List -> Boolean
+
+    filter Applicable List -> List
+
+    first List -> Anything
+
+    join-text Text List -> Text
+
+    last List -> Anything
+
+    length List -> Integer
+
+    list & -> List
+
+    map Applicable [List]& -> List
+
+    next-last List -> Anything
+
+    reduce Applicable Anything List -> Anything
+
+    range Integer Integer -> List
+
+    rest List -> List
+
+    second List -> Anything
+
+    some? Applicable List -> Anything
+
+    split-text Text Character -> List
+
+    take Integer List -> List
+
+    take-by Integer Integer -> List
+
+**Mapping**
+
+The protocol that handles arranging values into sets of key/value
+pairs.
+
+    contains-key? Table -> Boolean [*Not yet implemented*]
+
+    contains-value? Table -> Boolean [*Not yet implemented*]
+
+    get Table Anything -> Anything [*Not yet implemented*]
+
+    keys Table -> List [*Not yet implemented*]
+
+    merge [Table]& -> Table [*Not yet implemented*]
+
+    put Table Anything Anything -> Table [*Not yet implemented*]
+
+    table & -> Table
+
+    vals Table -> List [*Not yet implemented*]
+
+**Ordering**
+
+The protocol that handles sorting values into stable orders. 
+
+    < [Orderable]& -> Boolean
+
+    <= [Orderable]& -> Boolean
+
+    > [Orderable]& -> Boolean
+
+    >= [Orderable]& -> Boolean
+
+**Pairing**
+
+The protocol that handles associating one value with another.
+
+    left Pair -> Anything
+
+    pair Anything Anything -> Pair
+
+    right Pair -> Anything
+
+**Reading**
+
+The protocol that handles input of various kinds. 
+
+    current-input -> InputStream
+
+    load Text -> &
+
+    read InputStream -> Anything
+
+    read-file Text -> Text
+
+    read-line InputStream -> Text
+
+    read-lines Text -> List
+
+    read-text Text -> Anything
+
+
+**System**
+
+The protocol that handles operations on the Bard runtime and its
+underlying host system.
+
+    error Anything -> Anything
+
+    exit -> 
+
+    gc -> 
+
+    gensym -> Symbol
+
+    quit -> 
+
+    room -> 
+
+    uuid -> Symbol
+
+    version -> Text
+
+**Typing**
+
+The protocol that handles distinguishing the types of values from one
+another.
+
+    applicable? Anything -> Boolean
+
+    boolean? Anything -> Boolean
+
+    character? Anything -> Boolean [*Not yet implemented*]
+
+    class? Anything -> Boolean [*Not yet implemented*]
+
+    false? Anything -> Boolean
+
+    float? Anything -> Boolean
+
+    fraction? Anything -> Boolean [*Not yet implemented*]
+
+    foreign-value? Anything -> Boolean
+
+    function? Anything -> Boolean
+
+    input-stream? Anything -> Boolean
+
+    integer? Anything -> Boolean
+
+    iostream? Anything -> Boolean
+
+    keyword? Anything -> Boolean [*Not yet implemented*]
+
+    list? Anything -> Boolean
+
+    method? Anything -> Boolean [*Not yet implemented*]
+
+    nothing? Anything -> Boolean
+
+    number? Anything -> Boolean [*Not yet implemented*]
+
+    orderable? Anything -> Boolean [*Not yet implemented*]
+
+    output-stream? Anything -> Boolean
+
+    pair? Anything -> Boolean [*Not yet implemented*]
+
+    protocol? Anything -> Boolean [*Not yet implemented*]
+
+    ratio? Anything -> Boolean [*Not yet implemented*]
+
+    schema? Anything -> Boolean [*Not yet implemented*]
+
+    singleton Anything -> Singleton
+
+    something? Anything -> Boolean
+
+    stream? Anything -> Boolean [*Not yet implemented*]
+
+    symbol? Anything -> Boolean
+
+    table? Anything -> Boolean
+
+    text? Anything -> Boolean
+
+    true? Anything -> Boolean
+
+    type? Anything -> Boolean [*Not yet implemented*]
+
+    undefined? Anything -> Boolean [*Not yet implemented*]
+
+**Writing**
+
+The protocol that handles output of various kinds. 
+
+    current-output -> OutputStream
+
+    display Anything -> 
+
+    newline -> 
+
+    print Anything -> 
+
+    show Anything -> Text
+
+    write Anything OutputStream -> 
 
 
 ## Types, Procedures, and Protocols
