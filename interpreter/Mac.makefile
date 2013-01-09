@@ -4,7 +4,7 @@
 # we use the same host GSC to compile
 # Scheme sources for all targets
 
-GSC=/usr/local/gambit/macosx/bin/gsc
+GSC=/usr/local/Gambit-C/bin/gsc
 
 # ----------------------------------------
 # Mac
@@ -15,7 +15,7 @@ INSTALL_PATH=/Users/mikel/bin
 MAC_EXECUTABLE=bard
 MAC_LIBRARY=libBard.a
 MAC_BUILD_DIR=builds/mac
-MAC_GAMBIT_HOME=/usr/local/gambit/macosx
+MAC_GAMBIT_HOME=/usr/local/Gambit-C
 MAC_ARCH=x86_64
 MAC_TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 MAC_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk

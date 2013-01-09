@@ -11,8 +11,8 @@
 
 ;;; modify if the bard sources are at another pathname
 
-;;;(define $bard-root  "/Users/mikel/Projects/bard/interpreter/")
-(define $bard-root  "/home/mikel/Projects/bard/interpreter/")
+(define $bard-root  "/Users/mikel/Projects/bard/interpreter/") ; osx
+;;;(define $bard-root  "/home/mikel/Projects/bard/interpreter/") ; Linux
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
