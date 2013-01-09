@@ -459,7 +459,7 @@
       (%search-method-tree-for-values (function-method-tree fn) vals)))
 
 (define (make-function #!key 
-                       (debug-name 'an-anonymous-function)
+                       (debug-name #f)
                        (input-classes '())
                        (output-classes `(,Anything)))
   (let* ((fn (make-function-instance <function> debug-name #f input-classes output-classes #f (%singleton-tree)))
@@ -467,7 +467,7 @@
                     (let ((best-method (%function-best-method fn args)))
                       (if best-method
                           (%apply best-method args)
-                          (error (str "No applicable method for " fn " with arguments " args)))))))
+                          (error (str "No applicable method for " (%as-string fn) " with arguments " (map %as-string args))))))))
     (set-function-proc! fn fn-proc)
     fn))
 

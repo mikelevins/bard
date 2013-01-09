@@ -1,13 +1,17 @@
+# ----------------------------------------
+# Gambit
+# ----------------------------------------
 
 GSC=/usr/local/Gambit-C/bin/gsc
-CC=/usr/bin/gcc
-
-CFLAGS_MAIN= 
-LDFLAGS_MAIN= -L/usr/local/Gambit-C/lib -lgambc -o builds/bard
 
 # ----------------------------------------
 # Linux
 # ----------------------------------------
+
+CC=/usr/bin/gcc
+
+CFLAGS_MAIN= 
+LDFLAGS_MAIN= -L/usr/local/Gambit-C/lib -lgambc -o builds/bard
 
 # ----------------------------------------
 # Bard Common files

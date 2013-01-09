@@ -91,12 +91,15 @@
 
 (define-printer-function (schema-tag <function>) 
   (lambda (fn)
-    (let ((in (function-input-classes fn))
+    (let ((fname (function-name fn))
+          (in (function-input-classes fn))
           (out (function-output-classes fn)))
       (with-output-to-string
         '()
         (lambda ()
-          (display "(function ")
+          (if fname
+              (display (str "(" (object->string fname) " "))
+              (display "(function "))
           (if (not (null? in)) 
               (begin
                 (display (%as-string (car in)))

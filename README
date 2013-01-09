@@ -16,9 +16,15 @@ You can learn more about Bard by reading the reference page at
 
   https://github.com/mikelevins/bard/blob/master/docs/bard.md
 
-A prebuilt binary for Mac OS X is available from the git repository at
+A prebuilt binary for Mac OS X (64-bit Mach-O built on OSX 10.7) is
+available from the git repository at
 
   https://github.com/mikelevins/bard/blob/master/interpreter/builds/mac/bard
+
+A prebuilt binary for Linux (64-bit ELF LSB built on Linux Mint 14) is
+available from the git repository at
+
+  https://github.com/mikelevins/bard/blob/master/interpreter/builds/linux/bard
 
 A simple and limited Emacs interface to the Bard interpreter is at
 

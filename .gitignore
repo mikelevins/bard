@@ -60,3 +60,5 @@ builds//src/vm7/comp.scm~
 *.rkt~
 /0.3/gambit/TAGS
 /interpreter/fibs/
+/interpreter/builds/mac/bard.dSYM/Contents/Resources/DWARF/bard
+/interpreter/builds/mac/bard.dSYM/
