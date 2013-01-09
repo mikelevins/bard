@@ -1,10 +1,18 @@
 TO DO
 
 - special forms to implement
-  - define protocol
   - define record
   - define vector
   - table-args in define method (define method (foo a b & {baz: 1 grault: 2}) ...)
+
+- protocols to implement
+  - Creating (make, initialize)
+  - Streaming
+  - Mapping (all values are tables)
+
+=== release v0.3.x ===
+
+- special forms to implement
   - match
   - receive
   - send
@@ -15,18 +23,21 @@ TO DO
 
 - protocols to implement
   - Communicating (Actor)
-  - Creating (make)
-  - Streaming
-  - Mapping (all values are tables)
 
-=== release can happen here ===
+=== release v0.4.x ===
+
+- system work
+  - process control
+  - network primitives
+
+=== release v0.5.x ===
 
 - system work
   - serialization/deserialization
-  - process control
-  - network primitives
   - image save/load
   - OS/runtime/windowing/events work
+
+=== release v0.6.x ===
 
 
 

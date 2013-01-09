@@ -173,6 +173,15 @@
             (cons (car items)
                   (remove-if test (cdr items)))))))
 
+(define (remv item ls)
+  (let loop ((items ls))
+    (if (null? items)
+        '()
+        (if (eqv? item (car items))
+            (remv item (cdr items))
+            (cons (car items)
+                  (remv item (cdr items)))))))
+
 (define (some? fn ls)
   (let loop ((items ls))
     (if (null? items)
