@@ -577,7 +577,34 @@ send _actor_ _value_
 
 **set!**
 
-set! _variable-name_ _value-expression_
+set! _variable-reference_ _value-expression_
+
+    (set! answer 42)
+
+Assigns a new value to the variable given by _variable-reference_. The
+variable must be mutable, or an error is signaled.
+
+`set!` can also alter the value in a slot of a table, record, or other
+aggregate datatype, if the slot is mutable. The syntax for each case
+mirrors the syntax for retrieving a value.
+
+Getting a variable value:
+    answer
+
+Setting a variable value:
+    (set! answer 42)
+
+Getting a record field:
+    (mypoint 'x)
+
+Setting a variable value:
+    (set! (mypoint 'x) 42)
+
+Getting a list or vector field:
+    (myvec 2)
+
+Setting a variable value:
+    (set! (myvec 2) 42)
 
 **time**
 
@@ -603,7 +630,36 @@ with-exit ( _var_ ) [ _expression_ ] ...
 
 with-open-file ([( _var_ _pathname_) [ _direction_ ] [ _mode_ ]]) [ _expression_ ] ...
 
-**Built-in protocols**
+### Applying structures _Not yet implemented_
+
+Bard values that consist of named or indexed fields participate in the
+Applicable protocol. You can apply a list or a table, for example, as
+if it were a function. Applicable structures accept a single argument,
+which is treated as a key. If a matching key is found in the
+structure, Bard returns the value stored there.
+
+For example, you can obtain element 12 of the list in `$my-list`
+like this:
+
+    ($my-list 12)
+
+Similarly, if you have a table of user accounts keyed by username, you
+can obtain a particular record like this:
+
+    ($users "frank")
+
+Sometimes it's clearer to write these kinds of operations using an
+explicitly-named getter function. For those cases Bard provides the
+function `get`. The examples above can be expressed using `get` as
+follows:
+
+    (get $my-list 12)
+    (get $users "frank")
+
+Since `get` is a polymorphic function, using it also enables you to
+write custom accessors for specific types..
+
+### Built-in protocols
 
 Most of Bard's built-in vocabulary is collected in
 **protocols**--groups of functions that share a common purpose. This
