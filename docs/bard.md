@@ -531,7 +531,7 @@ let ([( _var_ _val-expression_) ...]) [ _expression_ ] ...
 
 loop _loopname_ ([( _var_ _val-expression1_ ) ...]) [ _expression_ ] ... [( _loopname_ _val-expressionN_ ...)] ...
 
-**make**
+**make** _Not yet implemented_
 
 make _type_ [ _init-argument1_ ] ...
 
@@ -583,7 +583,7 @@ set! _variable-name_ _value-expression_
 
 time _expression_
 
-**undefine**
+**undefine** _Not yet implemented_
 
 undefine _variable-name_
 
