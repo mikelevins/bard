@@ -16,6 +16,104 @@ others.
 
 This document is a brief overview and basic reference for the language.
 
+## Examples
+
+Programmers like to see example code, so that they can see what a
+language looks like in use. Here are a couple of short examples
+written in Bard. These are taken from the examples directory of the
+repository, and are part of Bard's tests.
+
+**Recursive fibonacci**
+
+    (define method (fib (n (singleton 0))) 1)
+    (define method (fib (n (singleton 1))) 1)
+
+    (define method (fib (n <fixnum>))
+      (+ (fib (- n 1))(fib (- n 2))))
+
+**Defining a protocol**
+
+    (define protocol Rational
+      (numerator Ratio -> Integer)
+      (denominator Ration -> Integer))
+
+**Iterative fibonacci using generators**
+
+    (define variable $fibs
+      (generate ((x 1)
+                 (y 1))
+        (yield x)
+        (resume y (+ x y))))
+
+**A simple name generator**
+
+Here's a simple version of a name generator that constructs names by
+reading sample names, splitting them into sequences of three
+characters, and recombining them according to a simple matching rule.
+
+    (def $name-starts nothing)
+    (def $name-parts nothing)
+    (def $name-parts-count 0)
+    (def *max-name-length* 16)
+    (def $max-tries 100)
+    
+    (define method (triples (x <string>)) (take-by 3 1 x))
+    (define method (long-enough? (s <string>)) (> (length s) 1))
+    (define method (choose-name-start)(any $name-starts))
+    
+    (define method (read-names path)
+        (let ((lines (with-open-file (in path)(read-lines in)))
+              (triples-list (map triples lines)))
+          (set! $name-starts (filter long-enough? (map first triples-list)))
+          (set! $name-parts (reduce append [] (map (partial filter long-enough?)
+                                                   (map rest triples-list))))
+          (set! $name-parts-count (length $name-parts))
+          path))
+    
+    (define method (choose-name-next part)
+      (let ((part1 (next-last part))
+            (part2 (last part)))
+        (some? (^ (p) (and (= part1 (first p))
+                           (= part2 (second p))))
+               (drop (random (- $name-parts-count 1))
+                     $name-parts))))
+    
+    (define method (merge-name-segment name segment)
+      (append name (drop 2 segment)))
+    
+    (define method (build-name)
+      (loop gen ((name (choose-name-start))
+                 (try-count 0))
+            (if (< try-count $max-tries)
+                (let ((count (length name)))
+                  (if (> count *max-name-length*)
+                      name
+                      (let ((seg (choose-name-next name)))
+                        (if (something? seg)
+                            (if (> (length seg) 2)
+                                (gen (merge-name-segment name seg)
+                                     (+ try-count 1))
+                                (merge-name-segment name seg))
+                            (gen name (+ try-count 1))))))
+                name)))
+    
+    (define method (build-names)
+      (generate ((nms []))
+        (let ((nm (build-name)))
+          (yield nm)
+          (resume (add-first nm nms)))))
+    
+    (define method (names path n)
+      (read-names path)
+      (let ((nms (build-names)))
+        (take n nms)))
+
+A sample run using the "us.names" data included in the examples produces:
+
+    bard> (names "namefiles/us.names" 10)
+    ("Vongo" "Tom" "Jesto" "Clif" "Pie" "Edgen" "Joel" "Laul" "Jimon" "Ramarlen")
+
+
 ## Syntax and built-in classes
 
 Bard is a Lisp, and like other Lisps, is a language made of

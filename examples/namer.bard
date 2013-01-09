@@ -2,13 +2,15 @@
 ;;; TODO: try a prefix-tree version
 ;;;       might want to add <hash-table> or <wb-tree-table> to support it
 
-(define variable $name-starts nothing)
-(define variable $name-parts nothing)
-(define variable $name-parts-count 0)
+(def $name-starts nothing)
+(def $name-parts nothing)
+(def $name-parts-count 0)
+(def *max-name-length* 16)
+(def $max-tries 100)
 
 (define method (triples (x <string>)) (take-by 3 1 x))
-
 (define method (long-enough? (s <string>)) (> (length s) 1))
+(define method (choose-name-start)(any $name-starts))
 
 (define method (read-names path)
     (let ((lines (with-open-file (in path)(read-lines in)))
@@ -19,8 +21,6 @@
       (set! $name-parts-count (length $name-parts))
       path))
 
-(define method (choose-name-start)(any $name-starts))
-
 (define method (choose-name-next part)
   (let ((part1 (next-last part))
         (part2 (last part)))
@@ -29,12 +29,8 @@
            (drop (random (- $name-parts-count 1))
                  $name-parts))))
 
-(define variable *max-name-length* 16)
-
 (define method (merge-name-segment name segment)
   (append name (drop 2 segment)))
-
-(define variable $max-tries 100)
 
 (define method (build-name)
   (loop gen ((name (choose-name-start))
