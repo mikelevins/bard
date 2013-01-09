@@ -519,7 +519,7 @@ values of its arguments.
 
 if _test-expression_ _then-expression_ [ _else-expression_ ]
 
-**initialize**
+**initialize** _Not yet implemented_
 
 initialize _value_ [ _init-argument1_ ] ...
 
