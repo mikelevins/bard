@@ -252,9 +252,27 @@ other operations.
 
     and [ form ] ...
 
+Evaluates each form from left to right. If any form returns a false
+value `and` stops evaluation and returns the false value. Otherwise it
+returns the value of the last form.
+
+Example:
+
+    bard> (and (odd? 3)(even? 2)(number? "Not a number")(odd? 5))
+    false
+
+ 
+
     begin [form] ...
 
+Evaluates each form from left to right, returning the value of the
+last form. `begin` is most often used to run proceudres with
+side-effects, such as printing something to the screen. Any values
+returned are discarded, except for the last one, which is returned.
+
     cond (test result) ... [(else: result)]
+
+Evaluates the 
 
     def variable value-expression
 
