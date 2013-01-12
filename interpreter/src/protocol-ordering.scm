@@ -10,8 +10,8 @@
 ;;;; ***********************************************************************
 
 (define bard:< (make-function debug-name: '<
-                              input-classes: `(,Orderable ,&)
-                              output-classes: `(,Boolean)))
+                              input-types: `(,Orderable ,&)
+                              output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:<
                         (list <fixnum> <fixnum>)
@@ -19,8 +19,8 @@
                         debug-name: '<)
 
 (define bard:> (make-function debug-name: '>
-                              input-classes: `(,Orderable ,&)
-                              output-classes: `(,Boolean)))
+                              input-types: `(,Orderable ,&)
+                              output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:>
                         (list <fixnum> <fixnum>)
@@ -28,8 +28,8 @@
                         debug-name: '>)
 
 (define bard:<= (make-function debug-name: '<=
-                               input-classes: `(,Orderable ,&)
-                               output-classes: `(,Boolean)))
+                               input-types: `(,Orderable ,&)
+                               output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:<=
                         (list <fixnum> <fixnum>)
@@ -37,8 +37,8 @@
                         debug-name: '<=)
 
 (define bard:>= (make-function debug-name: '>=
-                               input-classes: `(,Orderable ,&)
-                               output-classes: `(,Boolean)))
+                               input-types: `(,Orderable ,&)
+                               output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:>=
                         (list <fixnum> <fixnum>)

@@ -1,6 +1,35 @@
+0.3.3 
+
+- new define method syntax implemented, using with: clauses for type
+  constraints. for now they support only type references and
+  singletons (the "exactly" construct), but can also support more
+  general predicate dispatch
+
+0.3.2
+- added warn
+
+- Linux build working again
+
+- define protocol added
+
+0.3.1
+
+- generate implemented; a few generator-based protocol functions added
+
+- function literals implemented; functions know their input and output types
+
 0.3.0
 
+- overhauled type system and method dispatch. the low-level type
+  system is simpler and method dispatch is around 3x faster
 
+- protocol objects added
+
+- class objects and definitions added
+
+- schema implementation simplified
+
+- simplified and sped up apply
 
 0.2.10
 

@@ -34,6 +34,19 @@
                 #f)))
       #f))
 
+(define (%singleton-tree-remove! tree . keys)
+  (if (%singleton-tree? tree)
+      (if (null? keys)
+          tree
+          (let* ((entries (%singleton-tree-entries tree))
+                 (subtree (table-ref entries (car keys) #f)))
+            (if subtree
+                (if (null? (cdr keys))
+                    (table-set! entries (car keys))
+                    (apply %singleton-tree-remove! subtree (cdr keys)))
+                tree)))
+      tree))
+
 (define (%singleton-tree-put! val tree . keys)
   (if (%singleton-tree? tree)
       (if (null? keys)

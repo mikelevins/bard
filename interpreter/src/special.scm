@@ -68,9 +68,13 @@
 ;;; define
 ;;; ----------------------------------------------------------------------
 
+;;; variable
+
 (define (%eval-define-variable expr env)
   (%defglobal (list-ref expr 2) (%eval (list-ref expr 3) env))
   (list-ref expr 2))
+
+;;; macro
 
 (define (%eval-define-macro expr env)
   (let* ((proto (caddr expr))
@@ -82,80 +86,109 @@
                             (lambda (expr)
                               (%apply expander (cdr expr))))))
 
-(define %fparams list)
+;;; method
 
-(define (%parse-function-parameters params env)
-  (let loop ((params params)
-             (param-names '())
-             (param-types '())
-             (rest-arg #f)
-             (frame-arg #f))
+(define (%parse-method-prototype prototype env)
+  (let ((pos (position (lambda (x)(eq? x '&)) prototype)))
+    (if pos
+        ;; there's a '&' so we have a restarg
+        (values (car prototype)
+                (drop 1 (take pos prototype))
+                (let ((restarg (car (drop (+ 1 pos) prototype))))
+                  (if (symbol? restarg)
+                      ;; the restarg is a symbol; we'll bind it to a
+                      ;; list of the remaining args
+                      restarg
+                      ;; the restarg is a table expression; we'll use
+                      ;; it to match keyword arguments
+                      (%eval restarg env))))
+        ;; there's no '&' so we don't have a restarg
+        (values (car prototype)
+                (drop 1 prototype)
+                #f))))
+
+;;; processing type constraints
+;;;
+;;; (define method (foo x y z)
+;;;   with: ((y <fixnum>)(z (exactly 1)))
+;;;   ...)
+;;;
+;;; there are three kinds of constrant, represented here by x, y, and
+;;; z. x is unconstrained; we interpret it as if it were (x Anything).
+;;; y is constrained to be of type <fixnum>. The type constraint (in
+;;; this case, <fixnum>) is evaluated when executing define method to
+;;; obtain a reference to a type object. Arguments passed as y will
+;;; match only values whose type is <fixnum>. z is constrained to be
+;;; of type (exactly 1); a value (singleton 1) is created when define
+;;; method is executed, and arguments passed in z will match only if
+;;; they are equal to the singleton-value of that singleton.
+;;;
+
+;;; the computed types are returned in the order that the formal
+;;; arguments appear in the function prototype, regardless of the
+;;; order of constraints in the constraint expression; so, if
+;;; the function prototype is (foo x y z), as above, the types 
+;;; are returned as (Anything <fixnum> (singleton 1))
+
+(define (%parse-type-constraints formals constraints env)
+  (let loop ((params formals)
+             (types '()))
     (if (null? params)
-        (%fparams param-names param-types rest-arg frame-arg)
-        (let ((next (car params))
-              (more (cdr params)))
-          (cond
-           ((eq? '& next) (loop '()
-                                param-names
-                                param-types
-                                (cadr params)
-                                frame-arg))
-           ((symbol? next) (loop (cdr params)
-                                 (append param-names (list next))
-                                 (append param-types (list 'Anything))
-                                 rest-arg
-                                 frame-arg))
-           ((list? next) (if (eq? 'frame (car next))
-                              (loop '()
-                                    param-names
-                                    param-types
-                                    rest-arg
-                                    next)
-                              (loop (cdr params)
-                                    (append param-names (list (car next)))
-                                    (append param-types (list (cadr next)))
-                                    rest-arg
-                                    frame-arg)))
-           (else (error (string-append "Invalid parameter: " (object->string next)))))))))
-
-(define (%parse-function-prototype proto env)
-  (let* ((name (car proto))
-         (params (cdr proto)))
-    (cons name (%parse-function-parameters params env))))
-
-(define (%fproto-name fp)(list-ref fp 0))
-(define (%fproto-formals fp)(list-ref fp 1))
-(define (%fproto-types fp)(list-ref fp 2))
-(define (%fproto-restarg fp)(list-ref fp 3))
-(define (%fproto-framearg fp)(list-ref fp 4))
+        (begin
+          (reverse types))
+        (let* ((param (car params))
+               (constraint (assq param constraints))
+               (type (if constraint
+                         (if (symbol? (cadr constraint))
+                             (%eval (cadr constraint) env)
+                             (if (and (pair? (cadr constraint))
+                                      (eq? 'exactly (car (cadr constraint))))
+                                 (%singleton (cadr (cadr constraint)))
+                                 (error (str "Invalid type constraint: " constraint))))
+                         Anything)))
+          (loop (cdr params)
+                (cons type types))))))
 
 (define (%eval-define-method expr #!optional (env (%null-environment)))
-  (let* ((prototype (%parse-function-prototype (list-ref expr 2) env))
-         (fname (%fproto-name prototype))
-         (formals (%fproto-formals prototype))
-         (types (map (lambda (p)(%eval p env))(%fproto-types prototype)))
-         (in-classes (map (lambda (t)
-                            (cond
-                             ((class-instance? t) t)
-                             (else Anything))) 
-                          types))
-         (fn (or (table-ref $bard-global-variables fname #f)
-                 (let ((f (make-function debug-name: fname
-                                         input-classes: `(,@in-classes)
-                                         output-classes: `(,Anything))))
-                   (%defglobal fname f)
-                   f)))
-         (restarg (%fproto-restarg prototype))
-         (framearg (%fproto-framearg prototype))
-         (body (cons 'begin (drop 3 expr)))
-         (method-signature types)
-         (method (make-interpreted-method formal-parameters: formals
-                                          body: body
-                                          environment: env
-                                          debug-name: fname
-                                          restarg: restarg)))
-    (%add-method! fn method-signature method)
-    fname))
+  (let* ((prototype (list-ref expr 2))
+         (with-arg? (eq? with: (list-ref expr 3)))
+         (constraints (if with-arg?
+                          (list-ref expr 4)
+                          '()))
+         (body (cons 'begin
+                     (if with-arg?
+                         (drop 5 expr)
+                         (drop 3 expr)))))
+    (receive (fname formals restarg)
+             (%parse-method-prototype prototype env)
+             (let* ((input-types (%parse-type-constraints formals constraints env))
+                    (fn (table-ref $bard-global-variables fname #f)))
+               (cond
+                ((not fn)
+                 (let ((fn (make-function debug-name: fname
+                                          input-types: input-types
+                                          output-types: `(,Anything)))
+                       (method (make-interpreted-method formal-parameters: formals
+                                                        body: body
+                                                        environment: env
+                                                        debug-name: fname
+                                                        restarg: restarg)))
+                   (%defglobal fname fn)
+                   (%add-method! fn input-types method)
+                   fname))
+                ((equal? (length (function-input-types fn)) 
+                         (length input-types))
+                 (let ((method (make-interpreted-method formal-parameters: formals
+                                                        body: body
+                                                        environment: env
+                                                        debug-name: fname
+                                                        restarg: restarg)))
+                   (%add-method! fn input-types method)
+                   fname))
+                (else: (error (str "Conflicting function definition for " fname
+                                   "; you must undefine the function before you can add this definition"))))))))
+
+;;; class
 
 (define (%eval-define-class expr env)
   (let* ((cname (list-ref expr 2))
@@ -163,6 +196,7 @@
     (%defglobal cname class)
     class))
 
+;;; protocol
 
 ;;; (define protocol Rational
 ;;;   (numerator Ratio -> Integer)
@@ -246,8 +280,12 @@
         (%defglobal pname protocol))
     protocol))
 
+;;; record
+
 (define (%eval-define-record expr env) (error "define record not implemented"))
 (define (%eval-define-vector expr env) (error "define vector not implemented"))
+
+;;; define
 
 (%defspecial 'define
              (lambda (expr env)
@@ -284,11 +322,11 @@
                (if (> (length expr) 1)
                    (let ((arrow-pos (position (lambda (x)(eq? '-> x)) expr)))
                      (if arrow-pos
-                         (let ((in-classes (drop 1 (take arrow-pos expr)))
-                               (out-classes (drop (+ 1 arrow-pos) expr)))
+                         (let ((in-types (drop 1 (take arrow-pos expr)))
+                               (out-types (drop (+ 1 arrow-pos) expr)))
                            (make-function debug-name: (list-ref expr 1)
-                                          input-classes: `(,@in-classes)
-                                          output-classes: `(,@out-classes)))
+                                          input-types: `(,@in-types)
+                                          output-types: `(,@out-types)))
                          (error (str "Invalid function syntax: " expr))))
                    (error (str "Invalid function syntax: " expr)))))
 

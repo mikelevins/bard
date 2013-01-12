@@ -8,8 +8,8 @@
 (def *max-name-length* 16)
 (def $max-tries 100)
 
-(define method (triples (x <string>)) (take-by 3 1 x))
-(define method (long-enough? (s <string>)) (> (length s) 1))
+(define method (triples x) with: ((x <string>)) (take-by 3 1 x))
+(define method (long-enough? s) with: ((s <string>)) (> (length s) 1))
 (define method (choose-name-start)(any $name-starts))
 
 (define method (read-names path)

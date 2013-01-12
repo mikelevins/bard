@@ -10,8 +10,8 @@
 ;;;; ***********************************************************************
 
 (define bard:left (make-function debug-name: 'left
-                                 input-classes: `(,Pair)
-                                 output-classes: `(,Anything)))
+                                 input-types: `(,Pair)
+                                 output-types: `(,Anything)))
 
 (%add-primitive-method! bard:left
                         (list <pair>)
@@ -19,8 +19,8 @@
                         debug-name: 'left)
 
 (define bard:right (make-function debug-name: 'right
-                                  input-classes: `(,Pair)
-                                  output-classes: `(,Anything)))
+                                  input-types: `(,Pair)
+                                  output-types: `(,Anything)))
 
 (%add-primitive-method! bard:right
                         (list <pair>)

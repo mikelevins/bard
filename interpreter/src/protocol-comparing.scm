@@ -10,8 +10,8 @@
 ;;;; ***********************************************************************
 
 (define bard:= (make-function debug-name: '=
-                              input-classes: `(,Anything ,Anything)
-                              output-classes: `(,Boolean)))
+                              input-types: `(,Anything ,Anything)
+                              output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:=
                         (list Anything Anything)

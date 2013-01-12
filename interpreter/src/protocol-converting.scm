@@ -10,8 +10,8 @@
 ;;;; ***********************************************************************
 
 (define bard:as (make-function debug-name: 'as
-                               input-classes: `(,Type ,Anything)
-                               output-classes: `(,Anything)))
+                               input-types: `(,Type ,Anything)
+                               output-types: `(,Anything)))
 
 (%add-primitive-method! bard:as
                         (list (%singleton <string>) <symbol>) 

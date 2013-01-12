@@ -410,7 +410,7 @@
 
 (define-instance function-instance
   constructor: make-function-instance
-  name proc input-classes output-classes thunk-method method-tree)
+  name proc input-types output-types thunk-method method-tree)
 
 ;;; constructor
 
@@ -419,6 +419,15 @@
     (if (null? argtypes)
         (set-function-thunk-method! fn method)
         (apply %singleton-tree-put! method method-tree argtypes))
+    fn))
+
+(define (%remove-method! fn argtypes)
+  (let ((method-tree (function-method-tree fn)))
+    (if (null? argtypes)
+        fn
+        (begin
+          (apply %singleton-tree-remove! method-tree argtypes)
+          fn))
     fn))
 
 (define (%add-primitive-method! fn argtypes method-proc #!key (debug-name #f)(restarg #f))
@@ -460,9 +469,9 @@
 
 (define (make-function #!key 
                        (debug-name #f)
-                       (input-classes '())
-                       (output-classes `(,Anything)))
-  (let* ((fn (make-function-instance <function> debug-name #f input-classes output-classes #f (%singleton-tree)))
+                       (input-types '())
+                       (output-types `(,Anything)))
+  (let* ((fn (make-function-instance <function> debug-name #f input-types output-types #f (%singleton-tree)))
          (fn-proc (lambda args
                     (let ((best-method (%function-best-method fn args)))
                       (if best-method
@@ -475,8 +484,8 @@
 
 (define function? function-instance?)
 (define function-name function-instance-name)
-(define function-input-classes function-instance-input-classes)
-(define function-output-classes function-instance-output-classes)
+(define function-input-types function-instance-input-types)
+(define function-output-types function-instance-output-types)
 (define function-proc function-instance-proc)
 (define set-function-proc! function-instance-proc-set!)
 (define function-thunk-method function-instance-thunk-method)
@@ -484,8 +493,8 @@
 (define function-method-tree function-instance-method-tree)
 
 (define (%function-signature fn)
-  (let ((in (function-input-classes fn))
-        (out (function-output-classes fn)))
+  (let ((in (function-input-types fn))
+        (out (function-output-types fn)))
     `(,@in -> ,@out)))
 
 ;;; ----------------------------------------------------------------------
