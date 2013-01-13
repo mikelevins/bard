@@ -10,13 +10,21 @@
 ;;;; ***********************************************************************
 
 (define bard:= (make-function debug-name: '=
-                              input-types: `(,&)
+                              input-types: `()
                               restarg: 'more
                               output-types: `(,Boolean)))
 
+(define (%bard= . args)
+  (if (null? args)
+      #t
+      (if (null? (cdr args))
+          #t
+          (and (equal? (car args)(cadr args))
+               (apply %bard= (cdr args))))))
+
 (%add-primitive-method! bard:=
-                        (list '& 'more)
-                        equal?
+                        '()
+                        %bard=
                         debug-name: '=)
 
 

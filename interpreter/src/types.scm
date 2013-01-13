@@ -463,12 +463,12 @@
             #f))))
 
 (define (%function-best-method fn vals)
-  (if (null? vals)
+  (let ((vals (if (function-restarg fn)
+                  (take (length (function-input-types fn)) vals)
+                  vals)))
+    (if (null? vals)
       (function-thunk-method fn)
-      (let ((vals (if (function-restarg fn)
-                      (take (length (function-input-types fn)) vals)
-                      vals)))
-        (%search-method-tree-for-values (function-method-tree fn) vals))))
+      (%search-method-tree-for-values (function-method-tree fn) vals))))
 
 (define (make-function #!key 
                        (debug-name #f)
