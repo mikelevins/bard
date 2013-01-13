@@ -740,7 +740,7 @@ repeat _expression_
 
 send _actor_ _value_
 
-**set!**
+**set!**  _Not fully implemented_
 
 set! _variable-reference_ _value-expression_
 
