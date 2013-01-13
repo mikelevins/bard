@@ -151,7 +151,12 @@
 
 (define (%eval-define-method expr #!optional (env (%null-environment)))
   (let* ((prototype (list-ref expr 2))
-         (with-arg? (eq? with: (list-ref expr 3)))
+         (with-arg? (let ((tl (drop 3 expr)))
+                      (if (null? tl)
+                          #f
+                          (if (eq? with: (car tl))
+                              (cadr tl)
+                              #f))))
          (constraints (if with-arg?
                           (list-ref expr 4)
                           '()))
@@ -167,6 +172,7 @@
                 ((not fn)
                  (let ((fn (make-function debug-name: fname
                                           input-types: input-types
+                                          restarg: restarg
                                           output-types: `(,Anything)))
                        (method (make-interpreted-method formal-parameters: formals
                                                         body: body
@@ -320,12 +326,19 @@
 (%defspecial 'function
              (lambda (expr env)
                (if (> (length expr) 1)
-                   (let ((arrow-pos (position (lambda (x)(eq? '-> x)) expr)))
+                   (let ((arrow-pos (position (lambda (x)(eq? '-> x)) expr))
+                         (ampersand-pos (position (lambda (x)(eq? '& x)) expr)))
                      (if arrow-pos
-                         (let ((in-types (drop 1 (take arrow-pos expr)))
+                         (let ((in-types (if ampersand-pos
+                                             (drop 1 (take ampersand-pos expr))
+                                             (drop 1 (take arrow-pos expr))))
+                               (restarg (if ampersand-pos
+                                            (list-ref expr (+ 1 ampersand-pos))
+                                            #f))
                                (out-types (drop (+ 1 arrow-pos) expr)))
                            (make-function debug-name: (list-ref expr 1)
                                           input-types: `(,@in-types)
+                                          restarg: restarg
                                           output-types: `(,@out-types)))
                          (error (str "Invalid function syntax: " expr))))
                    (error (str "Invalid function syntax: " expr)))))

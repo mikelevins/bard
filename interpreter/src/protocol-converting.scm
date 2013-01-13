@@ -11,6 +11,7 @@
 
 (define bard:as (make-function debug-name: 'as
                                input-types: `(,Type ,Anything)
+                               restarg: #f
                                output-types: `(,Anything)))
 
 (%add-primitive-method! bard:as

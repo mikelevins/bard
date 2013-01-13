@@ -10,11 +10,12 @@
 ;;;; ***********************************************************************
 
 (define bard:= (make-function debug-name: '=
-                              input-types: `(,Anything ,Anything)
+                              input-types: `(,&)
+                              restarg: 'more
                               output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:=
-                        (list Anything Anything)
+                        (list '& 'more)
                         equal?
                         debug-name: '=)
 

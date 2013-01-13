@@ -15,6 +15,7 @@
 
 (define bard:add-first (make-function debug-name: 'add-first
                                       input-types: `(,Anything ,List)
+                                      restarg: #f
                                       output-types: `(,List)))
 
 (%add-primitive-method! bard:add-first
@@ -38,6 +39,7 @@
 
 (define bard:add-last (make-function debug-name: 'add-last
                                      input-types: `(,List ,Anything)
+                                     restarg: #f
                                      output-types: `(,List)))
 
 (%add-primitive-method! bard:add-last
@@ -91,6 +93,7 @@
 
 (define bard:append (make-function debug-name: 'append
                                    input-types: `(,List ,List)
+                                   restarg: #f
                                    output-types: `(,List)))
 
 (%add-primitive-method! bard:append
@@ -124,6 +127,7 @@
 
 (define bard:by (make-function debug-name: 'by
                                input-types: `(,Integer ,List)
+                               restarg: #f
                                output-types: `(,List)))
 
 (%add-primitive-method! bard:by
@@ -143,6 +147,7 @@
 
 (define bard:drop (make-function debug-name: 'drop
                                  input-types: `(,Integer ,List)
+                                 restarg: #f
                                  output-types: `(,List)))
 
 (%add-primitive-method! bard:drop
@@ -168,6 +173,7 @@
 
 (define bard:element (make-function debug-name: 'element
                                     input-types: `(,List ,Integer)
+                                    restarg: #f
                                     output-types: `(,Anything)))
 
 (%add-primitive-method! bard:element
@@ -198,6 +204,7 @@
 
 (define bard:empty? (make-function debug-name: 'empty?
                                    input-types: `(,List)
+                                   restarg: #f
                                    output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:empty?
@@ -221,6 +228,7 @@
 
 (define bard:filter (make-function debug-name: 'filter
                                    input-types: `(,Applicable ,List)
+                                   restarg: #f
                                    output-types: `(,List)))
 
 (define (%bard-filter test ls)
@@ -260,6 +268,7 @@
 
 (define bard:first (make-function debug-name: 'first
                                   input-types: `(,List)
+                                  restarg: #f
                                   output-types: `(,Anything)))
 
 (%add-primitive-method! bard:first
@@ -294,6 +303,7 @@
 
 (define bard:join-text (make-function debug-name: 'join-text
                                       input-types: `(,Text ,List)
+                                      restarg: #f
                                       output-types: `(,Text)))
 
 (%add-primitive-method! bard:join-text
@@ -308,6 +318,7 @@
 
 (define bard:last (make-function debug-name: 'last
                                  input-types: `(,List)
+                                 restarg: #f
                                  output-types: `(,Anything)))
 
 (define (%pair-last p)
@@ -347,6 +358,7 @@
 
 (define bard:length (make-function debug-name: 'length
                                    input-types: `(,List)
+                                   restarg: #f
                                    output-types: `(,Integer)))
 
 (%add-primitive-method! bard:length
@@ -375,6 +387,7 @@
 
 (define bard:map (make-function debug-name: 'map
                                 input-types: `(,Applicable ,List)
+                                restarg: #f
                                 output-types: `(,List)))
 
 ;;; <null>
@@ -487,6 +500,7 @@
 
 (define bard:next-last (make-function debug-name: 'next-last
                                       input-types: `(,List)
+                                      restarg: #f
                                       output-types: `(,Anything)))
 
 (%add-primitive-method! bard:next-last
@@ -505,6 +519,7 @@
 
 (define bard:reduce (make-function debug-name: 'reduce
                                    input-types: `(,Applicable ,Anything ,List)
+                                   restarg: #f
                                    output-types: `(,Anything)))
 
 (define (%bard-reduce fn init ls)
@@ -551,6 +566,7 @@
 
 (define bard:rest (make-function debug-name: 'rest
                                  input-types: `(,List)
+                                 restarg: #f
                                  output-types: `(,List)))
 
 (%add-primitive-method! bard:rest
@@ -574,6 +590,7 @@
 
 (define bard:second (make-function debug-name: 'second
                                    input-types: `(,List)
+                                   restarg: #f
                                    output-types: `(,Anything)))
 
 (%add-primitive-method! bard:second
@@ -592,6 +609,7 @@
 
 (define bard:some? (make-function debug-name: 'some?
                                   input-types: `(,Applicable ,List)
+                                  restarg: #f
                                   output-types: `(,Anything)))
 
 (define (%bard-some? test ls)
@@ -648,6 +666,7 @@
 
 (define bard:split-text (make-function debug-name: 'split-text
                                        input-types: `(,Text ,Character)
+                                       restarg: #f
                                        output-types: `(,List)))
 
 (%add-primitive-method! bard:split-text
@@ -661,6 +680,7 @@
 
 (define bard:take (make-function debug-name: 'take
                                  input-types: `(,Integer ,List)
+                                 restarg: #f
                                  output-types: `(,List)))
 
 (%add-primitive-method! bard:take

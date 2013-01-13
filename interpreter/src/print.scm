@@ -93,6 +93,7 @@
   (lambda (fn)
     (let ((fname (function-name fn))
           (in (function-input-types fn))
+          (restarg (function-restarg fn))
           (out (function-output-types fn)))
       (with-output-to-string
         '()
@@ -106,6 +107,7 @@
                 (if (not (null? (cdr in))) 
                     (for-each (lambda (c)(display (str " " (%as-string c))))
                               (cdr in)))))
+          (if restarg (display " & "))
           (display " -> ")
           (if (not (null? out))
               (begin

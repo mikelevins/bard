@@ -410,7 +410,7 @@
 
 (define-instance function-instance
   constructor: make-function-instance
-  name proc input-types output-types thunk-method method-tree)
+  name proc input-types restarg output-types thunk-method method-tree)
 
 ;;; constructor
 
@@ -465,13 +465,17 @@
 (define (%function-best-method fn vals)
   (if (null? vals)
       (function-thunk-method fn)
-      (%search-method-tree-for-values (function-method-tree fn) vals)))
+      (let ((vals (if (function-restarg fn)
+                      (take (length (function-input-types fn)) vals)
+                      vals)))
+        (%search-method-tree-for-values (function-method-tree fn) vals))))
 
 (define (make-function #!key 
                        (debug-name #f)
                        (input-types '())
+                       (restarg #f)
                        (output-types `(,Anything)))
-  (let* ((fn (make-function-instance <function> debug-name #f input-types output-types #f (%singleton-tree)))
+  (let* ((fn (make-function-instance <function> debug-name #f input-types restarg output-types #f (%singleton-tree)))
          (fn-proc (lambda args
                     (let ((best-method (%function-best-method fn args)))
                       (if best-method
@@ -485,6 +489,7 @@
 (define function? function-instance?)
 (define function-name function-instance-name)
 (define function-input-types function-instance-input-types)
+(define function-restarg function-instance-restarg)
 (define function-output-types function-instance-output-types)
 (define function-proc function-instance-proc)
 (define set-function-proc! function-instance-proc-set!)

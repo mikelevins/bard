@@ -11,6 +11,7 @@
 
 (define bard:left (make-function debug-name: 'left
                                  input-types: `(,Pair)
+                                 restarg: #f
                                  output-types: `(,Anything)))
 
 (%add-primitive-method! bard:left
@@ -20,6 +21,7 @@
 
 (define bard:right (make-function debug-name: 'right
                                   input-types: `(,Pair)
+                                  restarg: #f
                                   output-types: `(,Anything)))
 
 (%add-primitive-method! bard:right

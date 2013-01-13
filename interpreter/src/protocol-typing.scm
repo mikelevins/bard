@@ -13,6 +13,7 @@
 
 (define bard:list? (make-function debug-name: 'list?
                                   input-types: `(,Anything)
+                                  restarg: #f
                                   output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:list?
@@ -42,6 +43,7 @@
 
 (define bard:symbol? (make-function debug-name: 'symbol?
                                     input-types: `(,Anything)
+                                    restarg: #f
                                     output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:symbol?
@@ -56,6 +58,7 @@
 
 (define bard:nothing? (make-function debug-name: 'nothing?
                                      input-types: `(,Anything)
+                                     restarg: #f
                                      output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:nothing?
@@ -70,6 +73,7 @@
 
 (define bard:something? (make-function debug-name: 'something?
                                        input-types: `(,Anything)
+                                       restarg: #f
                                        output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:something?
@@ -84,6 +88,7 @@
 
 (define bard:table? (make-function debug-name: 'table?
                                    input-types: `(,Anything)
+                                   restarg: #f
                                    output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:table?
@@ -98,6 +103,7 @@
 
 (define bard:text? (make-function debug-name: 'text?
                                   input-types: `(,Anything)
+                                  restarg: #f
                                   output-types: `(,Boolean)))
 
 (%add-primitive-method! bard:text?
