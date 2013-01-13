@@ -754,21 +754,27 @@ aggregate datatype, if the slot is mutable. The syntax for each case
 mirrors the syntax for retrieving a value.
 
 Getting a variable value:
+
     answer
 
 Setting a variable value:
+
     (set! answer 42)
 
-Getting a record field:
+Getting a table or record field:
+
     (mypoint 'x)
 
-Setting a variable value:
+Setting a table or record field:
+
     (set! (mypoint 'x) 42)
 
 Getting a list or vector field:
+
     (myvec 2)
 
-Setting a variable value:
+Setting a list or vector field:
+
     (set! (myvec 2) 42)
 
 **time**
