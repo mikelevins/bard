@@ -35,7 +35,8 @@ and are part of Bard's tests.
 
     (define method (fib n)
      with: ((n <fixnum>))
-     1)
+     (+ (fib (- n 1))
+        (fib (- n 2))))
 
 **Defining a protocol**
 
