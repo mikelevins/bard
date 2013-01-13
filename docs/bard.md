@@ -25,11 +25,17 @@ and are part of Bard's tests.
 
 **Recursive fibonacci**
 
-    (define method (fib (n (singleton 0))) 1)
-    (define method (fib (n (singleton 1))) 1)
+    (define method (fib n)
+     with: ((n (exactly 0)))
+     1)
 
-    (define method (fib (n <fixnum>))
-      (+ (fib (- n 1))(fib (- n 2))))
+    (define method (fib n)
+     with: ((n (exactly 1)))
+     1)
+
+    (define method (fib n)
+     with: ((n <fixnum>))
+     1)
 
 **Defining a protocol**
 
@@ -56,9 +62,15 @@ characters, and recombining them according to a simple matching rule.
     (def $name-parts-count 0)
     (def *max-name-length* 16)
     (def $max-tries 100)
-    
-    (define method (triples (x <string>)) (take-by 3 1 x))
-    (define method (long-enough? (s <string>)) (> (length s) 1))
+
+    (define method (triples x) 
+     with: ((x <string>))
+      (take-by 3 1 x))
+
+    (define method (long-enough? s) 
+     with: ((s <string>))
+      (> (length s) 1))
+
     (define method (choose-name-start)(any $name-starts))
     
     (define method (read-names path)
@@ -72,7 +84,7 @@ characters, and recombining them according to a simple matching rule.
     
     (define method (choose-name-next part)
       (let ((part1 (next-last part))
-            (part2 (last part)))
+        (part2 (last part)))
         (some? (^ (p) (and (= part1 (first p))
                            (= part2 (second p))))
                (drop (random (- $name-parts-count 1))
@@ -107,7 +119,7 @@ characters, and recombining them according to a simple matching rule.
       (read-names path)
       (let ((nms (build-names)))
         (take n nms)))
-
+    
 A sample run using the "us.names" data included in the examples produces:
 
     bard> (names "namefiles/us.names" 10)
@@ -453,26 +465,77 @@ programmer to conveniently extend the syntax of Bard.
 
 **define method**
 
-define method ( _function-name_ [ _parameter_ ] ...) _expression_ ...
+define method ( _function-name_ [ _parameter_ ] ... [ & [ _restarg_ | { _k1_ _v1_ ... } ] ] ) 
+[ with: ( ( _var1_ _type1_ ) ...) ]
+_expression_ ...
 
-    (define method (add (left <string>) (right <string>))
+    (define method (add left right)
+       with: ((left <string>)
+              (right <string>))
       (append left right))
+
+    (define method (reverse & args)
+      (if (empty? args)
+        args
+        (add-last (apply reverse (rest args))
+                  (first args))))
+
+    bard> (reverse)
+    nothing
+
+    bard> (reverse 1)
+    (1)
+
+    bard> (reverse 1 2)
+    (2 1)
+
+    (define method (make-thing name & {size: 'average weight: 'average shape: 'round})
+      { name: name
+        size: size
+        weight: weight
+        shape: shape})
+
+    bard> (make-thing "Fred")
+    {name: "Fred" size: average weight: average shape: round}
+
+    bard> (make-thing "Barney" size: 'small)
+    {name: "Barney" size: small weight: average shape: round}
+
 
 Defines a new method and adds it to the function _function-name_. If
 no such function exists, then Bard creates one. When the function is
 subsequently applied, if its arguments match the types given in
-_parameter_... then the new method is called.
+_type1__... then the new method is called.
 
-If _parameter_ is a symbol then the type of the parameter is
-`Anything`, and value will match that argument. If it's a list then it
-can be either of the following forms:
+If no type is given for a parameter, or if there is no "with:" clause,
+then the type of the parameter is `Anything`, and values will match
+that argument. If a type is given in a "with:" clause, then argument
+values will match the method only if they re members of the type.
 
     ( _parameter-name_ _type_ )
 
-    ( _parameter-name_ (singleton _value_ ))
+    ( _parameter-name_ (exactly _value_ ))
 
 The first form causes the argument to match values of type _type_; the
 second causes it to match only values equal to _value_.
+
+Named parameters that appear before a `&` symbol are required; an
+argument value must be passed for each such parameter.
+
+If the `&` appears in the definition then any number of additional
+arguments may be passed. These additional arguments are called
+**rest** arguments.
+
+If a single symbol follows the `&` then all rest arguments are
+collected in a single list and bound to a variable whose name is that
+symbol.
+
+If a table expression follows the `&` then each keyword in the table
+becomes a variable of the same name in the body of the method. When
+calling the function, you can pass a value for each such variable by
+supplying the keyword followed by the argument value. If no value is
+supplied this way for a keyword then its variable takes the default
+value given in the method definition.
 
 **define protocol**
 
@@ -574,7 +637,10 @@ constructed.
 
 **generate**
 
-generate ([( _var1_ _val-expression1_ ) ...]) [ _expression1_ ] ... [(yield [ _expressionK_ ] ...)] ... [(resume [ _val-expression_ ...])]
+generate ([( _var1_ _val-expression1_ ) ...]) 
+[ _expression1_ ] ... 
+[(yield [ _expressionK_ ] ...)] ... 
+[(resume [ _val-expression_ ...])]
 
     ;;; fibonacci sequence
     (define variable $fibs

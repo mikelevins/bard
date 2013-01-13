@@ -515,6 +515,29 @@
 
 ;;; constructor
 
+(define (%merge-symbol-restarg env rest args)
+  (%add-binding env rest args))
+
+(define (%merge-table-restarg env rest args)
+  (let* ((restmap (merge-alists (alist-table-instance-slots rest)
+                                (plist->alist args)))
+         (param-map (map (lambda (slot)
+                           (cons (string->symbol (keyword->string (car slot)))
+                                 (cdr slot)))
+                         restmap)))
+    (let loop ((params param-map)
+               (out-env env))
+      (if (null? params)
+          out-env
+          (let ((param (car params)))
+            (loop (cdr params)
+                  (%add-binding out-env (car param)(cdr param))))))))
+
+(define (%merge-restarg env rest args)
+  (if (symbol? rest)
+      (%merge-symbol-restarg env rest args)
+      (%merge-table-restarg env rest args)))
+
 (define (%method-lexical-environment env params rest vals)
   (let loop ((env env)
              (formals params)
@@ -522,12 +545,12 @@
     (if (null? args)
         ;; out of args
         (if (null? formals)
-            (if rest (%add-binding env rest args) env)
+            (if rest (%merge-restarg env rest args) env)
             (error (str "Not enough arguments: " vals)))
         ;; more args to process
         (if (null? formals)
             (if rest
-                (%add-binding env rest args)
+                (%merge-restarg env rest args)
                 (error (str "Too many arguments: " vals)))
             (loop (%add-binding env (car formals)(car args))
                   (cdr formals)

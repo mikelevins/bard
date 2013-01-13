@@ -259,24 +259,10 @@
 
 (define (%table->list t)(alist-table-slots t))
 
-(define (%merge-slots s1 s2)
-  (let loop ((slots1 s1)
-             (result (reverse s2)))
-    (if (null? slots1)
-        (reverse result)
-        (let ((slot (car slots1))
-              (more (cdr slots1)))
-          (if (some? (lambda (r)
-                       (equal? (car slot)
-                               (car r)))
-                     result)
-              (loop (cdr slots1) result)
-              (loop (cdr slots1)
-                    (cons (car slots1)
-                          result)))))))
-
 (define (%merge-alist-tables t1 t2)
-  (%make-alist-table (%merge-slots (alist-table-instance-slots t1)(alist-table-instance-slots t2))))
+  (%make-alist-table
+   (merge-alists (alist-table-instance-slots t1)
+                 (alist-table-instance-slots t2))))
 
 (define prim:alist-table-merge
   (make-primitive

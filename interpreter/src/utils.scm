@@ -242,11 +242,42 @@
     (if (null? alist)
         default
         (if (test key (car (car alist)))
-            (cdr (car alist))
+            (car alist)
             (loop (cdr alist))))))
+
+(define (alist-ref alist key #!key (default #f)(test equal?))
+  (let ((slot (alist-get alist key default: default test: test)))
+    (if (test slot default)
+        default
+        (cdr slot))))
 
 (define (alist-keys alist)(map car alist))
 (define (alist-vals alist)(map cdr alist))
+
+(define (merge-alists a1 a2 #!optional (test equal?))
+  (if (null? a1)
+      a2
+      (if (null? a2)
+          a1
+          (let loop1 ((slots1 a1)
+                      (out1 '()))
+            (if (null? slots1)
+                (let loop2 ((slots2 a2)
+                            (out2 out1))
+                  (if (null? slots2)
+                      (reverse out2)
+                      (let* ((slot2 (car slots2))
+                             (k (car slot2))
+                             (out-slot (alist-get out2 k test: test)))
+                        (if out-slot
+                            (loop2 (cdr slots2) out2)
+                            (loop2 (cdr slots2) (cons slot2 out2))))))
+                (let* ((slot1 (car slots1))
+                       (k (car slot1))
+                       (slot2 (alist-get a2 k test: test)))
+                  (if slot2
+                      (loop1 (cdr slots1)(cons slot2 out1))
+                      (loop1 (cdr slots1)(cons slot1 out1)))))))))
 
 (define (plist->alist plist)
   (let loop ((kvs plist)
