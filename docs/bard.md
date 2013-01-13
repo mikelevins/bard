@@ -902,13 +902,17 @@ signature notation to indicate the inputs and outputs of protocol
 functions.
 
 When a function accepts or returns any number of values, but they must
-all be of a specific type, we write the signature like this:
+all be of a specific type, this section documents that fact by writing
+the signature like this:
 
     quux [Text]& -> [Integer]&
 
 When a function accepts optional arguments, we write them like this:
 
     quux [Text] [Integer] -> Anything
+
+These notations are not Bard syntax; they're just notational
+conventions for this documentation.
 
 When a function accepts more than one optional argument, it isn't
 possible to pass a value as the second or greater argument without
