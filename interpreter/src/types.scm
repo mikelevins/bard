@@ -34,7 +34,7 @@
 (define-schema primitive-schema)
 (define-schema structure-schema prototype)
 (define-schema base-schema)
-(define-schema record-schema)
+(define-schema record-schema slots)
 (define-instance record-instance slots)
 (define-schema tuple-schema)
 (define-instance tuple-instance elements)
@@ -724,6 +724,91 @@
 (%register-structure-schema! (structure-schema-prototype <iostream>) <iostream>)
 
 ;;; =====================================================================
+;;; record schemas
+;;; =====================================================================
+
+(define tags:$bard-record (%next-bard-type-number))
+(define tags:$bard-record-instance (%next-bard-type-number))
+(define <record> (make-structure-schema '<record> tags:$bard-record
+                                        (##structure-type (make-record-schema '<record> tags:$bard-record '()))))
+(%register-structure-schema! (structure-schema-prototype <record>) <record>)
+
+(define *records* (make-table test: eq?))
+
+(define (%defrecord name schema)
+  (table-set! *records* name schema))
+
+(define (%undefrecord name schema)
+  (table-set! *records* name))
+
+(define (%parse-slot-spec slot-spec)
+  (let ((sname (car slot-spec))
+        (attrs (cdr slot-spec))
+        (default (getf default: attrs '()))
+        (type (getf type: attrs test: eq? default: Anything)))
+    `(,sname default: ,default type: ,type)))
+
+(define (%parse-slot-specs slot-specs)
+  (map (lambda (spec)
+         (cond
+          ((symbol? spec) `(,spec default: () type: ,Anything))
+          ((pair? spec) (%parse-slot-spec spec))
+          (else: (error (str "Invalid record-slot specification: " spec)))))
+       slot-specs))
+
+(define (define-record name slot-specs)
+  (let* ((tag tags:$bard-record)
+         (slot-templates (%parse-slot-specs slot-specs))
+         (schema (make-record-schema name tag slot-templates)))
+    (%defrecord name schema)
+    schema))
+
+;;; instance constructor
+
+(define (initialize-record record-instance . initargs)
+  (let ((inits (plist->alist initargs))
+        (initslots (map (lambda (slot)
+                          (cons (string->symbol (keyword->string (car slot)))
+                                (cdr slot))) 
+                        inits)))
+    (let ((slots (record-instance-slots record-instance)))
+      (for-each (lambda (init)
+                  (let* ((sname (car init))
+                         (val (cdr init))
+                         (slot (alist-get slots sname test: eq?)))
+                    (if slot
+                        (set-cdr! slot val)
+                        (error (str "No such slot: " sname)))))
+                initslots))
+    
+    record-instance))
+
+;;; TODO: slot templates contain type information.
+;;;       currently it's not used, but later
+;;;       we can enforce it
+
+(define (%make-slot template)
+  (let* ((sname (car template))
+         (attrs (cdr template))
+         (val (getf default: attrs default: '())))
+    (cons sname val)))
+
+(define (make-record schema . initargs)
+  (let* ((slot-templates (record-schema slots schema))
+         (slots (map %make-slot slot-templates))
+         (instance (make-record-instance schema slots)))
+    (apply initialize-record instance initargs)))
+
+;;; instance accessors
+;;; TODO: add support for marking slots immutable
+
+(define (record-ref record-instance slot-name #!key (default '()))
+  (alist-ref (record-instance-slots record-instance) slot-name default: default))
+
+(define (record-set! record-instance slot-name val)
+  (alist-set! (record-instance-slots record-instance) slot-name val test: eq?))
+
+;;; =====================================================================
 ;;; getting bard types for values
 ;;; =====================================================================
 
@@ -733,5 +818,6 @@
       (if (##structure? val)
           (%structure->schema (##structure-type val))
           (%tag->schema (%tag val)))))
+
 
 

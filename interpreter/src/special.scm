@@ -288,8 +288,16 @@
 
 ;;; record
 
-(define (%eval-define-record expr env) (error "define record not implemented"))
-(define (%eval-define-vector expr env) (error "define vector not implemented"))
+(define (%eval-define-record expr env)
+  (let* ((record-name (list-ref expr 2))
+         (slot-specs (drop 3 expr))
+         (schema (define-record record-name slot-specs)))
+    (%defglobal record-name schema)
+    schema))
+
+;;; tuple
+
+(define (%eval-define-tuple expr env) (error "define tuple not implemented"))
 
 ;;; define
 
@@ -303,7 +311,7 @@
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))
                   ((eq? 'record kind)(%eval-define-record expr env))
                   ((eq? 'variable kind)(%eval-define-variable expr env))
-                  ((eq? 'vector kind)(%eval-define-vector expr env))
+                  ((eq? 'tuple kind)(%eval-define-tuple expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))
 
 

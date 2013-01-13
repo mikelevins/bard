@@ -593,19 +593,19 @@ especially when you want variable definitions to stand out
 visually. Use whichever form works best in your code; the effects of
 both forms are identical.
 
-**define vector**
+**define tuple**
 
-define vector _schema-name_ ( _slot-option_ ...) ...
+define tuple _schema-name_ ( _slot-option_ ...) ...
 
-    (define vector <cons> length: 2)
+    (define tuple <cons> length: 2)
 
-    (define vector <ostype> length: 4 element-type: <char>)
+    (define tuple <ostype> length: 4 element-type: <char>)
 
 Defines a new schema--that is, a concrete type--that consists of a
 ordered sequence of fields accessible by index. You can then create
 instances of the new type with `make`.
 
-An instance of a vector schema implements the Listing protocol; that is,
+An instance of a tuple schema implements the Listing protocol; that is,
 it behaves as if it's a fixed-length list.
 
 **ensure**
@@ -769,13 +769,13 @@ Setting a table or record field:
 
     (set! (mypoint 'x) 42)
 
-Getting a list or vector field:
+Getting a list or tuple field:
 
-    (myvec 2)
+    (mytup 2)
 
-Setting a list or vector field:
+Setting a list or tuple field:
 
-    (set! (myvec 2) 42)
+    (set! (mytup 2) 42)
 
 **time**
 

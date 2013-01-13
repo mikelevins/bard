@@ -251,6 +251,13 @@
         default
         (cdr slot))))
 
+;;; works only if the key is found in the alist
+(define (alist-set! alist key val #!key (test equal?))
+  (let ((slot (alist-get alist key test: test)))
+    (if slot
+        (set-cdr! slot val)
+        (error (str "Key not found: " key)))))
+
 (define (alist-keys alist)(map car alist))
 (define (alist-vals alist)(map cdr alist))
 
@@ -289,6 +296,20 @@
             (loop (cddr kvs)
                   (cons (cons (car kvs)(cadr kvs))
                         result))))))
+
+;;; ---------------------------------------------------------------------
+;;; plist utils
+;;; ---------------------------------------------------------------------
+
+(define (getf key plist #!key (default #f) (test equal?))
+  (let loop ((items plist))
+    (if (null? items)
+        default
+        (if (null? (cdr items))
+            (error (str "malformed plist: " plist))
+            (if (test key (car items))
+                (cadr items)
+                (loop (cddr items)))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; string utils

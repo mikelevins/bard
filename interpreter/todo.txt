@@ -2,7 +2,7 @@ TO DO
 
 - special forms to implement
   - define record
-  - define vector
+  - define tuple
 
 - protocols to implement
   - Creating (make, initialize)

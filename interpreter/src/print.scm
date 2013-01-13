@@ -195,3 +195,21 @@
     (with-output-to-string
         '()
         (lambda ()(display (str "(singleton " (singleton-value s) ")"))))))
+
+(define-printer-function (schema-tag <record>) 
+  (lambda (s)
+    (with-output-to-string
+      '()
+      (lambda ()
+        (display "#<record>{")
+        (let ((slots (record-schema-slots s)))
+          (for-each (lambda (slot)
+                      (display " ")
+                      (display (car slot))
+                      (display ": '")
+                      (display (cdr slot)))
+                    slots))
+        (display " }")))))
+
+(define-printer-function (schema-tag <record>) 
+  (lambda (rec)(object->string (schema-name rec))))
