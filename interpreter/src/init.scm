@@ -29,11 +29,14 @@
   ;;; schemas
 
   (%defglobal '<alist-table>         <alist-table>)
+  (%defglobal '<base-schema>         <base-schema>)
   (%defglobal '<bignum>              <bignum>)
   (%defglobal '<boolean>             <boolean>)
   (%defglobal '<character>           <character>)
+  (%defglobal '<class>               <class>)
   (%defglobal '<fixnum>              <fixnum>)
   (%defglobal '<flonum>              <flonum>)
+  (%defglobal '<foreign-schema>      <foreign-schema>)
   (%defglobal '<function>            <function>)
   (%defglobal '<generator>           <generator>)
   (%defglobal '<interpreted-method>  <interpreted-method>)
@@ -42,12 +45,17 @@
   (%defglobal '<null>                <null>)
   (%defglobal '<pair>                <pair>)
   (%defglobal '<primitive-procedure> <primitive-procedure>)
+  (%defglobal '<primitive-schema>    <primitive-schema>)
   (%defglobal '<primitive>           <primitive>)
+  (%defglobal '<protocol>            <protocol>)
   (%defglobal '<ratnum>              <ratnum>)
+  (%defglobal '<record>              <record>)
   (%defglobal '<string>              <string>)
+  (%defglobal '<structure-schema>    <structure-schema>)
   (%defglobal '<symbol>              <symbol>)
+  (%defglobal '<tuple>               <tuple>)
   (%defglobal '<undefined>           <undefined>)
-  ;;;  (%defglobal '<record> <record>)
+  (%defglobal '<union>               <union>)
 
   ;;; classes
 
@@ -136,6 +144,12 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'as bard:as)
+
+;;; ---------------------------------------------------------------------
+;;; Protocol: Creating
+;;; ---------------------------------------------------------------------
+
+  (%defglobal 'make bard:make)
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Generating
@@ -251,6 +265,7 @@
   (%defglobal 'table? bard:table?)
   (%defglobal 'text? bard:text?)
   (%defglobal 'true? prim:true?)
+  (%defglobal 'type bard:type)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Writing

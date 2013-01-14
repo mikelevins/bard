@@ -130,10 +130,6 @@
                 (filter test (cdr ls)))
           (filter test (cdr ls)))))
 
-(define (getf key plist #!optional (default #f))
-  (let ((tl (member key plist)))
-    (and tl (not (null? (cdr tl))) (cadr tl))))
-
 (define (interpose item ls)
   (if (or (null? ls)
           (null? (cdr ls)))

@@ -126,3 +126,12 @@
                         (constantly #t)
                         debug-name: 'text?)
 
+(define bard:type (make-function debug-name: 'type
+                                 input-types: `(,Anything)
+                                 restarg: #f
+                                 output-types: `(,Type)))
+
+(%add-primitive-method! bard:type
+                        (list Anything) 
+                        (lambda (x)(%object->schema x))
+                        debug-name: 'type)

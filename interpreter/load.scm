@@ -40,6 +40,7 @@
          "src/error.scm"
          "src/protocol-comparing.scm"
          "src/protocol-converting.scm"
+         "src/protocol-creating.scm"
          "src/protocol-listing.scm"
          "src/protocol-ordering.scm"
          "src/protocol-pairing.scm"

@@ -58,3 +58,5 @@
   (read-names path)
   (let ((nms (build-names)))
     (take n nms)))
+
+;;; (names "namefiles/us.names" 10)

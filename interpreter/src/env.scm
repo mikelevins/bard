@@ -22,6 +22,10 @@
   (table-set! $bard-global-variables var val)
   var)
 
+(define (%remglobal var)
+  (table-set! $bard-global-variables var)
+  var)
+
 (define (%global-value var)
   (table-ref $bard-global-variables var #!unbound))
 

@@ -141,7 +141,7 @@
               (%make-tag (%gambit-type val) (%gambit-subtype val))))))
 
 ;;; ---------------------------------------------------------------------
-;;; well-known gambit types
+;;; tags for well-known gambit types
 ;;; ---------------------------------------------------------------------
 
 (define tags:$undefined (%tag #!unbound))
@@ -159,7 +159,6 @@
 (define tags:$procedure (%tag (lambda (x) x)))
 (define tags:$vector (%tag (vector)))
 (define tags:$box (%tag (box 1)))
-
 
 ;;; =====================================================================
 ;;; the schema registry
@@ -205,6 +204,41 @@
 ;;; ---------------------------------------------------------------------
 ;;; we recover the schema from the instance, using instance-schema; no
 ;;; registry is necessary
+
+;;; ---------------------------------------------------------------------
+;;; built-in schema types
+;;; ---------------------------------------------------------------------
+;;; runtime values that represent the types of built-in schemas.
+;;; these are not the types of schema-instaces; these are the types of
+;;; their types. For example, a point may be an instance of
+;;; <point>. What is <point> an instance of? The answer is <record>
+;;; (or some other of the primitive schemas defined below).
+;;; What about these types? For example, what is <primitive-schema>
+;;; an instance of? It is an instance of itself: it is itself a
+;;; primitive schema.
+
+(define tags:$primitive-schema (%next-bard-type-number))
+(define tags:$structure-schema (%next-bard-type-number))
+(define tags:$base-schema (%next-bard-type-number))
+(define tags:$record-schema (%next-bard-type-number))
+(define tags:$tuple-schema (%next-bard-type-number))
+(define tags:$union-schema (%next-bard-type-number))
+(define tags:$foreign-schema (%next-bard-type-number))
+
+(define <primitive-schema> (make-primitive-schema '<primitive-schema> tags:$primitive-schema))
+(%register-primitive-schema! <primitive-schema> tags:$primitive-schema)
+(define <structure-schema> (make-primitive-schema '<structure-schema> tags:$structure-schema))
+(%register-primitive-schema! <structure-schema> tags:$structure-schema)
+(define <base-schema> (make-primitive-schema '<base-schema> tags:$base-schema))
+(%register-primitive-schema! <base-schema> tags:$base-schema)
+(define <record> (make-primitive-schema '<record> tags:$record-schema))
+(%register-primitive-schema! <record> tags:$record-schema)
+(define <tuple> (make-primitive-schema '<tuple> tags:$tuple-schema))
+(%register-primitive-schema! <tuple> tags:$tuple-schema)
+(define <union> (make-primitive-schema '<union> tags:$union-schema))
+(%register-primitive-schema! <union> tags:$union-schema)
+(define <foreign-schema> (make-primitive-schema '<foreign-schema> tags:$foreign-schema))
+(%register-primitive-schema! <foreign-schema> tags:$foreign-schema)
 
 ;;; =====================================================================
 ;;; schema definitions
@@ -729,9 +763,6 @@
 
 (define tags:$bard-record (%next-bard-type-number))
 (define tags:$bard-record-instance (%next-bard-type-number))
-(define <record> (make-structure-schema '<record> tags:$bard-record
-                                        (##structure-type (make-record-schema '<record> tags:$bard-record '()))))
-(%register-structure-schema! (structure-schema-prototype <record>) <record>)
 
 (define *records* (make-table test: eq?))
 
@@ -742,10 +773,10 @@
   (table-set! *records* name))
 
 (define (%parse-slot-spec slot-spec)
-  (let ((sname (car slot-spec))
-        (attrs (cdr slot-spec))
-        (default (getf default: attrs '()))
-        (type (getf type: attrs test: eq? default: Anything)))
+  (let* ((sname (car slot-spec))
+         (attrs (cdr slot-spec))
+         (default (getf default: attrs default: '()))
+         (type (getf type: attrs test: eq? default: Anything)))
     `(,sname default: ,default type: ,type)))
 
 (define (%parse-slot-specs slot-specs)
@@ -766,11 +797,11 @@
 ;;; instance constructor
 
 (define (initialize-record record-instance . initargs)
-  (let ((inits (plist->alist initargs))
-        (initslots (map (lambda (slot)
-                          (cons (string->symbol (keyword->string (car slot)))
-                                (cdr slot))) 
-                        inits)))
+  (let* ((inits (plist->alist initargs))
+         (initslots (map (lambda (slot)
+                           (cons (string->symbol (keyword->string (car slot)))
+                                 (cdr slot))) 
+                         inits)))
     (let ((slots (record-instance-slots record-instance)))
       (for-each (lambda (init)
                   (let* ((sname (car init))
@@ -794,7 +825,7 @@
     (cons sname val)))
 
 (define (make-record schema . initargs)
-  (let* ((slot-templates (record-schema slots schema))
+  (let* ((slot-templates (record-schema-slots schema))
          (slots (map %make-slot slot-templates))
          (instance (make-record-instance schema slots)))
     (apply initialize-record instance initargs)))
@@ -813,11 +844,20 @@
 ;;; =====================================================================
 
 (define (%object->schema val)
-  (if (schema-instance? val)
-      (instance-schema val)
-      (if (##structure? val)
-          (%structure->schema (##structure-type val))
-          (%tag->schema (%tag val)))))
+  (if (schema? val)
+      (cond 
+       ((primitive-schema? val) <primitive-schema>)
+       ((structure-schema? val) <structure-schema>)
+       ((base-schema? val) <base-schema>)
+       ((record-schema? val) <record>)
+       ((tuple-schema? val) <tuple>)
+       ((union-schema? val) <union>)
+       (else: (error (str "Unrecognized schema type: " val))))
+      (if (schema-instance? val)
+          (instance-schema val)
+          (if (##structure? val)
+              (%structure->schema (##structure-type val))
+              (%tag->schema (%tag val))))))
 
 
 

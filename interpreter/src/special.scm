@@ -32,6 +32,26 @@
 ;;; special forms defined
 ;;; ----------------------------------------------------------------------
 
+;;; add-method!
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'add-method!
+             (lambda (expr env) 
+               (let* ((fn-ref (list-ref expr 1))
+                      (fn (%eval fn-ref env))
+                      (types-expr (list-ref expr 2))
+                      (types (map (lambda (t)(%eval t env)) types-expr))
+                      (method-ref (list-ref expr 3))
+                      (method (%eval method-ref env)))
+                 (if (equal? (length types)
+                             (length (function-input-types fn)))
+                     (%add-method! fn types method)
+                     (error (str "Conflicting input types: expected "
+                                 (%as-string (function-input-types fn))
+                                 " but found "
+                                 (%as-string types))))
+                 fn)))
+
 ;;; begin
 ;;; ----------------------------------------------------------------------
 
@@ -344,7 +364,7 @@
                                             (list-ref expr (+ 1 ampersand-pos))
                                             #f))
                                (out-types (drop (+ 1 arrow-pos) expr)))
-                           (make-function debug-name: (list-ref expr 1)
+                           (make-function debug-name: #f
                                           input-types: `(,@in-types)
                                           restarg: restarg
                                           output-types: `(,@out-types)))
@@ -478,6 +498,20 @@
                    #f
                    #t)))
 
+;;; protocol
+;;; ----------------------------------------------------------------------
+
+(define (%eval-make-protocol expr env) 
+  (let* ((pname (list-ref expr 1))
+         (function-specs (drop 2 expr))
+         (protocol (%make-protocol pname))
+         (functions-alist (%build-protocol-functions-alist protocol function-specs env)))
+    (for-each (lambda (fname/fn)(%maybe-add-protocol-function! protocol fname/fn))
+              functions-alist)
+    protocol))
+
+(%defspecial 'protocol %eval-make-protocol)
+
 ;;; quasiquote
 ;;; ----------------------------------------------------------------------
 ;;; after norvig
@@ -548,6 +582,18 @@
 
 (%defspecial 'receive (lambda (expr env) (error "receive not yet implemented")))
 
+
+;;; remove-method!
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'remove-method!
+             (lambda (expr env) 
+               (let* ((fn-ref (list-ref expr 1))
+                      (fn (%eval fn-ref env))
+                      (types-expr (list-ref expr 2))
+                      (types (map (lambda (t)(%eval t env)) types-expr)))
+                 (%remove-method! fn types))))
+
 ;;; repeat
 ;;; ----------------------------------------------------------------------
 
@@ -579,6 +625,13 @@
 (%defspecial 'time
              (lambda (expr env)
                (time (%eval (car (cdr expr)) env))))
+
+;;; undefine
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'undefine
+             (lambda (expr env)
+               (%remglobal (list-ref expr 1))))
 
 ;;; unless
 ;;; ----------------------------------------------------------------------

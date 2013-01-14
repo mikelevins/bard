@@ -34,6 +34,7 @@ SCHEME_SOURCES= \
          src/error.scm \
          src/protocol-comparing.scm \
          src/protocol-converting.scm \
+         src/protocol-creating.scm \
          src/protocol-listing.scm \
          src/protocol-ordering.scm \
          src/protocol-pairing.scm \
@@ -57,6 +58,7 @@ C_SOURCES= \
          src/error.c \
          src/protocol-comparing.c \
          src/protocol-converting.c \
+         src/protocol-creating.c \
          src/protocol-listing.c \
          src/protocol-ordering.c \
          src/protocol-pairing.c \
@@ -80,6 +82,7 @@ OBJECTS= \
          error.o \
          protocol-comparing.o \
          protocol-converting.o \
+         protocol-creating.o \
          protocol-listing.o \
          protocol-ordering.o \
          protocol-pairing.o \

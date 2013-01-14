@@ -17,9 +17,16 @@
 (define (get-printer-function tag)
   (table-ref +printer-functions+ tag #f))
 
+(define (%schema->string x)
+  (str (schema-name x)))
+
 (define (%as-string x)
-  (let ((printer (get-printer-function (%tag x))))
-    (printer x)))
+  (if (schema? x)
+      (%schema->string x)
+      (let ((printer (get-printer-function (%tag x))))
+        (if printer
+            (printer x)
+            (str "#<Unprintable value " (object->string x) " >")))))
 
 (define (%show x)(%as-string x))
 
@@ -164,7 +171,7 @@
     (with-output-to-string
       '()
       (lambda ()
-        (display "#(protocol ")
+        (display "(protocol ")
         (display (object->string (protocol-instance-name p)))
         (table-for-each (lambda (fname fn)
                           (let ((in (function-input-types fn))
@@ -197,19 +204,11 @@
         (lambda ()(display (str "(singleton " (singleton-value s) ")"))))))
 
 (define-printer-function (schema-tag <record>) 
-  (lambda (s)
-    (with-output-to-string
-      '()
-      (lambda ()
-        (display "#<record>{")
-        (let ((slots (record-schema-slots s)))
-          (for-each (lambda (slot)
-                      (display " ")
-                      (display (car slot))
-                      (display ": '")
-                      (display (cdr slot)))
-                    slots))
-        (display " }")))))
-
-(define-printer-function (schema-tag <record>) 
   (lambda (rec)(object->string (schema-name rec))))
+
+(define-printer-function (schema-tag <iostream>) 
+  (lambda (s)
+    (cond
+     ((and (input-port? s)(output-port? s)) (str "#<iostream " (object->string s) ">"))
+     ((input-port? s) (str "#<input-stream " (object->string (object->serial-number s)) ">"))
+     ((output-port? s) (str "#<output-stream " (object->string (object->serial-number s)) ">")))))
