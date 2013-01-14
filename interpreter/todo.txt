@@ -1,7 +1,6 @@
 TO DO
 
 - protocols to implement
-  - Generating (cycle, iterate)
   - Streaming
   - Mapping (all values are tables)
 

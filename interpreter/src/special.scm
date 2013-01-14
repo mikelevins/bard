@@ -382,8 +382,7 @@
              (lambda (expr env)
                (let* ((bindings (list-ref expr 1))
                       (vars (map car bindings))
-                      (initvals (map (lambda (v)(%eval v env))
-                                     (map cadr bindings)))
+                      (initvals (%eval `(let ,bindings (list ,@vars)) env))
                       (body (drop 2 expr)))
                  (make-generator vars initvals body env))))
 

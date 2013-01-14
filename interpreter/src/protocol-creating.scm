@@ -108,7 +108,7 @@
 
 (%add-primitive-method! bard:make `(,(%singleton <string>))
                         (lambda (type . args)
-                          (let* ((vals (getf values: initargs default: "")))
+                          (let* ((vals (getf values: args default: "")))
                             (cond
                              ((string? vals) vals)
                              ((list? vals)(if (every? char? vals)

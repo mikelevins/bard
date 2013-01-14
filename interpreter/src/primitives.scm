@@ -143,6 +143,13 @@
    required-count: 1
    restarg: #f))
 
+(define prim:remainder
+  (make-primitive
+   procedure: remainder
+   debug-name: 'remainder
+   required-count: 2
+   restarg: #f))
+
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Comparing
 ;;; ---------------------------------------------------------------------
@@ -163,6 +170,35 @@
    procedure: (lambda (g) (next g))
    debug-name: 'next
    required-count: 1
+   restarg: #f))
+
+(define (bard:cycle ls)
+  (let* ((items (%->list ls))
+         (len (length items)))
+    (%eval `(generate cache: ,#f
+                      ((i 0))
+                      (yield (element (list ,@items) i))
+                      (resume (remainder (+ i 1) ,len)))
+           '())))
+
+(define prim:cycle
+  (make-primitive
+   procedure: bard:cycle
+   debug-name: 'cycle
+   required-count: 1
+   restarg: #f))
+
+(define (bard:iterate fn arg)
+  (%eval `(generate ((out ',arg))
+                    (yield out)
+                    (resume (,fn out)))
+         '()))
+
+(define prim:iterate
+  (make-primitive
+   procedure: bard:iterate
+   debug-name: 'iterate
+   required-count: 2
    restarg: #f))
 
 (define (bard:range-from start)

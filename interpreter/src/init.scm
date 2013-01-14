@@ -131,7 +131,7 @@
   (%defglobal 'even? prim:even?)
   (%defglobal 'odd? prim:odd?)
   (%defglobal 'random prim:random)
-
+  (%defglobal 'remainder prim:remainder)
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Comparing
 ;;; ---------------------------------------------------------------------
@@ -156,7 +156,10 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'next prim:next)
+  (%defglobal 'cycle prim:cycle)
+  (%defglobal 'iterate prim:iterate)
   (%defglobal 'range-from prim:range-from)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Listing
