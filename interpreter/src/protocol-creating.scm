@@ -55,7 +55,7 @@
                         (lambda (type . args)
                           (let* ((variables (getf variables: args default: '()))
                                  (vars (map car variables))
-                                 (initvals (map (lambda (v)(%eval v env))
+                                 (initvals (map (lambda (v)(%eval v '()))
                                                 (map cadr variables)))
                                  (body (getf body: args default: '())))
                             (make-generator vars initvals body '())))
