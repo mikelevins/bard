@@ -1,11 +1,9 @@
 TO DO
 
 - special forms to implement
-  - define record
   - define tuple
 
 - protocols to implement
-  - Creating (make, initialize)
   - Generating (cycle, iterate)
   - Streaming
   - Mapping (all values are tables)
