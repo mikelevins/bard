@@ -1,8 +1,5 @@
 TO DO
 
-- special forms to implement
-  - define tuple
-
 - protocols to implement
   - Generating (cycle, iterate)
   - Streaming

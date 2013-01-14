@@ -846,8 +846,7 @@
 ;;; instance constructor
 
 (define (initialize-tuple tuple-instance . initargs)
-  (let* ((inits (plist->alist initargs))
-         (vals (getf values: initargs default: #f))
+  (let* ((vals (getf values: initargs default: #f))
          (slots (tuple-instance-slots tuple-instance))
          (slot-count (vector-length slots)))
     (if vals

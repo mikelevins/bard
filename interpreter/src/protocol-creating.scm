@@ -69,6 +69,13 @@
                             (string->keyword name)))
                         debug-name: 'make)
 
+;;; List
+
+(%add-primitive-method! bard:make `(,(%singleton List))
+                        (lambda (type . args)
+                          (let ((vals (getf values: args default: '())))
+                            (copy-tree vals)))
+                        debug-name: 'make)
 ;;; <pair>
 
 (%add-primitive-method! bard:make `(,(%singleton <pair>))
@@ -95,6 +102,33 @@
 
 (%add-primitive-method! bard:make `(,<record>)
                         (lambda (type . args)(instantiate-record type args))
+                        debug-name: 'make)
+
+;;; <string>
+
+(%add-primitive-method! bard:make `(,(%singleton <string>))
+                        (lambda (type . args)
+                          (let* ((vals (getf values: initargs default: "")))
+                            (cond
+                             ((string? vals) vals)
+                             ((list? vals)(if (every? char? vals)
+                                              (list->string vals)
+                                              (error (str "All <string> values must be characters, but found: " vals))))
+                             (else: (error (str "Invalid initial values for a <string>: " vals))))))
+                        debug-name: 'make)
+
+;;; <symbol>
+
+(%add-primitive-method! bard:make `(,(%singleton <symbol>))
+                        (lambda (type . args)
+                          (let ((name (getf name: args default: (symbol->string (gensym)))))
+                            (string->symbol name)))
+                        debug-name: 'make)
+
+;;; Table
+
+(%add-primitive-method! bard:make `(,(%singleton Table))
+                        %bard-make-alist-table
                         debug-name: 'make)
 
 ;;; <tuple>
