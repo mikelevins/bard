@@ -824,7 +824,7 @@
          (val (getf default: attrs default: '())))
     (cons sname val)))
 
-(define (make-record schema . initargs)
+(define (make-record schema initargs)
   (let* ((slot-templates (record-schema-slots schema))
          (slots (map %make-slot slot-templates))
          (instance (make-record-instance schema slots)))

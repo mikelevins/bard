@@ -9,6 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; printer registry
+;;; ---------------------------------------------------------------------
+
 (define +printer-functions+ (make-table test: eqv?))
 
 (define (define-printer-function tag fn)
@@ -17,16 +21,53 @@
 (define (get-printer-function tag)
   (table-ref +printer-functions+ tag #f))
 
+;;; ---------------------------------------------------------------------
+;;; printing utils
+;;; ---------------------------------------------------------------------
+
+(define (alist-slots->string alist)
+  (with-output-to-string 
+    '() 
+    (lambda () 
+      (let loop ((slots alist)
+                 (already '()))
+        (if (not (null? slots))
+            (let ((slot (car slots))
+                  (more (cdr slots)))
+              (if (member (car slot) already)
+                  (loop more (cons (car slot) already))
+                  (begin 
+                    (if (not (null? already))(display " "))
+                    (display (%as-string (car slot)))
+                    (display " ")
+                    (display (%as-string (cdr slot)))
+                    (if (not (null? more))
+                        (loop more (cons (car slot) already)))))))))))
+
+;;; ---------------------------------------------------------------------
+;;; specialized printing
+;;; ---------------------------------------------------------------------
+
+(define (%record->string x)
+  (let* ((schema (instance-schema x))
+         (schema-name (schema-name schema)))
+    (str "#" schema-name "{" (alist-slots->string (record-instance-slots x)) "}")))
+
 (define (%schema->string x)
   (str (schema-name x)))
 
+;;; ---------------------------------------------------------------------
+;;; general printing
+;;; ---------------------------------------------------------------------
+
 (define (%as-string x)
-  (if (schema? x)
-      (%schema->string x)
-      (let ((printer (get-printer-function (%tag x))))
-        (if printer
-            (printer x)
-            (str "#<Unprintable value " (object->string x) " >")))))
+  (cond
+   ((schema? x)(%schema->string x))
+   ((record-instance? x)(%record->string x))
+   (else: (let ((printer (get-printer-function (%tag x))))
+            (if printer
+                (printer x)
+                (str "#<Unprintable value " (object->string x) " >"))))))
 
 (define (%show x)(%as-string x))
 
@@ -55,25 +96,7 @@
 
 (define-printer-function (schema-tag <alist-table>) 
   (lambda (tbl)
-    (with-output-to-string 
-      '() 
-      (lambda () 
-        (display "{")
-        (let loop ((slots (alist-table-slots tbl))
-                   (already '()))
-          (if (not (null? slots))
-              (let ((slot (car slots))
-                    (more (cdr slots)))
-                (if (member (car slot) already)
-                    (loop more (cons (car slot) already))
-                    (begin 
-                      (if (not (null? already))(display " "))
-                      (display (%as-string (car slot)))
-                      (display " ")
-                      (display (%as-string (cdr slot)))
-                      (if (not (null? more))
-                          (loop more (cons (car slot) already))))))))
-        (display "}")))))
+    (str "{" (alist-slots->string (alist-table-slots tbl)) "}")))
 
 (define-printer-function (schema-tag <pair>) 
   (lambda (ls)
@@ -172,7 +195,9 @@
       '()
       (lambda ()
         (display "(protocol ")
-        (display (object->string (protocol-instance-name p)))
+        (display (if (protocol-instance-name p)
+                     (object->string (protocol-instance-name p))
+                     ""))
         (table-for-each (lambda (fname fn)
                           (let ((in (function-input-types fn))
                                 (out (function-output-types fn)))
