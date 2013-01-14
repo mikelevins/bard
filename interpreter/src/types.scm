@@ -36,8 +36,8 @@
 (define-schema base-schema)
 (define-schema record-schema slots)
 (define-instance record-instance slots)
-(define-schema tuple-schema)
-(define-instance tuple-instance elements)
+(define-schema tuple-schema slot-count slot-type)
+(define-instance tuple-instance slots)
 (define-schema union-schema)
 (define-instance union-instance variants)
 
@@ -764,35 +764,25 @@
 (define tags:$bard-record (%next-bard-type-number))
 (define tags:$bard-record-instance (%next-bard-type-number))
 
-(define *records* (make-table test: eq?))
-
-(define (%defrecord name schema)
-  (table-set! *records* name schema))
-
-(define (%undefrecord name schema)
-  (table-set! *records* name))
-
-(define (%parse-slot-spec slot-spec)
+(define (%parse-record-slot-spec slot-spec)
   (let* ((sname (car slot-spec))
          (attrs (cdr slot-spec))
          (default (getf default: attrs default: '()))
          (type (getf type: attrs test: eq? default: Anything)))
     `(,sname default: ,default type: ,type)))
 
-(define (%parse-slot-specs slot-specs)
+(define (%parse-record-slot-specs slot-specs)
   (map (lambda (spec)
          (cond
           ((symbol? spec) `(,spec default: () type: ,Anything))
-          ((pair? spec) (%parse-slot-spec spec))
+          ((pair? spec) (%parse-record-slot-spec spec))
           (else: (error (str "Invalid record-slot specification: " spec)))))
        slot-specs))
 
-(define (define-record name slot-specs)
+(define (make-record name slot-specs)
   (let* ((tag tags:$bard-record)
-         (slot-templates (%parse-slot-specs slot-specs))
-         (schema (make-record-schema name tag slot-templates)))
-    (%defrecord name schema)
-    schema))
+         (slot-templates (%parse-record-slot-specs slot-specs)))
+    (make-record-schema name tag slot-templates)))
 
 ;;; instance constructor
 
@@ -818,15 +808,15 @@
 ;;;       currently it's not used, but later
 ;;;       we can enforce it
 
-(define (%make-slot template)
+(define (%make-record-slot template)
   (let* ((sname (car template))
          (attrs (cdr template))
          (val (getf default: attrs default: '())))
     (cons sname val)))
 
-(define (make-record schema initargs)
+(define (instantiate-record schema initargs)
   (let* ((slot-templates (record-schema-slots schema))
-         (slots (map %make-slot slot-templates))
+         (slots (map %make-record-slot slot-templates))
          (instance (make-record-instance schema slots)))
     (apply initialize-record instance initargs)))
 
@@ -838,6 +828,59 @@
 
 (define (record-set! record-instance slot-name val)
   (alist-set! (record-instance-slots record-instance) slot-name val test: eq?))
+
+
+;;; =====================================================================
+;;; tuple schemas
+;;; =====================================================================
+
+(define tags:$bard-tuple (%next-bard-type-number))
+(define tags:$bard-tuple-instance (%next-bard-type-number))
+
+(define (make-tuple name slot-specs)
+  (let* ((tag tags:$bard-tuple)
+         (slot-count (getf slot-count: slot-specs default: 0))
+         (slot-type (getf slot-type: slot-specs default: Anything)))
+    (make-tuple-schema name tag slot-count slot-type)))
+
+;;; instance constructor
+
+(define (initialize-tuple tuple-instance . initargs)
+  (let* ((inits (plist->alist initargs))
+         (vals (getf values: initargs default: #f))
+         (slots (tuple-instance-slots tuple-instance))
+         (slot-count (vector-length slots)))
+    (if vals
+        (if (= slot-count (length vals))
+            (let loop ((i 0))
+              (if (< i slot-count)
+                  (begin
+                    (vector-set! slots i (list-ref vals i))
+                    (loop (+ i 1)))))
+            (error (str "Wrong number of values for a tuple type. Expected "
+                        slot-count " but found " (length vals)))))
+    tuple-instance))
+
+;;; TODO: slot templates contain type information.
+;;;       currently it's not used, but later
+;;;       we can enforce it
+
+(define (instantiate-tuple schema initargs)
+  (let* ((slot-count (tuple-schema-slot-count schema))
+         (default (getf default: initargs default: '()))
+         (slots (make-vector slot-count default))
+         (instance (make-tuple-instance schema slots)))
+    (apply initialize-tuple instance initargs)))
+
+;;; instance accessors
+;;; TODO: add support for marking slots immutable
+
+(define (tuple-ref tuple-instance index)
+  (vector-ref (tuple-instance-slots tuple-instance) index))
+
+(define (tuple-set! tuple-instance index val)
+  (vector-set! (tuple-instance-slots tuple-instance) index val))
+
 
 ;;; =====================================================================
 ;;; getting bard types for values

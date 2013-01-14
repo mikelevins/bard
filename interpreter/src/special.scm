@@ -80,8 +80,7 @@
 ;;; ----------------------------------------------------------------------
 
 (define (%eval-def expr env)
-  (%defglobal (list-ref expr 1) (%eval (list-ref expr 2) env))
-  (list-ref expr 2))
+  (%defglobal (list-ref expr 1) (%eval (list-ref expr 2) env)))
 
 (%defspecial 'def (lambda (expr env) (%eval-def expr env)))
 
@@ -311,13 +310,18 @@
 (define (%eval-define-record expr env)
   (let* ((record-name (list-ref expr 2))
          (slot-specs (drop 3 expr))
-         (schema (define-record record-name slot-specs)))
+         (schema (make-record record-name slot-specs)))
     (%defglobal record-name schema)
     schema))
 
 ;;; tuple
 
-(define (%eval-define-tuple expr env) (error "define tuple not implemented"))
+(define (%eval-define-tuple expr env)
+  (let* ((tuple-name (list-ref expr 2))
+         (slot-specs (drop 3 expr))
+         (schema (make-tuple tuple-name slot-specs)))
+    (%defglobal tuple-name schema)
+    schema))
 
 ;;; define
 

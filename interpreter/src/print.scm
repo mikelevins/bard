@@ -53,6 +53,25 @@
          (schema-name (schema-name schema)))
     (str "#" schema-name "{" (alist-slots->string (record-instance-slots x)) "}")))
 
+(define (%tuple->string x)
+  (with-output-to-string
+    '() 
+    (lambda ()
+      (let* ((schema (instance-schema x))
+             (schema-name (schema-name schema)))
+        (display "#")
+        (display schema-name)
+        (display "(")
+        (let* ((slots (tuple-instance-slots x))
+               (slot-count (vector-length slots)))
+          (let loop ((i 0))
+            (if (< i slot-count)
+                (let ((item (vector-ref slots i)))
+                  (if (not (zero? i)) (display " "))
+                  (display (%as-string item))
+                  (loop (+ i 1))))))
+        (display ")")))))
+
 (define (%schema->string x)
   (str (schema-name x)))
 
@@ -64,6 +83,7 @@
   (cond
    ((schema? x)(%schema->string x))
    ((record-instance? x)(%record->string x))
+   ((tuple-instance? x)(%tuple->string x))
    (else: (let ((printer (get-printer-function (%tag x))))
             (if printer
                 (printer x)

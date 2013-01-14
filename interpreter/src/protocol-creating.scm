@@ -94,7 +94,13 @@
 ;;; <record>
 
 (%add-primitive-method! bard:make `(,<record>)
-                        (lambda (type . args)(make-record type args))
+                        (lambda (type . args)(instantiate-record type args))
+                        debug-name: 'make)
+
+;;; <tuple>
+
+(%add-primitive-method! bard:make `(,<tuple>)
+                        (lambda (type . args)(instantiate-tuple type args))
                         debug-name: 'make)
 
 
