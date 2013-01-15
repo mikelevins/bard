@@ -242,6 +242,63 @@
    required-count: 0
    restarg: 'more))
 
+;;; ---------------------------------------------------------------------
+;;; map
+;;; ---------------------------------------------------------------------
+
+(define (%bard-map fn . lists)
+  (let loop ((item-lists (map %->list lists))
+             (result '()))
+    (if (some? null? item-lists)
+        (reverse result)
+        (loop (map cdr item-lists)
+              (cons (%apply fn (map car item-lists))
+                    result)))))
+
+(define prim:map
+  (make-primitive
+   procedure: (lambda (fn . args)(apply %bard-map fn args))
+   debug-name: 'map
+   required-count: 1
+   restarg: 'more))
+
+;;; ---------------------------------------------------------------------
+;;; partition
+;;; ---------------------------------------------------------------------
+
+(define (%make-partition-function fns)
+  (if (null? fns)
+      (lambda (ls) ls)
+      (lambda (ls)
+        (let loop ((inlist ls)
+                   (result-lists (make-list (length fns) '())))
+          (if (null? inlist)
+              (apply values (map reverse result-lists))
+              (let ((item (car inlist)))
+                (loop (cdr inlist)
+                      (map cons
+                           (map (lambda (fn)(%funcall fn item))
+                                fns)
+                           result-lists))))))))
+
+(define (%bard-partition . fns)
+  (make-primitive
+   procedure: (%make-partition-function fns)
+   debug-name: 'anonymous-partition-function
+   required-count: 
+   restarg: 'more))
+
+(define prim:partition
+  (make-primitive
+   procedure: %bard-partition
+   debug-name: 'partition
+   required-count: 0
+   restarg: 'more))
+
+;;; ---------------------------------------------------------------------
+;;; range
+;;; ---------------------------------------------------------------------
+
 (define (bard:range start end)
   (if (= start end)
       (list start)

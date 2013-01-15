@@ -11,8 +11,12 @@
 
 (##include "type-signature-macros.scm")
 
+;;; ---------------------------------------------------------------------
+;;; make Type & {} -> Anything
+;;; ---------------------------------------------------------------------
+
 (define bard:make (make-function debug-name: 'make
-                                 signatures: (list (signature (Type Anything) 'more (Anything)))))
+                                 signatures: (list (signature (Type) 'more (Anything)))))
 
 ;;; Anything
 
@@ -133,6 +137,13 @@
 
 (%add-primitive-method! bard:make `(,<tuple>)
                         (lambda (type . args)(instantiate-tuple type args))
+                        debug-name: 'make)
+
+;;; <url>
+
+(%add-primitive-method! bard:make `(,<tuple>)
+                        (lambda (type . args)
+                          (apply %make-url args))
                         debug-name: 'make)
 
 

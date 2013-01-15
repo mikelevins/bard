@@ -67,6 +67,9 @@
 ;;; list utils
 ;;; ---------------------------------------------------------------------
 
+(define (any ls)
+  (list-ref ls (random-integer (length ls))))
+
 (define (by n ls)
   (cond
    ((<= n 0) '())
@@ -137,6 +140,14 @@
       (cons (car ls)
             (cons item
                   (interpose item (cdr ls))))))
+
+(define (make-list n #!optional (initial-element '()))
+  (let loop ((i n)
+             (result '()))
+    (if (<= i 0)
+        result
+        (loop (- i 1)
+              (cons initial-element result)))))
 
 (define (next-last ls)
   (if (null? ls)

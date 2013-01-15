@@ -146,7 +146,7 @@
                   (str (string #\newline) "  ")
                   (map (lambda (s)(signature->string s))
                        sigs))))
-    (string-join "" `("(" ,(str fname) ,(string #\newline) ,sigstr ")"))))
+    (string-join "" `("(" ,(str fname) " " ,(string #\newline) ,sigstr ")"))))
 
 (define-printer-function (schema-tag <function>) 
   (lambda (fn)(function->string fn)))

@@ -41,7 +41,7 @@
        (let ((restarg (signature-restarg sig)))
          (if (or (symbol? restarg)
                  (alist-table-instance? restarg))
-             (%as-string restarg)
+             (str " '" (%as-string restarg))
              ""))
        " -> "
        (string-join " " (map %as-string (signature-output-types sig)))

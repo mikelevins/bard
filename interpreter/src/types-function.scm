@@ -88,7 +88,10 @@
                     (let ((best-method (%function-best-method fn args)))
                       (if best-method
                           (%apply best-method args)
-                          (error (str "No applicable method for " (%as-string fn) " with arguments " (map %as-string args))))))))
+                          (error (string-append "No applicable method for "
+                                                (string #\newline) (%as-string fn) (string #\newline)
+                                                "with arguments " 
+                                                (string-join " " (map %as-string args)))))))))
     (set-function-proc! fn fn-proc)
     fn))
 
