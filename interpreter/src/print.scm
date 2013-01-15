@@ -226,3 +226,27 @@
      ((and (input-port? s)(output-port? s)) (str "#<iostream " (object->string s) ">"))
      ((input-port? s) (str "#<input-stream " (object->string (object->serial-number s)) ">"))
      ((output-port? s) (str "#<output-stream " (object->string (object->serial-number s)) ">")))))
+
+(define-printer-function (schema-tag <url>) 
+  (lambda (url)
+    (str "#<url>\""
+         (url-scheme url) "://"
+         (if (url-username url)
+             (url-username url)
+             "")
+         (if (and (url-username url)
+                  (url-password url))
+             (str ":" (url-password url))
+             "")
+         (if (url-username url)
+             "@"
+             "")
+         (url-domain url)
+         (if (url-port url)
+             (str ":" (url-port url))
+             "")
+         (url-path url)
+         (if (%empty? (url-query url))
+             ""
+             (str "?" (url-query url)))
+         "\"")))

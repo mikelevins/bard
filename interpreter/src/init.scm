@@ -65,11 +65,15 @@
   (%defglobal 'Boolean      Boolean)
   (%defglobal 'Character    Character)
   (%defglobal 'Class        Class)
+  (%defglobal 'File         File)
   (%defglobal 'Float        Float)
   (%defglobal 'Fraction     Fraction)
   (%defglobal 'Function     Function)    
   (%defglobal 'InputStream  InputStream) 
   (%defglobal 'Integer      Integer)
+  (%defglobal 'IODirection  IODirection)
+  (%defglobal 'IOMode       IOMode)
+  (%defglobal 'IOType       IOType)
   (%defglobal 'Keyword      Keyword)
   (%defglobal 'List         List)
   (%defglobal 'Method       Method)
@@ -100,6 +104,7 @@
   (%defglobal 'Ordering       Ordering)
   (%defglobal 'Pairing        Pairing)
   (%defglobal 'Reading        Reading)
+  (%defglobal 'Streaming      Streaming)
   (%defglobal 'TextProcessing TextProcessing)
   (%defglobal 'Typing         Typing)
   (%defglobal 'Writing        Writing)
@@ -109,12 +114,24 @@
 ;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
+;;; Protocol: Addressing
+;;; ---------------------------------------------------------------------
+
+  (%defglobal 'url bard:url)
+  (%defglobal 'url-domain bard:url-domain)
+  (%defglobal 'url-path bard:url-path)
+  (%defglobal 'url-port bard:url-port)
+  (%defglobal 'url-query bard:url-query)
+  (%defglobal 'url-scheme bard:url-scheme)
+
+;;; ---------------------------------------------------------------------
 ;;; Protocol: Applying
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'applicable? prim:applicable?)
   (%defglobal 'apply prim:apply)
   (%defglobal 'complement prim:complement)
+  (%defglobal 'compose prim:compose)
   (%defglobal 'constantly prim:constantly)
   (%defglobal 'eval prim:eval)
   (%defglobal 'flip prim:flip)

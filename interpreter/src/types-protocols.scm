@@ -40,6 +40,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; convention: protocol names are present participles
 
+(define Addressing     (%make-protocol 'Addressing))     ; locating resources
 (define Applying       (%make-protocol 'Applying))       ; applying function-like values
 (define Calculating    (%make-protocol 'Calculating))    ; performing arithmetic and other calculating tasks
 (define Comparing      (%make-protocol 'Comparing))      ; comparing values for equality
@@ -50,6 +51,7 @@
 (define Ordering       (%make-protocol 'Ordering))       ; arranging values by magnitude
 (define Pairing        (%make-protocol 'Pairing))        ; arranging values in pairs
 (define Reading        (%make-protocol 'Reading))        ; getting values from input streams
+(define Streaming      (%make-protocol 'Streaming))      ; data sources and sinks
 (define System         (%make-protocol 'System))         ; system tools
 (define TextProcessing (%make-protocol 'TextProcessing)) ; processing text
 (define Typing         (%make-protocol 'Typing))         ; discriminating values by type

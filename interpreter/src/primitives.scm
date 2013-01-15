@@ -33,6 +33,26 @@
    required-count: 1
    restarg: #f))
 
+(define (%compose-functions . fns)
+  (make-primitive
+   procedure: (lambda (x)
+                (let loop ((fs (reverse fns))
+                           (val x))
+                  (if (null? fs)
+                      val
+                      (loop (cdr fs)
+                            (%funcall (car fs) val)))))
+   debug-name: #f
+   required-count: 1
+   restarg: #f))
+
+(define prim:compose
+  (make-primitive
+   procedure: %compose-functions
+   debug-name: 'compose
+   required-count: 0
+   restarg: 'functions))
+
 (define prim:constantly 
   (make-primitive
    procedure:

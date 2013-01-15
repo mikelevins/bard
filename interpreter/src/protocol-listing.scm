@@ -205,6 +205,13 @@
 ;;; empty?
 ;;; ---------------------------------------------------------------------
 
+(define (%empty? x)
+  (or (eq? x #!unbound)
+      (null? x)
+      (equal? x "")
+      (and (alist-table-instance? x)
+           (zero? (length (alist-table-slots x))))))
+
 (define bard:empty? (make-function debug-name: 'empty?
                                    signatures: (list (signature (List) #f (Boolean)))))
 
@@ -499,6 +506,13 @@
                         (list <string>)
                         string-next-last
                         debug-name: 'next-last)
+
+;;; ---------------------------------------------------------------------
+;;; partition
+;;; ---------------------------------------------------------------------
+
+(define bard:partition (make-function debug-name: 'parition
+                                      signatures: (list (signature () 'functions (List &)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; reduce

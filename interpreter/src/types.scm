@@ -71,6 +71,10 @@
 
 (define-instance singleton-instance constructor: make-singleton-instance value)
 
+(define-instance url-instance 
+  constructor: make-url-instance
+  scheme username password domain port path query)
+
 ;;; ---------------------------------------------------------------------
 ;;; gambit type tags
 ;;; ---------------------------------------------------------------------
