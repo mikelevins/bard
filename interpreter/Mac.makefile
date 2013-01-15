@@ -34,6 +34,20 @@ SCHEME_SOURCES= \
          src/utils.scm \
          src/singleton-tree.scm \
          src/types.scm \
+         src/types-primitive-types.scm \
+         src/types-classes.scm \
+         src/types-protocols.scm \
+         src/types-alist-table.scm \
+         src/type-signatures.scm \
+         src/types-function.scm \
+         src/types-interpreted-method.scm \
+         src/types-primitive.scm \
+         src/types-singleton.scm \
+         src/types-generator.scm \
+         src/types-structure-schemas.scm \
+         src/types-records.scm \
+         src/types-tuples.scm \
+         src/value-to-schema.scm \
          src/env.scm \
          src/primitives.scm \
          src/read.scm \
@@ -47,11 +61,11 @@ SCHEME_SOURCES= \
          src/protocol-converting.scm \
          src/protocol-creating.scm \
          src/protocol-listing.scm \
+         src/protocol-mapping.scm \
          src/protocol-ordering.scm \
          src/protocol-pairing.scm \
          src/protocol-typing.scm \
-         src/init.scm \
-
+         src/init.scm
 
 
 C_SOURCES= \
@@ -60,6 +74,20 @@ C_SOURCES= \
          src/utils.c \
          src/singleton-tree.c \
          src/types.c \
+         src/types-primitive-types.c \
+         src/types-classes.c \
+         src/types-protocols.c \
+         src/types-alist-table.c \
+         src/type-signatures.c \
+         src/types-function.c \
+         src/types-interpreted-method.c \
+         src/types-primitive.c \
+         src/types-singleton.c \
+         src/types-generator.c \
+         src/types-structure-schemas.c \
+         src/types-records.c \
+         src/types-tuples.c \
+         src/value-to-schema.c \
          src/env.c \
          src/primitives.c \
          src/read.c \
@@ -73,36 +101,52 @@ C_SOURCES= \
          src/protocol-converting.c \
          src/protocol-creating.c \
          src/protocol-listing.c \
+         src/protocol-mapping.c \
          src/protocol-ordering.c \
          src/protocol-pairing.c \
          src/protocol-typing.c \
-         src/init.c \
+         src/init.c
 
 
 
 OBJECTS= \
-         version.o \
-         uuid.o \
-         utils.o \
-         singleton-tree.o \
-         types.o \
-         env.o \
-         primitives.o \
-         read.o \
-         print.o \
-         special.o \
-         macro.o \
-         apply.o \
-         eval.o \
-         error.o \
-         protocol-comparing.o \
-         protocol-converting.o \
-         protocol-creating.o \
-         protocol-listing.o \
-         protocol-ordering.o \
-         protocol-pairing.o \
-         protocol-typing.o \
-         init.o \
+         src/version.o \
+         lib/uuid.o \
+         src/utils.o \
+         src/singleton-tree.o \
+         src/types.o \
+         src/types-primitive-types.o \
+         src/types-classes.o \
+         src/types-protocols.o \
+         src/types-alist-table.o \
+         src/type-signatures.o \
+         src/types-function.o \
+         src/types-interpreted-method.o \
+         src/types-primitive.o \
+         src/types-singleton.o \
+         src/types-generator.o \
+         src/types-structure-schemas.o \
+         src/types-records.o \
+         src/types-tuples.o \
+         src/value-to-schema.o \
+         src/env.o \
+         src/primitives.o \
+         src/read.o \
+         src/print.o \
+         src/special.o \
+         src/macro.o \
+         src/apply.o \
+         src/eval.o \
+         src/error.o \
+         src/protocol-comparing.o \
+         src/protocol-converting.o \
+         src/protocol-creating.o \
+         src/protocol-listing.o \
+         src/protocol-mapping.o \
+         src/protocol-ordering.o \
+         src/protocol-pairing.o \
+         src/protocol-typing.o \
+         src/init.o
 
 
 

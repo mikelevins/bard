@@ -384,6 +384,9 @@
             s
             (string-append s (apply str (cdr args)))))))
 
+(define (string-join cupola strings)
+  (apply string-append (interpose cupola strings)))
+
 (define (string-next-last str)
   (string-ref str (- (string-length str) 2)))
 

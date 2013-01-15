@@ -1,0 +1,41 @@
+;;; streaming protocol in Bard, for reference
+
+(define protocol Streaming
+  (stream-type Stream -> IOType)
+  (stream-mode Stream -> IOMode)
+  (stream-direction Stream -> IODirection)
+  (lines InputStream -> List) ; -> a list (generator) of all lines of text from the stream
+  (contents InputStream -> List) ; -> a list (generator) of all elements of the stream
+  (vals InputStream -> List) ; -> a List (generator) of all Bard values from the stream
+  (put Anything OutputStream -> Boolean)
+  (take Integer InputStream -> List)
+  (take-one InputStream -> Anything)
+  (drop Integer InputStream -> Boolean))
+
+;;; macros: with-open (var Streamable & {type: * mode: * direction: * if-present: * if-absent: *])
+
+;;; lines, content, and vals return generators (generators belong to
+;;; class List).
+
+(define protocol Addressing
+  (url Name {scheme: * domain: * port: * path: * query: *} -> URL)
+  (url-scheme URL -> Name)
+  (url-domain URL -> Name)
+  (url-port URL -> Name)
+  (url-path URL ->))
+
+(define protocol System
+  (file URL -> File))
+
+(define protocol Listing
+  ;; returns a function that, when applied to a List, returns one List
+  ;; for each input Applicable
+  (partition Applicable & -> Applicable))
+
+(define protocol Applying
+  ;; given several functions, returns a single function whose effect
+  ;; is the same as applying the input functions from right to left;
+  ;; e.g. ((compose a b c) x) == (a (b (c x)))
+  (compose Applicable & -> Applicable))
+
+

@@ -9,12 +9,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
 ;;; list?
 
 (define bard:list? (make-function debug-name: 'list?
-                                  input-types: `(,Anything)
-                                  restarg: #f
-                                  output-types: `(,Boolean)))
+                                  signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:list?
                         (list Anything)
@@ -42,9 +42,7 @@
                         debug-name: 'list?)
 
 (define bard:symbol? (make-function debug-name: 'symbol?
-                                    input-types: `(,Anything)
-                                    restarg: #f
-                                    output-types: `(,Boolean)))
+                                    signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:symbol?
                         (list Anything)
@@ -57,9 +55,7 @@
                         debug-name: 'symbol?)
 
 (define bard:nothing? (make-function debug-name: 'nothing?
-                                     input-types: `(,Anything)
-                                     restarg: #f
-                                     output-types: `(,Boolean)))
+                                     signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:nothing?
                         (list Anything)
@@ -72,9 +68,7 @@
                         debug-name: 'nothing?)
 
 (define bard:something? (make-function debug-name: 'something?
-                                       input-types: `(,Anything)
-                                       restarg: #f
-                                       output-types: `(,Boolean)))
+                                       signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:something?
                         (list Anything)
@@ -87,9 +81,7 @@
                         debug-name: 'something?)
 
 (define bard:table? (make-function debug-name: 'table?
-                                   input-types: `(,Anything)
-                                   restarg: #f
-                                   output-types: `(,Boolean)))
+                                   signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:table?
                         (list Anything)
@@ -102,9 +94,7 @@
                         debug-name: 'table?)
 
 (define bard:text? (make-function debug-name: 'text?
-                                  input-types: `(,Anything)
-                                  restarg: #f
-                                  output-types: `(,Boolean)))
+                                  signatures: (list (signature (Anything) #f (Boolean)))))
 
 (%add-primitive-method! bard:text?
                         (list Anything) 
@@ -127,11 +117,9 @@
                         debug-name: 'text?)
 
 (define bard:type (make-function debug-name: 'type
-                                 input-types: `(,Anything)
-                                 restarg: #f
-                                 output-types: `(,Type)))
+                                 signatures: (list (signature (Anything) #f (Type)))))
 
 (%add-primitive-method! bard:type
                         (list Anything) 
-                        (lambda (x)(%object->schema x))
+                        (lambda (x)(%value->schema x))
                         debug-name: 'type)

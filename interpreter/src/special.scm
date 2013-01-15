@@ -42,12 +42,13 @@
                       (types-expr (list-ref expr 2))
                       (types (map (lambda (t)(%eval t env)) types-expr))
                       (method-ref (list-ref expr 3))
-                      (method (%eval method-ref env)))
-                 (if (equal? (length types)
-                             (length (function-input-types fn)))
+                      (method (%eval method-ref env))
+                      (method-signature (make-signature types #f `(,Anything))))
+                 (if (signature-congruent? method-signature
+                                           (car (function-signatures fn)))
                      (%add-method! fn types method)
-                     (error (str "Conflicting input types: expected "
-                                 (%as-string (function-input-types fn))
+                     (error (str "Conflicting input types: expected one of "
+                                 (str (map %as-string (function-signatures fn)))
                                  " but found "
                                  (%as-string types))))
                  fn)))
@@ -186,13 +187,13 @@
     (receive (fname formals restarg)
              (%parse-method-prototype prototype env)
              (let* ((input-types (%parse-type-constraints formals constraints env))
-                    (fn (table-ref $bard-global-variables fname #f)))
+                    (output-types `(,Anything))
+                    (fn (table-ref $bard-global-variables fname #f))
+                    (sig (make-signature input-types restarg output-types)))
                (cond
                 ((not fn)
                  (let ((fn (make-function debug-name: fname
-                                          input-types: input-types
-                                          restarg: restarg
-                                          output-types: `(,Anything)))
+                                          signatures: (list sig)))
                        (method (make-interpreted-method formal-parameters: formals
                                                         body: body
                                                         environment: env
@@ -201,8 +202,7 @@
                    (%defglobal fname fn)
                    (%add-method! fn input-types method)
                    fname))
-                ((equal? (length (function-input-types fn)) 
-                         (length input-types))
+                ((signature-congruent? sig (car (function-instance-signatures fn)))
                  (let ((method (make-interpreted-method formal-parameters: formals
                                                         body: body
                                                         environment: env
@@ -258,11 +258,12 @@
   (if (%globally-bound? nm)
       (let ((found-val (%global-value nm)))
         (if (function? found-val)
-            (if (equal? spec (%function-signature found-val))
+            (if (signature-congruent? spec (car (function-instance-signatures found-val)))
                 (cons nm found-val)
                 (begin
                   (warn (str "the function " nm " is defined with a different signature: "
-                             (%function-signature found-val) "; definition not changed"))
+                             (map signature->string (function-instance-signatures found-val))
+                             "; definition not changed"))
                   #f))
             (begin
               (warn (str nm " is defined, and is not a function; definition not changed"))
@@ -281,8 +282,14 @@
         (fn (cdr fname/fn))
         (already (table-ref (protocol-instance-functions protocol) fname #f)))
     (if already
-        (if (equal? (%function-signature fn) (%function-signature already))
-            already
+        (if (signature-congruent? (car (function-signatures fn))
+                                  (car (function-signatures already)))
+            ;; found the function in the protocol
+            ;; the new signature fits; add it to the found function
+            (begin
+              (function-add-signatures! already (function-signatures fn))
+              already)
+            ;; the new signature conflicts; warn and bail out
             (begin
               (warn (str fname " is defined on protocol" (protocol-instance-name protocol) 
                          " with an incompatible signature; definition not changed"))
@@ -361,17 +368,16 @@
                    (let ((arrow-pos (position (lambda (x)(eq? '-> x)) expr))
                          (ampersand-pos (position (lambda (x)(eq? '& x)) expr)))
                      (if arrow-pos
-                         (let ((in-types (if ampersand-pos
-                                             (drop 1 (take ampersand-pos expr))
-                                             (drop 1 (take arrow-pos expr))))
-                               (restarg (if ampersand-pos
-                                            (list-ref expr (+ 1 ampersand-pos))
-                                            #f))
-                               (out-types (drop (+ 1 arrow-pos) expr)))
+                         (let* ((in-types (if ampersand-pos
+                                              (drop 1 (take ampersand-pos expr))
+                                              (drop 1 (take arrow-pos expr))))
+                                (restarg (if ampersand-pos
+                                             (list-ref expr (+ 1 ampersand-pos))
+                                             #f))
+                                (out-types (drop (+ 1 arrow-pos) expr))
+                                (sig (make-signature in-types restarg out-types)))
                            (make-function debug-name: #f
-                                          input-types: `(,@in-types)
-                                          restarg: restarg
-                                          output-types: `(,@out-types)))
+                                          signatures: (list sig)))
                          (error (str "Invalid function syntax: " expr))))
                    (error (str "Invalid function syntax: " expr)))))
 

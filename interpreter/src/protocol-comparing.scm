@@ -9,10 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
 (define bard:= (make-function debug-name: '=
-                              input-types: `()
-                              restarg: 'more
-                              output-types: `(,Boolean)))
+                              signatures: (list (signature () 'more (Boolean)))))
 
 (define (%bard= . args)
   (if (null? args)

@@ -9,10 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
 (define bard:as (make-function debug-name: 'as
-                               input-types: `(,Type ,Anything)
-                               restarg: #f
-                               output-types: `(,Anything)))
+                               signatures: (list (signature (Type Anything) #f (Anything)))))
 
 (%add-primitive-method! bard:as
                         (list (%singleton <string>) <symbol>) 

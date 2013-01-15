@@ -1,0 +1,12 @@
+
+(define method (read-names path)
+  with: ((path <string>))
+  (let ((heads tails (with-open (in (file (url path)))
+                       (map (partition first rest) 
+                            (lines in)))))
+    (set! $starts (filter long-enough? heads))
+    (set! $parts (map (compose filter long-enough?) tails))))
+
+
+
+

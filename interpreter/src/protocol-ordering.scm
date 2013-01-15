@@ -9,10 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
 (define bard:< (make-function debug-name: '<
-                              input-types: `(,Orderable ,Orderable)
-                              restarg: #f
-                              output-types: `(,Boolean)))
+                              signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
 
 (%add-primitive-method! bard:< (list <fixnum> <fixnum>) < debug-name: '<)
 (%add-primitive-method! bard:< (list <fixnum> <bignum>) < debug-name: '<)
@@ -37,9 +37,7 @@
 (%add-primitive-method! bard:< (list <string> <string>) string<? debug-name: '<)
 
 (define bard:> (make-function debug-name: '>
-                              input-types: `(,Orderable ,Orderable)
-                              restarg: #f
-                              output-types: `(,Boolean)))
+                              signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
 
 (%add-primitive-method! bard:> (list <fixnum> <fixnum>) > debug-name: '>)
 (%add-primitive-method! bard:> (list <fixnum> <bignum>) > debug-name: '>)
@@ -64,9 +62,7 @@
 (%add-primitive-method! bard:> (list <string> <string>) string>? debug-name: '>)
 
 (define bard:<= (make-function debug-name: '<=
-                               input-types: `(,Orderable ,Orderable)
-                               restarg: #f
-                               output-types: `(,Boolean)))
+                               signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
 
 (%add-primitive-method! bard:<= (list <fixnum> <fixnum>) <= debug-name: '<=)
 (%add-primitive-method! bard:<= (list <fixnum> <bignum>) <= debug-name: '<=)
@@ -91,9 +87,7 @@
 (%add-primitive-method! bard:<= (list <string> <string>) string<=? debug-name: '<=)
 
 (define bard:>= (make-function debug-name: '>=
-                               input-types: `(,Orderable ,Orderable)
-                               restarg: #f
-                               output-types: `(,Boolean)))
+                               signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
 
 (%add-primitive-method! bard:>= (list <fixnum> <fixnum>) >= debug-name: '>=)
 (%add-primitive-method! bard:>= (list <fixnum> <bignum>) >= debug-name: '>=)

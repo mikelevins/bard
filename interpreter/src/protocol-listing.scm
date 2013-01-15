@@ -9,14 +9,28 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
+;;; ---------------------------------------------------------------------
+;;; general utilities
+;;; ---------------------------------------------------------------------
+
+(define (%List? x)
+  (or (null? x)
+      (list? x)
+      (string? x)
+      (tuple-instance? x)
+      (alist-table-instance? x)
+      (generator-instance? x)
+      (and (singleton-instance? x)
+           (%List? (singleton-instance-value x)))))
+
 ;;; ---------------------------------------------------------------------
 ;;; add-first
 ;;; ---------------------------------------------------------------------
 
 (define bard:add-first (make-function debug-name: 'add-first
-                                      input-types: `(,Anything ,List)
-                                      restarg: #f
-                                      output-types: `(,List)))
+                                      signatures: (list (signature (Anything List) #f (List)))))
 
 (%add-primitive-method! bard:add-first
                         (list Anything <null>)
@@ -38,9 +52,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:add-last (make-function debug-name: 'add-last
-                                     input-types: `(,List ,Anything)
-                                     restarg: #f
-                                     output-types: `(,List)))
+                                     signatures: (list (signature (Anything List) #f (List)))))
 
 (%add-primitive-method! bard:add-last
                         (list <null> Anything)
@@ -66,8 +78,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:any (make-function debug-name: 'any
-                                input-types: `(,List)
-                                output-types: `(,Anything)))
+                                signatures: (list (signature (List) #f (Anything)))))
 
 (%add-primitive-method! bard:any
                         (list <null>)
@@ -92,9 +103,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:append (make-function debug-name: 'append
-                                   input-types: `(,List ,List)
-                                   restarg: #f
-                                   output-types: `(,List)))
+                                   signatures: (list (signature (List List) #f (List)))))
 
 (%add-primitive-method! bard:append
                         (list <null>  <null>)
@@ -126,9 +135,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:by (make-function debug-name: 'by
-                               input-types: `(,Integer ,List)
-                               restarg: #f
-                               output-types: `(,List)))
+                               signatures: (list (signature (Integer List) #f (List)))))
 
 (%add-primitive-method! bard:by
                         (list <fixnum> <pair>)
@@ -146,9 +153,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:drop (make-function debug-name: 'drop
-                                 input-types: `(,Integer ,List)
-                                 restarg: #f
-                                 output-types: `(,List)))
+                                 signatures: (list (signature (Integer List) #f (List)))))
 
 (%add-primitive-method! bard:drop
                         (list <fixnum>  <pair>)
@@ -172,9 +177,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:element (make-function debug-name: 'element
-                                    input-types: `(,List ,Integer)
-                                    restarg: #f
-                                    output-types: `(,Anything)))
+                                    signatures: (list (signature (List Integer) #f (Anything)))))
 
 (%add-primitive-method! bard:element
                         (list <pair> <fixnum>)
@@ -203,9 +206,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:empty? (make-function debug-name: 'empty?
-                                   input-types: `(,List)
-                                   restarg: #f
-                                   output-types: `(,Boolean)))
+                                   signatures: (list (signature (List) #f (Boolean)))))
 
 (%add-primitive-method! bard:empty?
                         (list <null>)
@@ -227,9 +228,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:filter (make-function debug-name: 'filter
-                                   input-types: `(,Applicable ,List)
-                                   restarg: #f
-                                   output-types: `(,List)))
+                                   signatures: (list (signature (Applicable List) #f (List)))))
 
 (define (%bard-filter test ls)
   (let loop ((items ls)
@@ -267,9 +266,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:first (make-function debug-name: 'first
-                                  input-types: `(,List)
-                                  restarg: #f
-                                  output-types: `(,Anything)))
+                                  signatures: (list (signature (List) #f (Anything)))))
 
 (%add-primitive-method! bard:first
                         (list <pair>)
@@ -302,9 +299,7 @@
                                      strs))))))
 
 (define bard:join-text (make-function debug-name: 'join-text
-                                      input-types: `(,Text ,List)
-                                      restarg: #f
-                                      output-types: `(,Text)))
+                                      signatures: (list (signature (Text List) #f (Text)))))
 
 (%add-primitive-method! bard:join-text
                         (list <string> <pair>)
@@ -317,9 +312,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:last (make-function debug-name: 'last
-                                 input-types: `(,List)
-                                 restarg: #f
-                                 output-types: `(,Anything)))
+                                 signatures: (list (signature (List) #f (Anything)))))
 
 (define (%pair-last p)
   (if (null? (cdr p))
@@ -357,9 +350,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:length (make-function debug-name: 'length
-                                   input-types: `(,List)
-                                   restarg: #f
-                                   output-types: `(,Integer)))
+                                   signatures: (list (signature (List) #f (Integer)))))
 
 (%add-primitive-method! bard:length
                         (list <null>)
@@ -386,9 +377,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:map (make-function debug-name: 'map
-                                input-types: `(,Applicable ,List)
-                                restarg: #f
-                                output-types: `(,List)))
+                                signatures: (list (signature (Applicable List) #f (List)))))
 
 ;;; <null>
 ;;; ---------------------------------------------------------------------
@@ -499,9 +488,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:next-last (make-function debug-name: 'next-last
-                                      input-types: `(,List)
-                                      restarg: #f
-                                      output-types: `(,Anything)))
+                                      signatures: (list (signature (List) #f (Anything)))))
 
 (%add-primitive-method! bard:next-last
                         (list <pair>)
@@ -518,9 +505,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:reduce (make-function debug-name: 'reduce
-                                   input-types: `(,Applicable ,Anything ,List)
-                                   restarg: #f
-                                   output-types: `(,Anything)))
+                                   signatures: (list (signature (Applicable Anything List) #f (Anything)))))
 
 (define (%bard-reduce fn init ls)
   (let loop ((items ls)
@@ -565,9 +550,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:rest (make-function debug-name: 'rest
-                                 input-types: `(,List)
-                                 restarg: #f
-                                 output-types: `(,List)))
+                                 signatures: (list (signature (List) #f (List)))))
 
 (%add-primitive-method! bard:rest
                         (list <null>)
@@ -589,9 +572,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:second (make-function debug-name: 'second
-                                   input-types: `(,List)
-                                   restarg: #f
-                                   output-types: `(,Anything)))
+                                   signatures: (list (signature (List) #f (Anything)))))
 
 (%add-primitive-method! bard:second
                         (list <pair>)
@@ -608,9 +589,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:some? (make-function debug-name: 'some?
-                                  input-types: `(,Applicable ,List)
-                                  restarg: #f
-                                  output-types: `(,Anything)))
+                                  signatures: (list (signature (Applicable List) #f (Anything)))))
 
 (define (%bard-some? test ls)
   (let loop ((items ls))
@@ -665,9 +644,7 @@
                 (reverse (cons chunk chunks))))))))
 
 (define bard:split-text (make-function debug-name: 'split-text
-                                       input-types: `(,Text ,Character)
-                                       restarg: #f
-                                       output-types: `(,List)))
+                                       signatures: (list (signature (Text Character) #f (List)))))
 
 (%add-primitive-method! bard:split-text
                         (list <string>  <character>)
@@ -679,9 +656,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:take (make-function debug-name: 'take
-                                 input-types: `(,Integer ,List)
-                                 restarg: #f
-                                 output-types: `(,List)))
+                                 signatures: (list (signature (Integer List) #f (List)))))
 
 (%add-primitive-method! bard:take
                         (list <fixnum>  <pair>)
@@ -717,8 +692,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define bard:take-by (make-function debug-name: 'take-by
-                                    input-types: `(,Integer ,Integer ,List)
-                                    output-types: `(,List)))
+                                    signatures: (list (signature (Integer Integer List) #f (List)))))
 
 (%add-primitive-method! bard:take-by
                         (list <fixnum>  <fixnum> <pair>)

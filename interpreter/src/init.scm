@@ -87,6 +87,7 @@
   (%defglobal 'Text         Text)
   (%defglobal 'Type         Type)
   (%defglobal 'Undefined    Undefined)
+  (%defglobal 'URL          URL)
 
   ;;; protocols
 

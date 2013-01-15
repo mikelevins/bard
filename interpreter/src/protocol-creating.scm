@@ -9,10 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(##include "type-signature-macros.scm")
+
 (define bard:make (make-function debug-name: 'make
-                                 input-types: `(,Type)
-                                 restarg: 'more
-                                 output-types: `(,Anything)))
+                                 signatures: (list (signature (Type Anything) 'more (Anything)))))
 
 ;;; Anything
 
@@ -41,9 +41,7 @@
         (output-types (getf output-types: args default: '()))
         (restarg (getf restarg: args default: #f)))
     (make-function debug-name: name
-                   input-types: input-types
-                   output-types: output-types
-                   restarg: restarg)))
+                   signatures: (list (make-signature input-types restarg output-types)))))
 
 (%add-primitive-method! bard:make `(,(%singleton <function>))
                         %bard-make-function

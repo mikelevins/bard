@@ -18,6 +18,9 @@ TO DO
 - protocols to implement
   - Communicating (Actor)
 
+- type system features
+  - infer class membership from defined methods
+
 === release v0.4.x ===
 
 - system work
