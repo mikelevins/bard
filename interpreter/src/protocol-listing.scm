@@ -801,7 +801,7 @@
 ;;; take-one
 ;;; ---------------------------------------------------------------------
 
-(define bard:take (make-function debug-name: 'take-one
+(define bard:take-one (make-function debug-name: 'take-one
                                  signatures: (list (signature (List) #f (List)))))
 
 (%add-primitive-method! bard:take-one

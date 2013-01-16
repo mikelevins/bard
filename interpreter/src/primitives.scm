@@ -285,7 +285,7 @@
   (make-primitive
    procedure: (%make-partition-function fns)
    debug-name: 'anonymous-partition-function
-   required-count: 
+   required-count: 0
    restarg: 'more))
 
 (define prim:partition

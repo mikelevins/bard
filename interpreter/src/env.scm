@@ -38,14 +38,40 @@
 (define (%add-binding env var val)
   (cons (cons var val) env))
 
+(define (%eval-single-let-binding binding env)
+  (%add-binding env
+                (car binding)
+                (%eval (cadr binding)
+                       env)))
+
+(define (%eval-multiple-let-binding binding env)
+  (let* ((count (length binding))
+         (vars (take (- count 1) binding))
+         (vals-expr (car (drop (- count 1) binding))))
+    (call-with-values (lambda ()(%eval vals-expr env))
+      (lambda vals
+        (let loop ((vars vars)
+                   (vals vals)
+                   (env env))
+          (if (null? vars)
+              env
+              (let ((var (car vars))
+                    (val (car vals)))
+                (loop (cdr vars)
+                      (cdr vals)
+                      (%add-binding env var val)))))))))
+
+(define (%eval-let-binding binding env)
+  (cond
+   ((= (length binding) 2) (%eval-single-let-binding binding env))
+   ((> (length binding) 2) (%eval-multiple-let-binding binding env))
+   (error (str "Malformed let binding: " (%as-string binding)))))
+
 (define (%add-let-bindings env bindings)
   (if (null? bindings)
       env
       (let ((binding (car bindings)))
-        (%add-let-bindings (%add-binding env
-                                         (car binding)
-                                         (%eval (cadr binding)
-                                                env))
+        (%add-let-bindings (%eval-let-binding binding env)
                            (cdr bindings)))))
 
 (define (%extend-environment env plist)

@@ -34,14 +34,18 @@
                          (newline))
                        (if (eq? expr #!eof)
                            (loop)
-                           (let* ((val (%eval expr (%null-environment))))
-                             (if (%defined? val)
-                                 (display (%as-string val)))
-                             (loop))))))))
+                           (call-with-values (lambda ()(%eval expr (%null-environment)))
+                             (lambda vals
+                               (for-each (lambda (val)
+                                           (if (%defined? val)
+                                               (begin
+                                                 (display (%as-string val))
+                                                 (newline))))
+                                         vals)
+                               (loop)))))))))
       (if debug
           (rep)
           (let ((error-handler (lambda (err)
                                  (display-error err)
                                  (loop))))
             (with-exception-catcher error-handler rep))))))
-
