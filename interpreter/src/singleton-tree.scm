@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (standard-bindings))
+
 (define-type %singleton-tree
   id: 3623F664-68ED-4642-BB14-B6FDCA33618C
   (entries %singleton-tree-entries))

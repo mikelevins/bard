@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (standard-bindings))
+
 (define $special-forms-table (make-table test: eq?))
 
 (define (%defspecial nm eval-fn)

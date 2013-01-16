@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (standard-bindings))
+
 (define (%apply op args)
   (cond
    ((function? op)(apply (function-proc op) args))

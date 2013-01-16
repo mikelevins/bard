@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (standard-bindings))
+
 ;;;; extracted from Gambit's lib/_io#.scm so it can be used and modified
 ;;;; without the large overhead of including all of gambit#.scm
 

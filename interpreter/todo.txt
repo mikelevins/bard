@@ -1,9 +1,5 @@
 TO DO
 
-- protocols to implement
-  - Streaming
-  - Mapping (all values are tables)
-
 === release v0.3.x ===
 
 - special forms to implement
@@ -36,6 +32,5 @@ TO DO
 
 === release v0.6.x ===
 
-
-
+- customizable reader in Bard
 

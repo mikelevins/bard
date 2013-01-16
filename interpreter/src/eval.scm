@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (standard-bindings))
+
 (define (%eval-variable var env)
   (if (eq? var 'undefined)
       #!unbound

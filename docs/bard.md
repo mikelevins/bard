@@ -63,29 +63,23 @@ characters, and recombining them according to a simple matching rule.
     (def $name-parts-count 0)
     (def *max-name-length* 16)
     (def $max-tries 100)
-
-    (define method (triples x) 
-     with: ((x <string>))
-      (take-by 3 1 x))
-
-    (define method (long-enough? s) 
-     with: ((s <string>))
-      (> (length s) 1))
-
+    
+    (define method (triples x) with: ((x <string>)) (take-by 3 1 x))
+    (define method (long-enough? s) with: ((s <string>)) (> (length s) 1))
     (define method (choose-name-start)(any $name-starts))
     
     (define method (read-names path)
-        (let ((lines (with-open-file (in path)(read-lines in)))
-              (triples-list (map triples lines)))
-          (set! $name-starts (filter long-enough? (map first triples-list)))
-          (set! $name-parts (reduce append [] (map (partial filter long-enough?)
-                                                   (map rest triples-list))))
-          (set! $name-parts-count (length $name-parts))
-          path))
-    
+      (let ((lines (with-open-file (in path)(read-lines in)))
+            (triples-list (map triples lines))
+            (starts parts ((partition first rest) triples-list)))
+        (set! $name-starts (filter long-enough? starts))
+        (set! $name-parts (reduce append [] (map (partial filter long-enough?) parts)))
+        (set! $name-parts-count (length $name-parts))
+        path))
+
     (define method (choose-name-next part)
       (let ((part1 (next-last part))
-        (part2 (last part)))
+            (part2 (last part)))
         (some? (^ (p) (and (= part1 (first p))
                            (= part2 (second p))))
                (drop (random (- $name-parts-count 1))
@@ -118,8 +112,9 @@ characters, and recombining them according to a simple matching rule.
     
     (define method (names path n)
       (read-names path)
-      (let ((nms (build-names)))
+          (let ((nms (build-names)))
         (take n nms)))
+
     
 A sample run using the "us.names" data included in the examples produces:
 

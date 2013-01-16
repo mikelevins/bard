@@ -10,6 +10,7 @@
 ;;;; ***********************************************************************
 
 (##include "type-signature-macros.scm")
+(declare (standard-bindings))
 
 ;;; list?
 
