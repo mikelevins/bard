@@ -47,6 +47,7 @@ SCHEME_SOURCES= \
          src/types-structure-schemas.scm \
          src/types-records.scm \
          src/types-tuples.scm \
+         src/types-url.scm \
          src/value-to-schema.scm \
          src/env.scm \
          src/primitives.scm \
@@ -57,6 +58,7 @@ SCHEME_SOURCES= \
          src/apply.scm \
          src/eval.scm \
          src/error.scm \
+         src/protocol-addressing.scm \
          src/protocol-comparing.scm \
          src/protocol-converting.scm \
          src/protocol-creating.scm \
@@ -64,6 +66,7 @@ SCHEME_SOURCES= \
          src/protocol-mapping.scm \
          src/protocol-ordering.scm \
          src/protocol-pairing.scm \
+         src/protocol-text-processing.scm \
          src/protocol-typing.scm \
          src/init.scm
 
@@ -87,6 +90,7 @@ C_SOURCES= \
          src/types-structure-schemas.c \
          src/types-records.c \
          src/types-tuples.c \
+         src/types-url.c \
          src/value-to-schema.c \
          src/env.c \
          src/primitives.c \
@@ -97,6 +101,7 @@ C_SOURCES= \
          src/apply.c \
          src/eval.c \
          src/error.c \
+         src/protocol-addressing.c \
          src/protocol-comparing.c \
          src/protocol-converting.c \
          src/protocol-creating.c \
@@ -104,49 +109,53 @@ C_SOURCES= \
          src/protocol-mapping.c \
          src/protocol-ordering.c \
          src/protocol-pairing.c \
+         src/protocol-text-processing.c \
          src/protocol-typing.c \
-         src/init.c
+         src/init.c \
 
 
 
 OBJECTS= \
-         src/version.o \
-         lib/uuid.o \
-         src/utils.o \
-         src/singleton-tree.o \
-         src/types.o \
-         src/types-primitive-types.o \
-         src/types-classes.o \
-         src/types-protocols.o \
-         src/types-alist-table.o \
-         src/type-signatures.o \
-         src/types-function.o \
-         src/types-interpreted-method.o \
-         src/types-primitive.o \
-         src/types-singleton.o \
-         src/types-generator.o \
-         src/types-structure-schemas.o \
-         src/types-records.o \
-         src/types-tuples.o \
-         src/value-to-schema.o \
-         src/env.o \
-         src/primitives.o \
-         src/read.o \
-         src/print.o \
-         src/special.o \
-         src/macro.o \
-         src/apply.o \
-         src/eval.o \
-         src/error.o \
-         src/protocol-comparing.o \
-         src/protocol-converting.o \
-         src/protocol-creating.o \
-         src/protocol-listing.o \
-         src/protocol-mapping.o \
-         src/protocol-ordering.o \
-         src/protocol-pairing.o \
-         src/protocol-typing.o \
-         src/init.o
+         version.o \
+         uuid.o \
+         utils.o \
+         singleton-tree.o \
+         types.o \
+         types-primitive-types.o \
+         types-classes.o \
+         types-protocols.o \
+         types-alist-table.o \
+         type-signatures.o \
+         types-function.o \
+         types-interpreted-method.o \
+         types-primitive.o \
+         types-singleton.o \
+         types-generator.o \
+         types-structure-schemas.o \
+         types-records.o \
+         types-tuples.o \
+         types-url.o \
+         value-to-schema.o \
+         env.o \
+         primitives.o \
+         read.o \
+         print.o \
+         special.o \
+         macro.o \
+         apply.o \
+         eval.o \
+         error.o \
+         protocol-addressing.o \
+         protocol-comparing.o \
+         protocol-converting.o \
+         protocol-creating.o \
+         protocol-listing.o \
+         protocol-mapping.o \
+         protocol-ordering.o \
+         protocol-pairing.o \
+         protocol-text-processing.o \
+         protocol-typing.o \
+         init.o
 
 
 

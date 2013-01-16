@@ -377,17 +377,17 @@
     (%make-alist-table outslots)))
 
 (%add-primitive-method! bard:filter
-                        (list <primitive> <pair>)
+                        (list <primitive> <alist-table>)
                         %bard-filter-alist-table
                         debug-name: 'filter)
 
 (%add-primitive-method! bard:filter
-                        (list <interpreted-method> <pair>)
+                        (list <interpreted-method> <alist-table>)
                         %bard-filter-alist-table
                         debug-name: 'filter)
 
 (%add-primitive-method! bard:filter
-                        (list <function> <pair>)
+                        (list <function> <alist-table>)
                         %bard-filter-alist-table
                         debug-name: 'filter)
 
