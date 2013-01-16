@@ -121,6 +121,84 @@ A sample run using the "us.names" data included in the examples produces:
     bard> (names "namefiles/us.names" 10)
     ("Vongo" "Tom" "Jesto" "Clif" "Pie" "Edgen" "Joel" "Laul" "Jimon" "Ramarlen")
 
+The name generator illustrates a few distinctive characteristics of
+Bard. For example, Bard is a functional language, but it's not
+pure. You can see its functional orientation in expressions like
+
+    (reduce append [] (map (partial filter long-enough?) parts))
+
+This expression maps a function over `parts`, creating the function
+using `partial`. The results are then combined by `reduce`, using
+`append` as the function that combines elements.
+
+On the other hand, the same line of code then assigns the results to a
+global variable, `$name-parts`, so Bard is not relentlessly
+functional; it permits assignment and other side-effects, while
+encouraging a generally functional approach.
+
+Functions are polymorphic--that is, the same function can do different
+things, depending on attributes of its arguments. The definition
+
+    (define method (triples x) with: ((x <string>)) (take-by 3 1 x))
+
+says that this is how to perform `triples` when its argument is of
+type `<string>`. You can define different **methods** on the same
+function that execute different code for different types of
+arguments. Bard can currently discriminate methods based on the types
+of all inputs, or based on the actual values of inputs. The
+method-definition syntax is designed to allow additional means of
+discrimination to be added in the future; some early versions of Bard
+supported general predicate dispatch, and that feature may come back
+at some point.
+
+The definition of `read-names` illustrates a couple of points about
+local variable bindings in Bard. First, there's just one version of
+`let`, the basic local-variables form. Other Lisps have up to half a
+dozen different forms of `let`, each with slightly different
+rules. Bard just has `let`.
+
+(Well, actually, it also has `match`, but `match` is a general
+pattern-matching tool, rather than a basic tool for defining local
+variables.)
+
+Bard's `let` binds variables in order. In this example:
+
+    (let ((x 2)
+          (y (+ x 1)))
+      (* x y))
+
+evaluation returns 6. `x` is bound to 2 and `y` is bound to `x` plus
+one; in other Lisps, the `y` clause would signal an error because `x`
+would not be leixically visible in that scope. In order to accomplish
+the above evaluation, you would have to use a separate binding
+construct, usually named `let*`. Bard dispenses with this distinction
+and provides the most common case.
+
+Bard's `let` can also bind multiple values in a single binding
+expression, as shown in the definition of `read-names`:
+
+    (starts parts ((partition first rest) triples-list))
+
+In this clause, `starts` and `parts` are both local variables bound to
+the multiple values returned by the `partition` function. `partition`
+creates a function that applies one or more other functions to a List
+argument, returning the results of each function as a separate
+value. In this example, `partition` creates a function that applies
+`first` and `rest` to each element of `triples-list`, returning the
+results of each as a separate value. Those two separate results-lists
+are then bound to `starts` and `parts`.
+
+The functions `build-names` and `names` illustrate the use of
+**generators**. Simply put, a generator in Bard is a looping function
+that can return multiple times. To use one, you express the loop in a
+`generate` expression, which returns a `<generator>`
+value. `<generator>` values are lists--that is, they support most of
+the `Listing` protocol, so you can manipulate them in most ways as if
+they are lists. In the name generator, `build-names` creates a
+generator, and `names` takes names from it. The generator constructs
+only as many names as we actually ask for, and automatically caches
+the ones it has already created, so that retrieving them again causes
+no additional computation.
 
 ## Syntax and built-in classes
 
