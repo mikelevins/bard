@@ -15,8 +15,8 @@
     (yield x)
     (resume y (+ x y))))
 
-(take 12 $fibs)
+;;;(take 12 $fibs)
 
 (def $iter (iterate rest [0 1 2 3 4 5]))
 
-(take 10 $iter)
+;;;(take 10 $iter)

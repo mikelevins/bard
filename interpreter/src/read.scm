@@ -104,8 +104,9 @@
    ((pair? val)(%read-cons val))
    (else val)))
 
-(define (bard:read #!optional port)
-  (let ((original-readtable (input-port-readtable port)))
+(define (bard:read #!optional (port #f))
+  (let* ((port (or port (current-input-port)))
+         (original-readtable (input-port-readtable port)))
     (dynamic-wind
         (lambda ()(input-port-readtable-set! port +bard-readtable+))
         (lambda ()(let ((port (or port (current-input-port))))

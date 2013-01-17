@@ -24,8 +24,7 @@
     (newline)
     (display *bard-prompt*)
     (let ((rep (lambda ()
-                 (let* ((input (read-line))
-                        (expr (bard:read-from-string input)))
+                 (let* ((expr (bard:read)))
                    (if (or (eq? expr quit:)
                            (eq? expr q:))
                        (begin
@@ -49,3 +48,8 @@
                                  (display-error err)
                                  (loop))))
             (with-exception-catcher error-handler rep))))))
+
+
+
+
+
