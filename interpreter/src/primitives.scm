@@ -147,6 +147,20 @@
    required-count: 1
    restarg: #f))
 
+(define prim:max
+  (make-primitive
+   procedure: max
+   debug-name: 'max
+   required-count: 0
+   restarg: 'more))
+
+(define prim:min
+  (make-primitive
+   procedure: min
+   debug-name: 'min
+   required-count: 0
+   restarg: 'more))
+
 (define prim:odd?
   (make-primitive
    procedure: odd?
@@ -187,13 +201,6 @@
 ;;; protocol: Generating
 ;;; ---------------------------------------------------------------------
 
-(define prim:next
-  (make-primitive
-   procedure: (lambda (g) (next g))
-   debug-name: 'next
-   required-count: 1
-   restarg: #f))
-
 (define (bard:cycle ls)
   (let* ((items (%->list ls))
          (len (length items)))
@@ -216,10 +223,43 @@
                     (resume (,fn out)))
          '()))
 
+(define prim:generated-count
+  (make-primitive
+   procedure: (lambda (g)(length (generator-instance-results g)))
+   debug-name: 'generated-
+   required-count: 1
+   restarg: #f))
+
+(define prim:generated-values
+  (make-primitive
+   procedure: (lambda (g)(reverse (generator-instance-results g)))
+   debug-name: 'generated-values
+   required-count: 1
+   restarg: #f))
+
 (define prim:iterate
   (make-primitive
    procedure: bard:iterate
    debug-name: 'iterate
+   required-count: 2
+   restarg: #f))
+
+(define prim:next
+  (make-primitive
+   procedure: (lambda (g) (next g))
+   debug-name: 'next
+   required-count: 1
+   restarg: #f))
+
+(define prim:next-n
+  (make-primitive
+   procedure: (lambda (g n)
+                (let loop ((i 0)
+                           (result '()))
+                  (if (< i n)
+                      (loop (+ i 1)(cons (next g) result))
+                      (reverse result))))
+   debug-name: 'next-n
    required-count: 2
    restarg: #f))
 
@@ -268,27 +308,16 @@
 ;;; partition
 ;;; ---------------------------------------------------------------------
 
-(define (%make-partition-function fns)
-  (if (null? fns)
-      (lambda (ls) ls)
-      (lambda (ls)
-        (let loop ((inlist ls)
-                   (result-lists (make-list (length fns) '())))
-          (if (null? inlist)
-              (apply values (map reverse result-lists))
-              (let ((item (car inlist)))
-                (loop (cdr inlist)
-                      (map cons
-                           (map (lambda (fn)(%funcall fn item))
-                                fns)
-                           result-lists))))))))
-
-(define (%bard-partition . fns)
-  (make-primitive
-   procedure: (%make-partition-function fns)
-   debug-name: 'anonymous-partition-function
-   required-count: 0
-   restarg: 'more))
+(define (%bard-partition . args)
+  (if (null? args)
+      '()
+      (if (null? (cdr args))
+          (car args)
+          (let* ((len (length args))
+                 (fns (take (- len 1) args))
+                 (arg (car (drop (- len 1) args))))
+            (apply values (map (lambda (f)(map (lambda (arg)(%funcall f arg)) arg))
+                               fns))))))
 
 (define prim:partition
   (make-primitive
@@ -323,82 +352,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Mapping
 ;;; ---------------------------------------------------------------------
-
-(define (%bard-alist-table-contains-key? fr k)
-  (let loop ((slots (alist-table-slots fr)))
-    (if (null? slots)
-        #f
-        (let ((slot (car slots))
-              (more (cdr slots)))
-          (if (equal? k (car slot))
-              #t
-              (loop (cdr slots)))))))
-
-(define prim:alist-table-contains-key?
-  (make-primitive
-   procedure: %bard-alist-table-contains-key?
-   debug-name: 'prim:alist-table-contains-key?
-   required-count: 2
-   restarg: #f))
-
-(define (%bard-alist-table-contains-value? fr v)
-  (let loop ((slots (alist-table-slots fr)))
-    (if (null? slots)
-        #f
-        (let ((slot (car slots))
-              (more (cdr slots)))
-          (if (equal? v (cadr slot))
-              #t
-              (loop (cdr slots)))))))
-
-(define prim:alist-table-contains-value?
-  (make-primitive
-   procedure: %bard-alist-table-contains-value?
-   debug-name: 'prim:alist-table-contains-value?
-   required-count: 2
-   restarg: #f))
-
-(define prim:alist-table-get
-  (make-primitive
-   procedure: alist-table-get
-   debug-name: 'prim:alist-table-get
-   required-count: 2
-   restarg: #f))
-
-(define prim:alist-table-keys
-  (make-primitive
-   procedure: alist-table-keys
-   debug-name: 'prim:alist-table-keys
-   required-count: 1
-   restarg: #f))
-
-(define (%table->list t)(alist-table-slots t))
-
-(define (%merge-alist-tables t1 t2)
-  (%make-alist-table
-   (merge-alists (alist-table-instance-slots t1)
-                 (alist-table-instance-slots t2))))
-
-(define prim:alist-table-merge
-  (make-primitive
-   procedure: %merge-alist-tables
-   debug-name: 'prim:alist-table-merge
-   required-count: 2
-   restarg: #f))
-
-(define prim:alist-table-put
-  (make-primitive
-   procedure: alist-table-put
-   debug-name: 'prim:alist-table-put
-   required-count: 3
-   restarg: #f))
-
-(define prim:alist-table-vals
-  (make-primitive
-   procedure: alist-table-vals
-   debug-name: 'prim:alist-table-vals
-   required-count: 1
-   restarg: #f))
 
 (define prim:table
   (make-primitive

@@ -147,6 +147,8 @@
   (%defglobal '- prim:-)
   (%defglobal '/ prim:/)
   (%defglobal 'even? prim:even?)
+  (%defglobal 'max prim:max)
+  (%defglobal 'min prim:min)
   (%defglobal 'odd? prim:odd?)
   (%defglobal 'random prim:random)
   (%defglobal 'remainder prim:remainder)
@@ -173,9 +175,12 @@
 ;;; Protocol: Generating
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'next prim:next)
   (%defglobal 'cycle prim:cycle)
+  (%defglobal 'generated-count prim:generated-count)
+  (%defglobal 'generated-values prim:generated-values)
   (%defglobal 'iterate prim:iterate)
+  (%defglobal 'next prim:next)
+  (%defglobal 'next-n prim:next-n)
   (%defglobal 'range-from prim:range-from)
 
 
@@ -201,10 +206,10 @@
   (%defglobal 'map prim:map)
   (%defglobal 'next-last bard:next-last)
   (%defglobal 'partition prim:partition)
-  (%defglobal 'prim:alist-table-merge prim:alist-table-merge)
   (%defglobal 'range bard:range)
   (%defglobal 'reduce bard:reduce)
   (%defglobal 'rest bard:rest)
+  (%defglobal 'reverse bard:reverse)
   (%defglobal 'second bard:second)
   (%defglobal 'some? bard:some?)
   (%defglobal 'split-text bard:split-text)
@@ -215,14 +220,12 @@
 ;;; protocol: Mapping
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'prim:alist-table-contains-key? prim:alist-table-contains-key?)
-  (%defglobal 'prim:alist-table-contains-value? prim:alist-table-contains-value?)
-  (%defglobal 'prim:alist-table-get prim:alist-table-get)
-  (%defglobal 'prim:alist-table-keys prim:alist-table-keys)
-  (%defglobal 'prim:alist-table-merge prim:alist-table-merge)
-  (%defglobal 'prim:alist-table-put prim:alist-table-put)
+  (%defglobal 'get-key bard:get-key)
+  (%defglobal 'keys bard:keys)
+  (%defglobal 'merge bard:merge)
+  (%defglobal 'put-key bard:put-key)
+  (%defglobal 'vals bard:vals)
   (%defglobal 'table prim:table)
-  (%defglobal 'prim:alist-table-vals prim:alist-table-vals)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Ordering
@@ -252,6 +255,14 @@
   (%defglobal 'read-line prim:read-line)
   (%defglobal 'read-lines prim:read-lines)
   (%defglobal 'read-text prim:read-text)
+
+;;; ---------------------------------------------------------------------
+;;; protocol: Streaming
+;;; ---------------------------------------------------------------------
+
+  (%defglobal 'contents bard:contents)
+  (%defglobal 'lines bard:lines)
+  (%defglobal 'stream-direction bard:stream-direction)
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: System
@@ -300,4 +311,9 @@
   (%defglobal 'show prim:show)
   (%defglobal 'write prim:write)
 
-  )
+;;; ---------------------------------------------------------------------
+;;; computed globals
+;;; ---------------------------------------------------------------------
+
+)
+

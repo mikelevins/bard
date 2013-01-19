@@ -58,147 +58,82 @@ Here's a simple version of a name generator that constructs names by
 reading sample names, splitting them into sequences of three
 characters, and recombining them according to a simple matching rule.
 
-    (def $name-starts nothing)
-    (def $name-parts nothing)
-    (def $name-parts-count 0)
-    (def *max-name-length* 16)
-    (def $max-tries 100)
-    
-    (define method (triples x) with: ((x <string>)) (take-by 3 1 x))
-    (define method (long-enough? s) with: ((s <string>)) (> (length s) 1))
-    (define method (choose-name-start)(any $name-starts))
-    
     (define method (read-names path)
-      (let ((lines (with-open-file (in path)(read-lines in)))
-            (triples-list (map triples lines))
-            (starts parts ((partition first rest) triples-list)))
-        (set! $name-starts (filter long-enough? starts))
-        (set! $name-parts (reduce append [] (map (partial filter long-enough?) parts)))
-        (set! $name-parts-count (length $name-parts))
-        path))
-
-    (define method (choose-name-next part)
-      (let ((part1 (next-last part))
-            (part2 (last part)))
-        (some? (^ (p) (and (= part1 (first p))
-                           (= part2 (second p))))
-               (drop (random (- $name-parts-count 1))
-                     $name-parts))))
+      with: ((path <string>))
+      (with-open-file (in path)
+        (lines in)))
     
-    (define method (merge-name-segment name segment)
-      (append name (drop 2 segment)))
+    (define method (triples name)
+      with: ((name <string>))
+      (take-by 3 1 name))
     
-    (define method (build-name)
-      (loop gen ((name (choose-name-start))
-                 (try-count 0))
-            (if (< try-count $max-tries)
-                (let ((count (length name)))
-                  (if (> count *max-name-length*)
-                      name
-                      (let ((seg (choose-name-next name)))
-                        (if (something? seg)
-                            (if (> (length seg) 2)
-                                (gen (merge-name-segment name seg)
-                                     (+ try-count 1))
-                                (merge-name-segment name seg))
-                            (gen name (+ try-count 1))))))
-                name)))
+    (define method (valid-name-part? p) false)
+    (define method (valid-name-part? p)
+      with: ((p <string>))
+      (> (length p) 1))
     
-    (define method (build-names)
-      (generate ((nms []))
-        (let ((nm (build-name)))
-          (yield nm)
-          (resume (add-first nm nms)))))
+    (define method (filter-name-parts name)
+      (filter valid-name-part? name))
     
-    (define method (names path n)
-      (read-names path)
-          (let ((nms (build-names)))
-        (take n nms)))
-
+    (define method (filter-names names)
+      (filter something? (map filter-name-parts names)))
+    
+    (define method (parse-names names)
+      with: ((names <pair>))
+      (let ((starts parts (partition first rest (filter-names (map triples names)))))
+        (values starts (reduce append [] parts))))
+    
+    (define method (match? s1 s2)
+      with: ((s1 <string>)
+             (s2 <string>))
+      (and (= (next-last s1)(first s2))
+           (= (last s1)(second s2))))
+    
+    (define method (end-segment? s) true)
+    (define method (end-segment? s) 
+      with: ((s <string>))
+      (< (length s) 3))
+    
+    (define method (next-segment partial-name name-parts)
+      with: ((partial-name <pair>)
+             (name-parts <pair>))
+      (any (filter (partial match? (last partial-name))
+                   name-parts)))
+    
+    (define method (merge-segments left right) "")
+    (define method (merge-segments left right)
+      with: ((left <string>)
+             (right <string>))
+      (cond
+       ((empty? left) right)
+       ((empty? right) left)
+       ((< (length right) 3) left)
+       (else (append left (drop 2 right)))))
+    
+    (define method (build-name name-starts name-parts)
+      (loop build ((name [(any name-starts)]))
+            (let ((segment (next-segment name name-parts)))
+              (if (end-segment? segment)
+                  (reduce merge-segments "" (add-last name segment))
+                  (build (add-last name segment))))))
+    
+    (define method (name-builder starts parts)
+      (generate ()
+        (yield (build-name starts parts))
+        (resume)))
+    
+    (define method (names path number)
+      with: ((path <string>)(number <fixnum>))
+      (let ((starts parts (parse-names (read-names path)))
+            (names (name-builder starts parts)))
+        (take number names)))
+    
     
 A sample run using the "us.names" data included in the examples produces:
 
     bard> (names "namefiles/us.names" 10)
-    ("Vongo" "Tom" "Jesto" "Clif" "Pie" "Edgen" "Joel" "Laul" "Jimon" "Ramarlen")
+    ("San" "Jamil" "Barthelo" "Die" "Jert" "Fred" "Tobiagob" "Bruno" "Jarison" "Ted")
 
-The name generator illustrates a few distinctive characteristics of
-Bard. For example, Bard is a functional language, but it's not
-pure. You can see its functional orientation in expressions like
-
-    (reduce append [] (map (partial filter long-enough?) parts))
-
-This expression maps a function over `parts`, creating the function
-using `partial`. The results are then combined by `reduce`, using
-`append` as the function that combines elements.
-
-On the other hand, the same line of code then assigns the results to a
-global variable, `$name-parts`, so Bard is not relentlessly
-functional; it permits assignment and other side-effects, while
-encouraging a generally functional approach.
-
-Functions are polymorphic--that is, the same function can do different
-things, depending on attributes of its arguments. The definition
-
-    (define method (triples x) with: ((x <string>)) (take-by 3 1 x))
-
-says that this is how to perform `triples` when its argument is of
-type `<string>`. You can define different **methods** on the same
-function that execute different code for different types of
-arguments. Bard can currently discriminate methods based on the types
-of all inputs, or based on the actual values of inputs. The
-method-definition syntax is designed to allow additional means of
-discrimination to be added in the future; some early versions of Bard
-supported general predicate dispatch, and that feature may come back
-at some point.
-
-The definition of `read-names` illustrates a couple of points about
-local variable bindings in Bard. First, there's just one version of
-`let`, the basic local-variables form. Other Lisps have up to half a
-dozen different forms of `let`, each with slightly different
-rules. Bard just has `let`.
-
-(Well, actually, it also has `match`, but `match` is a general
-pattern-matching tool, rather than a basic tool for defining local
-variables.)
-
-Bard's `let` binds variables in order. In this example:
-
-    (let ((x 2)
-          (y (+ x 1)))
-      (* x y))
-
-evaluation returns 6. `x` is bound to 2 and `y` is bound to `x` plus
-one; in other Lisps, the `y` clause would signal an error because `x`
-would not be leixically visible in that scope. In order to accomplish
-the above evaluation, you would have to use a separate binding
-construct, usually named `let*`. Bard dispenses with this distinction
-and provides the most common case.
-
-Bard's `let` can also bind multiple values in a single binding
-expression, as shown in the definition of `read-names`:
-
-    (starts parts ((partition first rest) triples-list))
-
-In this clause, `starts` and `parts` are both local variables bound to
-the multiple values returned by the `partition` function. `partition`
-creates a function that applies one or more other functions to a List
-argument, returning the results of each function as a separate
-value. In this example, `partition` creates a function that applies
-`first` and `rest` to each element of `triples-list`, returning the
-results of each as a separate value. Those two separate results-lists
-are then bound to `starts` and `parts`.
-
-The functions `build-names` and `names` illustrate the use of
-**generators**. Simply put, a generator in Bard is a looping function
-that can return multiple times. To use one, you express the loop in a
-`generate` expression, which returns a `<generator>`
-value. `<generator>` values are lists--that is, they support most of
-the `Listing` protocol, so you can manipulate them in most ways as if
-they are lists. In the name generator, `build-names` creates a
-generator, and `names` takes names from it. The generator constructs
-only as many names as we actually ask for, and automatically caches
-the ones it has already created, so that retrieving them again causes
-no additional computation.
 
 ## Syntax and built-in classes
 

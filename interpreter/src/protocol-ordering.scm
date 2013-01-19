@@ -34,6 +34,7 @@
 (%add-primitive-method! bard:< (list <ratnum> <bignum>) < debug-name: '<)
 (%add-primitive-method! bard:< (list <ratnum> <flonum>) < debug-name: '<)
 
+(%add-primitive-method! bard:< (list <character> <character>) char<? debug-name: '<)
 (%add-primitive-method! bard:< (list <string> <string>) string<? debug-name: '<)
 
 (define bard:> (make-function debug-name: '>
@@ -59,6 +60,7 @@
 (%add-primitive-method! bard:> (list <ratnum> <bignum>) > debug-name: '>)
 (%add-primitive-method! bard:> (list <ratnum> <flonum>) > debug-name: '>)
 
+(%add-primitive-method! bard:> (list <character> <character>) char>? debug-name: '>)
 (%add-primitive-method! bard:> (list <string> <string>) string>? debug-name: '>)
 
 (define bard:<= (make-function debug-name: '<=
@@ -84,6 +86,7 @@
 (%add-primitive-method! bard:<= (list <ratnum> <bignum>) <= debug-name: '<=)
 (%add-primitive-method! bard:<= (list <ratnum> <flonum>) <= debug-name: '<=)
 
+(%add-primitive-method! bard:<= (list <character> <character>) char<=? debug-name: '<=)
 (%add-primitive-method! bard:<= (list <string> <string>) string<=? debug-name: '<=)
 
 (define bard:>= (make-function debug-name: '>=
@@ -109,6 +112,7 @@
 (%add-primitive-method! bard:>= (list <ratnum> <bignum>) >= debug-name: '>=)
 (%add-primitive-method! bard:>= (list <ratnum> <flonum>) >= debug-name: '>=)
 
+(%add-primitive-method! bard:>= (list <character> <character>) char>=? debug-name: '>=)
 (%add-primitive-method! bard:>= (list <string> <string>) string>=? debug-name: '>=)
 
 

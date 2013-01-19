@@ -71,4 +71,10 @@
                     (cons (car slot) keys)
                     (cons (cdr slot) vals)))))))
 
+(define (%table->list t)(alist-table-slots t))
+
+(define (%merge-alist-tables t1 t2)
+  (%make-alist-table
+   (merge-alists (alist-table-instance-slots t1)
+                 (alist-table-instance-slots t2))))
 

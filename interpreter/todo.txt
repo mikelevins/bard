@@ -1,5 +1,12 @@
 TO DO
 
+- add basic file-writing functions
+
+- add all the protocol functions to their respective protocol objects
+
+- implement (is? val type) where type is a Class; should answer a list
+  of protocols in which val's concrete type matches type
+
 === release v0.3.x ===
 
 - special forms to implement

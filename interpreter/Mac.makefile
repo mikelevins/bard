@@ -66,6 +66,7 @@ SCHEME_SOURCES= \
          src/protocol-mapping.scm \
          src/protocol-ordering.scm \
          src/protocol-pairing.scm \
+         src/protocol-streaming.scm \
          src/protocol-text-processing.scm \
          src/protocol-typing.scm \
          src/init.scm
@@ -109,6 +110,7 @@ C_SOURCES= \
          src/protocol-mapping.c \
          src/protocol-ordering.c \
          src/protocol-pairing.c \
+         src/protocol-streaming.c \
          src/protocol-text-processing.c \
          src/protocol-typing.c \
          src/init.c \
@@ -153,6 +155,7 @@ OBJECTS= \
          protocol-mapping.o \
          protocol-ordering.o \
          protocol-pairing.o \
+         protocol-streaming.o \
          protocol-text-processing.o \
          protocol-typing.o \
          init.o

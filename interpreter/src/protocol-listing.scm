@@ -114,6 +114,15 @@
                         (lambda (table)(alist-table-get table (car (any (alist-table-keys table)))))
                         debug-name: 'any)
 
+(%add-primitive-method! bard:any
+                        (list <generator>)
+                        (lambda (gen)
+                          (if (null? (generator-instance-results gen))
+                              (next gen))
+                          (list-ref (generator-instance-results gen)
+                                    (random-integer (length (generator-instance-results gen)))))
+                        debug-name: 'any)
+
 ;;; ---------------------------------------------------------------------
 ;;; append
 ;;; ---------------------------------------------------------------------
@@ -179,6 +188,15 @@
                         (lambda (n s)(by n (alist-table-slots s)))
                         debug-name: 'by)
 
+(%add-primitive-method! bard:by
+                        (list <fixnum> <generator>)
+                        (lambda (n g)
+                          (%eval `(generate ()
+                                            (yield (take-n n g))
+                                            (resume))
+                                 '()))
+                        debug-name: 'by)
+
 ;;; ---------------------------------------------------------------------
 ;;; drop
 ;;; ---------------------------------------------------------------------
@@ -188,12 +206,10 @@
 
 (%add-primitive-method! bard:drop
                         (list <fixnum>  <null>)
-                        (lambda (n ls)(error (str "Can't drop more elements from the empty list")))
-                        debug-name: 'drop)
-
-(%add-primitive-method! bard:drop
-                        (list (%singleton 0)  <null>)
-                        (constantly '())
+                        (lambda (n ls)
+                          (if (= n 0)
+                              ls
+                              (error (str "Can't drop more elements from the empty list"))))
                         debug-name: 'drop)
 
 (%add-primitive-method! bard:drop
@@ -250,23 +266,25 @@
                         debug-name: 'element)
 
 (%add-primitive-method! bard:element
-                        (list <generator> <fixnum>)
-                        (lambda (gen n)
-                          (let loop ((len (length (generator-results gen))))
-                            (if (< n len)
-                                (list-ref (generator-results gen)
-                                          (- len (+ n 1)))
-                                (begin
-                                  (next gen)
-                                  (loop (+ len 1))))))
-                        debug-name: 'element)
-
-(%add-primitive-method! bard:element
                         (list <alist-table> <fixnum>)
                         (lambda (table n)
                           (let* ((keys (alist-table-keys table))
                                  (key (list-ref keys n)))
                             (alist-table-get table key)))
+                        debug-name: 'element)
+
+(define (%bard-generator-element gen n)
+  (let loop ((len (length (generator-results gen))))
+    (if (< n len)
+        (list-ref (generator-results gen)
+                  (- len (+ n 1)))
+        (begin
+          (next gen)
+          (loop (+ len 1))))))
+
+(%add-primitive-method! bard:element
+                        (list <generator> <fixnum>)
+                        %bard-generator-element
                         debug-name: 'element)
 
 ;;; ---------------------------------------------------------------------
@@ -301,6 +319,11 @@
 (%add-primitive-method! bard:empty?
                         (list <alist-table>)
                         (lambda (table)(null? (alist-table-slots table)))
+                        debug-name: 'empty?)
+
+(%add-primitive-method! bard:empty?
+                        (list <generator>)
+                        (constantly #f)
                         debug-name: 'empty?)
 
 ;;; ---------------------------------------------------------------------
@@ -391,6 +414,35 @@
                         (list <function> <alist-table>)
                         %bard-filter-alist-table
                         debug-name: 'filter)
+
+;;; <alist-table>
+
+(define (%bard-filter-generator fn gen)
+  (%eval `(generate ((f ,fn)
+                     (g ,gen))
+                    (loop again ((x (next g)))
+                          (if (,fn x)
+                              (begin
+                                (yield x)
+                                (resume f g))
+                              (again (next g)))))
+         '()))
+
+(%add-primitive-method! bard:filter
+                        (list <primitive> <generator>)
+                        %bard-filter-generator
+                        debug-name: 'filter)
+
+(%add-primitive-method! bard:filter
+                        (list <interpreted-method> <generator>)
+                        %bard-filter-generator
+                        debug-name: 'filter)
+
+(%add-primitive-method! bard:filter
+                        (list <function> <generator>)
+                        %bard-filter-generator
+                        debug-name: 'filter)
+
 
 ;;; ---------------------------------------------------------------------
 ;;; first
@@ -614,6 +666,43 @@
                         (lambda (tbl)(%make-alist-table (cdr (alist-table-slots tbl))))
                         debug-name: 'rest)
 
+(%add-primitive-method! bard:rest
+                        (list <generator>)
+                        (lambda (gen)
+                          (%eval `(generate ((first-time? true))
+                                            (if first-time?
+                                                (begin
+                                                  (next ,gen)
+                                                  (yield (next ,gen))
+                                                  (resume false))
+                                                (begin
+                                                  (yield (next ,gen))
+                                                  (resume false))))
+                                 '()))
+                        debug-name: 'rest)
+
+;;; ---------------------------------------------------------------------
+;;; reverse 
+;;; ---------------------------------------------------------------------
+
+(define bard:reverse (make-function debug-name: 'reverse
+                                   signatures: (list (signature (List) #f (List)))))
+
+(%add-primitive-method! bard:reverse
+                        (list <null>)
+                        (constantly '())
+                        debug-name: 'reverse)
+
+(%add-primitive-method! bard:reverse
+                        (list <pair>)
+                        reverse
+                        debug-name: 'reverse)
+
+(%add-primitive-method! bard:reverse
+                        (list <string>)
+                        (lambda (str)(list->string (reverse (string->list str))))
+                        debug-name: 'reverse)
+
 ;;; ---------------------------------------------------------------------
 ;;; second
 ;;; ---------------------------------------------------------------------
@@ -634,6 +723,11 @@
 (%add-primitive-method! bard:second
                         (list <alist-table>)
                         (lambda (tbl)(list-ref (alist-table-slots tbl) 1))
+                        debug-name: 'second)
+
+(%add-primitive-method! bard:second
+                        (list <generator>)
+                        (lambda (gen)(%bard-generator-element gen 1))
                         debug-name: 'second)
 
 ;;; ---------------------------------------------------------------------

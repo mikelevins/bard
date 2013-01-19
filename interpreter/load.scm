@@ -61,6 +61,7 @@
          "src/protocol-mapping.scm"
          "src/protocol-ordering.scm"
          "src/protocol-pairing.scm"
+         "src/protocol-streaming.scm"
          "src/protocol-text-processing.scm"
          "src/protocol-typing.scm"
          "src/init.scm"
