@@ -10,9 +10,10 @@
 ;;;; ***********************************************************************
 
 (##include "type-signature-macros.scm")
+(##include "protocol-macros.scm")
 
-(define bard:= (make-function debug-name: '=
-                              signatures: (list (signature () 'more (Boolean)))))
+(define-protocol-function Comparing =
+  signatures: (list (signature () 'more (Boolean))))
 
 (define (%bard= . args)
   (if (null? args)
@@ -22,10 +23,7 @@
           (and (equal? (car args)(cadr args))
                (apply %bard= (cdr args))))))
 
-(%add-primitive-method! bard:=
-                        '()
-                        %bard=
-                        debug-name: '=)
+(define-primitive-method = () %bard=)
 
 
 

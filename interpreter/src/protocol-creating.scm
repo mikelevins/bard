@@ -10,22 +10,22 @@
 ;;;; ***********************************************************************
 
 (##include "type-signature-macros.scm")
+(##include "protocol-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; make Type & {} -> Anything
 ;;; ---------------------------------------------------------------------
 
-(define bard:make (make-function debug-name: 'make
-                                 signatures: (list (signature (Type) 'more (Anything)))))
+(define-protocol-function Creating make
+  signatures: (list (signature (Type) (%alist-table) (Anything))))
 
 ;;; Anything
 
 (define (%bard-make-anything type . args)
   (error (str "Don't know how to make an instance of " (%as-string type))))
 
-(%add-primitive-method! bard:make `(,Anything)
-                        %bard-make-anything
-                        debug-name: 'make)
+(define-primitive-method make (Anything) 
+  %bard-make-anything)
 
 ;;; <alist-table>
 
@@ -33,9 +33,8 @@
   (let ((slots-alist (plist->alist args)))
     (%make-alist-table slots-alist)))
 
-(%add-primitive-method! bard:make `(,(%singleton <alist-table>))
-                        %bard-make-alist-table
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <alist-table>)) 
+  %bard-make-alist-table)
 
 ;;; <function>
 
@@ -47,104 +46,94 @@
     (make-function debug-name: name
                    signatures: (list (make-signature input-types restarg output-types)))))
 
-(%add-primitive-method! bard:make `(,(%singleton <function>))
-                        %bard-make-function
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <function>)) 
+  %bard-make-function)
 
 ;;; <generator>
 
-(%add-primitive-method! bard:make `(,(%singleton <generator>))
-                        (lambda (type . args)
-                          (let* ((variables (getf variables: args default: '()))
-                                 (vars (map car variables))
-                                 (initvals (map (lambda (v)(%eval v '()))
-                                                (map cadr variables)))
-                                 (body (getf body: args default: '())))
-                            (make-generator vars initvals body '())))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <generator>)) 
+  (lambda (type . args)
+    (let* ((variables (getf variables: args default: '()))
+           (vars (map car variables))
+           (initvals (map (lambda (v)(%eval v '()))
+                          (map cadr variables)))
+           (body (getf body: args default: '())))
+      (make-generator vars initvals body '()))))
 
 ;;; <keyword>
 
-(%add-primitive-method! bard:make `(,(%singleton <keyword>))
-                        (lambda (type . args)
-                          (let ((name (getf name: args default: (symbol->string (gensym)))))
-                            (string->keyword name)))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <keyword>)) 
+  (lambda (type . args)
+    (let ((name (getf name: args default: (symbol->string (gensym)))))
+      (string->keyword name))))
 
 ;;; List
 
-(%add-primitive-method! bard:make `(,(%singleton List))
-                        (lambda (type . args)
-                          (let ((vals (getf values: args default: '())))
-                            (copy-tree vals)))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <function>)) 
+  (lambda (type . args)
+    (let ((vals (getf values: args default: '())))
+      (copy-tree vals))))
+
 ;;; <pair>
 
-(%add-primitive-method! bard:make `(,(%singleton <pair>))
-                        (lambda (type . args)
-                          (let ((left (getf left: args default: '()))
-                                (right (getf right: args default: '())))
-                            (cons left right)))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <pair>)) 
+  (lambda (type . args)
+    (let ((left (getf left: args default: '()))
+          (right (getf right: args default: '())))
+      (cons left right))))
 
 ;;; <protocol>
 
-(%add-primitive-method! bard:make `(,(%singleton <protocol>))
-                        (lambda (type . args)
-                          (let* ((pname (getf name: args default: #f))
-                                 (function-specs (getf functions: args default: '()))
-                                 (protocol (%make-protocol pname))
-                                 (functions-alist (%build-protocol-functions-alist protocol function-specs '())))
-                            (for-each (lambda (fname/fn)(%maybe-add-protocol-function! protocol fname/fn))
-                                      functions-alist)
-                            protocol))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <protocol>)) 
+  (lambda (type . args)
+    (let* ((pname (getf name: args default: #f))
+           (function-specs (getf functions: args default: '()))
+           (protocol (%make-protocol pname))
+           (functions-alist (%build-protocol-functions-alist protocol function-specs '())))
+      (for-each (lambda (fname/fn)(%maybe-add-protocol-function! protocol fname/fn))
+                functions-alist)
+      protocol)))
+
 
 ;;; <record>
 
-(%add-primitive-method! bard:make `(,<record>)
-                        (lambda (type . args)(instantiate-record type args))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <record>)) 
+  (lambda (type . args)(instantiate-record type args)))
 
 ;;; <string>
 
-(%add-primitive-method! bard:make `(,(%singleton <string>))
-                        (lambda (type . args)
-                          (let* ((vals (getf values: args default: "")))
-                            (cond
-                             ((string? vals) vals)
-                             ((list? vals)(if (every? char? vals)
-                                              (list->string vals)
-                                              (error (str "All <string> values must be characters, but found: " vals))))
-                             (else: (error (str "Invalid initial values for a <string>: " vals))))))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <string>)) 
+  (lambda (type . args)
+    (let* ((vals (getf values: args default: "")))
+      (cond
+       ((string? vals) vals)
+       ((list? vals)(if (every? char? vals)
+                        (list->string vals)
+                        (error (str "All <string> values must be characters, but found: " vals))))
+       (else: (error (str "Invalid initial values for a <string>: " vals)))))))
 
 ;;; <symbol>
 
-(%add-primitive-method! bard:make `(,(%singleton <symbol>))
-                        (lambda (type . args)
-                          (let ((name (getf name: args default: (symbol->string (gensym)))))
-                            (string->symbol name)))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <symbol>)) 
+  (lambda (type . args)
+    (let ((name (getf name: args default: (symbol->string (gensym)))))
+      (string->symbol name))))
 
 ;;; Table
 
-(%add-primitive-method! bard:make `(,(%singleton Table))
-                        %bard-make-alist-table
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton Table)) 
+  %bard-make-alist-table)
 
 ;;; <tuple>
 
-(%add-primitive-method! bard:make `(,<tuple>)
-                        (lambda (type . args)(instantiate-tuple type args))
-                        debug-name: 'make)
+(define-primitive-method make (<tuple>) 
+  (lambda (type . args)(instantiate-tuple type args)))
 
 ;;; <url>
 
-(%add-primitive-method! bard:make `(,<tuple>)
-                        (lambda (type . args)
-                          (apply %make-url args))
-                        debug-name: 'make)
+(define-primitive-method make ((%singleton <url>)) 
+  (lambda (type . args)(apply %make-url args)))
+
 
 
 

@@ -26,6 +26,7 @@
   (paths $bard-root 
          "src/version.scm"
          "lib/uuid.scm"
+         "lib/Sort.scm"
          "src/utils.scm"
          "src/singleton-tree.scm"
          "src/types.scm"

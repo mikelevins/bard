@@ -36,14 +36,16 @@
                 (signature-restarg s2)))))
 
 (define (signature->string sig #!key (name #f))
-  (str "("
-       (string-join " " (map %as-string (signature-input-types sig)))
-       (let ((restarg (signature-restarg sig)))
-         (if (or (symbol? restarg)
-                 (alist-table-instance? restarg))
-             (str " '" (%as-string restarg))
-             ""))
-       " -> "
-       (string-join " " (map %as-string (signature-output-types sig)))
-       ")"))
+  (let ((fname (if name (str name " ") "")))
+    (str "(" fname
+         (string-join " " (map %as-string (signature-input-types sig)))
+         (let ((restarg (signature-restarg sig)))
+           (cond
+            ((not restarg) "")
+            ((symbol? restarg) (str "& '" (%as-string restarg)))
+            ((alist-table-instance? restarg) (str "& " (%as-string restarg)))))
+         " -> "
+         (string-join " " (map %as-string (signature-output-types sig)))
+         ")")))
+
 

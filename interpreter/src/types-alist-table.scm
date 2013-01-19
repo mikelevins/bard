@@ -78,3 +78,9 @@
    (merge-alists (alist-table-instance-slots t1)
                  (alist-table-instance-slots t2))))
 
+;;; ----------------------------------------------------------------------
+;;; utils
+;;; ----------------------------------------------------------------------
+
+(define (%alist-table . args)
+  (%make-alist-table (plist->alist args)))

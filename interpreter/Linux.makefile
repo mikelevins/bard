@@ -20,6 +20,7 @@ LDFLAGS_MAIN= -L/usr/local/Gambit-C/lib -lgambc -o builds/bard
 SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
+         lib/Sort.scm \
          src/utils.scm \
          src/singleton-tree.scm \
          src/types.scm \
@@ -64,6 +65,7 @@ SCHEME_SOURCES= \
 C_SOURCES= \
          src/version.c \
          lib/uuid.c \
+         lib/Sort.c \
          src/utils.c \
          src/singleton-tree.c \
          src/types.c \
@@ -109,6 +111,7 @@ C_SOURCES= \
 OBJECTS= \
          version.o \
          uuid.o \
+         Sort.o \
          utils.o \
          singleton-tree.o \
          types.o \

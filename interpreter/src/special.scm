@@ -305,7 +305,9 @@
          (function-specs (drop 3 expr))
          (protocol (if (%globally-bound? pname)
                        (%eval pname env)
-                       (%make-protocol pname)))
+                       (let ((proto (%make-protocol pname)))
+                         (register-protocol pname proto)
+                         proto)))
          (functions-alist (%build-protocol-functions-alist protocol function-specs env)))
     (for-each (lambda (fname/fn)(%maybe-add-protocol-function! protocol fname/fn))
               functions-alist)
@@ -689,7 +691,7 @@
                                    (if (<= keylen 0)
                                        'input
                                        (if (and (= 2 keylen)
-                                                (eq? direction:))
+                                                (eq? direction: (car keyargs)))
                                            (%eval (cadr keyargs) env)
                                            (error (str "Invalid keyword arguments to with-open-file: "
                                                        keyargs))))))

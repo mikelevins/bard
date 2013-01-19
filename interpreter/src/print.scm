@@ -140,16 +140,16 @@
         (display ")")))))
 
 (define (function->string fn  #!key (name #f))
-  (let* ((fname (or name "function"))
+  (let* ((fname (or name ""))
          (sigs (function-signatures fn))
          (sigstr (string-join
                   (str (string #\newline) "  ")
-                  (map (lambda (s)(signature->string s))
+                  (map (lambda (s)(signature->string s name: fname))
                        sigs))))
-    (string-join "" `("(" ,(str fname) " " ,(string #\newline) ,sigstr ")"))))
+    (string-join "" `("(function " ,sigstr ")"))))
 
 (define-printer-function (schema-tag <function>) 
-  (lambda (fn)(function->string fn)))
+  (lambda (fn)(function->string fn name: (function-instance-name fn))))
 
 (define-printer-function (schema-tag <interpreted-method>) 
   (lambda (m)
@@ -202,13 +202,10 @@
         (display (if (protocol-instance-name p)
                      (object->string (protocol-instance-name p))
                      ""))
-        (let* ((fn-strings '()))
-          (table-for-each (lambda (fname fn)(set! fn-strings 
-                                                  (cons (function->string fn name: fname)
-                                                        fn-strings)))
-                          (protocol-instance-functions p))
-          (newline)
-          (display (string-join (str (string #\newline) "  ") fn-strings)))
+        (table-for-each (lambda (fname fn)
+                          (newline)(display " ")
+                          (display (function->string fn name: fname)))
+                        (protocol-instance-functions p))
         (display ")")))))
 
 (define-printer-function (schema-tag <singleton>) 

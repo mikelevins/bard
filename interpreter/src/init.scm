@@ -56,6 +56,7 @@
   (%defglobal '<tuple>               <tuple>)
   (%defglobal '<undefined>           <undefined>)
   (%defglobal '<union>               <union>)
+  (%defglobal '<url>                 <url>)
 
   ;;; classes
 
@@ -95,10 +96,12 @@
 
   ;;; protocols
 
+  (%defglobal 'Addressing     Addressing)
   (%defglobal 'Applying       Applying)
   (%defglobal 'Calculating    Calculating)
   (%defglobal 'Comparing      Comparing)
-  (%defglobal 'Constructing   Constructing)
+  (%defglobal 'Converting     Converting)
+  (%defglobal 'Creating       Creating)
   (%defglobal 'Listing        Listing)
   (%defglobal 'Mapping        Mapping)
   (%defglobal 'Ordering       Ordering)
@@ -292,7 +295,9 @@
   (%defglobal 'iostream? prim:iostream?)
   (%defglobal 'nothing? bard:nothing?)
   (%defglobal 'output-stream? prim:output-stream?)
-  (%defglobal 'singleton singleton)
+  (%defglobal 'protocols prim:protocols)
+  (%defglobal 'list-protocols prim:list-protocols)
+  (%defglobal 'singleton prim:singleton)
   (%defglobal 'something? bard:something?)
   (%defglobal 'symbol? bard:symbol?)
   (%defglobal 'table? bard:table?)

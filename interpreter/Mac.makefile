@@ -31,6 +31,7 @@ LDFLAGS_MAIN=-arch ${ARCH} -isysroot ${SYSROOT} -mmacosx-version-min=10.7 -frame
 SCHEME_SOURCES= \
          src/version.scm \
          lib/uuid.scm \
+         lib/Sort.scm \
          src/utils.scm \
          src/singleton-tree.scm \
          src/types.scm \
@@ -75,6 +76,7 @@ SCHEME_SOURCES= \
 C_SOURCES= \
          src/version.c \
          lib/uuid.c \
+         lib/Sort.c \
          src/utils.c \
          src/singleton-tree.c \
          src/types.c \
@@ -120,6 +122,7 @@ C_SOURCES= \
 OBJECTS= \
          version.o \
          uuid.o \
+         Sort.o \
          utils.o \
          singleton-tree.o \
          types.o \

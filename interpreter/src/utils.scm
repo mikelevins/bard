@@ -158,6 +158,16 @@
               (car ls)
               (next-last (cdr ls))))))
 
+(define (nub ls #!key (test eq?))
+  (let loop ((in ls)
+             (out '()))
+    (if (null? in)
+        (reverse out)
+        (let ((i (car in)))
+          (if (some? (lambda (o)(test i o)) out)
+              (loop (cdr in) out)
+              (loop (cdr in)(cons i out)))))))
+
 (define (position test ls #!key (start 0)(end #f))
   (let ((end (or end (length ls))))
     (let loop ((items (drop start ls))

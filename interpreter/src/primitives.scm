@@ -639,6 +639,19 @@
    required-count: 1
    restarg: #f))
 
+(define (%bard-list-protocols)
+  (let ((protos '()))
+    (table-for-each (lambda (k v)(set! protos (cons k protos)))
+                    +protocols+)
+    (sort protos (lambda (p1 p2)(string<? (symbol->string p1)(symbol->string p2))))))
+
+(define prim:list-protocols
+  (make-primitive
+   procedure: %bard-list-protocols
+   debug-name: 'list-protocols
+   required-count: 0
+   restarg: #f))
+
 (define prim:output-stream?
   (make-primitive
    procedure: output-port?
@@ -646,7 +659,21 @@
    required-count: 1
    restarg: #f))
 
-(define singleton
+
+(define (%bard-protocols)
+  (let ((protos '()))
+    (table-for-each (lambda (k v)(set! protos (cons v protos)))
+                    +protocols+)
+    protos))
+
+(define prim:protocols
+  (make-primitive
+   procedure: %bard-protocols
+   debug-name: 'protocols
+   required-count: 0
+   restarg: #f))
+
+(define prim:singleton
   (make-primitive
    procedure: %singleton
    debug-name: 'singleton
@@ -680,14 +707,14 @@
    procedure: display
    debug-name: 'display
    required-count: 1
-   restarg: #f))
+   restarg: 'more))
 
 (define prim:newline
   (make-primitive
    procedure: (lambda ()(newline))
    debug-name: 'newline
    required-count: 0
-   restarg: #f))
+   restarg: 'more))
 
 (define prim:print
   (make-primitive
