@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 ;;; ---------------------------------------------------------------------
 ;;; printer registry
 ;;; ---------------------------------------------------------------------
@@ -202,10 +204,15 @@
         (display (if (protocol-instance-name p)
                      (object->string (protocol-instance-name p))
                      ""))
-        (table-for-each (lambda (fname fn)
-                          (newline)(display " ")
-                          (display (function->string fn name: fname)))
-                        (protocol-instance-functions p))
+        (let ((funs (protocol-instance-functions p))
+              (fnames '()))
+          (table-for-each (lambda (fname f)(set! fnames (cons fname fnames))) funs)
+          (set! fnames (sort fnames (lambda (fn1 fn2)(string<? (symbol->string fn1)(symbol->string fn2)))))
+          (for-each (lambda (fname)
+                      (let ((fn (table-ref funs fname)))
+                        (newline)(display " ")
+                        (display (function->string fn name: fname))))
+                    fnames))
         (display ")")))))
 
 (define-printer-function (schema-tag <singleton>) 

@@ -9,6 +9,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
 (##include "protocol-macros.scm")
 

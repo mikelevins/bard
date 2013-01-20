@@ -9,7 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
+(##include "protocol-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; join-text
@@ -22,13 +24,12 @@
              (cdr (apply append (map (lambda (s)(list cupola s))
                                      strs))))))
 
-(define bard:join-text (make-function debug-name: 'join-text
-                                      signatures: (list (signature (Text List) #f (Text)))))
+(define-protocol-function TextProcessing join-text
+  signatures: (list (signature (Text List) #f (Text))))
 
-(%add-primitive-method! bard:join-text
-                        (list <string> <pair>)
-                        %bard-join-text
-                        debug-name: 'join-text)
+(define-primitive-method join-text
+  (list <string> <pair>)
+  %bard-join-text)
 
 ;;; ---------------------------------------------------------------------
 ;;; split
@@ -54,11 +55,10 @@
               (let ((chunk (substring str 0 i)))
                 (reverse (cons chunk chunks))))))))
 
-(define bard:split-text (make-function debug-name: 'split-text
-                                       signatures: (list (signature (Text Character) #f (List)))))
+(define-protocol-function TextProcessing split-text
+  signatures: (list (signature (Text Character) #f (List))))
 
-(%add-primitive-method! bard:split-text
-                        (list <string>  <character>)
-                        %bard-split-string
-                        debug-name: 'split-text)
+(define-primitive-method split-text
+  (list <string>  <character>)
+  %bard-split-string)
 

@@ -9,111 +9,113 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
+(##include "protocol-macros.scm")
 
-(define bard:< (make-function debug-name: '<
-                              signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
+(define-protocol-function Ordering <
+  signatures: (list (signature (Orderable Orderable) #f (Boolean))))
 
-(%add-primitive-method! bard:< (list <fixnum> <fixnum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <fixnum> <bignum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <fixnum> <flonum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <fixnum> <ratnum>) < debug-name: '<)
+(define-primitive-method < (<fixnum> <fixnum>) <)
+(define-primitive-method < (<fixnum> <bignum>) <)
+(define-primitive-method < (<fixnum> <flonum>) <)
+(define-primitive-method < (<fixnum> <ratnum>) <)
 
-(%add-primitive-method! bard:< (list <bignum> <bignum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <bignum> <fixnum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <bignum> <flonum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <bignum> <ratnum>) < debug-name: '<)
+(define-primitive-method < (<bignum> <bignum>) <)
+(define-primitive-method < (<bignum> <fixnum>) <)
+(define-primitive-method < (<bignum> <flonum>) <)
+(define-primitive-method < (<bignum> <ratnum>) <)
 
-(%add-primitive-method! bard:< (list <flonum> <flonum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <flonum> <fixnum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <flonum> <bignum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <flonum> <ratnum>) < debug-name: '<)
+(define-primitive-method < (<flonum> <flonum>) <)
+(define-primitive-method < (<flonum> <fixnum>) <)
+(define-primitive-method < (<flonum> <bignum>) <)
+(define-primitive-method < (<flonum> <ratnum>) <)
 
-(%add-primitive-method! bard:< (list <ratnum> <ratnum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <ratnum> <fixnum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <ratnum> <bignum>) < debug-name: '<)
-(%add-primitive-method! bard:< (list <ratnum> <flonum>) < debug-name: '<)
+(define-primitive-method < (<ratnum> <ratnum>) <)
+(define-primitive-method < (<ratnum> <fixnum>) <)
+(define-primitive-method < (<ratnum> <bignum>) <)
+(define-primitive-method < (<ratnum> <flonum>) <)
 
-(%add-primitive-method! bard:< (list <character> <character>) char<? debug-name: '<)
-(%add-primitive-method! bard:< (list <string> <string>) string<? debug-name: '<)
+(define-primitive-method < (<character> <character>) char<?)
+(define-primitive-method < (<string> <string>) string<?)
 
-(define bard:> (make-function debug-name: '>
-                              signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
+(define-protocol-function Ordering >
+  signatures: (list (signature (Orderable Orderable) #f (Boolean))))
 
-(%add-primitive-method! bard:> (list <fixnum> <fixnum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <fixnum> <bignum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <fixnum> <flonum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <fixnum> <ratnum>) > debug-name: '>)
+(define-primitive-method > (<fixnum> <fixnum>) >)
+(define-primitive-method > (<fixnum> <bignum>) >)
+(define-primitive-method > (<fixnum> <flonum>) >)
+(define-primitive-method > (<fixnum> <ratnum>) >)
 
-(%add-primitive-method! bard:> (list <bignum> <bignum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <bignum> <fixnum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <bignum> <flonum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <bignum> <ratnum>) > debug-name: '>)
+(define-primitive-method > (<bignum> <bignum>) >)
+(define-primitive-method > (<bignum> <fixnum>) >)
+(define-primitive-method > (<bignum> <flonum>) >)
+(define-primitive-method > (<bignum> <ratnum>) >)
 
-(%add-primitive-method! bard:> (list <flonum> <flonum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <flonum> <fixnum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <flonum> <bignum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <flonum> <ratnum>) > debug-name: '>)
+(define-primitive-method > (<flonum> <flonum>) >)
+(define-primitive-method > (<flonum> <fixnum>) >)
+(define-primitive-method > (<flonum> <bignum>) >)
+(define-primitive-method > (<flonum> <ratnum>) >)
 
-(%add-primitive-method! bard:> (list <ratnum> <ratnum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <ratnum> <fixnum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <ratnum> <bignum>) > debug-name: '>)
-(%add-primitive-method! bard:> (list <ratnum> <flonum>) > debug-name: '>)
+(define-primitive-method > (<ratnum> <ratnum>) >)
+(define-primitive-method > (<ratnum> <fixnum>) >)
+(define-primitive-method > (<ratnum> <bignum>) >)
+(define-primitive-method > (<ratnum> <flonum>) >)
 
-(%add-primitive-method! bard:> (list <character> <character>) char>? debug-name: '>)
-(%add-primitive-method! bard:> (list <string> <string>) string>? debug-name: '>)
+(define-primitive-method > (<character> <character>) char>?)
+(define-primitive-method > (<string> <string>) string>?)
 
-(define bard:<= (make-function debug-name: '<=
-                               signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
+(define-protocol-function Ordering <=
+  signatures: (list (signature (Orderable Orderable) #f (Boolean))))
 
-(%add-primitive-method! bard:<= (list <fixnum> <fixnum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <fixnum> <bignum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <fixnum> <flonum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <fixnum> <ratnum>) <= debug-name: '<=)
+(define-primitive-method <= (<fixnum> <fixnum>) <=)
+(define-primitive-method <= (<fixnum> <bignum>) <=)
+(define-primitive-method <= (<fixnum> <flonum>) <=)
+(define-primitive-method <= (<fixnum> <ratnum>) <=)
 
-(%add-primitive-method! bard:<= (list <bignum> <bignum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <bignum> <fixnum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <bignum> <flonum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <bignum> <ratnum>) <= debug-name: '<=)
+(define-primitive-method <= (<bignum> <bignum>) <=)
+(define-primitive-method <= (<bignum> <fixnum>) <=)
+(define-primitive-method <= (<bignum> <flonum>) <=)
+(define-primitive-method <= (<bignum> <ratnum>) <=)
 
-(%add-primitive-method! bard:<= (list <flonum> <flonum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <flonum> <fixnum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <flonum> <bignum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <flonum> <ratnum>) <= debug-name: '<=)
+(define-primitive-method <= (<flonum> <flonum>) <=)
+(define-primitive-method <= (<flonum> <fixnum>) <=)
+(define-primitive-method <= (<flonum> <bignum>) <=)
+(define-primitive-method <= (<flonum> <ratnum>) <=)
 
-(%add-primitive-method! bard:<= (list <ratnum> <ratnum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <ratnum> <fixnum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <ratnum> <bignum>) <= debug-name: '<=)
-(%add-primitive-method! bard:<= (list <ratnum> <flonum>) <= debug-name: '<=)
+(define-primitive-method <= (<ratnum> <ratnum>) <=)
+(define-primitive-method <= (<ratnum> <fixnum>) <=)
+(define-primitive-method <= (<ratnum> <bignum>) <=)
+(define-primitive-method <= (<ratnum> <flonum>) <=)
 
-(%add-primitive-method! bard:<= (list <character> <character>) char<=? debug-name: '<=)
-(%add-primitive-method! bard:<= (list <string> <string>) string<=? debug-name: '<=)
+(define-primitive-method <= (<character> <character>) char<=?)
+(define-primitive-method <= (<string> <string>) string<=?)
 
-(define bard:>= (make-function debug-name: '>=
-                               signatures: (list (signature (Orderable Orderable) #f (Boolean)))))
+(define-protocol-function Ordering >=
+  signatures: (list (signature (Orderable Orderable) #f (Boolean))))
 
-(%add-primitive-method! bard:>= (list <fixnum> <fixnum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <fixnum> <bignum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <fixnum> <flonum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <fixnum> <ratnum>) >= debug-name: '>=)
+(define-primitive-method >= (<fixnum> <fixnum>) >=)
+(define-primitive-method >= (<fixnum> <bignum>) >=)
+(define-primitive-method >= (<fixnum> <flonum>) >=)
+(define-primitive-method >= (<fixnum> <ratnum>) >=)
 
-(%add-primitive-method! bard:>= (list <bignum> <bignum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <bignum> <fixnum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <bignum> <flonum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <bignum> <ratnum>) >= debug-name: '>=)
+(define-primitive-method >= (<bignum> <bignum>) >=)
+(define-primitive-method >= (<bignum> <fixnum>) >=)
+(define-primitive-method >= (<bignum> <flonum>) >=)
+(define-primitive-method >= (<bignum> <ratnum>) >=)
 
-(%add-primitive-method! bard:>= (list <flonum> <flonum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <flonum> <fixnum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <flonum> <bignum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <flonum> <ratnum>) >= debug-name: '>=)
+(define-primitive-method >= (<flonum> <flonum>) >=)
+(define-primitive-method >= (<flonum> <fixnum>) >=)
+(define-primitive-method >= (<flonum> <bignum>) >=)
+(define-primitive-method >= (<flonum> <ratnum>) >=)
 
-(%add-primitive-method! bard:>= (list <ratnum> <ratnum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <ratnum> <fixnum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <ratnum> <bignum>) >= debug-name: '>=)
-(%add-primitive-method! bard:>= (list <ratnum> <flonum>) >= debug-name: '>=)
+(define-primitive-method >= (<ratnum> <ratnum>) >=)
+(define-primitive-method >= (<ratnum> <fixnum>) >=)
+(define-primitive-method >= (<ratnum> <bignum>) >=)
+(define-primitive-method >= (<ratnum> <flonum>) >=)
 
-(%add-primitive-method! bard:>= (list <character> <character>) char>=? debug-name: '>=)
-(%add-primitive-method! bard:>= (list <string> <string>) string>=? debug-name: '>=)
+(define-primitive-method >= (<character> <character>) char>=?)
+(define-primitive-method >= (<string> <string>) string>=?)
 
 
 

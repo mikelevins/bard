@@ -11,6 +11,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 (define *bard-prompt* "bard> ")
 
 (define (bard:repl #!key (debug #f))

@@ -9,7 +9,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (standard-bindings))
+(declare (extended-bindings))
 
 (define (%eval-variable var env)
   (if (eq? var 'undefined)

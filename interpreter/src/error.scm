@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 (define (error->string err)
   (cond
    ((error-exception? err) (error-exception-message err))

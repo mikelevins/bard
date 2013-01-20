@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 ;;; a macro-expander is a function of the form:
 ;;; (lambda (expr env) ...) => sexpr
 

@@ -9,119 +9,84 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
 (##include "protocol-macros.scm")
-(declare (standard-bindings))
 
 ;;; list?
 
-(define bard:list? (make-function debug-name: 'list?
-                                  signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing list?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:list?
-                        (list Anything)
-                        (constantly #f)
-                        debug-name: 'list?)
+(define-primitive-method list? (Anything)
+  (constantly #f))
 
-(%add-primitive-method! bard:list?
-                        (list <null>)
-                        (constantly #t)
-                        debug-name: 'list?)
+(define-primitive-method list? (<null>)
+  (constantly #t))
 
-(%add-primitive-method! bard:list?
-                        (list <pair>)
-                        (lambda (ls)(list? ls))
-                        debug-name: 'list?)
+(define-primitive-method list? (<pair>)
+  (lambda (ls)(list? ls)))
 
-(%add-primitive-method! bard:list?
-                        (list <string>)
-                        (constantly #t)
-                        debug-name: 'list?)
+(define-primitive-method list? (<string>)
+  (constantly #t))
 
-(%add-primitive-method! bard:list?
-                        (list <alist-table>)
-                        (constantly #t)
-                        debug-name: 'list?)
+(define-primitive-method list? (<alist-table>)
+  (constantly #t))
 
-(define bard:symbol? (make-function debug-name: 'symbol?
-                                    signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing nothing?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:symbol?
-                        (list Anything)
-                        (constantly #f)
-                        debug-name: 'symbol?)
+(define-primitive-method nothing? (Anything)
+  (constantly #f))
 
-(%add-primitive-method! bard:symbol?
-                        (list <symbol>)
-                        (constantly #t)
-                        debug-name: 'symbol?)
+(define-primitive-method nothing? (<null>)
+  (constantly #t))
 
-(define bard:nothing? (make-function debug-name: 'nothing?
-                                     signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing something?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:nothing?
-                        (list Anything)
-                        (constantly #f)
-                        debug-name: 'nothing?)
+(define-primitive-method something? (Anything)
+  (constantly #t))
 
-(%add-primitive-method! bard:nothing?
-                        (list <null>)
-                        (constantly #t)
-                        debug-name: 'nothing?)
+(define-primitive-method something? (<null>)
+  (constantly #f))
 
-(define bard:something? (make-function debug-name: 'something?
-                                       signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing symbol?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:something?
-                        (list Anything)
-                        (constantly #t)
-                        debug-name: 'something?)
+(define-primitive-method symbol? (Anything)
+  (constantly #f))
 
-(%add-primitive-method! bard:something?
-                        (list <null>)
-                        (constantly #f)
-                        debug-name: 'something?)
+(define-primitive-method symbol? (<symbol>)
+  (constantly #t))
 
-(define bard:table? (make-function debug-name: 'table?
-                                   signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing table?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:table?
-                        (list Anything)
-                        (constantly #f)
-                        debug-name: 'table?)
+(define-primitive-method table? (Anything)
+  (constantly #f))
 
-(%add-primitive-method! bard:table?
-                        (list <alist-table>)
-                        (constantly #t)
-                        debug-name: 'table?)
+(define-primitive-method table? (<alist-table>)
+  (constantly #t))
 
-(define bard:text? (make-function debug-name: 'text?
-                                  signatures: (list (signature (Anything) #f (Boolean)))))
+(define-protocol-function Typing text?
+  signatures: (list (signature (Anything) #f (Boolean))))
 
-(%add-primitive-method! bard:text?
-                        (list Anything) 
-                        (constantly #f)
-                        debug-name: 'text?)
+(define-primitive-method text? (Anything) 
+  (constantly #f))
 
-(%add-primitive-method! bard:text?
-                        (list <string>) 
-                        (constantly #t)
-                        debug-name: 'text?)
+(define-primitive-method text? (<string>) 
+  (constantly #t))
 
-(%add-primitive-method! bard:text?
-                        (list <symbol>) 
-                        (constantly #t)
-                        debug-name: 'text?)
+(define-primitive-method text? (<symbol>) 
+  (constantly #t))
 
-(%add-primitive-method! bard:text?
-                        (list <keyword>) 
-                        (constantly #t)
-                        debug-name: 'text?)
+(define-primitive-method text? (<keyword>) 
+  (constantly #t))
 
-(define bard:type (make-function debug-name: 'type
-                                 signatures: (list (signature (Anything) #f (Type)))))
+(define-protocol-function Typing type
+  signatures: (list (signature (Anything) #f (Type))))
 
-(%add-primitive-method! bard:type
-                        (list Anything) 
-                        (lambda (x)(%value->schema x))
-                        debug-name: 'type)
+(define-primitive-method type (Anything) 
+  (lambda (x)(%value->schema x)))
+

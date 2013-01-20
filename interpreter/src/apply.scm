@@ -9,7 +9,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (standard-bindings))
+(declare (extended-bindings))
 
 (define (%apply op args)
   (cond

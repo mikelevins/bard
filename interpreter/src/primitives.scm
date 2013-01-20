@@ -10,7 +10,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (standard-bindings))
+(declare (extended-bindings))
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Applying
@@ -282,6 +282,23 @@
    procedure: (lambda args args)
    debug-name: 'list
    required-count: 0
+   restarg: 'more))
+
+(define (%bard-reduce fn arg #!optional (more #f))
+  (let ((init (if more arg (car arg)))
+        (args (if more more (cdr arg))))
+    (let loop ((items args)
+               (result init))
+      (if (null? items)
+          result
+          (loop (cdr items)
+                (%funcall fn result (car items)))))))
+
+(define prim:reduce
+  (make-primitive
+   procedure: %bard-reduce
+   debug-name: 'reduce
+   required-count: 2
    restarg: 'more))
 
 ;;; ---------------------------------------------------------------------

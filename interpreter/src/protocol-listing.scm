@@ -9,8 +9,9 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
-(declare (standard-bindings))
+(##include "protocol-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; general utilities
@@ -30,221 +31,165 @@
 ;;; add-first
 ;;; ---------------------------------------------------------------------
 
-(define bard:add-first (make-function debug-name: 'add-first
-                                      signatures: (list (signature (Anything List) #f (List)))))
+(define-protocol-function Listing add-first
+  signatures: (list (signature (Anything List) #f (List))))
 
-(%add-primitive-method! bard:add-first
-                        (list Anything <null>)
-                        cons
-                        debug-name: 'add-first)
+(define-primitive-method add-first (Anything <null>) 
+  cons)
 
-(%add-primitive-method! bard:add-first
-                        (list Anything <pair>)
-                        cons
-                        debug-name: 'add-first)
+(define-primitive-method add-first (Anything <pair>) 
+  cons)
 
-(%add-primitive-method! bard:add-first
-                        (list <character> <string>)
-                        (lambda (ch str)(string-append (string ch) str))
-                        debug-name: 'add-first)
+(define-primitive-method add-first (<character> <string>) 
+  (lambda (ch str)(string-append (string ch) str)))
 
-(%add-primitive-method! bard:add-first
-                        (list <pair> <alist-table>)
-                        (lambda (entry table)(%make-alist-table (cons entry (alist-table-slots table))))
-                        debug-name: 'add-first)
+(define-primitive-method add-first (<pair> <alist-table>) 
+  (lambda (entry table)(%make-alist-table (cons entry (alist-table-slots table)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; add-last
 ;;; ---------------------------------------------------------------------
 
-(define bard:add-last (make-function debug-name: 'add-last
-                                     signatures: (list (signature (Anything List) #f (List)))))
+(define-protocol-function Listing add-last
+  signatures: (list (signature (List Anything) #f (List))))
 
-(%add-primitive-method! bard:add-last
-                        (list <null> Anything)
-                        (lambda (ls thing)(list thing))
-                        debug-name: 'add-last)
+(define-primitive-method add-last (<null> Anything) 
+  (lambda (ls thing)(list thing)))
 
-(%add-primitive-method! bard:add-last
-                        (list <pair> Anything)
-                        (lambda (ls thing)
-                          (if (list? ls)
-                              (append ls (list thing))
-                              (error (str "Improper list: " ls))))
-                        debug-name: 'add-last)
+(define-primitive-method add-last (<pair> Anything) 
+  (lambda (ls thing)
+    (if (list? ls)
+        (append ls (list thing))
+        (error (str "Improper list: " ls)))))
 
-(%add-primitive-method! bard:add-last
-                        (list <string> <character>)
-                        (lambda (str ch)(string-append str (string ch)))
-                        debug-name: 'add-last)
+(define-primitive-method add-last (<string> <character>) 
+  (lambda (str ch)(string-append str (string ch))))
 
-(%add-primitive-method! bard:add-last
-                        (list <alist-table> <pair>)
-                        (lambda (table entry)(%make-alist-table (append (alist-table-slots table) (list entry))))
-                        debug-name: 'add-last)
-
+(define-primitive-method add-last (<alist-table> <pair>) 
+  (lambda (table entry)
+    (%make-alist-table (append (alist-table-slots table) (list entry)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; any
 ;;; ---------------------------------------------------------------------
 
-(define bard:any (make-function debug-name: 'any
-                                signatures: (list (signature (List) #f (Anything)))))
+(define-protocol-function Listing any
+  signatures: (list (signature (List) #f (Anything))))
 
-(%add-primitive-method! bard:any
-                        (list <null>)
-                        (constantly '())
-                        debug-name: 'any)
+(define-primitive-method any (<null>) 
+  (constantly '()))
 
-(%add-primitive-method! bard:any
-                        (list <pair>)
-                        (lambda (ls)
-                          (if (list? ls)
-                              (list-ref ls (random-integer (length ls)))
-                              (error (str "Improper list: " ls))))
-                        debug-name: 'any)
+(define-primitive-method any (<pair>) 
+  (lambda (ls)
+    (if (list? ls)
+        (list-ref ls (random-integer (length ls)))
+        (error (str "Improper list: " ls)))))
 
-(%add-primitive-method! bard:any
-                        (list <string>)
-                        (lambda (ls)(string-ref ls (random-integer (string-length ls))))
-                        debug-name: 'any)
+(define-primitive-method any (<string>) 
+  (lambda (str)(string-ref str (random-integer (string-length str)))))
 
-(%add-primitive-method! bard:any
-                        (list <alist-table>)
-                        (lambda (table)(alist-table-get table (car (any (alist-table-keys table)))))
-                        debug-name: 'any)
+(define-primitive-method any (<alist-table>) 
+  (lambda (table)(alist-table-get table (car (any (alist-table-keys table))))))
 
-(%add-primitive-method! bard:any
-                        (list <generator>)
-                        (lambda (gen)
-                          (if (null? (generator-instance-results gen))
-                              (next gen))
-                          (list-ref (generator-instance-results gen)
-                                    (random-integer (length (generator-instance-results gen)))))
-                        debug-name: 'any)
+(define-primitive-method any (<generator>) 
+  (lambda (gen)
+    (if (null? (generator-instance-results gen))
+        (next gen))
+    (if (null? (generator-instance-results gen))
+        '()
+        (list-ref (generator-instance-results gen)
+                  (random-integer (length (generator-instance-results gen)))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; append
 ;;; ---------------------------------------------------------------------
 
-(define bard:append (make-function debug-name: 'append
-                                   signatures: (list (signature (List List) #f (List)))))
+(define-protocol-function Listing append
+  signatures: (list (signature (List List) #f (List))))
 
-(%add-primitive-method! bard:append
-                        (list <null>  <null>)
-                        (constantly '())
-                        debug-name: 'append)
+(define-primitive-method append (<null> <null>) 
+  (constantly '()))
 
-(%add-primitive-method! bard:append
-                        (list <null>  <pair>)
-                        (lambda (ls1 ls2) ls2)
-                        debug-name: 'append)
+(define-primitive-method append (<null> <pair>)
+  (lambda (n p) p))
 
-(%add-primitive-method! bard:append
-                        (list <pair>  <null>)
-                        (lambda (ls1 ls2) ls1)
-                        debug-name: 'append)
+(define-primitive-method append (<pair> <null>)
+  (lambda (p n) p))
 
-(%add-primitive-method! bard:append
-                        (list <pair>  <pair>)
-                        append
-                        debug-name: 'append)
+(define-primitive-method append (<pair> <pair>)
+  append)
 
-(%add-primitive-method! bard:append
-                        (list <string>  <string>)
-                        string-append
-                        debug-name: 'append)
+(define-primitive-method append (<string> <string>)
+  string-append)
 
-(%add-primitive-method! bard:append
-                        (list <alist-table>  <alist-table>)
-                        (lambda (t1 t2)(%make-alist-table (append (alist-table-slots t1)(alist-table-slots t2))))
-                        debug-name: 'append)
+(define-primitive-method append (<alist-table> <alist-table>)
+  (lambda (a b) (%make-alist-table (append (alist-table-slots a)(alist-table-slots b)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; by
 ;;; ---------------------------------------------------------------------
 
-(define bard:by (make-function debug-name: 'by
-                               signatures: (list (signature (Integer List) #f (List)))))
+(define-protocol-function Listing by
+  signatures: (list (signature (Integer List) #f (List))))
 
-(%add-primitive-method! bard:by
-                        (list <fixnum> <null>)
-                        (constantly '())
-                        debug-name: 'by)
+(define-primitive-method by (<fixnum> <null>)
+  (constantly '()))
 
-(%add-primitive-method! bard:by
-                        (list <fixnum> <pair>)
-                        by
-                        debug-name: 'by)
+(define-primitive-method by (<fixnum> <pair>)
+  by)
 
-(%add-primitive-method! bard:by
-                        (list <fixnum> <string>)
-                        (lambda (n s)(map (lambda (i)(list->string i))
-                                          (by n (string->list s))))
-                        debug-name: 'by)
+(define-primitive-method by (<fixnum> <string>)
+  (lambda (n s)(map (lambda (i)(list->string i))
+                    (by n (string->list s)))))
 
-(%add-primitive-method! bard:by
-                        (list <fixnum> <alist-table>)
-                        (lambda (n s)(by n (alist-table-slots s)))
-                        debug-name: 'by)
+(define-primitive-method by (<fixnum> <alist-table>)
+  (lambda (n s)(by n (alist-table-slots s))))
 
-(%add-primitive-method! bard:by
-                        (list <fixnum> <generator>)
-                        (lambda (n g)
-                          (%eval `(generate ()
-                                            (yield (take-n n g))
-                                            (resume))
-                                 '()))
-                        debug-name: 'by)
+(define-primitive-method by (<fixnum> <generator>)
+  (lambda (n g)
+    (%eval `(generate ()
+                      (yield (take-n n g))
+                      (resume))
+           '())))
 
 ;;; ---------------------------------------------------------------------
 ;;; drop
 ;;; ---------------------------------------------------------------------
 
-(define bard:drop (make-function debug-name: 'drop
-                                 signatures: (list (signature (Integer List) #f (List)))))
+(define-protocol-function Listing drop
+  signatures: (list (signature (Integer List) #f (List))))
 
-(%add-primitive-method! bard:drop
-                        (list <fixnum>  <null>)
-                        (lambda (n ls)
-                          (if (= n 0)
-                              ls
-                              (error (str "Can't drop more elements from the empty list"))))
-                        debug-name: 'drop)
+(define-primitive-method drop (<fixnum> <null>)
+  (lambda (n ls)
+    (if (= n 0)
+        ls
+        (error (str "Can't drop more elements from the empty list")))))
 
-(%add-primitive-method! bard:drop
-                        (list <fixnum> <pair>)
-                        (lambda (n ls)
-                          (let loop ((items ls)
-                                     (i 0))
-                            (if (>= i n)
-                                items
-                                (if (null? items)
-                                    (error (string-append "Count out of bounds: " (%as-string n)))
-                                    (loop (cdr items)(+ i 1))))))
-                        debug-name: 'drop)
+(define-primitive-method drop (<fixnum> <pair>)
+  (lambda (n ls)
+    (let loop ((items ls)
+               (i 0))
+      (if (>= i n)
+          items
+          (if (null? items)
+              (error (string-append "Count out of bounds: " (%as-string n)))
+              (loop (cdr items)(+ i 1)))))))
 
-(%add-primitive-method! bard:drop
-                        (list <fixnum>  <string>)
-                        (lambda (n str)(substring str n (string-length str)))
-                        debug-name: 'drop)
+(define-primitive-method drop (<fixnum> <string>)
+  (lambda (n str)(substring str n (string-length str))))
 
-(%add-primitive-method! bard:drop
-                        (list <fixnum> <alist-table>)
-                        (lambda (n s)(%make-alist-table (drop n (alist-table-slots s))))
-                        debug-name: 'drop)
+(define-primitive-method drop (<fixnum> <alist-table>)
+  (lambda (n s)(%make-alist-table (drop n (alist-table-slots s)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; element
 ;;; ---------------------------------------------------------------------
 
-(define bard:element (make-function debug-name: 'element
-                                    signatures: (list (signature (List Integer) #f (Anything)))))
+(define-protocol-function Listing element
+  signatures: (list (signature (List Integer) #f (Anything))))
 
-(%add-primitive-method! bard:element
-                        (list <null> <fixnum>)
-                        (lambda (ls n)(error (str "element index out of range")))
-                        debug-name: 'element)
+(define-primitive-method element (<null> <fixnum>)
+  (lambda (ls n)(error (str "element index out of range"))))
 
 (define (%bard-list-element ls n)
   (if (= n 0)
@@ -255,23 +200,17 @@
                      (cdr ls)
                      (error (str "element index out of range")))))))
 
-(%add-primitive-method! bard:element
-                        (list <pair> <fixnum>)
-                        %bard-list-element
-                        debug-name: 'element)
+(define-primitive-method element (<pair> <fixnum>)
+  %bard-list-element)
 
-(%add-primitive-method! bard:element
-                        (list <string> <fixnum>)
-                        string-ref
-                        debug-name: 'element)
+(define-primitive-method element (<string> <fixnum>)
+  string-ref)
 
-(%add-primitive-method! bard:element
-                        (list <alist-table> <fixnum>)
-                        (lambda (table n)
-                          (let* ((keys (alist-table-keys table))
-                                 (key (list-ref keys n)))
-                            (alist-table-get table key)))
-                        debug-name: 'element)
+(define-primitive-method element (<alist-table> <fixnum>)
+  (lambda (table n)
+    (let* ((keys (alist-table-keys table))
+           (key (list-ref keys n)))
+      (alist-table-get table key))))
 
 (define (%bard-generator-element gen n)
   (let loop ((len (length (generator-results gen))))
@@ -282,10 +221,8 @@
           (next gen)
           (loop (+ len 1))))))
 
-(%add-primitive-method! bard:element
-                        (list <generator> <fixnum>)
-                        %bard-generator-element
-                        debug-name: 'element)
+(define-primitive-method element (<generator> <fixnum>)
+  %bard-generator-element)
 
 ;;; ---------------------------------------------------------------------
 ;;; empty?
@@ -298,40 +235,30 @@
       (and (alist-table-instance? x)
            (zero? (length (alist-table-slots x))))))
 
-(define bard:empty? (make-function debug-name: 'empty?
-                                   signatures: (list (signature (List) #f (Boolean)))))
+(define-protocol-function Listing empty?
+  signatures: (list (signature (List) #f (Boolean))))
 
-(%add-primitive-method! bard:empty?
-                        (list <null>)
-                        (constantly #t)
-                        debug-name: 'empty?)
+(define-primitive-method empty? (<null>)
+  (constantly #t))
 
-(%add-primitive-method! bard:empty?
-                        (list <pair>)
-                        (constantly #f)
-                        debug-name: 'empty?)
+(define-primitive-method empty? (<pair>)
+  (constantly #f))
 
-(%add-primitive-method! bard:empty?
-                        (list <string>)
-                        (lambda (str)(<= (string-length str) 0))
-                        debug-name: 'empty?)
+(define-primitive-method empty? (<string>)
+  (lambda (str)(<= (string-length str) 0)))
 
-(%add-primitive-method! bard:empty?
-                        (list <alist-table>)
-                        (lambda (table)(null? (alist-table-slots table)))
-                        debug-name: 'empty?)
+(define-primitive-method empty? (<alist-table>)
+  (lambda (table)(null? (alist-table-slots table))))
 
-(%add-primitive-method! bard:empty?
-                        (list <generator>)
-                        (constantly #f)
-                        debug-name: 'empty?)
+(define-primitive-method empty? (<generator>)
+  (constantly #f))
 
 ;;; ---------------------------------------------------------------------
 ;;; filter
 ;;; ---------------------------------------------------------------------
 
-(define bard:filter (make-function debug-name: 'filter
-                                   signatures: (list (signature (Applicable List) #f (List)))))
+(define-protocol-function Listing filter
+  signatures: (list (signature (Applicable List) #f (List))))
 
 (define (%bard-filter-list test ls)
   (let loop ((items ls)
@@ -349,27 +276,19 @@
 
 ;;; <null>
 
-(%add-primitive-method! bard:filter
-                        (list Anything <null>)
-                        (constantly '())
-                        debug-name: 'filter)
+(define-primitive-method filter (Anything <null>)
+  (constantly '()))
 
 ;;; <pair>
 
-(%add-primitive-method! bard:filter
-                        (list <primitive> <pair>)
-                        %bard-filter-list
-                        debug-name: 'filter)
+(define-primitive-method filter (<primitive> <pair>)
+  %bard-filter-list)
 
-(%add-primitive-method! bard:filter
-                        (list <interpreted-method> <pair>)
-                        %bard-filter-list
-                        debug-name: 'filter)
+(define-primitive-method filter (<interpreted-method> <pair>)
+  %bard-filter-list)
 
-(%add-primitive-method! bard:filter
-                        (list <function> <pair>)
-                        %bard-filter-list
-                        debug-name: 'filter)
+(define-primitive-method filter (<function> <pair>)
+  %bard-filter-list)
 
 ;;; <string>
 
@@ -378,20 +297,14 @@
          (outchars (%bard-filter-list fn inchars)))
     (list->string outchars)))
 
-(%add-primitive-method! bard:filter
-                        (list <primitive> <string>)
-                        %bard-filter-string
-                        debug-name: 'filter)
+(define-primitive-method filter (<primitive> <string>)
+  %bard-filter-string)
 
-(%add-primitive-method! bard:filter
-                        (list <interpreted-method> <string>)
-                        %bard-filter-string
-                        debug-name: 'filter)
+(define-primitive-method filter (<interpreted-method> <string>)
+  %bard-filter-string)
 
-(%add-primitive-method! bard:filter
-                        (list <function> <string>)
-                        %bard-filter-string
-                        debug-name: 'filter)
+(define-primitive-method filter (<function> <string>)
+  %bard-filter-string)
 
 ;;; <alist-table>
 
@@ -400,20 +313,14 @@
          (outslots (%bard-filter-list fn inslots)))
     (%make-alist-table outslots)))
 
-(%add-primitive-method! bard:filter
-                        (list <primitive> <alist-table>)
-                        %bard-filter-alist-table
-                        debug-name: 'filter)
+(define-primitive-method filter (<primitive> <alist-table>)
+  %bard-filter-alist-table)
 
-(%add-primitive-method! bard:filter
-                        (list <interpreted-method> <alist-table>)
-                        %bard-filter-alist-table
-                        debug-name: 'filter)
+(define-primitive-method filter (<interpreted-method> <alist-table>)
+  %bard-filter-alist-table)
 
-(%add-primitive-method! bard:filter
-                        (list <function> <alist-table>)
-                        %bard-filter-alist-table
-                        debug-name: 'filter)
+(define-primitive-method filter (<function> <alist-table>)
+  %bard-filter-alist-table)
 
 ;;; <alist-table>
 
@@ -428,60 +335,46 @@
                               (again (next g)))))
          '()))
 
-(%add-primitive-method! bard:filter
-                        (list <primitive> <generator>)
-                        %bard-filter-generator
-                        debug-name: 'filter)
+(define-primitive-method filter (<primitive> <generator>)
+  %bard-filter-generator)
 
-(%add-primitive-method! bard:filter
-                        (list <interpreted-method> <generator>)
-                        %bard-filter-generator
-                        debug-name: 'filter)
+(define-primitive-method filter (<interpreted-method> <generator>)
+  %bard-filter-generator)
 
-(%add-primitive-method! bard:filter
-                        (list <function> <generator>)
-                        %bard-filter-generator
-                        debug-name: 'filter)
+(define-primitive-method filter (<function> <generator>)
+  %bard-filter-generator)
 
 
 ;;; ---------------------------------------------------------------------
 ;;; first
 ;;; ---------------------------------------------------------------------
 
-(define bard:first (make-function debug-name: 'first
-                                  signatures: (list (signature (List) #f (Anything)))))
+(define-protocol-function Listing first
+  signatures: (list (signature (List) #f (Anything))))
 
-(%add-primitive-method! bard:first
-                        (list <pair>)
-                        car
-                        debug-name: 'first)
+(define-primitive-method first (<pair>)
+  car)
 
-(%add-primitive-method! bard:first
-                        (list <string>)
-                        (lambda (s)(string-ref s 0))
-                        debug-name: 'first)
+(define-primitive-method first (<string>)
+  (lambda (s)(string-ref s 0)))
 
-(%add-primitive-method! bard:first
-                        (list <alist-table>)
-                        (lambda (table)(car (alist-table-slots table)))
-                        debug-name: 'first)
+(define-primitive-method first (<alist-table>)
+  (lambda (table)(car (alist-table-slots table))))
 
-(%add-primitive-method! bard:first
-                        (list <generator>)
-                        (lambda (gen)
-                          (if (null? (generator-results gen))
-                              (next gen))
-                          (list-ref (generator-results gen)
-                                    (- (length (generator-results gen)) 1)))
-                        debug-name: 'first)
+(define-primitive-method first (<generator>)
+  (lambda (gen)
+    (if (null? (generator-results gen))
+        (next gen))
+    (list-ref (generator-results gen)
+              (- (length (generator-results gen)) 1))))
 
 
 ;;; ---------------------------------------------------------------------
 ;;; last
 ;;; ---------------------------------------------------------------------
 
-(define bard:last (make-function debug-name: 'last
-                                 signatures: (list (signature (List) #f (Anything)))))
+(define-protocol-function Listing last
+  signatures: (list (signature (List) #f (Anything))))
 
 (define (%pair-last p)
   (if (null? p)
@@ -490,252 +383,124 @@
           (list-ref p (- (length p) 1))
           (cdr p))))
 
-(%add-primitive-method! bard:last
-                        (list <pair>)
-                        %pair-last
-                        debug-name: 'last)
+(define-primitive-method last (<pair>)
+  %pair-last)
 
-(%add-primitive-method! bard:last
-                        (list <string>)
-                        (lambda (string)(string-ref string (- (string-length string) 1)))
-                        debug-name: 'last)
+(define-primitive-method last (<string>)
+  (lambda (string)(string-ref string (- (string-length string) 1))))
 
-(%add-primitive-method! bard:last
-                        (list <alist-table>)
-                        (lambda (table)
-                          (%pair-last (alist-table-slots table)))
-                        debug-name: 'last)
+(define-primitive-method last (<alist-table>)
+  (lambda (table)
+    (%pair-last (alist-table-slots table))))
 
 ;;; ---------------------------------------------------------------------
 ;;; length
 ;;; ---------------------------------------------------------------------
 
-(define bard:length (make-function debug-name: 'length
-                                   signatures: (list (signature (List) #f (Integer)))))
+(define-protocol-function Listing length
+  signatures: (list (signature (List) #f (Integer))))
 
-(%add-primitive-method! bard:length
-                        (list <null>)
-                        (constantly 0)
-                        debug-name: 'length)
+(define-primitive-method length (<null>)
+  (constantly 0))
 
-(%add-primitive-method! bard:length
-                        (list <pair>)
-                        length
-                        debug-name: 'length)
+(define-primitive-method length (<pair>)
+  length)
 
-(%add-primitive-method! bard:length
-                        (list <string>)
-                        string-length
-                        debug-name: 'length)
+(define-primitive-method length (<string>)
+  string-length)
 
-(%add-primitive-method! bard:length
-                        (list <alist-table>)
-                        (lambda (table)(length (alist-table-slots table)))
-                        debug-name: 'length)
+(define-primitive-method length (<alist-table>)
+  (lambda (table)(length (alist-table-slots table))))
 
 ;;; ---------------------------------------------------------------------
 ;;; next-last
 ;;; ---------------------------------------------------------------------
 
-(define bard:next-last (make-function debug-name: 'next-last
-                                      signatures: (list (signature (List) #f (Anything)))))
+(define-protocol-function Listing next-last
+  signatures: (list (signature (List) #f (Anything))))
 
-(%add-primitive-method! bard:next-last
-                        (list <pair>)
-                        next-last
-                        debug-name: 'next-last)
+(define-primitive-method next-last (<pair>)
+  next-last)
 
-(%add-primitive-method! bard:next-last
-                        (list <string>)
-                        string-next-last
-                        debug-name: 'next-last)
+(define-primitive-method next-last (<string>)
+  string-next-last)
 
-(%add-primitive-method! bard:next-last
-                        (list <alist-table>)
-                        (lambda (table)(next-last (alist-table-slots table)))
-                        debug-name: 'next-last)
-
-
-;;; ---------------------------------------------------------------------
-;;; reduce
-;;; ---------------------------------------------------------------------
-
-(define bard:reduce (make-function debug-name: 'reduce
-                                   signatures: (list (signature (Applicable Anything List) #f (Anything)))))
-
-(define (%bard-reduce fn init ls)
-  (let loop ((items ls)
-             (result init))
-    (if (null? items)
-        result
-        (loop (cdr items)
-              (%funcall fn result (car items))))))
-
-;;; <null>
-
-(%add-primitive-method! bard:reduce
-                        (list <primitive> Anything <null>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <interpreted-method> Anything <null>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <function> Anything <null>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-;;; <pair>
-
-(%add-primitive-method! bard:reduce
-                        (list <primitive> Anything <pair>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <interpreted-method> Anything <pair>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <function> Anything <pair>)
-                        %bard-reduce
-                        debug-name: 'reduce)
-
-;;; <string>
-
-(%add-primitive-method! bard:reduce
-                        (list <primitive> Anything <string>)
-                        (lambda (fn init str)(%bard-reduce fn init (string->list str)))
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <interpreted-method> Anything <string>)
-                        (lambda (fn init str)(%bard-reduce fn init (string->list str)))
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <function> Anything <string>)
-                        (lambda (fn init str)(%bard-reduce fn init (string->list str)))
-                        debug-name: 'reduce)
-
-;;; <alist-table>
-
-(%add-primitive-method! bard:reduce
-                        (list <primitive> Anything <alist-table>)
-                        (lambda (fn init tbl)(%bard-reduce fn init (alist-table-slots tbl)))
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <interpreted-method> Anything <alist-table>)
-                        (lambda (fn init tbl)(%bard-reduce fn init (alist-table-slots tbl)))
-                        debug-name: 'reduce)
-
-(%add-primitive-method! bard:reduce
-                        (list <function> Anything <alist-table>)
-                        (lambda (fn init tbl)(%bard-reduce fn init (alist-table-slots tbl)))
-                        debug-name: 'reduce)
+(define-primitive-method next-last (<alist-table>)
+  (lambda (table)(next-last (alist-table-slots table))))
 
 ;;; ---------------------------------------------------------------------
 ;;; rest 
 ;;; ---------------------------------------------------------------------
 
-(define bard:rest (make-function debug-name: 'rest
-                                 signatures: (list (signature (List) #f (List)))))
+(define-protocol-function Listing rest
+  signatures: (list (signature (List) #f (List))))
 
-(%add-primitive-method! bard:rest
-                        (list <null>)
-                        (constantly '())
-                        debug-name: 'rest)
+(define-primitive-method rest (<null>)
+  (constantly '()))
 
-(%add-primitive-method! bard:rest
-                        (list <pair>)
-                        cdr
-                        debug-name: 'rest)
+(define-primitive-method rest (<pair>)
+  cdr)
 
-(%add-primitive-method! bard:rest
-                        (list <string>)
-                        (lambda (str)(substring str 1 (string-length str)))
-                        debug-name: 'rest)
+(define-primitive-method rest (<string>)
+  (lambda (str)(substring str 1 (string-length str))))
 
-(%add-primitive-method! bard:rest
-                        (list <alist-table>)
-                        (lambda (tbl)(%make-alist-table (cdr (alist-table-slots tbl))))
-                        debug-name: 'rest)
+(define-primitive-method rest (<alist-table>)
+  (lambda (tbl)(%make-alist-table (cdr (alist-table-slots tbl)))))
 
-(%add-primitive-method! bard:rest
-                        (list <generator>)
-                        (lambda (gen)
-                          (%eval `(generate ((first-time? true))
-                                            (if first-time?
-                                                (begin
-                                                  (next ,gen)
-                                                  (yield (next ,gen))
-                                                  (resume false))
-                                                (begin
-                                                  (yield (next ,gen))
-                                                  (resume false))))
-                                 '()))
-                        debug-name: 'rest)
+(define-primitive-method rest (<generator>)
+  (lambda (gen)
+    (%eval `(generate ((first-time? true))
+                      (if first-time?
+                          (begin
+                            (next ,gen)
+                            (yield (next ,gen))
+                            (resume false))
+                          (begin
+                            (yield (next ,gen))
+                            (resume false))))
+           '())))
 
 ;;; ---------------------------------------------------------------------
 ;;; reverse 
 ;;; ---------------------------------------------------------------------
 
-(define bard:reverse (make-function debug-name: 'reverse
-                                   signatures: (list (signature (List) #f (List)))))
+(define-protocol-function Listing reverse
+  signatures: (list (signature (List) #f (List))))
 
-(%add-primitive-method! bard:reverse
-                        (list <null>)
-                        (constantly '())
-                        debug-name: 'reverse)
+(define-primitive-method reverse (<null>)
+  (constantly '()))
 
-(%add-primitive-method! bard:reverse
-                        (list <pair>)
-                        reverse
-                        debug-name: 'reverse)
+(define-primitive-method reverse (<pair>)
+  reverse)
 
-(%add-primitive-method! bard:reverse
-                        (list <string>)
-                        (lambda (str)(list->string (reverse (string->list str))))
-                        debug-name: 'reverse)
+(define-primitive-method reverse (<string>)
+  (lambda (str)(list->string (reverse (string->list str)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; second
 ;;; ---------------------------------------------------------------------
 
-(define bard:second (make-function debug-name: 'second
-                                   signatures: (list (signature (List) #f (Anything)))))
+(define-protocol-function Listing second
+  signatures: (list (signature (List) #f (Anything))))
 
-(%add-primitive-method! bard:second
-                        (list <pair>)
-                        cadr
-                        debug-name: 'second)
+(define-primitive-method second (<pair>)
+  cadr)
 
-(%add-primitive-method! bard:second
-                        (list <string>)
-                        (lambda (s)(string-ref s 1))
-                        debug-name: 'second)
+(define-primitive-method second (<string>)
+  (lambda (s)(string-ref s 1)))
 
-(%add-primitive-method! bard:second
-                        (list <alist-table>)
-                        (lambda (tbl)(list-ref (alist-table-slots tbl) 1))
-                        debug-name: 'second)
+(define-primitive-method second (<alist-table>)
+  (lambda (tbl)(list-ref (alist-table-slots tbl) 1)))
 
-(%add-primitive-method! bard:second
-                        (list <generator>)
-                        (lambda (gen)(%bard-generator-element gen 1))
-                        debug-name: 'second)
+(define-primitive-method second (<generator>)
+  (lambda (gen)(%bard-generator-element gen 1)))
 
 ;;; ---------------------------------------------------------------------
 ;;; some?
 ;;; ---------------------------------------------------------------------
 
-(define bard:some? (make-function debug-name: 'some?
-                                  signatures: (list (signature (Applicable List) #f (Anything)))))
+(define-protocol-function Listing some?
+  signatures: (list (signature (Applicable List) #f (Anything))))
 
 (define (%bard-some? test ls)
   (let loop ((items ls))
@@ -747,27 +512,19 @@
 
 ;;; <null>
 
-(%add-primitive-method! bard:some?
-                        (list Anything <null>)
-                        (constantly '())
-                        debug-name: 'some?)
+(define-primitive-method some? (list Anything <null>)
+  (constantly '()))
 
 ;;; <pair>
 
-(%add-primitive-method! bard:some?
-                        (list <primitive> <pair>)
-                        %bard-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<primitive> <pair>)
+  %bard-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <interpreted-method> <pair>)
-                        %bard-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<interpreted-method> <pair>)
+  %bard-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <function> <pair>)
-                        %bard-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<function> <pair>)
+  %bard-some?)
 
 ;;; <string>
 
@@ -775,20 +532,14 @@
   (let ((ls (string->list str)))
     (%bard-some? fn ls)))
 
-(%add-primitive-method! bard:some?
-                        (list <primitive> <string>)
-                        %bard-string-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<primitive> <string>)
+  %bard-string-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <interpreted-method> <string>)
-                        %bard-string-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<interpreted-method> <string>)
+  %bard-string-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <function> <string>)
-                        %bard-string-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<function> <string>)
+  %bard-string-some?)
 
 ;;; <alist-table>
 
@@ -796,37 +547,27 @@
   (let ((ls (alist-table-slots tbl)))
     (%bard-some? fn ls)))
 
-(%add-primitive-method! bard:some?
-                        (list <primitive> <alist-table>)
-                        %bard-alist-table-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<primitive> <alist-table>)
+  %bard-alist-table-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <interpreted-method> <alist-table>)
-                        %bard-alist-table-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<interpreted-method> <alist-table>)
+  %bard-alist-table-some?)
 
-(%add-primitive-method! bard:some?
-                        (list <function> <alist-table>)
-                        %bard-alist-table-some?
-                        debug-name: 'some?)
+(define-primitive-method some? (<function> <alist-table>)
+  %bard-alist-table-some?)
 
 ;;; ---------------------------------------------------------------------
 ;;; take
 ;;; ---------------------------------------------------------------------
 
-(define bard:take (make-function debug-name: 'take
-                                 signatures: (list (signature (Integer List) #f (List)))))
+(define-protocol-function Listing take
+  signatures: (list (signature (Integer List) #f (List))))
 
-(%add-primitive-method! bard:take
-                        (list (%singleton 0)  <null>)
-                        (constantly 0)
-                        debug-name: 'take)
+(define-primitive-method take (list (%singleton 0)  <null>)
+  (constantly 0))
 
-(%add-primitive-method! bard:take
-                        (list <fixnum>  <null>)
-                        (lambda (n ls)(error (str "Can't take more items from the empty list")))
-                        debug-name: 'take)
+(define-primitive-method take (<fixnum> <null>)
+  (lambda (n ls)(error (str "Can't take more items from the empty list"))))
 
 (define (%bard-list-take n ls)
   (let loop ((items ls)
@@ -838,20 +579,14 @@
             (error (string-append "Count out of bounds: " (%as-string n)))
             (loop (cdr items)(+ i 1)(append result (list (car items))))))))
 
-(%add-primitive-method! bard:take
-                        (list <fixnum>  <pair>)
-                        %bard-list-take
-                        debug-name: 'take)
+(define-primitive-method take (<fixnum> <pair>)
+  %bard-list-take)
 
-(%add-primitive-method! bard:take
-                        (list <fixnum>  <string>)
-                        (lambda (n str)(substring str 0 n))
-                        debug-name: 'take)
+(define-primitive-method take (<fixnum> <string>)
+  (lambda (n str)(substring str 0 n)))
 
-(%add-primitive-method! bard:take
-                        (list <fixnum>  <alist-table>)
-                        (lambda (n tbl)(%make-alist-table (%bard-list-take n (alist-table-slots tbl))))
-                        debug-name: 'take)
+(define-primitive-method take (<fixnum> <alist-table>)
+  (lambda (n tbl)(%make-alist-table (%bard-list-take n (alist-table-slots tbl)))))
 
 (define (%bard-generator-take n gen)
   (let loop ((len (length (generator-results gen))))
@@ -861,65 +596,47 @@
           (next gen)
           (loop (+ len 1))))))
 
-(%add-primitive-method! bard:take
-                        (list <fixnum>  <generator>)
-                        %bard-generator-take
-                        debug-name: 'take)
+(define-primitive-method take (<fixnum> <generator>)
+  %bard-generator-take)
 
 ;;; ---------------------------------------------------------------------
 ;;; take-by
 ;;; ---------------------------------------------------------------------
 
-(define bard:take-by (make-function debug-name: 'take-by
-                                    signatures: (list (signature (Integer Integer List) #f (List)))))
+(define-protocol-function Listing take-by
+  signatures: (list (signature (Integer Integer List) #f (List))))
 
-(%add-primitive-method! bard:take-by
-                        (list <fixnum> <fixnum> <pair>)
-                        take-by
-                        debug-name: 'take-by)
+(define-primitive-method take-by (<fixnum> <fixnum> <pair>)
+  take-by)
 
-(%add-primitive-method! bard:take-by
-                        (list <fixnum> <fixnum> <string>)
-                        (lambda (len advance s)(map (lambda (i)(list->string i))
-                                                    (take-by len advance (string->list s))))
-                        debug-name: 'take-by)
+(define-primitive-method take-by (<fixnum> <fixnum> <string>)
+  (lambda (len advance s)(map (lambda (i)(list->string i))
+                              (take-by len advance (string->list s)))))
 
-(%add-primitive-method! bard:take-by
-                        (list <fixnum> <fixnum> <alist-table>)
-                        (lambda (len advance tbl)
-                          (let* ((inslots (alist-table-slots tbl))
-                                 (outslots (take-by len advance inslots)))
-                            (%make-alist-table outslots)))
-                        debug-name: 'take-by)
+(define-primitive-method take-by (<fixnum> <fixnum> <alist-table>)
+  (lambda (len advance tbl)
+    (let* ((inslots (alist-table-slots tbl))
+           (outslots (take-by len advance inslots)))
+      (%make-alist-table outslots))))
 
 ;;; ---------------------------------------------------------------------
 ;;; take-one
 ;;; ---------------------------------------------------------------------
 
-(define bard:take-one (make-function debug-name: 'take-one
-                                 signatures: (list (signature (List) #f (List)))))
+(define-protocol-function Listing take-one
+  signatures: (list (signature (List) #f (List))))
 
-(%add-primitive-method! bard:take-one
-                        (list <null>)
-                        (lambda (ls)(error (str "Can't take more items from the empty list")))
-                        debug-name: 'take-one)
+(define-primitive-method take-one (<null>)
+  (lambda (ls)(error (str "Can't take more items from the empty list"))))
 
-(%add-primitive-method! bard:take-one
-                        (list <pair>)
-                        (lambda (ls)(list (car ls)))
-                        debug-name: 'take)
+(define-primitive-method take-one (<pair>)
+  (lambda (ls)(list (car ls))))
 
-(%add-primitive-method! bard:take-one
-                        (list <string>)
-                        (lambda (s)(list (string-ref s 0)))
-                        debug-name: 'take)
+(define-primitive-method take-one (<string>)
+  (lambda (s)(list (string-ref s 0))))
 
-(%add-primitive-method! bard:take-one
-                        (list <fixnum>  <alist-table>)
-                        (lambda (tbl)(%make-alist-table (list (car (alist-table-slots tbl)))))
-                        debug-name: 'take)
+(define-primitive-method take-one (<fixnum> <alist-table>)
+  (lambda (tbl)(%make-alist-table (list (car (alist-table-slots tbl))))))
 
-(%add-primitive-method! bard:take-one
-                        (list <fixnum>  <generator>)
-                        (lambda (gen)(%bard-generator-take 1 gen))
-                        debug-name: 'take-one)
+(define-primitive-method take-one (<fixnum> <generator>)
+  (lambda (gen)(%bard-generator-take 1 gen)))

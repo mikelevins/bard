@@ -9,6 +9,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 (define (%init-bard)
 
   (set! $bard-global-variables (%global-variables))
@@ -210,7 +212,7 @@
   (%defglobal 'next-last bard:next-last)
   (%defglobal 'partition prim:partition)
   (%defglobal 'range bard:range)
-  (%defglobal 'reduce bard:reduce)
+  (%defglobal 'reduce prim:reduce)
   (%defglobal 'rest bard:rest)
   (%defglobal 'reverse bard:reverse)
   (%defglobal 'second bard:second)

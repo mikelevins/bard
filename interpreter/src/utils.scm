@@ -181,6 +181,14 @@
                 i
                 (loop more (+ 1 i))))))))
 
+(define (reduce fn init args)
+  (let loop ((items args)
+             (result init))
+    (if (null? items)
+        result
+        (loop (cdr items)
+              (fn result (car items))))))
+
 (define (remove-if test ls)
   (let loop ((items ls))
     (if (null? items)

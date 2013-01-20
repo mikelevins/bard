@@ -60,53 +60,41 @@
 ;;; this new table, it also contains a reference to the original value
 ;;; used to create it, stored on the key value:.
 
+(declare (extended-bindings))
 (##include "type-signature-macros.scm")
+(##include "protocol-macros.scm")
 
 ;;; ---------------------------------------------------------------------
 ;;; get-key
 ;;; ---------------------------------------------------------------------
 
-(define bard:get-key
-  (make-function debug-name: 'get-key
-                 signatures: (list (signature (Table Anything) #f (Anything)))))
+(define-protocol-function Mapping get-key
+  signatures: (list (signature (Table Anything) #f (Anything))))
 
-(%add-primitive-method! bard:get-key
-                        (list Anything Anything)
-                        (constantly '())
-                        debug-name: 'get-key)
+(define-primitive-method get-key (Anything Anything)
+  (constantly '()))
 
-(%add-primitive-method! bard:get-key
-                        (list <pair> <fixnum>)
-                        (lambda (ls k)(list-ref ls k))
-                        debug-name: 'get-key)
+(define-primitive-method get-key (<pair> <fixnum>)
+  (lambda (ls k)(list-ref ls k)))
 
-(%add-primitive-method! bard:get-key
-                        (list <string> <fixnum>)
-                        (lambda (str k)(string-ref str k))
-                        debug-name: 'get-key)
+(define-primitive-method get-key (<string> <fixnum>)
+  (lambda (str k)(string-ref str k)))
 
-(%add-primitive-method! bard:get-key
-                        (list <alist-table> Anything)
-                        (lambda (tbl k)(alist-table-get tbl k))
-                        debug-name: 'get-key)
+(define-primitive-method get-key (<alist-table> Anything)
+  (lambda (tbl k)(alist-table-get tbl k)))
 
-(%add-primitive-method! bard:get-key
-                        (list <generator> <fixnum>)
-                        (lambda (gen k)(%bard-generator-element gen k))
-                        debug-name: 'get-key)
+(define-primitive-method get-key (<generator> <fixnum>)
+  (lambda (gen k)(%bard-generator-element gen k)))
 
 ;;; ---------------------------------------------------------------------
 ;;; keys
 ;;; ---------------------------------------------------------------------
 
-(define bard:keys
-  (make-function debug-name: 'keys
-                 signatures: (list (signature (Table) #f (List)))))
+(define-protocol-function Mapping keys
+  signatures: (list (signature (Table) #f (List))))
 
-(%add-primitive-method! bard:keys
-                        (list Anything)
-                        (constantly '())
-                        debug-name: 'keys)
+(define-primitive-method keys (Anything)
+  (constantly '()))
 
 (define (%bard-pair-keys pair)
   (let loop ((i 0)
@@ -120,28 +108,20 @@
                 (loop (+ i 1) (cdr tls) (cons i keys))
                 (reverse (cons i keys)))))))
 
-(%add-primitive-method! bard:keys
-                        (list <pair>)
-                        %bard-pair-keys
-                        debug-name: 'keys)
+(define-primitive-method keys (<pair>)
+  %bard-pair-keys)
 
-(%add-primitive-method! bard:keys
-                        (list <string>)
-                        (lambda (str)(iota (string-length str)))
-                        debug-name: 'keys)
+(define-primitive-method keys (<string>)
+  (lambda (str)(iota (string-length str))))
 
-(%add-primitive-method! bard:keys
-                        (list <alist-table>)
-                        (lambda (tbl)(map car (alist-table-slots tbl)))
-                        debug-name: 'keys)
+(define-primitive-method keys (<alist-table>)
+  (lambda (tbl)(map car (alist-table-slots tbl))))
 
-(%add-primitive-method! bard:keys
-                        (list <generator>)
-                        (lambda (gen) (%eval '(generate ((i 0))
-                                                        (yield i)
-                                                        (resume (+ i 1)))
-                                             '()))
-                        debug-name: 'keys)
+(define-primitive-method keys (<generator>)
+  (lambda (gen) (%eval '(generate ((i 0))
+                                  (yield i)
+                                  (resume (+ i 1)))
+                       '())))
 
 ;;; ---------------------------------------------------------------------
 ;;; merge
@@ -153,80 +133,58 @@
         (zip (iota (length l1)) l1)
         (zip (iota (length l2)) l2))))
 
-(define bard:merge
-  (make-function debug-name: 'merge
-                 signatures: (list (signature (Table Table) #f (Table)))))
+(define-protocol-function Mapping merge
+  signatures: (list (signature (Table Table) #f (Table))))
 
-(%add-primitive-method! bard:merge
-                        (list <pair> <pair>)
-                        %bard-merge-lists
-                        debug-name: 'merge)
+(define-primitive-method merge (<pair> <pair>)
+  %bard-merge-lists)
 
-(%add-primitive-method! bard:merge
-                        (list <pair> <string>)
-                        (lambda (p s)(%bard-merge-lists p (string->list s)))
-                        debug-name: 'merge)
+(define-primitive-method merge (<pair> <string>)
+  (lambda (p s)(%bard-merge-lists p (string->list s))))
 
-(%add-primitive-method! bard:merge
-                        (list <pair> <alist-table>)
-                        (lambda (p a)(merge-alists (zip (iota (length p)) p)(alist-table-instance-slots a)))
-                        debug-name: 'merge)
+(define-primitive-method merge (<pair> <alist-table>)
+  (lambda (p a)(merge-alists (zip (iota (length p)) p)(alist-table-instance-slots a))))
 
-(%add-primitive-method! bard:merge
-                        (list <string> <string>)
-                        (lambda (s1 s2)(let ((result (%bard-merge-lists (string->list s1)(string->list s2))))
-                                         (if (every? char? result)
-                                             (list->string result)
-                                             result)))
-                        debug-name: 'merge)
+(define-primitive-method merge (<string> <string>)
+  (lambda (s1 s2)(let ((result (%bard-merge-lists (string->list s1)(string->list s2))))
+                   (if (every? char? result)
+                       (list->string result)
+                       result))))
 
-(%add-primitive-method! bard:merge
-                        (list <string> <pair>)
-                        (lambda (s p)
-                          (let ((result (%bard-merge-lists p (string->list s))))
-                            (if (every? char? result)
-                                (list->string result)
-                                result)))
-                        debug-name: 'merge)
+(define-primitive-method merge (<string> <pair>)
+  (lambda (s p)
+    (let ((result (%bard-merge-lists p (string->list s))))
+      (if (every? char? result)
+          (list->string result)
+          result))))
 
-(%add-primitive-method! bard:merge
-                        (list <string> <alist-table>)
-                        (lambda (s a)
-                          (let ((p (string->list s)))
-                            (merge-alists (zip (iota (length p)) p)(alist-table-instance-slots a))))
-                        debug-name: 'merge)
+(define-primitive-method merge (<string> <alist-table>)
+  (lambda (s a)
+    (let ((p (string->list s)))
+      (merge-alists (zip (iota (length p)) p)(alist-table-instance-slots a)))))
 
-(%add-primitive-method! bard:merge
-                        (list <alist-table> <alist-table>)
-                        %merge-alist-tables
-                        debug-name: 'merge)
+(define-primitive-method merge (<alist-table> <alist-table>)
+  %merge-alist-tables)
 
-(%add-primitive-method! bard:merge
-                        (list <alist-table> <pair>)
-                        (lambda (a p)(merge-alists (alist-table-instance-slots a)(zip (iota (length p)) p)))
-                        debug-name: 'merge)
+(define-primitive-method merge (<alist-table> <pair>)
+  (lambda (a p)(merge-alists (alist-table-instance-slots a)(zip (iota (length p)) p))))
 
-(%add-primitive-method! bard:merge
-                        (list <alist-table> <string>)
-                        (lambda (a s)
-                          (let ((p (string->list s)))
-                            (merge-alists (alist-table-instance-slots a)(zip (iota (length p)) p))))
-                        debug-name: 'merge)
+(define-primitive-method merge (<alist-table> <string>)
+  (lambda (a s)
+    (let ((p (string->list s)))
+      (merge-alists (alist-table-instance-slots a)(zip (iota (length p)) p)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; put-key
 ;;; ---------------------------------------------------------------------
 
-(define bard:put-key
-  (make-function debug-name: 'put-key
-                 signatures: (list (signature (Anything Anything Anything) #f (Table)))))
+(define-protocol-function Mapping put-key
+  signatures: (list (signature (Anything Anything Anything) #f (Table))))
 
-(%add-primitive-method! bard:put-key
-                        (list Anything Anything Anything)
-                        (lambda (tbl key val)
-                          (%make-alist-table (list (cons value: tbl)
-                                                   (cons key val))))
-                        debug-name: 'put-key)
+(define-primitive-method put-key (Anything Anything Anything)
+  (lambda (tbl key val)
+    (%make-alist-table (list (cons value: tbl)
+                             (cons key val)))))
 
 (define (%bard-list-put-key ls key val)
   (if (<= 0 key (- (length ls) 1))
@@ -234,48 +192,33 @@
               (cons val (drop (+ 1 key) ls)))
       (error "Index out of range")))
 
-(%add-primitive-method! bard:put-key
-                        (list <pair> <fixnum> Anything)
-                        %bard-list-put-key
-                        debug-name: 'put-key)
+(define-primitive-method put-key (<pair> <fixnum> Anything)
+  %bard-list-put-key)
 
-(%add-primitive-method! bard:put-key
-                        (list <string> <fixnum> <character>)
-                        (lambda (str key val)
-                          (list->string (%bard-list-put-key (string->list str) key val)))
-                        debug-name: 'put-key)
+(define-primitive-method put-key (<string> <fixnum> <character>)
+  (lambda (str key val)
+    (list->string (%bard-list-put-key (string->list str) key val))))
 
-(%add-primitive-method! bard:put-key
-                        (list <alist-table> Anything Anything)
-                        alist-table-put
-                        debug-name: 'merge)
+(define-primitive-method put-key (<alist-table> Anything Anything)
+  alist-table-put)
 
 ;;; ---------------------------------------------------------------------
 ;;; vals
 ;;; ---------------------------------------------------------------------
 
-(define bard:vals
-  (make-function debug-name: 'vals
-                 signatures: (list (signature (Table) #f (List)))))
+(define-protocol-function Mapping vals
+  signatures: (list (signature (Table) #f (List))))
 
-(%add-primitive-method! bard:vals
-                        (list <pair>)
-                        identity
-                        debug-name: 'merge)
+(define-primitive-method vals (<pair>)
+  identity)
 
-(%add-primitive-method! bard:vals
-                        (list <string>)
-                        identity
-                        debug-name: 'merge)
+(define-primitive-method vals (<string>)
+  identity)
 
-(%add-primitive-method! bard:vals
-                        (list <alist-table>)
-                        alist-table-vals
-                        debug-name: 'merge)
+(define-primitive-method vals (<alist-table>)
+  alist-table-vals)
 
-(%add-primitive-method! bard:vals
-                        (list <generator>)
-                        identity
-                        debug-name: 'vals)
+(define-primitive-method vals (<generator>)
+  identity)
 
 
