@@ -413,6 +413,44 @@
   (lambda (table)(length (alist-table-slots table))))
 
 ;;; ---------------------------------------------------------------------
+;;; member?
+;;; ---------------------------------------------------------------------
+
+(define-protocol-function Listing member?
+  signatures: (list (signature (Anything List) #f (Boolean))
+                    (signature (Function Protocol) #f (Boolean))
+                    (signature (Schema Class) #f (Boolean))))
+
+(define-primitive-method member? (Anything <null>)
+  (constantly #f))
+
+(define-primitive-method member? (Anything <pair>)
+  (lambda (x ls)(and (member x ls) #t)))
+
+(define-primitive-method member? (Anything <string>)
+  (constantly #f))
+
+(define-primitive-method member? (<character> <string>)
+  (lambda (ch str)(and (string-char-position ch str) #t)))
+
+(define-primitive-method member? (<pair> <alist-table>)
+  (lambda (p tbl)
+    (and (some? (lambda (x slot)(and (equal? (car x)(car slot))
+                                     (equal? (cdr x)(cdr slot))))
+                (alist-table-slots tbl))
+         #t)))
+
+(define-primitive-method member? (<function> <protocol>)
+  (lambda (fn pro)
+    (let* ((fname (function-instance-name fn))
+           (found (and fname (%protocol-ref pro fname))))
+      (and found
+           (or (and (null? (function-signatures fn))
+                    (null? (function-signatures found)))
+               (signature-congruent? (car (function-signatures fn))
+                                     (car (function-signatures found))))))))
+
+;;; ---------------------------------------------------------------------
 ;;; next-last
 ;;; ---------------------------------------------------------------------
 

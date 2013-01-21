@@ -30,8 +30,8 @@
 (define CONST   1)
 (define LREF    2)
 (define LSET    3)
-(define GREF    4)
-(define GSET    5)
+(define MREF    4)
+(define MSET    5)
 (define POPV    6)
 (define POPC    7)
 (define PRIM    8)
@@ -50,8 +50,8 @@
 (define (standard-bard-globals) #f) ; initialize the VM's globals
 (define (env-ref env i j) #f) ; fetch a lexical variable's value
 (define (env-set! env i j val) #f) ; set a lexical variable's value
-(define (global-ref env g) #f) ; fetch a global variable's value
-(define (global-set! globals g val) #f) ; set a global variable's value
+(define (module-ref env g) #f) ; fetch a global variable's value
+(define (module-set! globals g val) #f) ; set a global variable's value
 (define (false? x) #f) ; test for #f or other logically false values (e.g. undefined, nothing)
 (define (true? x) #f) ; test for logically true values
 (define (link-function-code f instructions) #f) ; replace instruction bytecodes with opfns
@@ -74,7 +74,7 @@
            (pc 0)
            (nvals 0)
            (env (standard-bard-environment))
-           (globals (standard-bard-globals))
+           (module (standard-bard-module))
            (vals '())
            (stack '()))
        (letrec (;; vm instructions

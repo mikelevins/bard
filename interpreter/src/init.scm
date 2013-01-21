@@ -209,6 +209,7 @@
   (%defglobal 'list prim:list)
   (%defglobal 'list? bard:list?)
   (%defglobal 'map prim:map)
+  (%defglobal 'member? bard:member?)
   (%defglobal 'next-last bard:next-last)
   (%defglobal 'partition prim:partition)
   (%defglobal 'range bard:range)
