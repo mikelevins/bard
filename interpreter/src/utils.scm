@@ -283,6 +283,20 @@
         (set-cdr! slot val)
         (error (str "Key not found: " key)))))
 
+(define (alist-put alist key val #!key (test equal?))
+  (cons (cons key val)
+        (alist-remove alist key test: test)))
+
+(define (alist-remove alist key #!key (test equal?))
+  (let loop ((in alist)
+             (out '()))
+    (if (null? in)
+        (reverse out)
+        (let ((entry (car in)))
+          (if (test key (car entry))
+              (loop (cdr in) out)
+              (loop (cdr in)(cons entry out)))))))
+
 (define (alist-keys alist)(map car alist))
 (define (alist-vals alist)(map cdr alist))
 

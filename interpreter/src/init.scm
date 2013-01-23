@@ -226,9 +226,11 @@
 ;;; protocol: Mapping
 ;;; ---------------------------------------------------------------------
 
+  (%defglobal 'get prim:get)
   (%defglobal 'get-key bard:get-key)
   (%defglobal 'keys bard:keys)
   (%defglobal 'merge bard:merge)
+  (%defglobal 'put prim:put)
   (%defglobal 'put-key bard:put-key)
   (%defglobal 'vals bard:vals)
   (%defglobal 'table prim:table)

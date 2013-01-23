@@ -193,7 +193,12 @@
       (error "Index out of range")))
 
 (define-primitive-method put-key (<pair> <fixnum> Anything)
-  %bard-list-put-key)
+  (lambda (ls k v)
+    (if (list? ls)
+        (%bard-list-put-key ls k v)
+        (cond ((eq? k 'left)(cons v (cdr ls)))
+              ((eq? k 'right)(cons (car ls) v))
+              (else (error (str "invalid pair key: " (%as-string k))))))))
 
 (define-primitive-method put-key (<string> <fixnum> <character>)
   (lambda (str key val)

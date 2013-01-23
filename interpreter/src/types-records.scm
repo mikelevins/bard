@@ -81,4 +81,14 @@
 (define (record-set! record-instance slot-name val)
   (alist-set! (record-instance-slots record-instance) slot-name val test: eq?))
 
+(define (record-put record-instance slot-name val)
+  (let* ((slots (record-instance-slots record-instance))
+         (snames (map car slots))
+         (new-slots (alist-put (record-instance-slots record-instance) slot-name val test: eq?)))
+    (if (member slot-name snames)
+        ;; we're putting an existing slot, so the result can be of the same record type
+        (make-record-instance (instance-schema record-instance) new-slots)
+        ;; we're putting a new slot, so the result cannot be the same record tpye; we return a table instead
+        (%make-alist-table new-slots))))
+
 

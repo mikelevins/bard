@@ -60,6 +60,23 @@
 (define (tuple-set! tuple-instance index val)
   (vector-set! (tuple-instance-slots tuple-instance) index val))
 
+(define (tuple-put tuple-instance index val)
+  (if (and (integer? index)
+           (< -1 index (vector-length (tuple-instance-slots tuple-instance))))
+      ;;; the index is in the range of this tuple type's indexes so we
+      ;;; can make a new instsance of the tuple
+      (let ((new-slots (vector-copy (tuple-instance-slots tuple-instance))))
+        (vector-set! new-slots index val)
+        (make-tuple-instance (instance-schema tuple-instance) new-slots))
+      ;;; the index is outside the range of this tuple type's indexes;
+      ;;; we can't represent the result with the same tuple type so we
+      ;;; make a table instead
+      (let* ((invals (vector->list (tuple-instance-slots tuple-instance)))
+             (indexes (iota (length invals)))
+             (slots (cons (cons index val)
+                          (zip indexes invals))))
+        (%make-alist-table slots))))
+
 
 
 

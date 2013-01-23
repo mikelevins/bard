@@ -370,6 +370,29 @@
 ;;; protocol: Mapping
 ;;; ---------------------------------------------------------------------
 
+(define prim:get
+  (make-primitive
+   procedure: (lambda (tbl key)(%apply tbl key))
+   debug-name: 'get
+   required-count: 2
+   restarg: #f))
+
+(define (%bard-put tbl key val)
+  (cond
+   ((pair? tbl)(%bard-list-put-key tbl key val))
+   ((string? tbl)(list->string (%bard-list-put-key (string->list tbl) key val)))
+   ((alist-table-instance? tbl)(alist-table-put tbl key val))
+   ((record-instance? tbl) (record-put tbl key val))
+   ((tuple-instance? tbl)(tuple-put tbl key val))
+   (else (%make-alist-table `((,key . ,val)(value: . ,tbl))))))
+
+(define prim:put
+  (make-primitive
+   procedure: %bard-put
+   debug-name: 'put
+   required-count: 3
+   restarg: #f))
+
 (define prim:table
   (make-primitive
    procedure: (lambda args (%make-alist-table (plist->alist args)))
