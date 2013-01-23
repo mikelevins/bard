@@ -212,6 +212,8 @@
   (%defglobal 'member? bard:member?)
   (%defglobal 'next-last bard:next-last)
   (%defglobal 'partition prim:partition)
+  (%defglobal 'position bard:position)
+  (%defglobal 'position-if bard:position-if)
   (%defglobal 'range bard:range)
   (%defglobal 'reduce prim:reduce)
   (%defglobal 'rest bard:rest)

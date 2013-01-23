@@ -403,6 +403,15 @@
               (loop (+ 1 i)))
           #f))))
 
+(define (string-char-position-if test str)
+  (let ((len (string-length str)))
+    (let loop ((i 0))
+      (if (< i len)
+          (if (test (string-ref str i))
+              i
+              (loop (+ 1 i)))
+          #f))))
+
 (define (string-split-on ch str)
   (let loop ((instr str)
              (result '()))

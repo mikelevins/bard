@@ -22,39 +22,39 @@
 ;;; self-evaluating
 ;;; ---------------------------------------------------------------------
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <undefined>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <null>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <boolean>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <keyword>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <flonum>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <ratnum>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <fixnum>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <bignum>))
   expr)
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <string>))
   expr)
 
@@ -73,41 +73,40 @@
                   (search (+ i 1)))
               nothing))))
 
+(define method (find-var var frame)
+  (position-if (^ (v)(= var (get v 'name)))
+               frame))
+
 (define method (in-env? var env)
-  (let search ((frames env)
-               (i 0))
-       (if (empty? frames)
-           (values false false)
-           (let ((frame (first frames))
-                 (j (find-var var frame)))
-             (if (something? j)
-                 (values i j)
-                 (search (rest frames)
-                         (+ i 1)))))))
+  (let ((j nothing)
+        (i (position-if (^ (fr)
+                           (let ((found (find-var var fr)))
+                             (if (something? found)
+                                 (begin
+                                  (set! j found)
+                                  true)
+                                 false)))
+                        env)))
+    (values i j)))
 
-(define method (compile-lref var)
-  (let ((i j (find-var var *environment*)))
-    ['LREF i j]))
+(define method (compile-variable-reference expr env module)
+  (let ((i j (in-env? expr env)))
+    (if i
+        ['LREF i j]
+        (let ((i j (in-env? expr module)))
+          (if i
+              ['MREF i j]
+              (error (append "Undefined variable: " (as <string> expr))))))))
 
-(define method (compile-mref var)
-  (let ((i j (find-var var *module*)))
-    ['MREF i j]))
-
-(define method (compile-variable-reference expr)
-  (let ()
-    (if (in-env? expr *environment*)
-        (compile-lref expr)
-        (compile-mref expr))))
-
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <symbol>))
-  (compile-variable-reference expr env))
+  (compile-variable-reference expr env module))
 
 ;;; ---------------------------------------------------------------------
 ;;; applications
 ;;; ---------------------------------------------------------------------
 
-(define method (compile expr)
+(define method (compile expr env module)
   with: ((expr <pair>))
-  (compile-application expr))
+  (compile-application expr env module))
 

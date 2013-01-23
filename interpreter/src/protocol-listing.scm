@@ -467,6 +467,70 @@
   (lambda (table)(next-last (alist-table-slots table))))
 
 ;;; ---------------------------------------------------------------------
+;;; position
+;;; ---------------------------------------------------------------------
+
+(define-protocol-function Listing position
+  signatures: (list (signature (Anything List) #f (Anything))))
+
+(define-primitive-method position (Anything <null>)
+  (constantly '()))
+
+(define-primitive-method position (Anything <pair>)
+  (lambda (x p)
+    (if (list? p)
+        (or (position (lambda (i)(equal? x i)) p)
+            '())
+        (cond
+         ((equal? x (car p)) 'left)
+         ((equal? x (cdr p)) 'right)
+         (else '())))))
+
+(define-primitive-method position (Anything <string>)
+  (constantly '()))
+
+(define-primitive-method position (<character> <string>)
+  (lambda (ch str)(or (string-char-position ch str) '())))
+
+(define-primitive-method position (<pair> <alist-table>)
+  (lambda (entry tbl)
+    (or (position (lambda (e)(equal? (car entry)(car e)))
+                  (alist-table-slots tbl))
+        '())))
+
+;;; ---------------------------------------------------------------------
+;;; position-if
+;;; ---------------------------------------------------------------------
+
+(define-protocol-function Listing position-if
+  signatures: (list (signature (Applicable List) #f (Anything))))
+
+(define-primitive-method position-if (Anything <null>)
+  (constantly '()))
+
+(define-primitive-method position-if (Anything <pair>)
+  (lambda (test p)
+    (let ((test (lambda (x)(%funcall test x))))
+      (if (list? p)
+          (or (position test p) '())
+          (cond
+           ((test (car p)) 'left)
+           ((test (cdr p)) 'right)
+           (else '()))))))
+
+(define-primitive-method position-if (Anything <string>)
+  (lambda (test str)
+    (let ((test (lambda (x)(%funcall test x))))
+      (or (string-char-position-if test str) '()))))
+
+(define-primitive-method position-if (<pair> <alist-table>)
+  (lambda (test tbl)
+    (let ((test (lambda (x)(%funcall test x))))
+      (or (position (lambda (e)(test e))
+                    (alist-table-slots tbl))
+          '()))))
+
+;;; ---------------------------------------------------------------------
 ;;; rest 
 ;;; ---------------------------------------------------------------------
 
