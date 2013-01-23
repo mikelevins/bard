@@ -8,7 +8,6 @@
 (define-macro (lset! i j v) `(vector-set! (list-ref $env ,i) ,j ,v))
 (define-macro (incpc!) `(set! $pc (+ $pc 1)))
 
-(define-macro (fetch code) `(vector-ref ,code $pc))
 
 
 

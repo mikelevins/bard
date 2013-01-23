@@ -20,7 +20,7 @@
 
 (define $test
   (vector (list LREF 0 0)
-          (list CONST 1000000)
+          (list CONST 100000)
           (list GT)
           (list FJUMP 9)
           (list LREF 0 0)

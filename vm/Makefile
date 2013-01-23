@@ -25,7 +25,7 @@ obj:
 	${GSC} -obj src/bardvm.scm src/main.scm
 
 main: 
-	${GSC} -cc-options "-D___SINGLE_HOST -O1" -exe -o bardvm src/bardvm.scm src/main.scm
+	${GSC} -cc-options "-D___SINGLE_HOST -O1" -exe -o bardvm src/instructions.scm src/bardvm.scm src/main.scm
 
 
 
