@@ -1,0 +1,113 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compile.bard
+;;;; Project:       Bard
+;;;; Purpose:       bard compiler in bard
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; ---------------------------------------------------------------------
+;;; compiler state variables
+;;; ---------------------------------------------------------------------
+
+(define variable $null-env [])
+
+(define variable *environment* $null-env)
+(define variable *module* $null-env)
+
+;;; ---------------------------------------------------------------------
+;;; self-evaluating
+;;; ---------------------------------------------------------------------
+
+(define method (compile expr)
+  with: ((expr <undefined>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <null>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <boolean>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <keyword>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <flonum>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <ratnum>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <fixnum>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <bignum>))
+  expr)
+
+(define method (compile expr)
+  with: ((expr <string>))
+  expr)
+
+;;; ---------------------------------------------------------------------
+;;; variables
+;;; ---------------------------------------------------------------------
+
+(define record <var> name val mutable?)
+
+(define method (find-var var frame)
+  (let ((len (length frame)))
+    (loop search ((i 0))
+          (if (< i len)
+              (if (= var (get (element frame i) 'name))
+                  i
+                  (search (+ i 1)))
+              nothing))))
+
+(define method (in-env? var env)
+  (let search ((frames env)
+               (i 0))
+       (if (empty? frames)
+           (values false false)
+           (let ((frame (first frames))
+                 (j (find-var var frame)))
+             (if (something? j)
+                 (values i j)
+                 (search (rest frames)
+                         (+ i 1)))))))
+
+(define method (compile-lref var)
+  (let ((i j (find-var var *environment*)))
+    ['LREF i j]))
+
+(define method (compile-mref var)
+  (let ((i j (find-var var *module*)))
+    ['MREF i j]))
+
+(define method (compile-variable-reference expr)
+  (let ()
+    (if (in-env? expr *environment*)
+        (compile-lref expr)
+        (compile-mref expr))))
+
+(define method (compile expr)
+  with: ((expr <symbol>))
+  (compile-variable-reference expr env))
+
+;;; ---------------------------------------------------------------------
+;;; applications
+;;; ---------------------------------------------------------------------
+
+(define method (compile expr)
+  with: ((expr <pair>))
+  (compile-application expr))
+

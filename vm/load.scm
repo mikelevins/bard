@@ -25,18 +25,19 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "src/instructions.scm"
          "src/bardvm.scm"
          ))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
 
-(define (load-bard)
+(define (loadvm)
   (gc-report-set! #t)
   (for-each (lambda (f)(load f))
             $bard-files))
 
-;;; (load-bard)
+;;; (loadvm)
 
 
 

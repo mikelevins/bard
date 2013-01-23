@@ -16,24 +16,51 @@
          (proper-tail-calls)
          (block))
 
-(define-macro (fetch code) `(vector-ref ,code $pc))
+;;; ----------------------------------------------------------------------
+;;; vm registers
+;;; ----------------------------------------------------------------------
 
 (define $code #f)
 (define $pc 0)
-(define $vals '())
-(define $env (list (vector 0)))
+(define $vals #f)
+(define $env #f)
+
+(define $prog #f)
+(define $module #f)
+
+;;; ----------------------------------------------------------------------
+;;; exit continuation
+;;; ----------------------------------------------------------------------
 
 (define end #f)
 
+;;; ----------------------------------------------------------------------
+;;; main loop
+;;; ----------------------------------------------------------------------
+
+(define $banner-message "Bard VM")
+
+(define (display-banner)
+  (newline)
+  (display $banner-message)
+  (display " v")
+  (display (bard-version-string))
+  (newline))
+
+(define-macro (fetch code) `(vector-ref ,code $pc))
+(define op car)
+(define args cdr)
+
 (define (vmrun code)
   (begin
-    (newline)(display "Bard VM 0.4.0")(newline)
+    (display-banner)
     (call/cc
      (lambda (exit)
+       (initvm)
        (set! end exit)
        (set! $code code)
        (let loop ()
          (let* ((instr (fetch $code)))
-           (apply (car instr) (cdr instr))
+           (apply (op instr) (args instr))
            (loop)))))))
 

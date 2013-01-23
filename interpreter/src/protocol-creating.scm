@@ -98,7 +98,7 @@
 
 ;;; <record>
 
-(define-primitive-method make ((%singleton <record>)) 
+(define-primitive-method make (<record>) 
   (lambda (type . args)(instantiate-record type args)))
 
 ;;; <string>
