@@ -25,6 +25,8 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "src/stack.scm"
+         "src/opcodes.scm"
          "src/instructions.scm"
          "src/bardvm.scm"
          ))

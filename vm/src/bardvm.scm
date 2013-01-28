@@ -9,24 +9,28 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (gambit-scheme)
-         (standard-bindings)
+(declare (standard-bindings)
          (extended-bindings)
          (inline)
-         (proper-tail-calls)
-         (block))
+         (inline-primitives))
 
 ;;; ----------------------------------------------------------------------
 ;;; vm registers
 ;;; ----------------------------------------------------------------------
 
-(define $code #f)
-(define $pc 0)
-(define $vals #f)
-(define $env #f)
 
-(define $prog #f)
-(define $module #f)
+(define $pc 0)
+(define $code #f)
+(define $program #f)
+
+;;; the size of $vals dictates the maximum number of arguments and of
+;;; return values
+(define $vals (make-stack 1024))
+
+(define $env #f)
+(define $globals #f)
+
+(define $instructions #f)
 
 ;;; ----------------------------------------------------------------------
 ;;; exit continuation
@@ -47,20 +51,15 @@
   (display (bard-version-string))
   (newline))
 
-(define-macro (fetch code) `(vector-ref ,code $pc))
-(define op car)
-(define args cdr)
+(define (exec!)
+  (let* ((instr (vector-ref $code $pc))
+         (opcode (vector-ref instr 0))
+         (opfn (vector-ref $instructions opcode)))
+    (opfn instr)
+    (exec!)))
 
-(define (vmrun code)
-  (begin
-    (display-banner)
-    (call/cc
-     (lambda (exit)
-       (initvm)
-       (set! end exit)
-       (set! $code code)
-       (let loop ()
-         (let* ((instr (fetch $code)))
-           (apply (op instr) (args instr))
-           (loop)))))))
-
+(define (vmrun)
+  (call/cc
+   (lambda (exit)
+     (set! $instructions (instructions-vector exit))
+     (exec!))))

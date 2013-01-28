@@ -58,41 +58,16 @@
 ;;; self-evaluating
 ;;; ---------------------------------------------------------------------
 
-(define method (compile expr)
-  with: ((expr <undefined>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <null>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <boolean>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <keyword>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <flonum>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <ratnum>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <fixnum>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <bignum>))
-  expr)
-
-(define method (compile expr)
-  with: ((expr <string>))
-  expr)
+(define method (compile expr) with: ((expr <undefined>)) expr)
+(define method (compile expr) with: ((expr <null>)) expr)
+(define method (compile expr) with: ((expr <boolean>)) expr)
+(define method (compile expr) with: ((expr <character>)) expr)
+(define method (compile expr) with: ((expr <keyword>)) expr)
+(define method (compile expr) with: ((expr <flonum>)) expr)
+(define method (compile expr) with: ((expr <ratnum>)) expr)
+(define method (compile expr) with: ((expr <fixnum>)) expr)
+(define method (compile expr) with: ((expr <bignum>)) expr)
+(define method (compile expr) with: ((expr <string>)) expr)
 
 ;;; ---------------------------------------------------------------------
 ;;; variables
@@ -132,6 +107,87 @@
 ;;; ---------------------------------------------------------------------
 ;;; applications
 ;;; ---------------------------------------------------------------------
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'begin)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'cond)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'def)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'define)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'ensure)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'function)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'generate)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'if)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'let)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'loop)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'match)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'method)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly '^)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'protocol)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'quote)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'repeat)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'setter)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'undefine)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'values)))
+  )
+
+(define method (compile-funcall op args env module)
+  with: ((op (exactly 'with-exit)))
+  )
+
 
 (define method (compile-application op-expr args-expr env module)
   (let ((op (with-module module
