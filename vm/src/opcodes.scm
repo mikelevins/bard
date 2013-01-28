@@ -16,6 +16,7 @@
 (define FJUMP   3)
 (define CC      4) ; obtain the current continuation, reified as a procedure
 (define SETCC   5) ; replace the VM state with the supplied continuation
+(define PRIM    6)
 
 ;;; 32 values
 (define CONST  32)

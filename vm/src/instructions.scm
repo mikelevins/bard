@@ -21,6 +21,7 @@
 (define %fjump (lambda () (if (popv!)(incpc!)(setpc!))))
 (define %cc    (lambda () (error "%cc not implemented yet")(incpc!)))
 (define %setcc (lambda () (error "%setcc not implemented yet")(incpc!)))
+(define %prim  (lambda () (error "%prim not implemented yet")(incpc!)))
 
 ;;; 032 values
 (define %const (lambda () (pushv! (arg1))(incpc!)))
@@ -85,12 +86,13 @@
   (vector
    
    ;; 000 machine control
-   exitfn ; HALT   
-   %jump  ; JUMP   
-   %tjump ; TJUMP  
-   %fjump ; FJUMP  
-   %cc    ; CC      
-   %setcc ; SETCC   
+   exitfn
+   %jump 
+   %tjump
+   %fjump
+   %cc   
+   %setcc
+   %prim 
 
    ;; 006-031 unimplemented
 
@@ -122,12 +124,12 @@
    %unimplemented ; 031
 
    ;; 032 values
-   %const ; CONST  
-   %nil   ; NIL    
-   %zero  ; ZERO   
-   %one   ; ONE    
-   %one-  ; ONE-   
-   %two   ; TWO    
+   %const
+   %nil  
+   %zero 
+   %one  
+   %one- 
+   %two  
 
    ;; 038-063 unimplemented
 
@@ -159,12 +161,12 @@
    %unimplemented ; 063
 
    ;; 064 variables
-   %lref  ; LREF   
-   %lset  ; LSET   
-   %mref  ; MREF   
-   %mset  ; MSET   
-   %modl  ; MODL   
-   %args  ; ARGS    
+   %lref
+   %lset
+   %mref
+   %mset
+   %modl
+   %args
 
    ;; 070-095 unimplemented
 
@@ -196,16 +198,16 @@
    %unimplemented ; 095
 
    ;; 096 arithmetic and logic
-   %gt    ; GT     
-   %gte   ; GTE    
-   %lt    ; LT     
-   %lte   ; LTE    
-   %add   ; ADD    
-   %sub   ; SUB    
-   %mul   ; MUL    
-   %div   ; DIV    
-   %rem   ; REM    
-   %expt  ; EXPT   
+   %gt  
+   %gte 
+   %lt  
+   %lte 
+   %add 
+   %sub 
+   %mul 
+   %div 
+   %rem 
+   %expt
 
    ;; 106-127 unimplemented
 
@@ -233,15 +235,15 @@
    %unimplemented ; 127
 
    ;; 128 data manipulations
-   %cons  ; CONS   
-   %car   ; CAR    
-   %cdr   ; CDR    
-   %vec   ; VEC    
-   %vref  ; VREF   
-   %vset  ; VSET   
-   %tbl   ; TBL    
-   %tblref ; TBREF  
-   %tblset ; TBSET  
+   %cons  
+   %car   
+   %cdr   
+   %vec   
+   %vref  
+   %vset  
+   %tbl   
+   %tblref
+   %tblset
 
    ;; 137-159 unimplemented
 
@@ -270,12 +272,12 @@
    %unimplemented ; 159
 
    ;; 160 system and I/O
-   %write ; WRITE  
-   %read  ; READ   
-   %save  ; SAVE    
-   %load  ; LOAD    
-   %ser   ; SER     
-   %dser  ; DSER    
+   %write
+   %read 
+   %save 
+   %load 
+   %ser  
+   %dser 
 
    ;; 161-191 unimplemented
 
@@ -312,9 +314,9 @@
    %unimplemented ; 191
 
    ;; 192 network and IPC
-   %this  ; THIS    
-   %send  ; SEND   
-   %recv  ; RECV   
+   %this 
+   %send
+   %recv
 
    ;; 195-255 unimplemented
 

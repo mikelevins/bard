@@ -55,7 +55,7 @@
   (let* ((instr (vector-ref $code $pc))
          (opcode (vector-ref instr 0))
          (opfn (vector-ref $instructions opcode)))
-    (opfn instr)
+    (opfn)
     (exec!)))
 
 (define (vmrun)
