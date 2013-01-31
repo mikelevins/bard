@@ -45,6 +45,7 @@ tidy:
 	rm -f *.gvm
 	rm -f *.o
 	rm -f src/*.c
+	rm -f src/*.o
 	rm -f src/*.gvm
 	rm -f lib/*.o
 	rm -f lib/*.c
@@ -57,7 +58,7 @@ asm:
 	${GSC} -c -S -cc-options ${CC_OPTS} -exe -o bardvm ${SCHEME_SOURCES}
 
 obj:
-	${GSC} -obj -cc-options ${CC_OPTS} -exe -o bardvm ${SCHEME_SOURCES}
+	${GSC} -obj -cc-options ${CC_OPTS} ${SCHEME_SOURCES}
 
 main: 
 	${GSC} -cc-options ${CC_OPTS} -exe -o bardvm ${SCHEME_SOURCES}
