@@ -27,3 +27,22 @@
                  (number->string (bard-minor-version))
                  "."
                  (number->string (bard-update-version))))
+
+
+(define $bardo-version (vector 0 4 0))
+
+(define (bardo-major-version)
+  (vector-ref $bardo-version 0))
+
+(define (bardo-minor-version)
+  (vector-ref $bardo-version 1))
+
+(define (bardo-update-version)
+  (vector-ref $bardo-version 2))
+
+(define (bardo-version-string)
+  (string-append (number->string (bardo-major-version))
+                 "."
+                 (number->string (bardo-minor-version))
+                 "."
+                 (number->string (bardo-update-version))))

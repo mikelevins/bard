@@ -25,7 +25,15 @@
 (define $bard-files
   (paths $bard-root 
          "src/version.scm"
+         "src/banner.scm"
+         "lib/uuid.scm"
+         "src/util.scm"
          "src/stack.scm"
+         "src/env.scm"
+         "src/instructions.scm"
+         "src/program.scm"
+         "src/bardo.scm"
+         "src/bardvm.scm"
          ))
 
 ;;; load sources
