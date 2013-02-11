@@ -21,8 +21,7 @@
       (read-all stream read-char)
       (error (str "Not an input stream:" (%as-string stream)))))
 
-(define-primitive-method contents
-  (list <iostream>)
+(define-primitive-method contents (<iostream>)
   %bard-iostream-contents)
 
 (define-protocol-function Streaming lines
@@ -33,8 +32,7 @@
       (read-all stream read-line)
       (error (str "Not an input stream:" (%as-string stream)))))
 
-(define-primitive-method lines
-  (list <iostream>)
+(define-primitive-method lines (<iostream>)
   %bard-iostream-lines)
 
 (define-protocol-function Streaming put
@@ -50,8 +48,7 @@
           'output
           (error (str "Not an iostream:" (%as-string stream))))))
 
-(define-primitive-method stream-direction
-  (list <iostream>)
+(define-primitive-method stream-direction (<iostream>)
   %bard-stream-direction)
 
 

@@ -27,8 +27,7 @@
 (define-protocol-function TextProcessing join-text
   signatures: (list (signature (Text List) #f (Text))))
 
-(define-primitive-method join-text
-  (list <string> <pair>)
+(define-primitive-method join-text (<string> <pair>)
   %bard-join-text)
 
 ;;; ---------------------------------------------------------------------
@@ -58,7 +57,6 @@
 (define-protocol-function TextProcessing split-text
   signatures: (list (signature (Text Character) #f (List))))
 
-(define-primitive-method split-text
-  (list <string>  <character>)
+(define-primitive-method split-text (<string>  <character>)
   %bard-split-string)
 

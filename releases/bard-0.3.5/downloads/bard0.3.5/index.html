@@ -1,0 +1,3139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 15.6), see www.w3.org">
+
+<title>Bard</title>
+<link href="assets/styles.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Bard<span class="trade">&trade;</span></h1>
+
+<div id="front_matter">
+<p class="subtitle">A programming language</p>
+<p class="version">version 0.3.5</p>
+<p class="byline">copyright 2013 by mikel evins</p>
+</div>
+
+<!-- sidebar -->
+<div class="sidebar">
+
+  <!-- top matter -->
+ <div id="top_matter">
+<h3 class="nb">Getting bard</h3>
+
+<p class="note_body">You can download Bard from here:<br>
+<a href="http://">Bard 0.3.5</a></p>
+
+<p class="note_body">This reference is hosted at <a href=
+"http://explorersguild.com/bardcode.net/bard.html">bardcode.net</a>.</p>
+
+<p class="note_body">Bard's source code is available from
+<a href="https://github.com/mikelevins/bard">Github</a>.</p>
+ </div>
+ <!-- end top matter -->
+
+<!-- contents -->
+ <div id="contents">
+<h3 class="nb">Contents</h3>
+
+<h4 class="nb1"><a href="#introduction">Introduction</a></h4>
+<h4 class="nb1"><a href="#running_bard">Running Bard</a></h4>
+<h4 class="nb1"><a href="#syntax">Syntax</a></h4>
+<h4 class="nb1"><a href="#values_and_literals">Values and
+literals</a></h4>
+
+<h4 class="nb1"><a href="#programs">Programs</a></h4>
+<h4 class="nb1"><a href="#functions">Functions</a></h4>
+<h4 class="nb1"><a href="#types">Types</a></h4>
+<h4 class="nb1"><a href="#actors">Actors</a></h4>
+<h4 class="nb1"><a href="#language_reference">Language reference</a></h4>
+
+<h5 class="nb2"><a href="#constants">Constants</a></h5>
+<h5 class="nb2"><a href="#schemas">Schemas</a></h5>
+<h5 class="nb2"><a href="#classes">Classes</a></h5>
+<h5 class="nb2"><a href="#special_forms">Special Forms</a></h5>
+<h5 class="nb2"><a href="#protocols">Protocols</a></h5>
+ </div>
+ <!-- end contents -->
+</div>
+<!-- sidebar -->
+
+<div id="body_text">
+<h2 class="introduction"><a id="introduction" name=
+"introduction"></a><span class=
+"initial_cap">I</span>ntroduction</h2>
+
+<p>Bard is a small, high-level, general-purpose programming
+language. It is interpreted, dynamic, and impurely functional.
+It has a unique object system influenced by, but different
+from, CLOS.</p>
+
+<p>Bard is a dialect of Lisp, because Lisp is the family of
+languages that offer me the most pleasure in programming. Bard
+is designed primarily to make me happy--to make my work more
+pleasant. If someone else likes it or finds it interesting
+that's a good thing, but it is not a goal.</p>
+
+<h3>Bard version 0.3.5</h3>
+
+<p>Bard is a work in progress. This document describes the
+current release, which is version 0.3.5. The Bard 0.2 series
+was used for about a year in product development, but not
+released for general use. Bard 0.4 is currently in development,
+and will offer improved performance and several new
+features.</p>
+
+<p>Bard 0.3.5 is an interpreter for most of the Bard language.
+It runs on OSX, Windows, and Linux, and it exhibits most of the
+unique features of Bard. It's not quite complete; a few
+features, such as Actors and messages, are not implemented in
+the 0.3.5 interpreter. Version 0.4, which is already in
+development, will provide the features that are missing in
+0.3.5.</p>
+
+<p>Version 0.4 will also be substantially faster than 0.3.5.
+This release is a slow interpreter. It's not too slow to use;
+it's much faster than the 0.2 interpreter was, and I used Bard
+0.2 for a year in game development. But don't expect Bard 0.3.5
+to be fast; it isn't.</p>
+
+<p>Bard 0.2 ran on iPhones and iPads. The current release does
+not, though I plan to bring it back to that platform in the
+near future, and also to port it to additional platforms, such
+as Android. One of my goals for the language is to be able to
+work in Bard on every platform I find interesting.</p>
+
+<p>I have other interesting plans for Bard's future, including
+many new tools and features, but for now, Bard 0.3.5 is a
+simple command-line interpreter that runs on desktop computers.
+Its feature set is small, but it has already proven itself
+useful to me in my work. I hope others can get as much pleasure
+out of it as I have.</p>
+
+<h3>Bard features</h3>
+
+<p>Like other Lisps, Bard is designed to be used interactively.
+It's distributed as a single executable file named "bard"; you
+run it by typing "bard" at the command line. When you do, Bard
+starts an interactive session that displays a prompt:</p>
+<pre>
+  bard&gt; 
+</pre>
+
+<p>You can type Bard expressions at the prompt and the
+interpreter will evaluate them and return the results:</p>
+<pre>
+  bard&gt; (+ 2 3)
+  5
+
+  bard&gt; (values 2 3)
+  2
+  3
+</pre>
+
+<p>Bard is a functional language, but it's not pure. You can
+use non-functional features if you really want to.</p>
+
+<p>It's an object-oriented language, but its object system is
+unique. It may take some getting used to, but it's simple, and
+it rewards the time taken to learn it.</p>
+
+<p>Bard organizes most of its features into
+<strong>protocols</strong>, which are collections of related
+functions. Classes are used in protocols to define the roles of
+values.</p>
+
+<p>Bard functions are polymorphic. A function can execute
+different code depending on the values passed to it as
+arguments. Functions dispatch on all their arguments to choose
+the code to run. In most cases, functions examine the types of
+values in order to choose methods to run, but you can also
+write functions that pay attention to the actual values of
+arguments in selecting methods.</p>
+
+<p>Bard values that support the <code>Mapping</code> protocol
+can be applied as if they're functions that accept a single
+argument. When you apply a collection like this, it returns the
+element stored on the key equal to the argument, or
+<code>nothing</code> if there is no such key. Sequences and
+series support the <code>Mapping</code> protocol, behaving as
+tables whose keys are integers.</p>
+
+<p>Bard encourages working at a high level of abstraction. Most
+of its values are instances of abstract types, and you normally
+don't need to know or care which specific concrete type a value
+has. Recursion and mapping are more natural than iteration and
+looping in Bard, though the language has support for both
+styles. Bard also provides <strong>generators</strong> as
+another way to write iterative code. Using a generator you can
+represent an iterative process as a lazy list of values, taking
+only as many of them as you need.</p>
+
+<p>Bard has two kinds of types and two kinds of procedures. In
+each case, one is abstract and the other concrete. Abstract
+types are called <strong>classes</strong>; concrete types are
+called <strong>schemas</strong>. Abstract procedures are called
+<strong>functions</strong>; concrete procedures are called
+<strong>methods</strong>.</p>
+
+<p>Bard provides a traditional Lisp-style macro system for
+extending the language syntax, and several built-in features of
+the language are implemented as macros.</p>
+
+<p>You can define your own types using <strong>records</strong>
+and <strong>tuples</strong>. A record is a type that consists
+of named fields; a tuple is a type that consists of fields
+indexed by integers.</p>
+
+<p>Bard provides a few powerful control constructs, including
+upward continuations for nonlocal exits, and dynamic stack
+guards that can guarantee that certain code executes even if an
+error or other abnormal exit is taken.</p>
+
+<p>Bard supports returning multiple values from functions, and
+binding multiple values to lexical variables.</p>
+
+<h3>Future features</h3>
+
+<p>Bard 0.3.5 implements most of the language, but not all; a
+few important features are not yet implemented.</p>
+
+<p><strong>Pattern matching</strong> provides a powerful and
+convenient way to destructure complex values and bind parts to
+lexical variables. Bard's <code>match</code> special form will
+provide this feature in the 0.4 release.</p>
+
+<p><strong>Multiple inheritance</strong> provides a way to
+conveniently reuse functions. It's not implemented in Bard
+0.3.5, but will be in 0.4.</p>
+
+<p><strong>Union types</strong> consist of collections of
+alternative type definitions. You'll be able to define them and
+<strong>type synonyms</strong> in release 0.4. Synonyms are new
+names for existing types, which can help your code express more
+clearly the intended roles of your types.</p>
+
+<p><strong>First-class continuations</strong> provide a
+powerful general-purpose tool for constructing custom control
+structures. I plan to implement them in release 0.4.</p>
+
+<p><strong>Series</strong> are unbounded data structures that
+make it easy to express iterative programs without using
+explicit loops. Implementation of series is planned for
+0.4.</p>
+
+<p>In Bard, an <strong>actor</strong> represents a Bard
+process. One Bard process can communicate with another by
+obtaining a reference to the actor that represents the process
+and sending it a <strong>message</strong>. Bard actors may run
+in the same process, or in different processes on the same
+machine, or on different machines. Any Bard data structure may
+be sent to an actor in a message. Implementation of actors is
+planned for release 0.4.</p>
+
+<p><strong>Predicate dispatch</strong> is a powerful
+generalization of method dispatch that enables you to specify
+rules for selecting methods to run. For example, using
+predicate dispatch you can write a method that runs only if its
+argument is greater than five, or only if its second argument
+is greater than the first. Bard 0.4 will support predicate
+dispatch.</p>
+
+<p>Bard is designed to support <strong>image-based
+development</strong>. In this style of programming, the
+language interpreter can write a copy of its state to a file,
+called an <strong>image</strong>, and resume in the same state
+later by loading the image file. This feature is not
+implemented in version 0.3.5, but is planned for 0.4.</p>
+
+<h2><a id="running_bard" name="running_bard"></a><span class=
+"initial_cap">R</span>unning Bard</h2>
+
+<p>You can run Bard by putting the Bard executable in your
+system's PATH and then typing "bard" at the command prompt. The
+Bard interpreter starts up ready to execute Bard expressions.
+You can load a Bard program using the <code>load</code>
+function:</p>
+<pre>
+  bard&gt; (load "examples/namer.bard")
+  Loading examples/namer.bard...
+  
+  read-names
+  triples
+  valid-name-part?
+  valid-name-part?
+  filter-name-parts
+  filter-names
+  parse-names
+  match?
+  end-segment?
+  end-segment?
+  next-segment
+  merge-segments
+  merge-segments
+  build-name
+  name-builder
+  names
+
+  bard&gt; 
+</pre>
+
+<p>After <code>load</code> returns, you can use any of the
+functions defined by the file you loaded.</p>
+
+<p>Many Lisp programmers are used to using Emacs together with
+a Lisp interpreter. A simple Emacs mode is provided with Bard
+0.3.5. See the text of "bard-mode.el" for instructions on
+installing and using it with the Bard interpreter.</p>
+
+<p>To exit the Bard interpreter, type <code>q:</code> at the
+"bard" prompt.</p>
+
+<h3>Example code</h3>
+
+<p>A few example programs are supplied with the Bard 0.3.5 interpreter, distributed in the "examples" directory. You can load and run the code by starting the Bard interpreter and using the <code>load</code> special form to load the examples, as shown in the previous section. Note that if you start the interpreter from some working directory other than the examples directory then you must provide a complete absolute path to the example you want to load.</p>
+
+<p>Comments in the example programs show some examples of executing Bard code defined by the example sources.</p>
+
+
+<h2><a id="syntax" name="syntax"></a><span class=
+"initial_cap">S</span>yntax</h2>
+
+<p>Bard's syntax resembles that of other Lisps: programs are
+made up of expressions. There are two types of expression:
+atoms and lists. Taken together, atoms and lists are called
+<strong>s-expressions</strong>.</p>
+
+<p>Here are a few examples of atoms:</p>
+<pre>
+  nothing
+  true
+  false
+  12
+  2.2
+  next:
+</pre>
+
+<p>In Bard, unlike other Lisps, lists are not a specific
+concrete datatype; rather, <code>List</code> is an abstract
+type that may be represented by any of several concrete types.
+That's a theme that comes up over and over in Bard: values are
+instances of abstract types, and it's usually more helpful to
+know the abstraction a type represents than to know which
+specific concrete type it belongs to. That's not
+<em>always</em> the case, and you can always find out the
+concrete type of a value if you really want to know, but more
+often it's the abstract type that is interesting.</p>
+
+<p>There are several types of lists in Bard. Here are a few
+examples:</p>
+<pre>
+  ()
+
+  (0 1 2 3)
+
+  (left . right)
+
+  {name: "Fred" size: 'large friend: "Barney"}
+
+  "Now is the time for all good men..."
+</pre>
+
+<p>These are all examples of lists, but remember that
+<code>List</code> is not a concrete type in Bard. Each of these
+examples may have a different representation. For example, the
+first one might be represented as an instance of
+<code>&lt;null&gt;</code> and the last as an instance of
+<code>&lt;string&gt;</code>. Don't assume too much about a
+value from its abstract type; for example, it's true that the
+last example value is a list, but it's not true that it's
+represented as an inefficient linked list of characters. List
+is an abstract type that tells you only the family of functions
+that work with it, not how they work or how the value is
+represented.</p>
+
+<p>Bard's model of execution is that an
+<strong>evaluator</strong> reads each expression one after
+another, performing any computation represented by the
+expressions, and returning the resulting values. All the
+expressions must be s-expressions&mdash;that is, either atoms
+or lists. As in other Lisps, Bard treats a certain type of list
+as the application of an operator to some arguments.</p>
+
+<p>Here's an example; the first element of the following list
+is the addition operator, and the other two are numbers. Bard
+sees the list and interprets it as a function call. It applies
+the addition operator to the number to compute a result, which
+it then returns and prints:</p>
+<pre>
+  bard&gt; (+ 2 3)
+  5
+</pre>
+
+<p>All expressions that you write as lists in parentheses are
+like this: Bard interprets them as operators being applied to
+arguments. If you want to create a list instead of calling a
+function, you can use the <strong>quote</strong> to tell Bard
+not to evaluate the expression:</p>
+<pre>
+  bard&gt; '(+ 2 3)
+  (+ 2 3)
+</pre>
+
+<p>There's also one kind of atom that Bard evalutes to return a
+value. When it sees a <strong>symbol</strong>, Bard treats it
+as the name of a variable. It looks up the value of the
+variable and returns it:</p>
+<pre>
+  bard&gt; +
+  #&lt;primitive +&gt;
+</pre>
+
+<p>The value of the symbol <code>+</code> is the addition
+function, whose name is "+". That function is a
+<strong>primitive</strong>&mdash;that is, it's a function that
+is built into the interpreter.</p>
+
+<p>These two kinds of values&mdash;symbols and parenthesized
+lists&mdash;are special. Every other value in Bard is just a
+value; the evaluator sees the value and returns it. That kind
+of value&mdash;the kind that returns itself when
+evaluated&mdash;is naturally called a
+<strong>self-evaluting</strong> value. Almost all Bard values
+are self-evaluating.</p>
+
+<p>That's pretty much all there is to Bard syntax: expressions
+made of atoms and lists. There are a few special bits of
+syntax, mostly to make it easy to write various kinds of data.
+We'll cover those details in the next section.</p>
+
+<h2><a id="values_and_literals" name=
+"values_and_literals"></a><span class=
+"initial_cap">V</span>alues and literals</h2>
+
+<p>Most Bard values are instances of abstract types that
+provide literal syntax. The purpose of the literal syntax is to
+make it easy and convenient to write commonly-used expressions.
+(In fact, my goal is to arrange for every Bard value to have a
+literal syntax that both a human being and the Bard interpreter
+can read easily.)</p>
+
+<p>Here are examples of the literal syntaxes for the most
+important built-in types:</p>
+
+<h4>Boolean</h4>
+<pre>
+  true
+  false
+</pre>
+
+<h4>Character</h4>
+<pre>
+  #\C
+  #\space
+</pre>
+
+<h4>Float</h4>
+<pre>
+  2.3
+</pre>
+
+<h4>Function</h4>
+<pre>
+  (function Integer Integer -&gt; Ratio)
+</pre>
+
+<h4>Keyword</h4>
+<pre>
+  next:
+</pre>
+
+<h4>Method</h4>
+<pre>
+  (^ (x y) (* x y))
+</pre>
+
+<h4>Null</h4>
+<pre>
+  nothing
+  ()
+  []
+  ""
+  {}
+</pre>
+
+<h4>Pair</h4>
+<pre>
+  '(left . right)
+</pre>
+
+<h4>Ratio</h4>
+<pre>
+  2/3
+</pre>
+
+<h4>Text</h4>
+<pre>
+  "Hello, world!"
+</pre>
+
+<h4>Table</h4>
+<pre>
+  {a: 1 b: 2 c: 3}
+</pre>
+
+<h2><a id="programs" name="programs"></a><span class=
+"initial_cap">P</span>rograms</h2>
+
+<p>A Bard program consists of a series of s-expressions. Some
+expressions are evaluated to produce results or to cause the
+machine to produce side-effects like printing some values or
+making a network connection. Other expressions&mdash;in fact,
+most of them&mdash;define data structures or operations you'd
+like Bard to perform.</p>
+
+<p>The way to think about a Bard program is that you enter each
+s-expression at the Bard prompt and the evaluator computes a
+resulting value. If computing the result requires the evaluator
+to print something or open a network connection or create a
+window on the screen, then that's what happens.</p>
+
+<p>If you ask Bard to load a program from a file, much the same
+thing happens: it opens the file and reads s-expressions from
+it one-by-one, performing the computations required by the
+expressions.</p>
+
+<p>If you build a program using Bard, then when the program
+starts it behaves the same way; that is, it behaves as if it's
+reading and executing each of the expressions that made up the
+source code of the program when it was under development. A
+delivered program may not include any source code, and it may
+not actually read any files when it starts up, but it still
+behaves as if it's reading s-expressions and evaluating
+them.</p>
+
+<p>In Bard 0.3.5, the only way to run a program is to start the
+interpreter and tell it to load a file. If the file contains
+only definitions, then you can start the program running by
+typing an expression at the "bard" prompt.</p>
+
+<p>That won't always be the only way to run a program. Bard 0.2
+could be deployed as a library that executed built-in code, and
+Bard 0.4 will provide tools for building a program and
+delivering it as a compiled binary. It will also provide the
+ability to run as a script interpreter, loading and running a
+program file passed to it from the command line.</p>
+
+<p>In version 0.3.5, though, Bard is more limited. If you want
+to run a program you must first launch the interpreter and then
+tell it to load your program's source file.</p>
+
+<h3>Control structure</h3>
+
+<p>The most basic control structure in Bard is evaluating a
+form:</p>
+<pre>
+  bard&gt; 1
+  1
+</pre>
+
+<p>In a way, that's all a Bard program is&mdash;evaluating a
+form&mdash;even if it's a complex application. Most Bard
+programs consist of a single simple expression that gets
+evaluated at the start. What makes it a full-featured program
+is that the simple expression evaluates one or more forms, and
+each of those evaluates more forms, and those evaluate more,
+and so on, until a whole complex tree of evaluations runs,
+resulting in a program that comes to life.</p>
+
+<p>To compute something in Bard, you evalute an
+<strong>application</strong>. An application is an expression
+that <strong>applies</strong> an <strong>operator</strong> to
+some <strong>arguments</strong>. A simple example is adding two
+numbers:</p>
+<pre>
+  bard&gt; (+ 2 3)
+  5
+</pre>
+
+<p>As you can see, we write an application as a list. Why does
+the "+" come first, instead of going in the middle as we all
+learn in school? Because in Bard, as in other Lisps, the
+operation always comes first, and its arguments always come
+after. It takes a little getting used to, but it's very simple,
+and it means there are hardly any rules to learn about how to
+write expressions. They're pretty much all the same: operator
+first, then arguments.</p>
+
+<p>The arguments are expressions, too, and they don't have to
+be atoms. They can be more applications:</p>
+<pre>
+  bard&gt; (+ (* 2 3) (* 4 5))
+  26
+</pre>
+
+<p>Here, Bard multiples the 2 and 3 to get 6, and multiples the
+4 and 5 to get 20, then adds them together. Many expressions in
+Bard are like this one: some inner expressions to compute
+intermediate results, and an outer expression to combine
+them.</p>
+
+<h3>Conditionals</h3>
+
+<p>Bard wouldn't be much of a programming language without a
+way to decide between alternatives. The basic tool for making
+such decision is a special operator called <code>if</code>:</p>
+<pre>
+  bard&gt; (if (odd? (* 3 3))
+             (display "odd")
+             (display "even"))
+  odd
+</pre>
+
+<p><code>if</code> evaluates its first argument, called the
+test. If the test returns a true value then it evaluates the
+second argument; otherwise it evaluates the third. It's a
+simple but effective way to choose between two different
+alternatives.</p>
+
+<p>What if you want to choose from more than two
+alternatives?</p>
+
+<p><code>cond</code> is a conditional form that can choose from
+any number of alternatives:</p>
+<pre>
+  bard&gt; (cond
+             ((sunday?) "go to meeting")
+             ((monday?) "I hate mondays")
+             ((tuesday?) "weld")
+             ((wednesday?) "up and Addam")
+             ((thursday?) "no thanks, just had a drink")
+             ((friday?) "thank God")
+             (else: "rest"))
+  "thank God"
+</pre>
+
+<p><code>cond</code> takes each of its arguments&mdash;called
+clauses&mdash;in turn, one at a time. It evaluates the first
+expression in each clause and, if it returns a true value, then
+evaluates the rest of the expressions in the clause.
+<code>cond</code> evaluates at most one complete clause; once
+it has chosen a clause to evaluate, and then evaluated all of
+its expressions, it returns whatever the last expression in
+that clause returned. In the example above,
+<code>(friday?)</code> must have returned true, because the
+value returned from the <code>cond</code> was the expression in
+that clause. The other text values in the other clauses were
+not evaluated.</p>
+
+<h3>Sequencing</h3>
+
+<p>What if you want to evaluate more than one expression in one
+of the alternatives of an <code>if</code>? The
+<code>begin</code> form is for that precise purpose:</p>
+<pre>
+  (if (approved? purchase)
+    (begin
+      (compute-sales-tax subtotal)
+      (debit account)
+      (display "Approved"))
+    (begin
+      (cancel-purchase)
+      (display "Declined")))
+</pre>
+
+<p><code>begin</code> is useful only when you want to evaluate
+expressions that have side-effects like printing a message or
+asking a service to do something. Expressions that perform pure
+calculations have no use for <code>begin</code> because it
+discards all the values produced except for the last one.</p>
+
+<p><code>begin</code> is an example of an
+<strong>imperative</strong> operator. Imperative operators
+exist mainly to command the computer to do something; it's not
+important whether they return a result. Often they do in Bard,
+but that's just because most Bard operators are functions that
+compute and return results. The important effect of an
+imperative operator is the task it commands the computer to
+perform.</p>
+
+<p>By contrast, most Bard operators are
+<strong>functional</strong>; that is, most Bard operators exist
+primarily to compute and return a result. Bard is a functional
+language, meaning that its design caters primarily to writing
+programs made of functions that return results.</p>
+
+<p>Unlike some functional languages, though, Bard doesn't
+prevent you from evaluating expressions purely for their side
+effects on the computer, and it provides forms like
+<code>begin</code> to make that kind of effect easy to
+achieve.</p>
+
+<h3>Loops</h3>
+
+<p>Another common imperative idiom is looping. Imperative
+programs typically comprise several iterative loops that
+perform a series of actions repeatedly. You can create that
+kind of loop very easily in Bard:</p>
+<pre>
+  bard&gt; (repeat
+          (newline)
+          (display "Hello!"))
+
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  Hello
+  ...
+</pre>
+
+<p>This example will go on printing greetings forever, or until
+you stop it by killing the program. So how do you tell
+<code>repeat</code> when to stop?</p>
+
+<p>You don't. Repeat always repeats forever.</p>
+
+<p>So how do you use <code>repeat</code> without getting stuck
+in an infinite loop?</p>
+
+<p>You use <code>with-exit</code>:</p>
+<pre>
+  bard&gt; (def $x 0)
+  $x
+
+  bard&gt; (with-exit (return) 
+          (repeat 
+            (begin
+              (set! $x (+ $x 1))
+              (if (&gt; $x 9)
+                (return 'done!))))) 
+  done!
+
+
+</pre>
+
+<p><code>with-exit</code> creates a procedure that returns from
+the <code>with-exit</code> form, no matter where in the body of
+the expression it's called. In this example, we define a
+variable named <code>$x</code>, initialize it to zero, then
+execute a <code>repeat</code> form that repeatedly increments
+<code>$x</code>. As soon as <code>$x</code> is greater than 9,
+the <code>return</code> procedure, which was created by the
+<code>with-exit</code> form, returns the value
+<code>done</code>.</p>
+
+<p>These two simple control structures make it easy to
+construct a wide variety of iterative processes.</p>
+
+<p>Bard offers a more functional alternative for looping,
+though. You can achieve the same effect using
+<code>loop</code>:</p>
+<pre>
+  bard&gt; (loop again ((x 0)) 
+        (if (&gt; x 9)
+          'done!
+          (again (+ x 1))))
+  done!
+</pre>
+
+<p>Why do I call this a "more functional alternative?" Because
+<code>loop</code> doesn't require us to assign values to a
+mutable variable. Instead, it creates a local procedure (in
+this case named <code>again</code>) and calls it recursively
+with whatever value we supply to it. Loop looks like an
+iterative construct, and acts like one, but it runs without
+side effects; each time through the loop the variable
+<code>x</code> is a new variable in a new lexical
+environment.</p>
+
+<p>Isn't that more costly that the pure iteration of
+<code>repeat</code>? It is in Bard 0.3.5, but the language
+design provides a solution: Bard is meant to support
+<strong>tail recursion elimination</strong>, a technique that
+enables recursive function calls to run in constant space. I
+expect to implement that optimization in release 0.4.</p>
+
+<h3>Definitions</h3>
+
+<p>In one of the examples above we saw a simple example of a
+<strong>definition</strong>:</p>
+<pre>
+  bard&gt; (def $x 0)
+  $x
+</pre>
+
+<p>This example defines the variable <code>$x</code> and binds
+it to the value <code>0</code>. A variable defined this way is
+visible everywhere in a Bard program; it's a <strong>global
+binding</strong>. All definitions in Bard establish global
+bindings.</p>
+
+<p>Bard provides several different kinds of definitions, but
+all of them establish global bindings, and all can in principle
+be performed by <code>def</code>. In most cases, though, you'll
+use more specialized <strong>defining forms</strong> to create
+the more complex definitions.</p>
+
+<p>As an example, one of the most commonly-used defining forms
+is <code>define method</code>:</p>
+<pre>
+  bard&gt; (define method (swap x y) 
+        (values y x))
+  swap
+
+
+  bard&gt; (swap 1 2)
+  2
+  1
+</pre>
+
+<p><code>define method</code> creates a method and adds it to a
+function. In this example, the function is bound to the
+variable <code>swap</code>. If the function already exists then
+<code>define method</code> adds the method to it. If it doesn't
+exist, <code>define method</code> creates it and binds it to
+the variable.</p>
+
+<p>Bard's defining forms include:</p>
+<pre>
+  def
+  define class
+  define macro
+  define method
+  define protocol
+  define record
+  define tuple
+  define variable
+</pre>
+
+<p>Most Bard programs consist mainly of defining forms, plus
+one or a few expressions that are evaluated to start the
+computations created by the defining forms.</p>
+
+<h2><a id="functions" name="functions"></a><span class=
+"initial_cap">F</span>unctions</h2>
+
+<p>Functions are the heart of Bard. A function is a value that
+can be <strong>applied</strong> to other values to compute one
+or more results. Bard's functions are
+<strong>polymorphic</strong>; in other words, the same function
+can do two or more different things, depending on the arguments
+you pass to it.</p>
+
+<p>A function chooses the code to run by examining the argument
+values you pass to it. You control the code that functions run
+by defining <strong>methods</strong> for different cases.
+Here's a simple example:</p>
+<pre>
+  (define method (recognize x)
+    "I don't know what that is")
+
+  (define method (recognize x)
+    with: ((x &lt;fixnum&gt;))
+    "That's a fixed-size integer.")
+
+  (define method (recognize x)
+    with: ((x &lt;string&gt;))
+    "That's a text string.")
+
+  bard&gt; (recognize 3)
+        "That's a fixed-size integer."
+
+  bard&gt; (recognize "Hello!")
+        "That's a text string."
+
+  bard&gt; (recognize 'foo)
+        "I don't know what that is"
+</pre>
+
+<p>In this example we define three methods on
+<code>recognize</code>, then apply the function to three
+different values. It returns a different result in each case,
+because the types of the arguments passed to it are
+different.</p>
+
+<p>If the function didn't exist when the first <code>define
+method</code> was evaluated, then Bard created it. Here's what
+the <code>swap</code> function looks like when Bard prints
+it:</p>
+<pre>
+  bard&gt; swap
+  (function (swap Anything Anything -&gt; Anything))
+</pre>
+
+<p>A function by itself doesn't know how to do anything but
+look for methods that match its argument types. The printed
+form of <code>swap</code> tells us that it's a function that
+accepts two arguments of type <code>Anything</code> and returns
+one argument of type <code>Anything</code>.
+<code>Anything</code> is a <strong>class</strong>&mdash;an
+abstract type. It's the class of all Bard values; every value
+is an instance of <code>Anything</code>, so <code>swap</code>
+works on any value we give it.</p>
+
+<p>This feature&mdash;Bard's polymorphism&mdash;enables the
+same function to execute different code to handle different
+types of arguments. It means that a single function can operate
+usefully on a variety of different argument types. That in turn
+means that Bard can provide generic functions that implement
+similar operations over many different representations of
+data.</p>
+
+<p>The most obvious example of the use of generic functions is
+in implementing arithmetic: numbers are represented in many
+different ways in computing, but the meaning of addition,
+subtraction, multiplication, and division doesn't change for
+different kinds of numbers; the strategy for combining numbers
+changes, but the meaning remains the same. Polymorphic
+functions make it simple to provide arithmetic operators that
+work across all the different types of numbers that Bard
+supports. It doesn't need special versions of addition for
+different kinds of numbers, and if a new kind of number is
+added to an implementation of the language, supporting it is a
+simple matter of writing new methods for the existing
+functions.</p>
+
+<p>Arithmetic isn't the only use for generic functions, though.
+All of Bard is organized into collections of generic functions
+called <strong>protocols</strong>. Each protocol provides a set
+of related functions that operates on a family of types to
+provide useful computing features. Bard provides protocols with
+names like <code>Calculating</code>, <code>Comparing</code>,
+<code>Mapping</code>, <code>Ordering</code>, and more. Each
+protocol implements a useful library of functions for practical
+purposes, and each function&mdash;because it's
+polymorphic&mdash;can be extended to support new types
+as-needed.</p>
+
+<h2><a id="types" name="types"></a><span class=
+"initial_cap">T</span>ypes</h2>
+
+<p>We've already seen examples of Bard's
+<strong>classes</strong>. Classes in Bard are purely abstract
+types; that is, there are no direct instances of Bard
+classes.</p>
+
+<p>Bard's classes differ from the classes in most other
+object-oriented languages, in that, as pure abstractions, they
+have no data members and no internal structure. In fact, a
+class is nothing more than a name: it names a role played by a
+type in a protocol.</p>
+
+<p>Let's take a look at a very simple protocol, so that we can
+see more concretely what these concepts mean. Here's the
+protocol definition:</p>
+<pre>
+  (define protocol Rational
+    (numerator Ratio -&gt; Integer)
+    (denominator Ratio -&gt; Integer))
+</pre>
+
+<p>This definition establishes a new protocol bound to the
+global variable <code>Rational</code>. It has two functions,
+<code>numerator</code> and <code>denominator</code>. Each of
+the two functions accepts one argument of type
+<code>Ratio</code> and returns a result of type
+<code>Integer</code>.</p>
+
+<p>These types, and the functions as well, are purely abstract.
+We cannot successfully call either function because we haven't
+yet defined any methods for them.</p>
+
+<p><code>Ratio</code> and <code>Integer</code> are also purely
+abstract. It so happens that they are built into Bard, but if
+they weren't, if we had just created them, then they would have
+no members; there would be no instances of either Ratio or
+Integer.</p>
+
+<p>They also have no internal structure and no concrete
+representation. <code>Ratio</code> and <code>Integer</code> are
+just names&mdash;variables, if you like, whose values are
+collections of other types.</p>
+
+<p>So how do other types become members of classes? By being
+bound in method definitions. Let's see how we can make a
+concrete type become a member of a class:</p>
+<pre>
+  (define method (numerator r)
+    with: ((r &lt;fixnum&gt;))
+    r)
+
+  (define method (denomenator r)
+    with: ((r &lt;fixnum&gt;))
+    1)
+</pre>
+
+<p>That's all it takes; now values of type
+<code>&lt;fixnum&gt;</code> are instances of
+<code>Ratio</code>, and <code>&lt;fixnum&gt;</code> itself is a
+member of <code>Ratio</code> because we told Bard how to
+execute the protocol's functions when values of that concrete
+type are passed to it.</p>
+
+<p>Protocols are the connection between Bard's abstract types
+(called <strong>classes</strong>) and its concrete
+representations of data (called <strong>schemas</strong>). Any
+schema can become a member of any class; you just have to
+define suitable methods for a protocol that defines the
+class.</p>
+
+<h2><a id="actors" name="actors"></a><span class=
+"initial_cap">A</span>ctors</h2>
+
+<p>An <strong>actor</strong> in Bard represents a running Bard
+process. Any Bard process can obtain a reference to the
+<code>Actor</code> value that represents itself by calling
+<code>(this)</code>.</p>
+
+<p>Bard can also create new actors by applying the
+<code>make</code> function to an actor schema. If the call
+succeeds, it returns a new instance of <code>Actor</code> that
+represents a new Bard process. The new actor's process may
+share the creating process, or it may inhabit a newly-created
+process on the same computer, or, when called under the right
+circumstances, may represent a newly-created Bard process on a
+remote computer.</p>
+
+<p>Once a Bard process has an actor, it can send messages to it
+using the <code>send</code> function. <code>send</code> accepts
+any Bard value and copies it to the receiving actor in the form
+of a <strong>message</strong>. Bard can even send actors to
+other actors, enabling it to dynamically construct networks of
+communicating processes.</p>
+
+<p>Messages appear in a queue on the receiving actor in
+arbitrary order. The receiving actor can collect inbound
+messages at any time using the <code>receive</code> special
+form. <code>receive</code> supports a pattern-matching syntax
+that enables it to selectively retrieve incoming messages and
+destructure them, binding their parts to lexical variables.</p>
+
+<p>Actors are not implemented in Bard 0.3.5. I expect to have
+them implemented in the 0.4 release.</p>
+
+<h2><a id="language_reference" name=
+"language_reference"></a><span class=
+"initial_cap">L</span>anguage reference</h2>
+
+<p>The previous sections provided a brief overview of the Bard
+language. This section presents a comprehensive reference to
+all the constants, variables, types, and protocols implemented
+in Bard 0.3.5.</p>
+
+<h3><a id="constants" name="constants"></a>Constants</h3>
+
+<p>Items in this section are named constants built into the
+Bard runtime.</p>
+
+<p><strong><code>false</code></strong> &mdash; the Boolean false value</p>
+
+<p><strong><code>nothing</code></strong> &mdash; the absent value; the empty
+collection</p>
+
+<p><strong><code>true</code></strong> &mdash; the Boolean true value</p>
+
+<p><strong><code>undefined</code></strong> &mdash; no value at all</p>
+
+<h3><a id="schemas" name="schemas"></a>Schemas</h3>
+
+<p>This section lists <strong>schemas</strong>. Schemas are
+concrete types; that is, they're types that describe the layout
+of bits and bytes that make up families of values.</p>
+
+<p>Types are themselves values in Bard; you can pass them as
+parameters to functions, return them as values, and store them
+in variables. Some of the schemas listed below are the types of
+types; for example, <code>&lt;base-schema&gt;</code> is the
+type of standard Bard types, and
+<code>&lt;primitive-schema&gt;</code> is the type of the
+lowest-level built-in types used to build the rest of the Bard
+type system.</p>
+
+<p><strong><code>&lt;alist-table&gt;</code></strong><br>
+Tables represented as lists of key/value pairs</p>
+
+<p><strong><code>&lt;base-schema&gt;</code></strong><br>
+Standard types that are built into Bard</p>
+
+<p><strong><code>&lt;bignum&gt;</code></strong><br>
+Unlimited precision integers</p>
+
+<p><strong><code>&lt;boolean&gt;</code></strong><br>
+True and false values</p>
+
+<p><strong><code>&lt;character&gt;</code></strong><br>
+Text characters</p>
+
+<p><strong><code>&lt;class&gt;</code></strong><br>
+Bard classes</p>
+
+<p><strong><code>&lt;fixnum&gt;</code></strong><br>
+Compactly-represented integers</p>
+
+<p><strong><code>&lt;flonum&gt;</code></strong><br>
+Single-precision floating-point numbers</p>
+
+<p><strong><code>&lt;foreign-schema&gt;</code></strong><br>
+Values defined outside of Bard (for example, C data)</p>
+
+<p><strong><code>&lt;function&gt;</code></strong><br>
+Polymorphic applicable objects</p>
+
+<p><strong><code>&lt;generator&gt;</code></strong><br>
+Values that are partly like functions and partly like series. A
+generator is an iterative function that returns values one at a
+time. You can easily take one value at a time, or a certain
+number of values. Generators can return an infinite number of
+values, and provide an easy and efficient way to process
+unbounded streams of data.</p>
+
+<p><strong><code>&lt;interpreted-method&gt;</code></strong><br>
+Concrete procedures</p>
+
+<p><strong><code>&lt;iostream&gt;</code></strong><br>
+Objects that represent data channels. Bard code can read data
+from input streams and write it to output streams.</p>
+
+<p><strong><code>&lt;keyword&gt;</code></strong><br>
+Keywords are like symbols that never represent variables. A
+keyword is a self-evaluating name; evaluating it always
+produces the keyword itself. Bard uses keywords for, among
+other things, labeling fields in tables and arguments in
+functions to help make code more easily understandable.</p>
+
+<p><strong><code>&lt;null&gt;</code></strong><br>
+The only instance of <code>&lt;null&gt;</code> is
+<code>nothing</code>. <code>nothing</code> is the absent value,
+and also the empty collection. It's the only Bard value that is
+both an atom and a sequence.</p>
+
+<p><strong><code>&lt;pair&gt;</code></strong><br>
+A collection with two elements, named <code>left</code> and
+<code>right</code>. <code>&lt;pair&gt;</code> is also used as
+one representation of a list: the <code>left</code> element
+serves as the head of the list and the <code>right</code>
+serves as the tail.</p>
+
+<p><strong><code>&lt;primitive-procedure&gt;</code></strong><br>
+A Bard procedure provided by the core virtual-machine code.</p>
+
+<p><strong><code>&lt;primitive-schema&gt;</code></strong><br>
+A built-in concrete datatype supplied by the Bard runtime.</p>
+
+<p><strong><code>&lt;primitive&gt;</code></strong><br>
+A virtual-machine primitive. VM primitives are relatively
+simple bits of code implementing specific functions or other
+procedures. Bard initializes its working set of primitives from
+a table at startup. Primitives are modular pieces of Bard
+semantics. A &lt;primitive-procedure&gt; object, on the other
+hand, is built into the core logic of the VM.</p>
+
+<p><strong><code>&lt;protocol&gt;</code></strong><br>
+A collection of related functions representing an API that
+defines a set of types. Examples include the
+<code>Comparing</code> and <code>Ordering</code> protocols.</p>
+
+<p><strong><code>&lt;ratnum&gt;</code></strong><br>
+A ratio of integers.</p>
+
+<p><strong><code>&lt;record&gt;</code></strong><br>
+A user-defined concrete datatype consisting of named
+fields.</p>
+
+<p><strong><code>&lt;string&gt;</code></strong><br>
+A text string.</p>
+
+<p><strong><code>&lt;structure-schema&gt;</code></strong><br>
+A concrete, built-in datatype represented by a record
+structure.</p>
+
+<p><strong><code>&lt;symbol&gt;</code></strong><br>
+A name object used to identify variables, among other
+things.</p>
+
+<p><strong><code>&lt;tuple&gt;</code></strong><br>
+A user-defined datatype consisting of a set of fields accessed
+by index.</p>
+
+<p><strong><code>&lt;undefined&gt;</code></strong><br>
+The type of the unique value that represents the inability to
+compute a meaningful value. The value <code>undefined</code>
+is, for example, the value of a variable that has not been
+initialized.</p>
+
+<p><strong><code>&lt;union&gt;</code></strong><br>
+A user-defined concrete datatype that consists of a collection
+of one or more other datatypes. An example of a union type
+might be, for example, an identifier type defined as either an
+integer or a symbol.</p>
+
+<p><strong><code>&lt;url&gt;</code></strong><br>
+A concrete datatype that represents a Uniform Resource Locator.
+Bard uses URLs as a standard way of referring to files and
+other resources stored either locally or in some
+network-accessible filesystem.</p>
+
+<h3><a id="classes" name="classes"></a>Classes</h3>
+
+<p>In Bard, a <strong>class</strong> is an abstract type that
+may be represented by any number of concrete types. You can
+think of a Bard class as a variable that is bound to any type
+that meets the requirements set by a protocol.</p>
+
+<p>Bard classes are quite different from classes in most other
+programming languages. In most languages, a class combines a
+name, a definition of some number of data fields, a set of
+subtype/supertype relationships with other classes, and a set
+of methods.</p>
+
+<p>Bard's system of types works differently. A class is nothing
+more than the name of a role as defined by a protocol. A
+protocol is a defined collection of functions. Each function is
+polymorphic&mdash;it can accept many different types of
+arguments. A function gives names to the types of arguments it
+accepts. For example, the <code>numerator</code> function shown
+in the <a href="#types">Types</a> section called its input
+argument <code>Ratio</code> and its output
+<code>Integer</code>:</p>
+<pre>
+(numerator Ratio -&gt; Integer)
+
+</pre>
+
+<p>This definition means that any type that
+<code>numerator</code> accepts is, by definition, a
+<code>Ratio</code>. When we defined a method for
+<code>numerator</code> that specialized on
+<code>&lt;fixnum&gt;</code>, we were also implicitly asserting
+that <code>&lt;fixnum&gt;</code> was a member of
+<code>Ratio</code>.</p>
+
+<p>Classes, therefore, are extremely simple. A class is just a
+name.</p>
+
+<p>This section lists the classes that are built into Bard
+0.3.5.</p>
+
+<p class="class_list_header"><code>Anything</code></p>
+<p class="class_list_body">The class of all values.</p>
+
+<p class="class_list_header"><code>Applicable</code></p>
+<p class="class_list_body">The class of values that can be applied to arguments.</p>
+
+<p class="class_list_header"><code>Boolean</code></p>
+<p class="class_list_body">The class of values that are true or false.</p>
+
+<p class="class_list_header"><code>Character</code></p>
+<p class="class_list_body">The class of values that are elements of Text objects.</p>
+
+<p class="class_list_header"><code>Class</code></p>
+<p class="class_list_body">The class of values that are classes.</p>
+
+<p class="class_list_header"><code>File</code></p>
+<p class="class_list_body">The class of values that represent files in a filesystem.</p>
+
+<p class="class_list_header"><code>Float</code></p>
+<p class="class_list_body">The class of floating-point numbers.</p>
+
+<p class="class_list_header"><code>Fraction</code></p>
+<p class="class_list_body">The class of fractional numbers.</p>
+
+<p class="class_list_header"><code>Function</code></p>
+<p class="class_list_body">The class of polymorphic functions.</p>
+
+<p class="class_list_header"><code>Generator</code></p>
+<p class="class_list_body">The class of objects that generate sequences of values.</p>
+
+<p class="class_list_header"><code>InputStream</code></p>
+<p class="class_list_body">The class of values that represent data inputs.</p>
+
+<p class="class_list_header"><code>Integer</code></p>
+<p class="class_list_body">The class of whole numbers.</p>
+
+<p class="class_list_header"><code>IODirection</code></p>
+<p class="class_list_body">The class of values that signify input or output.</p>
+
+<p class="class_list_header"><code>IOMode</code></p>
+<p class="class_list_body">The class of values that signify file-access modes (append, overwrite, replace, and so on).</p>
+
+<p class="class_list_header"><code>IOType</code></p>
+<p class="class_list_body">The class of values that signify the types of values that IOStreams can produce or accept.</p>
+
+<p class="class_list_header"><code>Keyword</code></p>
+<p class="class_list_body">The class of names that evaluate to themselves.</p>
+
+<p class="class_list_header"><code>List</code></p>
+<p class="class_list_body">The class of bounded, ordered collections of values.</p>
+
+<p class="class_list_header"><code>Method</code></p>
+<p class="class_list_body">The class of monomorphic procedures.</p>
+
+<p class="class_list_header"><code>Null</code></p>
+<p class="class_list_body">The class of empty collections and absent values.</p>
+
+<p class="class_list_header"><code>Number</code></p>
+<p class="class_list_body">The class of numeric values.</p>
+
+<p class="class_list_header"><code>Orderable</code></p>
+<p class="class_list_body">The class of values that can be sorted into stable order.</p>
+
+<p class="class_list_header"><code>OutputStream</code></p>
+<p class="class_list_body">The class of values that represent data outputs.</p>
+
+<p class="class_list_header"><code>Pair</code></p>
+<p class="class_list_body">The class of associations between one value and another.</p>
+
+<p class="class_list_header"><code>Protocol</code></p>
+<p class="class_list_body">The class of Bard protocols; protocols are lists of related functions that define classes.</p>
+
+<p class="class_list_header"><code>Ratio</code></p>
+<p class="class_list_body">The class of rational numbers.</p>
+
+<p class="class_list_header"><code>Schema</code></p>
+<p class="class_list_body">The class of values that represent concrete types (that is, types that can have direct instances).</p>
+
+<p class="class_list_header"><code>Stream</code></p>
+<p class="class_list_body">The class of objects that can consume or produce unbounded numbers of values.</p>
+
+<p class="class_list_header"><code>Symbol</code></p>
+<p class="class_list_body">The class of names that represent variables.</p>
+
+<p class="class_list_header"><code>Table</code></p>
+<p class="class_list_body">The class of objects that represent sets of key/value mappings.</p>
+
+<p class="class_list_header"><code>Text</code></p>
+<p class="class_list_body">The class of text values.</p>
+
+<p class="class_list_header"><code>Type</code></p>
+<p class="class_list_body">The class of values that represent abstract or concrete datatypes.</p>
+
+<p class="class_list_header"><code>Undefined</code></p>
+<p class="class_list_body">The class of things that are not values, or, if you prefer, the class of values that cannot be dealt with coherently.</p>
+
+<p class="class_list_header"><code>URL</code></p>
+<p class="class_list_body">The class of values that represent Universal Resource Locators.</p>
+
+<h3><a id="protocols" name="special_forms"></a>Special forms</h3>
+
+<p>Bard's special forms and built-in macros provide its basic program
+structure and flow of control. Bard 0.3.5 has 27 special forms,
+counting all the variations of <code>define</code> as a single special
+form, of which a few are not yet implemented.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>add-method!</code></strong></p>
+<pre class="ref_prototype">
+(add-method! <em>fn</em> (<em>type</em> ...) <em>method</em>)
+</pre>
+<p>Adds the method <em>method</em> to the function <em>fn</em> as a
+match for the types given in <em>type</em> ... Subsequent calls
+to <em>fn</em> with arguments matching the supplied types will
+apply <em>method</em>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>and</code></strong></p>
+<pre class="ref_prototype">
+(and <em>expr</em> ...)
+</pre>
+<p>Evaluates the first expression <em>expr</em>. If the result is a
+true value, evaluates the next expression, and continues in the same
+way until either an expression returns a false value, or the last
+expression is evaluated. Returns the last value produced.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>begin</code></strong></p>
+<pre class="ref_prototype">
+(begin <em>expr</em> ...)
+</pre>
+<p>Evaluates the expressions <em>expr</em> ... from left to right,
+returning the value returned by the rightmost expression. Other values
+computed in the process are discarded.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>cond</code></strong></p>
+<pre class="ref_prototype">
+(cond ((<em>test</em>) <em>expr</em> ...) ... [(else: <em>expr</em> ...)])
+</pre>
+<p>Evalutes <em>test</em>; if the value returned is true, evalutes the
+associated expressions <em>expr</em> ... as if in the body of
+a <code>begin</code> form. The the value returned is
+false, <code>cond</code> skips the associated expressions and moves to
+the next clause, repeating the process for each clause in
+the <code>cond</code> form. If an <code>else:</code> clause is
+present, its associated expressions are guaranteed to be executed if
+no previous clause is, because the <code>else:</code> keyword is
+logically true. If there's no <code>else:</code> clause and
+no <em>test</em> form returns true, then <code>cond</code> returns
+nothing.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>def</code></strong></p>
+<pre class="ref_prototype">
+(def <em>var</em> <em>val</em>)
+</pre>
+<p>Assigns <em>val</em> to the global variable <em>var</em>, creating
+the variable if it does not already exist.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+
+<strong><code>define</code></strong></p>
+<pre class="ref_prototype">
+(define <em>variable-type</em> <em>var</em> <em>body</em>)
+</pre>
+<p>Assigns a new value to the global variable <em>var</em>, creating
+the variable if it does not already exist. The value created or
+modified by <code>define</code> depends on <em>variable-type</em> as
+follows:</p>
+
+<pre class="ref_prototype">
+(<strong>define class</strong> <em>cname</em> <em>class-name</em>)
+</pre>
+<p>Defines a class named <em>cname</em> and binds it to <em>cname</em>.</p>
+
+<pre class="ref_prototype">
+(<strong>define macro</strong> (<em>macro-name</em> <em>arg</em> ...) <em>body</em>)
+</pre>
+<p>Defines a macro named <em>macro-name</em>. When <em>macro-name</em>
+is called, Bard expands the macro call, replacing it with the
+expression constructed by <em>body</em> and evaluating the result in
+place of the original macro call.</p>
+
+<pre class="ref_prototype">
+(<strong>define method</strong> (<em>function-name</em> (<em>arg</em>...)) 
+  with: (<em>type-spec</em>...)  
+  <em>body</em>)
+</pre>
+<p>Creates a method and adds it to the
+function <em>function-name</em>, matching arguments whose types are
+given by <em>type-spec</em> .... If the function does not exist,
+then <code>define method</code> creates it. </p>
+<p class="introduce_list">A <em>type-spec</em> make take any of the following forms:<br/>
+<ul>
+<li>Absent - a parameter with no corresponding <em>type-spec</em>
+is treated as if declared to be of
+type <code>Anything</code>.</li>
+<li><code>(<em>var</em> <em>type</em>)</code> - <em>var</em> matches
+values of type <em>type</em>.</li>
+<li><code>(<em>var</em> (exactly <em>expr</em>))</code> - <em>var</em> matches
+values equal to <em>expr</em>.</li>
+</ul></p>
+
+<pre class="ref_prototype">
+(<strong>define protocol</strong> <em>var</em> 
+  (<em>class</em> ... -> <em>class</em> ...) 
+  ...)
+</pre>
+<p>Creates a new protocol and binds it to the variable <em>var</em>,
+creating the variable if it doesn't already exist. In the
+process, <code>define protocol</code> defines the classes given
+by <em>class</em> ..., if they don't already exist. The protocol may
+define any number of functions. Each function may accept and return
+any number of values. <code>define protocol</code> does not create
+methods for the functions it defines.</p>
+
+<pre class="ref_prototype">
+(<strong>define record</strong> <em>record-name</em> <em>field-spec</em> ...)
+</pre>
+<p>Defines a new record type and binds the type object to the global
+variable <em>record-name</em>.</p>
+<p class="introduce_list">A <em>field-spec</em> make take either of the following forms:<br/>
+<ul>
+<li><code><em>var</em></code> - the record has a field named <em>var</em>.</li>
+<li><code>(<em>var</em> default: <em>val</em>)</code> - the record has
+a field named <em>var</em> that is initialized with the
+value <em>val</em>, if no initial value is supplied when an instance
+is created.</li>
+</ul></p>
+
+<pre class="ref_prototype">
+(<strong>define tuple</strong> <em>tuple-name</em> 
+  slot-count: <em>count</em> 
+  [default: <em>expr</em>])
+</pre>
+<p>Defines a new tuple type with <em>count</em> slots, and binds the
+type object to the global
+variable <em>tuple-name</em>. If <em>expr</em> is present then slots
+in newly-created instance of the tuple type will contain the value
+of <em>expr</em>, unless initial values are supplied at creation time;
+otherwise, uninitualized slots will contain <code>nothing</code>.</p>
+
+<pre class="ref_prototype">
+(<strong>define variable</strong> <em>var</em> <em>val</em>)
+</pre>
+<p>Assigns <em>val</em> to the global variable <em>var</em>, creating
+the variable if it does not already exist.</p>
+<p><code>define variable</code> is a synonym for <code>def</code> that
+is useful when you want to make variable definitions stand our more
+prominently.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>ensure</code></strong></p>
+<pre class="ref_prototype">
+(ensure <em>before-form</em>
+        <em>during-form</em>
+        <em>after-form</em>)
+</pre>
+<p>Evaluates the
+expressions <em>before-form</em>, <em>during-form</em>,
+and <em>after-form</em>, ensuring that all three execute, even
+if <em>during-form</em> fails to complete because of an error, a
+nonlocal exit, or some other exceptional
+condition. <code>ensure</code> is useful for ensuring that important
+code executes, even when parts of a procedure are at risk of
+failure. For example, you can use it to make sure that cleanup code
+runs after a risky procedure call, even if the risky procedure
+fails.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>function</code></strong></p>
+<pre class="ref_prototype">
+(function <em>class</em> ... -> <em>class</em> ...)
+</pre>
+<p>Returns a new function that accepts and returns values as specified
+by <em>class</em> ... -> <em>class</em> ...</p>. The new function has
+no methods, belongs to no protocol, and is not necessarily bound to
+any name.
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>generate</code></strong></p>
+<pre class="ref_prototype">
+(generate <em>generator-name</em> 
+    ((<em>var</em> <em>val</em>) ...) 
+  <em>expr</em> ...
+  [(yield <em>return-val</em>)]
+  <em>expr</em> ...
+  [(<em>generator-name</em> <em>expr'</em>)]
+  ...)
+</pre>
+<p>Returns a new generator whose behavior is given by
+the <code>generate</code> expression. <code>generate</code> binds
+<em>generator-name</em> to a local function whose parameters and
+initial inputs are given by ((<em>var</em> <em>val</em>) ...). The
+generator can be executed by calling the function <code>next</code>,
+but it's more common to use the functions of the List protocol to
+retrieve values from a generator.</p>
+<p>Each time <code>next</code> is called, whether directly, or because
+a List function was applied, the generator enters its body, evaluating
+the expressions defined there. If it reaches a <code>yield</code>
+expression, it immediately stops execution and returns the arguments
+passed to <code>yield</code>. If <code>next</code> is called again,
+the generator resumes execution from where it last returned.</p>
+<p>If an expression is encountered that calls <em>generator-name</em>
+as a function, then control resumes from the beginning, binding the
+generator's parameters to the arguments of the <em>generator-name</em>
+call.</p>
+<p><code>generate</code> thus establishes a looping function that can
+return multiple times&mdash;once for each time a <code>yield</code>
+expression is encountered; and it returns the captured state of the
+looping function as a generator object.</p>
+<p>Generators provide a convenient way to represent unbounded
+iterative processes and infinite data structures.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>if</code></strong></p>
+<pre class="ref_prototype">
+(if <em>test</em> <em>then-clause</em> [<em>else-clause</em>])
+</pre>
+<p>Evaluates <em>test</em>. If <em>test</em> returns true
+then <em>if</em> evaluates and returns the value
+of <em>then-clause</em>; otherwise, it evaluates and returns the value
+of <em>else-clause</em>. If no <em>else-clause</em> is supplied then
+when <em>test</em> returns false, <em>if</em>
+returns <code>nothing</code>.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>let</code></strong></p>
+<pre class="ref_prototype">
+(let ((<em>var</em> ... <em>vals</em>)
+      ...)
+  <em>expr</em> ...)
+</pre>
+<p>Establishes a new lexical environment, binding the
+variables <em>var</em>... to initial values <em>vals</em>, then
+evaluates the expressions in <em>expr</em> ... in the resulting
+environment.</p>
+<p>A simple use of <code>let</code> looks like this:</p>
+<pre>
+(let ((x 2)
+      (y (+ x 1)))
+  (* x y))
+</pre>
+<p>This example returns 6; first it binds x to 2, then binds y to x+1,
+then it multiples x and y, yielding 6.</p>
+<p><code>let</code> can also bind multiple variables to the results of
+a function call that returns multiple values:</p>
+<pre>
+(let ((x y (values 2 3)))
+  (* x y))
+</pre>
+<p>This example also returns 6. Note that the last expression in a
+variable-binding form must always be an expression that produces
+values.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>loop</code></strong></p>
+<pre class="ref_prototype">
+(loop <em>loop-name</em> 
+    ((<em>var</em> <em>val</em>) ...) 
+  <em>expr</em> ...
+  [(<em>loop-name</em> <em>expr'</em>)])
+</pre>
+<p>Creates a new lexical environment in which <em>loop-name</em> is
+bound to a looping function whose parameters and initial inputs are
+given by ((<em>var</em> <em>val</em>) ...), then evaluates the
+expressions in <em>expr</em> .... If a call to the
+function <em>loop-name</em> is encountered, control resumes at the
+start of the <code>loop</code> form, but with the parameters bound to
+the values passed in the call. <code>loop</code> makes it convenient
+to express an iterative process as a recursive local function.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>match</code></strong></p>
+<pre class="ref_prototype">
+(match ((<em>pattern</em> <em>expr</em>) ...) 
+  <em>expr</em> ...)
+</pre>
+<p><em>NOTE: <code>match</code> is not yet implemented in Bard
+0.3.5</em></p>
+<p><code>match</code> desconstructs <em>expr</em> using
+pattern-matching, matching variables given in <em>pattern</em> to
+corresponding values in <em>expr</em>, then evaluates the expressions
+in the body of the <code>match</code> in the resulting
+environment.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>method</code></strong></p>
+<pre class="ref_prototype">
+(method ([<em>var</em>] ...)
+  <em>expr</em> ...)
+</pre>
+<p>Returns a new method whose input parameters are given
+by <em>var</em> ... and whose behavior is given by <em>expr</em>
+....</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>not</code></strong></p>
+<pre class="ref_prototype">
+(not <em>expr</em>)
+</pre>
+<p>Returns <code>false</code> if <em>expr</em> returns a true value,
+and <code>true</code> otherwise.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>protocol</code></strong></p>
+<pre class="ref_prototype">
+(protocol 
+  (<em>class</em> ... -> <em>class</em> ...) 
+    ...)
+</pre>
+<p>Returns a new anonymous protocol whose member functions are given
+by (<em>class</em> ... -> <em>class</em> ...) ....</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>quasiquote</code></strong></p>
+<pre class="ref_prototype">
+`<em>expr</em>
+</pre>
+<p>Normally written as "`", <code>quasiquote</code> tells Bard not to
+evaluate its argument expression, but in a way that permits the
+programmer to selectively unquote parts of the expression.</p>
+<p><code>quasiquote</code> is easiest to explain by example:</p>
+<pre class="ref_prototype">
+`(+ 2 3)
+</pre>
+<p>returns the list <code>(+ 2 3)</code>; the input expression is
+returned unchanged.</p>
+<pre class="ref_prototype">
+`(,+ 2 3)
+</pre>
+<p>returns the list <code>(#<primitive +> 2 3)</code>; the first
+element of the expression was unquoted, and so, instead of the
+symbole <code>+</code>, the output contains the value of the variable
+it names.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>quote</code></strong></p>
+<pre class="ref_prototype">
+'<em>expr</em>
+</pre>
+<p>Normally written as "'", <code>quote</code> tells Bard not to
+evaluate its argument expression.</p>
+<p><code>quote</code> is easiest to explain by example:</p>
+<pre class="ref_prototype">
+'(+ 2 3)
+</pre>
+<p>returns the list <code>(+ 2 3)</code>; the input expression is
+returned unchanged. Without the quote, Bard will interpret the
+expression as a function call, and will evaluate it to produce 5.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>receive</code></strong></p>
+<pre class="ref_prototype">
+(receive [<em>pattern</em>])
+</pre>
+<p><em>NOTE: <code>receive</code> is not yet implemented in Bard
+0.3.5</em></p>
+<p>Returns the next message sent to the current Bard process, or,
+if <em>pattern</em> is present, the next message
+matching <em>pattern</em>. Messages are data transferred from one Bard
+process to another (or from a process to itself) using
+the <code>send</code> special form.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>remove-method!</code></strong></p>
+<pre class="ref_prototype">
+(remove-method! <em>fn</em> (<em>type</em> ...))
+</pre>
+<p>Removes the method matching the types given by <em>type</em>
+... from the function <em>fn</em>. Subsequent calls to <em>fn</em>
+will not match <em>type</em>
+....</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>repeat</code></strong></p>
+<pre class="ref_prototype">
+(repeat <em>expr</em>)
+</pre>
+<p>Repeatedly evaluates the
+expression <em>expr</em>. <code>repeat</code> always creates an
+infinite loop. The body of <em>expr</em> can terminate the loop by
+wrapping the <code>repeat</code> with a <code>with-exit</code> form
+and calling the bound exit procedure.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>send</code></strong></p>
+<pre class="ref_prototype">
+(send <em>actor</em> <em>message</em>)
+</pre>
+<p><em>NOTE: <code>send</code> is not yet implemented in Bard
+0.3.5</em></p>
+<p>Sends the value <em>message</em> to the Bard process represented by
+the actor <em>actor</em>. <em>actor</em> may represent a Bard process
+on the same host as the sending process, or on the remote host, or may
+even represent the sending process itself.  <em>message</em> may be
+any Bard value, subject to some platform-specific restrictions on the
+values that can be serialized. Notably, actors can be sent as
+messages, and Bard processes can use messages to dynaically establish
+communication networks.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>set!</code></strong></p>
+<pre class="ref_prototype">
+(set! <em>var</em> <em>val</em>)
+</pre>
+<p>Changes the value bound to <em>var</em>, replacing it
+with <em>val</em>.</p>
+<p><em>NOTE: <code>set!</code> defines some features that are not
+fully implemented in Bard 0.3.5. These features will be added in 0.4.x
+releases, and include support for general assignment (that is,
+assignment to bindings other than simple variables), thread-safety
+guarantees, and support for immutable variables.</em></p>< /div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>time</code></strong></p>
+<pre class="ref_prototype">
+(time <em>expr</em>)
+</pre>
+<p>Evaluates <em>expr</em> and returns the result, printing
+information about the time taken by the evaluation.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>undefine</code></strong></p>
+<pre class="ref_prototype">
+(undefine <em>var</em>)
+</pre>
+<p>Retracts the definition
+of <em>var</em>. After <code>undefine</code> returns, <em>var</em> is
+no longer defined as a global variable.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>unless</code></strong></p>
+<pre class="ref_prototype">
+(unless <em>test</em> <em>expr</em> ...)
+</pre>
+<p>Evaluates <em>test</em>. If it returns a false value
+then <code>unless</code> evaluates <em>expr</em> ... as if they form
+the body of a <code>begin</code> form, returning the last value
+produced; otherwise, <code>unless</code>
+returns <code>nothing</code>.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>values</code></strong></p>
+<pre class="ref_prototype">
+(values <em>expr</em> ...)
+</pre>
+<p>Evaluates the expressions in <em>expr</em> ... from left to right,
+returning all values produced. Bard supports multiple-value returns;
+each value produced is returned as a separate value, rather than as an
+element of a collection. You can use <code>let</code> to bind multiple
+returned values.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>when</code></strong></p>
+<pre class="ref_prototype">
+(when <em>test</em> <em>expr</em> ...)
+</pre>
+<p>Evaluates <em>test</em>. If it returns a true value
+then <code>when</code> evaluates <em>expr</em> ... as if they form
+the body of a <code>begin</code> form, returning the last value
+produced; otherwise, <code>when</code>
+returns <code>nothing</code>.</p>
+</div>
+
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Special form</em>
+<strong><code>with-open-file</code></strong></p>
+<pre class="ref_prototype">
+(with-open-file (<em>var</em> <em>path</em>
+                 [direction: <em>iodirection</em>])
+  <em>expr</em> ...)
+</pre>
+<p>Creates a new lexical environment in which <em>var</em> is bound to
+a stream created by opening the file at <em>path</em>, then evaluates
+the expressions given by <em>expr</em> ... in that environment. When
+control leaves the <code>with-open-file</code> form, whether normally
+or because of an error or nonlocal exit, the file is
+closed. <em>iodirection</em> may be either <code>'input</code>
+or <code>'output</code>.</p>
+</div>
+
+
+
+<h3><a id="protocols" name="protocols"></a>Protocols</h3>
+
+<p>A Bard protocol describes a set of related functions and
+defines the classes of their parameters. This section describes
+the protocols built into Bard 0.3.5 and documents the functions
+they define.</p>
+
+<h4><a id="Addressing" name="Addressing"></a>Addressing</h4>
+
+<p>The <code>Addressing</code> protocol defines functions used
+to locate files and other resources, both in the local
+filesystem and in the larger world of network-accessible
+systems.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url</code></strong></p>
+<pre class="ref_prototype">
+(url {scheme: Name 
+      domain: Name 
+      port: Name 
+      path: Name 
+      query: Name }) -&gt; URL
+</pre>
+<p>Constructs and returns a new <code>URL</code> value whose
+fields are initialized using the values supplied with the
+keyword parameters shown.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url-domain</code></strong></p>
+<pre class="ref_prototype">
+(url-domain URL) -&gt; Name
+</pre>
+<p>Returns the domain element of the URL.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url-path</code></strong></p>
+<pre class="ref_prototype">
+(url-path URL) -&gt; Name
+</pre>
+<p>Returns the path element of the URL.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url-port</code></strong></p>
+<pre class="ref_prototype">
+(url-port URL) -&gt; Name
+</pre>
+<p>Returns the port element of a URL.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url-query</code></strong></p>
+<pre class="ref_prototype">
+(url-query URL) -&gt; Name
+</pre>
+<p>Returns the query element of a URL.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>url-scheme</code></strong></p>
+<pre class="ref_prototype">
+(url-scheme URL) -&gt; Name
+</pre>
+<p>Returns the scheme element of URL.</p>
+</div>
+
+<h4><a id="Applying" name="Applying"></a>Applying</h4>
+
+<p>The <code>Applying</code> protocol defines functions used in
+manipulating other functions&mdash;for example, in applying
+functions to arguments, or creating new functions by combining
+existing ones.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>apply</code></strong></p>
+<pre class="ref_prototype">
+(apply Applicable List) -&gt; Anything &amp;
+</pre>
+<p>Returns the result of applying the Applicable to the List.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>complement</code></strong></p>
+<pre class="ref_prototype">
+(complement Applicable) -&gt; Applicable
+</pre>
+<p>Returns a method of one argument that returns a Boolean. The
+Applicable argument should be a function or method of one argument
+that returns a Boolean. The newly created method returns true when the
+input returns false, and vice versa.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>compose</code></strong></p>
+<pre class="ref_prototype">
+(compose Applicable &amp;) -&gt; Applicable
+</pre>
+<p>Returns a new method that has the same effect as applying the input
+Applicables one after another. In other words, if you
+call <code>((compose a b c) x)</code>, the result is the same as
+calling <code>(a (b (c x)))</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>constantly</code></strong></p>
+<pre class="ref_prototype">
+(constantly Anything) -&gt; Applicable
+</pre>
+<p>Returns a new method that accepts any number of arguments, and
+always returns the input value.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>eval</code></strong></p>
+<pre class="ref_prototype">
+(eval Anything) -&gt; identity &amp;
+</pre>
+<p>Evaluates the input expression and returns the resulting value.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>flip</code></strong></p>
+<pre class="ref_prototype">
+(flip Applicable) -&gt; Applicable
+</pre>
+<p>Accepts an argument that is a method of two arguments. Returns a
+new method that behaves identically to the input, except that it
+accepts its arguments in reverse order. <code>flip</code> is often
+useful when composing or partially applying methods.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>identity</code></strong></p>
+<pre class="ref_prototype">
+(identity Anything) -&gt; Anything
+</pre>
+<p>Returns its input argument. <code>identity</code> is often useful
+in mapping and reducing idioms.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>partial</code></strong></p>
+<pre class="ref_prototype">
+(partial Applicable Anything &amp;) -&gt; Applicable
+</pre>
+<p>Returns a new method that represents the input Applicable partially
+applied. As an example, calling <code>(partial + 1)</code> returns a
+method that adds one to its argument; calling <code>(partial *
+2)</code> returns a function that doubles its argument.</p>
+</div>
+
+<h4><a id="Calculating" name="Calculating"></a>Calculating</h4>
+
+<p>The <code>Calculating</code> protocol defines functions used
+in arithmetic and other ways of combining numbers.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>*</code></strong></p>
+<pre class="ref_prototype">
+(* Number Number &amp;) -&gt; Number
+</pre>
+<p>Returns the product of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>+</code></strong></p>
+<pre class="ref_prototype">
+(+ Number Number &amp;) -&gt; Number
+</pre>
+<p>Returns the sum of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>/</code></strong></p>
+<pre class="ref_prototype">
+(/ Number Number &amp;) -&gt; Number
+</pre>
+<p>Returns the quotient of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>-</code></strong></p>
+<pre class="ref_prototype">
+(- Number Number &amp;) -&gt; Number
+</pre>
+<p>Returns the difference of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>even?</code></strong></p>
+<pre class="ref_prototype">
+(even? Integer) -&gt; Boolean
+</pre>
+<p>Returns true if its argument is an even integer.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>max</code></strong></p>
+<pre class="ref_prototype">
+(max Number &amp;) -&gt; Number
+</pre>
+<p>Returns the greatest of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>min</code></strong></p>
+<pre class="ref_prototype">
+(min Number &amp;) -&gt; Number
+</pre>
+<p>Returns the least of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>odd?</code></strong></p>
+<pre class="ref_prototype">
+(odd? Integer) -&gt; Boolean
+</pre>
+<p>Returns true if its argument is an odd integer.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>random</code></strong></p>
+<pre class="ref_prototype">
+(random Integer) -&gt; Number
+</pre>
+<p>Returns a psuedo-randomly-chosen integer in the range from zero to one less than its argument, where the Integer argument must be a nonnegative integer.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>quotient</code></strong></p>
+<pre class="ref_prototype">
+(quotient Integer Integer) -&gt; Integer
+</pre>
+<p>Returns the integer quotient of its arguments.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>remainder</code></strong></p>
+<pre class="ref_prototype">
+(remainder Integer Integer) -&gt; Integer
+</pre>
+<p>Returns the integer remainder of its arguments.</p>
+</div>
+
+<h4><a id="Comparing" name="Comparing"></a>Comparing</h4>
+
+<p>The <code>Comparing</code> protocol defines functions that
+test whether one value is equivalent to another.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>=</code></strong></p>
+<pre class="ref_prototype">
+(= Anything Anything &amp;) -&gt; Boolean
+</pre>
+<p>Returns true if its arguments are equal. <code>=</code> is a polymorphic function that may be extended by adding methods.</p>
+</div>
+
+<h4><a id="Converting" name="Converting"></a>Converting</h4>
+
+<p>The <code>Converting</code> protocol defines functions that
+convert one type to another by creating new values from old
+ones.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>as</code></strong></p>
+<pre class="ref_prototype">
+(as Type Anything) -&gt; Anything
+</pre>
+<p>Converts its second argument to a value of the type given in its first. If the Type argument is identical to the Anything argument's concrete type then the value may be returned as if by <code>identity</code>; otherwise, a new value that is an instance of Type, and which is equivalent to the input value, is constructed and returned. <code>as</code> is a polymoprhic function that is intended to be extended by adding methods, in order to provide a convenient utility for converting values from one type to another. Bard provides numerous built-in methods for <code>as</code> on its built-in types.</p>
+</div>
+
+<h4><a id="Creating" name="Creating"></a>Creating</h4>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>make</code></strong></p>
+<pre class="ref_prototype">
+(make Type &amp; {}) -&gt; Anything
+</pre>
+<p>Constructs and returns a new instance of Type. The table argument signifies that <code>make</code> accepts many different keyword arguments, which vary according to Type, and which are used to initialize the newly-constructed value.</p>
+<p><em>NOTE: the implementation of <code>make</code> is incomplete in Bard 0.3.5; releases in the 0.4.x series will add additional features providing more extensive control over how values are constructed and initialized.</em></p>
+</div>
+
+<p>The <code>Creating</code> protocol defines functions used to
+construct new values.</p>
+
+<h4><a id="Generating" name="Generating"></a>Generating</h4>
+
+<p>The <code>Generating</code> protocol defines functions that
+can turn functions into sequences of values. A
+<strong>generator</strong> is an object that behaves like a
+stream or sequence, producing values by repeatedly executing a
+function.</p>
+
+<p>Generators cache the values produced, so that retrieving the first N values produced by a generator incurs the cost of computing them only the first time.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>cycle</code></strong></p>
+<pre class="ref_prototype">
+(cycle Anything) -&gt; Generator
+</pre>
+<p>Returns a generator that produces the argument to <code>cycle</code> on every <code>yield</code>. You can think of the value constructed by <code>cycle</code> as an infinite list of values identical to its argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>generated-count</code></strong></p>
+<pre class="ref_prototype">
+(generated-count Generator) -&gt; Integer
+</pre>
+<p>Returns the count of values computed and cached so far by the generator.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>generated-values</code></strong></p>
+<pre class="ref_prototype">
+(generated-values Generator) -&gt; List
+</pre>
+<p>Returns the cached list of values produced so far by the generator.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>iterate</code></strong></p>
+<pre class="ref_prototype">
+(iterate Applicable Anything) -&gt; Generator
+</pre>
+<p>Given an Applicable argument <em>fn</em> and an argument <em>val</em>, <code>iterate</code> first applies <em>fn</em> to <em>val</em>, then to <code>(<em>fn</em> <em>val</em>)</code>, then to <code>(<em>fn</em> (<em>fn</em> <em>val</em>))</code>, and so on without limit. Each time <code>next</code> is applied to the returned generator, the next value in this sequence is produced.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>next</code></strong></p>
+<pre class="ref_prototype">
+(next Generator) -&gt; Anything
+</pre>
+<p>Returns the next value from the generator.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>next-n</code></strong></p>
+<pre class="ref_prototype">
+(next-n Generator Integer) -&gt; List
+</pre>
+<p>Returns a list of the next N values from the generator.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>range-from</code></strong></p>
+<pre class="ref_prototype">
+(range-from Integer) -&gt; Generator
+</pre>
+<p>Returns a new generator that produces integers beginning with the Integer argument, and increasing in value by one on each call to <code>next</code>.</p>
+</div>
+
+<h4><a id="Listing" name="Listing"></a>Listing</h4>
+
+<p>The <code>Listing</code> protocol defines functions that
+arrange values into ordered sequences, and that manipulate such
+sequences.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>add-first</code></strong></p>
+<pre class="ref_prototype">
+(add-first Anything List) -&gt; List
+</pre>
+<p>Returns a new list whose tail is the same as the second argument, and whose head is the first argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>add-last</code></strong></p>
+<pre class="ref_prototype">
+(add-last List Anything) -&gt; List
+</pre>
+<p>Returns a new list containing the elements of the first argument, plus the second argument added at the end.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>any</code></strong></p>
+<pre class="ref_prototype">
+(any List) -&gt; Anything
+</pre>
+<p>Returns an arbitrary element from the List argument. Generally speaking, the returned element is chosen psuedo-randomly, but other options are allowed for cases where a random choice is impossible or inconvenient (for example, in the case of an unbounded list or stream).</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>append</code></strong></p>
+<pre class="ref_prototype">
+(append List List) -&gt; List
+</pre>
+<p>Returns a new list whose elements are those of the first argument followed by those of the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>by</code></strong></p>
+<pre class="ref_prototype">
+(by Integer List) -&gt; List
+</pre>
+<p>Returns a list of lists, where each sublist is composed of an number of elements from the second argument. The number of elements in each sublist is equal to the first argument, except possibly the last, which may hold fewer elements.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>drop</code></strong></p>
+<pre class="ref_prototype">
+(drop Integer List) -&gt; List
+</pre>
+<p>Returns the elements of the second argument less the first N, where N equals the first argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>element</code></strong></p>
+<pre class="ref_prototype">
+(element List Integer) -&gt; Anything
+</pre>
+<p>Returns the element of the list at the index given by the integer argument. The index is zero-based.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>empty?</code></strong></p>
+<pre class="ref_prototype">
+(empty? List) -&gt; Boolean
+</pre>
+<p>Returns true if the count of elements in the list is zero.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>filter</code></strong></p>
+<pre class="ref_prototype">
+(filter Applicable List) -&gt; List
+</pre>
+<p>Returns a new list containing zero or more elements of the second argument, in the same order that they appear in the input list. The elements of the new list are chosen by applying the applicable argument to each element; when the applicable returns true, the element is added to the output; when it returns false, the element is discarded.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>first</code></strong></p>
+<pre class="ref_prototype">
+(first List) -&gt; Anything
+</pre>
+<p>Returns the head of the list (that is, element zero).</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>last</code></strong></p>
+<pre class="ref_prototype">
+(last List) -&gt; Anything
+</pre>
+<p>Returns the last element of the list.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>length</code></strong></p>
+<pre class="ref_prototype">
+(length List) -&gt; Integer
+</pre>
+<p>Returns a count of elements in the list.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>list</code></strong></p>
+<pre class="ref_prototype">
+(list &amp;) -&gt; List
+</pre>
+<p>Constructs a new list whose elements are the arguments to <code>list</code>, in the same order as their appearance in the argument list. The concrete type of the new list is not specified.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>map</code></strong></p>
+<pre class="ref_prototype">
+(map Applicable List &amp;) -&gt; List
+</pre>
+<p>Returns a new list containing one element for each element in the input lists. The number of input lists must be equal to the number of arguments accepted by the Applicable argument. The output list is constructed by taking an element from each of the input lists and applying the applicable argument to them, then repeating with the tails of the input lists until at least one of them is empty.</p>
+<p>For example:</p>
+<pre>
+bard> (map odd? [0 1 2 3])
+(false true false true)
+
+bard> (map + [1 1 1] [2 3 4])
+(3 4 5)
+</pre>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>member?</code></strong></p>
+<pre class="ref_prototype">
+(member? Anything List) -&gt; Boolean
+</pre>
+<p>Returns true if the list argument contains an element equal to the first argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>next-last</code></strong></p>
+<pre class="ref_prototype">
+(next-last List) -&gt; Anything
+</pre>
+<p>Returns the element just before the last element in the list.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>partition</code></strong></p>
+<pre class="ref_prototype">
+(partition [Applicable &amp;] List) -&gt; List &amp;
+</pre>
+<p>Applies zero or more functions to the list argument, yielding zero or more values as results. If no function arguments are passed, then the list argument is returned unchanged. If a single function is supplied then the result of <code>partition</code> is the same as the result of <code>map</code>.</p>
+<p>If more than one function is supplied then the number of outputs is the same as the number of functions. Each output is a list produced by applying the corresponding function to each element of the input list.</p>
+<p>For example:</p>
+<pre>
+bard> (partition [1 2 3])
+(1 2 3)
+
+bard> (partition odd? [1 2 3])
+(true false true)
+
+bard> (partition odd? even? [1 2 3])
+(true false true)
+(false true false)
+</pre>
+
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>position</code></strong></p>
+<pre class="ref_prototype">
+(position Anything List) -&gt; (union Integer nothing)
+</pre>
+<p>Returns the index of the first element of the list argument equal to the first argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>position-if</code></strong></p>
+<pre class="ref_prototype">
+(position-if Applicable List) -&gt; (union Integer nothing)
+</pre>
+<p>Returns the index of the first argument of the list for which applying the Applicable argument returns true.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>range</code></strong></p>
+<pre class="ref_prototype">
+(range Integer Integer) -&gt; List
+</pre>
+<p>Returns a list of integers beginning with the first argument and ending with one less than the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>reduce</code></strong></p>
+<pre class="ref_prototype">
+(reduce Applicable List) -&gt; Anything
+</pre>
+<p>Combines the elements of the List argument using the Applicable argument. The Applicable is applied to the first and second arguments to produce a value; that value is then combined in the same way with the third argument; that process is repeated with the fourth and fifth and so on, until all elements of the List argument have been consumed. The last value produced is returned.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>rest</code></strong></p>
+<pre class="ref_prototype">
+(rest List) -&gt; List
+</pre>
+<p>Returns the tail of the List argument&mdash;that is, all elements except the first.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>reverse</code></strong></p>
+<pre class="ref_prototype">
+(reverse List) -&gt; List
+</pre>
+<p>Returns the elements of the input list in revers order.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>second</code></strong></p>
+<pre class="ref_prototype">
+(second List) -&gt; Anything
+</pre>
+<p>Returns the second element of the list.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>some?</code></strong></p>
+<pre class="ref_prototype">
+(some? Applicable List) -&gt; Anything
+</pre>
+<p>Returns the first element of the list for which applying the Applicable to the element produces a true value.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>take</code></strong></p>
+<pre class="ref_prototype">
+(take Integer List) -&gt; List
+</pre>
+<p>Returns the first N elements of the list, where N equals the Integer argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>take-by</code></strong></p>
+<pre class="ref_prototype">
+(take-by Integer Integer List) -&gt; List
+</pre>
+<p>Returns a list of lists, each of which contains elements from the input list. Each sublist of the output contains N elements, where N equals the first argument, except possibly the last sublist, which may contain fewer. Each sublist is taken from a tail of the input list obtained by dropping K elements, where K equals the second argument. Thus <code>(take-by 1 1 [0 1 2 3])</code> yields <code>((1)(2)(3))</code>, but <code>(take-by 2 1 [0 1 2 3])</code> yields <code>((1 2)(2 3)(3))</code></p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>take-one</code></strong></p>
+<pre class="ref_prototype">
+(take-one List) -&gt; Anything
+</pre>
+<p>Returns a list containing the first element of the list.</p>
+</div>
+
+<h4><a id="Mapping" name="Mapping"></a>Mapping</h4>
+
+<p>The <code>Mapping</code> protocol defines functions that
+arrange values into tables of key/value pairs, or
+<strong>mappings</strong>.</p>
+
+<p>In Bard, everything is a table; that is, every value except <code>undefined</code> is an instance of the <code>Table</code> class. In other words, the <code>Mapping</code> protocol's functions can be used with every value. Some values are instances of concrete types specifically designed to represent sets of key/value mappings.</p> 
+
+<p>Using <code>get-key</code> or <code>put-key</code> on these values does exactly what you might expect: it returns or updates the value associated with the supplied key. The same goes for other <code>Mapping</code> protocol functions: they behave just as we expect them to behave with finite maps such as hash tables or association lists.</p>
+
+<p>Using <code>get-key</code> or <code>put-key</code> with a sequence or a stream behaves as if the object is a set of key/value mappings where the values are the elements of the sequence, and the keys are zero-based indexes into the sequence.</p>
+
+<p>Using <code>Mapping</code> protocol functions with other values behaves a little differently: <code>get-key</code> and other retrieval functions behave as if the value is an empty table, unless you use the key <code>value:</code>; the value associated with the key <code>value:</code> is always the object itself. Using update functions, such as <code>put-key</code>, creates a new <code>Table</code> value whose mappings are the supplied key and value, plus the key <code>value:</code> mapped to the object itself.</p>
+
+<p>Any Bard value except <code>undefined</code> may be the value associated with a key. Any Bard value except <code>undefined</code> or <code>nothing</code> may be a key.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>get-key</code></strong></p>
+<pre class="ref_prototype">
+(get-key Table Anything) -&gt; Anything
+</pre>
+<p>Returns the value associated in T with the key K, where T is the Table argument and K is the Anything argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>keys</code></strong></p>
+<pre class="ref_prototype">
+(keys Table) -&gt; List
+</pre>
+<p>Returns all keys in the Table. If the Table is an unbounded sequence, such as a generator or a stream, then the returned List may also be unbounded.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>merge</code></strong></p>
+<pre class="ref_prototype">
+(merge Table Table) -&gt; Table
+</pre>
+<p>Returns a newly-create table whose mappings are those of the first argument combined with those of the second. For each key/value mapping in the second table whose key is equal to a mapping in the first, a single mapping is placed in the output, mapped to the value from the second table; in other words, mappings in the second table override or shadow those in the first.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>put-key</code></strong></p>
+<pre class="ref_prototype">
+(put-key Table Anything Anything) -&gt; Table
+</pre>
+<p>Returns a new table whose mappings consist of those from the first argument, plus a new mapping whose key is the second argument and whose value is the third. If the key already exists in the input table then its value is replaced in the output by the third argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>table</code></strong></p>
+<pre class="ref_prototype">
+(table Anything Anything &amp;) -&gt; Table
+</pre>
+<p>Returns a newly-create table value constructed from the input arguments. The first argument is a key; the second is the value associated with that key; the third argument is another key; and so on, converting all arguments to keys and associated values. If the number of arguments is not even, Bard signals an error.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>vals</code></strong></p>
+<pre class="ref_prototype">
+(vals Table) -&gt; List
+</pre>
+<p>Returns the values from the table. If the table argument is a List or Stream, then the returned value may be identical to the input.</p>
+</div>
+
+<h4><a id="Ordering" name="Ordering"></a>Ordering</h4>
+
+<p>The <code>Ordering</code> protocol defines functions used to
+sort values into stable orders.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>&lt;</code></strong></p>
+<pre class="ref_prototype">
+(&lt; Orderable Orderable) -&gt; Boolean
+</pre>
+<p>Returns true if the first argument is less than the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>&lt;=</code></strong></p>
+<pre class="ref_prototype">
+(&lt;= Orderable Orderable) -&gt; Boolean
+</pre>
+<p>Returns true if the first argument is less than or equal to the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>&gt;</code></strong></p>
+<pre class="ref_prototype">
+(&gt; Orderable Orderable) -&gt; Boolean
+</pre>
+<p>Returns true if the first argument is greater than the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>&gt;=</code></strong></p>
+<pre class="ref_prototype">
+(&gt;= Orderable Orderable) -&gt; Boolean
+</pre>
+<p>Returns true if the first argument is greater than or equal to the second.</p>
+</div>
+
+<h4><a id="Pairing" name="Pairing"></a>Pairing</h4>
+
+<p>The <code>Pairing</code> protocol defines functions for
+pairing one object with another, and for extracting the objects
+from such pairs.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>left</code></strong></p>
+<pre class="ref_prototype">
+(left Pair) -&gt; Anything
+</pre>
+<p>Returns the left (first) argument of the pair.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>pair</code></strong></p>
+<pre class="ref_prototype">
+(pair Anything Anything) -&gt; Pair
+</pre>
+<p>Returns a new <code>Pair</code> instance whose left element is the first argument, and whose right is the second.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>right</code></strong></p>
+<pre class="ref_prototype">
+(right Pair) -&gt; Anything
+</pre>
+<p>Returns the right (second) argument of the pair.</p>
+</div>
+
+<h4><a id="Reading" name="Reading"></a>Reading</h4>
+
+<p>The <code>Reading</code> protocol defines functions for
+taking values from streams. That includes, for example, reading
+text or binary data from files or from network connections.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>current-input</code></strong></p>
+<pre class="ref_prototype">
+(current-input) -&gt; InputStream
+</pre>
+<p>Returns the <code>InputStream</code> value representing the Bard process' current input.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>load</code></strong></p>
+<pre class="ref_prototype">
+(load URL) -&gt; Anything &amp;
+</pre>
+<p>Opens an <code>InputStream</code> on the argument and reads Bard expressions from it, evaluating each expression as it is read, until end-of-file is reached.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>read</code></strong></p>
+<pre class="ref_prototype">
+(read InputStream) -&gt; Anything &amp;
+</pre>
+<p>Reads a Bard value from the input stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>read-file</code></strong></p>
+<pre class="ref_prototype">
+(read-file URL) -&gt; List
+</pre>
+<p>Reads the entire contents of the file named by the argument, returning the data as a List. The returned List may be any of several concrete types, including an array of bytes, a text string, or a list of Bard values.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>read-line</code></strong></p>
+<pre class="ref_prototype">
+(read-line InputStream) -&gt; Text
+</pre>
+<p>Reads one line of text from the argument.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>read-lines</code></strong></p>
+<pre class="ref_prototype">
+(read-lines (union InputStream URL)) -&gt; List
+</pre>
+<p>Reads all lines of text from the argument, which may be either an input stream or the name of a file. The produced lines are returned as a list of <code>Text</code> values.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>read-text</code></strong></p>
+<pre class="ref_prototype">
+(read-text (union InputStream URL)) -&gt; Text
+</pre>
+<p>Returns the entire contents of the input as a text string. The input may be an input stream or the name of a file.</p>
+</div>
+
+<h4><a id="Streaming" name="Streaming"></a>Streaming</h4>
+
+<p>The <code>Streaming</code> protocol defines functions for
+creating streams&mdash;objects similar to sequences, but which
+deliver their values one at a time, and that may be of
+unbounded length.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>contents</code></strong></p>
+<pre class="ref_prototype">
+(contents InputStream) -&gt; List
+</pre>
+<p>Returns a generator that yields the contents of the input stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>lines</code></strong></p>
+<pre class="ref_prototype">
+(lines InputStream) -&gt; Generator
+</pre>
+<p>Returns a generator that yields all lines of text in the input stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>put</code></strong></p>
+<pre class="ref_prototype">
+(put Anything OutputStream) -&gt; 
+</pre>
+<p>Serializes the first argument and writes it to the output stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>stream-direction</code></strong></p>
+<pre class="ref_prototype">
+(stream-direction Stream) -&gt; IODirection
+</pre>
+<p>Returns <code>'input</code> if the stream is an <code>InputStream</code>, and <code>'output</code> if it's an <code>OutputStream</code>; signals an error otherwise.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>stream-type</code></strong></p>
+<pre class="ref_prototype">
+(stream-type Stream) -&gt; IOType
+</pre>
+<p>Returns the type of values produced or accepted by the stream.</p>
+</div>
+
+<h4><a id="System" name="System"></a>System</h4>
+
+<p>The <code>System</code> protocol defines functions for
+getting and setting system parameters, for collecting
+information about the host system, and for other system-related
+tasks.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>error</code></strong></p>
+<pre class="ref_prototype">
+(error Anything) -&gt; 
+</pre>
+<p>Signals an error. Any value may be passed as an argument.</p>
+<p><em>NOTE: an extended error- and condition-handling system will be added in the 0.4.x series of releases. The error-reporting system in 0.3.5 is rudimentary.</em></p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>exit</code></strong></p>
+<pre class="ref_prototype">
+(exit) -&gt; 
+</pre>
+<p>Terminates Bard.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>gc</code></strong></p>
+<pre class="ref_prototype">
+(gc) -&gt; 
+</pre>
+<p>Triggers Bard's garbage collector to reclaim unused storage.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>gensym</code></strong></p>
+<pre class="ref_prototype">
+(gensym) -&gt; Symbol
+</pre>
+<p>Returns a newly-created symbol whose name is unique in the currently-running process.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>quit</code></strong></p>
+<pre class="ref_prototype">
+(quit) -&gt; 
+</pre>
+<p>Terminates Bard.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>room</code></strong></p>
+<pre class="ref_prototype">
+(room) -&gt; 
+</pre>
+<p>Triggers Bard's garbage collector and reports statistics about memory used.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>uuid</code></strong></p>
+<pre class="ref_prototype">
+(uuid) -&gt; Symbol
+</pre>
+<p>Returns a newly-create symbol that is reasonably likely to be universally unique.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>version</code></strong></p>
+<pre class="ref_prototype">
+(version) -&gt; Text
+</pre>
+<p>Returns the version string of the Bard interpreter.</p>
+</div>
+
+<h4><a id="TextProcessing" name=
+"TextProcessing"></a>TextProcessing</h4>
+
+<p>The <code>TextProcessing</code> protocol defines functions
+used in processing text.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>join-text</code></strong></p>
+<pre class="ref_prototype">
+(join-text Text List) -&gt; Text
+</pre>
+<p>Returns a new <code>Text</code> value created by joining the elements of the list, using the first argument as a cupola between elements.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Function</em>
+<strong><code>split-text</code></strong></p>
+<pre class="ref_prototype">
+(split-text Character Text) -&gt; List
+</pre>
+<p>Splits the <code>Text</code> argument at each occurrence of the <code>Character argument</code>, returning the resulting pieces in a list.</p>
+</div>
+
+<h4><a id="Typing" name="Typing"></a>Typing</h4>
+
+<p>The <code>Typing</code> protocol defines functions used to
+discriminate values according to their types.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>applicable?</code></strong></p>
+<pre class="ref_prototype">
+(applicable?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Applicable</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>boolean?</code></strong></p>
+<pre class="ref_prototype">
+(boolean?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Boolean</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>char?</code></strong></p>
+<pre class="ref_prototype">
+(char?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Character</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>false?</code></strong></p>
+<pre class="ref_prototype">
+(false?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is logically false. Logically false values include <code>false</code> and <code>nothing</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>float?</code></strong></p>
+<pre class="ref_prototype">
+(float?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Float</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>foreign-value?</code></strong></p>
+<pre class="ref_prototype">
+(foreign-value?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is a foreign value (that is, a value allocated on the C heap).</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>function?</code></strong></p>
+<pre class="ref_prototype">
+(function?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Function</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>input-stream?</code></strong></p>
+<pre class="ref_prototype">
+(input-stream?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an input stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>integer?</code></strong></p>
+<pre class="ref_prototype">
+(integer?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>Integer</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>interpreted-method?</code></strong></p>
+<pre class="ref_prototype">
+(interpreted-method?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>&lt;interpreted-method&gt;</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>iostream?</code></strong></p>
+<pre class="ref_prototype">
+(iostream?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an input or output stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>list?</code></strong></p>
+<pre class="ref_prototype">
+(list?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an instance of <code>List</code>.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>list-protocols</code></strong></p>
+<pre class="ref_prototype">
+(list-protocols) -&gt; List
+</pre>
+<p>Returns a list of the names of all currently-defined protocols.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>output-stream?</code></strong></p>
+<pre class="ref_prototype">
+(output-stream?) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is an output stream.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>protocols</code></strong></p>
+<pre class="ref_prototype">
+(protocols) -&gt; List
+</pre>
+<p>Returns a list of all currently-defined protocols.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>singleton</code></strong></p>
+<pre class="ref_prototype">
+(singleton Anything) -&gt; Singleton
+</pre>
+<p>Returns a <code>Singleton</code> object that represents the singleton type of the input value.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>true?</code></strong></p>
+<pre class="ref_prototype">
+(true? Anything) -&gt; Boolean
+</pre>
+<p>Returns true if the argument is logically true. Logically true values include all Bard values that are not logically false, except for <code>undefined</code>.</p>
+</div>
+
+<h4><a id="Writing" name="Writing"></a>Writing</h4>
+
+<p>The <code>Writing</code> protocol defines functions for
+inserting values into streams. That includes, for example,
+writing data to files or network connections.</p>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>current-output</code></strong></p>
+<pre class="ref_prototype">
+(current-output) -&gt; OutputStream
+</pre>yes
+<p>Returns the <code>OutputStream</code> value representing the Bard process' current output.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>display</code></strong></p>
+<pre class="ref_prototype">
+(display Anything) -&gt; 
+</pre>
+<p>Writes a human-readable representation of the input value to the current output.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>newline</code></strong></p>
+<pre class="ref_prototype">
+(newline) -&gt; 
+</pre>
+<p></p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>show</code></strong></p>
+<pre class="ref_prototype">
+(show Anything) -&gt; Text
+</pre>
+<p>Writes a new line to the current output.</p>
+</div>
+
+<div class="protocol_ref">
+<p class="ref_title"><em>Primitive</em>
+<strong><code>write</code></strong></p>
+<pre class="ref_prototype">
+(write Anything OutputStream) -&gt; 
+</pre>
+<p>Writes a Bard-readable representation of the input value to the supplied output stream.</p>
+</div>
+
+<p></p>
+<p></p>
+<p></p>
+
+</div>
+</body>
+</html>

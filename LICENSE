@@ -1,5 +1,8 @@
 Bard License: all files included with Bard
-are Copyright 2012 mikel evins
+are Copyright 2013 mikel evins
+
+Bard is developed with the Gambit-C Scheme compiler
+Copyright Marc Feeley
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
