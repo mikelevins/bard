@@ -22,7 +22,7 @@
 ;;; var 0 is currently a placeholder
 ;;; will replace with bard globals
 (define $globals 
-  (let ((env (make-env))
+  (let ((env (null-env))
         (gframe (make-frame '(#f))))
     (push-frame gframe env)))
 
@@ -32,7 +32,7 @@
 
 (define $program #f)
 (define $pc 0)
-(define $vals (make-stack 1024)) ; number of arguments/return values
+(define $vals (make-stack 1024)) ; size = max number of arguments/return values
 (define $env $globals)
 (define $haltfn #f) ; set by vm startup
 

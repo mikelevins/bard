@@ -32,32 +32,19 @@
 ;;; for now we go with lists of vectors for the sake of the simplicity
 ;;; and avoiding the need to copy whole environment stacks.
 
-(define-type env 
-  id: 480244D8-A0E8-456A-9B30-2E2D2167B726
-  constructor: %make-env frames)
-
-(define (make-env)(%make-env '()))
+(define (null-env) '())
 
 (define (make-frame vals)
   (list->vector vals))
 
-(define (push-frame frame env)
-  (%make-env (cons frame env)))
+(define (push-frame frame env)(cons frame env))
 
-(define (pop-frame env)
-  (cdr (env-frames env)))
+(define (pop-frame env)(values (car env)(cdr env)))
 
 (define (env-ref env i j)
-  (if (zero? i)
-      (vector-ref (car (env-frames env)) j)
-      (env-ref (car (env-frames env))
-               (- i 1))))
+  (vector-ref (list-ref env i) j))
 
 (define (env-set! env i j val)
-  (if (zero? i)
-      (vector-set! (car (env-frames env)) j val)
-      (env-set! (car (env-frames env))
-                (- i 1)
-                val)))
+  (vector-set! (list-ref env i) j val))
 
 
