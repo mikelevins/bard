@@ -1,0 +1,98 @@
+Schema
+
+A schema is a concrete layout of data. Schemas don't support
+inheritance, but you can define a new schema by including existing
+schemas. Doing so just means that the fields from the included schema
+are laid out in the new one the same way with the same names. You can
+rename the fields at the time the new schema is created.
+
+By convention, the name of a schema is written in lower-case enclosed
+in angle brackets:
+
+  <fixnum>
+  <string>
+
+Schema names are module variables.
+
+Protocol
+
+A protocol is a set of (generic) functions.
+
+Function names are module variables. A given function may belong to
+more than one protocol, but only if the function and class definitions
+do not contradict one another.
+
+One protocol may extend another protocol, in which case it inherits
+all the functions of the super-protocol, and may add additional ones.
+
+Class
+
+a class is an abstract type that identifies all the schemas that may
+appear at a particular position in the inputs or outputs of a
+function. For example, consider the generic function foo:
+
+  (foo Shape Size Color) => (Shape Color)
+
+foo accepts three arguments, which must be of classes Shape, Size, and
+Color, respectively. It returns two values which will be of classes
+Shape and Color.
+
+Shape, Size, and Color may be any schemas, as long as methods are
+defined on foo for those schemas.
+
+By default, classes are disjoint; they support no subclass/superclass
+relations, with the sole exception that Anything is the direct
+superclass of all classes.
+
+Class names are variables whose scope is the defining protocol. If
+protocol A and protocol B both define class Foo, the defined classes
+are distinct; they're not the same Foo.
+
+It is method definitions that define the schemas that belong to a
+class. If we have the protocol:
+
+  (protocol Shapes
+    (foo Shape Size Color) => (Shape Color))
+
+...and the method definition:
+
+  (define-function (foo (shape <simple-vector>)(size <fixnum>)(color <fixnum>))
+    ...)
+
+...then we know that <simple-vector> belongs to Shapes/Shape and <fixnum>
+belongs to both Shapes/Size and Shapes/Color.
+
+If a method definition establishes that some schema belongs to a
+class, but other methods in the protocol mention the same class, but
+lack method definitions for that schema, then Bard will warn that the
+protocol is incompletely defined.
+
+A protocol may optionally establish superclass/subclass relations in a
+taxonomy: 
+
+  (protocol Streams
+    (taxonomy
+      (InputStream Stream)
+      (OutputStream Stream)
+      (IOStream InputStream OutputStream))
+    (open Path) => (Stream)
+    (read InputStream) => (Anything)
+    (write OutputStream) => (OutputStream))
+
+A protocol's taxonomy may also be updated at any time using
+define-taxonomy.
+
+If a Protocol defines a taxonomy then Bard uses the C3 class
+linearization algorithm to linearize the Protocol's classes wth
+respect to that taxonomy.
+
+The scope of a taxonomy is the defining Protocol. Taxonomies defined
+by different protocols are distinct and have no influence on the
+linearization strategies of other protocols.
+
+For linearization purposes, taxonomic relations always treat Anything
+as the least specific class. It is an error to try to give Anything a
+superclass.
+
+
+

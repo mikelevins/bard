@@ -1,0 +1,1286 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Menlo-Italic;
+\f3\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww24480\viewh27400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs48 \cf0 Bard 0.2.4 Quick Reference\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 Copyright 2012 by mikel evins\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 I. Running Bard\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Run the Bard interpreter by typing the name of the executable "bard" at the terminal's shell prompt:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 $ cd bard\
+$ ./bard\
+\
+Bard 0.2.4\
+\
+bard>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+To exit the interpreter, evaluate one of these expressions:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> (exit)\
+bard> (quit)\
+bard> quit:\
+bard> q:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+All of these expressions have the same effect: they terminate the interpreter and return control to the shell.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 II. Literal Data Expressions\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Bard provides a small but useful set of built-in datatypes. Each built-in datatype has a corresponding literal syntax that can be used to construct values of that type. Bard uses literal syntax to print values produced by evaluations.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Undefined
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 undefined\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	A value that represents the absence of a defined value. The value of an unbound variable.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Null
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 nothing\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	A value that represents nothing. A synonym for the empty list, or the empty set.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Boolean
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 true
+\f0 \
+
+\f1 false
+\f0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Numbers
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 5\
+1.2\
+888888888888\
+-12\
+2/3\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Text Characters
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 #\\C\
+#\\space\
+#\\u0041\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Symbols
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 Foo
+\f0 \
+	A symbol is a named datum. Any two symbols that are spelled the same way are identical. Bard uses symbols as the names of variables, and if you enter a symbol at the Bard prompt, the evaluator attempts to find the value of a variable of that name, signaling an error if no such variable is defined. If you want to use the symbol itself (rather than the value of the named variable) as a datum, you can do so by quoting the symbol:\
+\
+
+\f1 'Foo\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Keywords
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bar:
+\f0 \
+	A keyword is exactly like a symbol, except that it is never used as the name of a variable. The value of a keyword is always the keyword itself, making keywords convenient to use as symbolic data, or as named keys in frames.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Text
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 "Foo, Bar, Baz"\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	A text object represents textual data--a string of text characters. A text object is a special case of a more general data type called a 
+\b list
+\b0 .\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Frame\
+	
+\b0 A frame is an associative array that maps arbitrary keys to arbitrary values. A key may be any value except 
+\f1 undefined
+\f0  or 
+\f1 nothing
+\f0 . The value associated with a key may be any value except 
+\f1 undefined
+\f0 . 
+\b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+	An empty frame is written like this:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 \{\}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	A frame with keys 
+\f1 name:
+\f0 , 
+\f1 age:
+\f0 , and 
+\f1 shape:
+\f0  might be written like this:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 \{name: "Fred" age: 35 shape: 'square\}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 List
+\b0 \
+	A list is an ordered sequence of values:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (+ 2 3)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	Like other Lisps, Bard represents expressions as lists. When you type a list at the interpreter's prompt, it treats the expression as an operator being applied to a sequence of arguments, and tries to evaluate it:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> (+ 2 3)\
+\
+5\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	If you want to use the same list as a datum, rather than as an expression to be evaluated, you can quote it:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> '(+ 2 3)\
+(+ 2 3)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	Often we'd like to create a list to be used as a datum rather than an expression to be evaluated. You can do that like this:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> (list + 2 3)\
+\
+(#<primitive-procedure 2> 2 3)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	A slightly more compact way to write the same thing, while also making it clearer that the list is intended to be used as data, is to write the list with square brackets, like this:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> [+ 2 3]\
+\
+(#<primitive-procedure 2> 2 3)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+	The empty list, named 
+\f1 nothing
+\f0 , can also be written in either of the following two forms:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 '()\
+[]\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+Both Text and Frame values are also Lists. They can be used with Bard's List functions just like any other List. A Text is treated as a List of characters; a Frame is treated as a List of pairs, where the left-hand item in the pair is the key, and the right-hand item is the value.\
+\
+Incidentally, that means that Bard frames preserve the order of their keys.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Method
+\b0 \
+\
+	A method is an object that can be applied to a list of arguments to compute a value. Commonly methods are created using the special form 
+\f1 define-function
+\f0 , but you can also just create one as-needed, as easily as you create a text or frame value:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (method (x) (* x x))\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+This example method accepts a single argument and multiples it by itself. You can call this method just as you would any other:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> ((method (x)(* x x)) 2)\
+\
+4
+\f0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 \
+III. Special Forms\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Special forms are operators that are built into the bard interpreter. Bard 0.2.4 defines seventeen special forms:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (and expr1 expr2 ... exprN) => Boolean\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns true if all its arguments evaluate to true. Otherwise returns false at the first expression that evaluates to false. Expressions after the first false one are not evaluated. And accepts zero or more arguments.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (begin expr1 expr2 ... exprn) => Anything\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Evaluates each subexpression in left-to-right order and returns that value of the last. Begin accepts zero or more arguments.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (define var val) => var\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Creates a global variable whose name is var and whose value is val.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (define-function (fname (arg1 type1) (arg2 type2) ...(argN typeN)) body) => Function\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Creates a global variable named fname whose value is a function with arguments given by arg1...argN, with types given by type1 ... typeN. The body is a sequence of zero or more expressions that describe the computation performed when the function is applied to arguments of types type1...typeN. \
+	When fname is applied to arguments, the arguments are bound to the named parameters in the order they are given in the function call.\
+	You can use multiple define-function expressions to define different methods that are called when different argument types are supplied to the function.\
+	Zero or more arguments may be given in the function definition; the function takes as many arguments as are specified in the definition. \
+ 	Instead of being written (arg type), an argument may be given as just the name arg. In that case, the type Anything is inferred.\
+	\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (define-function (fname (arg1 type1) (arg2 type2) ...(argN typeN) & rest-arg) body) => Function\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Exactly like the define-function above, except that the defined function accepts N or more arguments. All arguments after the & are collected into a list that is bound to rest-arg.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (function)\
+(function fname)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns a newly-created anonymous function with no methods defined. You can capture such a function in a variable binding and use define-function to add methods to it. The second form of function creates the function with a debug-name given by fname.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (generate ((var1 expr1) (var2 expr2)...(varN exprN)) \
+  (yield valueExpr)\
+  (then thenExpr1 thenExpr2 ... thenExprN))\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Creates a lexical scope in which var1 is bound to the value of expr1, var2 is bound to the value of expr2, and so on for all variables given. Returns a value of type <generator>. Applying the function next to the generator returns the value of the valueExpr in the yield clause. The yield form behaves as a begin form. The next time next is applied to the generator, the values of its local variables are the values given by thenExpr1, thenExpr2, and so on.\
+        Generators provide a convenient construct for encapsulating iterations and computations that return infinite values.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 \
+(if test consequent alternate)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Evaluates test. If the result is true, evaluates and returns consequent; otherwise evaluates and returns alternate. If not alternate is given, and test returns false, then if returns nothing.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (let ((var1 expr1) (var2 expr2)...(varN exprN)) body)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Creates a lexical scope in which var1 is bound to the value of expr1, var2 is bound to the value of expr2, and so on for all variables given. All the variables are defined in the scope of body, which is a sequence of zero of more expressions. the value of the final expression in body is returned. The value of var1 can be used in computing the value of var2, and so on, so that later variables' initialization forms can refer to earlier ones.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (method (arg1 arg2 ... argN) body)\
+(method name (arg1 arg2 ... argN) body)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns a newly-created method. When it's applied, var1 through N are bound to the arguments supplied in the call expression. Body is a sequence of zero or more expressions; the value of the last expression is returned when the method exits. The body can reference arguments arg1 through argN. If 
+\f1 name
+\f0  is present, it is used as a debug-name for the created method.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (not expr)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns the Boolean inverse of its argument.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (or expr1 expr2 ... exprN)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns false if all of its argument expressions return false; other wise returns the first non-false value returned by its argument expressions. Expressions after the first non-false one are not evaluated. Or accepts zero or more arguments.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (quote expr)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns expr without evaluating it.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (repeat expr)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Repeatedly evaluates 
+\f1 expr
+\f0 . Use in combination with 
+\f1 with-exit
+\f0  to implement looping.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 NOTE: the repeat/with-exit pattern is a useful temporary looping solution that  is likely to be replaced in the near future.
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (set! var val)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Stores 
+\f1 val
+\f0  in the variable named by 
+\f1 var
+\f0 . Signals an error if the variable is not defined.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (time expr)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns the value of 
+\f1 expr
+\f0 , printing statistics about its execution, including elapsed time.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (with-exit (
+\f2\i var
+\f1\i0 ) 
+\f2\i body
+\f1\i0 )\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Evaluates 
+\f2\i body
+\f0\i0  in an environment where 
+\f2\i var
+\f0\i0  is bound to an exit procedure. The exit procedure transfers control to the end of the 
+\f1 with-exit
+\f0  form, regardless of where it is called, returning any value passed to it as if that value were returned from the 
+\f1 with-exit
+\f0  form. This special form can be used to exit from arbitrary control structures, returning a chosen value.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (with-open-file (
+\f2\i var
+\f1\i0  path [direction: 'input|'in|'output|'out]) 
+\f2\i body
+\f1\i0 )\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Opens the file at 
+\f1 path
+\f0  for reading or writing, depending on which 
+\f1 direction:
+\f0  is specified, and executes 
+\f2\i body
+\f0\i0  in an environment where 
+\f2\i var
+\f0\i0  is bound to the input or output stream associated with the file. 
+\f1 with-open-file
+\f0  arranges to close the file even if control exits abnormally (for example, in the case of an error).\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 IV. Primitive Methods\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Bard 0.2.4 defines the following primitive methods:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 General utilities and combinators
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (apply (app Applicable) (arglist List)) => Anything
+\f0 \
+	Applies an applicable object (such as a function or frame) to a List of arguments, returning the resulting value.\
+\
+
+\f1 (eval (expr Anything)) => Anything
+\f0 \
+
+\f1 (eval (expr Anything)(env Environment)) => Anything
+\f0 \
+	Evaluates the expression in the supplied environment, or in the null environment if no environment is supplied. Returns the resulting value.\
+\
+
+\f1 (identity (x Anything)) => x
+\f0 \
+	The identity function; returns x. 
+\f1 id
+\f0  is often useful in functional code that maps functions over collections.\
+\
+
+\f1 (complement (fn Procedure)) => Procedure
+\f0 \
+	Returns a function that returns false if fn returns a true value, and true if it returns a false value.\
+\
+
+\f1 (constantly (thing Anything)) => Procedure
+\f0 \
+	Returns a function that accepts any number of arguments and always returns thing.\
+\
+
+\f1 (flip (fn Procedure)) => Procedure
+\f0 \
+	
+\f1 fn
+\f0  should be a function that accepts two arguments, 
+\f1 x
+\f0  and 
+\f1 y
+\f0 . 
+\f1 flip
+\f0  returns a function that accepts the same arguments, but in the opposite order. If 
+\f1 (fn x y)
+\f0  returns 
+\f1 z
+\f0 , then 
+\f1 ((flip fn) y x)
+\f0  also returns 
+\f1 z
+\f0 . Often useful in combination with 
+\f1 partial
+\f0 .\
+\
+
+\f1 (partial (fn Procedure) & args) => Procedure
+\f0 \
+	Returns a function that represents a partial application of 
+\f1 fn
+\f0 . As an example, 
+\f1 (partial + 2)
+\f0  returns a function that adds 2 to its argument. Often used in combination with higher-order functions like 
+\f1 sort
+\f0 , 
+\f1 map
+\f0 , and 
+\f1 filter
+\f0 .\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 System\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (exit)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Terminates the Bard interpreter.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (gc)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Triggers Bard's garbage collector.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (quit)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Terminates the Bard interpreter.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (room)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Triggers Bard's garbage collector and prints statistics about memory use.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (version)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns the version string of the running Bard interpreter.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Types\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 Anything\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	[Protocol] The abstract type of all Bard values.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 Type\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	[Protocol] The abstract type of all types.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (type? x)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns true if x is a type object, and false otherwise.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (type x)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns the type object that represents the type of x.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (singleton x)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns a type object that represents the value x as if it were a type. Used in function definitions to enable functions to specialize on individual values.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (singleton? x)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns true if x is a singleton.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 V. Representations\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Concrete datatypes in Bard are called 
+\b representations
+\b0 . \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 NOTE: Bard 0.2.4 doesn't provide any mechanisms users can use to define their own datatypes. That facility is coming. In the meantime, much can be accomplished using Lists and Frames.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+Bard 0.2.4 defines the following built-in representations:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Primitive types
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 Type\
+Anything\
+<undefined>\
+<null>\
+<character>\
+<boolean>\
+<symbol>\
+<keyword>\
+<flonum>\
+<ratnum>\
+<fixnum>\
+<bignum>\
+<primitive-procedure>\
+<list>\
+<string>\
+<iostream>\
+<frame>\
+<function>\
+<primitive-method>\
+<interpreted-method>\
+<singleton>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 VI. Singletons\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+A 
+\b singleton
+\b0  is a computed type that represents a single Bard value. For example:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> (singleton 'foo)\
+\
+#<singleton foo>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+Bard uses singletons to represent specific values as types for method dispatch. Using singletons, you can define a method that is called only when a specific value is passed to a function. For example:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 bard> (define-function (frob (x Anything)) x)\
+\
+#<function frob 6>\
+\
+bard> (define-function (frob (x <fixnum>)) "it's a fixnum")\
+\
+#<function frob 6>\
+\
+bard> (define-function (frob (x (singleton 2))) "it's two")\
+\
+#<function frob 6>\
+\
+bard> (frob 'foo)\
+\
+foo\
+\
+bard> (frob 100)\
+\
+"it's a fixnum"\
+\
+bard> (frob 2)\
+\
+"it's two"\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b\fs36 \cf0 VII. Protocols\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0\fs28 \cf0 \
+Bard distinguishes two parts of a type: the 
+\b representation
+\b0 , covered in the previous chapter, and the 
+\b protocol
+\b0 , covered here. A protocol is a set of defined functions that, taken together, define an abstract type. A protocol may include any number of representations, and a given representation may participate in any number of protocols.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 NOTE:
+\b0  
+\b In version 0.2.4 Bard's Protocols are in the middle of a redesign to better support user-defined types and function dispatch. The only Protocols present in Bard 0.2.4 as first-class objects are Anything and Type. Many protocol functions are temporarily missing. Please note that functions or methods that should be present in Bard may be absent in version 0.2.4.\
+\
+The Protocol functions present in Bard 0.2.4 are described below.
+\b0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Anything\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The abstract type of all Bard values.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (something? (x Anything)) => Boolean
+\f0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Applicable\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The abstract type of all values that can be applied like functions. List and Frame values are Applicable, as are <primitive-procedure>, <function>, and <method>.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (applicable? (x Anything)) => Boolean\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 	Returns true if x is Applicable and false otherwise.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (apply (app Applicable)(args List)) => Boolean
+\f0 \
+	Applies app to args, returning the resulting value.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 As\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The As protocol provides a single function, as, for constructing new values from equivalent values of a different type.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (as (representation (singleton 
+\f2\i rep
+\f1\i0 ))(x Anything)) => Anything
+\f0 \
+	Returns a value of type 
+\i rep
+\i0  that is equivalent to x.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Boolean\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Boolean protocol defines values that can be treated as true or false.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (boolean? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a Boolean value (that is, if it is true or false), and false otherwise.\
+
+\f1 \
+(false? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as false, and false otherwise.\
+
+\f1 \
+(true? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as true, and false otherwise.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Character\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Character protocol defines values that can be treated as text characters.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (character? (x Anything)) => Boolean
+\f0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Equal\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Equal protocol defines values that can be compared for equality.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (= (x Anything)(y Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Float\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Float protocol defines floating-point numeric values. In Bard 0.2.4, all Float values are single-precision floating-point numbers.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (float? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a floating-point number, and false otherwise.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 ForeignValue\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The ForeignValue protocol defines Bard values that represent foreign data, defined in some external language or program. Typically, this means C data.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (foreign-value? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a foreign value, and false otherwise.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Frame\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Frame protocol defines values that can be treated as mappings from keys to values. Lists are also Frames; when you use a List as a Frame, Bard treats it as a mapping from the indexes of the list elements to the elements themselves.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (frame? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a frame, and false otherwise.\
+\
+
+\f1 (get (x Frame)(k Anything)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the value associated with key k on frame x, or nothing if there is no such association in x.\
+\
+
+\f1 (keys (x Frame)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list of all keys in x. Applying keys to a List returns a List of the indexes of the elements.\
+\
+
+\f1 (merge (x Frame)(y Frame)) => Frame
+\f0 \
+
+\f1 	
+\f0 Returns a new frame that contains all the associations in both x and y. If x and y have keys that are equal then the associations from y are used in the new frame. merge treats lists and strings as if they were frames where the keys are the positions of the elements, and the values are the elements themselves.\
+\
+
+\f1 (put (x Anything)(k Anything)(v Anything)) => Frame
+\f0 \
+
+\f1 	
+\f0 Returns a new frame in which key k is associated with value v. If x is not a frame, then the new frame also contains an association in which the key value: is associated with the value x.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 IOStream\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The IOStream protocol defines values that can be treated as input or output streams.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (current-input) => <input-stream>
+\f0 \
+
+\f1 	
+\f0 Returns Bard's current default input stream, corresponding to Unix's standard input.\
+\
+
+\f1 (current-output) => <output-stream>
+\f0 \
+
+\f1 	
+\f0 Returns Bard's current default output stream, corresponding to Unix's standard output.\
+\
+
+\f1 (display (x Anything)(out <output-stream>)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes a human-readable text representation of x to the supplied output stream. \
+\
+
+\f1 (load (path Text)) => Anything
+\f0 \
+
+\f1 	
+\f0 Opens the file at path and reads its contents as Bard expressions, evaluating each expression in sequence as they are read, and returning the value of the last one. \
+\
+
+\f1 (print (x Anything)) => Undefined
+\f0 \
+
+\f1 	
+\f0 Writes x in the form of a text literal to the current output stream. \
+\
+
+\f1 (read) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the next Bard value read from the current input sream.\
+\
+
+\f1 (read (in <input-stream>)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the next Bard value read from in.\
+\
+
+\f1 (read-file (pathname <string>)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the entire contents of the file at pathname as a string.\
+\
+
+\f1 (read-line) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the next line read from the current input stream as a Text value.\
+\
+
+\f1 (read-line (in <input-stream>)) => Text
+\f0 \
+
+\f1 	
+\f0 Returns the next line read from in as a Text value.\
+\
+
+\f1 (read-lines (in <input-stream>)) => List\
+	
+\f0 Returns the contents of in as a list of Text objects.\
+\
+
+\f1 (read-text (text <string>)) => Anything
+\f0 \
+
+\f1 	
+\f0 Reads a Bard object from text as if by using read. Returns the first Bard value read from the string.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 TODO: Provide an API that permits reading more than one object from a string.
+\b0 \
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 List\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The List protocol defines values that can be treated as ordered sequences of values.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (list (x Anything)*) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List of arbitrary values in the order they were passed to list. list accepts zero or more arguments.\
+\
+
+\f1 (list? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a List.\
+\
+
+\f1 (add-first (x Anything)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List whose first element is x and whose remaining elements are the elements of ls.\
+\
+
+\f1 (add-last (ls List)(x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List that consists of the values of ls followed by x.\
+\
+
+\f1 (any (x Anything)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns a randomly-chosen element of x.\
+\
+
+\f1 (append (x List)(y List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List that contains the values of x followed by the values of y. When x and y are Frames the result is equivalent to (merge x y).\
+\
+
+\f1 (drop (n Integer)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a new List containing those elements of ls that remain after the first n are removed.\
+\
+
+\f1 (element (ls List)(n Integer)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the nth elements of ls, indexed from zero.\
+\
+
+\f1 (filter (test Procedure)(ls List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns those elements e of ls for which (test e) returns true.\
+\
+
+\f1 (first (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the first element of x, or 
+\f1 nothing
+\f0  if x is empty.\
+\
+
+\f1 (last (x List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns the last element of x, or 
+\f1 nothing
+\f0  if x is empty.\
+\
+
+\f1 (length (x List)) => Integer
+\f0 \
+
+\f1 	
+\f0 Returns the count of elements in x.\
+\
+
+\f1 (map (app Applicable)(ls List)*) => List
+\f0 \
+
+\f1 	
+\f0 Returns a list constructed by applying the applicable value app to each element of ls from left to right. If app is a procedure, it may accept more than one argument. In that case, the number of lists ls must be equal to the number of arguments accepted by app, and the length of the result is the length of the shortest ls.\
+\
+
+\f1 (reduce (app Applicable)(init Anything)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns a value computed by first evaluating 
+\f1 (app init (first ls))
+\f0 , then applying 
+\f1 (app x (second ls)
+\f0 ), where x is equal to the value returned from the first expression, and so on until the elements of ls are exhausted. For example,:\
+\
+
+\f1 	bard> (reduce + 1 '(2 3))\
+\
+	6\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (rest (x List)) => List
+\f0 \
+
+\f1 	
+\f0 Returns a List whose elements are the elements of x in the same order, after discarding the first.\
+\
+
+\f1 (take (n Integer)(ls List)) => Anything
+\f0 \
+
+\f1 	
+\f0 Returns a list of the first n elements taken from ls.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Null\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Null protocol defines the value 
+\f1 nothing
+\f0 , which is synonymous with the empty List.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (nothing? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a null value.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Ordered\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Ordered protocol defines values that can be compared for sort order.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (> (x Ordered)(y Ordered)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if y should be ordered before x. \
+\
+
+\f1 (< (x Ordered)(y Ordered)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x should be ordered before y.\
+\
+
+\f1 (>= (x Ordered)(y Ordered)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent, or y should be ordered before x.\
+\
+
+\f1 (<= (x Ordered)(y Ordered)*) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x and y are equivalent, or x should be ordered before y.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 \
+Type\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Type protocol defines values that can be treated as types, including <primitive-type>, <structure-type>, <protocol>, and <singleton>.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (type? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as a Type.\
+\
+
+\f1 (singleton? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a singleton.\
+\
+
+\f1 (singleton (x Anything)) => <singleton>
+\f0 \
+
+\f1 	
+\f0 Returns a singleton that represents the value x as if it were a type.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f3\b\fs32 \cf0 Undefined\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b0\fs28 \cf0 \
+The Undefined protocol defines values that undefined. Bard has a single distinguished undefined value, named undefined.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1 \cf0 (undefined? (x Anything)) => Boolean
+\f0 \
+
+\f1 	
+\f0 Returns true if x is a value that Bard interprets as undefined.\
+\
+\
+
+\f1 \
+}

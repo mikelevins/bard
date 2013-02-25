@@ -1,0 +1,19 @@
+
+(define $test-frame1 {name: "Fred"})
+(define $test-frame2 {name: "Fred" age: 101})
+(define $test-frame3 {name: "Fred" age: 101 shape: "square"})
+(define $test-frame4 {name: "Fred" age: 101 shape: "square" friends: ["Barney" "Betty" "Wilma"]})
+(define $test-frame5 {age: 101 shape: "square" friends: ["Barney" "Betty" "Wilma"]})
+(define $test-frame6 {shape: "square" friends: ["Barney" "Betty" "Wilma"]})
+(define $test-frame7 {friends: ["Barney" "Betty" "Wilma"]})
+
+(define $test-frame8 {name: "Fred"})
+(define $test-frame9 {name: "Fred" age: 101})
+(define $test-frame10 {name: "Fred" age: 101 shape: "square"})
+(define $test-frame11 {name: "Fred" age: 101 shape: "square" friends: {a: "Barney" b: "Betty" c: "Wilma"}})
+(define $test-frame12 {age: 101 shape: "square" friends: {a: "Barney" b: "Betty" c: "Wilma"}})
+(define $test-frame13 {shape: "square" friends: {a: "Barney" b: "Betty" c: "Wilma"}})
+(define $test-frame14 {friends: {a: "Barney" b: "Betty" c: "Wilma"}})
+
+
+
