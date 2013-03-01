@@ -63,3 +63,4 @@ builds//src/vm7/comp.scm~
 /interpreter/builds/mac/bard.dSYM/Contents/Resources/DWARF/bard
 /interpreter/builds/mac/bard.dSYM/
 /.DS_Store
+/0.4/.DS_Store

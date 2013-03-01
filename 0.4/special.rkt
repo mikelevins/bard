@@ -10,7 +10,7 @@
 ;;;; ***********************************************************************
 #lang bard
 
-(provide def define ensure loop method repeat with-exit)
+(provide -> cascade def define ensure loop method repeat with-exit)
 
 ;;; ---------------------------------------------------------------------
 ;;; special forms
@@ -27,6 +27,9 @@
 ;;; h3)) => v1 v2 v3 where v1 is (h1 (g1 (f1 a))), and so on for the
 ;;; other values.
 
+(%define (-> . fns)
+  (^ args
+    (apply values (map (^ (f a)(f a)) fns args))))
 
 ;;; begin
 ;;; ----------------------------------------------------------------------
@@ -40,6 +43,16 @@
 ;;; K values. cascade applies F1 to arguments arg1..argk. The K
 ;;; output values become the inputs to F2. F2's outputs are the inputs
 ;;; to F3, and so on. The outputs of FN are VAL1..VALK
+
+
+(define-syntax-rule (cascade (arg ...) fn ...) 
+  (%let loop ((fns (list fn ...))
+              (args (list arg ...)))
+    (if (null? fns)
+        (apply values args)
+        (%let ((f (car fns)))
+              (call-with-values (^ ()(apply f args))
+                (^ results (loop (cdr fns) results)))))))
 
 ;;; cond
 ;;; ----------------------------------------------------------------------
@@ -72,9 +85,10 @@
 ;;; ----------------------------------------------------------------------
 
 
+
 ;;; generate
 ;;; ----------------------------------------------------------------------
-;;; racket: generator
+;;; use racket generator
 
 
 ;;; gather
@@ -84,10 +98,11 @@
 
 ;;; if
 ;;; ----------------------------------------------------------------------
-;;; racket: if
+;;; use racket if
 
 ;;; let
 ;;; ----------------------------------------------------------------------
+
 
 
 ;;; loop
@@ -153,7 +168,7 @@
 
 ;;; time
 ;;; ----------------------------------------------------------------------
-
+;;; use racket time
 
 ;;; undefine
 ;;; ----------------------------------------------------------------------
@@ -161,15 +176,16 @@
 
 ;;; unless
 ;;; ----------------------------------------------------------------------
-;;; racket: unless
+;;; use racket unless
 
 ;;; values
 ;;; ----------------------------------------------------------------------
+;;; use racket values
 
 
 ;;; when
 ;;; ----------------------------------------------------------------------
-;;; racket: when
+;;; use racket when
 
 ;;; with-open
 ;;; ----------------------------------------------------------------------
