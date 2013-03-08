@@ -67,7 +67,16 @@
                     #f
                     found)
                 (if (%singleton-tree? found)
-                    (%search-method-tree-for-values found (cdr vals))
+                    (or (%search-method-tree-for-values found (cdr vals))
+                        (let ((found (%search-method-tree-for-value mtree Anything)))
+                          (if found
+                              (if (null? (cdr vals))
+                                  (if (%singleton-tree? found)
+                                      #f
+                                      found)
+                                  (if (%singleton-tree? found)
+                                      (%search-method-tree-for-values found (cdr vals))
+                                      #f)))))
                     #f))
             #f))))
 

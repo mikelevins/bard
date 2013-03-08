@@ -614,7 +614,7 @@
 
 ;;; <null>
 
-(define-primitive-method some? (list Anything <null>)
+(define-primitive-method some? (Anything <null>)
   (constantly '()))
 
 ;;; <pair>

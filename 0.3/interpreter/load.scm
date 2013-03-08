@@ -11,7 +11,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Workshop/bard/interpreter/") ; osx
+(define $bard-root  "/Users/mikel/Workshop/bard/0.3/interpreter/") ; osx
 ;;;(define $bard-root  "/home/mikel/Projects/bard/interpreter/") ; Linux
 
 ;;; ----------------------------------------------------------------------
