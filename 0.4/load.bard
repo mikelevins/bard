@@ -1,0 +1,38 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          load.bard
+;;;; Project:       Bard
+;;;; Purpose:       bard system loader
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; modify if the bard sources are at another pathname
+
+(def $bard-root  "/Users/mikel/Workshop/bard/0.4/") ; osx
+;;;(define $bard-root  "/home/mikel/Projects/bard/interpreter/") ; Linux
+
+;;; ----------------------------------------------------------------------
+;;; Scheme files to load for interactive development
+;;; ----------------------------------------------------------------------
+
+(define method (paths prefix & suffixes)
+  (map (^ (suffix)(append prefix suffix))
+       suffixes))
+
+(def $bard-files
+     (paths $bard-root 
+            "src/version.bard"
+            "src/compile.bard"
+            ))
+
+;;; load sources
+;;; ----------------------------------------------------------------------
+
+(define method (loadcomp)
+  (map (^ (f)(load f))
+       $bard-files))
+
+;;; (loadcomp)

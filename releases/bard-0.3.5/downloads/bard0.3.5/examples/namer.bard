@@ -68,5 +68,6 @@
         (names (name-builder starts parts)))
     (take number names)))
 
-;;; (names "/Users/mikel/Workshop/bard/examples/namefiles/us.names" 10)
+
+;;; (names "/Users/mikel/Workshop/bard/releases/bard-0.3.5/downloads/bard0.3.5/examples/namefiles/us.names" 10)
 ;;; (names "/Users/mikel/Workshop/bard/examples/namefiles/gnome.names" 10)
