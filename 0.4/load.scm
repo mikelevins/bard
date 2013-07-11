@@ -1,38 +1,51 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          load.bard
+;;;; Name:          load.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       bard system loader
 ;;;; Author:        mikel evins
-;;;; Copyright:     2013 by mikel evins
+;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 ;;; modify if the bard sources are at another pathname
 
-(def $bard-root  "/Users/mikel/Workshop/bard/0.4/") ; osx
+(define $bard-root  "/Users/mikel/Workshop/bard/0.4/") ; osx
 ;;;(define $bard-root  "/home/mikel/Projects/bard/interpreter/") ; Linux
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
 ;;; ----------------------------------------------------------------------
 
-(define method (paths prefix & suffixes)
-  (map (^ (suffix)(append prefix suffix))
+(define (paths prefix . suffixes)
+  (map (lambda (suffix)(string-append prefix suffix))
        suffixes))
 
-(def $bard-files
-     (paths $bard-root 
-            "src/version.bard"
-            "src/compile.bard"
-            ))
+(define $bard-files
+  (paths $bard-root 
+         "src/vm.scm"
+         ))
 
 ;;; load sources
 ;;; ----------------------------------------------------------------------
 
-(define method (loadcomp)
-  (map (^ (f)(load f))
-       $bard-files))
+(define (loadvm)
+  (gc-report-set! #t)
+  (for-each (lambda (f)(load f))
+            $bard-files))
 
-;;; (loadcomp)
+;;; (loadvm)
+
+;;; (make-stack size)
+;;; (make-default-env)
+;;; (make-default-globals)
+;;; (make-default-prims)
+;;; (load-program vm program)
+;;; (instruction-opcode instr)
+;;; (code-ref code index)
+;;; (stack-push! v stack)
+;;; (stack-pop! stack)
+;;; (stack-top stack)
+;;; (stack-take! n stack)
+;;; (stack-adjoin! vals stack)

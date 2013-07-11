@@ -69,8 +69,7 @@
   name
   functions)
 
-(define-instance singleton-yes
-instance constructor: make-singleton-instance value)
+(define-instance singleton-instance constructor: make-singleton-instance value)
 
 (define-instance url-instance 
   constructor: make-url-instance

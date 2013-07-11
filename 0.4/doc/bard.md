@@ -1,497 +1,257 @@
-# Bard 0.4
+# Bard
 
-## Introduction
+version 0.4
+<br/>copyright 2013 by mikel evins
 
-Bard is a small language in the Lisp family that combines a novel approach to types and polymorphic functions with an emphasis on functional style and dynamic programming. It's and extensible, kernel-based language designed to present a small set of generic and self-documenting APIs, and to support an interactive style of programming in which a program is built up incrementally by modifying the Bard system itself. It's intended to be both highly portable and efficient enough for a wide range of programming tasks.
+## About Bard
 
-Bard is designed with the assumption that it will be used to write both locally-useful scripts and distributed, network-aware applications. It's intended for writing server applications that run unattended and without a user interface for extended periods, and also for graphical applications that run in a dekstop or mobile environment. It's also intended as a language for writing both the client and server sides of web applications, with compilation to Javascript for use in client-side code.
+Bard is a dynamic actor language whose design owes a great deal to Common Lisp, Scheme, and Dylan, and also draws elements from Smalltalk, Haskell, ML, Clojure, and other languages.
 
-## Types
+## Expressions and Values
 
-### Schemas
+Bard is a language of **expressions**. A Bard program is a sequence of expressions, and is executed by evaluating the expressions from start to finish.
 
-A **schema** is a concrete type that describes the representation of a family of values. In other words, it describes concretely how to lay out bits and bytes to represent values of a certain type. Every Bard value is an instance of exactly one schema.
+Each expression denotes some number of **values**. An expression is either a **literal value**, a reference to a **variables** that is bound to a value, or a **list** that denotes an **application**, and which returns some number of values when it's evaluated.
 
-`<undefined>` represents results of computations that are not valid values, such as the values of unbound variables, or the return values of undefined functions. It has exactly one instance, the value `undefined`, and exactly one superclass, `Anything`. It has no subclasses.
+A literal value that is not a list is called an **atom**. Atoms are expressions that denote simple values without component parts, like `true` and `false` and numbers.
 
-Every schema besides `<undefined>` has exactly one subclass: the schema `<null>`, making the value `nothing` an instance of every type. No schema may have any subclasses except `<null>`.
+A list is a sequence of other values delimited by parentheses ("`(...)`"), braces ("`[...]`"), or brackets ("`{...}`").
 
-A schema may have any number and variety of superclasses, but they must all be abstract types--either **classes** or **categories**.
+Parentheses delimit an **application**. An appllication is an expression that represents a procedure call, where the procedure being called is the first element of the list and the parameters passed to it are the remaining elements of the list. For example,
 
-### Built-in schemas
+    (+ 2 3)
+    
+passes the parameters `2` and `3` to the built-in function named `+`. There are three kinds of procedures, called **functions**, **macros**, and **special forms**, each with its own rules for evaluation. These evaluation rules are discussed in the next section.
 
-**`<boolean>`**
+Braces delimit a **list constructor**. A list constructor returns a **list value**. A list value is a value that belongs to the `List` class. `List` comprises objects that are ordered sequences of values. Here's an example:
 
-**`<frame>`**
+    bard> [1 2 3]
+    [1 2 3]
+    
+Bard returns and prints the new list, which contains the integers 1, 2, and 3.
 
-**`<null>`**
+Bard evaluates the elements of a list constructor, so we can construct a list that includes computed elements. For example:
 
-**`<number>`**
+    bard> [1 (+ 2 3) (* 2 3)]
+    [1 5 6]
 
-**`<symbol>`**
+Brackets delimit a **map constructor**. A map constructor returns a **map value**. A map value is a value that belongs to the `Map` class. `Map` comprises objects that are sets of key/value pairs. As an example:
 
-**`<undefined>`**
+    bard> {name: "Fred" age: (+ 20 12)}
+    {name: "Fred" age: 32}
+    
+Like a list constructor, a map constructor evaluates its elements, so you can compute the keys and values as you construct the map. It is an error to write a map constructor with an odd number of elements; since a map is a set of key/value pairs, a map constructor must give a value for each key, meaning that the number of elements must be even.
 
-**`<vector>`**
+### Applications and Evaluation Rules
 
-### User-defined schemas
+There are three kinds of applications, one for each of the three kinds of procedures.
 
-You can define your own schemas using the special form `define record`. Schemas defined using `define record` behave exactly like built-in frames, but they must have values for all required keys. Be aware that if you use the `Frames` protocol to remove a required key from an instance of a user-defined record then the result is not an instance of the schema.
+A **special form** is a procedure that is built into Bard and that has its own special rules for evaluation. Examples include the `define` and `if` special forms. Special forms cannot be redefined by programs. They form the foundation of the Bard language.
 
-**`define record`**
+A **macro** is a procedure that rewrites an expression before evaluating it. For example, suppose `and` is implemented as a macro. In that case, this expression
 
-    (define record <point> 
-      (x type: Float default: 0 mutable: false required: true)
-      (y type: Float default: 0 mutable: false required: true))
+    (and (odd? 2) 'yes)
+    
+might be rewritten to this expression
 
-### Classes
+    (if (odd? 2) 'yes nothing)
+    
+before being evaluated. You can define your own macros using the `define macro` special form. The main use for macros is in extending Bard by adding new syntax.
 
-A **class** is an abstract type that names a collection of other types. The collected types are called **members** of the class. An instance of any member of a class is also an instance of the class.
+A **function** is a procedure that selects and executes a **method** for a set of inputs and computes a result. Bard's function are **polymorphic**, meaning that they can execute different code for different sets of inputs. When you apply a function, it examines its inputs to determine the code to run. The code it selects is called a **method**. You can define methods using the `define function` special form.
 
-All Bard classes are purely abstract, with no behavior of their own and no data fields. It is not possible to create a direct instance of a class; all values are instances of schemas. In order to be an instance of a class, a value has to be an instance of some schema that is a member of the class.
+### The Bard Reader
 
-A class may be a member of any number of other classes and **categories**.
+Bard uses a **programmable reader**, like many other dialects of Lisp. The reader is a program that transforms text into Bard source code, converting strings of text characters into the lists and atoms that compose Bard expressions.
 
-Types that are members of a class are called its **subclasses** or its **subtypes** (the terms are interchangeable).
+You can modify the operation of the reader using built-in procedures provided by the language to define **reader macros**. A reader macro defines a transformation from text to Bard expressions.
 
-The classes and categories of which a class is a member are called its **superclasses** or **supertypes**.
+Bard also provides a useful set of built-in reader macros. For example, list constructors and map constructors are implemented as reader macros that transform the text into `list` and `map` expressions.
 
-Bard provides a set of built-in classes arranged in a graph of superclass/subclass relations.
+The reader and reader macros are described more thoroughly in the chapter about the reader.
 
-![](types.jpg)
+## Data Types
 
-*Built-in classes and schemas*
+### Type in Bard
 
-### Built-in classes
+#### Schemas
 
-**`Anything`**
+Every Bard value has a single concrete datatype called its **schema**. A **schema** is a description of how to represent a family of values. For example, `<fixnum>` is a schema that describes a representation for integers that can fit into a single machine word; `<bignum>` is a different schema, describing a representation for integers that uses as much memory as needed. Bard provides many built-in schemas.
 
-**`Applicable`**
+A value's schema is not the same thing as its **type**, for two reasons. First, different representations may be used for the same type. For example, both `<fixnum>` and `<bignum>` may be used to represent an integer type. Second, the same representation may be used for different types. For example, `<fixnum>` is a useful representation of a certain range of integers, but it can be used to represent other types as well. You could use `<fixnum>` to represent a packed array of Boolean values, for example, with each bit of the `<fixnum>` representing one of the packed bits.
 
-**`Boolean`**
+For these reasons, a schema is only part of a Bard type; the other parts are its **class** and **protocol**.
 
-**`Class`**
+### Defining Schemas
 
-**`Float`**
+You can define new schemas using the `define schema` special form.
 
-**`Frame`**
+    bard> (define schema <point> x y)
+    <point>
 
-**`Function`**
+#### Protocols
 
-**`Integer`**
+A **protocol** is a set of related operations. The `Lists` protocol, for example, describes operations that can be performed on values that represent lists. Here's a small portion of the definition of the `Lists` protocol:
 
-**`Keyword`**
+    (define protocol Lists
+      add-first (Anything List -> List)
+      add-last (List Anything -> List)
+      first (List -> Anything)
+      image (Function List -> List))
+      
+#### Defining Protocols
 
-**`List`**
+You can define new protocols using the `define protocol` special form:
 
-**`Method`**
+    (define protocol Greeting
+      hello (Text -> Text))
+      
+#### Classes
 
-**`Name`**
+A **class** is an identifier that does two jobs: it names a role in a protocol, and it identifies a set of relationships to other types. For example, the `Lists` protocol defines a function named `image` that has this signature:
 
-**`Null`**
+    (Function List -> List)
+    
+The function signature says that `image` takes two input parameters and returns one output value. The inputs are a `Function` and a `List`; the output is a `List`. `Function` and `List` are classes.
 
-**`Number`**
+A Bard class does not define how values are represented, and does not define how functions operate. It's just a _name for an abstract type_ that identifies the role the type plays in the protocol.
 
-**`Protocol`**
+A class can have **members**, and it can be a member of another class. For example, `List` is a member of the class `Anything`--in fact, every Bard type is a member of `Anything`.
 
-**`Record`**
+#### Asserting Class Membership
 
-**`Schema`**
+A value is an instance of a class if its schema is a member of the class. Thus, instances of `<pair>` are also instances of `List`, because `<pair>` is a member of `List`.
 
-**`Symbol`**
+How does a schema become a member of a class?
 
-**`Text`**
+There are two ways: you can explicitly assert that a schema belongs to a class, or you can define a method for a protocol function that implicitly asserts the schema's membership.
 
-**`Tuple`**
+The first way is simpler: just mention a schema (or a class) in a `define class` expression:
 
-**`Type`**
+    (define class <pair> List)
+    
+This expression asserts that `<pair>` is a member of `List`.
 
-**`Undefined`**
+You can do the same thing with a class instead of a schema:
 
-**`URL`**
+    (define class MyListClass List)
 
-### User-defined classes
+This expression asserts that `MyListClass` is a member of `List`.
 
-**`define class`** 
+You can't reverse the schema and the class, though; you can't say that `List` is a member of `<pair>`, because `<pair>` is a schema, not a class, and schemas do not have members.
 
-### Categories
+If you say 
 
-A **category** is a class that is defined by a predicate function called a **criterion**. A **criterion** is a function that accepts one argument and returns `true` or `false`; if it returns `true` then its argument is an instance of the criterion's category; otherwise, it isn't.
+    (define class MyListClass List)
 
-Categories can be used to create classes with arbitrary values as instances. For example, you can create an `OddIntegers` category using the built-in functions `integer?` and `odd?`:
+and `MyListClass` doesn't exist already, then Bard creates it. That doesn't work with schemas, though. It works with classes because a class is just a name, but a schema is more than that. A schema is a description of how to lay data out to represent a value; without the definition of its fields, a schema is meaningless. That means you have to define a schema before you can make it a member of a class.
 
-    (define category OddIntegers 
-      (^ (x) (and (integer? x) 
-                  (odd? x))))
+#### Defining Functions
 
-**`define category`** 
+The second way to make a schema a member of a class is to define a method on a protocol function. A protocol function is a function that is a member of a protocol (as all Bard functions are). As we've seen, protocols define function signatures that give classes for their inputs and outputs. When you define a method that applies to values of a particular schema, you are asserting that the schema is a member of the corresponding class.
 
+Let's look at a very simple protocol to see what that means. Here's an extremely simple `Rational` protocol:
 
-## Protocols
+    (define class Ratio Number)
 
-A protocol is an object that describes a set of functions. It defines the names of the functions and the classes of their input and output values. A protocol definition does not define the implementations of the functions.
+    (define protocol Rational
+      numerator (Ratio -> Integer)
+      denominator (Ratio -> Integer))
 
+This example defines the class `Ratio` and the protocol `Rational`. The `Rational` protocol defines two functions named `numerator` and `denominator`. Each of them accepts a single input, an instance of `Ratio`, and returns a single output, an instance of `Integer`.
 
-### Functions
+At this point the class `Ratio` is defined, but it has no members, because we haven't asserted any members and we haven't defined any methods that identify members of `Ratio`. Let's define a schema that we can use as a member of `Ratio`:
 
-### Methods
+    (define schema <ratio> 
+      (num reader: ratio-num) 
+      (denom reader: ratio-denom))
+    
+The `define schema` expression creates a schema object and binds it to a new variable named `<ratio>`. The schema object defines two **slots** named `num` and `denom`. We also gave each slot a **reader** function, named `ratio-num` and `ratio-denom`; the reader functions enable us to get the values in the slots of a `<ratio>` instance.
 
-### Built-in Protocols
+We can now create an instance of `<ratio>` using the built-in `make` function:
 
-#### Addressing
+    bard> (make <ratio> num: 1 denom: 2)
+    {schema: <ratio> num: 1 denom: 2}    
 
-**`url-domain`** 
+Now we have a `<ratio>` schema suitable for use as a member of `Ratio`, but we haven't yet told Bard that it's a member of the class. We could do so the same way we saw in the previous section, but then the functions `numerator` and `denominator` would still be undefined for `<ratio>` values. So instead, let's tell Bard how to execute `numerator` and `denominator` when their inputs are instances of `<ratio>`:
 
-**`url-path`** 
+    (define function (numerator x)
+      with {x <ratio>}
+      (ratio-num x))
 
-**`url-port`** 
+    (define function (denominator x)
+      with {x <ratio>}
+      (ratio-denom x))
+      
+Now `numerator` and `denominator` are defined on instances of `<ratio>`. What's more, because we gave `<ratio>` as the type of the `Ratio` arguments to `numerator` and `denominator`, Bard automatically asserts that `<ratio>` is a member of `Ratio`.
 
-**`url-query`** 
+What if we defined the `numerator` method, but not the `denominator` method? Bard would still automatically assert that `<ratio>` is a member of `Ratio`, because we gave `<ratio>` as the type of the `Ratio` argument to `numerator`, but it would warn us that the `Rational` protocol is only partially defined for the schema `<ratio>`. In fact, it does the same thing if we explicitly assert a schema as a member of a class using the `define class` special form, and for the same reason: because the protocol has functions that are not defined on that schema.
 
-**`url-scheme`** 
+### Categories and Criteria
 
-#### Calculating
+A **category** is a type whose members are defined by a **criterion**. A **criterion** is a function that accepts one argument and returns either `true` or `false`. If you apply a criterion to a value and it returns `true` then the value is an instance of the type; otherwise it's not. It's simple to define a category; here's an example:
 
-**`+`** 
+    (def odd-integer? (compose odd? integer?))
+    
+    (define category OddInteger odd-integer?)
+    
+`OddInteger` is now a category whose instances are odd integer values. 
 
-**`-`** 
+In most respects a category behaves like a class, but you cannot use `define class` to assert new members of a category. You can use `define class` and `define function` to add a category as a member to another class, though.
 
-**`*`** 
+### Singletons
 
-**`/`** 
+A **singleton** is a type that comprises exactly one value. For example, a singleton type for the value `true` has exactly one instance: the value `true`.
 
-**`%`** 
+Singletons make it possible for Bard functions to discriminate specific values, rather than just types of values. For example, consider this definition of the Fibonacci function:
 
-**`abs`** 
+    (define function (fib n)
+      with {n (exactly 0)}
+      1)
+      
+    (define function (fib n)
+      with {n (exactly 1)}
+      1)
+            
+    (define function (fib n)
+      with {n <fixnum>}
+      (+ (fib (- n 1))
+         (fib (- n 2))))
+         
+These three expressions define three methods for the function `fib`. The first two use singleton types for the input argument `n`; the first one applies to `n` when it's equal to zero; the second applies when `n` is equal to one.
 
-**`acos`** 
+The third definition applies to any other case where `n` is a `<fixnum>`.
 
-**`asin`** 
+The expression `(exactly 0)` returns a singleton type for the value `0`. That type has exactly one instance: the value `0`.
 
-**`atan`** 
+You can evaluate `(exactly 0)` anywhere you can evaluate any other Bard expression; it will always return the same singleton type. Normally, though, the only reason to use an `exactly` expression is for defining methods.
 
-**`ceiling`** 
 
-**`cos`** 
+## Scope and Extent
 
-**`exp`** 
+## Program Structure
 
-**`floor`** 
+## Control Structure
 
-**`log`** 
+## Macros
 
-**`max`** 
+## Names and Modules
 
-**`min`** 
+## Numbers
 
-**`power`** 
+## Sequences, Streams, and Maps
 
-**`random`** 
+## Arrays
 
-**`round`** 
+## Generators and Collectors
 
-**`sin`** 
+## Input and Output
 
-**`sqrt`** 
+## Resources, Paths, Files, and Networks
 
-**`tan`** 
+## Actors and Messages
 
-#### Constructing
+## Conditions
 
-**`copy`**
-
-**`deep-copy`**
-
-**`make`** 
-
-**`type-for-copy`** 
-
-#### Converting
-
-**`as`** 
-
-**`combined-type`** 
-
-#### Equality
-
-**`=`** 
-
-**`identical?`** 
-
-#### Frames
-
-**`drop-key`** 
-
-**`get`** 
-
-**`keys`** 
-
-**`merge`** 
-
-**`put`** 
-
-**`select`** 
-
-**`vals`** 
-
-#### Functions
-
-**`^`** 
-
-**`->`** 
-
-**`apply`** 
-
-**`cascade`** 
-
-**`compose`** 
-
-**`conjoin`** 
-
-**`disjoin`** 
-
-**`flip`** 
-
-**`function?`** 
-
-**`functional?`** 
-
-**`method?`** 
-
-**`partial`** 
-
-**`repeatedly`** 
-
-**`rotate-left`** 
-
-**`rotate-right`** 
-
-**`rpartial`** 
-
-#### Lists
-
-**`add-first`** 
-
-**`add-last`** 
-
-**`any`** 
-
-**`by`** 
-
-**`coalesce`** 
-
-**`concat`** 
-
-**`concat2`** 
-
-**`drop`** 
-
-**`drop-while`** 
-
-**`element`** 
-
-**`empty?`** 
-
-**`every?`** 
-
-**`filter`** 
-
-**`find`** 
-
-**`first`** 
-
-**`generate`** 
-
-**`indexes`** 
-
-**`interleave`** 
-
-**`interpose`** 
-
-**`join`** 
-
-**`join2`** 
-
-**`last`** 
-
-**`length`** 
-
-**`map`** 
-
-**`match-prefix?`** 
-
-**`match-suffix?`** 
-
-**`next-last`** 
-
-**`partition`** 
-
-**`position`** 
-
-**`position-if`** 
-
-**`range`** 
-
-**`range-from`** 
-
-**`reduce`** 
-
-**`remove`** 
-
-**`repeat`** 
-
-**`rest`** 
-
-**`reverse`** 
-
-**`scan`** 
-
-**`scan-map`** 
-
-**`second`** 
-
-**`shuffle`** 
-
-**`some?`** 
-
-**`split`** 
-
-**`sublist`** 
-
-**`tails`** 
-
-**`take`** 
-
-**`take-by`** 
-
-**`take-while`** 
-
-**`unique`** 
-
-**`unzip`** 
-
-**`zip`** 
-
-#### Messaging
-
-**`send`** 
-
-**`receive`** 
-
-#### Ordering
-
-**`<`** 
-
-**`<=`** 
-
-**`>`** 
-
-**`>=`** 
-
-**`sort`** 
-
-#### Pairs
-
-**`left`** 
-
-**`pair`** 
-
-**`right`** 
-
-#### Streams
-
-**`characters`** 
-
-**`close`** 
-
-**`input-stream?`** 
-
-**`lines`** 
-
-**`objects`** 
-
-**`octets`** 
-
-**`open`** 
-
-**`output-stream?`** 
-
-**`read-sequence`** 
-
-**`stream?`** 
-
-**`stream-element-type`** 
-
-**`stream-eof?`** 
-
-**`stream-direction`** 
-
-**`stream-mode`**
-(append, supersede, overwrite) 
-
-**`stream-open?`**
-
-**`stream-position`**
-
-**`write-sequence`** 
-
-### User-defined protocols
-
-**`define protocol`** 
-
-## Special forms and macros
-
-**`begin`**
-
-**`case`**
-
-**`cond`**
-
-**`def`**
-
-**`define class`**
-
-**`define macro`**
-
-**`define method`**
-
-**`define protocol`**
-
-**`define record`**
-
-**`define variable`**
-
-**`ensure`**
-
-**`generate`**
-
-**`if`**
-
-**`let`**
-
-**`loop`**
-
-**`match`**
-
-**`quasiquote`**
-
-**`quote`**
-
-**`repeat`**
-
-**`setter`**
-
-**`set!`**
-
-**`undefine`**
-
-**`unless`**
-
-**`values`**
-
-**`when`**
-
-**`with-exit`**
-
-**`with-open`**
+## Iteration, Mapping, and Reducing
 

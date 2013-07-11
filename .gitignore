@@ -64,3 +64,6 @@ builds//src/vm7/comp.scm~
 /interpreter/builds/mac/bard.dSYM/
 /.DS_Store
 /0.4/.DS_Store
+/0.4/src/vm.scm~
+/0.4/core/load.scm~
+/0.4/core/README.md~
