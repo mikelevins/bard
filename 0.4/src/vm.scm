@@ -21,6 +21,15 @@
 (define (identity x) x)
 (define (1+ n)(+ n 1))
 
+(define (vector-for-each fn vec)
+  (let ((len (vector-length vec)))
+    (let loop ((i 0))
+      (if (< i len)
+          (let ((it (vector-ref vec i)))
+            (fn it)
+            (loop (+ i 1)))
+          vec))))
+
 ;;; ----------------------------------------------------------------------
 ;;; vm constants
 ;;; ----------------------------------------------------------------------
@@ -127,7 +136,7 @@
 (define instruction list)
 
 (define (make-instruction op-n-args)
-  (map identity op-n-nargs))
+  (map identity op-n-args))
 
 (define (instruction-opcode instruction)
   (car instruction))
@@ -168,21 +177,29 @@
 ;;; vm operators
 ;;; ----------------------------------------------------------------------
 
-(define HALT   0)
-(define CONST  1)
-(define LREF   2)
-(define LSET   3)
-(define GREF   4)
-(define GSET   5)
-(define GO     6)
-(define TGO    7)
-(define FGO    8)
-(define FN     9)
-(define CC    10)
-(define SETCC 11)
-(define NARGS 12)
-(define ARGS. 13)
-(define PRIM  14)
+(define *opnames* (make-table test: eqv?))
+
+(define (defopname code name)
+  (table-set! *opnames* code name))
+
+(define (opname opcode)
+  (table-ref *opnames* opcode))
+
+(define HALT   0)(defopname HALT 'HALT)
+(define CONST  1)(defopname CONST 'CONST)
+(define LREF   2)(defopname LREF 'LREF)
+(define LSET   3)(defopname LSET 'LSET)
+(define GREF   4)(defopname GREF 'GREF)
+(define GSET   5)(defopname GSET 'GSET)
+(define GO     6)(defopname GO 'GO)
+(define TGO    7)(defopname TGO 'TGO)
+(define FGO    8)(defopname FGO 'FGO)
+(define FN     9)(defopname FN 'FN)
+(define CC    10)(defopname CC 'CC)
+(define SETCC 11)(defopname SETCC 'SETCC)
+(define NARGS 12)(defopname NARGS 'NARGS)
+(define ARGS. 13)(defopname ARGS. 'ARGS.)
+(define PRIM  14)(defopname PRIM 'PRIM)
 
 (define *bard-vm-operators* (make-table test: eqv?))
 
@@ -276,22 +293,72 @@
          (state* (execute-instruction opcode instruction state)))
     (vmexec state*)))
 
-(define (vmrun program)
+(define (vmstart vmstate)
   (call/cc 
    (lambda (exitfn)
-     (let ((state (make-vmstate program 
-                                0
-                                (make-stack)
-                                (default-environment)
-                                (default-globals)
-                                exitfn)))
-       (vmexec state)))))
+     (vmstate-haltfn-set! vmstate exitfn)
+     (vmexec vmstate))))
+
+(define (vmrun program)
+  (let ((state (make-vmstate program 
+                             0
+                             (make-stack)
+                             (default-environment)
+                             (default-globals)
+                             #f)))
+    (vmstart state)))
 
 ;;; ----------------------------------------------------------------------
 ;;; tools and diagnostics
 ;;; ----------------------------------------------------------------------
 
+(define (display-instruction ins)
+  (let* ((opc (instruction-opcode ins))
+         (nm (opname opc)))
+    (display nm)
+    (for-each (lambda (arg)
+                (display " ")
+                (display arg))
+              (instruction-args ins))))
+
 (define (showvm state)
   (newline)
   (display "Bard VM 0.40")(newline)
-  (display " "))
+  (display "          pc: ")(display (vmstate-pc state))(newline)
+  (display " instruction: ")(display-instruction (program-ref (vmstate-program state) (vmstate-pc state)))(newline)
+  (display "       stack: ")
+  (for-each (lambda (item)
+              (newline)
+              (display "          ")
+              (display item))
+            (vmstate-stack state))
+  (newline)
+  (display " environment: ")
+  (for-each (lambda (binding)
+              (newline)
+              (display "          ")
+              (display (car binding))
+              (display ": ")
+              (display (cdr binding)))
+            (vmstate-stack state))
+  (newline)
+  (display "     globals: ")
+  (table-for-each (lambda (key val)
+                    (newline)
+                    (display "          ")
+                    (display key)
+                    (display ": ")
+                    (display val))
+                  (vmstate-globals state))
+  (newline)
+  (display "     program: ")
+  (vector-for-each (lambda (instr)
+                     (newline)
+                     (display "          ")
+                     (display-instruction instr))
+                   (vmstate-program state)) 
+  (newline))
+
+;;; (define $pgm (make-program (list (make-instruction `(,CONST 0))(make-instruction `(,HALT)))))
+;;; (define $vm (make-vmstate $pgm 0 (make-stack)(default-environment)(default-globals) #f))
+;;; (showvm $vm)
