@@ -30,15 +30,21 @@
             (loop (+ i 1)))
           vec))))
 
+(define (vector-map fn vec)
+  (let* ((len (vector-length vec))
+         (outvec (make-vector len #f)))
+    (let loop ((i 0))
+      (if (< i len)
+          (let ((it (vector-ref vec i)))
+            (vector-set! outvec i (fn it)))))
+    outvec))
+
 ;;; ----------------------------------------------------------------------
 ;;; vm constants
 ;;; ----------------------------------------------------------------------
 
 (define +absent+ (string->symbol "+absent+"))
-(define +bard-program-sentinel+ 'bard-program)
 (define +bard-program-version+ (vector 0 4 0))
-(define +bard-vmstate-sentinel+ 'bard-vmstate)
-(define +bard-vmstate-version+ (vector 0 4 0))
 
 ;;; ----------------------------------------------------------------------
 ;;; vm value semantics
@@ -87,11 +93,58 @@
 (define (program-ref program index)
   (vector-ref program index))
 
+(define (asm . instructions)
+  (list->vector
+   (map (lambda (i)
+          (let* ((opnm (car i))
+                 (opcode (opcode opnm))
+                 (opargs (cdr i)))
+            (cons opcode opargs)))
+        instructions)))
+
+(define (link . code)
+  (vector-map (lambda (i)
+                (let ((opc (car i))
+                      (op (vmoperator opc))
+                      (opargs (cdr i)))
+                  (cons op opargs)))
+              code))
+
+;;; ----------------------------------------------------------------------
+;;; vm primitives
+;;; ----------------------------------------------------------------------
+
+(define-structure primitive required-parameters rest-parameter function)
+
+(define *primitives* (make-table test: eqv?))
+
+(define (defprim pname required-parameters rest-parameter function)
+  (let ((prim (make-primitive required-parameters rest-parameter function)))
+    (table-set! *primitives* pname prim)
+    pname))
+
+(define (get-primitive pname)
+  (table-ref *primitives* pname #f))
+
+(defprim 'GNADD 0 #t
+  (lambda (state)
+    (let* ((argcount (vmstate-nargs state))
+           (args (vmstate-popn! state argcount))
+           (sum (apply + args)))
+      (vmstate-push! state sum))))
+
+(defprim 'GNSUB 0 #t
+  (lambda (state)
+    (let* ((argcount (vmstate-nargs state))
+           (args (vmstate-popn! state argcount))
+           (sum (apply - args)))
+      (vmstate-push! state sum))))
+
 ;;; ----------------------------------------------------------------------
 ;;; vmstate structure
 ;;; ----------------------------------------------------------------------
 
-(define-structure vmstate program pc stack env globals haltfn)
+(define-structure vmstate program function pc nargs stack env globals haltfn)
 
 ;;; acessing and updating state
 
@@ -178,36 +231,41 @@
 ;;; ----------------------------------------------------------------------
 
 (define *opnames* (make-table test: eqv?))
+(define *opcodes* (make-table test: eqv?))
 
 (define (defopname code name)
-  (table-set! *opnames* code name))
+  (table-set! *opnames* code name)
+  (table-set! *opcodes* name code))
 
 (define (opname opcode)
   (table-ref *opnames* opcode))
 
-(define HALT   0)(defopname HALT 'HALT)
-(define CONST  1)(defopname CONST 'CONST)
-(define LREF   2)(defopname LREF 'LREF)
-(define LSET   3)(defopname LSET 'LSET)
-(define GREF   4)(defopname GREF 'GREF)
-(define GSET   5)(defopname GSET 'GSET)
-(define GO     6)(defopname GO 'GO)
-(define TGO    7)(defopname TGO 'TGO)
-(define FGO    8)(defopname FGO 'FGO)
-(define FN     9)(defopname FN 'FN)
-(define CC    10)(defopname CC 'CC)
-(define SETCC 11)(defopname SETCC 'SETCC)
-(define NARGS 12)(defopname NARGS 'NARGS)
-(define ARGS. 13)(defopname ARGS. 'ARGS.)
-(define PRIM  14)(defopname PRIM 'PRIM)
-
 (define *bard-vm-operators* (make-table test: eqv?))
+
+(define (opcode opname)
+  (table-ref *opcodes* opname))
 
 (define (defop opcode opfn)
   (table-set! *bard-vm-operators* opcode opfn))
 
 (define (vmoperator opcode)
   (table-ref *bard-vm-operators* opcode))
+
+(define HALT   0)   (defopname HALT 'HALT)
+(define CONST  1)   (defopname CONST 'CONST)
+(define LREF   2)   (defopname LREF 'LREF)
+(define LSET   3)   (defopname LSET 'LSET)
+(define GREF   4)   (defopname GREF 'GREF)
+(define GSET   5)   (defopname GSET 'GSET)
+(define GO     6)   (defopname GO 'GO)
+(define TGO    7)   (defopname TGO 'TGO)
+(define FGO    8)   (defopname FGO 'FGO)
+(define FN     9)   (defopname FN 'FN)
+(define CC    10)   (defopname CC 'CC)
+(define SETCC 11)   (defopname SETCC 'SETCC)
+(define PRIM  14)   (defopname PRIM 'PRIM)
+(define CALL  16)   (defopname CALL 'CALL)
+(define RETURN  17) (defopname RETURN 'RETURN)
 
 ;;; operator definitions
 
@@ -266,13 +324,46 @@
         (vmstate-pc-set! state (arg1 instruction))
         (vmstate-incpc! state))))
 
-
 (defop FN 
   (lambda (instruction state)
     (let ((args (arg1 instruction))
           (restarg (arg2 instruction))
           (body (arg3 instruction)))
-      (vmstate-push! state (make-fn args restarg body)))))
+      (vmstate-push! state (make-fn args restarg body))
+      (vmstate-incpc! state))))
+
+(defop CC 
+  (lambda (instruction state)
+    (let ((pc (vmstate-pc state))
+          (stack (vmstate-stack state))
+          (env (vmstate-env state)))
+      (vmstate-push! state (make-continuation pc stack env)))
+    (vmstate-incpc! state)))
+
+(defop SETCC
+  (lambda (instruction state)
+    (let ((cc (vmstate-pop! state)))
+      (vmstate-continue! state cc))))
+
+(defop PRIM
+  (lambda (instruction state)
+    (let* ((pname (arg1 instruction))
+           (prim (get-primitive pname))
+           (pfun (primitive-function prim)))
+      (pfun state)
+      (vmstate-incpc! state))))
+
+(defop CALL
+  (lambda (instruction state)
+    (let* ((fn (vmstate-pop! state))
+           (args (vmstate-popn! state (vmstate-nargs state)))
+           (ambient-env (vmstate-env state))
+           (fenv (fn-env fn))
+           (params-env (make-fn-env fn args))
+           (call-env (merge-envs params-env fenv ambient-env)))
+      (vmstate-env-set! call-env)
+      (vmstate-function-set! fn)
+      (vmstate-pc-set! 0))))
 
 ;;; ----------------------------------------------------------------------
 ;;; executing instructions
@@ -321,11 +412,16 @@
                 (display arg))
               (instruction-args ins))))
 
+(define (display-function fn)
+  (display "#<function>"))
+
 (define (showvm state)
   (newline)
   (display "Bard VM 0.40")(newline)
   (display "          pc: ")(display (vmstate-pc state))(newline)
   (display " instruction: ")(display-instruction (program-ref (vmstate-program state) (vmstate-pc state)))(newline)
+  (display "    function: ")(display-function (vmstate-function state))(newline)
+  (display "       nargs: ")(display (vmstate-nargs state))(newline)
   (display "       stack: ")
   (for-each (lambda (item)
               (newline)
@@ -359,6 +455,6 @@
                    (vmstate-program state)) 
   (newline))
 
-;;; (define $pgm (make-program (list (make-instruction `(,CONST 0))(make-instruction `(,HALT)))))
-;;; (define $vm (make-vmstate $pgm 0 (make-stack)(default-environment)(default-globals) #f))
+;;; (define $pgm (asm `(CONST 1) `(CONST 2) `(PRIM GNADD) `(HALT)))
+;;; (define $vm (make-vmstate $pgm #f 0 0 (make-stack)(default-environment)(default-globals) #f))
 ;;; (showvm $vm)
