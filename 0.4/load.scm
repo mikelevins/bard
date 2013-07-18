@@ -24,7 +24,20 @@
 
 (define $bard-files
   (paths $bard-root 
+         "src/constants.scm"
+         "src/utils.scm"
+         "src/values.scm"
+         "src/stacks.scm"
+         "src/environments.scm"
+         "src/globals.scm"
+         "src/programs.scm"
+         "src/vmstate.scm"
+         "src/primitives.scm"
+         "src/functions.scm"
+         "src/transfers.scm"
+         "src/instructions.scm"
          "src/vm.scm"
+         "src/system.scm"
          ))
 
 ;;; load sources
