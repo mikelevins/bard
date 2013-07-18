@@ -18,22 +18,22 @@ The files listed in `load.scm` in the definition of the `$bard-files` variable a
 
 Following is a brief explanation of the purpose of each source file:
 
-| file             | notes 
-| -
-| constants.scm    | constant values, such as version numbers, relied on by the vm 
-| utils.scm        | general-purpose utility functions, such as list and vector tools 
-| values.scm       | implementation of basic Bard value semantics 
-| stacks.scm       | implementation of the vm stack
-| environments.scm | representation of lexical environments
-| globals.scm      | representation of global variables
-| programs.scm     | representation of compiled Bard programs
-| vmstate.scm      | the VM's registers and related operations
-| primitives.scm   | representation and implementation of vm primitives
-| functions.scm    | representation of Bard's function values
-| transfers.scm    | representation and implementation of nonlocal transfers of control, including continuations, function returns, and conditions
-| instructions.scm | representation and implementation of the Bard VM's instruction set
-| vm.scm           | the main logic of the VM itself
-| system.scm       | supporting and diagnostic tools, such as printers and inspectors
+| file             | notes |
+| - | |
+| constants.scm    | constant values, such as version numbers, relied on by the vm |
+| utils.scm        | general-purpose utility functions, such as list and vector tools |
+| values.scm       | implementation of basic Bard value semantics |
+| stacks.scm       | implementation of the vm stack |
+| environments.scm | representation of lexical environments |
+| globals.scm      | representation of global variables |
+| programs.scm     | representation of compiled Bard programs |
+| vmstate.scm      | the VM's registers and related operations |
+| primitives.scm   | representation and implementation of vm primitives |
+| functions.scm    | representation of Bard's function values |
+| transfers.scm    | representation and implementation of nonlocal transfers of control, including continuations, function returns, and conditions |
+| instructions.scm | representation and implementation of the Bard VM's instruction set |
+| vm.scm           | the main logic of the VM itself |
+| system.scm       | supporting and diagnostic tools, such as printers and inspectors |
 
 ## The Stack
 
