@@ -64,7 +64,7 @@ A program is a value that represents executable Bard code--in other words, the o
 The state of the Bard VM is represented by a set of registers:
 
 | register | purpose
-| -
+| -------- | -------
 | program  | the Bard program currently being executed
 | function | the function currently being executed
 | pc       | the index of the next instruction to execute
@@ -95,7 +95,7 @@ There are three kinds of nonlocal transfers of control in Bard; transfers are da
 The three kinds of transfers are:
 
 | transfer type | purpose
-| -
+| ------------- | -------
 | return        | the transfer that occurs at the end of a function call to return its results 
 | continuation  | a general-purpose jump to any point in a program
 | condition     | a transfer provided as part of Bard's condition system, its feacility for handling exceptions and other unusual circumstances
@@ -109,7 +109,7 @@ Bard's continuations work like Scheme continuations: they provide a first-class 
 The core instruction set for the VM is defined and implemented, and can execute basic compiled Bard programs. Many useful instructions are not yet implemented, but most of them are fairly trivial instructions that will exist primiarly for convenience or efficiency. The core semantics of the Bard VM is defined by the following instructions, all of which are currently implemented:
 
 | instruction  | arguments | description
-| -
+| -----------  | --------- | -----------
 | HALT   |     | stop the VM
 | CONST  | k   | push k on the stack
 | LREF   | v   | look up v in env and push its value on the stack
