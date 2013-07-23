@@ -29,7 +29,7 @@
   (vmstate-stack-set! s (cons v (vmstate-stack s))))
 
 (define (vmstate-pushvals! s vals)
-  )
+  (vmstate-stack-set! s (append vals (vmstate-stack s))))
 
 (define (vmstate-top s)
   (car (vmstate-stack s)))
@@ -40,7 +40,10 @@
     (car old-stack)))
 
 (define (vmstate-popn! s n)
-  )
+  (let ((vals (take n (vmstate-stack s)))
+        (stack* (drop n (vmstate-stack s))))
+    (vmstate-stack-set! s stack*)
+    vals))
 
 (define (vmstate-gref s var)
   (table-ref (vmstate-globals s) var +absent+))

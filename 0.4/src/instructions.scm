@@ -184,7 +184,7 @@
            (ambient-env (vmstate-env state))
            (fenv (fn-env fn))
            (params-env (make-fn-env fn args))
-           (call-env (merge-envs params-env fenv ambient-env)))
+           (call-env (merge-environments params-env fenv ambient-env)))
       (vmstate-env-set! call-env)
       (vmstate-function-set! fn)
       (vmstate-pc-set! 0))))
