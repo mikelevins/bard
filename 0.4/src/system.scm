@@ -54,7 +54,7 @@
               (display (car binding))
               (display ": ")
               (display (cdr binding)))
-            (vmstate-stack state))
+            (vmstate-env state))
   (newline)
   (display "     globals: ")
   (table-for-each (lambda (key val)

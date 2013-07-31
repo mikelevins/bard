@@ -32,3 +32,14 @@
 
 ;;; (test-halt)
 
+(define (test-const)
+  (let* ((code (asm (instruction 'CONST 5)
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-const)
+

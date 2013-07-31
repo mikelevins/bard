@@ -94,13 +94,15 @@
 
 (defop CONST 
   (lambda (instruction state)
-    (vmstate-stack-push! state (arg1 instruction))
-    (vmstate-incpc! state)))
+    (vmstate-push! state (arg1 instruction))
+    (vmstate-incpc! state)
+    state))
 
 (defop LREF 
   (lambda (instruction state)
-    (vmstate-stack-push! state (vmstate-lref state (arg1 instruction)))
-    (vmstate-incpc! state)))
+    (vmstate-push! state (vmstate-lref state (arg1 instruction)))
+    (vmstate-incpc! state)
+    state))
 
 (defop LSET 
   (lambda (instruction state)
@@ -112,35 +114,41 @@
           (vmstate-env-set! state
                             (cons (cons varname val)
                                   (vmstate-env state)))))
-    (vmstate-incpc! state)))
+    (vmstate-incpc! state)
+    state))
 
 (defop GREF 
   (lambda (instruction state)
-    (vmstate-stack-push! state (vmstate-gref state (arg1 instruction)))
-    (vmstate-incpc! state)))
+    (vmstate-push! state (vmstate-gref state (arg1 instruction)))
+    (vmstate-incpc! state)
+    state))
 
 (defop GSET 
   (lambda (instruction state)
     (let* ((varname (arg1 instruction))
            (val (vmstate-pop! state)))
       (table-set! (vmstate-globals state) varname val))
-    (vmstate-incpc! state)))
+    (vmstate-incpc! state)
+    state))
 
 (defop GO 
   (lambda (instruction state)
-    (vmstate-pc-set! state (arg1 instruction))))
+    (vmstate-pc-set! state (arg1 instruction))
+    state))
 
 (defop TGO 
   (lambda (instruction state)
     (if (true? (vmstate-pop! state))
         (vmstate-pc-set! state (arg1 instruction))
-        (vmstate-incpc! state))))
+        (vmstate-incpc! state))
+    state))
 
 (defop FGO 
   (lambda (instruction state)
     (if (false? (vmstate-pop! state))
         (vmstate-pc-set! state (arg1 instruction))
-        (vmstate-incpc! state))))
+        (vmstate-incpc! state))
+    state))
 
 (defop FN 
   (lambda (instruction state)
@@ -148,7 +156,8 @@
           (restarg (arg2 instruction))
           (body (arg3 instruction)))
       (vmstate-push! state (make-fn args restarg body))
-      (vmstate-incpc! state))))
+      (vmstate-incpc! state)
+      state)))
 
 (defop CC 
   (lambda (instruction state)
@@ -156,12 +165,14 @@
           (stack (vmstate-stack state))
           (env (vmstate-env state)))
       (vmstate-push! state (make-continuation pc stack env)))
-    (vmstate-incpc! state)))
+    (vmstate-incpc! state)
+    state))
 
 (defop SETCC
   (lambda (instruction state)
     (let ((cc (vmstate-pop! state)))
-      (vmstate-continue! state cc))))
+      (vmstate-continue! state cc)
+      state)))
 
 (defop PRIM
   (lambda (instruction state)
@@ -169,14 +180,16 @@
            (prim (get-primitive pname))
            (pfun (primitive-function prim)))
       (pfun state)
-      (vmstate-incpc! state))))
+      (vmstate-incpc! state)
+      state)))
 
 (defop SAVE
   (lambda (instruction state)
     (let* ((destpc (arg1 instruction))
            (ret (make-return destpc (vmstate-fn state)(vmstate-stack state))))
       (vmstate-push! state ret)
-      (vmstate-incpc! state))))
+      (vmstate-incpc! state)
+      state)))
 
 (defop CALL
   (lambda (instruction state)
@@ -188,10 +201,12 @@
            (call-env (merge-environments params-env fenv ambient-env)))
       (vmstate-env-set! call-env)
       (vmstate-function-set! fn)
-      (vmstate-pc-set! 0))))
+      (vmstate-pc-set! 0)
+      state)))
 
 (defop RETURN
   (lambda (instruction state)
     (let* ((vals (vmstate-popn! state (vmstate-nvals state)))
            (ret (vmstate-pop! state)))
-      (vmstate-return! state ret vals))))
+      (vmstate-return! state ret vals)
+      state)))
