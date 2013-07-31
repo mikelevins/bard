@@ -49,16 +49,3 @@
             $bard-files))
 
 ;;; (loadvm)
-
-;;; (make-stack size)
-;;; (make-default-env)
-;;; (make-default-globals)
-;;; (make-default-prims)
-;;; (load-program vm program)
-;;; (instruction-opcode instr)
-;;; (code-ref code index)
-;;; (stack-push! v stack)
-;;; (stack-pop! stack)
-;;; (stack-top stack)
-;;; (stack-take! n stack)
-;;; (stack-adjoin! vals stack)

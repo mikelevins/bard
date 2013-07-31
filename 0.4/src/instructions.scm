@@ -88,6 +88,7 @@
 
 (defop HALT 
   (lambda (instruction state)
+    (vmstate-incpc! state)
     (let ((exit (vmstate-haltfn state)))
       (exit state))))
 

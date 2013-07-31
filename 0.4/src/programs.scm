@@ -19,9 +19,10 @@
 ;;; ----------------------------------------------------------------------
 
 (define program vector)
+(define program-length vector-length)
 
-(define (make-program instructions) 
-  (list->vector instructions))
+(define (make-program code-vector) 
+  code-vector)
 
 (define (program-ref program index)
   (vector-ref program index))
