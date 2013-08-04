@@ -43,3 +43,10 @@
            (args (vmstate-popn! state argcount))
            (sum (apply - args)))
       (vmstate-push! state sum))))
+
+(defprim 'GNMUL 0 #t
+  (lambda (state)
+    (let* ((argcount (vmstate-nvals state))
+           (args (vmstate-popn! state argcount))
+           (prod (apply * args)))
+      (vmstate-push! state prod))))

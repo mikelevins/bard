@@ -26,10 +26,12 @@
   (vmstate-pc-set! s (1+ (vmstate-pc s))))
 
 (define (vmstate-push! s v)
-  (vmstate-stack-set! s (cons v (vmstate-stack s))))
+  (vmstate-stack-set! s (cons v (vmstate-stack s)))
+  (vmstate-nvals-set! s (+ 1 (vmstate-nvals s))))
 
 (define (vmstate-pushvals! s vals)
-  (vmstate-stack-set! s (append vals (vmstate-stack s))))
+  (vmstate-stack-set! s (append vals (vmstate-stack s)))
+  (vmstate-nvals-set! s (+ (length vals) (vmstate-nvals s))))
 
 (define (vmstate-top s)
   (car (vmstate-stack s)))
@@ -37,12 +39,14 @@
 (define (vmstate-pop! s)
   (let ((old-stack (vmstate-stack s)))
     (vmstate-stack-set! s (cdr old-stack))
+    (vmstate-nvals-set! s (- (vmstate-nvals s) 1))
     (car old-stack)))
 
 (define (vmstate-popn! s n)
   (let ((vals (take n (vmstate-stack s)))
         (stack* (drop n (vmstate-stack s))))
     (vmstate-stack-set! s stack*)
+    (vmstate-nvals-set! s (- (vmstate-nvals s) n))
     vals))
 
 (define (vmstate-gref s var)

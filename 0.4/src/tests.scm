@@ -135,5 +135,17 @@
 
 ;;; (test-tgo-false)
 
+(define (test-prim)
+  (let* ((code (asm (instruction 'CONST 2)
+                    (instruction 'CONST 3)
+                    (instruction 'PRIM 'GNMUL)
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-prim)
 
 
