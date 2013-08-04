@@ -100,14 +100,17 @@
 
 (defop LREF 
   (lambda (instruction state)
-    (vmstate-push! state (vmstate-lref state (arg1 instruction)))
-    (vmstate-incpc! state)
-    state))
+    (let ((entry (vmstate-lref state (arg1 instruction))))
+      (if entry
+          (vmstate-push! state (cdr entry))
+          (vmstate-push! state +absent+))
+      (vmstate-incpc! state)
+      state)))
 
 (defop LSET 
   (lambda (instruction state)
     (let* ((varname (arg1 instruction))
-           (var (env-ref (vmstate-env state) varname))
+           (var (env-ref varname (vmstate-env state)))
            (val (vmstate-pop! state)))
       (if var
           (set-cdr! var val)

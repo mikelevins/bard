@@ -52,7 +52,7 @@
   (table-set! (vmstate-globals s) var val))
 
 (define (vmstate-lref s var)
-  (let ((entry (assq (vmstate-env s) var)))
+  (let ((entry (assq var (vmstate-env s))))
     (or entry +absent+)))
 
 (define (vmstate-lset! s var val)
