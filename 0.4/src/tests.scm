@@ -13,6 +13,9 @@
 ;;; instruction tests
 ;;; ----------------------------------------------------------------------
 
+;;; test-show
+;;; ----------------------------------------------------------------------
+
 (define (test-show)
   (let* ((code (asm (instruction 'HALT)))
          (function (make-fn '() #f code))
@@ -21,6 +24,9 @@
     (showvm state)))
 
 ;;; (test-show)
+
+;;; test-halt
+;;; ----------------------------------------------------------------------
 
 (define (test-halt)
   (let* ((code (asm (instruction 'HALT)))
@@ -31,6 +37,9 @@
     (showvm state)))
 
 ;;; (test-halt)
+
+;;; test-const
+;;; ----------------------------------------------------------------------
 
 (define (test-const)
   (let* ((code (asm (instruction 'CONST 5)
@@ -43,6 +52,9 @@
 
 ;;; (test-const)
 
+;;; test-lref
+;;; ----------------------------------------------------------------------
+
 (define (test-lref)
   (let* ((code (asm (instruction 'LREF 'x)
                     (instruction 'HALT)))
@@ -53,6 +65,9 @@
     (showvm state)))
 
 ;;; (test-lref)
+
+;;; test-lset
+;;; ----------------------------------------------------------------------
 
 (define (test-lset)
   (let* ((code (asm (instruction 'CONST 0)
@@ -66,6 +81,9 @@
 
 ;;; (test-lset)
 
+;;; test-gref
+;;; ----------------------------------------------------------------------
+
 (define (test-gref)
   (let ((globals (default-globals)))
     (table-set! globals 'x 101)
@@ -78,6 +96,9 @@
     (showvm state))))
 
 ;;; (test-gref)
+
+;;; test-gset
+;;; ----------------------------------------------------------------------
 
 (define (test-gset)
   (let ((globals (default-globals)))
@@ -94,6 +115,9 @@
 
 ;;; (test-gset)
 
+;;; test-go
+;;; ----------------------------------------------------------------------
+
 (define (test-go)
   (let* ((code (asm (instruction 'CONST 1)
                     (instruction 'GO 3)
@@ -106,6 +130,9 @@
     (showvm state)))
 
 ;;; (test-go)
+
+;;; test-tgo-true
+;;; ----------------------------------------------------------------------
 
 (define (test-tgo-true)
   (let* ((code (asm (instruction 'CONST 1)
@@ -121,6 +148,9 @@
 
 ;;; (test-tgo-true)
 
+;;; test-tgo-false
+;;; ----------------------------------------------------------------------
+
 (define (test-tgo-false)
   (let* ((code (asm (instruction 'CONST 1)
                     (instruction 'CONST #f)
@@ -135,6 +165,9 @@
 
 ;;; (test-tgo-false)
 
+;;; test-fn
+;;; ----------------------------------------------------------------------
+
 (define (test-fn)
   (let* ((code (asm (instruction 'FN '(a b) 'rest (asm (instruction 'HALT)))
                     (instruction 'HALT)))
@@ -145,6 +178,39 @@
     (showvm state)))
 
 ;;; (test-fn)
+
+;;; test-cc
+;;; ----------------------------------------------------------------------
+
+(define (test-cc)
+  (let* ((code (asm (instruction 'CC)
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-cc)
+
+;;; test-setcc
+;;; ----------------------------------------------------------------------
+
+(define (test-setcc)
+  (let* ((code (asm (instruction 'CONST 0)
+                    (instruction 'LSET 'x)
+                    
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '((k . #f)(x . 0)) (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-setcc)
+
+;;; test-prim
+;;; ----------------------------------------------------------------------
 
 (define (test-prim)
   (let* ((code (asm (instruction 'CONST 2)
@@ -158,7 +224,5 @@
     (showvm state)))
 
 ;;; (test-prim)
-
-
 
 

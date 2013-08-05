@@ -16,26 +16,16 @@
          (inline-primitives))
 
 ;;; ----------------------------------------------------------------------
-;;; return records
-;;; ----------------------------------------------------------------------
-
-(define-structure return pc fn stack)
-
-(define (vmstate-return! state ret vals)
-  (vmstate-pc-set! (return-pc ret))
-  (vmstate-stack-set! (return-stack ret))
-  (vmstate-fn-set! state (return-fn ret))
-  (vmstate-pushvals! state vals)
-  state)
-
-;;; ----------------------------------------------------------------------
 ;;; continuations
 ;;; ----------------------------------------------------------------------
 
-(define-structure continuation pc stack env)
+(define-structure continuation stack environment destination)
 
 (define (vmstate-continue! state cc)
-  (vmstate-pc-set! state (continuation-pc cc))
-  (vmstate-stack-set! state (continuation-stack cc))
-  (vmstate-env-set! state (continuation-env cc))
+  (let ((stack (continuation-stack cc))
+        (env (continuation-environment cc))
+        (dest (continuation-destination cc)))
+    (if stack (vmstate-stack-set! state (continuation-stack cc)))
+    (if env (vmstate-env-set! state (continuation-environment cc)))
+    (if dest (vmstate-pc-set! state (continuation-destination cc))))
   state)
