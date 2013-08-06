@@ -4,22 +4,6 @@ supose the function we're going to call is defined as
 
   (^ (a b) (GNADD a b))
 
-The compiled code for this is
-
-0  LREF 'a     ; push the value of the lexical variable a
-1  LREF 'b     ; push the value of the lexical variable b
-2  PRIM 'GNADD ; execute primitive GNADD
-3  ROTATE 1    ; rotate the bottom of the stack to the top
-4  CONTINUE    ; pop saved state on the top of the stack and restore the VM to it 
-
-The lexical variables a and b are the function parameters, bound by
-the code that calls the function. Before execution of the function
-body starts, the calling code also creates a continuation and pushes
-it on the stack. This continuation is the return point for the called
-function. The end of a function body always consists of the
-instruction ROT, which rotates the return continuation to the top of
-the stack, followed by CONTINUE, which pops the continuation and uses
-it to transfer control (to return from the function).
 
 Now suppose the function is named add and we call it like this:
 
@@ -31,19 +15,40 @@ This compiles to code like this:
 1  CONST 3   ; push the args from right to left
 2  CONST 2   ; 
 3  GREF 'add ; push the function
-4  SETFN     ; pop the pushed function; set FN to the function, and CODE to its body
-5  ARGS      ; pop the argument values and move them to ENV, bound to add's params
-6  GO 0      ; transfer control to add's body
-L0 ...
-
-We can condense instructions 4, 5, and 6 into a single instruction, APPLY:
-
-0  SAVE L0   ; create a continuation and push it on the stack; it continues after the end of the calling sequence
-1  CONST 3   ; push the args from right to left
-2  CONST 2   ; 
-3  GREF 'add ; push the function
 4  APPLY
 L0 ...
 
-APPLY does the same thing as the SETFN, ARGS, and GO instructions.
+APPLY sets up the function call, using the arguments and function that
+are on the stack. It pops the function and fetches its formal
+parameters. These it binds to the argument values on the stack,
+creating an extended environment by merging the bound parameters onto
+the environments inherited from the calling code and the function
+(which may be a closure with its own environment).
+
+It sets the FN register to the function, the CODE register to the code
+in the body of the function, and the PC register to 0. It sets the ENV
+register to the extended environment.
+
+Execution then continues in the body of the function..
+
+The compiled code for the called function, generated from the form at
+the top of this file, is
+
+0  LREF 'a     ; push the value of the lexical variable a
+1  LREF 'b     ; push the value of the lexical variable b
+2  PRIM 'GNADD ; execute primitive GNADD
+3  RETURN      ; remove the saved return record from the stack after the pushed results;
+               ; restore the vm to the state represented by the return record
+
+This code fetches the values of the parameters a and d, combines them
+using the primitive GNADD, and leaves the result on the stack. The
+RETURN instruction removes the return recrod from underneath the
+result values, leaving the stack otherwise unchanged, then uses the
+saved state from the return record to reset the VM's function, code,
+and PC. 
+
+Execution then continues after the completion of the function
+call. The VM's state is just as it would have been if the function
+call hadn't happened, except that the stack now contains any result
+values returned by the execution of the function.
 

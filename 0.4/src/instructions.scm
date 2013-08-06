@@ -78,9 +78,10 @@
 (define FGO       8)  (defopname FGO 'FGO)
 (define PRIM      9)  (defopname PRIM 'PRIM)
 (define SAVE     10)  (defopname SAVE 'SAVE)
-(define SETFN    11)  (defopname SETFN 'SETFN)
-(define CONTINUE 12)  (defopname CONTINUE 'CONTINUE)
+(define RETURN   12)  (defopname RETURN 'RETURN)
 (define APPLY    13)  (defopname APPLY 'APPLY)
+(define CC       14)  (defopname CC 'CC) ; "capture continuation"
+(define SETCC    15)  (defopname SETCC 'SETCC) ; "set captured continuation" - for arbitrary transfers of control
 
 ;;; defining operations
 
@@ -171,67 +172,25 @@
 
 (defop SAVE
   (lambda (instruction state)
-    (let* ((dest (arg1 instruction))
-           (env (vmstate-env state))
-           (stack (vmstate-stack state))
-           (cc (make-continuation stack env dest)))
-      (vmstate-push! state cc)
-      (vmstate-incpc! state)
-      state)))
-
-(defop SETFN
-  (lambda (instruction state)
-    (let* ((fn (vmstate-pop! state))
-           (code (fn-code fn)))
-      (vmstate-fn-set! state fn)
-      (vmstate-code-set! state (fn-code fn))
-      (vmstate-incpc! state)
-      state)))
-
-(defop ARGS
-  (lambda (instruction state)
-    (let* ((fn (vmstate-fn state))
-           (params (fn-required-parameters fn))
-           (paramcount (length params))
-           (argcount (vmstate-nvals state))
-           (args (vmstate-popn! state argcount))
-           (callenv (make-fn-env fn args)))
-      (vmstate-env-set! state callenv)
-      (vmstate-incpc! state)
-      state)))
+    ))
 
 (defop APPLY
   (lambda (instruction state)
-    (let* ((fn (vmstate-pop! state))
-           (code (fn-code fn))
-           (params (fn-required-parameters fn))
-           (paramcount (length params))
-           (argcount (vmstate-nvals state))
-           (args (vmstate-popn! state argcount))
-           (callenv (make-fn-env fn args)))
-      (vmstate-fn-set! state fn)
-      (vmstate-code-set! state (fn-code fn))
-      (vmstate-env-set! state callenv)
-      (vmstate-pc-set! state 0)
-      state)))
+    ))
 
-(defop ROTATE
+(defop RETURN
   (lambda (instruction state)
-    (let* ((index (arg1 instruction))
-           (stack (vmstate-stack state))
-           (len (length stack))
-           (pivot (- len index))
-           (left (take pivot stack))
-           (right (drop pivot stack))
-           (stack* (append right left)))
-      (vmstate-stack-set! state stack*)
-      (vmstate-incpc! state)
-      state)))
+    ))
 
-(defop CONTINUE
+(defop CC
   (lambda (instruction state)
-    (let* ((cc (vmstate-pop! state)))
-      (vmstate-continue! state cc)
-      state)))
+    ))
+
+(defop SETCC
+  (lambda (instruction state)
+    ))
+
+
+
 
 
