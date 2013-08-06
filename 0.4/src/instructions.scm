@@ -172,23 +172,37 @@
 
 (defop SAVE
   (lambda (instruction state)
-    ))
+    (let ((rr (make-return (vmstate-fn state)
+                           (vmstate-pc state)
+                           (vmstate-stack state)
+                           (vmstate-env state))))
+      (vmstate-push! state rr)
+      (vmstate-incpc! state)
+      state)))
 
 (defop APPLY
   (lambda (instruction state)
-    ))
+    (vmstate-apply! state)    
+    state))
 
 (defop RETURN
   (lambda (instruction state)
-    ))
+    (let ((rr (vmstate-pop-bottom! state)))
+      (vmstate-return! state rr)
+      state)))
 
 (defop CC
   (lambda (instruction state)
-    ))
+    (vmstate-push! state (make-continuation (vmstate-stack state)))
+    (vmstate-incpc! state)
+    state))
 
 (defop SETCC
   (lambda (instruction state)
-    ))
+    (let ((cc (vmstate-pop! state)))
+      (vmstate-setcc! state cc)
+      (vmstate-incpc! state)
+      state)))
 
 
 

@@ -16,16 +16,15 @@
          (inline-primitives))
 
 ;;; ----------------------------------------------------------------------
+;;; function return records
+;;; ----------------------------------------------------------------------
+
+(define-structure return fn pc stack env)
+
+;;; ----------------------------------------------------------------------
 ;;; continuations
 ;;; ----------------------------------------------------------------------
 
-(define-structure continuation stack environment destination)
+(define-structure continuation stack)
 
-(define (vmstate-continue! state cc)
-  (let ((stack (continuation-stack cc))
-        (env (continuation-environment cc))
-        (dest (continuation-destination cc)))
-    (if stack (vmstate-stack-set! state (continuation-stack cc)))
-    (if env (vmstate-env-set! state (continuation-environment cc)))
-    (if dest (vmstate-pc-set! state (continuation-destination cc))))
-  state)
+

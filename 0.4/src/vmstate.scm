@@ -68,3 +68,25 @@
         (let ((entry (cons var val)))
           (vmstate-env-set! s (cons entry (vmstate-env s)))
           val))))
+
+(define (vmstate-apply! state)
+  (let* ((fn (vmstate-pop! state))
+         (args (vmstate-popn! state (vmstate-nvals state)))
+         (call-env (make-fn-env fn args)))
+    (vmstate-fn-set! state fn)
+    (vmstate-code-set! (fn-code fn))
+    (vmstate-pc-set! state 0)
+    (vmstate-env-set! state call-env)))
+
+(define (vmstate-return! state rr)
+  (vmstate-fn-set! state (return-fn rr))
+  (vmstate-code-set! state (fn-code (return-fn rr)))
+  (vmstate-pc-set! state (return-pc rr))
+  (vmstate-stack-set! state (return-stack rr))
+  (vmstate-env-set! state (return-env rr))
+  state)
+
+(define (vmstate-setcc! state cc)
+  (vmstate-stack-set! state (continuation-stack cc))
+  state)
+
