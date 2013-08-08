@@ -52,6 +52,23 @@
 
 ;;; (test-const)
 
+;;; test-pop
+;;; ----------------------------------------------------------------------
+
+(define (test-pop)
+  (let* ((code (asm (instruction 'CONST 1)
+                    (instruction 'CONST 2)
+                    (instruction 'CONST 3)
+                    (instruction 'POP)
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-pop)
+
 ;;; test-lref
 ;;; ----------------------------------------------------------------------
 
@@ -179,6 +196,45 @@
 
 ;;; (test-fn)
 
+;;; test-prim
+;;; ----------------------------------------------------------------------
+
+(define (test-prim)
+  (let* ((code (asm (instruction 'CONST 2)
+                    (instruction 'CONST 3)
+                    (instruction 'PRIM 'GNMUL)
+                    (instruction 'HALT)))
+         (function (make-fn '() #f code))
+         (prog (make-program code))
+         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
+    (vmstart state)
+    (showvm state)))
+
+;;; (test-prim)
+
+;;; test-apply
+;;; ----------------------------------------------------------------------
+
+(define (test-apply)
+  (let ((testfun (make-fn '(a b) #f (asm (instruction 'LREF 'a)
+                                         (instruction 'LREF 'b)
+                                         (instruction 'PRIM 'GNADD)
+                                         (instruction 'RETURN))))
+        (globals (default-globals)))
+    (table-set! globals 'add testfun)
+    (let* ((code (asm (instruction 'CONST 4)
+                      (instruction 'CONST 2)
+                      (instruction 'GREF 'add)
+                      (instruction 'APPLY)
+                      (instruction 'HALT)))
+           (function (make-fn '() #f code))
+           (prog (make-program code))
+           (state (make-vmstate prog function 0 0 '() '() globals #f)))
+      (vmstart state)
+      (showvm state))))
+
+;;; (test-apply)
+
 ;;; test-cc
 ;;; ----------------------------------------------------------------------
 
@@ -197,32 +253,20 @@
 ;;; ----------------------------------------------------------------------
 
 (define (test-setcc)
-  (let* ((code (asm (instruction 'CONST 0)
-                    (instruction 'LSET 'x)
-                    
+  (let* ((code (asm (instruction 'CONST 1)
+                    (instruction 'CONST 2)
+                    (instruction 'CONST 3)
+                    (instruction 'CC)
+                    (instruction 'LSET 'k)
+                    (instruction 'POP)
+                    (instruction 'POP)
+                    (instruction 'LREF 'k)
+                    (instruction 'SETCC)
                     (instruction 'HALT)))
          (function (make-fn '() #f code))
          (prog (make-program code))
-         (state (make-vmstate prog function 0 0 '() '((k . #f)(x . 0)) (default-globals) #f)))
+         (state (make-vmstate prog function 0 0 '() '((k . #f)) (default-globals) #f)))
     (vmstart state)
     (showvm state)))
 
 ;;; (test-setcc)
-
-;;; test-prim
-;;; ----------------------------------------------------------------------
-
-(define (test-prim)
-  (let* ((code (asm (instruction 'CONST 2)
-                    (instruction 'CONST 3)
-                    (instruction 'PRIM 'GNMUL)
-                    (instruction 'HALT)))
-         (function (make-fn '() #f code))
-         (prog (make-program code))
-         (state (make-vmstate prog function 0 0 '() '() (default-globals) #f)))
-    (vmstart state)
-    (showvm state)))
-
-;;; (test-prim)
-
-

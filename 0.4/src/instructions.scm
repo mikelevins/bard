@@ -69,15 +69,16 @@
 
 (define HALT      0)  (defopname HALT 'HALT)
 (define CONST     1)  (defopname CONST 'CONST)
-(define LREF      2)  (defopname LREF 'LREF)
-(define LSET      3)  (defopname LSET 'LSET)
-(define GREF      4)  (defopname GREF 'GREF)
-(define GSET      5)  (defopname GSET 'GSET)
-(define GO        6)  (defopname GO 'GO)
-(define TGO       7)  (defopname TGO 'TGO)
-(define FGO       8)  (defopname FGO 'FGO)
-(define PRIM      9)  (defopname PRIM 'PRIM)
-(define SAVE     10)  (defopname SAVE 'SAVE)
+(define POP       2)  (defopname POP 'POP)
+(define LREF      3)  (defopname LREF 'LREF)
+(define LSET      4)  (defopname LSET 'LSET)
+(define GREF      5)  (defopname GREF 'GREF)
+(define GSET      6)  (defopname GSET 'GSET)
+(define GO        7)  (defopname GO 'GO)
+(define TGO       8)  (defopname TGO 'TGO)
+(define FGO       9)  (defopname FGO 'FGO)
+(define FN       10)  (defopname FN 'FN)
+(define PRIM     11)  (defopname PRIM 'PRIM)
 (define RETURN   12)  (defopname RETURN 'RETURN)
 (define APPLY    13)  (defopname APPLY 'APPLY)
 (define CC       14)  (defopname CC 'CC) ; "capture continuation"
@@ -94,6 +95,12 @@
 (defop CONST 
   (lambda (instruction state)
     (vmstate-push! state (arg1 instruction))
+    (vmstate-incpc! state)
+    state))
+
+(defop POP 
+  (lambda (instruction state)
+    (vmstate-pop! state)
     (vmstate-incpc! state)
     state))
 
@@ -170,16 +177,6 @@
       (vmstate-incpc! state)
       state)))
 
-(defop SAVE
-  (lambda (instruction state)
-    (let ((rr (make-return (vmstate-fn state)
-                           (vmstate-pc state)
-                           (vmstate-stack state)
-                           (vmstate-env state))))
-      (vmstate-push! state rr)
-      (vmstate-incpc! state)
-      state)))
-
 (defop APPLY
   (lambda (instruction state)
     (vmstate-apply! state)    
@@ -187,7 +184,7 @@
 
 (defop RETURN
   (lambda (instruction state)
-    (let ((rr (vmstate-pop-bottom! state)))
+    (let ((rr (vmstate-pop! state)))
       (vmstate-return! state rr)
       state)))
 

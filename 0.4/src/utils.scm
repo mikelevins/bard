@@ -41,6 +41,17 @@
                         result)))
         (reverse result))))
 
+(define (last ls)
+  (if (null? ls)
+      (error "empty list")
+      (if (null? (cdr ls))
+          (car ls)
+          (last (cdr ls)))))
+
+(define (butlast ls)
+  (let ((len (length ls)))
+    (take (1- len) ls)))
+
 ;;; ----------------------------------------------------------------------
 ;;;  vector utils
 ;;; ----------------------------------------------------------------------

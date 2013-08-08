@@ -28,7 +28,7 @@
               (instruction-args ins))))
 
 (define (display-function fn)
-  (display "#<function>"))
+  (display fn))
 
 (define (showvm state)
   (newline)

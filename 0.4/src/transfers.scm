@@ -19,7 +19,7 @@
 ;;; function return records
 ;;; ----------------------------------------------------------------------
 
-(define-structure return fn pc stack env)
+(define-structure return fn pc env)
 
 ;;; ----------------------------------------------------------------------
 ;;; continuations

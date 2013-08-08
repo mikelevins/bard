@@ -26,6 +26,13 @@
 ;;; vm main loop
 ;;; ----------------------------------------------------------------------
 
+(define (vmstep state)
+  (let* ((instruction (program-ref (vmstate-program state)
+                                   (vmstate-pc state)))
+         (opcode (instruction-opcode instruction))
+         (state* (execute-instruction opcode instruction state)))
+    (showvm state*)))
+
 (define (vmexec state)
   (let* ((instruction (program-ref (vmstate-program state)
                                    (vmstate-pc state)))
