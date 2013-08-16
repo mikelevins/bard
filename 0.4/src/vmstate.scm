@@ -18,7 +18,7 @@
 ;;; vmstate structure
 ;;; ----------------------------------------------------------------------
 
-(define-structure vmstate program function pc nvals stack env globals haltfn)
+(define-structure vmstate function pc nvals stack env globals haltfn)
 
 ;;; acessing and updating state
 
@@ -101,34 +101,12 @@
                  (error msg args)))))))
 
 
-;;; BUG: APPLY sets the function, but not the program, causing a function call to read instructions from the wrong code
-
-;;; TODO: implement closures and make sure to handle their environments in the merge
 (define (vmstate-apply! state)
-  (let* ((fn (vmstate-pop! state))
-         (argcount (vmstate-nvals state))
-         (args (vmstate-popn! state argcount))
-         (params (fn-required-parameters fn))
-         (rest-param (fn-rest-parameter fn))
-         (params-env (make-parameters-environment params rest-param args))
-         (call-env (merge-environments params-env (vmstate-env state)))
-         (return-record (make-return (vmstate-function state)
-                                     (1+ (vmstate-pc state))
-                                     (vmstate-env state))))
-    (vmstate-function-set! state fn)
-    (vmstate-pc-set! state 0)
-    (vmstate-env-set! state call-env)
-    (vmstate-push! state return-record)
-    state))
+#f)
 
 (define (vmstate-return! state rr)
-  (let* ((rr (vmstate-pop-bottom! state)))
-    (vmstate-function-set! state (return-fn rr))
-    (vmstate-pc-set! state (return-pc rr))
-    (vmstate-env-set! state (return-env rr))
-    state))
+  #f)
 
 (define (vmstate-setcc! state cc)
-  (vmstate-stack-set! state (continuation-stack cc))
-  state)
+  #f)
 

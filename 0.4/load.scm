@@ -30,7 +30,6 @@
          "src/stacks.scm"
          "src/environments.scm"
          "src/globals.scm"
-         "src/programs.scm"
          "src/vmstate.scm"
          "src/primitives.scm"
          "src/functions.scm"
