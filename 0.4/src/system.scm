@@ -18,6 +18,24 @@
 ;;; 
 ;;; ----------------------------------------------------------------------
 
+(define (asm . instructions)
+  (make-codevector
+   (list->vector
+    (map (lambda (i)
+           (let* ((opnm (car i))
+                  (opcode (opcode opnm))
+                  (opargs (cdr i)))
+             (cons opcode opargs)))
+         instructions))))
+
+(define (link . cvec)
+  (vector-map (lambda (i)
+                (let ((opc (car i))
+                      (op (vmoperator opc))
+                      (opargs (cdr i)))
+                  (cons op opargs)))
+              (codevector-code cvec))) 
+
 (define (display-instruction ins)
   (let* ((opc (instruction-opcode ins))
          (nm (opname opc)))
@@ -35,8 +53,8 @@
   (display "Bard VM 0.40")(newline)
   (display "          pc: ")(display (vmstate-pc state))(newline)
   (display " instruction: ")(if (< (vmstate-pc state)
-                                   (program-length (vmstate-program state)))
-                                (display-instruction (program-ref (vmstate-program state) (vmstate-pc state))))
+                                   (codevector-length (fn-body (vmstate-function state))))
+                                (display-instruction (codevector-ref (fn-body (vmstate-function state)) (vmstate-pc state))))
   (newline)
   (display "    function: ")(display-function (vmstate-function state))(newline)
   (display "       nvals: ")(display (vmstate-nvals state))(newline)
@@ -70,9 +88,5 @@
                      (newline)
                      (display "          ")
                      (display-instruction instr))
-                   (vmstate-program state)) 
+                   (codevector-code (fn-body (vmstate-function state)))) 
   (newline))
-
-;;; (define $pgm (asm `(CONST 1) `(CONST 2) `(PRIM GNADD) `(HALT)))
-;;; (define $vm (make-vmstate $pgm #f 0 0 (make-stack)(default-environment)(default-globals) #f))
-;;; (showvm $vm)

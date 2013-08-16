@@ -28,6 +28,7 @@
          "src/utils.scm"
          "src/values.scm"
          "src/stacks.scm"
+         "src/codevector.scm"
          "src/environments.scm"
          "src/globals.scm"
          "src/vmstate.scm"
