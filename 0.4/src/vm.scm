@@ -34,7 +34,7 @@
     (showvm state*)))
 
 (define (vmexec state)
-  (let* ((instruction (codevector-ref (fn-body (vmstate-program state))
+  (let* ((instruction (codevector-ref (fn-body (vmstate-function state))
                                       (vmstate-pc state)))
          (opcode (instruction-opcode instruction))
          (state* (execute-instruction opcode instruction state)))
