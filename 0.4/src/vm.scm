@@ -26,8 +26,8 @@
 ;;; vm main loop
 ;;; ----------------------------------------------------------------------
 
-(define (vmstep state)
-  (let* ((instruction (codevector-ref (function-body (vmstate-function state))
+(define (stepvm state)
+  (let* ((instruction (codevector-ref (fn-body (vmstate-function state))
                                       (vmstate-pc state)))
          (opcode (instruction-opcode instruction))
          (state* (execute-instruction opcode instruction state)))

@@ -188,9 +188,8 @@
 
 (defop RETURN
   (lambda (instruction state)
-    (let ((rr (vmstate-pop! state)))
-      (vmstate-return! state rr)
-      state)))
+    (vmstate-return! state)
+    state))
 
 (defop CC
   (lambda (instruction state)
