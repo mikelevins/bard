@@ -31,22 +31,19 @@
   (table-ref *primitives* pname #f))
 
 (defprim 'GNADD 0 #t
-  (lambda (state)
-    (let* ((argcount (vmstate-nvals state))
-           (args (vmstate-popn! state argcount))
+  (lambda (state argcount)
+    (let* ((args (vmstate-popn! state argcount))
            (sum (apply + args)))
       (vmstate-push! state sum))))
 
 (defprim 'GNSUB 0 #t
-  (lambda (state)
-    (let* ((argcount (vmstate-nvals state))
-           (args (vmstate-popn! state argcount))
+  (lambda (state argcount)
+    (let* ((args (vmstate-popn! state argcount))
            (sum (apply - args)))
       (vmstate-push! state sum))))
 
 (defprim 'GNMUL 0 #t
-  (lambda (state)
-    (let* ((argcount (vmstate-nvals state))
-           (args (vmstate-popn! state argcount))
+  (lambda (state argcount)
+    (let* ((args (vmstate-popn! state argcount))
            (prod (apply * args)))
       (vmstate-push! state prod))))

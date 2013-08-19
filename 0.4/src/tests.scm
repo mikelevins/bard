@@ -18,7 +18,7 @@
 
 (define (test-show)
   (let* ((code (asm (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (showvm state)))
 
@@ -35,7 +35,7 @@
 
 (define (test-halt)
   (let* ((code (asm (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -54,7 +54,7 @@
 (define (test-const)
   (let* ((code (asm (instruction 'CONST 5)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -75,9 +75,9 @@
   (let* ((code (asm (instruction 'CONST 1)
                     (instruction 'CONST 2)
                     (instruction 'CONST 3)
-                    (instruction 'POP)
+                    (instruction 'POP 1)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -85,7 +85,7 @@
 ;;; program: CONST 1
 ;;;          CONST 2
 ;;;          CONST 3
-;;;          POP
+;;;          POP 1
 ;;;          HALT
 ;;; expected state:
 ;;;  pc: 5
@@ -100,7 +100,7 @@
 (define (test-lref)
   (let* ((code (asm (instruction 'LREF 'x)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '((x . 5)) (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -121,7 +121,7 @@
   (let* ((code (asm (instruction 'CONST 0)
                     (instruction 'LSET 'x)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '((x . 5)) (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -144,7 +144,7 @@
     (table-set! globals 'x 101)
     (let* ((code (asm (instruction 'GREF 'x)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() globals #f)))
     (vmstart state)
     (showvm state))))
@@ -168,7 +168,7 @@
                       (instruction 'GSET 'x)
                       (instruction 'GREF 'x)
                       (instruction 'HALT)))
-           (function (make-fn '() #f code))
+           (function (make-fn '() #f (default-environment) code))
            (state (make-vmstate function 0 0 '() '() globals #f)))
       (vmstart state)
       (showvm state))))
@@ -192,11 +192,10 @@
                     (instruction 'GO 3)
                     (instruction 'CONST 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
-
 
 ;;; program: CONST 1
 ;;;          GO 3
@@ -218,7 +217,7 @@
                     (instruction 'TGO 4)
                     (instruction 'CONST 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -244,7 +243,7 @@
                     (instruction 'TGO 4)
                     (instruction 'CONST 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -270,7 +269,7 @@
                     (instruction 'FGO 4)
                     (instruction 'CONST 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -296,7 +295,7 @@
                     (instruction 'FGO 4)
                     (instruction 'CONST 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -319,7 +318,7 @@
 (define (test-fn)
   (let* ((code (asm (instruction 'FN '(a b) 'rest (asm (instruction 'HALT)))
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -339,9 +338,9 @@
 (define (test-prim)
   (let* ((code (asm (instruction 'CONST 2)
                     (instruction 'CONST 3)
-                    (instruction 'PRIM 'GNMUL)
+                    (instruction 'PRIM 'GNMUL 2)
                     (instruction 'HALT)))
-         (function (make-fn '() #f code))
+         (function (make-fn '() #f (default-environment) code))
          (state (make-vmstate function 0 0 '() '() (default-globals) #f)))
     (vmstart state)
     (showvm state)))
@@ -361,7 +360,22 @@
 ;;; ----------------------------------------------------------------------
 
 (define (test-apply)
-  #f)
+  (let ((globals (default-globals))
+        (times (make-fn '(a b) #f (default-environment)
+                        (asm (instruction 'LREF 'b)
+                             (instruction 'LREF 'a)
+                             (instruction 'PRIM 'GNMUL 2)
+                             (instruction 'RETURN)))))
+    (table-set! globals '* times)
+    (let* ((code (asm (instruction 'CONST 2)
+                      (instruction 'CONST 3)
+                      (instruction 'GREF '*)
+                      (instruction 'APPLY 2)
+                      (instruction 'HALT)))
+           (function (make-fn '() #f (default-environment) code))
+           (state (make-vmstate function 0 0 '() '() globals #f)))
+      (vmstart state)
+      (showvm state))))
 
 ;;; (test-apply)
 

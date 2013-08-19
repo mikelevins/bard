@@ -100,9 +100,10 @@
 
 (defop POP 
   (lambda (instruction state)
-    (vmstate-pop! state)
-    (vmstate-incpc! state)
-    state))
+    (let ((count (arg1 instruction)))
+      (vmstate-popn! state count)
+      (vmstate-incpc! state)
+      state)))
 
 (defop LREF 
   (lambda (instruction state)
@@ -163,23 +164,26 @@
   (lambda (instruction state)
     (let ((args (arg1 instruction))
           (restarg (arg2 instruction))
+          (env (vmstate-env state))
           (body (arg3 instruction)))
-      (vmstate-push! state (make-fn args restarg body))
+      (vmstate-push! state (make-fn args restarg env body))
       (vmstate-incpc! state)
       state)))
 
 (defop PRIM
   (lambda (instruction state)
     (let* ((pname (arg1 instruction))
+           (argcount (arg2 instruction))
            (prim (get-primitive pname))
            (pfun (primitive-function prim)))
-      (pfun state)
+      (pfun state argcount)
       (vmstate-incpc! state)
       state)))
 
 (defop APPLY
   (lambda (instruction state)
-    (vmstate-apply! state)    
+    (let ((argcount (arg1 instruction)))
+      (vmstate-apply! state argcount))
     state))
 
 (defop RETURN

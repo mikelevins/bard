@@ -18,5 +18,5 @@
 ;;; fns
 ;;; ----------------------------------------------------------------------
 
-(define-structure fn required-parameters rest-parameter body)
+(define-structure fn required-parameters rest-parameter environment body)
 
