@@ -47,3 +47,9 @@
     (let* ((args (vmstate-popn! state argcount))
            (prod (apply * args)))
       (vmstate-push! state prod))))
+
+(defprim 'GNLT 0 #t
+  (lambda (state argcount)
+    (let* ((args (vmstate-popn! state argcount))
+           (prod (apply < args)))
+      (vmstate-push! state prod))))
