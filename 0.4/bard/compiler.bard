@@ -1,0 +1,95 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compiler.bard
+;;;; Project:       Bard
+;;;; Purpose:       the bard compiler in bard
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+(define variable *special-form-definitions* {})
+
+(define variable *macro-definitions* {})
+
+(define method (special-form? x)
+  (and (get *special-form-definitions* x)
+       true))
+
+(define method (macroname? x)
+  (and (get *macro-definitions* x)
+       true))
+
+(define method (compile-special-form expression environment)
+  (let ((name (head expression))
+        (special-compile (get *special-form-definitions* name)))
+    (special-compile expression environment)))
+
+(define method (macroexpand expression)
+  (let ((name (head expression))
+        (expand (get *macro-definitions* name)))
+    (expand expression)))
+
+(define method (environment-bindings env)
+  env)
+
+(define method (binding-key binding)
+  (left binding))
+
+(define method (find-variable-binding var-expr env)
+  (some (^ (x)(= var-expr (binding-key x)))
+        (environment-bindings env)))
+
+(define method (in-environment? var-expr env)
+  (and (something? (find-variable-binding var-expr env))
+       true))
+
+(define method (compile-variable-reference expression environment)
+  (if (in-environment? expression environment)
+      [['LREF expression]]
+      [['GREF expression]]))
+
+(define method (compile-apply-value expression environment)
+  (let ((val (head expression))
+        (val-code (compile val environment))
+        (arg-exprs (tail expression))
+        (args-code (map (^ (x)(compile x environment))
+                        arg-exprs)))
+    (reverse (pair (pair 'APPLY (length args-code))
+                   (pair val-code
+                         (reverse args-code))))))
+
+(define method (compile-procedure-call-for operator expression environment)
+  (compile-apply-value expression environment))
+
+(define method (compile-procedure-call-for operator expression environment)
+  with: ((operator <symbol>))
+  (if (special-form? operator)
+      (compile-special-form expression environment)
+      (if (macroname? operator)
+          (compile (macroexpand expression) environment)
+          (compile-apply-value expression environment))))
+
+(define method (compile-procedure-call-for operator expression environment)
+  with: ((operator <pair>))
+  (compile-apply-value expression environment))
+
+(define method (compile-procedure-call expression environment)
+  (compile-procedure-call-for (first expression)
+                              expression
+                              environment))
+
+(define method (compile expression environment)
+  expression)
+
+(define method (compile expression environment)
+  with: ((expression <symbol>))
+  (compile-variable-reference expression environment))
+
+(define method (compile expression environment)
+  with: ((expression <pair>))
+  (compile-procedure-call expression environment))
+
+
+
