@@ -38,7 +38,7 @@
   (left binding))
 
 (define method (find-variable-binding var-expr env)
-  (some (^ (x)(= var-expr (binding-key x)))
+  (some? (^ (x)(= var-expr (binding-key x)))
         (environment-bindings env)))
 
 (define method (in-environment? var-expr env)
@@ -81,7 +81,7 @@
                               environment))
 
 (define method (compile expression environment)
-  expression)
+  [['CONST expression]])
 
 (define method (compile expression environment)
   with: ((expression <symbol>))
