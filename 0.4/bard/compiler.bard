@@ -9,16 +9,19 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; special form compilers
+;;; ---------------------------------------------------------------------
+
 (define variable *special-form-definitions* {})
 
-(define variable *macro-definitions* {})
+(define method (define-special-form name compiler-fn)
+  (set! *special-form-definitions*
+        (merge *special-form-definitions*
+               {name compiler-fn})))
 
 (define method (special-form? x)
   (and (get *special-form-definitions* x)
-       true))
-
-(define method (macroname? x)
-  (and (get *macro-definitions* x)
        true))
 
 (define method (compile-special-form expression environment)
@@ -26,10 +29,48 @@
         (special-compile (get *special-form-definitions* name)))
     (special-compile expression environment)))
 
+;;; ---------------------------------------------------------------------
+;;; macro expanders
+;;; ---------------------------------------------------------------------
+
+(define variable *macro-definitions* {})
+
+(define method (define-macroexpander name expander-fn)
+  (set! *macro-definitions*
+        (merge *macro-definitions*
+               {name expander-fn})))
+
+(define method (macroname? x)
+  (and (get *macro-definitions* x)
+       true))
+
 (define method (macroexpand expression)
   (let ((name (head expression))
         (expand (get *macro-definitions* name)))
     (expand expression)))
+
+;;; ---------------------------------------------------------------------
+;;; primitives
+;;; ---------------------------------------------------------------------
+
+(define variable *primitives* {})
+
+(define method (define-primitive name prim-fn)
+  (set! *primitives*
+        (merge *primitives*
+               {name prim-fn})))
+
+(define method (primitive? x)
+  (and (get *primitives* x)
+       true))
+
+(define method (compile-primitive-call expression environment)
+  (let ((argcount (length (tail expression))))
+    [['PRIM (first expression) argcount]]))
+
+;;; ---------------------------------------------------------------------
+;;; environments
+;;; ---------------------------------------------------------------------
 
 (define method (environment-bindings env)
   env)
@@ -44,6 +85,10 @@
 (define method (in-environment? var-expr env)
   (and (something? (find-variable-binding var-expr env))
        true))
+
+;;; ---------------------------------------------------------------------
+;;; main compiler
+;;; ---------------------------------------------------------------------
 
 (define method (compile-variable-reference expression environment)
   (if (in-environment? expression environment)
@@ -69,7 +114,9 @@
       (compile-special-form expression environment)
       (if (macroname? operator)
           (compile (macroexpand expression) environment)
-          (compile-apply-value expression environment))))
+          (if (primitive? operator)
+              (compile-primitive-call expression environment)
+              (compile-apply-value expression environment)))))
 
 (define method (compile-procedure-call-for operator expression environment)
   with: ((operator <pair>))
@@ -90,6 +137,3 @@
 (define method (compile expression environment)
   with: ((expression <pair>))
   (compile-procedure-call expression environment))
-
-
-
