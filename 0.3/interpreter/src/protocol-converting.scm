@@ -35,17 +35,23 @@
 ;;; as
 ;;; ---------------------------------------------------------------------
 
+;;; as List
+;;; ---------------------------------------------------------------------
+
+(define-primitive-method as ((%singleton List) Anything) 
+  (lambda (type thing)(%->list thing)))
+
 ;;; as <string>
 ;;; ---------------------------------------------------------------------
+
+(define-primitive-method as ((%singleton <string>) Anything) 
+  (lambda (type thing)(object->string thing)))
 
 (define-primitive-method as ((%singleton <string>) <symbol>) 
   (lambda (type thing)(symbol->string thing)))
 
 (define-primitive-method as ((%singleton <string>) <keyword>) 
   (lambda (type thing)(keyword->string thing)))
-
-(define-primitive-method as ((%singleton List) Anything) 
-  (lambda (type thing)(%->list thing)))
 
 (define-primitive-method as ((%singleton <string>) <null>) 
   (constantly ""))

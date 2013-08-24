@@ -1,3 +1,8 @@
+0.3.7
+
+- fixed a bug (a cut-paste error) in types the broke singleton definition
+- added a method (as <string> Anything) to enable conversion of arbitrary values to strings
+
 0.3.6
 
 - fixed a bug in dispatch that caused Anything dispatch to fail
