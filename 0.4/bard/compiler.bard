@@ -37,9 +37,57 @@
        true))
 
 (define method (compile-special-form expression environment)
-  (let ((name (head expression))
+  (let ((name (first expression))
         (special-compile (get *special-form-definitions* name)))
     (special-compile expression environment)))
+
+;;; ---------------------------------------------------------------------
+
+;;; if
+;;; ---------------------------------------------------------------------
+
+(define method (compile-one-armed-if expression environment)
+  (let ((test-form (element expression 1))
+        (test-code (compile test-form environment))
+        (then-form (element expression 2))
+        (then-code (compile then-form environment))
+        (end-label (gen-label)))
+    `(,@test-code
+      (FGO ,end-label)
+      ,@then-code
+      ,end-label)))
+
+(define method (compile-two-armed-if expression environment)
+  (let ((test-form (element expression 1))
+        (test-code (compile test-form environment))
+        (then-form (element expression 2))
+        (then-code (compile then-form environment))
+        (else-label (gen-label))
+        (else-form (element expression 3))
+        (else-code (compile else-form environment))
+        (end-label (gen-label)))
+    `(,@test-code
+      (FGO ,else-label)
+      ,@then-code
+      (GO ,end-label)
+      ,else-label
+      ,@else-code
+      ,end-label)))
+
+(define-special-form 'if
+  (method (expression environment)
+          (let ((len (length expression)))
+            (cond
+             ((= len 3)(compile-one-armed-if expression environment))
+             ((= len 4)(compile-two-armed-if expression environment))
+             (else (error "syntax error in if expression: " expression))))))
+
+;;; quote
+;;; ---------------------------------------------------------------------
+
+(define-special-form 'quote 
+  (method (expression environment)
+          [['CONST (second expression)]]))
 
 ;;; ---------------------------------------------------------------------
 ;;; macro expanders
@@ -57,7 +105,7 @@
        true))
 
 (define method (macroexpand expression)
-  (let ((name (head expression))
+  (let ((name (first expression))
         (expand (get *macro-definitions* name)))
     (expand expression)))
 
@@ -77,7 +125,7 @@
        true))
 
 (define method (compile-primitive-call expression environment)
-  (let ((argcount (length (tail expression))))
+  (let ((argcount (length (rest expression))))
     [['PRIM (first expression) argcount]]))
 
 ;;; ---------------------------------------------------------------------
@@ -108,9 +156,9 @@
       [['GREF expression]]))
 
 (define method (compile-apply-value expression environment)
-  (let ((val (head expression))
+  (let ((val (first expression))
         (val-code (compile val environment))
-        (arg-exprs (tail expression))
+        (arg-exprs (rest expression))
         (args-code (map (^ (x)(compile x environment))
                         arg-exprs)))
     (reverse (pair (pair 'APPLY (length args-code))
