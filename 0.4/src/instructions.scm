@@ -83,6 +83,9 @@
 (define APPLY    13)  (defopname APPLY 'APPLY)
 (define CC       14)  (defopname CC 'CC) ; "capture continuation"
 (define SETCC    15)  (defopname SETCC 'SETCC) ; "set captured continuation" - for arbitrary transfers of control
+(define DISCARD  16)  (defopname DISCARD 'DISCARD) ; pops all values (if any) pushed by the last instruction
+;;; TODO: implement DISCARD. requires adding a mechanism for the VM to keep track of how many values were
+;;;       pushed by the last instruction
 
 ;;; defining operations
 

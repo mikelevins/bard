@@ -21,6 +21,18 @@
     (set! *label-counter* (+ *label-counter* 1))
     (as <symbol> (append nm (as <string> n)))))
 
+(define method (interpose thing things)
+  with: ((things <null>))
+  [])
+
+(define method (interpose thing things)
+  with: ((things <pair>))
+  (if (empty? (rest things))
+      things
+      (pair (first things)
+            (pair thing
+                  (interpose thing (rest things))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; special form compilers
 ;;; ---------------------------------------------------------------------
@@ -42,6 +54,15 @@
     (special-compile expression environment)))
 
 ;;; ---------------------------------------------------------------------
+
+;;; begin
+;;; ---------------------------------------------------------------------
+
+(define-special-form 'begin
+  (method (expression environment)
+          (let ((body (rest expression))
+                (code (map (method (x)(compile x environment)) body)))
+            (interpose '(DISCARD) (reduce append code)))))
 
 ;;; if
 ;;; ---------------------------------------------------------------------
