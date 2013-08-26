@@ -55,15 +55,6 @@
 
 ;;; ---------------------------------------------------------------------
 
-;;; begin
-;;; ---------------------------------------------------------------------
-
-(define-special-form 'begin
-  (method (expression environment)
-          (let ((body (rest expression))
-                (code (map (method (x)(compile x environment)) body)))
-            (interpose '(DISCARD) (reduce append code)))))
-
 ;;; if
 ;;; ---------------------------------------------------------------------
 
