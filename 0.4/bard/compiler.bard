@@ -37,6 +37,8 @@
 ;;; special form compilers
 ;;; ---------------------------------------------------------------------
 
+;;; defining special forms
+
 (define variable *special-form-definitions* {})
 
 (define method (define-special-form name compiler-fn)
@@ -53,7 +55,20 @@
         (special-compile (get *special-form-definitions* name)))
     (special-compile expression environment)))
 
+;;; compilers
+
+;;; begin
 ;;; ---------------------------------------------------------------------
+
+(define method (compile-begin-sequence exprs environment)
+  (interpose '(POP 1)
+             (reduce append
+                     (map (method (x)(compile x environment))
+                          exprs))))
+
+(define-special-form 'begin
+  (method (expression environment)
+          (compile-begin-sequence (rest expression) environment)))
 
 ;;; if
 ;;; ---------------------------------------------------------------------
