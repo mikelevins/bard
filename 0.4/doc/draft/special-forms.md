@@ -61,25 +61,30 @@ It is an error to write an `if` form with no `else-expression`. For single-armed
 
 The `body` can be any number of expressions, and they're evaluated from left to right as if in the body of a `begin` form.
 
-The `bindings` portion provides several options for defining and initializing lexical variables. The `bindings` form appears as a map that associates variable names with expressions used to initialize them. For example, here's a very simple `let` form:
+The `bindings` part of the `let` form is a list of variable definitions:
 
-    (let {x 2
-          y (+ x 1)}
-      (* x y))
-      
-This example returns 6 when evaluated. It first creates a lexical variable named `x` and binds it to `2`. It next creates a second lexical variable named `y` and binds it to the value of `x` plus 1. FInally, the single expression in the body multiplies `x` and `y` to obtain `6`.
+    (def1 def2 def3...)
+    
+A definition is also a list. It takes the form
 
-As the example illustrates, the initializationof a variable can refer to any variable that was defined earlier in the bindings part of the `let` form. It can't refer to variables defined after its own definition, though; only to ones defined before.
+    (var val)
+    
+Putting it all together, here is a simple example that defines and initialize two lexical variables and then uses them to compute a result:
 
-`let` supports binding multiple values:
+    bard> (let ((x 2)
+                (y (+ x 1)))
+            (* x y))
+    6
 
-    (let { [object characters-read file-position] (read-object *logfile*) 
-           remaining-characters (- (file-length *logfile*) file-position) }
-      ...)
-      
-In this contrived example, the function `read-object` returns three value: an object read from a file, the number of characters processed during the read, and the file position after the read is complete. The example `let` form binds these values to lexical variables and then uses the file-position value in a further computation to initialize another lexical variable, `remaining-characters`.
+Variables are initialized from left to right, and so later variable initializations may refer to variables that are defined earlier, as the initialization of `y` here refers to the value of `x`.
 
-As you see here, if the left side of a variable definition is a list of variable names, Bard collects multiple values returned by the value expression and binds them in order to the named variables. If there are more variables named than values produced, Bard binds the values to the variables in order, and then binds `nothing` to any variables that are left over.
+A single definition may initialize more than one variable, by using an initialization form that returns multiple values:
+
+    bard> (let ((x y z (values 2 3 4)))
+            (* y z))
+    12
+
+If there are more variable names than values then the extra variables are bound to the value `nothing`.
 
 ### `loop`
 *control* Simple iterative evaluation
@@ -114,9 +119,53 @@ In this example, `loop` initially binds `i` to 0, prints a newline and then i, c
 
     (method parameters body)
     
-`method` creates a new method whos formal parameters are given in `parameters` and whose behavior is defined in `body`. When the method is applied to arguments, the arguments are evaluated and their values are bound to the formal parameters given in `parameters`. The expressions in `body` are then evaluated in the resulting environment as if they were in a `begin` form. The value of the last expression evaluated is returned as the value of the method call.
+`method` creates a new method whose formal parameters are given in `parameters` and whose behavior is defined in `body`. When the method is applied to arguments, the arguments are evaluated and their values are bound to the formal parameters given in `parameters`. The expressions in `body` are then evaluated in the resulting environment as if they were in a `begin` form. The value of the last expression evaluated is returned as the value of the method call.
 
-**TODO:** document `method` parameter lists.
+`parameters` is a list with two parts: the **required parameters** and the **rest parameter**. Both required parameters and rest parameters are optional. If the rest parameter is present, it's separated from the required parameters by the symbol `&`.
+
+This is a method that accepts no arguments:
+
+    (method () ...)
+    
+This is one that accepts exactly one argument:
+
+    (method (x) ...)
+    
+This is a method that accepts any number of arguments--zero or more--and binds all of them to a lexical variable named `args`:
+
+    (method (& args) ...)
+    
+Here's a method that accepts three or more arguments; it binds the first three (the required parameters) to the names `x`, `y`, and `z`, and binds any additional arguments to the name `more`:
+
+    (method (x y z & more) ...)
+    
+The rest parameter can be a map instead of a symbol. If it's a map then the keys have to be keywords. The names of the keywords are used as the names of lexical variables in the environment of the method. For example:
+
+    (method (x & {a: 2})
+      (* x a))
+      
+Suppose we bound this method to the name `frob`; then an interaction with it would look like this:
+
+    bard> (frob 2)
+    4
+    
+It returns the value of the expression in the method's body. `x` is 2 because we passed 2 as the argument. `a` is 2 because we said so in the construction of the method; that's what the map in the rest parameter meant.
+    
+We can change the result by passing a different value for `a`, using the `a:` keyword:
+
+    bard> (frob 2 a: 3)
+    6
+    
+When we pass the keyword `a:` and a value, the value we pass replaces the initial value of `a` in the method's environment.
+
+Parameters that are defined by giving a map as the rest parameter are called **keyword parameters**. Keyword parameters can be convenient both because they can be used to make the meanings of method parameters more clear, and because they can be used to provide default values for parameters.
+
+### `receive`
+*accessor*: Receiving messages
+
+A Bard process can communicate with other Bard processes by sending and receiving **messages**. A **message** is simply any Bard value that can be serialized. 
+
+Each Bard process has an associated message queue. Calling `receive` retrieves a message from that queue.
 
 ### `set!` and `setter`
 *accessor*: Assigning new values to variables and other bindings
