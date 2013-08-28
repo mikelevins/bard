@@ -15,6 +15,15 @@
          (inline-primitives))
 
 ;;; ----------------------------------------------------------------------
+;;; ABOUT
+;;; ----------------------------------------------------------------------
+;;; a single stack is used for argument values, return values, and 
+;;; function return addresses.
+;;; a function that returns multiple values pushes a values record
+;;; on the stack (in order to simplify the handling of begin and
+;;; other compiled forms that must discard function results)
+
+;;; ----------------------------------------------------------------------
 ;;; vmstate structure
 ;;; ----------------------------------------------------------------------
 
