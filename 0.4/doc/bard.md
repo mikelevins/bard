@@ -56,6 +56,14 @@ project.
 
 ## Special Forms
 
+Special forms are built-in procedures whose behavior is defined in the
+Bard virtual machine. They form the core of the Bard language. You
+cannot modify Bard's special forms (at least, not without modifying
+the virtual machine).
+
+See the file "special-forms.md" for a full description of Bard's
+special forms.
+
 ## Types
 
 ### How Types Work
