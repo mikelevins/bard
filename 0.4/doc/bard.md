@@ -18,6 +18,14 @@ Bard's primary design goal is to make me happy and productive in my work. It has
 
 ## Syntax and Expressions
 
+### Values
+
+### Variables and constants
+
+### Procedure calls
+
+### Constructors, getters and setters
+
 ## Types
 
 Bard types are made of three parts: **structures**, **protocols**, and **classes**. Every Bard type is an abstraction that consists of at least one protocol, zero or more classes, and zero or more structures. More commonly, a type is defined as a protocol plus several classes and several structures.
