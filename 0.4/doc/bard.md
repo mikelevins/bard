@@ -93,7 +93,7 @@ But why don't we just eliminate the guesswork? We can specify exactly which repr
 
 The expression `#<fixnum>` is a **value constraint**. It means we expect the Bard reader to construct the value of the next expression respecting restrictions that we specify. In this case, we specified a type of `<fixnum>`, which means Bard must use a `<fixnum>` to represent `1`. Bard can also use the value constraint to deduce that the return type of the function is `<fixnum>`, since we've now specified exactly what representation we mean.
 
-There was no need for the value constraint in the definition of `numerator` because Bard already knew the type of `r`; we said what it was in the `with:` clause.
+There was no need for the value constraint in the definition of `numerator` because Bard already knew the type of `r`; we said what it was in the `with` clause.
 
 
 
