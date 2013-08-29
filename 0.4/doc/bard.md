@@ -66,7 +66,7 @@ The protocol definition does not say anything about how to actually compute the 
 To define how to compute `numerator`, we define a method on the function `numerator`:
 
     (define method (numerator r)
-      with: {r <fixnum>}
+      with: ((r <fixnum>))
       r)
 
 `<fixnum>` is a structure that is built into Bard. It's one of several representations of an integer. The definition above says that when the argument to `numerator` is a `<fixnum>`, `numerator` simply returns that value. That defines a way to compute the value of `numerator`. 
