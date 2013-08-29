@@ -32,7 +32,7 @@ Bard's primary design goal is to make me happy and productive in my work. It has
 
 Bard types are made of three parts: **structures**, **protocols**, and **classes**. Every Bard type is an abstraction that consists of at least one protocol, zero or more classes, and zero or more structures. More commonly, a type is defined as a protocol plus several classes and several structures.
 
-A **protocol** is a set of related functions that define the behavior of one or more related types. For example, there is a `Number` protocol that defines a set of operations that on instances of `Number`, and there is a `List` protocol that defines a set of operations on instances of `List`. In most cases, a protocol's functions operate on and produce several related classes.
+A **protocol** is a set of related functions that define the behavior of one or more related types. For example, there is a `Number` protocol that defines a set of operations on instances of `Number`, and there is a `List` protocol that defines a set of operations on instances of `List`. In most cases, a protocol's functions operate on and produce several related classes.
 
 A **class** is the name of an abstract type. `Number` and `List` are classes. It's important to understand that a Bard class is really *just* a name. A Bard class has no internal structure--just the name. That name can appear in function definitions, and it can be used to assert that one type is a subtype of another--for example, `Integer` is a subclass of `Number`, but that's all you can do with classes.
 
