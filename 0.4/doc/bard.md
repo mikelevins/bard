@@ -66,7 +66,7 @@ The protocol definition does not say anything about how to actually compute the 
 To define how to compute `numerator`, we define a method on the function `numerator`:
 
     (define method (numerator r)
-      with: ((r <fixnum>))
+      with ((r <fixnum>))
       r)
 
 `<fixnum>` is a structure that is built into Bard. It's one of several representations of an integer. The definition above says that when the argument to `numerator` is a `<fixnum>`, `numerator` simply returns that value. That defines a way to compute the value of `numerator`. 
@@ -78,7 +78,7 @@ That means that the structure `<fixnum>` is a now a member of the classes `Ratio
 We can define `denominator` similarly:
 
     (define method (denominator r)
-      with: {r <fixnum>}
+      with ((r <fixnum>))
       1)
 
 There's a subtle point about the return value of `denominator`: this definition returns the literal value `1`. What representation of `1` do we mean? There are various possible concrete types that can be used to represent `1`, and we didn't say which one to use.
@@ -88,7 +88,7 @@ When we write a literal value, Bard will choose a representation for it. It can'
 But why don't we just eliminate the guesswork? We can specify exactly which representation we mean:
 
     (define method (denominator r)
-      with: {r <fixnum>}
+      with ((r <fixnum>))
       #<fixnum> 1)
 
 The expression `#<fixnum>` is a **value constraint**. It means we expect the Bard reader to construct the value of the next expression respecting restrictions that we specify. In this case, we specified a type of `<fixnum>`, which means Bard must use a `<fixnum>` to represent `1`. Bard can also use the value constraint to deduce that the return type of the function is `<fixnum>`, since we've now specified exactly what representation we mean.
