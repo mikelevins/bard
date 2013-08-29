@@ -96,13 +96,71 @@ There was no need for the value constraint in the definition of `numerator` beca
 Bard has four kinds of procedures:
 
 * **special forms**
+
+  **Special forms** are procedures that are built into the Bard compiler and virtual machine. They define the core of the Bard language. It's not possible to define new special forms from within Bard, nor to modify the ones that are built-in. Bard defines around two dozen special forms.
+
 * **macros**
+
+  **Macros** are procedures that rewrite expressions before they are compiled and evaluated. Bard defines several standard macros, and provides the `define macro` form to enable you to define new ones. Macros are best used to define new syntax that simplifies common patterns of code and makes them clearer.
+
 * **functions**
-* **methods**
+
+  **Functions** are procedures that accept arguments and compute result values. Bard functions are **polymorphic**; that is, the exact code that a function executes may depend on the arguments passed to it. In fact, a function doesn't actually compute its results; it merely examines its arguments and selects a suitable **method** that is then used to compute the results.
+
+* **methods** 
+
+  **Methods** are procedures that accept arguments and compute result values. Methods do the actual work of computing results of functions. A function examines its arguments and chooses a matching method; the method then computes the function's results.
 
 ### Defining Procedures
 
 ### Built-in Procedures
+
+#### Special Forms
+
+##### `begin`
+##### `cond`
+##### `define`
+
+* `define class`
+* `define constant`
+* `define method`
+* `define macro`
+* `define method`
+* `define protocol`
+* `define variable`
+
+##### defining structures
+* `define record`
+* `define union`
+* `define vector`
+
+
+##### `ensure`
+##### `function` 
+##### `if`
+##### `let` 
+##### `loop` 
+##### `match` 
+##### `method` 
+##### `protocol` 
+##### `quasiquote` 
+##### `quote`
+##### `receive` 
+##### `repeat`
+##### `send`
+##### `setter` 
+##### `time`
+##### `undefine` 
+##### `unless`
+##### `values`
+##### `when`
+##### `with-exit` 
+##### `with-open`
+
+#### Macros
+
+#### Protocols
+
 
 ## The Virtual Machine
 
