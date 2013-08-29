@@ -118,12 +118,17 @@ Bard has four kinds of procedures:
 #### Special Forms
 
 ##### `begin`
+<code>(begin <i>[expr]*</i>)</code>
+
 ##### `cond`
+<code>(cond <i>[</i> (<i>test</i> <i>[</i><i>expr</i><i>]&#42;</i>) <i>]&#42;</i>)</code>
+
+
 ##### `define`
 
-* `define class`
-* `define constant`
-* `define method`
+* `define class` <br>
+* `define constant` <br>
+* `define method` <br>
 * `define macro`
 * `define method`
 * `define protocol`
@@ -136,26 +141,66 @@ Bard has four kinds of procedures:
 
 
 ##### `ensure`
+<code>(ensure <i>body epilog</i>)</code>
+
 ##### `function` 
+<code>(-> <i>[input-type]&#42;</i> -> <i>[output-type]&#42;</i>)</code><br>
+<code>(function <i>[input-type]&#42;</i> -> <i>[output-type]&#42;</i>)</code>
+
 ##### `if`
+<code>(if <i>test-expr then-expr else-expr</i>)</code>
+
 ##### `let` 
 ##### `loop` 
 ##### `match` 
 ##### `method` 
+<code>(^ ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code><br>
+<code>(method ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+
 ##### `protocol` 
+<code>(protocol <i>[name function]*</i>)</code><br>
+
 ##### `quasiquote` 
+<code>`<i>expr</i></code><br>
+<code>(quasiquote <i>expr</i>)</code>
+
 ##### `quote`
+<code>'<i>expr</i></code><br>
+<code>(quote <i>expr</i>)</code>
+
 ##### `receive` 
+<code>(receive)</code><br>
+<code>(receive <i>pattern</i>)</code>
+
 ##### `repeat`
+<code>(repeat <i>[expr]*</i>)</code>
+
 ##### `send`
+<code>(send <i>dest expr</i>)</code>
+
 ##### `setter` 
+<code>(setter <i>place</i>)</code>
+
 ##### `time`
+<code>(time <i>[expr]*</i>)</code>
+
 ##### `undefine` 
+<code>(undefine <i>name</i>)</code>
+
 ##### `unless`
+<code>(unless <i>test-expr</i> <i>[expr]*</i>)</code>
+
 ##### `values`
+<code>(values <i>[expr]*</i>)</code>
+
 ##### `when`
+<code>(when <i>test-expr</i> <i>[expr]*</i>)</code>
+
 ##### `with-exit` 
+<code>(with-exit (<i>name</i>) <i>[expr]*</i>)</code>
+
 ##### `with-open`
+<code>(with-open (<i>name [param]&#42;</i>) <i>[expr]*</i>)</code>
 
 #### Macros
 
