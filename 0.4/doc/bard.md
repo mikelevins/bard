@@ -55,7 +55,7 @@ The protocol definition does not say anything about how to actually compute the 
 
 To define how to compute `numerator`, we define a method on the function `numerator`:
 
-    (define function (numerator r)
+    (define method (numerator r)
       with: {r <fixnum>}
       r)
 
@@ -67,7 +67,7 @@ That means that the structure `<fixnum>` is a now a member of the classes `Ratio
 
 We can define `denominator` similarly:
 
-    (define function (denominator r)
+    (define method (denominator r)
       with: {r <fixnum>}
       1)
 
@@ -77,7 +77,7 @@ When we write a literal value, Bard will choose a representation for it. It can'
 
 But why don't we just eliminate the guesswork? We can specify exactly which representation we mean:
 
-    (define function (denominator r)
+    (define method (denominator r)
       with: {r <fixnum>}
       #<fixnum> 1)
 
@@ -123,23 +123,6 @@ Bard has four kinds of procedures:
 ##### `cond`
 <code>(cond <i>[</i> (<i>test</i> <i>[</i><i>expr</i><i>]&#42;</i>) <i>]&#42;</i>)</code>
 
-
-##### `define`
-
-* `define class` <br>
-* `define constant` <br>
-* `define method` <br>
-* `define macro`
-* `define method`
-* `define protocol`
-* `define variable`
-
-##### defining structures
-* `define record`
-* `define union`
-* `define vector`
-
-
 ##### `ensure`
 <code>(ensure <i>body epilog</i>)</code>
 
@@ -151,8 +134,14 @@ Bard has four kinds of procedures:
 <code>(if <i>test-expr then-expr else-expr</i>)</code>
 
 ##### `let` 
+<code>(let ( <i>[</i>(<i>[name]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+
 ##### `loop` 
+<code>(loop <i>loop-name</i> ( <i>[</i>(<i>[name]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+
 ##### `match` 
+<code>(match ( <i>[</i>(<i>[pattern]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+
 ##### `method` 
 <code>(^ ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code><br>
 <code>(method ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code>
@@ -202,9 +191,41 @@ Bard has four kinds of procedures:
 ##### `with-open`
 <code>(with-open (<i>name [param]&#42;</i>) <i>[expr]*</i>)</code>
 
-#### Macros
 
-#### Protocols
+#### Definitions
+
+##### `define class`
+<code>(define class <i>name [superclass]*</i>)</code>
+
+##### `define constant`
+<code>(define constant <i>name expr</i>)</code>
+
+##### `define macro`
+<code>(define macro (<i>macro-name</i> <i>[param]&#42;</i>) <i>[</i>with (<i>[pattern]&#42;</i>)<i>]</i> <i>[expr]*</i>)</code>
+
+##### `define method`
+<code>(define method (<i>fn-name</i> <i>[param]&#42;</i>) <i>[</i>with (<i>[constraint]&#42;</i>)<i>]</i> <i>[expr]*</i>)</code>
+
+##### `define protocol`
+<code>(define protocol <i>pname [fname function]*</i>)</code>
+
+##### `define variable`
+<code>(define variable <i>name expr</i>)</code>
+
+#### Defining structures
+##### `define record`
+<code>(define record <i>name [field]*</i>)</code>
+
+##### `define union`
+<code>(define union <i>uname</i> <i>[vname struct]*</i>)</code>
+
+##### `define vector`
+<code>(define vector <i>name</i> <i>[</i> type:  <i>type ]</i> <i>[</i> minimum:  <i>min ]</i> <i>[</i> maximum:  <i>max ]</i>)</code>
+
+
+#### Built-in Macros
+
+#### Built-in Protocols
 
 
 ## The Virtual Machine
