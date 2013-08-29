@@ -6,7 +6,9 @@ by mikel evins
 
 Bard is a small, simple, general-purpose Lisp dialect with a few novel features. It's designed to be easy to implement, easy to port, and efficient enough to use for a variety of purposes.
 
-Like other Lisps, Bard is an expression-oriented language: a Bard program consists of a sequence of expressions, each of which denotes a value. Running the program means feeding the expressions to an **evaluator** that reduces each expression to a value called its **normal form**. Also like other Lisps, Bard allows **side effects**, which means that evaluating an expression may cause things to happen besides production of the result value--things like printing messages, drawing pictures, or opening network connections.
+Like other Lisps, Bard is an expression-oriented language: a Bard program consists of a sequence of expressions, each of which denotes a value. Running the program means feeding the expressions to an **evaluator** that reduces each expression to a **result value**. (Expressions may actually evaluate to any number of values--even none--but it's most common for them to evaluate to exactly one.) 
+
+Also like other Lisps, Bard allows **side effects**, which means that evaluating an expression may cause things to happen besides production of the result value--things like printing messages, drawing pictures, or opening network connections.
 
 Bard generally resembles other Lisp dialects, but also has a few unique features of its own. Its type system is distinctive, with some similarities to the Common Lisp Object System and some things in common with Haskell's type classes. It uses the familiar parenthesized s-expression syntax common to most Lisps, but adds a small number of extra lexical conventions to make it easier to write some values as literal constants, and to provide convenient ways to give information to the reader and evaluator about what what the programmer wants them to do.
 
