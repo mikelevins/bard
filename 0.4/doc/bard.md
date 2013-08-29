@@ -57,7 +57,7 @@ Now let's define a protocol that uses those classes:
       numerator (-> Ratio -> Integer)
       denominator (-> Ratio -> Integer))
         
-This definition says that there exists a protocol named `Rational` that comprises two functions, named `numerator` and `denominator`. Each of those functions accepts a single argument of type `Ratio`, and returns a single argument of type `Integer`.
+This definition says that there exists a protocol named `Rational` that comprises two functions, named `numerator` and `denominator`. Each of those functions accepts a single argument of type `Ratio`, and returns a single result of type `Integer`.
 
 The protocol definition does not say anything about how to actually compute the result of `numerator` or `denominator`, and it doesn't say anything about what values might be instances of `Ratio` or `Integer`.
 
