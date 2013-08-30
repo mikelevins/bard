@@ -161,6 +161,15 @@ There was no need for the value constraint in the definition of `numerator` beca
 
 ### Built-in Types
 
+#### Actor
+#### Enumerated
+#### List
+#### Map
+#### Number
+#### Procedure
+#### Resource
+#### Stream
+
 ## Procedures
 
 **Procedures** are values that represent executable code. A procedure is a value that can be **applied** to some list of **arguments** to compute a **result**. The result may consist of zero or more computed **values**, and it may also involve causing some **side effects**, such as printing output, drawing images on a screen, or opening a network connection.
