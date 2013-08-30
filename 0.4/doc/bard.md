@@ -22,9 +22,71 @@ Bard's primary design goal is to make me happy and productive in my work. It has
 
 ### Values
 
+Bard programs are made up of **expressions** that denote **values**. Values are instances of **types**. The Bard language defines a useful set of built-in types and provides tools for creating new types and for constructing instances of them.
+
+Programs are sequences of expressions that are given to the Bard **evaluator**, which computes their values. In the course of evaluating some expressions, the Bard evaluator also causes **side effects** like printing output or controlling devices, but execution of a Bard program always means evaluating expressions to produce result values.
+
+As far as it's practical, Bard provides a way to write every type of value as a literal constant. The most commonly-used types have the most compact and convenient notations. Here are examples of some of Bard's most commonly-used types, each one shown with the name of the built-in type it represents:
+
+    nothing     ; Null
+    true        ; Boolean
+    \A          ; Character
+    "Hello!"    ; Text
+    101         ; Integer
+    2/3         ; Ratio
+    [1 2 3]     ; List
+    {a: 1 b: 2} ; Map
+
 ### Variables and constants
 
+**variables** and **constants** are names that refer to values. A variable is a name whose associated value can be changed by program code. A constant is one whose associated value can't be changed.
+
+Like other Lisps, and unlike most programming languages, Bard uses ordinary Bard values to name variables. These values are called **symbols**. Here are a few examples of symbols:
+
+    +
+    <fixnum>
+    Integer
+    
+Each of these symbols is the name of a module variable in Bard.
+
+A symbol doesn't have to be the name of a variable, and you can use symbols for other purposes but their most common use is to name variables.
+
+When the Bard evaluator encounters a symbol it automatically assumes it's the name of a variable. It tries to find a defined variable whose name is the symbol, and returns the value of that variable as the value of the symbol.
+
+For example:
+
+    bard> +
+    #<function> #{name: '+} (-> Number* -> Number)
+    
+If you want to refer to the symbol itself, and not to a variable that it names, you can **quote** the symbol:
+
+    bard> (quote +)
+    +
+    
+Quoting occurrs often enough that most Lisps provide a shorthand way to write it. Bard is no exception:
+
+    bard> '+
+    +
+
 ### Procedure calls
+
+The hallmark of Lisp syntax is the parentheses. Lisp's parentheses indicate the start and end of a list. Lists are special in Lisp in that it treats them as procedure calls. In other words, if you want to call the function `sqrt` with the parameter `4`, this is how you do it in Lisp:
+
+    (sqrt 4)
+    
+That's a list. Its first element is the symbol `sqrt` and its second element is the integer `4`.
+
+It's also, in Lisp, a function call: it calls the function `sqrt` with the argument `4`.
+
+The reason that Lisp programs look like a lot of parentheses is that all procedure calls work like this. For example, here's an expression adding two numbers:
+
+    (+ 2 3)
+    
+...and here's one adding the product of two numbers and the difference of two others:
+
+    (+ (* 2 3) (- 5 2))
+
+Bard programs--like other Lisp programs--are mainly sequences of lists. The lists define and execute the data and procedures that make the program work.
 
 ### Constructors, getters and setters
 
@@ -201,7 +263,6 @@ Bard has four kinds of procedures:
 ##### `with-open`
 <code>(with-open (<i>name [param]&#42;</i>) <i>[expr]*</i>)</code>
 
-
 #### Definitions
 
 ##### `define class`
@@ -231,7 +292,6 @@ Bard has four kinds of procedures:
 
 ##### `define vector`
 <code>(define vector <i>name</i> <i>[</i> type:  <i>type ]</i> <i>[</i> minimum:  <i>min ]</i> <i>[</i> maximum:  <i>max ]</i>)</code>
-
 
 #### Built-in Macros
 
