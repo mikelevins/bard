@@ -134,6 +134,47 @@
   (method (expression environment)
           [['CONST (second expression)]]))
 
+;;; unless
+;;; ---------------------------------------------------------------------
+
+(define method (compile-unless expression environment)
+  (let ((test-form (element expression 1))
+        (test-code (compile test-form environment))
+        (body-forms (drop 2 expression))
+        (body-code (compile-begin-sequence body-forms environment))
+        (end-label (gen-label)))
+    `(,@test-code
+      (TGO ,end-label)
+      ,@body-code
+      ,end-label)))
+
+(define-special-form 'unless
+  (method (expression environment)
+          (let ((len (length expression)))
+            (cond
+             ((< len 2)(error "syntax error in unless expression: " expression))
+             (else (compile-unless expression environment))))))
+
+;;; when
+;;; ---------------------------------------------------------------------
+
+(define method (compile-when expression environment)
+  (let ((test-form (element expression 1))
+        (test-code (compile test-form environment))
+        (body-forms (drop 2 expression))
+        (body-code (compile-begin-sequence body-forms environment))
+        (end-label (gen-label)))
+    `(,@test-code
+      (FGO ,end-label)
+      ,@body-code
+      ,end-label)))
+
+(define-special-form 'when
+  (method (expression environment)
+          (let ((len (length expression)))
+            (cond
+             ((< len 2)(error "syntax error in when expression: " expression))
+             (else (compile-when expression environment))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; macro expanders
