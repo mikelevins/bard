@@ -246,10 +246,11 @@
   (let ((val (first expression))
         (val-code (compile val environment))
         (arg-exprs (rest expression))
-        (args-code (map (^ (x)(compile x environment))
-                        arg-exprs)))
-    (reverse (pair (pair 'APPLY (length args-code))
-                   (pair val-code
+        (args-code (reduce append
+                           (map (^ (x)(compile x environment))
+                                arg-exprs))))
+    (reverse (pair (pair 'APPLY [(length args-code)])
+                   (append val-code
                          (reverse args-code))))))
 
 (define method (compile-procedure-call-for operator expression environment)
