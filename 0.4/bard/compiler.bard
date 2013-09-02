@@ -70,21 +70,42 @@
   (method (expression environment)
           (compile-begin-sequence (rest expression) environment)))
 
+;;; cond
+;;; ---------------------------------------------------------------------
+
+(define method (compile-cond-clauses clauses environment end-label)
+  with: ((clauses <null>))
+  `(,end-label))
+
+(define method (compile-cond-clauses clauses environment end-label)
+  with: ((clauses <pair>))
+  (let ((clause (first clauses))
+        (more (rest clauses))
+        (test-form (first clause))
+        (test-code (compile test-form environment))
+        (body-forms (rest clause))
+        (body-code (reduce append
+                           (map (^ (form)(compile form environment))
+                                body-forms)))
+        (next-label (gen-label))
+        (case-code `(,@test-code
+                     (FGO ,next-label)
+                     ,@body-code
+                     (GO ,end-label)
+                     ,next-label)))
+    (append case-code
+            (compile-cond-clauses more environment end-label))))
+
+(define-special-form 'cond
+  (method (expression environment)
+          (let ((clauses (rest expression))
+                (end-label (gen-label)))
+            (compile-cond-clauses clauses environment end-label))))
+
 ;;; if
 ;;; ---------------------------------------------------------------------
 
-(define method (compile-one-armed-if expression environment)
-  (let ((test-form (element expression 1))
-        (test-code (compile test-form environment))
-        (then-form (element expression 2))
-        (then-code (compile then-form environment))
-        (end-label (gen-label)))
-    `(,@test-code
-      (FGO ,end-label)
-      ,@then-code
-      ,end-label)))
-
-(define method (compile-two-armed-if expression environment)
+(define method (compile-if expression environment)
   (let ((test-form (element expression 1))
         (test-code (compile test-form environment))
         (then-form (element expression 2))
@@ -105,8 +126,8 @@
   (method (expression environment)
           (let ((len (length expression)))
             (cond
-             ((= len 3)(compile-one-armed-if expression environment))
-             ((= len 4)(compile-two-armed-if expression environment))
+             ((< len 4)(error "syntax error in if expression: " expression))
+             ((= len 4)(compile-if expression environment))
              (else (error "syntax error in if expression: " expression))))))
 
 ;;; quote
