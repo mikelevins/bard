@@ -79,14 +79,11 @@
 
 (define method (compile-cond-clauses clauses environment end-label)
   with: ((clauses <pair>))
-  (let ((clause (first clauses))
-        (more (rest clauses))
-        (test-form (first clause))
+  (let ((test-form (first clauses))
         (test-code (compile test-form environment))
-        (body-forms (rest clause))
-        (body-code (reduce append
-                           (map (^ (form)(compile form environment))
-                                body-forms)))
+        (body-form (second clauses))
+        (body-code (compile body-form environment))
+        (more (drop 2 clauses))
         (next-label (gen-label))
         (case-code `(,@test-code
                      (FGO ,next-label)

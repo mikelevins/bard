@@ -41,15 +41,13 @@ As far as it's practical, Bard provides a way to write every type of value as a 
 
 **variables** and **constants** are names that refer to values. A variable is a name whose associated value can be changed by program code. A constant is one whose associated value can't be changed.
 
-Like other Lisps, and unlike most programming languages, Bard uses ordinary Bard values to name variables. These values are called **symbols**. Here are a few examples of symbols:
+The name of a variable is a **symbol**. Here are a few examples of symbols:
 
     +
     <fixnum>
     Integer
     
 Each of these symbols is the name of a module variable in Bard.
-
-A symbol doesn't have to be the name of a variable, and you can use symbols for other purposes but their most common use is to name variables.
 
 When the Bard evaluator encounters a symbol it automatically assumes it's the name of a variable. It tries to find a defined variable whose name is the symbol, and returns the value of that variable as the value of the symbol.
 
@@ -131,6 +129,11 @@ To define how to compute `numerator`, we define a method on the function `numera
       with ((r <fixnum>))
       r)
 
+This method applies when the value of `r` is of type `<fixnum>`; that's what the line `with ((r <fixnum>))` means. What if `r` is not of type `<fixnum>`? Then this method does not apply, and will not get called. In fact, since we haven't defined any other methods on `numerator`, *no* method of this function can get called if `r` isn't a `<fixnum>`. What happens in that case?
+
+    bard> (numerator "Hello")
+    ERROR: no applicable method of the function numerator for the arguments ("Hello")
+
 `<fixnum>` is a structure that is built into Bard. It's one of several representations of an integer. The definition above says that when the argument to `numerator` is a `<fixnum>`, `numerator` simply returns that value. That defines a way to compute the value of `numerator`. 
 
 That's not all, though; this definition also implicitly asserts that instances of `<fixnum>` are instances of `Ratio` and of `Integer`, because the argument to `numerator` has to be of type `Ratio`, and the return value of `numerator` has to be of type `Integer`.
@@ -202,7 +205,13 @@ Bard has four kinds of procedures:
 <code>(begin <i>[expr]*</i>)</code>
 
 ##### `cond`
-<code>(cond <i>[</i> (<i>test</i> <i>[</i><i>expr</i><i>]&#42;</i>) <i>]&#42;</i>)</code>
+<code>(cond <i>[</i> <i>test</i> <i>[</i><i>expr</i><i>]&#42;</i> <i>]&#42;</i>)</code>
+
+Examples:
+
+    (cond 
+      (odd? x) 'odd
+      else: 'even)
 
 ##### `ensure`
 <code>(ensure <i>body epilog</i>)</code>
@@ -215,13 +224,19 @@ Bard has four kinds of procedures:
 <code>(if <i>test-expr then-expr else-expr</i>)</code>
 
 ##### `let` 
-<code>(let ( <i>[</i>(<i>[name]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+<code>(let ( <i>[name vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+
+Examples:
+
+    (let (x 2
+          y (+ x 1))
+      (* x y))
 
 ##### `loop` 
-<code>(loop <i>loop-name</i> ( <i>[</i>(<i>[name]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+<code>(loop <i>loop-name</i> ( <i>[name vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
 
 ##### `match` 
-<code>(match ( <i>[</i>(<i>[pattern]&#42; vals-expr</i>)<i>]&#42;</i> ) <i>[expr]&#42;</i>)</code>
+<code>(match ( <i>[pattern vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
 
 ##### `method` 
 <code>(^ ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code><br>
