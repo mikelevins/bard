@@ -33,6 +33,30 @@
             (pair thing
                   (interpose thing (rest things))))))
 
+
+;;; ---------------------------------------------------------------------
+;;; environments
+;;; ---------------------------------------------------------------------
+
+(define method (null-env)
+  [])
+
+(define method (add-binding env var val)
+  with: ((var <symbol>))
+  (pair (pair var val)
+        env))
+
+(define method (add-bindings env vars vals)
+  (let ((bindings (map (method (k v)(pair k v))
+                       vars vals)))
+    (append bindings env)))
+
+(define method (add-vars env vars)
+  (let ((bindings (map (method (k)(pair k nothing))
+                       vars)))
+    (append bindings env)))
+
+
 ;;; ---------------------------------------------------------------------
 ;;; special form compilers
 ;;; ---------------------------------------------------------------------
@@ -123,9 +147,41 @@
   (method (expression environment)
           (let ((len (length expression)))
             (cond
-             ((< len 4)(error "syntax error in if expression: " expression))
+             ((< len 4)(error ["syntax error in if expression: " expression]))
              ((= len 4)(compile-if expression environment))
-             (else (error "syntax error in if expression: " expression))))))
+             (else (error ["syntax error in if expression: " expression]))))))
+
+;;; method
+;;; ---------------------------------------------------------------------
+
+(define method (parse-method-args paramlist)
+  (let ((rest-pos (position '& paramlist)))
+    (if (something? rest-pos)
+        (let ((params (take rest-pos paramlist))
+              (rest-params (drop (+ rest-pos 1) paramlist)))
+          (if (= 1 (length rest-params))
+              (values params (first rest-params))
+              (error ["Syntax error in parameter list: " paramlist])))
+        (values paramlist nothing))))
+
+(define method (compile-method expression environment)
+  (let ((params restarg (parse-method-args (second expression)))
+        (body (drop 2 expression)))
+    (if (= <pair> (type params))
+        (let ((compile-env (add-vars environment params))
+              (body-code (compile-begin-sequence body compile-env)))
+          `((CONST ,params)
+            (CONST ,restarg)
+            (CONST ,body)
+            (FN)))
+        (error ["syntax error in method expression: " expression]))))
+
+(define-special-form 'method 
+  (method (expression environment)
+          (let ((len (length expression)))
+            (cond
+             ((< len 2)(error ["syntax error in method expression: " expression]))
+             (else (compile-method expression environment))))))
 
 ;;; quote
 ;;; ---------------------------------------------------------------------
@@ -152,7 +208,7 @@
   (method (expression environment)
           (let ((len (length expression)))
             (cond
-             ((< len 2)(error "syntax error in unless expression: " expression))
+             ((< len 2)(error ["syntax error in unless expression: " expression]))
              (else (compile-unless expression environment))))))
 
 ;;; when
@@ -173,7 +229,7 @@
   (method (expression environment)
           (let ((len (length expression)))
             (cond
-             ((< len 2)(error "syntax error in when expression: " expression))
+             ((< len 2)(error ["syntax error in when expression: " expression]))
              (else (compile-when expression environment))))))
 
 ;;; ---------------------------------------------------------------------
