@@ -123,6 +123,40 @@
                 (end-label (gen-label)))
             (compile-cond-clauses clauses environment end-label))))
 
+;;; function
+;;; ---------------------------------------------------------------------
+;;; (-> Integer Anything -> Anything)
+;;; (function Integer Anything -> Anything)
+
+(define method (compile-function expression environment)
+  (let ((signature (rest expression))
+        (arrow-pos (position '-> signature)))
+    (if (something? arrow-pos)
+        (let ((input-types (reduce append
+                                   (map (^ (x)(compile x environment))
+                                        (take arrow-pos signature))))
+              (input-count (length input-types))
+              (output-types (reduce append
+                                    (map (^ (x)(compile x environment))
+                                         (rest (drop arrow-pos signature)))))
+              (output-count (length output-types)))
+          `(,@input-types
+            (CONST ,input-count)
+            (PRIM list)
+            ,@output-types
+            (CONST ,output-count)
+            (PRIM list)
+            (PRIM function)))
+        (error ["Syntax error in function form: " expression]))))
+
+(define-special-form '->
+  (method (expression environment)
+          (compile-function expression environment)))
+
+(define-special-form 'function
+  (method (expression environment)
+          (compile-function expression environment)))
+
 ;;; if
 ;;; ---------------------------------------------------------------------
 
@@ -153,6 +187,8 @@
 
 ;;; method
 ;;; ---------------------------------------------------------------------
+;;; (^ (x) (+ x 1))
+;;; (method (x) (+ x 1))
 
 (define method (parse-method-args paramlist)
   (let ((rest-pos (position '& paramlist)))
@@ -172,9 +208,16 @@
               (body-code (compile-begin-sequence body compile-env)))
           `((CONST ,params)
             (CONST ,restarg)
-            (CONST ,body)
-            (FN)))
+            (CONST ,body-code)
+            (PRIM method)))
         (error ["syntax error in method expression: " expression]))))
+
+(define-special-form '^ 
+  (method (expression environment)
+          (let ((len (length expression)))
+            (cond
+             ((< len 2)(error ["syntax error in method expression: " expression]))
+             (else (compile-method expression environment))))))
 
 (define-special-form 'method 
   (method (expression environment)
