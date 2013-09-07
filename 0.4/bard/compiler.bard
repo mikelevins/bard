@@ -9,6 +9,21 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; TODO
+;;; ensure
+;;; let
+;;; loop
+;;; match
+;;; protocol
+;;; quasiquote
+;;; receive
+;;; send
+;;; set!
+;;; setter
+;;; time
+;;; with-exit
+;;; with-open
+
 ;;; ---------------------------------------------------------------------
 ;;; utils
 ;;; ---------------------------------------------------------------------
@@ -33,6 +48,8 @@
             (pair thing
                   (interpose thing (rest things))))))
 
+(define method (not-yet-implemented name)
+  (error [name " is not yet implemented "]))
 
 ;;; ---------------------------------------------------------------------
 ;;; environments
@@ -55,6 +72,94 @@
   (let ((bindings (map (method (k)(pair k nothing))
                        vars)))
     (append bindings env)))
+
+
+;;; ---------------------------------------------------------------------
+;;; compilers for define
+;;; ---------------------------------------------------------------------
+
+;;; define class
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-class expression environment)
+  (let ((forms (drop 2 expression))
+        (cname (first forms))
+        (superforms (rest forms))
+        (supercount (length superforms)))
+    (if (> supercount 0)
+        (let ((supers (reduce append
+                              (map (^ (s)(compile s environment))
+                                   superforms))))
+          `(,@supers
+            (CONST ,supercount)
+            (PRIM list)
+            (PRIM make-class)
+            (GSET ,cname)))
+        `((CONST ())
+          (PRIM make-class)
+          (GSET ,cname)))))
+
+;;; define constant
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-constant expression environment)
+  (let ((var (element expression 2))
+        (val-form (element expression 3))
+        (val (compile val-form environment)))
+    `((GRW ,var)
+      ,@val
+      (GSET ,var)
+      (GRO ,var))))
+
+;;; define macro
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-macro expression environment)
+  (not-yet-implemented 'compile-define-macro))
+
+;;; define method
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-method expression environment)
+  (not-yet-implemented 'compile-define-method))
+
+;;; define protocol
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-protocol expression environment)
+  (not-yet-implemented 'compile-define-protocol))
+
+;;; define variable
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-variable expression environment)
+  (let ((var (element expression 2))
+        (val-form (element expression 3))
+        (val (compile val-form environment)))
+    `(,@val
+      (GSET ,var))))
+
+;;; ---------------------------------------------------------------------
+;;; defining structures
+;;; ---------------------------------------------------------------------
+
+;;; define record
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-record expression environment)
+  (not-yet-implemented 'compile-define-record))
+
+;;; define vector
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-vector expression environment)
+  (not-yet-implemented 'compile-define-vector))
+
+;;; define union
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-union expression environment)
+  (not-yet-implemented 'compile-define-union))
 
 
 ;;; ---------------------------------------------------------------------
@@ -122,6 +227,27 @@
           (let ((clauses (rest expression))
                 (end-label (gen-label)))
             (compile-cond-clauses clauses environment end-label))))
+
+;;; define
+;;; ---------------------------------------------------------------------
+
+(define-special-form 'define
+  (method (expression environment)
+          (if (and (list? expression)
+                   (> (length expression) 2))
+              (let ((deftype (second expression)))
+                (cond
+                 ((= deftype 'class)(compile-define-class expression environment))
+                 ((= deftype 'constant)(compile-define-constant expression environment))
+                 ((= deftype 'macro)(compile-define-macro expression environment))
+                 ((= deftype 'method)(compile-define-method expression environment))
+                 ((= deftype 'protocol)(compile-define-protocol expression environment))
+                 ((= deftype 'variable)(compile-define-variable expression environment))
+                 ((= deftype 'record)(compile-define-record expression environment))
+                 ((= deftype 'vector)(compile-define-vector expression environment))
+                 ((= deftype 'union)(compile-define-union expression environment))
+                 (else: (error ["don't know how to define " deftype]))))
+              (error ["not enough elements in define expression: " expression]))))
 
 ;;; function
 ;;; ---------------------------------------------------------------------
@@ -233,6 +359,16 @@
   (method (expression environment)
           [['CONST (second expression)]]))
 
+;;; undefine
+;;; ---------------------------------------------------------------------
+
+(define-special-form 'undefine
+  (method (expression environment)
+          (let ((len (length expression)))
+            (if (= 2 len)
+                `((UNDEF ,(second expression)))
+                (error ["syntax error in undefine expression: " expression])))))
+
 ;;; unless
 ;;; ---------------------------------------------------------------------
 
@@ -253,6 +389,20 @@
             (cond
              ((< len 2)(error ["syntax error in unless expression: " expression]))
              (else (compile-unless expression environment))))))
+
+;;; values
+;;; ---------------------------------------------------------------------
+
+(define-special-form 'values
+  (method (expression environment)
+          (let ((forms (rest expression))
+                (forms-count (length forms))
+                (forms-code (reduce append
+                                    (map (^ (f)(compile f environment))
+                                         forms))))
+            `(,@forms-code
+              (CONST ,forms-count)
+              (PRIM values)))))
 
 ;;; when
 ;;; ---------------------------------------------------------------------
