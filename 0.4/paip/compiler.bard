@@ -1,0 +1,142 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compiler.bard
+;;;; Project:       Bard
+;;;; Purpose:       paip-based compiler/vm implementation experiment
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; ----------------------------------------------------------------------
+;;; general utilities
+;;; ----------------------------------------------------------------------
+
+(define method (third x)
+  (element x 2))
+
+(define method (fourth x)
+  (element x 3))
+
+(define method (every? pred items) 
+  (if (empty? items)
+      true
+      (if (pred (first items))
+          (every? pred (rest items))
+          false)))
+
+;;; ----------------------------------------------------------------------
+;;; data constructors
+;;; ----------------------------------------------------------------------
+
+(define record <bard-method> environment parameters body)
+
+;;; ----------------------------------------------------------------------
+;;; environments
+;;; ----------------------------------------------------------------------
+
+(define method (find-var varname env)
+  with: ((env <null>))
+  nothing)
+
+(define method (find-var varname env)
+  with: ((env <pair>))
+  (let ((binding (first env)))
+    (if (= varname (left binding))
+        binding
+        (find-var varname (rest env)))))
+
+;;; ----------------------------------------------------------------------
+;;; code generators
+;;; ----------------------------------------------------------------------
+
+(define method (seq & forms)
+  forms)
+
+(define variable *label-index* 0)
+
+(define method (gen-label)
+  (let ((num (as <string> *label-index*))
+        (lbl (as <symbol> (append "L" num))))
+    (set! *label-index* (+ *label-index* 1))
+    lbl))
+
+(define method (gen opname & args)
+  `(,opname ,@args))
+
+(define method (gen-var varname env)
+  (let ((binding (find-var varname env)))
+    (if (something? binding)
+        (gen 'LREF varname)
+        (gen 'GREF varname))))
+
+(define method (gen-set place env)
+  (gen 'NOT-YET-IMPLEMENTED 'setter))
+
+;;; ----------------------------------------------------------------------
+;;; expression compilers
+;;; ----------------------------------------------------------------------
+
+(define method (comp-begin exps env)
+  (if (empty? exps)
+      [(gen 'CONST nothing)]
+      (if (= 1 (length exps))
+          (comp (first exps) env)
+          (append (comp (first exps) env)
+                  (pair (gen 'POP)
+                        (comp-begin (rest exps) env))))))
+
+(define method (comp-if test-expr then-expr else-expr env)
+  (let ((l1 (gen-label))
+        (l2 (gen-label)))
+    (seq (comp test-expr env)
+         (gen 'FJUMP l1)
+         (comp then-expr env)
+         (gen 'TJUMP l2)
+         [l1] (comp else-expr env)
+         [l2])))
+
+(define method (comp-method paramlist body env)
+  (if (every? symbol? paramlist)
+      (let ((code (comp-begin body env)))
+        (make <bard-method> 
+              environment: env
+              parameters: paramlist
+              body: `(,(gen 'ARGS (length paramlist))
+                      ,@code
+                      ,(gen 'RETURN))))
+      (else (error (append "Invalid parameter list: " (as <string> paramlist))))))
+
+;;; ----------------------------------------------------------------------
+;;; the compiler driver
+;;; ----------------------------------------------------------------------
+
+(define method (comp x env)
+  [(gen 'CONST x)])
+
+(define method (comp x env)
+  with: ((x <symbol>))
+  [(gen-var x env)])
+
+(define method (comp x env)
+  with: ((x <pair>))
+  (let ((op (first x)))
+    (cond
+     ((= 'quote op) [(gen 'CONST (second x))])
+     ((= 'begin op) (comp-begin (rest x) env))
+     ((= 'set! op) (seq (comp (third x) env)
+                        (gen-set (second x) env)))
+     ((= 'if op) (comp-if (second x) (third x) (fourth x) env))
+     ((= 'method op) (gen 'CONST (comp-method (second x) (drop 2 x) env)))
+     ;; procedure application
+     (else: (let ((args (reduce append
+                                (map (^ (e)(comp e env))
+                                     (rest x))))
+                  (proc (comp (first x) env))
+                  (argcount (length (rest x))))
+              `(,@args
+                ,@proc
+                ,(gen 'CALLJ argcount)))))))
+
+
