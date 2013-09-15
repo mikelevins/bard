@@ -96,6 +96,9 @@
       ,@(compile else-expr env)
       (,l2))))
 
+;;; BUG: currently contructs the method at compile time and pushes the constant.
+;;;      instead need to compile to a METHOD instruction that contructs and pushes the
+;;;      method at run time.
 (define method (compile-method paramlist body env)
   (if (every? symbol? paramlist)
       (let ((code (compile-begin body env)))
