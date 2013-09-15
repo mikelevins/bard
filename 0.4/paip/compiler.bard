@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          compiler.bard
 ;;;; Project:       Bard
-;;;; Purpose:       paip-based compiler/vm implementation experiment
+;;;; Purpose:       Bard compiler in Bard, based on Norvig's PAIP Scheme compiler
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
@@ -50,9 +50,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; code generators
 ;;; ----------------------------------------------------------------------
-
-(define method (seq & forms)
-  forms)
+;;; the compiler represents environments as Bard <pair>s
 
 (define variable *label-index* 0)
 
@@ -78,28 +76,29 @@
 ;;; expression compilers
 ;;; ----------------------------------------------------------------------
 
-(define method (comp-begin exps env)
+(define method (compile-begin exps env)
   (if (empty? exps)
       [(gen 'CONST nothing)]
       (if (= 1 (length exps))
-          (comp (first exps) env)
-          (append (comp (first exps) env)
+          (compile (first exps) env)
+          (append (compile (first exps) env)
                   (pair (gen 'POP)
-                        (comp-begin (rest exps) env))))))
+                        (compile-begin (rest exps) env))))))
 
-(define method (comp-if test-expr then-expr else-expr env)
+(define method (compile-if test-expr then-expr else-expr env)
   (let ((l1 (gen-label))
         (l2 (gen-label)))
-    (seq (comp test-expr env)
-         (gen 'FJUMP l1)
-         (comp then-expr env)
-         (gen 'TJUMP l2)
-         [l1] (comp else-expr env)
-         [l2])))
+    `(,@(compile test-expr env)
+      ,(gen 'FJUMP l1)
+      ,@(compile then-expr env)
+      ,(gen 'TJUMP l2)
+      (,l1) 
+      ,@(compile else-expr env)
+      (,l2))))
 
-(define method (comp-method paramlist body env)
+(define method (compile-method paramlist body env)
   (if (every? symbol? paramlist)
-      (let ((code (comp-begin body env)))
+      (let ((code (compile-begin body env)))
         (make <bard-method> 
               environment: env
               parameters: paramlist
@@ -109,34 +108,89 @@
       (else (error (append "Invalid parameter list: " (as <string> paramlist))))))
 
 ;;; ----------------------------------------------------------------------
+;;; special-form compilers
+;;; ----------------------------------------------------------------------
+
+(define variable *special-form-compilers* {})
+
+(define method (defspecial name compfn)
+  (set! *special-form-compilers*
+        (merge *special-form-compilers*
+               {name compfn})))
+
+(define method (special-form? x)
+  (let ((op (first x)))
+    (something? (get *special-form-compilers* op))))
+
+(define method (compile-special-form x env)
+  (let ((op (first x))
+        (comp (get *special-form-compilers* op)))
+    (comp x env)))
+
+(defspecial 'begin (^ (exp env) (compile-begin (rest exp) env)))
+
+(defspecial 'if (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
+
+(defspecial 'method (^ (exp env) [(gen 'CONST (compile-method (second exp) (drop 2 exp) env))]))
+
+(defspecial 'quote
+  (^ (exp env)
+     (let ((len (length exp)))
+       (cond
+        ((= len 2)[(gen 'CONST (second exp))])
+        ((< len 2)(error ["missing argument in quote expression: " exp]))
+        (else: (error ["too many arguments in quote expression: " exp]))))))
+
+(defspecial 'set!
+  (^ (exp env)
+     `(,@(compile (third exp) env)
+       ,(gen-set (second exp) env))))
+
+;;; ----------------------------------------------------------------------
+;;; macro expanders
+;;; ----------------------------------------------------------------------
+
+(define variable *macro-expanders* {})
+
+(define method (defmacro name expander)
+  (set! *macro-expanders*
+        (merge *macro-expanders*
+               {name expander})))
+
+(define method (macro-form? x)
+  (let ((op (first x)))
+    (something? (get *macro-expanders* op))))
+
+(define method (macroexpand x)
+  (let ((op (first x))
+        (comp (get *special-form-compilers* op)))
+    (comp x env)))
+
+;;; ----------------------------------------------------------------------
 ;;; the compiler driver
 ;;; ----------------------------------------------------------------------
 
-(define method (comp x env)
+(define method (compile x env)
   [(gen 'CONST x)])
 
-(define method (comp x env)
+(define method (compile x env)
   with: ((x <symbol>))
   [(gen-var x env)])
 
-(define method (comp x env)
+(define method (compile x env)
   with: ((x <pair>))
-  (let ((op (first x)))
-    (cond
-     ((= 'quote op) [(gen 'CONST (second x))])
-     ((= 'begin op) (comp-begin (rest x) env))
-     ((= 'set! op) (seq (comp (third x) env)
-                        (gen-set (second x) env)))
-     ((= 'if op) (comp-if (second x) (third x) (fourth x) env))
-     ((= 'method op) (gen 'CONST (comp-method (second x) (drop 2 x) env)))
-     ;; procedure application
-     (else: (let ((args (reduce append
-                                (map (^ (e)(comp e env))
-                                     (rest x))))
-                  (proc (comp (first x) env))
-                  (argcount (length (rest x))))
-              `(,@args
-                ,@proc
-                ,(gen 'CALLJ argcount)))))))
+  (cond
+   ((special-form? x) (compile-special-form x env))
+   ((macro-form? x) (compile (macroexpand x) env))
+   (else: (let ((args (reduce append
+                              (map (^ (e)(compile e env))
+                                   (rest x))))
+                (proc (compile (first x) env))
+                (argcount (length (rest x))))
+            `(,@args
+              ,@proc
+              ,(gen 'CALLJ argcount))))))
+
+
 
 
