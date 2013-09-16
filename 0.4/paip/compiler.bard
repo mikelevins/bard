@@ -99,6 +99,25 @@
                   (pair (gen 'POP)
                         (compile-begin (rest exps) env))))))
 
+
+(define method (compile-cond clauses env end-label)
+  with: ((clauses <null>))
+  [[end-label]])
+
+(define method (compile-cond clauses env end-label)
+  with: ((clauses <pair>))
+  (let ((clause (first clauses))
+        (more (compile-cond (rest clauses) env end-label))
+        (test (first clause))
+        (body (rest clause)))
+    (let ((l1 (gen-label)))
+      `(,@(compile test env)
+        ,(gen 'FJUMP l1)
+        ,@(compile-begin body env)
+        ,(gen 'JUMP end-label)
+        (,l1)
+        ,@more))))
+
 (define method (compile-if test-expr then-expr else-expr env)
   (let ((l1 (gen-label))
         (l2 (gen-label)))
@@ -121,7 +140,7 @@
               (gen 'CONST env) ; closure environment
               '(METHOD) ; instruction to construct a method and push it
               ))
-      (else (error (append "Invalid parameter list: " (as <string> paramlist))))))
+      (error (append "Invalid parameter list: " (as <string> paramlist)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; special-form compilers
@@ -143,11 +162,19 @@
         (comp (get *special-form-compilers* op)))
     (comp x env)))
 
-(defspecial 'begin (^ (exp env) (compile-begin (rest exp) env)))
+(defspecial 'begin
+  (^ (exp env) (compile-begin (rest exp) env)))
 
-(defspecial 'if (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
+(defspecial 'cond
+  (^ (exp env) 
+     (let ((end-label (gen-label)))
+       (compile-cond (rest exp) env end-label))))
 
-(defspecial 'method (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
+(defspecial 'if
+  (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
+
+(defspecial 'method
+  (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
 
 (defspecial 'quote
   (^ (exp env)
