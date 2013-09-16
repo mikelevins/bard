@@ -30,8 +30,6 @@
 ;;; data constructors
 ;;; ----------------------------------------------------------------------
 
-(define record <bard-method> environment parameters body)
-
 ;;; ----------------------------------------------------------------------
 ;;; environments
 ;;; ----------------------------------------------------------------------
@@ -69,8 +67,24 @@
         (gen 'LREF varname)
         (gen 'GREF varname))))
 
+;;; place is a variable name (a symbol)
 (define method (gen-set place env)
-  (gen 'NOT-YET-IMPLEMENTED 'setter))
+  with: ((place <symbol>))
+  (let ((binding (find-var place env)))
+    (if (something? binding)
+        (gen 'LSET place)
+        (gen 'GSET place))))
+
+;;; place is a list of the form (getter object)
+;;; for example: (first x)
+;;; getter is an accessor. check the structure definition
+;;; for thing's representation to see if a setter is defined
+;;; for that accessor
+(define method (gen-set place env)
+  with: ((place <pair>))
+  (if (= 2 (length place))
+      (gen 'NOT-YET-IMPLEMENTED 'structure-setter)
+      (error (append "Invalid place argument to set!: " (as <string> place)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; expression compilers
@@ -96,18 +110,17 @@
       ,@(compile else-expr env)
       (,l2))))
 
-;;; BUG: currently contructs the method at compile time and pushes the constant.
-;;;      instead need to compile to a METHOD instruction that contructs and pushes the
-;;;      method at run time.
 (define method (compile-method paramlist body env)
   (if (every? symbol? paramlist)
-      (let ((code (compile-begin body env)))
-        (make <bard-method> 
-              environment: env
-              parameters: paramlist
-              body: `(,(gen 'ARGS (length paramlist))
-                      ,@code
-                      ,(gen 'RETURN))))
+      (let ((menv (append (map (^ (p) [p])
+                               paramlist)
+                          env))
+            (code (compile-begin body menv)))
+        (list (gen 'CONST code) ; compiled method body
+              (gen 'CONST paramlist) ; formal parameters
+              (gen 'CONST env) ; closure environment
+              '(METHOD) ; instruction to construct a method and push it
+              ))
       (else (error (append "Invalid parameter list: " (as <string> paramlist))))))
 
 ;;; ----------------------------------------------------------------------
@@ -134,7 +147,7 @@
 
 (defspecial 'if (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
 
-(defspecial 'method (^ (exp env) [(gen 'CONST (compile-method (second exp) (drop 2 exp) env))]))
+(defspecial 'method (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
 
 (defspecial 'quote
   (^ (exp env)
@@ -192,7 +205,7 @@
                 (argcount (length (rest x))))
             `(,@args
               ,@proc
-              ,(gen 'CALLJ argcount))))))
+              ,(gen 'CALL argcount))))))
 
 
 
