@@ -210,6 +210,9 @@
 (defspecial 'function
   (^ (exp env) (compile-function (rest exp) env)))
 
+(defspecial '^
+  (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
+
 (defspecial 'method
   (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
 
