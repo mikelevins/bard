@@ -118,6 +118,34 @@
         (,l1)
         ,@more))))
 
+(define method (parse-function-expression expr)
+  (let ((arrow-pos (position-if (^ (e)(= e '->)) expr))
+        (informs (take arrow-pos expr))
+        (outforms (drop (+ arrow-pos 1) expr)))
+    (values informs outforms)))
+
+(define method (compile-function expr env)
+  (let ((input-forms output-forms (parse-function-expression expr))
+        (input-types (if (something? input-forms)
+                         (reduce append
+                                 (map (^ (f)(compile f env))
+                                      input-forms))
+                         nothing))
+        (input-code `(,@input-types
+                      (CONST ,(length input-forms))
+                      (PRIM list)))
+        (output-types (if (something? output-forms)
+                          (reduce append
+                                  (map (^ (f)(compile f env))
+                                       output-forms))
+                          nothing))
+        (output-code `(,@output-types
+                       (CONST ,(length output-forms))
+                       (PRIM list))))
+    `(,@input-code
+      ,@output-code
+      (FUNCTION))))
+
 (define method (compile-if test-expr then-expr else-expr env)
   (let ((l1 (gen-label))
         (l2 (gen-label)))
@@ -162,6 +190,9 @@
         (comp (get *special-form-compilers* op)))
     (comp x env)))
 
+;;; special forms
+;;; ----------------------------------------------------------------------
+
 (defspecial 'begin
   (^ (exp env) (compile-begin (rest exp) env)))
 
@@ -172,6 +203,12 @@
 
 (defspecial 'if
   (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
+
+(defspecial '->
+  (^ (exp env) (compile-function (rest exp) env)))
+
+(defspecial 'function
+  (^ (exp env) (compile-function (rest exp) env)))
 
 (defspecial 'method
   (^ (exp env) (compile-method (second exp) (drop 2 exp) env)))
@@ -210,6 +247,36 @@
     (comp x env)))
 
 ;;; ----------------------------------------------------------------------
+;;; primitives
+;;; ----------------------------------------------------------------------
+
+(define variable *primitives* {})
+
+(define method (defprim name required-count rest?)
+  (set! *primitives*
+        (merge *primitives*
+               {name {required-count: required-count
+                      rest: rest?}})))
+
+(define method (primitive? x)
+  (let ((op (first x)))
+    (something? (get *primitives* op))))
+
+(define method (compile-primitive-call x env)
+  (let ((arg-forms (rest x))
+        (args (if (something? arg-forms)
+                  (reduce append
+                          (map (^ (e)(compile e env))
+                               arg-forms))
+                  [])))
+    `(,@args
+      ,(gen 'PRIM (first x)))))
+
+
+;;; primitives
+;;; ----------------------------------------------------------------------
+
+;;; ----------------------------------------------------------------------
 ;;; the compiler driver
 ;;; ----------------------------------------------------------------------
 
@@ -225,6 +292,7 @@
   (cond
    ((special-form? x) (compile-special-form x env))
    ((macro-form? x) (compile (macroexpand x) env))
+   ((primitive? x) (compile-primitive-call x env))
    (else: (let ((args (reduce append
                               (map (^ (e)(compile e env))
                                    (rest x))))
