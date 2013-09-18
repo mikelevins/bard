@@ -187,6 +187,68 @@
       (,l1))))
 
 ;;; ----------------------------------------------------------------------
+;;; definition compilers
+;;; ----------------------------------------------------------------------
+
+(define method (compile-define-class defbody env)
+  (let ((forms defbody)
+        (cname (first forms))
+        (superforms (rest forms))
+        (supercount (length superforms)))
+    (if (> supercount 0)
+        (let ((supers (reduce append
+                              (map (^ (s)(compile s env))
+                                   superforms))))
+          `(,@supers
+            (CONST ,supercount)
+            (PRIM list)
+            (PRIM make-class)
+            (GSET ,cname)))
+        `((CONST ())
+          (PRIM make-class)
+          (GSET ,cname)))))
+
+(define method (compile-define-constant defbody env)
+  )
+
+(define method (compile-define-macro defbody env)
+  )
+
+(define method (compile-define-method defbody env)
+  )
+
+(define method (compile-define-protocol defbody env)
+  )
+
+(define method (compile-define-variable defbody env)
+  )
+
+(define method (compile-define-record defbody env)
+  )
+
+(define method (compile-define-union defbody env)
+  )
+
+(define method (compile-define-vector defbody env)
+  )
+
+(define method (compile-definition exp env)
+  (let ((deftype (first exp))
+        (defbody (rest exp)))
+    (cond
+     ((= 'class deftype)(compile-define-class defbody env))
+     ((= 'constant deftype)(compile-define-constant defbody env))
+     ((= 'macro deftype)(compile-define-macro defbody env))
+     ((= 'method deftype)(compile-define-method defbody env))
+     ((= 'protocol deftype)(compile-define-protocol defbody env))
+     ((= 'variable deftype)(compile-define-variable defbody env))
+     ;; structures
+     ((= 'record deftype)(compile-define-record defbody env))
+     ((= 'union deftype)(compile-define-union defbody env))
+     ((= 'vector deftype)(compile-define-vector defbody env))
+     (else: (error ["unrecognized definition type: " exp])))))
+
+;;; ----------------------------------------------------------------------
 ;;; special-form compilers
 ;;; ----------------------------------------------------------------------
 
@@ -216,6 +278,9 @@
   (^ (exp env) 
      (let ((end-label (gen-label)))
        (compile-cond (rest exp) env end-label))))
+
+(defspecial 'define
+  (^ (exp env) (compile-definition (rest exp) env)))
 
 (defspecial 'if
   (^ (exp env) (compile-if (second exp) (third exp) (fourth exp) env)))
