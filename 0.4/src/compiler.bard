@@ -170,6 +170,22 @@
               ))
       (error (append "Invalid parameter list: " (as <string> paramlist)))))
 
+(define method (compile-unless test-expr body-exprs env)
+  (let ((l1 (gen-label))
+        (body (compile-begin body-exprs env)))
+    `(,@(compile test-expr env)
+      ,(gen 'TJUMP l1)
+      ,@body
+      (,l1))))
+
+(define method (compile-when test-expr body-exprs env)
+  (let ((l1 (gen-label))
+        (body (compile-begin body-exprs env)))
+    `(,@(compile test-expr env)
+      ,(gen 'FJUMP l1)
+      ,@body
+      (,l1))))
+
 ;;; ----------------------------------------------------------------------
 ;;; special-form compilers
 ;;; ----------------------------------------------------------------------
@@ -228,6 +244,18 @@
   (^ (exp env)
      `(,@(compile (third exp) env)
        ,(gen-set (second exp) env))))
+
+(defspecial 'undefine
+  (^ (exp env)
+     `((UNDEF ,(second exp)))))
+
+(defspecial 'unless
+  (^ (exp env)
+     (compile-unless (second exp) (drop 2 exp) env)))
+
+(defspecial 'when
+  (^ (exp env)
+     (compile-when (second exp) (drop 2 exp) env)))
 
 ;;; ----------------------------------------------------------------------
 ;;; macro expanders
