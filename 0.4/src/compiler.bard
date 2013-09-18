@@ -253,6 +253,19 @@
   (^ (exp env)
      (compile-unless (second exp) (drop 2 exp) env)))
 
+(defspecial 'values
+  (^ (exp env)
+     (let ((forms (rest exp))
+           (forms-count (length forms))
+           (forms-code (if (> forms-count 0)
+                           (reduce append
+                                   (map (^ (f)(compile f env))
+                                        forms))
+                           [])))
+       `(,@forms-code
+         (CONST ,forms-count)
+         (PRIM values)))))
+
 (defspecial 'when
   (^ (exp env)
      (compile-when (second exp) (drop 2 exp) env)))
