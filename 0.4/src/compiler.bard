@@ -157,17 +157,25 @@
       ,@(compile else-expr env)
       (,l2))))
 
+(define method (parse-method-parameters paramlist)
+  (let ((&pos (position '& paramlist))
+        (params (if (something? &pos)
+                    (take &pos paramlist)
+                    paramlist))
+        (rest-param (if (something? &pos)
+                        (drop (+ 1 &pos) paramlist)
+                        nothing)))
+    ))
+
 (define method (compile-method paramlist body env)
   (if (every? symbol? paramlist)
-      (let ((menv (append (map (^ (p) [p])
-                               paramlist)
-                          env))
-            (code (compile-begin body menv)))
-        (list (gen 'CONST code) ; compiled method body
-              (gen 'CONST paramlist) ; formal parameters
-              (gen 'CONST env) ; closure environment
-              '(METHOD) ; instruction to construct a method and push it
-              ))
+      (let ((parameters menv (parse-method-parameters paramlist))
+            (code (compile-begin body menv))
+            (meth (make <method>
+                        code: code
+                        parameters: parameters
+                        environment: menv)))
+        `(,(gen 'METHOD meth)))
       (error (append "Invalid parameter list: " (as <string> paramlist)))))
 
 (define method (compile-unless test-expr body-exprs env)

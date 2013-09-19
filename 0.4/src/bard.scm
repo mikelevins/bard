@@ -25,9 +25,9 @@
        (case (opcode instr)
          
          ;; Variable/stack manipulation instructions:
-         ((LVAR) (instruction-not-implemented 'LVAR))
+         ((LREF) (instruction-not-implemented 'LREF))
          ((LSET) (instruction-not-implemented 'LSET))
-         ((GVAR) (instruction-not-implemented 'GVAR))
+         ((GREF) (instruction-not-implemented 'GREF))
          ((GSET) (instruction-not-implemented 'GSET))
          ((POP) (instruction-not-implemented 'POP))
          ((CONST) (instruction-not-implemented 'CONST))
@@ -40,7 +40,7 @@
          ;; Function call/return instructions:
          ((SAVE) (instruction-not-implemented 'SAVE))
          ((RETURN) (instruction-not-implemented 'RETURN))
-         ((CALLJ) (instruction-not-implemented 'CALLJ))
+         ((CALL) (instruction-not-implemented 'CALLJ))
          ((ARGS) (instruction-not-implemented 'ARGS))
          ((ARGS.) (instruction-not-implemented 'ARGS.))
          ((FN) (instruction-not-implemented 'FN))
