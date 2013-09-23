@@ -22,7 +22,9 @@ A **type** is a specific way to represent data. Each type can represent some val
 
 A **class** is a collection of types with a common **protocol**. A **protocol** is a set of related functions. Creating a class also creates its protocol.
 
-## Built-in classes
+## An Overview of Bard
+
+### Built-in classes
 
 Bard provides several built-in classes, and a way to write values that belong to each class.
 
@@ -40,7 +42,7 @@ Each built-in class is a collection of one or more related types.
 
 Bard provides tools for creating new types and classes.
 
-## Literal values
+### Literal values
 
 There's a way of writing literal values of each of the built-in classes. When Bard prints a value of any built-in class, it prints it in a way that it can be read back in by a Bard process to produce a value that is equivalent to the one that was printed. For example, if an evaluation produces a value equal to 5, Bard prints `5`. Bard can read that text to construct a value equal to 5.
 
@@ -50,7 +52,7 @@ The following sections list examples of literal values of each of the built-in c
 
 It's worth keeping in mind that a type can belong to more than one class. 
 
-### Numbers
+#### Numbers
 
 | values | types |
 | --- | ------------------------- |
@@ -59,7 +61,7 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `2/3` | `<ratio>` |
 | `999999999999999999999999` | `<bignum>` |
 
-### Enumerations
+#### Enumerations
 
 | values | types |
 | --- | ------------------------- |
@@ -67,7 +69,7 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `\A` | `<character>` |
 | `\space` | `<character>` |
 
-### Lists
+#### Lists
 
 | values | types |
 | --- | ------------------------- |
@@ -79,14 +81,14 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `(1 -2 3 -4000)` | `<pair>` `<vector>` `<s16vector>` |
 | `"Hello"` | `<string>` |
 
-### Maps
+#### Maps
 
 | values | types |
 | --- | ------------------------- |
 | `{}` | `<null>` |
 | `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
 
-### Streams
+#### Streams
 
 | values | types |
 | --- | ------------------------- |
@@ -94,7 +96,7 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `#<consumer>{id: 1 element-type: <u8>}` | `<consumer>` |
 | `#<iostream>{id: 1208 element-type: <u8> direction: io}` | `<iostream>` |
 
-### Procedures
+#### Procedures
 
 | values | types |
 | --- | ------------------------- |
@@ -103,7 +105,7 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `(^ (x) x)` | `<method>` |
 | `(^ (x y) (* x y))` | `<method>` |
 
-### Resources
+#### Resources
 
 | values | types |
 | --- | ------------------------- |
@@ -111,7 +113,7 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `#<http>{id: 11831 url: "http://bardcode.net"}` | `<http>` |
 | `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
 
-## Evaluating expressions
+### Evaluating expressions
 
 If I type an expression at the Bard prompt, Bard reads it and evaluates it to return a result. Most values that you can type at the prompt are **self-evaluating**. When Bard evaluates a **self-evaluating** value, the result is just the same value.
 
@@ -123,7 +125,7 @@ Here are a couple of examples:
     bard> "Hello!"
     "Hello!"
     
-### Symbols
+#### Symbols
 
 A symbol is a value that just consists of a name. Here are a few examples:
 
@@ -153,7 +155,7 @@ You can define your own variables and change the values associated with them.
     bard> n
     105
     
-### Lists
+#### Lists
 
 Lists are special. Like other Lisps, Bard treats lists as procedure calls. Here's what I mean:
 
@@ -162,7 +164,7 @@ Lists are special. Like other Lisps, Bard treats lists as procedure calls. Here'
     
 When evaluating a list, Bard treats it as a procedure call, meaning that it uses the first item in the list as a procedure and passes the remaining items to that procedure as arguments. That's what happened in the above example: Bard looked up `+` and found the addition function; it passed `2` and `3` as arguments to that function, and the function computed the result `5`.
 
-### Quoting
+#### Quoting
 
 What if you want to use a symbol or a list as a piece of data? In other words, what if I want to make a list of the symbols `x`, `y`, and `z`? If I just write a list containing them, I'll run into a problem:
 
@@ -199,7 +201,7 @@ Quoting most values has no effect at all.
     
 That's because most values are self-evaluating, so evaluating them returns the same result as not evaluating them. Only symbols and lists are affected by quoting.
 
-## Types
+### Types
 
 **Types** are objects that describe how to represent data. As an example, `<fixnum>` is a type that describes how to represent integers in Bard.
 
@@ -221,7 +223,7 @@ Bard provides many built-in types, and it also provides tools for constructing n
 
 Bard types are **disjoint**. That is, a value is an instance of exactly one type; if it's an instance of one type, then it's not an instance of another.
 
-## Classes
+### Classes
 
 **Classes** are collections of related types. A class comprises a list of types and a **protocol** that they share. A **protocol** is a list of functions.
 
@@ -233,11 +235,51 @@ New types may be added to existing classes. If you add a type to a class, Bard w
 
 In fact, defining such methods is all it takes to add a type to a class. You can skip the step of explicitly adding the type to the class, and just write methods for it. As soon as at least one protocol function has a method for the type, it's considered a member of the class.
 
-## Relationships between classes
+### Relationships between classes
 
 Bard classes have no subclasses; they have only members, and only types are allowed to be members. Types have no subtypes.
 
 Bard has one **superclass**, named `Anything`. All classes are members of `Anything`. 
 
-Bard also has one **subtype**, named `<null>`. `<null>` is a member of every class. It has a single unique value, `nothing`. `nothing` is an insstance of every type.
+Bard also has one **subtype**, named `<null>`. `<null>` is a member of every class. It has a single unique value, `nothing`. `nothing` is an instance of every type.
+
+### Procedures
+
+Procedures are values that can be applied to arguments to compute results. There are four kinds of procedures:
+
+* **functions:** A function examines the arguments passed to it and chooses a **method** to execute.
+* **methods:** A method accepts the values passed to it as parameters and uses them to compute and return a result.
+* **special forms:** A special form is a procedure that is built into Bard itself, and which has its own rules for how it evaluates and handles its arguments.
+* **macros:** A macro is a proceudre that transforms its expression into a different one before evaluating it.
+
+Special forms are the basic, built-in vocabulary of Bard--the core of the language. Bard has a relatively small number of special forms, and it doesn't provide a way to add new ones, short of modifying the code of Bard itself.
+
+Macros are primarily used for building new syntax in Bard. Many special forms could be implemented as macros, and if you find yourself in a situation where you really need a new special form, the solution is usually to write a macro.
+
+Functions and methods are the bread and butter of Bard programming. Most work in Bard is writing functions and macros.
+
+#### Functions and methods
+
+Bard's functions are **polymorphic**. That means that the same function can use different code depending on the arguments you give it. Here's a simple example:
+
+    bard> (append '(0 1) (2 3))
+    (0 1 2 3)
+    
+    bard> (append "AB" "CD")
+    "ABCD"
+    
+The results of both calls to `append` look pretty much the same. In both cases, it accepted two input values that are instances of List, and in both cases it produced a new one by concatenating the inputs.
+
+However, the lists in the first example are instances of `<pair>`, and the ones in the second are instances of `<string>`. The two types represent data very differently, which means that the code `aapend` uses for them must be quite different as well.
+
+Bard can handle these different types, and you can extend `aapend` to handle new ones, because functions are polymorphic: they choose one **method** or another based on an examination of the inputs. Specifically, `append` chose one method to combine the two pairs, and a different one to combine the two strings.
+
+Methods are the procedures that functions use to do their work. Methods are not polymorphic. A method does exactly one thing, regardless of the arguments passed to it.
+
+In writing Bard programs you will likely spend most of your time defeining types and writing functions and methods that operate on them.
+
+## Reference
+
+### Built-in types
+### Built-in procedures
 
