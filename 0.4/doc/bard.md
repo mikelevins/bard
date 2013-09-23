@@ -2,339 +2,162 @@
 version 0.4
 by mikel evins
 
-## Introduction
+## Basic ideas
 
-Bard is a small, simple, general-purpose Lisp dialect with a few novel features. It's designed to be easy to implement, easy to port, and efficient enough to use for a variety of purposes.
+Bard is a langauge and processor that evaluates **expressions** to produce **values**.
 
-Like other Lisps, Bard is an expression-oriented language: a Bard program consists of a sequence of expressions, each of which denotes a value. Running the program means feeding the expressions to an **evaluator** that reduces each expression to a **result value**. (Expressions may actually evaluate to any number of values--even none--but it's most common for them to evaluate to exactly one.) 
+A **value** is a piece of data that Bard knows how to handle.
 
-Also like other Lisps, Bard allows **side effects**, which means that evaluating an expression may cause things to happen besides production of the result value--things like printing messages, drawing pictures, or opening network connections.
+An **expression** is a word or phrase that Bard understands. Expressions can be as simple as a single number or text character, or as complex as a large structure of phrases wthin phrases many pages long. An expression is also called a **form**, especially when it's more complicated than just a single word or number.
 
-Bard generally resembles other Lisp dialects, but also has a few unique features of its own. Its type system is distinctive, with some similarities to the Common Lisp Object System and some things in common with Haskell's type classes. It uses the familiar parenthesized s-expression syntax common to most Lisps, but adds a small number of extra lexical conventions to make it easier to write some values as literal constants, and to provide concise ways to control the reader and evaluator.
+A **program** is a collection of expressions that, when evaluated, produces some values.
 
-Bard is implemented as a small, simple compiler and a small, simple virtual machine. That implementation choice makes it easy to port to new platforms as-needed. The virtual machine implements only a very small kernel language; the rest of Bard is implemented in Bard, and provided by compiled code that is stored in an image file that the VM loads when it starts. Again, this design eases porting and customization, and also provides some other conveniences.
+A **function** is a value that you can **apply** to other values to compute results.
 
-Compiled Bard code is hardware-independent and can run unchanged on the Bard VM running on any supported hardware platform. Bard functions can be serialized and passed across a network connection to a remote Bard process for execution, and can run unchanged on the destination even if it's running on a different CPU and operating system.
+A **method** is a particular way for a function to compute results for certain values. A function can use different methods for different values.
 
-Bard's primary design goal is to make me happy and productive in my work. It has succeeded in this goal so far. I hope it makes someone else happy and productive, too.
+**Applying** a function means passing some values for it to use as parameters. When it's properly applied, a function chooses a method to compute a result, and applies that method to the parameter values. The method then computes a result.
 
-## Syntax and Expressions
+A **type** is a specific way to represent data. Each type can represent some values, but not others. Every value has a type.
 
-### Values
+A **class** is a collection of types with a common **protocol**.
 
-Bard programs are made up of **expressions** that denote **values**. Values are instances of **types**. The Bard language defines a useful set of built-in types and provides tools for creating new types and for constructing instances of them.
+A **protocol** is a defined set of related functions.
 
-Programs are sequences of expressions that are given to the Bard **evaluator**, which computes their values. In the course of evaluating some expressions, the Bard evaluator also causes **side effects** like printing output or controlling devices, but execution of a Bard program always means evaluating expressions to produce result values.
+## Built-in classes
 
-As far as it's practical, Bard provides a way to write every type of value as a literal constant. The most commonly-used types have the most compact and convenient notations. Here are examples of some of Bard's most commonly-used types, each one shown with the name of the built-in type it represents:
+Bard provides several built-in classes, and a way to write values that belong to each class.
 
-    nothing     ; Null
-    true        ; Boolean
-    \A          ; Character
-    "Hello!"    ; Text
-    101         ; Integer
-    2/3         ; Ratio
-    [1 2 3]     ; List
-    {a: 1 b: 2} ; Map
+* **Anything** is a special class that includes all values of all types.
+* **Number** includes all the types that represent numeric values.
+* **Enumeration** includes all **enumerated types**. An **enumerated type** is a type whose values are individually and explicitly specified values. An example of an enumerated type is `<boolean>`. The values that belong to `<boolean>` are `true` and `false`.
+* **List** includes types that represent ordered sequences of values.
+* **Map** includes types that represent collections of **keys** that are associated with values. A key is a value that is used to identify another value contained in a map. For example, in the map `{a: 1 b: 2}`, the key `a:` identifies the value `1`.
+* **Producer** includes types that produce one value after another when asked.
+* **Consumer** includes types that consume one value after another when offered. Values belonging to either Producer or Consumer are called **streams**.
+* **Procedure** includes types that can be applied to arguments to compute result values.
+* **Resource** includes types that represent files, devices, network connections, and other abstractions of hardware capabilities.
+* **Actor** includes types that represent computer processes, including running Bard programs.
 
-### Variables and constants
+There's a way of writing literal values of each of the built-in classes. When Bard prints a value of any built-in class, it prints it in a way that it can be read back in by a Bard process to produce a value that is equivalent to the one that was printed. For example, if an evaluation produces a value equal to 5, Bard prints `5`. Bard can read that text to construct a value equal to 5.
 
-**variables** and **constants** are names that refer to values. A variable is a name whose associated value can be changed by program code. A constant is one whose associated value can't be changed.
+There are a few exceptions to this rule. Some values--such as streams, for example, cannot be printed in a way that Bard can read them and construct an equivalent value. In cases like this one, Bard instead prints an expression that can be used to construct an approximate equivalent, to the extent that's possible.
 
-The name of a variable is a **symbol**. Here are a few examples of symbols:
+Each built-in class is a collection of one or more related types.
 
-    +
-    <fixnum>
-    Integer
-    
-Each of these symbols is the name of a module variable in Bard.
+### Numbers
 
-When the Bard evaluator encounters a symbol it automatically assumes it's the name of a variable. It tries to find a defined variable whose name is the symbol, and returns the value of that variable as the value of the symbol.
+Here are examples of Number values, listed with types that can represent them. 
 
-For example:
+| values | types |
+| - | ------------------------- |
+| `0` | `<bit>` `<u8>` `<fixed>` |
+| `1.2` | `<float>` |
+| `2/3` | `<ratio>` |
+| `999999999999999999999999` | `<bignum>` |
 
-    bard> +
-    #<function> #{name: '+} (-> Number* -> Number)
-    
-If you want to refer to the symbol itself, and not to a variable that it names, you can **quote** the symbol:
 
-    bard> (quote +)
-    +
-    
-Quoting occurrs often enough that most Lisps provide a shorthand way to write it. Bard is no exception:
+### Enumerations
 
-    bard> '+
-    +
+Here are examples of Enumeration values, listed with types that can represent them. 
 
-### Procedure calls
+| values | types |
+| - | ------------------------- |
+| `true` | `<boolean>` |
+| `\A` `\space` | `<character>` |
 
-The hallmark of Lisp syntax is the parentheses. Lisp's parentheses indicate the start and end of a list. Lists are special in Lisp in that it treats them as procedure calls. In other words, if you want to call the function `sqrt` with the parameter `4`, this is how you do it in Lisp:
+### Lists
 
-    (sqrt 4)
-    
-That's a list. Its first element is the symbol `sqrt` and its second element is the integer `4`.
+Here are examples of List values, listed with types that can represent them. 
 
-It's also, in Lisp, a function call: it calls the function `sqrt` with the argument `4`.
+| values | types |
+| - | ------------------------- |
+| `nothing` | `<null>` |
+| `(1 . 2)` | `<pair>` |
+| `(1 0 1 0)` | `<pair>` `<vector>` `<bitvector>` |
+| `(1 2 3 4)` | `<pair>` `<vector>` `<u8vector>` |
+| `(1 -2 3 -4)` | `<pair>` `<vector>` `<s8vector>` |
+| `(1 -2 3 -4000)` | `<pair>` `<vector>` `<s16vector>` |
+| `"Hello"` | `<string>` |
 
-The reason that Lisp programs look like a lot of parentheses is that all procedure calls work like this. For example, here's an expression adding two numbers:
+Bard is a Lisp and, like other Lisps, normally treats lists as function calls. So, for example, when you write this list:
 
     (+ 2 3)
     
-...and here's one adding the product of two numbers and the difference of two others:
+Bard treats it as a function call that applies the function `+` to the arguments `2` and `3`. 
 
-    (+ (* 2 3) (- 5 2))
+If you want to write the same list and use it as a piece of data, rather than evaluating it for a result, there are two ways to do it. One is to quote it:
 
-Bard programs--like other Lisp programs--are mainly sequences of lists. The lists define and execute the data and procedures that make the program work.
-
-### Constructors, getters and setters
-
-## Types
-
-Bard types are made of three parts: **structures**, **protocols**, and **classes**. Every Bard type is an abstraction that consists of at least one protocol, zero or more classes, and zero or more structures. More commonly, a type is defined as a protocol plus several classes and several structures.
-
-A **protocol** is a set of related functions that define the behavior of one or more related types. For example, there is a `Number` protocol that defines a set of operations on instances of `Number`, and there is a `List` protocol that defines a set of operations on instances of `List`. In most cases, a protocol's functions operate on and produce several related classes.
-
-A **class** is the name of an abstract type. `Number` and `List` are classes. It's important to understand that a Bard class is really *just* a name. A Bard class has no internal structure--just the name. That name can appear in function definitions, and it can be used to assert that one type is a subtype of another--for example, `Integer` is a subclass of `Number`--but that's all you can do with classes.
-
-A **structure** is a concrete description of how to represent some data. That description includes a definition of the **fields** that make up an instance of the structure, a **constructor** that can be used to make a new instance, and **accessors** that can be used to get and set the values of the fields. Once again, *that's all*. Structures have no additional behavior, and they have no defined relationship to other structures or types. There no member functions in structures, and no inheritance between them.
-
-### Defining protocols and classes
-
-So how does a value become an instance of a type?
-
-The answer is that defining **methods** on functions turns values into instances of types.
-
-Before we can define methods, we need some functions, and in order to define functions, we need some classes for them to operate on. Let's begin by defining the classes `Ratio` and `Integer`, pretending for the moment that they don't already exist:
-
-    (define class Integer Number)
-    (define class Ratio Number)
+    '(+ 2 3)
     
-That's all there is to a class definition in Bard: you say that a name is the name of a class and, optionally, say that it belongs to one or more superclasses. In this case we said that `Integer` and `Ratio` are both subclasses of `Number`.
+The other is to use a List literal:
 
-Now let's define a protocol that uses those classes:    
+    [+ 2 3]
+    
+A List literal is almost, but not quite, the same as quoting the list. The difference is that
 
-    (define protocol Rational
-      numerator (-> Ratio -> Integer)
-      denominator (-> Ratio -> Integer))
-        
-This definition says that there exists a protocol named `Rational` that comprises two functions, named `numerator` and `denominator`. Each of those functions accepts a single argument of type `Ratio`, and returns a single result of type `Integer`.
+    '(+ 2 3)
+    
+means that neither the list nor its contents are to be evaluated. Writing that expression at the Bard prompt returns it exactly as you wrote it:
 
-The protocol definition does not say anything about how to actually compute the result of `numerator` or `denominator`, and it doesn't say anything about what values might be instances of `Ratio` or `Integer`.
+    bard> '(+ 2 3)
+    (+ 2 3)
+    
+A List literal instead evaluates the contents of the list, but it doesn't treat the list as a function call. Since `+` is the name of a function, writing the List literal produces this result:
 
-### Making values into instances of types
+    bard> [+ 2 3]
+    ((-> & -> Number) 2 3)
 
-To define how to compute `numerator`, we define a method on the function `numerator`:
+Bard constructs a list of three elements: the function, followed by 2 and 3.
 
-    (define method (numerator r)
-      with ((r <fixnum>))
-      r)
+### Maps
 
-This method applies when the value of `r` is of type `<fixnum>`; that's what the line `with ((r <fixnum>))` means. What if `r` is not of type `<fixnum>`? Then this method does not apply, and will not get called. In fact, since we haven't defined any other methods on `numerator`, *no* method of this function can get called if `r` isn't a `<fixnum>`. What happens in that case?
+Here are examples of List values, listed with types that can represent them. 
 
-    bard> (numerator "Hello")
-    ERROR: no applicable method of the function numerator for the arguments ("Hello")
+| values | types |
+| - | ------------------------- |
+| `{}` | `<null>` |
+| `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
 
-`<fixnum>` is a structure that is built into Bard. It's one of several representations of an integer. The definition above says that when the argument to `numerator` is a `<fixnum>`, `numerator` simply returns that value. That defines a way to compute the value of `numerator`. 
+Maps serve as a kind of lingua franca for structured data in Bard. For example, the default way of writing a literal value of an arbitrary type is to write the '#' character, followed by the type of the value, followed by a map that describes the value in enough detail to uniquely identify it. For example, a reference to a file might be written this way:
 
-That's not all, though; this definition also implicitly asserts that instances of `<fixnum>` are instances of `Ratio` and of `Integer`, because the argument to `numerator` has to be of type `Ratio`, and the return value of `numerator` has to be of type `Integer`.
+    #<file>{url: "file:///tmp/foo.txt"}
+    
+Even more basic values can be written the same way, though they usually aren't. For example, the intereger 5 could be written like this:
 
-That means that the structure `<fixnum>` is a now a member of the classes `Ratio` and `Integer`.
+    #<fixnum>{value: 5}
 
-We can define `denominator` similarly:
+This way of writing values can come in handy when there are a variety of ways to represent a particular value and you want to specify exactly one representation. Here's an example:
 
-    (define method (denominator r)
-      with ((r <fixnum>))
-      1)
+    #<u8vector>{elements: [\F \A \C \E]}
 
-There's a subtle point about the return value of `denominator`: this definition returns the literal value `1`. What representation of `1` do we mean? There are various possible concrete types that can be used to represent `1`, and we didn't say which one to use.
+### Streams
 
-When we write a literal value, Bard will choose a representation for it. It can't assume that representation is the return type of the function, though; that will almost certainly be too restrictive, and very likely not what we meant at all. Bard will therefore identify the return type of the function as the most restrictive type that is still inclusive enough to avoid ruling out any type that could reasonably represent the value we gave.
+Here are examples of stream values, listed with types that can represent them. Streams are special in that the printed representation of a stream cannot necessarily faithfully represent its state.
 
-But why don't we just eliminate the guesswork? We can specify exactly which representation we mean:
+| values | types |
+| - | ------------------------- |
+| `#<producer>{id: 0 element-type: <u8> direction: input}` | `<producer>` |
+| `#<consumer>{id: 1 element-type: <u8> direction: output}` | `<consumer>` |
 
-    (define method (denominator r)
-      with ((r <fixnum>))
-      #<fixnum> 1)
+### Procedures
 
-The expression `#<fixnum>` is a **value constraint**. It means we expect the Bard reader to construct the value of the next expression respecting restrictions that we specify. In this case, we specified a type of `<fixnum>`, which means Bard must use a `<fixnum>` to represent `1`. Bard can also use the value constraint to deduce that the return type of the function is `<fixnum>`, since we've now specified exactly what representation we mean.
+Here are examples of Procedure values, listed with types that can represent them. 
 
-There was no need for the value constraint in the definition of `numerator` because Bard already knew the type of `r`; we said what it was in the `with` clause.
+| values | types |
+| - | ------------------------- |
+| `(-> ->)` | `<function>` |
+| `(-> Number Number -> Number)` | `<function>` |
+| `(^ (x) x)` | `<method>` |
+| `(^ (x y) (* x y))` | `<method>` |
 
+### Resources
 
+Here are examples of Resource values, listed with types that can represent them. 
 
-### Built-in Types
-
-#### Actor
-#### Enumerated
-#### List
-#### Map
-#### Number
-#### Procedure
-#### Resource
-#### Stream
-
-## Procedures
-
-**Procedures** are values that represent executable code. A procedure is a value that can be **applied** to some list of **arguments** to compute a **result**. The result may consist of zero or more computed **values**, and it may also involve causing some **side effects**, such as printing output, drawing images on a screen, or opening a network connection.
-
-Bard has four kinds of procedures:
-
-* **special forms**
-
-  **Special forms** are procedures that are built into the Bard compiler and virtual machine. They define the core of the Bard language. It's not possible to define new special forms from within Bard, nor to modify the ones that are built-in. Bard defines around two dozen special forms.
-
-* **macros**
-
-  **Macros** are procedures that rewrite expressions before they are compiled and evaluated. Bard defines several standard macros, and provides the `define macro` form to enable you to define new ones. Macros are best used to define new syntax that simplifies common patterns of code and makes them clearer.
-
-* **functions**
-
-  **Functions** are procedures that accept arguments and compute result values. Bard functions are **polymorphic**; that is, the exact code that a function executes may depend on the arguments passed to it. In fact, a function doesn't actually compute its results; it merely examines its arguments and selects a suitable **method** that is then used to compute the results.
-
-* **methods** 
-
-  **Methods** are procedures that accept arguments and compute result values. Methods do the actual work of computing results of functions. A function examines its arguments and chooses a matching method; the method then computes the function's results.
-
-### Defining Procedures
-
-### Built-in Procedures
-
-#### Special Forms
-
-##### `begin`
-<code>(begin <i>[expr]*</i>)</code>
-
-##### `cond`
-<code>(cond <i>[</i> <i>test</i> <i>[</i><i>expr</i><i>]&#42;</i> <i>]&#42;</i>)</code>
-
-Examples:
-
-    (cond 
-      (odd? x) 'odd
-      else: 'even)
-
-##### `ensure`
-<code>(ensure <i>body epilog</i>)</code>
-
-##### `function` 
-<code>(-> <i>[input-type]&#42;</i> -> <i>[output-type]&#42;</i>)</code><br>
-<code>(function <i>[input-type]&#42;</i> -> <i>[output-type]&#42;</i>)</code>
-
-##### `if`
-<code>(if <i>test-expr then-expr else-expr</i>)</code>
-
-##### `let` 
-<code>(let ( <i>[name vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
-
-Examples:
-
-    (let (x 2
-          y (+ x 1))
-      (* x y))
-
-##### `loop` 
-<code>(loop <i>loop-name</i> ( <i>[name vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
-
-##### `match` 
-<code>(match ( <i>[pattern vals-expr]&#42;</i> ) <i>[expr]&#42;</i>)</code>
-
-##### `method` 
-<code>(^ ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code><br>
-<code>(method ( <i>[param]&#42;</i> ) <i>[expr]&#42;</i>)</code>
-
-##### `protocol` 
-<code>(protocol <i>[name function]*</i>)</code><br>
-
-##### `quasiquote` 
-<code>`<i>expr</i></code><br>
-<code>(quasiquote <i>expr</i>)</code>
-
-##### `quote`
-<code>'<i>expr</i></code><br>
-<code>(quote <i>expr</i>)</code>
-
-##### `receive` 
-<code>(receive)</code><br>
-<code>(receive <i>pattern</i>)</code>
-
-##### `repeat`
-<code>(repeat <i>[expr]*</i>)</code>
-
-##### `send`
-<code>(send <i>dest expr</i>)</code>
-
-##### `setter` 
-<code>(setter <i>place</i>)</code>
-
-##### `time`
-<code>(time <i>[expr]*</i>)</code>
-
-##### `undefine` 
-<code>(undefine <i>name</i>)</code>
-
-##### `unless`
-<code>(unless <i>test-expr</i> <i>[expr]*</i>)</code>
-
-##### `values`
-<code>(values <i>[expr]*</i>)</code>
-
-##### `when`
-<code>(when <i>test-expr</i> <i>[expr]*</i>)</code>
-
-##### `with-exit` 
-<code>(with-exit (<i>name</i>) <i>[expr]*</i>)</code>
-
-##### `with-open`
-<code>(with-open (<i>name [param]&#42;</i>) <i>[expr]*</i>)</code>
-
-#### Definitions
-
-##### `define class`
-<code>(define class <i>name [superclass]*</i>)</code>
-
-##### `define constant`
-<code>(define constant <i>name expr</i>)</code>
-
-##### `define macro`
-<code>(define macro (<i>macro-name</i> <i>[param]&#42;</i>) <i>[</i>with (<i>[pattern]&#42;</i>)<i>]</i> <i>[expr]*</i>)</code>
-
-##### `define method`
-<code>(define method (<i>fn-name</i> <i>[param]&#42;</i>) <i>[</i>with (<i>[constraint]&#42;</i>)<i>]</i> <i>[expr]*</i>)</code>
-
-##### `define protocol`
-<code>(define protocol <i>pname [fname function]*</i>)</code>
-
-##### `define variable`
-<code>(define variable <i>name expr</i>)</code>
-
-#### Defining structures
-##### `define record`
-<code>(define record <i>name [field]*</i>)</code>
-
-##### `define union`
-<code>(define union <i>uname</i> <i>[vname struct]*</i>)</code>
-
-##### `define vector`
-<code>(define vector <i>name</i> <i>[</i> type:  <i>type ]</i> <i>[</i> minimum:  <i>min ]</i> <i>[</i> maximum:  <i>max ]</i>)</code>
-
-#### Built-in Macros
-
-#### Built-in Protocols
-
-
-## The Virtual Machine
-
-The **virtual machine** is the program that makes it possible to run Bard code. It simulates a machine whose native language is Bard's kernel. When you execute a Bard expression, it is compiled to the kernel language and given to the virtual machine for execution.
-
-The Bard language includes a set of protocols for controlling and fine-tuning the virtual machine.
-
-### Starting and controlling the VM
-
-### Image files
-
-### Remote Bard Processes
-
-### The Host Environment
-
-### Foreign Code
+| values | types |
+| - | ------------------------- |
+| `#<file>{id: 1501 url: "file:///tmp/foo.txt"}` | `<file>` |
+| `#<http>{id: 11831 url: "http://bardcode.net"}` | `<http>` |
+| `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
 

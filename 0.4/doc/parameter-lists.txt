@@ -12,11 +12,8 @@ I. methods
 (method (a b & more) ...)
   method takes any number of arguments, two required
 
-(method (a b & c: d:) ...)
+(method (a b & {c: 1 d: nothing}) ...)
   method requires two arguments, and accepts two keyword arguments
-
-(method (a b & c: {d: 1}) ...)
-  method requires two arguments, and accepts two keyword arguments, one with a default value
 
 II. functions
 

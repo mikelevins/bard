@@ -12,6 +12,10 @@
 (define (instruction-not-implemented name)
   (error (string-append "Instruction " (object-to-string name) " not yet implemented")))
 
+(define (opcode instr)(list-ref instr 0))
+(define (arg1 instr)(list-ref instr 1))
+(define (arg2 instr)(list-ref instr 2))
+
 (define (machine fn)
   (let* ((code (fn-code fn))
          (pc 0)
@@ -38,34 +42,17 @@
          ((TJUMP) (instruction-not-implemented 'TJUMP))
          
          ;; Function call/return instructions:
-         ((SAVE) (instruction-not-implemented 'SAVE))
-         ((RETURN) (instruction-not-implemented 'RETURN))
          ((CALL) (instruction-not-implemented 'CALLJ))
-         ((ARGS) (instruction-not-implemented 'ARGS))
-         ((ARGS.) (instruction-not-implemented 'ARGS.))
-         ((FN) (instruction-not-implemented 'FN))
+         ((FUNCTION) (instruction-not-implemented 'FUNCTION))
+         ((METHOD) (instruction-not-implemented 'METHOD))
          ((PRIM) (instruction-not-implemented 'PRIM))
-         
-         ;; Continuation instructions:
-         ((SET-CC) (instruction-not-implemented 'SET-CC))
-         ((CC) (instruction-not-implemented 'CC))
-         
-         ;; Nullary operations:
-         ((BARD-READ NEWLINE) (instruction-not-implemented '(BARD-READ NEWLINE)))
-         
+
          ;; Unary operations:
-         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
-          (instruction-not-implemented '(CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)))
-         
+         ((NOT-YET-IMPLEMENTED) (error (string-append "NOT-YET-IMPLEMENTED: " (object->string (arg1 instr)))))
+         ((UNDEF) (instruction-not-implemented 'UNDEF))
+
          ;; Binary operations:
-         ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
-          (instruction-not-implemented '(+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)))
-         
-         ;; Ternary operations:
-         ((LIST3) (instruction-not-implemented 'LIST3))
-         
-         ;; Constants:
-         ((T NIL -1 0 1 2) (instruction-not-implemented '(T NIL -1 0 1 2)))
+         ((DEF) (instruction-not-implemented 'DEF))
          
          ;; Other:
          ((HALT) (instruction-not-implemented 'HALT))

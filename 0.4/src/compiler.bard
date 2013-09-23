@@ -162,21 +162,18 @@
         (params (if (something? &pos)
                     (take &pos paramlist)
                     paramlist))
-        (rest-param (if (something? &pos)
+        (rest-params (if (something? &pos)
                         (drop (+ 1 &pos) paramlist)
                         nothing)))
-    ))
+    (values params rest-params)))
 
 (define method (compile-method paramlist body env)
-  (if (every? symbol? paramlist)
-      (let ((parameters menv (parse-method-parameters paramlist))
-            (code (compile-begin body menv))
-            (meth (make <method>
-                        code: code
-                        parameters: parameters
-                        environment: menv)))
-        `(,(gen 'METHOD meth)))
-      (error (append "Invalid parameter list: " (as <string> paramlist)))))
+  (let ((params menv (parse-method-parameters paramlist))
+        (code (compile-begin body menv)))
+    (make <method>
+          code: code
+          parameters: params
+          environment: menv)))
 
 (define method (compile-unless test-expr body-exprs env)
   (let ((l1 (gen-label))
