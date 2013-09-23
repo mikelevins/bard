@@ -62,7 +62,7 @@ Here are examples of Number values, listed with types that can represent them.
 Here are examples of Enumeration values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `true` | `<boolean>` |
 | `\A` `\space` | `<character>` |
 
