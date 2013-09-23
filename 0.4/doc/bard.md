@@ -37,7 +37,6 @@ Bard provides several built-in classes, and a way to write values that belong to
 * **Consumer** includes types that consume one value after another when offered. Values belonging to either Producer or Consumer are called **streams**.
 * **Procedure** includes types that can be applied to arguments to compute result values.
 * **Resource** includes types that represent files, devices, network connections, and other abstractions of hardware capabilities.
-* **Actor** includes types that represent computer processes, including running Bard programs.
 
 There's a way of writing literal values of each of the built-in classes. When Bard prints a value of any built-in class, it prints it in a way that it can be read back in by a Bard process to produce a value that is equivalent to the one that was printed. For example, if an evaluation produces a value equal to 5, Bard prints `5`. Bard can read that text to construct a value equal to 5.
 
@@ -50,7 +49,7 @@ Each built-in class is a collection of one or more related types.
 Here are examples of Number values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `0` | `<bit>` `<u8>` `<fixed>` |
 | `1.2` | `<float>` |
 | `2/3` | `<ratio>` |
