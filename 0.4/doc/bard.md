@@ -4,11 +4,11 @@ by mikel evins
 
 ## Basic ideas
 
-Bard is a langauge and processor that evaluates **expressions** to produce **values**.
+Bard is a language and processor that evaluates **expressions** to produce **values**.
 
 A **value** is a piece of data that Bard knows how to handle.
 
-An **expression** is a word or phrase that Bard understands. Expressions can be as simple as a single number or text character, or as complex as a large structure of phrases wthin phrases many pages long. An expression is also called a **form**, especially when it's more complicated than just a single word or number.
+An **expression** is a word or phrase that Bard understands. Expressions can be as simple as a single number or text character, or as complex as a large structure of phrases within phrases many pages long. An expression is also called a **form**, especially when it's more complicated than just a single word or number.
 
 A **program** is a collection of expressions that, when evaluated, produces some values.
 
@@ -16,13 +16,11 @@ A **function** is a value that you can **apply** to other values to compute resu
 
 A **method** is a particular way for a function to compute results for certain values. A function can use different methods for different values.
 
-**Applying** a function means passing some values for it to use as parameters. When it's properly applied, a function chooses a method to compute a result, and applies that method to the parameter values. The method then computes a result.
+**Applying** a function means passing some values for it to use as parameters. When it's applied, a function chooses a method to compute a result, and applies that method to the parameter values. The method then computes a result.
 
 A **type** is a specific way to represent data. Each type can represent some values, but not others. Every value has a type.
 
-A **class** is a collection of types with a common **protocol**.
-
-A **protocol** is a defined set of related functions.
+A **class** is a collection of types with a common **protocol**. A **protocol** is a set of related functions. Creating a class also creates its protocol.
 
 ## Built-in classes
 
@@ -38,16 +36,21 @@ Bard provides several built-in classes, and a way to write values that belong to
 * **Procedure** includes types that can be applied to arguments to compute result values.
 * **Resource** includes types that represent files, devices, network connections, and other abstractions of hardware capabilities.
 
+Each built-in class is a collection of one or more related types.
+
+Bard provides tools for creating new types and classes.
+
+## Literal values
+
 There's a way of writing literal values of each of the built-in classes. When Bard prints a value of any built-in class, it prints it in a way that it can be read back in by a Bard process to produce a value that is equivalent to the one that was printed. For example, if an evaluation produces a value equal to 5, Bard prints `5`. Bard can read that text to construct a value equal to 5.
 
 There are a few exceptions to this rule. Some values--such as streams, for example, cannot be printed in a way that Bard can read them and construct an equivalent value. In cases like this one, Bard instead prints an expression that can be used to construct an approximate equivalent, to the extent that's possible.
 
-Each built-in class is a collection of one or more related types.
+The following sections list examples of literal values of each of the built-in classes. Each example value is listed with one or more types that can represent it.
+
+It's worth keeping in mind that a type can belong to more than one class. 
 
 ### Numbers
-
-Here are examples of Number values, listed with types that can represent them. 
-
 
 | values | types |
 | --- | ------------------------- |
@@ -56,19 +59,15 @@ Here are examples of Number values, listed with types that can represent them.
 | `2/3` | `<ratio>` |
 | `999999999999999999999999` | `<bignum>` |
 
-
 ### Enumerations
-
-Here are examples of Enumeration values, listed with types that can represent them. 
 
 | values | types |
 | --- | ------------------------- |
 | `true` | `<boolean>` |
-| `\A` `\space` | `<character>` |
+| `\A` | `<character>` |
+| `\space` | `<character>` |
 
 ### Lists
-
-Here are examples of List values, listed with types that can represent them. 
 
 | values | types |
 | --- | ------------------------- |
@@ -80,69 +79,22 @@ Here are examples of List values, listed with types that can represent them.
 | `(1 -2 3 -4000)` | `<pair>` `<vector>` `<s16vector>` |
 | `"Hello"` | `<string>` |
 
-Bard is a Lisp and, like other Lisps, normally treats lists as function calls. So, for example, when you write this list:
-
-    (+ 2 3)
-    
-Bard treats it as a function call that applies the function `+` to the arguments `2` and `3`. 
-
-If you want to write the same list and use it as a piece of data, rather than evaluating it for a result, there are two ways to do it. One is to quote it:
-
-    '(+ 2 3)
-    
-The other is to use a List literal:
-
-    [+ 2 3]
-    
-A List literal is almost, but not quite, the same as quoting the list. The difference is that
-
-    '(+ 2 3)
-    
-means that neither the list nor its contents are to be evaluated. Writing that expression at the Bard prompt returns it exactly as you wrote it:
-
-    bard> '(+ 2 3)
-    (+ 2 3)
-    
-A List literal instead evaluates the contents of the list, but it doesn't treat the list as a function call. Since `+` is the name of a function, writing the List literal produces this result:
-
-    bard> [+ 2 3]
-    ((-> & -> Number) 2 3)
-
-Bard constructs a list of three elements: the function, followed by 2 and 3.
-
 ### Maps
-
-Here are examples of List values, listed with types that can represent them. 
 
 | values | types |
 | --- | ------------------------- |
 | `{}` | `<null>` |
 | `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
 
-Maps serve as a kind of lingua franca for structured data in Bard. For example, the default way of writing a literal value of an arbitrary type is to write the '#' character, followed by the type of the value, followed by a map that describes the value in enough detail to uniquely identify it. For example, a reference to a file might be written this way:
-
-    #<file>{url: "file:///tmp/foo.txt"}
-    
-Even more basic values can be written the same way, though they usually aren't. For example, the intereger 5 could be written like this:
-
-    #<fixnum>{value: 5}
-
-This way of writing values can come in handy when there are a variety of ways to represent a particular value and you want to specify exactly one representation. Here's an example:
-
-    #<u8vector>{elements: [\F \A \C \E]}
-
 ### Streams
-
-Here are examples of stream values, listed with types that can represent them. Streams are special in that the printed representation of a stream cannot necessarily faithfully represent its state.
 
 | values | types |
 | --- | ------------------------- |
-| `#<producer>{id: 0 element-type: <u8> direction: input}` | `<producer>` |
-| `#<consumer>{id: 1 element-type: <u8> direction: output}` | `<consumer>` |
+| `#<producer>{id: 0 element-type: <u8>}` | `<producer>` |
+| `#<consumer>{id: 1 element-type: <u8>}` | `<consumer>` |
+| `#<iostream>{id: 1208 element-type: <u8> direction: io}` | `<iostream>` |
 
 ### Procedures
-
-Here are examples of Procedure values, listed with types that can represent them. 
 
 | values | types |
 | --- | ------------------------- |
@@ -152,8 +104,6 @@ Here are examples of Procedure values, listed with types that can represent them
 | `(^ (x y) (* x y))` | `<method>` |
 
 ### Resources
-
-Here are examples of Resource values, listed with types that can represent them. 
 
 | values | types |
 | --- | ------------------------- |
