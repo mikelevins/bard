@@ -48,6 +48,7 @@ Each built-in class is a collection of one or more related types.
 
 Here are examples of Number values, listed with types that can represent them. 
 
+
 | values | types |
 | --- | ------------------------- |
 | `0` | `<bit>` `<u8>` `<fixed>` |
