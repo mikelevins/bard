@@ -111,3 +111,133 @@ It's worth keeping in mind that a type can belong to more than one class.
 | `#<http>{id: 11831 url: "http://bardcode.net"}` | `<http>` |
 | `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
 
+## Evaluating expressions
+
+If I type an expression at the Bard prompt, Bard reads it and evaluates it to return a result. Most values that you can type at the prompt are **self-evaluating**. When Bard evaluates a **self-evaluating** value, the result is just the same value.
+
+Here are a couple of examples:
+
+    bard> 5
+    5
+    
+    bard> "Hello!"
+    "Hello!"
+    
+### Symbols
+
+A symbol is a value that just consists of a name. Here are a few examples:
+
+    x
+    *
+    Fred
+    ALongerSymbolName
+    
+When you type a symbol at the Bard prompt, Bard treats it as a reference to a **variable**. A **variable** is a name that is bound to a value.
+
+    bard> *
+    (-> & -> Number)
+    
+When we type `*` at the prompt, Bard recognizes it as a symbol and looks up the value of the variable with that name. In this case the value is the multiplication function, written as `(-> & -> Number)`. (We'll talk later about why the function is printed like that and what it means.)
+
+You can define your own variables and change the values associated with them.
+
+    bard> (def n 5)
+    n
+    
+    bard> n
+    5
+    
+    bard> (set! n 105)
+    105
+    
+    bard> n
+    105
+    
+### Lists
+
+Lists are special. Like other Lisps, Bard treats lists as procedure calls. Here's what I mean:
+
+    bard> (+ 2 3)
+    5
+    
+When evaluating a list, Bard treats it as a procedure call, meaning that it uses the first item in the list as a procedure and passes the remaining items to that procedure as arguments. That's what happened in the above example: Bard looked up `+` and found the addition function; it passed `2` and `3` as arguments to that function, and the function computed the result `5`.
+
+### Quoting
+
+What if you want to use a symbol or a list as a piece of data? In other words, what if I want to make a list of the symbols `x`, `y`, and `z`? If I just write a list containing them, I'll run into a problem:
+
+    bard> (x y z)
+
+    ERROR: Undefined variable: x 
+
+As before, Bard sees a list and assumes it's a procedure call. It looks up `x` to find the procedure, and notices that there's no variable named `x` defined, so it can't proceed.
+
+Even if it could, `x` would have to have a value that is a procedure, and that still wouldn't get the result we want: it still wouldn't return a list of the symbols `x`, `y`, and `z`. So how do we do that?
+
+That's what **quoting** is for. When you quote a value, you're telling Bard not to evaluate it.
+
+    bard> 'x
+    x
+    
+Typing `'x` at the prompt tells Bard to returnthe symbol `x` itself, instead of looking up a variable named `x`.
+
+We can do the same thing with a list:
+
+    bard> '(x y z)
+    (x y z)
+    
+Quoting most values has no effect at all.
+
+    bard> '5
+    5
+    
+    bard> 'true
+    true
+    
+    bard> '"Hello1"
+    "Hello!"
+    
+That's because most values are self-evaluating, so evaluating them returns the same result as not evaluating them. Only symbols and lists are affected by quoting.
+
+## Types
+
+**Types** are objects that describe how to represent data. As an example, `<fixnum>` is a type that describes how to represent integers in Bard.
+
+Every value has a type, and you can ask Bard for the type of any value.
+
+    bard> (type 5)
+    <fixnum>
+    
+    bard (type 999999999999999999999999999999999999999999999999)
+    <bignum>
+    
+    bard> (type \space)
+    <character>
+    
+    bard> (type true)
+    <boolean>
+    
+Bard provides many built-in types, and it also provides tools for constructing new ones.
+
+Bard types are **disjoint**. That is, a value is an instance of exactly one type; if it's an instance of one type, then it's not an instance of another.
+
+## Classes
+
+**Classes** are collections of related types. A class comprises a list of types and a **protocol** that they share. A **protocol** is a list of functions.
+
+Thus, for example, the `List` class has numerous member types, including `<pair>`, `<string>`, `<vector>`, and others. It also has an associated `List` protocol that includes such functions as `list`, `list?`, `first`, `rest`, `last`, and so on.
+
+Just as you can define your own types, you can also define your own classes. When you define a class, its associated protocol is automatically created along with it.
+
+New types may be added to existing classes. If you add a type to a class, Bard warns you that the functions belonging to the protocol don't have definitions for the new type. You can remedy that issue by defining new methods on the protocol's functions.
+
+In fact, defining such methods is all it takes to add a type to a class. You can skip the step of explicitly adding the type to the class, and just write methods for it. As soon as at least one protocol function has a method for the type, it's considered a member of the class.
+
+## Relationships between classes
+
+Bard classes have no subclasses; they have only members, and only types are allowed to be members. Types have no subtypes.
+
+Bard has one **superclass**, named `Anything`. All classes are members of `Anything`. 
+
+Bard also has one **subtype**, named `<null>`. `<null>` is a member of every class. It has a single unique value, `nothing`. `nothing` is an insstance of every type.
+
