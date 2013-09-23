@@ -71,7 +71,7 @@ Here are examples of Enumeration values, listed with types that can represent th
 Here are examples of List values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `nothing` | `<null>` |
 | `(1 . 2)` | `<pair>` |
 | `(1 0 1 0)` | `<pair>` `<vector>` `<bitvector>` |
@@ -115,7 +115,7 @@ Bard constructs a list of three elements: the function, followed by 2 and 3.
 Here are examples of List values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `{}` | `<null>` |
 | `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
 
@@ -136,7 +136,7 @@ This way of writing values can come in handy when there are a variety of ways to
 Here are examples of stream values, listed with types that can represent them. Streams are special in that the printed representation of a stream cannot necessarily faithfully represent its state.
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `#<producer>{id: 0 element-type: <u8> direction: input}` | `<producer>` |
 | `#<consumer>{id: 1 element-type: <u8> direction: output}` | `<consumer>` |
 
@@ -145,7 +145,7 @@ Here are examples of stream values, listed with types that can represent them. S
 Here are examples of Procedure values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `(-> ->)` | `<function>` |
 | `(-> Number Number -> Number)` | `<function>` |
 | `(^ (x) x)` | `<method>` |
@@ -156,7 +156,7 @@ Here are examples of Procedure values, listed with types that can represent them
 Here are examples of Resource values, listed with types that can represent them. 
 
 | values | types |
-| - | ------------------------- |
+| --- | ------------------------- |
 | `#<file>{id: 1501 url: "file:///tmp/foo.txt"}` | `<file>` |
 | `#<http>{id: 11831 url: "http://bardcode.net"}` | `<http>` |
 | `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
