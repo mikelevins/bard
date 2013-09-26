@@ -285,6 +285,116 @@ In languages that don't support polymorphic functions, you would either have to 
 
 ## Reference
 
-### Built-in types
+### Built-in classes
+
+Each class can be represented by one or more types. This section lists the built-in classes and the built-in types that represent them.
+
+#### Special classes and types
+
+**`Anything`** is the only superclass in the language. All other classes are subclasses of `Anything`. All values are instances of `Anything`.
+
+**`<null>`** is the only subtype in the language. All other types are supertypes of `<null>`. `<null>` is an instance of every type.
+
+A type may belong to more than one class.
+
+#### Enumeration
+
+    <boolean>
+    <character>
+    <keyword>
+    <null>
+    <symbol>
+    <undefined>
+
+#### Foreign
+
+    <foreign-pointer>
+    <foreign-procedure>
+    <foreign-structure>
+    <foreign-value>
+
+#### List
+
+    <bitvector>
+    <class>
+    <pair>
+    <protocol>
+    <string>
+    <s8vector>
+    <s16vector>
+    <s32vector>
+    <s64vector>
+    <s128vector>
+    <u8vector>
+    <u16vector>
+    <u32vector>
+    <u64vector>
+    <u128vector>
+    <vector>
+
+#### Map
+
+    <alist>
+
+#### Number
+
+    <bignum>
+    <bit>
+    <fixed>
+    <float>
+    <ratio>
+    <s8>
+    <s16>
+    <s32>
+    <s64>
+    <s128>
+    <u8>
+    <u16>
+    <u32>
+    <u64>
+    <u128>
+
+#### Procedure
+
+    <continuation>
+    <function>
+    <macro>
+    <method>
+    <special-form>
+
+
+#### Resource
+
+    <actor>
+    <consumer>
+    <file>
+    <iostream>
+    <url>
+    <producer>
+
+#### Stream
+
+    <consumer>
+    <iostream>
+    <producer>
+
+
+#### Type
+
+    <class>
+    <foreign-type>
+    <protocol>
+    <structure>
+    <tuple>
+    <union>
+
 ### Built-in procedures
+
+#### Enumeration
+#### List
+#### Map
+#### Number
+#### Procedure
+#### Resource
+#### Stream
 
