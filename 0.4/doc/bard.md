@@ -297,6 +297,11 @@ Each class can be represented by one or more types. This section lists the built
 
 A type may belong to more than one class.
 
+#### Condition
+
+    <error>
+    <warning>
+
 #### Enumeration
 
     <boolean>
@@ -390,11 +395,57 @@ A type may belong to more than one class.
 
 ### Built-in procedures
 
+#### Condition
+
+    handle
+    signal
+    with-handlers
+
 #### Enumeration
+
+    character?
+    keyword?
+    name?
+    symbol?
 
 #### Equality
 
     =
+
+#### Foreign
+
+    foreign-procedure?
+    foreign-structure?
+    foreign-type?
+    foreign-value?
+
+#### Language
+
+    and
+    begin
+    case
+    cond
+    def
+    define
+    ensure
+    getter
+    if
+    let
+    loop
+    match
+    not
+    or
+    quasiquote
+    quote
+    repeat
+    set!
+    setter
+    unless
+    unquote
+    unquote-splicing
+    values
+    when
+    with-exit
 
 #### List
 
@@ -431,6 +482,7 @@ A type may belong to more than one class.
     seventh
     sixth
     some?
+    sort
     split-text
     take
     take-by
@@ -438,6 +490,12 @@ A type may belong to more than one class.
     third
 
 #### Map
+
+    get
+    keys
+    merge
+    put
+    vals
 
 #### Number
 
@@ -458,8 +516,29 @@ A type may belong to more than one class.
     remainder
     sqrt
 
+#### Order
+
+    <
+    <=
+    >
+    >=
+
+#### Pair
+
+    left
+    pair
+    pair?
+    right
+
 #### Procedure
 
+    '
+    `
+    ,
+    #
+    ^
+    ->
+    add-method
     applicable?
     apply
     complement
@@ -467,45 +546,94 @@ A type may belong to more than one class.
     constantly
     eval
     flip
+    function
     function?
     identity
+    method
     method?
     partial
     procedure?
+    remove-method
     special-form?
 
 #### Resource
 
     actor?
     consumer?
+    close
+    closed?
     domain
     file?
     iostream?
+    load
+    open
+    open?
     path
     port
     producer?
     query
+    receive
     scheme
+    send
     url?
+    with-open
 
 #### Stream
 
+    characters
+    contents
     cycle
+    direction
+    generate
     iterate
+    lines
+    load
     next
     next-n
+    objects
+    octets
     produced-count
     produced-values
     range-from
+    read
+    readable?
+    text
+    words
+    write
+    writeable?
 
 #### System
+
+    current-input
+    current-output
+    error
+    exit
+    gc
+    gensym
+    quit
+    room
+    standard-error
+    standard-input
+    standard-output
+    uuid
+    version
 
 #### Type
 
     as
+    class
     convert
+    defined?
+    exactly
     initialize
     instance?
+    isa
     make
+    nothing?
+    protocol
+    satisfies
+    something?
     type
+    type?
+    undefined?
 
