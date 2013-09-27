@@ -369,8 +369,8 @@ A type may belong to more than one class.
     <consumer>
     <file>
     <iostream>
-    <url>
     <producer>
+    <url>
 
 #### Stream
 
@@ -391,10 +391,121 @@ A type may belong to more than one class.
 ### Built-in procedures
 
 #### Enumeration
+
+#### Equality
+
+    =
+
 #### List
+
+    add-first
+    add-last
+    any
+    append
+    by
+    drop
+    eighth
+    element
+    empty?
+    fifth
+    filter
+    first
+    fourth
+    join-text
+    last
+    length
+    list
+    list?
+    map
+    member?
+    ninth
+    penultimate
+    partition
+    position
+    position-if
+    range
+    reduce
+    rest
+    reverse
+    second
+    seventh
+    sixth
+    some?
+    split-text
+    take
+    take-by
+    tenth
+    third
+
 #### Map
+
 #### Number
+
+    *
+    +
+    -
+    /
+    abs
+    even?
+    expt
+    inverse
+    max
+    min
+    mod
+    odd?
+    quotient
+    random
+    remainder
+    sqrt
+
 #### Procedure
+
+    applicable?
+    apply
+    complement
+    compose
+    constantly
+    eval
+    flip
+    function?
+    identity
+    method?
+    partial
+    procedure?
+    special-form?
+
 #### Resource
+
+    actor?
+    consumer?
+    domain
+    file?
+    iostream?
+    path
+    port
+    producer?
+    query
+    scheme
+    url?
+
 #### Stream
+
+    cycle
+    iterate
+    next
+    next-n
+    produced-count
+    produced-values
+    range-from
+
+#### System
+
+#### Type
+
+    as
+    convert
+    initialize
+    instance?
+    make
+    type
 
