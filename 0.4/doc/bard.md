@@ -414,6 +414,8 @@ A type may belong to more than one class.
 #### Map
 
     <alist>
+    <ordered-map>
+    <wbtree>
 
 #### Number
 
