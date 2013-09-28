@@ -278,12 +278,12 @@ Now we use a list literal:
     bard> [+ 2 3]
     ((-> & -> Number) 2 3)
 
-Here's a clue to why the last result loks different from the one before it:
+Here's a clue to why the last result looks different from the one before it:
 
     bard> +
     (-> & -> Number)
 
-The second result is different from the first because in the second, Bard evalutes the first element, the symbol `+`. Plus names a variable defined by the Bard language core. That variable is bound to the Bard addition function. When printing it, Bard writes the addition function as `(-> & -> Number)`; that form is called the function's **signature**. A function's signature identify the classes that it accepts as inputs, and the classes it can return as results.
+The second result is different from the first because in the second, Bard evalutes the first element, the symbol `+`. The symbol `+` names a variable defined by the Bard language core. That variable is bound to the Bard addition function, which is printed as `(-> & -> Number)`.
 
 ### Types
 
