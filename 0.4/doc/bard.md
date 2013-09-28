@@ -12,37 +12,65 @@ An **expression** is a word or phrase that Bard understands. Expressions can be 
 
 A **program** is a collection of expressions that, when evaluated, produces some values.
 
-A **procedure** is a value that can be **applied** to other values to compute a result.
+A **procedure** is a value that can be **applied** to other values to compute a result. There are four kinds of procedures: **functions**, **methods**, **macros**, and **special forms**.
 
 A **type** is a specific way to represent values. Each type can represent some values, but not others. Every value has exactly one type.
 
 A **class** is a collection of types with a common **protocol**. A **protocol** is a set of related **functions**.
 
-A **function** is one kind of procedure. There are a couple of others, as well.
-
 ## An Overview of Bard
 
-### Built-in classes
+### Types in Bard
 
-Bard provides several built-in **classes**, and a way to write values that belong to each class.
+A **type** describes how certain values are represented. It's a concrete description--in other words, each type describes specifically how to represent certain values. There are no abstract types.
 
-There is exactly one **superclass** in Bard, named **Anything**. All Bard classes are subclasses of Anything, but no class has any subclasses; only the superclass Anything does.
+A **class**, on the other hand, is a collection of types that share a common **protocol**. All classes are abstract. No value is ever a direct instance of a class; it's always an instance of a type. Every type belongs to at least one class, though, and its values are said to be **indirect instances** of the classes it belongs to.
 
-There is exactly one **subtype** in Bard, named `<null>`, and it has exactly one value, written `nothing`. `nothing` is a member of every type. `<null>` is a subtype of every type. It has no subtypes itself, and no type has any subtypes other than `<null>`.
+Here's an example of how types and classes work: 
 
-A type may be a member of more than one class.
+Let's start with the values `[1 2]` and `"Hello!"`. Let's say `[1 2]` is an instance of `<pair>` and `"Hello!"` is an instance of `<string>`. 
 
-Bard provides tools for creating new types and classes.
+The type `<pair>` is a member of the class `List`, which means that the functions of the `List` protocol can be used on `[1 2]`:
 
-Bard also provides several built-in classes:
+    bard> (first [1 2])
+    1
+    
+    bard> (last [1 2])
+    2
 
-* **Number** includes all the types that represent numeric values.
-* **Enumeration** includes all **enumerated types**. An **enumerated type** is a type whose values are individually and explicitly specified values. An example of an enumerated type is `<boolean>`. The values that belong to `<boolean>` are `true` and `false`.
+
+The type `<string>` is also a member of `List`:
+    
+    bard> (first "Hello!")
+    \H
+    
+    bard> (last "Hello!")
+    \!
+
+Usually we would just say that `[1 2]` and `"Hello!"` are lists. That's how types and classes work in Bard: when you're talking about what a value "is", and what you can do with it, you generally talk about some class that it belongs to. If for some reason you need to pay attention to exactly how a value is represented, then you talk about its type.
+
+Bard provides a useful library of built-in types and classes, and also provides tools you can use to make your own.
+
+There are two special data descriptions that are not regular types or classes.
+
+**`Anything`** is called the **superclass**. It's called *the* superclass because Bard has only one. Every class is a subclass of **`Anything`**, but there are no other superclasses, and no Bard class has any subclasses.
+
+Because every class is a subclass of `Anything`, every value is an indirect instance of `Anything`.
+
+The second special data description is the **subtype**, **`<null>`**. Once again, there's only one. **`<null>`** has exactly one value, which is written **`nothing`**. As you might have guessed, `nothing` represents the empty set, or the null value. `nothing` is an instance of every type, and indirectly an instance of every class. `<null>` is a member of every class.
+
+The entire language is organized around classes and protocols. Every value, type, and procedure has a place in a class and its protocol, which makes helps make it easy to learn the language and find the tools you need.
+
+Bard's built-in classes include:
+
+* **Class**: the class of all classes
+* **Enumeration**: the class of **enumerated types**. An enumerated type is one whose values are individually and explicitly specified. Examples include `<boolean>`, `<symbol>`, and `<character>`.
 * **List** includes types that represent ordered sequences of values.
 * **Map** includes types that represent collections of **keys** that are associated with values. A key is a value that is used to identify another value contained in a map. For example, in the map `{a: 1 b: 2}`, the key `a:` identifies the value `1`.
-* **Stream** includes types that produce one value after another when asked for it, or that consume one value after another when it's offered, or both.
+* **Number** includes all the types that represent numeric values.
 * **Procedure** includes types that can be applied to arguments to compute result values.
 * **Resource** includes types that represent files, devices, network connections, and other abstractions of hardware capabilities.
+* **Stream** includes types that produce one value after another when asked for it, or that consume one value after another when it's offered, or both.
 
 
 ### Literal values
