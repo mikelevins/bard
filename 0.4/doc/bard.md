@@ -63,14 +63,23 @@ The entire language is organized around classes and protocols. Every value, type
 
 Bard's built-in classes include:
 
-* **Class**: the class of all classes
-* **Enumeration**: the class of **enumerated types**. An enumerated type is one whose values are individually and explicitly specified. Examples include `<boolean>`, `<symbol>`, and `<character>`.
-* **List** includes types that represent ordered sequences of values.
-* **Map** includes types that represent collections of **keys** that are associated with values. A key is a value that is used to identify another value contained in a map. For example, in the map `{a: 1 b: 2}`, the key `a:` identifies the value `1`.
-* **Number** includes all the types that represent numeric values.
-* **Procedure** includes types that can be applied to arguments to compute result values.
-* **Resource** includes types that represent files, devices, network connections, and other abstractions of hardware capabilities.
-* **Stream** includes types that produce one value after another when asked for it, or that consume one value after another when it's offered, or both.
+* **Class**: the class of all classes.
+* **Condition**: the class of special circumstances--such as errors--that arise when performing a computation.
+* **Enumeration**: the class of **enumerated types**. An enumerated type is one whose values are defined by listing all of them individually. Examples include `<boolean>` and `<character>`.
+* **Equal**: the class of values that can be compared for equality.
+* **Foreign**: the class of code and data defined by something other than Bard, such as C libraries, or proxies for data in a Java process.
+* **Language**: the protocol that contains the basic vocabulary of the Bard language.
+* **List**: the class of types that represent ordered sequences of values, such as `<string>`, `<pair>`, and `<vector>`.
+* **Map**: the class of associative arrays. A map is a values that consists of some **keys** that are associated with values.
+* **Name**: the class of values that represent names, include `<keyword>` and `<symbol>`.
+* **Number**: the clas of numeric types.
+* **Ordered**: the class of values that can be sorted.
+* **Pair**: the class of values that associate two other values in a left/right relationship.
+* **Procedure**: the class of values that represent code that Bard can run.
+* **Resource**: the class of vlaues that represent machine resources, such as files, network connections, and running processes.
+* **Stream**: the class of types that represent values that can produce other values one at a time, or that can consume them one at a time, or both. Bard performs input by collectng values from streams, and performs output by inserting values into streams.
+* **System**: the class of values that represent running Bard systems.
+* **Type**: the class of values that represent types or categories of other values, such as `<class>`, `<type>`, and `<protocol>`.
 
 
 ### Literal values
@@ -86,14 +95,6 @@ Text like this--that is, text that Bard can read to construct a specific value--
 
 The following sections list examples of literals for each built-in class. Remember that a class is a collection of types; each example lists one or more types that can represent the value given in the literal.
 
-#### Numbers
-
-| values | types |
-| --- | ------------------------- |
-| `0` | `<bit>` `<u8>` `<fixed>` |
-| `1.2` | `<float>` |
-| `2/3` | `<ratio>` |
-| `999999999999999999999999` | `<bignum>` |
 
 #### Enumerations
 
@@ -122,13 +123,22 @@ The following sections list examples of literals for each built-in class. Rememb
 | `{}` | `<null>` |
 | `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
 
-#### Streams
+#### Name
 
 | values | types |
 | --- | ------------------------- |
-| `#<producer>{id: 0 element-type: <u8>}` | `<producer>` |
-| `#<consumer>{id: 1 element-type: <u8>}` | `<consumer>` |
-| `#<iostream>{id: 1208 element-type: <u8> direction: io}` | `<iostream>` |
+| `begin` | `<symbol>` |
+| `Anything` | `<symbol>` |
+| `name:` | `<keyword>` |
+
+#### Numbers
+
+| values | types |
+| --- | ------------------------- |
+| `0` | `<bit>` `<u8>` `<fixed>` |
+| `1.2` | `<float>` |
+| `2/3` | `<ratio>` |
+| `999999999999999999999999` | `<bignum>` |
 
 #### Procedures
 
@@ -147,15 +157,26 @@ The following sections list examples of literals for each built-in class. Rememb
 | `#<website>{id: 11831 url: "http://bardcode.net"}` | `<website>` |
 | `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
 
+#### Streams
+
+| values | types |
+| --- | ------------------------- |
+| `#<producer>{id: 0 element-type: <u8>}` | `<producer>` |
+| `#<consumer>{id: 1 element-type: <u8>}` | `<consumer>` |
+| `#<iostream>{id: 1208 element-type: <u8> direction: io}` | `<iostream>` |
+
 ### Evaluating expressions
 
-If you type an expression at the Bard prompt, Bard reads it and evaluates it to return a result. Most values that you can type at the prompt are **self-evaluating**. When Bard evaluates a **self-evaluating** value, the result is just the same as the value you typed.
+If you type an expression at the Bard prompt, Bard reads it and evaluates it to return a result. Most values that you can type at the prompt are **self-evaluating**. They're called "self-evaluating values" because the result of evaluating one is just the same value.
 
-Here are a couple of examples:
+For example, `5` is a self-evaluating expression:
 
     bard> 5
     5
-    
+
+So is `"Hello!"`:
+
+
     bard> "Hello!"
     "Hello!"
     
@@ -163,19 +184,21 @@ Here are a couple of examples:
     
 #### Symbols
 
-A symbol is a value represents a name. Here are a few examples:
+Most Bard values are self-evaluating, but not all.
+
+A symbol, for example, is a value represents a name. A name of what? Of a **variable**. 
+
+The following values are symbols:
 
     x
     *
     Fred
     ALongerSymbol
     
-Symbols are not self-evaluating. When you type a symbol at the Bard prompt, Bard treats it as a reference to a **variable**. A **variable** is a name that is bound to a value.
+When you type a symbol at the Bard prompt, Bard treats it as a reference to a **variable**. A **variable** is a name that is bound to a value. When evaluating a variable name, Bard finds the variable asociated with the name and returns the value it's bound to:
 
     bard> *bard-version*
     (0 4 0)
-    
-When we type `*bard-version*` at the prompt, Bard recognizes it as a symbol and looks up the value of the variable with that name. In this case the value is the version on the Bard system, which is a List of numbers.
 
 You can define your own variables:
 
@@ -199,45 +222,68 @@ Lists are not self-evaluating, either. Bard is a Lisp, and like other Lisps, it 
 
     bard> (+ 2 3)
     5
-    
-When it encounters a list, Bard assumes you mean to call a procedure. The first element in the list indicates the procedure you want to call, and the remaining elements are the arguments to the procedure. In this example, the procedure is indicated by the symbol `+`. Bard looks it up and finds the addition function bound to that variable. It applies the addition function to 2 and 3, yielding 5, which it prints.
+
+Bard didn't just return the expression I typed, `(+ 2 3)`. Instead, it recognized it as a list, which means it's intended to be a procedure call--in other words. we want Bard to find the procedure named `+` and apply it to the arguments 2 and `3`. That's what Bad did in the above example.
 
 #### Quoting
 
-What if you want to use a symbol or a list as a piece of data? In other words, what if I want to make a list of the symbols `x`, `y`, and `z`? If you write a list containing them you run into a problem:
+Sometime you don't want Bard to treat your lists as procedure calls. Sometimes you actually just want to express a list of values. There are a couple of ways to do that.
 
-    bard> (x y z)
+One is to **quote** the list. Quoting a list--or any value--tells bard that you don't want to evaluate the list; you just want to mention it. For example, if you write this:
 
-    ERROR: Undefined variable: x 
-
-As before, Bard sees a list and assumes it's a procedure call. It looks up `x` to find the procedure, and notices that there's no variable named `x` defined, so it can't proceed.
-
-So how do we write a list of x, y, and z?
-
-That's what **quoting** is for. When you quote a value, you're telling Bard not to evaluate it.
-
-    bard> 'x
+    bard> (def x (+ 2 3))
     x
     
-Typing `'x` at the prompt tells Bard to return the symbol `x` itself, instead of looking up a variable named `x`.
+...Bard defines the varable `x` with the value `5`--the result of evaluating `(+ 2 3)`:
 
-We can do the same thing with a list:
-
-    bard> '(x y z)
-    (x y z)
-    
-Quoting most values has no effect; the result is the same as if you didn't quote them.
-
-    bard> '5
+    bard> x
     5
     
-    bard> 'true
-    true
+That's a problem if you actually wanted to store the list in x; so how do you do that? 
+
+You **quote** the list, which means telling Bard not to evaluate it;
+
+    bard> (def x )'(+ 2 3))
+    x
     
-    bard> '"Hello!"
-    "Hello!"
+    bard> x
+    (+ 2 3)
     
-That's because most values are self-evaluating. Evaluating them returns the same result as not evaluating them. Quoting makes a difference only with symbols and lists.
+There's a second way to refer to the list, one that works slightly differently:
+
+    bard> (def y [+ 2 2])
+    x
+    
+    bard> y
+    ((-> & -> Number) 2 3)
+    
+That first expression in the resulting list is a function--specifically, it's the addition function named `+`.
+
+So why did quoting the list return `(+ 2 3)` while writing it as a list literal return `((-> & -> Number) 2 3)`? The answer is that quoting the list tells Bard not to evaluate the list *or anything in it*.
+
+By contrast, a list literal doesn't tell Bard to avoid evaluating the contents of the list; it just says not to apply the first element to the others.
+
+Taking a slightly closer look, here's what happens if we just write the original list:
+
+    bard> (+ 2 3)
+    5
+    
+Now we quote the list:
+
+    bard> '(+ 2 3)
+    (+ 2 3)
+
+Now we use a list literal:
+
+    bard> [+ 2 3]
+    ((-> & -> Number) 2 3)
+
+Here's a clue to why the last result loks different from the one before it:
+
+    bard> +
+    (-> & -> Number)
+
+The second result is different from the first because in the second, Bard evalutes the first element, the symbol `+`. Plus names a variable defined by the Bard language core. That variable is bound to the Bard addition function. When printing it, Bard writes the addition function as `(-> & -> Number)`; that form is called the function's **signature**. A function's signature identify the classes that it accepts as inputs, and the classes it can return as results.
 
 ### Types
 
