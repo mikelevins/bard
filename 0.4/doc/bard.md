@@ -357,6 +357,59 @@ The lists in the first example are instances of `<pair>`, and the ones in the se
 
 In languages that don't support polymorphic functions, you would either have to write append as a special form, or you'd have to have two different functions. In Bard, the **append** function examines its arguments and chooses the appropriate **method** for the arguments it received. Furthermore, Bard provides tools you can use to add new methods, so that `append` can work on new types.
 
+### Function signatures
+
+Bard prints functions using a notation known as a **function signature**. Here's an example:
+
+    bard> *
+    (-> Number & -> Number)
+    
+The symbol `*` is the name of Bard's multiplication function. When we type it at the prompt, Bard looks up the function and prints it. The expression that it printed in the example is the function signature for the multiplication function.
+
+A function signature's format  is like this:
+
+    (-> input-type... -> output-type...)
+
+There can be any number of input types (even zero) and any number of output types (even zero). The following are all valid function signatures:
+
+    (-> ->)
+    (-> Number -> Number)
+    (-> Anything -> <boolean>)
+    (-> Number Number -> <boolean>)
+    
+The first one means the function accepts no input arguments and returns nothing. The last one means the function accepts two arguments, both instances of `Number`, and returns one result, an instance of `<boolean>`.
+
+A function signature does no uniquely identify a function. For example many different functions could have the signature `(-> Number Number -> Number)`; addition functions, multiplication functions, and so on. There is a way to uniquely identify a function--or any value--in Bard; we'll come to that presently. Function signatures just identify the inputs and outputs of a function.
+
+Besides the arrows and the input and output types, there are a couple of other symbols that can appear in a signature:
+
+* `&` is used to indicate that more inputs or outputs are allowed
+*  `*` means that zero or more of the preceding form are allowed
+
+In addition, two other conventions are used:
+
+* if a symbol in lowercase appears in a function signature, and it's not the name of a type, then it indicates a variable that appears in a macro or special form.
+* if parenthses appear in a signature, then they indicate parentheses that must appear in a macor or special form.
+
+As an example, the special form `handle` looks like this:
+
+    (handle (err (display "An error occurred: " err))
+      (do-awesome-stuff)
+      (do-more-awesome-stuff)
+      (do-ordinary-stuff-too))
+
+`handle` wraps some expressions and provides some code to be executed if an error or other unusual condition is signaled. In this example, if any error or other condition is signaled in the body then `handle` captures the condition, binds it to `err`, and then transfers control to the expression after `err`.
+
+Here's the signature for this special form:
+
+    (-> (var &) & -> &)
+
+The signature means that `handle` requires its first argument to be a list that starts with a variable name. The elements of that list after the variable name can be any number of expressions (that's what the `&` means). After the list with the variable name, any number of expressions may follow. Finally, the `handle` form may returns any number of values.
+
+Here's an example of a hypothetical function that can accept any number of arguments as long as they are all Numbers, and that can return any number of arguments of any type:
+
+    (-> Number * -> &)
+
 ## Reference
 
 ### Built-in classes
@@ -473,31 +526,31 @@ A type may belong to more than one class.
 
 #### Condition
 
-    handle
-    signal
-    with-handlers
+    handle (-> (var &) & -> &)
+    signal (-> Condition ->)
+    with-handlers  (-> ((var &) &) -> &)
 
 #### Enumeration
 
-    character?
-    keyword?
-    name?
-    symbol?
+    character? (-> Anything -> <boolean>)
+    keyword? (-> Anything -> <boolean>)
+    name?(-> Anything -> <boolean>)
+    symbol?(-> Anything -> <boolean>)
 
 #### Equality
 
-    =
+    = (-> Anything Anything & -> <boolean>)
 
 #### Foreign
 
-    foreign-procedure?
-    foreign-structure?
-    foreign-type?
-    foreign-value?
+    foreign-procedure? (-> Anything -> <boolean>)
+    foreign-structure? (-> Anything -> <boolean>)
+    foreign-type? (-> Anything -> <boolean>)
+    foreign-value? (-> Anything -> <boolean>)
 
 #### Language
 
-    and
+    and (-> )
     begin
     case
     cond
