@@ -12,757 +12,268 @@ An **expression** is a word or phrase that Bard understands. Expressions can be 
 
 A **program** is a collection of expressions that, when evaluated, produces some values.
 
-A **procedure** is a value that can be **applied** to other values to compute a result. There are four kinds of procedures: **functions**, **methods**, **macros**, and **special forms**.
+A **structure** is a specific way to represent values. Each structure can represent some values, but not others. Every value has exactly one structure. You can define new structures in Bard.
 
-A **type** is a specific way to represent values. Each type can represent some values, but not others. Every value has exactly one type.
+A **procedure** is a value that can be **applied** to other values to compute a result. Procedures come in four flavors: **functions**, **methods**, **macros**, and **special forms**. We'll look more closely at each of these in later sections. You can define new functions, methods, and macros, but you can't add or change special forms; that's what's special about them. They form the foundation of the Bard language.
 
-A **class** is a collection of types with a common **protocol**. A **protocol** is a set of related **functions**.
+A **protocol** is a set of related procedures that define a **type**. A **type** is a collection of values that can all behave the same way. For example, all the values that can be used in arithmetic belong to the type `Number`. All the values that can be sorted, reversed, and appended together belong to the type `List`. You can define new protocols in Bard, and by defining protocols, create new types.
 
 ## An Overview of Bard
 
-### Types in Bard
+### Expressions
 
-A **type** describes how certain values are represented. It's a concrete description--in other words, each type describes specifically how to represent certain values. There are no abstract types.
+The basic unit of meaning in Bard is the **expression**. Simple values are expressions. Here are a few examples:
 
-A **class**, on the other hand, is a collection of types that share a common **protocol**. All classes are abstract. No value is ever a direct instance of a class; it's always an instance of a type. Every type belongs to at least one class, though, and its values are said to be **indirect instances** of the classes it belongs to.
-
-Here's an example of how types and classes work: 
-
-Let's start with the values `[1 2]` and `"Hello!"`. Let's say `[1 2]` is an instance of `<pair>` and `"Hello!"` is an instance of `<string>`. 
-
-The type `<pair>` is a member of the class `List`, which means that the functions of the `List` protocol can be used on `[1 2]`:
-
-    bard> (first [1 2])
-    1
+    bard> 4
+    4
     
-    bard> (last [1 2])
-    2
-
-
-The type `<string>` is also a member of `List`:
-    
-    bard> (first "Hello!")
-    \H
-    
-    bard> (last "Hello!")
-    \!
-
-Usually we would just say that `[1 2]` and `"Hello!"` are lists. That's how types and classes work in Bard: when you're talking about what a value "is", and what you can do with it, you generally talk about some class that it belongs to. If for some reason you need to pay attention to exactly how a value is represented, then you talk about its type.
-
-Bard provides a useful library of built-in types and classes, and also provides tools you can use to make your own.
-
-There are two special data descriptions that are not regular types or classes.
-
-**`Anything`** is called the **superclass**. It's called *the* superclass because Bard has only one. Every class is a subclass of **`Anything`**, but there are no other superclasses, and no Bard class has any subclasses.
-
-Because every class is a subclass of `Anything`, every value is an indirect instance of `Anything`.
-
-The second special data description is the **subtype**, **`<null>`**. Once again, there's only one. **`<null>`** has exactly one value, which is written **`nothing`**. As you might have guessed, `nothing` represents the empty set, or the null value. `nothing` is an instance of every type, and indirectly an instance of every class. `<null>` is a member of every class.
-
-The entire language is organized around classes and protocols. Every value, type, and procedure has a place in a class and its protocol, which makes helps make it easy to learn the language and find the tools you need.
-
-Bard's built-in classes include:
-
-* **Class**: the class of all classes.
-* **Condition**: the class of special circumstances--such as errors--that arise when performing a computation.
-* **Enumeration**: the class of **enumerated types**. An enumerated type is one whose values are defined by listing all of them individually. Examples include `<boolean>` and `<character>`.
-* **Equal**: the class of values that can be compared for equality.
-* **Foreign**: the class of code and data defined by something other than Bard, such as C libraries, or proxies for data in a Java process.
-* **Language**: the protocol that contains the basic vocabulary of the Bard language.
-* **List**: the class of types that represent ordered sequences of values, such as `<string>`, `<pair>`, and `<vector>`.
-* **Map**: the class of associative arrays. A map is a values that consists of some **keys** that are associated with values.
-* **Name**: the class of values that represent names, include `<keyword>` and `<symbol>`.
-* **Number**: the clas of numeric types.
-* **Ordered**: the class of values that can be sorted.
-* **Pair**: the class of values that associate two other values in a left/right relationship.
-* **Procedure**: the class of values that represent code that Bard can run.
-* **Resource**: the class of vlaues that represent machine resources, such as files, network connections, and running processes.
-* **Stream**: the class of types that represent values that can produce other values one at a time, or that can consume them one at a time, or both. Bard performs input by collectng values from streams, and performs output by inserting values into streams.
-* **System**: the class of values that represent running Bard systems.
-* **Type**: the class of values that represent types or categories of other values, such as `<class>`, `<type>`, and `<protocol>`.
-
-
-### Literal values
-
-Bard can print almost every value in a way that allows it to read the value back in. To take a simple example, consider the following interaction:
-
-    bard> (+ 2 3)
-    5
-    
-In this interaction we add the numbers 2 and 3, resulting in 5. Bard prints that result as the text `5`. It can read that text--`5`--and constuct a value that is equal to the value it printed.
-
-Text like this--that is, text that Bard can read to construct a specific value--is called a **literal**. Bard provides literal notation for almost all values. There are a few exceptions that can't be easily treated this way, and they are printed specially to distinguish them as **unreadable values**, but as far as it's practical, Bard provides literal notation for all its values.
-
-The following sections list examples of literals for each built-in class. Remember that a class is a collection of types; each example lists one or more types that can represent the value given in the literal.
-
-
-#### Enumerations
-
-| values | types |
-| --- | ------------------------- |
-| `true` | `<boolean>` |
-| `\A` | `<character>` |
-| `\space` | `<character>` |
-
-#### Lists
-
-| values | types |
-| --- | ------------------------- |
-| `nothing` | `<null>` |
-| `(1 . 2)` | `<pair>` |
-| `(1 0 1 0)` | `<pair>` `<vector>` `<bitvector>` |
-| `(1 2 3 4)` | `<pair>` `<vector>` `<u8vector>` |
-| `(1 -2 3 -4)` | `<pair>` `<vector>` `<s8vector>` |
-| `(1 -2 3 -4000)` | `<pair>` `<vector>` `<s16vector>` |
-| `"Hello"` | `<string>` |
-
-#### Maps
-
-| values | types |
-| --- | ------------------------- |
-| `{}` | `<null>` |
-| `{a: 1 b: 2}` | `<pair>` `<ordered-map>` `<weight-balanced-treemap>` |
-
-#### Name
-
-| values | types |
-| --- | ------------------------- |
-| `begin` | `<symbol>` |
-| `Anything` | `<symbol>` |
-| `name:` | `<keyword>` |
-
-#### Numbers
-
-| values | types |
-| --- | ------------------------- |
-| `0` | `<bit>` `<u8>` `<fixed>` |
-| `1.2` | `<float>` |
-| `2/3` | `<ratio>` |
-| `999999999999999999999999` | `<bignum>` |
-
-#### Procedures
-
-| values | types |
-| --- | ------------------------- |
-| `(-> ->)` | `<function>` |
-| `(-> Number Number -> Number)` | `<function>` |
-| `(^ (x) x)` | `<method>` |
-| `(^ (x y) (* x y))` | `<method>` |
-
-#### Resources
-
-| values | types |
-| --- | ------------------------- |
-| `#<file>{id: 1501 url: "file:///tmp/foo.txt"}` | `<file>` |
-| `#<website>{id: 11831 url: "http://bardcode.net"}` | `<website>` |
-| `#<actor>{id: 32042 url: "http://bardcode.net/bardrepl"}` | `<actor>` |
-
-#### Streams
-
-| values | types |
-| --- | ------------------------- |
-| `#<producer>{id: 0 element-type: <u8>}` | `<producer>` |
-| `#<consumer>{id: 1 element-type: <u8>}` | `<consumer>` |
-| `#<iostream>{id: 1208 element-type: <u8> direction: io}` | `<iostream>` |
-
-### Evaluating expressions
-
-If you type an expression at the Bard prompt, Bard reads it and evaluates it to return a result. Most values that you can type at the prompt are **self-evaluating**. They're called "self-evaluating values" because the result of evaluating one is just the same value.
-
-For example, `5` is a self-evaluating expression:
-
-    bard> 5
-    5
-
-So is `"Hello!"`:
-
-
     bard> "Hello!"
     "Hello!"
     
-    bard> { a: 1 b: 2 }
+    bard> ()
+    nothing
     
-#### Symbols
+I've shown what happens when I type thse values at Bard's prompt: it reads each value, evaluates it, and prints the result. For most values, "evaluating" just means returning the same value. Expressions that work this way are called **self-evaluating forms**. 
 
-Most Bard values are self-evaluating, but not all.
-
-A symbol, for example, is a value represents a name. A name of what? Of a **variable**. 
-
-The following values are symbols:
-
-    x
-    *
-    Fred
-    ALongerSymbol
-    
-When you type a symbol at the Bard prompt, Bard treats it as a reference to a **variable**. A **variable** is a name that is bound to a value. When evaluating a variable name, Bard finds the variable asociated with the name and returns the value it's bound to:
-
-    bard> *bard-version*
-    (0 4 0)
-
-You can define your own variables:
-
-    bard> (def n 5)
-    n
-    
-    bard> n
-    5
-    
-Once a variable is defined, you can assign a new value to it:
-    
-    bard> (set! n 105)
-    105
-    
-    bard> n
-    105
-    
-#### Lists
-
-Lists are not self-evaluating, either. Bard is a Lisp, and like other Lisps, it treats lists as procedure calls. Here's what I mean:
-
-    bard> (+ 2 3)
-    5
-
-Bard didn't just return the expression I typed, `(+ 2 3)`. Instead, it recognized it as a list, which means it's intended to be a procedure call--in other words. we want Bard to find the procedure named `+` and apply it to the arguments 2 and `3`. That's what Bad did in the above example.
-
-#### Quoting
-
-Sometime you don't want Bard to treat your lists as procedure calls. Sometimes you actually just want to express a list of values. There are a couple of ways to do that.
-
-One is to **quote** the list. Quoting a list--or any value--tells bard that you don't want to evaluate the list; you just want to mention it. For example, if you write this:
-
-    bard> (def x (+ 2 3))
-    x
-    
-...Bard defines the varable `x` with the value `5`--the result of evaluating `(+ 2 3)`:
-
-    bard> x
-    5
-    
-That's a problem if you actually wanted to store the list in x; so how do you do that? 
-
-You **quote** the list, which means telling Bard not to evaluate it;
-
-    bard> (def x )'(+ 2 3))
-    x
-    
-    bard> x
-    (+ 2 3)
-    
-There's a second way to refer to the list, one that works slightly differently:
-
-    bard> (def y [+ 2 2])
-    x
-    
-    bard> y
-    ((-> & -> Number) 2 3)
-    
-That first expression in the resulting list is a function--specifically, it's the addition function named `+`.
-
-So why did quoting the list return `(+ 2 3)` while writing it as a list literal return `((-> & -> Number) 2 3)`? The answer is that quoting the list tells Bard not to evaluate the list *or anything in it*.
-
-By contrast, a list literal doesn't tell Bard to avoid evaluating the contents of the list; it just says not to apply the first element to the others.
-
-Taking a slightly closer look, here's what happens if we just write the original list:
+Not all forms are self-evaluating, though. For example:
 
     bard> (+ 2 3)
     5
     
-Now we quote the list:
+The value that Bard returned and printed is not the same as the expression that I typed. That's because Bard interprets that kind of expression as a **procedure call**; that is, it finds a procedure identified in the expression and applies it to some arguments to compute a result. In this example, the procedure was `+`, the addition function, and the arguments were the numbers `2` and `3`.
 
-    bard> '(+ 2 3)
-    (+ 2 3)
+An expression like this one, in which some values are delimited by parentheses, is called a **list**. Here are a few more lists:
 
-Now we use a list literal:
+    ()
+    (* 4 5)
+    (< 2 3)
+    (+ 2 3 4)
+    (+ (* 2 3) (* 4 5))
+    (a list of random words)
 
-    bard> [+ 2 3]
-    ((-> & -> Number) 2 3)
+All of these example lists will work as procedure calls if you type them in, except the last one. The problem with the last one is that there is no procedure in Bard named `a`. If you type in the expression as you see it here, Bard will complain by signaling an error:
 
-Here's a clue to why the last result looks different from the one before it:
+
+    bard> (a list of random words)
+
+    ERROR: Undefined variable: a 
+
+It complains that the **variable** `a` is not defined--and it's quite right, because we haven't defined it. Unfortunately, that means that Bard doesn't know how to process that list. It thinks we want to call the procedure `a`, but it can't find such a procedure.
+
+Why did it complain about an undefined **variable** instead of an undefined procedure? Because the normal way Bard finds a procedure is by looking up a variable that is the name of the procedure.
+
+The name of a variable is called a **symbol**. Symbols are the second kind of value--besides procedures--that are not self-evaluating. Most of the time when you write a symbol it's because you want the value of the variable that it names. For example:
 
     bard> +
-    (-> & -> Number)
+    #<function> (-> Number & -> &)
+    
+The variable named `+` has as its value a function. That's why it worked to evalute `(+ 2 3)`.
 
-The second result is different from the first because in the second, Bard evalutes the first element, the symbol `+`. The symbol `+` names a variable defined by the Bard language core. That variable is bound to the Bard addition function, which is printed as `(-> & -> Number)`.
+    bard> a
+    
+    ERROR: Undefined variable: a 
 
-### Types
+The variable `a` is undefined--but we already knew that.
 
-**Types** are objects that describe how to represent values. As an example, `<fixnum>` is a type that describes how to represent integers in Bard.
+You can actualy get Bard to process `a`, even though the variable is undefined; you just have to tell it not to try to look up a variable with that name. Here's how:
 
-Every value has a type, and you can ask Bard for the type of any value.
+    bard> 'a
+    a
+    
+Bard is happy to just return `a` if we tell it not to try evaluating it. I did that using a single quote ('). Marking an expression like this is called **quoting** the expression, and you can do it with anything. For example:
 
-    bard> (type 5)
+    bard> '(a list of random words)
+    (a list of random words)
+
+Again, as long as we ask Bard not to try evaluating the list, it's perfectly happy with it.
+
+We can even quote self-evaluating forms:
+
+    bard> '4
+    4
+
+The result is the same as if I didn't quote it. If I don't quote `4` its value is 4. If I do quote `4`, its value is 4. Quoting makes no difference with self-evaluating expressions.
+
+### Literals
+
+Another name for a self-evaluating expression is a **literal**. A literal is just the written form of a value. 
+
+Here are a few examples of literal values:
+
+    0
+    5
+    -2
+    "hello"
+    'a
+
+An expression like `(+ 2 3)` is not considered a literal because it's not the written form of a self-evaluating expression. If you type it in at the Bard prompt, Bard will read and evaluate it and return 5. 5 is not the same as the expression you typed; you typed a list with three elements--the symbol `+`, and the numbers 2 and 3.
+
+A **literal** is a self-evaluating expression that represents a value. All the numbers, for example, are literals.
+
+Bard provides a way to write almost every kind of value as a literal. There are a few exceptions. Some data resist being printed in a convenient, readable form. A common example is an open file or network connection: there's not a really convenient way to print that as a value that Bard can read back in.
+
+Apart from exceptions like that, though, Bard can print any value as a literal, and it can read any literal expression to reconstruct an equivalent value.
+
+Here are a few more examples of Bard literals:
+
+    true false ; Boolean values
+    0 1.2 2/3 6.022e29 ; numbers
+    \A \space ; text characters
+    (+ 2 3) (a random list) ; lists (remember to quote them if they aren't procedure calls!)
+    "Hello" ; text
+    { name: "Fred" age: 101 } ; a map
+    
+Literals make it easy to type data into interactive sessions. That in turn makes it easy to test procedures interactively as you write them. It also means that in most cases it's easy to convert data into a form that your program can write to storage, or read from it, or transmit to another program.   
+
+### Values and structures
+
+A **structure** describes how to represent a family of values. Structures are values themselves, as well, and you can ask Bard for information about them. For example, you can ask Bard what structure is used to represent a value:
+
+    bard> (structure-of 5)
     <fixnum>
     
-    bard (type 999999999999999999999999999999999999999999999999)
-    <bignum>
-    
-    bard> (type \space)
-    <character>
-    
-    bard> (type true)
-    <boolean>
-    
-Bard provides many built-in types, and it also provides tools for constructing new ones.
+The value `5` is an instance of the structure `<fixnum>`.
 
-Bard types are **disjoint**. That is, a value is an instance of exactly one type; if it's an instance of one type, then it's not an instance of another.
+By convention, the names of structures start with the '<' character and end with '>'.
 
-### Classes
+Here are the structures of a few more values:
 
-**Classes** are collections of related types. A class consists of a list of types and a **protocol** that they share. A **protocol** is a list of functions.
-
-For example, the `List` class has numerous member types, including `<pair>`, `<string>`, `<vector>`, and others. It also has an associated List protocol that includes such functions as `list`, `list?`, `first`, `rest`, `last`, and so on.
-
-Just as you can define your own types, you can also define your own classes. When you define a class, its associated protocol is automatically created along with it.
-
-You can add a type to a class at any time like this:
-
-    bard> (add-type! List <my-new-list-type>)
-    WARNING: these List functions are not defined on the type <my-new-list-type>:
-    add-first add-last any append by drop element empty? filter first insert last length 
-    ...
-    
-When we add the new type, Bard warns us that the List protocol has functions that won't work on the new List type. We'll have to define **methods** for those functions if we want to use `<my-new-list-type>` as a List.
-
-In fact, you can skip the call to `add-type!` and just define the methods. That's all it takes for `<my-new-list-type>` to be considered a List. If you define methods for only some of the List functions, Bard will warn you about the ones you missed.
-
-### Procedures
-
-Procedures are values that can be applied to arguments to compute results. There are four kinds of procedures:
-
-* **functions:** A function examines the arguments passed to it and chooses a **method** to execute.
-* **methods:** A method accepts the values passed to it as parameters and uses them to compute and return a result.
-* **special forms:** A special form is a procedure that is built into Bard itself, and which has its own rules for how it evaluates and handles its arguments.
-* **macros:** A macro is a procedure that transforms its expression into a different one before evaluating it.
-
-Special forms are the basic, built-in vocabulary of Bard. Bard has a relatively small number of special forms, and it doesn't provide a way to add new ones. Think of them as the foundation of the language.
-
-Macros are primarily used for building new syntax. Many special forms could be implemented as macros, and if you find yourself in a situation where you really wish you could use a special form that Bard doesn't have, the solution is usually to write a macro.
-
-Functions and methods are the bread and butter of Bard programming. Most work in Bard is writing functions and methods.
-
-#### Functions and methods
-
-Bard's functions are **polymorphic**. That means  the same function can do different things depending on the arguments you give it. Here's a simple example:
-
-    bard> (append '(0 1) (2 3))
-    (0 1 2 3)
-    
-    bard> (append "AB" "CD")
-    "ABCD"
-    
-The results of both calls to `append` look pretty much like what you might expect: the two List inputs are concatenated together.
-
-The lists in the first example are instances of `<pair>`, and the ones in the second are instances of `<string>`. The two types represent values very differently, which means that the code `aapend` uses to concatenate pairs has to be pretty different from the code it uses to cancatenate strings.
-
-In languages that don't support polymorphic functions, you would either have to write append as a special form, or you'd have to have two different functions. In Bard, the **append** function examines its arguments and chooses the appropriate **method** for the arguments it received. Furthermore, Bard provides tools you can use to add new methods, so that `append` can work on new types.
-
-### Function signatures
-
-Bard prints functions using a notation known as a **function signature**. Here's an example:
-
-    bard> *
-    (-> Number & -> Number)
-    
-The symbol `*` is the name of Bard's multiplication function. When we type it at the prompt, Bard looks up the function and prints it. The expression that it printed in the example is the function signature for the multiplication function.
-
-A function signature's format  is like this:
-
-    (-> input-type... -> output-type...)
-
-There can be any number of input types (even zero) and any number of output types (even zero). The following are all valid function signatures:
-
-    (-> ->)
-    (-> Number -> Number)
-    (-> Anything -> <boolean>)
-    (-> Number Number -> <boolean>)
-    
-The first one means the function accepts no input arguments and returns nothing. The last one means the function accepts two arguments, both instances of `Number`, and returns one result, an instance of `<boolean>`.
-
-A function signature does no uniquely identify a function. For example many different functions could have the signature `(-> Number Number -> Number)`; addition functions, multiplication functions, and so on. There is a way to uniquely identify a function--or any value--in Bard; we'll come to that presently. Function signatures just identify the inputs and outputs of a function.
-
-Besides the arrows and the input and output types, there are a couple of other symbols that can appear in a signature:
-
-* `&` is used to indicate that more inputs or outputs are allowed
-*  `*` means that zero or more of the preceding form are allowed
-
-In addition, two other conventions are used:
-
-* if a symbol in lowercase appears in a function signature, and it's not the name of a type, then it indicates a variable that appears in a macro or special form.
-* if parenthses appear in a signature, then they indicate parentheses that must appear in a macor or special form.
-
-As an example, the special form `handle` looks like this:
-
-    (handle (err (display "An error occurred: " err))
-      (do-awesome-stuff)
-      (do-more-awesome-stuff)
-      (do-ordinary-stuff-too))
-
-`handle` wraps some expressions and provides some code to be executed if an error or other unusual condition is signaled. In this example, if any error or other condition is signaled in the body then `handle` captures the condition, binds it to `err`, and then transfers control to the expression after `err`.
-
-Here's the signature for this special form:
-
-    (-> (var &) & -> &)
-
-The signature means that `handle` requires its first argument to be a list that starts with a variable name. The elements of that list after the variable name can be any number of expressions (that's what the `&` means). After the list with the variable name, any number of expressions may follow. Finally, the `handle` form may returns any number of values.
-
-Here's an example of a hypothetical function that can accept any number of arguments as long as they are all Numbers, and that can return any number of arguments of any type:
-
-    (-> Number * -> &)
-
-## Reference
-
-### Built-in classes
-
-Each class can be represented by one or more types. This section lists the built-in classes and the built-in types that represent them.
-
-#### Special classes and types
-
-**`Anything`** is the only superclass in the language. All other classes are subclasses of `Anything`. All values are instances of `Anything`.
-
-**`<null>`** is the only subtype in the language. All other types are supertypes of `<null>`. `<null>` is an instance of every type.
-
-A type may belong to more than one class.
-
-#### Condition
-
-    <error>
-    <warning>
-
-#### Enumeration
-
-    <boolean>
-    <character>
-    <keyword>
+    bard> (structure-of nothing)
     <null>
-    <symbol>
-    <undefined>
 
-#### Foreign
-
-    <foreign-pointer>
-    <foreign-procedure>
-    <foreign-structure>
-    <foreign-value>
-
-#### List
-
-    <bitvector>
-    <class>
-    <pair>
-    <protocol>
+    bard> (structure-of "Hello!")
     <string>
-    <s8vector>
-    <s16vector>
-    <s32vector>
-    <s64vector>
-    <s128vector>
-    <u8vector>
-    <u16vector>
-    <u32vector>
-    <u64vector>
-    <u128vector>
-    <vector>
 
-#### Map
+    bard> (structure-of { name: "Fred" age: 101 })
+    <simple-table>
 
-    <alist>
-    <ordered-map>
-    <wbtree>
-
-#### Number
-
-    <bignum>
-    <bit>
-    <fixed>
-    <float>
-    <ratio>
-    <s8>
-    <s16>
-    <s32>
-    <s64>
-    <s128>
-    <u8>
-    <u16>
-    <u32>
-    <u64>
-    <u128>
-
-#### Procedure
-
-    <continuation>
+    bard> (structure-of +)
     <function>
-    <macro>
-    <method>
-    <special-form>
+
+    bard> (structure-of '+)
+    <symbol>
+
+You can define new structures; we'll cover how to do that in a later section.
+
+### Procedures 
+
+We've already seen a simple example of calling a procedure. Here it is again:
+
+    bard> (+ 2 3)
+    5
+
+If you write a list and you don't quote it, Bard assumes you intend to execute a procedure call--in other words, it looks up the procedure given as the first element of the list, and it applies the procedure to the remaining elements of the list.
+
+Here are a few more examples of procedure calls:
 
 
-#### Resource
+    bard> (* 2 3)
+    6
 
-    <actor>
-    <consumer>
-    <file>
-    <iostream>
-    <producer>
-    <url>
+    bard> (> 2 3)
+    false
 
-#### Stream
+    bard> (+ (* 2 3) (* 4 5))
+    26
 
-    <consumer>
-    <iostream>
-    <producer>
+In the last example, the arguments to the procedure call are themselves procedure calls. This kind of nesting is common in Bard programs, and in all Lisp programs.
+
+Naturally, arithmetic is not the only kind of operation we can do with procedures:
 
 
-#### Type
+    bard> (first "hello")
+    \h
 
-    <class>
-    <foreign-type>
-    <protocol>
-    <structure>
-    <tuple>
-    <union>
+    bard> (last "hello")
+    \o
 
-### Built-in procedures
+    bard> (append "hello " "world")
+    "hello world"
 
-#### Condition
+You can create your own procedures and use them in your programs. When you define a new procedure, you build it out of calls to other procedures.
 
-    handle (-> (var &) & -> &)
-    signal (-> Condition ->)
-    with-handlers  (-> ((var &) &) -> &)
+Most of Bard programming consists of defining structures and procedures, and then using those new structures and procedures to accomplish your task.
 
-#### Enumeration
+### Protocols and types
 
-    character? (-> Anything -> <boolean>)
-    keyword? (-> Anything -> <boolean>)
-    name?(-> Anything -> <boolean>)
-    symbol?(-> Anything -> <boolean>)
+A **type** is a collection of values that can behave the same way. For example, all the values that can be used in arithmetic belong to the `Number` type.
 
-#### Equality
+Types and structures are not the same. A structure is a blueprint for constructing values. A type is a collection of values that can all be used in a certain way. **Protocols** define types.
 
-    = (-> Anything Anything & -> <boolean>)
+Let's suppose that we want to create a protocol for greeting people. We want to say "hello" to a person by name. Here's the protocol:
 
-#### Foreign
+    (protocol greet (-> UserName -> Salutation))
+              
+Evaluating this expression returns a protocol object. It's a value that contains the information that `greet` is a function that takes one argument of type `UserName` and returns a value of type `Salutation`.
 
-    foreign-procedure? (-> Anything -> <boolean>)
-    foreign-structure? (-> Anything -> <boolean>)
-    foreign-type? (-> Anything -> <boolean>)
-    foreign-value? (-> Anything -> <boolean>)
+By convention, the names of types start with capital letters.
 
-#### Language
+Let's capture the protocol in a variable so we can talk about it later:
 
-    and (-> )
-    begin
-    case
-    cond
-    def
-    define
-    ensure
-    getter
-    if
-    let
-    loop
-    match
-    not
-    or
-    quasiquote
-    quote
-    repeat
-    set!
-    setter
-    unless
-    unquote
-    unquote-splicing
-    values
-    when
-    with-exit
+    (define variable =Greeting=
+      (protocol greet (-> UserName -> Salutation)))
 
-#### List
+By convention, the names of protocols start and end with an equals sign (=).
 
-    add-first
-    add-last
-    any
-    append
-    by
-    drop
-    eighth
-    element
-    empty?
-    fifth
-    filter
-    first
-    fourth
-    join-text
-    last
-    length
-    list
-    list?
-    map
-    member?
-    ninth
-    penultimate
-    partition
-    position
-    position-if
-    range
-    reduce
-    rest
-    reverse
-    second
-    seventh
-    sixth
-    some?
-    sort
-    split-text
-    take
-    take-by
-    tenth
-    third
+So how do we define these types `UserName` and `Salutation`? We just did! A type is really nothing more than a named collection of values. We just defined them by creating the protocol.
 
-#### Map
+Okay, if we defined the types, then what values are instances of `UserName` and `Salutation`? The answer is that, so far, no values are instances of either type, because we haven't told Bard what values should belong to them. We also haven't told it how to actually compute a result for the `greet` function, so if we try to use it then Bard will just print an error.
 
-    get
-    keys
-    merge
-    put
-    vals
+There are two ways to add values to a type:
 
-#### Number
+* You can **assert** that values belong to a type
+* You can define a **method** on one of the protocol functions
 
-    *
-    +
-    -
-    /
-    abs
-    even?
-    expt
-    inverse
-    max
-    min
-    mod
-    odd?
-    quotient
-    random
-    remainder
-    sqrt
+The first way is simpler, but less useful. Here's what it looks like to assert a type:
 
-#### Order
+    (add-instance! UserName "Bob")
+    
+...or...
 
-    <
-    <=
-    >
-    >=
+    (add-member! UserName <string>)
+    
+The first form asserts that "Bob" is an instance of `UserName`. The second asserts that `<string>` is a member of `UserName`, which means that all instances of `<string>` are also instances of `UserName`.
 
-#### Pair
+One reason it's generally less useful to add values to a type this way is that in most cases adding all the values or types you care about would be tedious and error-prone. Another reason it's less than ideal is that adding values this way doesn't tell Bard what to do with them. In particular, Bard won't know how to actually compute any results using the values you've added until you write a method that tells it.
 
-    left
-    pair
-    pair?
-    right
+It'll warn you about that problem:
 
-#### Procedure
+    bard> (add-elements! UserName ["Bob" "Joe"])
+    WARNING: Protocol =Greeting= is only partially defined
+     unimplemented methods on: greet
+    
+What Bard means is that you told it that those text strings were instances of `UserName`, but you didn't tell it what to do if someone passes one of them to `greet`. But the whole purpose of `UserName` is to be passed to `greet`, so you've left out an important part of the type's definition.
 
-    '
-    `
-    ,
-    #
-    ^
-    ->
-    add-method
-    applicable?
-    apply
-    complement
-    compose
-    constantly
-    eval
-    flip
-    function
-    function?
-    identity
-    method
-    method?
-    partial
-    procedure?
-    remove-method
-    special-form?
+Defining a **method** on `greet` solves all these problems:
 
-#### Resource
+    (define method (greet nm)
+        where: (nm <string>)
+      (append "Hello, " nm "!"))
+      
+Here's what it looks like to call this function with the argument "Pete":
 
-    actor?
-    consumer?
-    close
-    closed?
-    domain
-    file?
-    iostream?
-    load
-    open
-    open?
-    path
-    port
-    producer?
-    query
-    receive
-    scheme
-    send
-    url?
-    with-open
+    bard> (greet "Pete")
+    "Hello, Pete!"
+    
+The method definition told Bard that when the function `greet` encounters a `<string>`, it should evaluate the code given in the definition: append the text "Hello " before it, and then "!" after it, and then return the result.
 
-#### Stream
+The protocol says the argument to `greet` is a `Username`. The method definition says it's a `<string>`. Logically, that means that `<string>` must be a member of `UserName`, so Bard automatically asserts that it is. You don't actually need to write
 
-    characters
-    contents
-    cycle
-    direction
-    generate
-    iterate
-    lines
-    load
-    next
-    next-n
-    objects
-    octets
-    produced-count
-    produced-values
-    range-from
-    read
-    readable?
-    text
-    words
-    write
-    writeable?
+    (add-member! UserName <string>)
 
-#### System
+or any other assertion; just writing the method definition is enough. What's more, Bard won't issue any warnings about incomplete definitions of `greet`, because the `define method` form provides a complete definition.
 
-    current-input
-    current-output
-    error
-    exit
-    gc
-    gensym
-    quit
-    room
-    standard-error
-    standard-input
-    standard-output
-    uuid
-    version
+There are more subtleties to protocols and method definitions that we will cover in later sections.
 
-#### Type
+### Input and output
+#### The reader
+#### The printer
+#### Images
+#### Messaging
 
-    as
-    class
-    convert
-    defined?
-    exactly
-    initialize
-    instance?
-    isa
-    make
-    nothing?
-    protocol
-    satisfies
-    something?
-    type
-    type?
-    undefined?
+### Flow of control
+
+### System procedures and data structures
+
+### Built-in structures and protocols
 
