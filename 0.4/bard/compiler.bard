@@ -78,27 +78,6 @@
 ;;; compilers for define
 ;;; ---------------------------------------------------------------------
 
-;;; define class
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-class expression environment)
-  (let ((forms (drop 2 expression))
-        (cname (first forms))
-        (superforms (rest forms))
-        (supercount (length superforms)))
-    (if (> supercount 0)
-        (let ((supers (reduce append
-                              (map (^ (s)(compile s environment))
-                                   superforms))))
-          `(,@supers
-            (CONST ,supercount)
-            (PRIM list)
-            (PRIM make-class)
-            (GSET ,cname)))
-        `((CONST ())
-          (PRIM make-class)
-          (GSET ,cname)))))
-
 ;;; define constant
 ;;; ---------------------------------------------------------------------
 
@@ -143,24 +122,29 @@
 ;;; defining structures
 ;;; ---------------------------------------------------------------------
 
+;;; define enumeration
+;;; ---------------------------------------------------------------------
+
+(define method (compile-define-enumeration expression environment)
+  (not-yet-implemented 'compile-define-enumeration))
+
 ;;; define record
 ;;; ---------------------------------------------------------------------
 
 (define method (compile-define-record expression environment)
   (not-yet-implemented 'compile-define-record))
 
-;;; define vector
+;;; define tuple
 ;;; ---------------------------------------------------------------------
 
-(define method (compile-define-vector expression environment)
-  (not-yet-implemented 'compile-define-vector))
+(define method (compile-define-tuple expression environment)
+  (not-yet-implemented 'compile-define-tuple))
 
 ;;; define union
 ;;; ---------------------------------------------------------------------
 
 (define method (compile-define-union expression environment)
   (not-yet-implemented 'compile-define-union))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; special form compilers
@@ -189,44 +173,27 @@
 ;;; begin
 ;;; ---------------------------------------------------------------------
 
+(define method (insert-begin-pops instrs)
+  (if (something? instrs)
+      (let ((i (first instrs))
+            (more (rest instrs)))
+        (if (something? more)
+            (append i
+                  (pair '(POP)
+                        (insert-begin-pops more)))
+            i))
+      nothing))
+
 (define method (compile-begin-sequence exprs environment)
-  (interpose '(POP 1)
-             (reduce append
-                     (map (method (x)(compile x environment))
-                          exprs))))
+  (let ((instrs (map (method (x)(compile x environment))
+                     exprs)))
+    (if (something? instrs)
+        (insert-begin-pops instrs)
+        instrs)))
 
 (define-special-form 'begin
   (method (expression environment)
           (compile-begin-sequence (rest expression) environment)))
-
-;;; cond
-;;; ---------------------------------------------------------------------
-
-(define method (compile-cond-clauses clauses environment end-label)
-  with: ((clauses <null>))
-  `(,end-label))
-
-(define method (compile-cond-clauses clauses environment end-label)
-  with: ((clauses <pair>))
-  (let ((test-form (first clauses))
-        (test-code (compile test-form environment))
-        (body-form (second clauses))
-        (body-code (compile body-form environment))
-        (more (drop 2 clauses))
-        (next-label (gen-label))
-        (case-code `(,@test-code
-                     (FGO ,next-label)
-                     ,@body-code
-                     (GO ,end-label)
-                     ,next-label)))
-    (append case-code
-            (compile-cond-clauses more environment end-label))))
-
-(define-special-form 'cond
-  (method (expression environment)
-          (let ((clauses (rest expression))
-                (end-label (gen-label)))
-            (compile-cond-clauses clauses environment end-label))))
 
 ;;; define
 ;;; ---------------------------------------------------------------------
@@ -239,12 +206,13 @@
                 (cond
                  ((= deftype 'class)(compile-define-class expression environment))
                  ((= deftype 'constant)(compile-define-constant expression environment))
+                 ((= deftype 'enumeration)(compile-define-enumeration expression environment))
                  ((= deftype 'macro)(compile-define-macro expression environment))
                  ((= deftype 'method)(compile-define-method expression environment))
                  ((= deftype 'protocol)(compile-define-protocol expression environment))
                  ((= deftype 'variable)(compile-define-variable expression environment))
                  ((= deftype 'record)(compile-define-record expression environment))
-                 ((= deftype 'vector)(compile-define-vector expression environment))
+                 ((= deftype 'tuple)(compile-define-tuple expression environment))
                  ((= deftype 'union)(compile-define-union expression environment))
                  (else: (error ["don't know how to define " deftype]))))
               (error ["not enough elements in define expression: " expression]))))
@@ -258,13 +226,17 @@
   (let ((signature (rest expression))
         (arrow-pos (position '-> signature)))
     (if (something? arrow-pos)
-        (let ((input-types (reduce append
-                                   (map (^ (x)(compile x environment))
-                                        (take arrow-pos signature))))
+        (let ((input-types (map (^ (x)(compile x environment))
+                                (take arrow-pos signature)))
+              (input-types (if (something? input-types)
+                               (reduce append input-types)
+                               input-types))
               (input-count (length input-types))
-              (output-types (reduce append
-                                    (map (^ (x)(compile x environment))
-                                         (rest (drop arrow-pos signature)))))
+              (output-types (map (^ (x)(compile x environment))
+                                 (rest (drop arrow-pos signature))))
+              (output-types (if (something? output-types)
+                                (reduce append output-types)
+                                output-types))
               (output-count (length output-types)))
           `(,@input-types
             (CONST ,input-count)
@@ -443,7 +415,30 @@
 (define method (macroexpand expression)
   (let ((name (first expression))
         (expand (get *macro-definitions* name)))
-    (expand expression)))
+    (if (something? expand)
+        (expand expression)
+        expression)))
+
+;;; expanders
+
+;;; and
+;;; ---------------------------------------------------------------------
+
+(define-macroexpander 'and 
+  (^ (expr)
+     (let ((body (rest expr)))
+       (if (something? body)
+           (let ((test (first body))
+                 (more (rest body))
+                 (more? (something? more))
+                 (var (gensym)))
+             `(let ((,var ,test))
+                (if ,var
+                    (if ,more?
+                        (and ,@more)
+                        ,var)
+                    false)))
+           true))))
 
 ;;; ---------------------------------------------------------------------
 ;;; primitives
