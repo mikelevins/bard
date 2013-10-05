@@ -139,6 +139,9 @@ Literals
 #### Exports
 
 ### How to use structures
+#### Built-in structures
+##### `<anything>`
+##### `<null>`
 #### Structures and accessors
 #### Records
 #### Tuples
@@ -206,303 +209,310 @@ Literals
 
 #### Enumeration
 
-    character? (-> Anything -> <boolean>)
-    keyword? (-> Anything -> <boolean>)
-    name?(-> Anything -> <boolean>)
-    symbol?(-> Anything -> <boolean>)
+    character? (-> <anything> -> <boolean>)
+    keyword? (->  <anything> -> <boolean>)
+    name? (->  <anything> -> <boolean>)
+    symbol? (->  <anything> -> <boolean>)
 
 #### Equality
 
-    = (-> Anything Anything & -> <boolean>)
+    = (-> Comparable Comparable & -> <boolean>)
 
 #### Foreign
 
-    foreign-procedure? (-> Anything -> <boolean>)
-    foreign-structure? (-> Anything -> <boolean>)
-    foreign-type? (-> Anything -> <boolean>)
-    foreign-value? (-> Anything -> <boolean>)
+    foreign-procedure? (->  <anything> -> <boolean>)
+    foreign-structure? (->  <anything> -> <boolean>)
+    foreign-type? (->  <anything> -> <boolean>)
+    foreign-value? (->  <anything> -> <boolean>)
 
 #### Language
 
-    and (-> )
-    begin
-    case
-    cond
-    def
-    define
-    ensure
-    getter
-    if
-    let
-    loop
-    match
-    not
-    or
-    quasiquote
-    quote
-    repeat
-    set!
-    setter
-    unless
-    unquote
-    unquote-splicing
-    values
-    when
-    with-exit
+    and (-> & -> <boolean>)
+    begin (-> & -> &)
+    case (-> <anything> (<anything> <anything> &) * -> &)
+    cond (-> (<anything> <anything> &) * -> &)
+    def (-> <symbol> <anything> -> <symbol>)
+    define condition (-> <symbol> & -> <anything>)
+    define constant (-> <symbol> <anything> -> <symbol>)
+    define enumeration (-> <symbol> <anything> & -> <symbol>)
+    define method (-> (<function> &) [where: [(<symbol> <anything>) *] | [(<symbol> <function>) *] | [(<list> <function>) *] -> <function>)
+    define protocol (-> <symbol> [<symbol> <function-signature>] * -> <protocol>)
+    define record (-> <symbol> [<symbol> *] | [(<symbol> &)] * -> <structure>)
+    define tuple (-> <symbol> [minimum: <number> | <null>] [maximum: <number> | <null>] [type: <anything>] [default: <anything>] -> <structure>)
+    define union (-> <structure> & -> <structure>)
+    define variable (-> <symbol> <anything> -> <symbol>)
+    ensure (-> <anything> <anything> -> <anything>)
+    getter (-> [<symbol> | (<symbol> <structure>) | (<function> <anything> &)] -> <method>)
+    if (-> <anything>  <anything>  <anything> -> &)
+    let (-> ((<symbol> &) *) & -> &)
+    loop 
+    match (-> <anything> (&) & -> &)
+    not (-> <anything> -> <boolean>)
+    or (-> & -> <anything>)
+    quasiquote (-> <anything> -> <anything>)
+    quote (-> <anything> -> <anything>)
+    repeat (-> <anything> -> )
+    set! (-> [<symbol> | (<symbol> <structure>) | (<function> <anything> &)] <anything> -> <anything>)
+    setter (-> [<symbol> | (<symbol> <structure>) | (<function> <anything> &)] -> <method>)
+    unless (-> & -> <anything>)
+    unquote (-> <anything> -> <anything>)
+    unquote-splicing (-> <anything> -> <anything>)
+    values (-> & -> &)
+    when (-> & -> <anything>)
+    with-exit (-> (var) & -> &)
 
 #### List
 
-    add-first
-    add-last
-    any
-    append
-    by
-    drop
-    eighth
-    element
-    empty?
-    fifth
-    filter
-    first
-    fourth
-    join-text
-    last
-    length
-    list
-    list?
-    map
-    member?
-    ninth
-    penultimate
-    partition
-    position
-    position-if
-    range
-    reduce
-    rest
-    reverse
-    second
-    seventh
-    sixth
-    some?
-    sort
-    split-text
-    take
-    take-by
-    tenth
-    third
+    add-first (-> <anything> List -> List)
+    add-last (-> List <anything> -> List)
+    any (-> List -> <anything>)
+    append (-> List * -> List)
+    by (-> Count List-> List)
+    drop (-> Count List-> List)
+    eighth (-> List -> <anything>)
+    element (-> List Index-> <anything>)
+    empty? (-> List -> <boolean>)
+    fifth (-> List -> <anything>)
+    filter (-> Predicate List-> List)
+    first (-> List -> <anything>)
+    fourth (-> List -> <anything>)
+    join-text (-> Text * -> Text)
+    last (-> List -> Anything)
+    length (-> List -> Number)
+    list (-> & -> List)
+    list? (-> <anything> -> <boolean>)
+    map (-> Procedure List -> List)
+    member? (-> <anything> List &{test: =} -> <boolean>)
+    ninth (-> List -> <anything>)
+    penultimate (-> List -> <anything>)
+    partition (-> Predicate List -> List List)
+    position (-> <anything> List &{test: =} -> [Number | <null>])
+    range (-> Number [Number] -> [List | Stream])
+    reduce (-> Procedure [<anything>] List -> <anything>)
+    rest (-> List -> List)
+    reverse (-> List -> List)
+    second (-> List -> <anything>)
+    seventh (-> List -> <anything>)
+    sixth (-> List -> <anything>)
+    some? (-> Predicate List -> <anything>)
+    sort (-> Comparator List -> List)
+    split-text (-> Text Text &{test: =} -> List)
+    take (-> Count List -> List)
+    take-by (-> Count Count List -> List)
+    tenth (-> List -> <anything>)
+    third (-> List -> <anything>)
 
 #### Map
 
-    get
-    keys
-    merge
-    put
-    vals
+    get (-> -> )
+    keys (-> -> )
+    merge (-> -> )
+    put (-> -> )
+    vals (-> -> )
 
 #### Number
 
-    *
-    +
-    -
-    /
-    abs
-    even?
-    expt
-    inverse
-    max
-    min
-    mod
-    odd?
-    quotient
-    random
-    remainder
-    sqrt
+    * (-> -> )
+    + (-> -> )
+    - (-> -> )
+    / (-> -> )
+    abs (-> -> )
+    even? (-> -> )
+    expt (-> -> )
+    inverse (-> -> )
+    max (-> -> )
+    min (-> -> )
+    mod (-> -> )
+    odd? (-> -> )
+    quotient (-> -> )
+    random (-> -> )
+    remainder (-> -> )
+    sqrt (-> -> )
 
 #### Order
 
-    <
-    <=
-    >
-    >=
+    < (-> -> )
+    <= (-> -> )
+    > (-> -> )
+    >= (-> -> )
 
 #### Pair
 
-    left
-    pair
-    pair?
-    right
+    left (-> -> )
+    pair (-> -> )
+    pair? (-> -> )
+    right (-> -> )
 
 #### Procedure
 
-    '
-    `
-    ,
-    #
-    ^
-    ->
-    add-method
-    applicable?
-    apply
-    complement
-    compose
-    constantly
-    eval
-    flip
-    function
-    function?
-    identity
-    method
-    method?
-    partial
-    procedure?
-    remove-method
-    special-form?
+    ' (-> -> )
+    ` (-> -> )
+    , (-> -> )
+    # (-> -> )
+    ^ (-> -> )
+    -> (-> -> )
+    add-method (-> -> )
+    applicable? (-> -> )
+    apply (-> -> )
+    complement (-> -> )
+    compose (-> -> )
+    constantly (-> -> )
+    eval (-> -> )
+    flip (-> -> )
+    function (-> -> )
+    function? (-> -> )
+    identity (-> -> )
+    method (-> -> )
+    method? (-> -> )
+    partial (-> -> )
+    procedure? (-> -> )
+    remove-method (-> -> )
+    special-form? (-> -> )
 
 #### Resource
 
-    agent?
-    consumer?
-    close
-    closed?
-    domain
-    file?
-    iostream?
-    load
-    open
-    open?
-    path
-    port
-    producer?
-    query
-    receive
-    scheme
-    send
-    url?
-    with-open
+    agent? (-> -> )
+    consumer? (-> -> )
+    close (-> -> )
+    closed? (-> -> )
+    domain (-> -> )
+    file? (-> -> )
+    iostream? (-> -> )
+    load (-> -> )
+    open (-> -> )
+    open? (-> -> )
+    path (-> -> )
+    port (-> -> )
+    producer? (-> -> )
+    query (-> -> )
+    receive (-> -> )
+    scheme (-> -> )
+    send (-> -> )
+    url? (-> -> )
+    with-open (-> -> )
 
 #### Stream
 
-    characters
-    contents
-    cycle
-    direction
-    generate
-    iterate
-    lines
-    load
-    next
-    next-n
-    objects
-    octets
-    produced-count
-    produced-values
-    range-from
-    read
-    readable?
-    text
-    words
-    write
-    writeable?
+    characters (-> -> )
+    contents (-> -> )
+    cycle (-> -> )
+    direction (-> -> )
+    generate (-> -> )
+    iterate (-> -> )
+    lines (-> -> )
+    load (-> -> )
+    next (-> -> )
+    next-n (-> -> )
+    objects (-> -> )
+    octets (-> -> )
+    produced-count (-> -> )
+    produced-values (-> -> )
+    range-from (-> -> )
+    read (-> -> )
+    readable? (-> -> )
+    text (-> -> )
+    words (-> -> )
+    write (-> -> )
+    writeable? (-> -> )
 
 #### System
 
-    current-input
-    current-output
-    error
-    exit
-    gc
-    gensym
-    quit
-    room
-    save-image
-    standard-error
-    standard-input
-    standard-output
-    uuid
-    version
+    current-input (-> -> )
+    current-output (-> -> )
+    error (-> -> )
+    exit (-> -> )
+    gc (-> -> )
+    gensym (-> -> )
+    quit (-> -> )
+    room (-> -> )
+    save-image (-> -> )
+    standard-error (-> -> )
+    standard-input (-> -> )
+    standard-output (-> -> )
+    uuid (-> -> )
+    version (-> -> )
 
 #### Type
 
-    as
-    class
-    convert
-    defined?
-    exactly
-    initialize
-    instance?
-    isa
-    make
-    nothing?
-    protocol
-    satisfies
-    something?
-    type
-    type?
-    undefined?
+    as (-> -> )
+    class (-> -> )
+    convert (-> -> )
+    defined? (-> -> )
+    exactly (-> -> )
+    initialize (-> -> )
+    instance? (-> -> )
+    isa (-> -> )
+    make (-> -> )
+    nothing? (-> -> )
+    protocol (-> -> )
+    satisfies (-> -> )
+    something? (-> -> )
+    type (-> -> )
+    type? (-> -> )
+    undefined? (-> -> )
 
 ### Built-in structures
 
-    <agent>
-    <alist>
-    <bignum>
-    <bit>
-    <bitvector>
-    <boolean>
-    <character>
-    <consumer>
-    <continuation>
-    <error>
-    <file>
-    <fixed>
-    <float>
-    <foreign-pointer>
-    <foreign-procedure>
-    <foreign-structure>
-    <foreign-type>
-    <foreign-value>
-    <function>
-    <iostream>
-    <keyword>
-    <macro>
-    <method>
-    <null>
-    <ordered-map>
-    <pair>
-    <producer>
-    <protocol>
-    <ratio>
-    <s128>
-    <s128vector>
-    <s16>
-    <s16vector>
-    <s32>
-    <s32vector>
-    <s64>
-    <s64vector>
-    <s8>
-    <s8vector>
-    <special-form>
-    <string>
-    <structure>
-    <symbol>
-    <tuple>
-    <u128>
-    <u128vector>
-    <u16>
-    <u16vector>
-    <u32>
-    <u32vector>
-    <u64>
-    <u64vector>
-    <u8>
-    <u8vector>
-    <undefined>
-    <union>
-    <url>
-    <vector>
-    <warning>
-    <wbtree>
+    <agent> (-> -> )
+    <alist> (-> -> )
+    <bignum> (-> -> )
+    <bit> (-> -> )
+    <bitvector> (-> -> )
+    <boolean> (-> -> )
+    <character> (-> -> )
+    <consumer> (-> -> )
+    <continuation> (-> -> )
+    <error> (-> -> )
+    <file> (-> -> )
+    <fixed> (-> -> )
+    <float> (-> -> )
+    <foreign-pointer> (-> -> )
+    <foreign-procedure> (-> -> )
+    <foreign-structure> (-> -> )
+    <foreign-type> (-> -> )
+    <foreign-value> (-> -> )
+    <function> (-> -> )
+    <iostream> (-> -> )
+    <keyword> (-> -> )
+    <macro> (-> -> )
+    <method> (-> -> )
+    <null> (-> -> )
+    <ordered-map> (-> -> )
+    <pair> (-> -> )
+    <producer> (-> -> )
+    <protocol> (-> -> )
+    <ratio> (-> -> )
+    <s128> (-> -> )
+    <s128vector> (-> -> )
+    <s16> (-> -> )
+    <s16vector> (-> -> )
+    <s32> (-> -> )
+    <s32vector> (-> -> )
+    <s64> (-> -> )
+    <s64vector> (-> -> )
+    <s8> (-> -> )
+    <s8vector> (-> -> )
+    <special-form> (-> -> )
+    <string> (-> -> )
+    <structure> (-> -> )
+    <symbol> (-> -> )
+    <tuple> (-> -> )
+    <u128> (-> -> )
+    <u128vector> (-> -> )
+    <u16> (-> -> )
+    <u16vector> (-> -> )
+    <u32> (-> -> )
+    <u32vector> (-> -> )
+    <u64> (-> -> )
+    <u64vector> (-> -> )
+    <u8> (-> -> )
+    <u8vector> (-> -> )
+    <undefined> (-> -> )
+    <union> (-> -> )
+    <url> (-> -> )
+    <vector> (-> -> )
+    <warning> (-> -> )
+    <wbtree> (-> -> )
 
 
 ### System tools
