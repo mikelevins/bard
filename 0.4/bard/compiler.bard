@@ -170,6 +170,60 @@
 
 ;;; compilers
 
+;;; and
+;;; ---------------------------------------------------------------------
+
+(define method (compile-if expression environment)
+  (let ((test-form (element expression 1))
+        (test-code (compile test-form environment))
+        (then-form (element expression 2))
+        (then-code (compile then-form environment))
+        (else-label (gen-label))
+        (else-form (element expression 3))
+        (else-code (compile else-form environment))
+        (end-label (gen-label)))
+    `(,@test-code
+      (FGO ,else-label)
+      ,@then-code
+      (GO ,end-label)
+      ,else-label
+      ,@else-code
+      ,end-label)))
+
+(define-special-form 'and
+  (method (expression environment)
+          (let ((expr (rest expression)))
+            (if (something? expr)
+                (let ((tests (reduce append
+                                     (map (^ (x)(compile x environment))
+                                          expr)))
+                      (else-label (gen-label))
+                      (end-label (gen-label))
+                      (test-count (length tests)))
+                  (if (> test-count 1)
+                      (let ((test-seq (reduce append
+                                              (map (^ (t) (list t '(DUP) `(FGO ,else-label) '(POP)))
+                                                   (take (- test-count 1) tests))))
+                            (last-test (last tests))
+                            (end-seq `(,last-test
+                                       (GO ,end-label)
+                                       ,else-label
+                                       (POP)
+                                       (FALSE)
+                                       ,end-label)))
+                        `(,@test-seq
+                          ,@end-seq))
+                      (let ((test (first tests)))
+                        `(,test
+                          (DUP)
+                          (FGO ,else-label)
+                          (GO ,end-label)
+                          ,else-label
+                          (POP)
+                          (FALSE)
+                          ,end-label))))
+                '((TRUE))))))
+
 ;;; begin
 ;;; ---------------------------------------------------------------------
 
@@ -420,25 +474,6 @@
         expression)))
 
 ;;; expanders
-
-;;; and
-;;; ---------------------------------------------------------------------
-
-(define-macroexpander 'and 
-  (^ (expr)
-     (let ((body (rest expr)))
-       (if (something? body)
-           (let ((test (first body))
-                 (more (rest body))
-                 (more? (something? more))
-                 (var (gensym)))
-             `(let ((,var ,test))
-                (if ,var
-                    (if ,more?
-                        (and ,@more)
-                        ,var)
-                    false)))
-           true))))
 
 ;;; ---------------------------------------------------------------------
 ;;; primitives
