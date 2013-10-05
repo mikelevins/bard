@@ -173,23 +173,6 @@
 ;;; and
 ;;; ---------------------------------------------------------------------
 
-(define method (compile-if expression environment)
-  (let ((test-form (element expression 1))
-        (test-code (compile test-form environment))
-        (then-form (element expression 2))
-        (then-code (compile then-form environment))
-        (else-label (gen-label))
-        (else-form (element expression 3))
-        (else-code (compile else-form environment))
-        (end-label (gen-label)))
-    `(,@test-code
-      (FGO ,else-label)
-      ,@then-code
-      (GO ,end-label)
-      ,else-label
-      ,@else-code
-      ,end-label)))
-
 (define-special-form 'and
   (method (expression environment)
           (let ((expr (rest expression)))
