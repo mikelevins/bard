@@ -361,7 +361,7 @@ Literals
 
 #### Resource
 
-    actor?
+    agent?
     consumer?
     close
     closed?
@@ -415,6 +415,7 @@ Literals
     gensym
     quit
     room
+    save-image
     standard-error
     standard-input
     standard-output
