@@ -9,6 +9,7 @@ The basic ideas that make up the Bard language, each briefly described in this s
 * **expressions** or **forms**
 * **values**
 * **programs**
+* **modules** and **variables**
 * **structures** and **instances** of structures
 * four kinds of **procedures**: **functions**, **methods**, **macros**, and **special forms**
 * **types** and **protocols**
@@ -23,6 +24,8 @@ A **value** is a piece of data that Bard knows how to handle.
 An **expression** is a word or phrase that Bard understands. Expressions can be as simple as a single number or text character, or as complex as a large structure of phrases within phrases many pages long. An expression is also called a **form**, especially when it's more complicated than just a single word or number.
 
 A **program** is an organized collection of expressions that is designed to compute some result.
+
+A **module** is a collection of **variables**. Bard programs use modules to organize variable names so that they don't compete or collide with one another. For example, you might write a procedure named `first`, and another programmer might write a different procedure named `first`. If both procedures existed in the same namespace, that would be a problem; only one of the two could be used. By defining your procedures in two different modules, you and the other programmer can avoid that problem.
 
 A **structure** is a blueprint for constructing values; it tells Bard how to combine simpler values to form more complex ones. It also defines how to extract parts of the data contained in a structure.
 
@@ -94,7 +97,7 @@ The basic unit of meaning in Bard is the **expression**. Simple values are expre
 
 Literals
 
-#### Variables
+#### Variables and modules
 
 #### Naming conventions
 
@@ -117,4 +120,389 @@ Literals
 ### Agents
 
 #### Sessions and images
+
+
+## Using Bard
+### How to run Bard
+#### The `bard` command
+#### The graphical environment
+#### Saved images
+#### Init files
+#### Modules and Module variables
+#### Saving images
+
+### How to use modules
+#### Module names
+#### The `bard.user` and `bard.language` modules
+#### Creating and using a working module
+#### Imports and renaming
+#### Exports
+
+### How to use structures
+#### Structures and accessors
+#### Records
+#### Tuples
+#### Enumerations
+#### Unions
+
+### How to define protocols
+#### About protocols
+#### Protocols and module variables
+#### Function signatures
+#### Creating and defining protocols
+
+### How to define macros
+
+### How to use conditions
+#### About conditions and the condition system
+#### Signaling conditions
+#### Handling conditions
+#### Restarts
+#### Adding condition types
+#### Defining condition structures
+
+### How to build distributed programs
+#### Agents and sessions
+#### Contacting an agent through a URL
+#### Serialization and messages
+#### Safety, security, and subordinate agents
+
+### How to use persistent data
+#### Serialization and storage
+#### Using images for storage
+#### Using the built-in value database
+#### Using foreign stores
+
+### How to use foreign code
+#### Foreign procedures and types
+#### Defining foreign procedures and types
+#### Linking foreign libraries
+#### Making system calls
+#### Running external programs
+
+### How to debug programs
+#### Backtraces
+#### Inspecting data
+#### Stepping through procedures
+#### Conditions and restarts
+
+### How to deliver programs
+#### Saving an executable image
+#### Console images
+#### Graphical images
+#### Packaging resources
+
+### How to modify Bard
+
+## Bard reference
+
+### Built-in protocols
+
+#### Condition
+
+    handle (-> (var &) & -> &)
+    signal (-> Condition ->)
+    with-handlers  (-> ((var &) &) -> &)
+
+#### Enumeration
+
+    character? (-> Anything -> <boolean>)
+    keyword? (-> Anything -> <boolean>)
+    name?(-> Anything -> <boolean>)
+    symbol?(-> Anything -> <boolean>)
+
+#### Equality
+
+    = (-> Anything Anything & -> <boolean>)
+
+#### Foreign
+
+    foreign-procedure? (-> Anything -> <boolean>)
+    foreign-structure? (-> Anything -> <boolean>)
+    foreign-type? (-> Anything -> <boolean>)
+    foreign-value? (-> Anything -> <boolean>)
+
+#### Language
+
+    and (-> )
+    begin
+    case
+    cond
+    def
+    define
+    ensure
+    getter
+    if
+    let
+    loop
+    match
+    not
+    or
+    quasiquote
+    quote
+    repeat
+    set!
+    setter
+    unless
+    unquote
+    unquote-splicing
+    values
+    when
+    with-exit
+
+#### List
+
+    add-first
+    add-last
+    any
+    append
+    by
+    drop
+    eighth
+    element
+    empty?
+    fifth
+    filter
+    first
+    fourth
+    join-text
+    last
+    length
+    list
+    list?
+    map
+    member?
+    ninth
+    penultimate
+    partition
+    position
+    position-if
+    range
+    reduce
+    rest
+    reverse
+    second
+    seventh
+    sixth
+    some?
+    sort
+    split-text
+    take
+    take-by
+    tenth
+    third
+
+#### Map
+
+    get
+    keys
+    merge
+    put
+    vals
+
+#### Number
+
+    *
+    +
+    -
+    /
+    abs
+    even?
+    expt
+    inverse
+    max
+    min
+    mod
+    odd?
+    quotient
+    random
+    remainder
+    sqrt
+
+#### Order
+
+    <
+    <=
+    >
+    >=
+
+#### Pair
+
+    left
+    pair
+    pair?
+    right
+
+#### Procedure
+
+    '
+    `
+    ,
+    #
+    ^
+    ->
+    add-method
+    applicable?
+    apply
+    complement
+    compose
+    constantly
+    eval
+    flip
+    function
+    function?
+    identity
+    method
+    method?
+    partial
+    procedure?
+    remove-method
+    special-form?
+
+#### Resource
+
+    actor?
+    consumer?
+    close
+    closed?
+    domain
+    file?
+    iostream?
+    load
+    open
+    open?
+    path
+    port
+    producer?
+    query
+    receive
+    scheme
+    send
+    url?
+    with-open
+
+#### Stream
+
+    characters
+    contents
+    cycle
+    direction
+    generate
+    iterate
+    lines
+    load
+    next
+    next-n
+    objects
+    octets
+    produced-count
+    produced-values
+    range-from
+    read
+    readable?
+    text
+    words
+    write
+    writeable?
+
+#### System
+
+    current-input
+    current-output
+    error
+    exit
+    gc
+    gensym
+    quit
+    room
+    standard-error
+    standard-input
+    standard-output
+    uuid
+    version
+
+#### Type
+
+    as
+    class
+    convert
+    defined?
+    exactly
+    initialize
+    instance?
+    isa
+    make
+    nothing?
+    protocol
+    satisfies
+    something?
+    type
+    type?
+    undefined?
+
+### Built-in structures
+
+    <agent>
+    <alist>
+    <bignum>
+    <bit>
+    <bitvector>
+    <boolean>
+    <character>
+    <consumer>
+    <continuation>
+    <error>
+    <file>
+    <fixed>
+    <float>
+    <foreign-pointer>
+    <foreign-procedure>
+    <foreign-structure>
+    <foreign-type>
+    <foreign-value>
+    <function>
+    <iostream>
+    <keyword>
+    <macro>
+    <method>
+    <null>
+    <ordered-map>
+    <pair>
+    <producer>
+    <protocol>
+    <ratio>
+    <s128>
+    <s128vector>
+    <s16>
+    <s16vector>
+    <s32>
+    <s32vector>
+    <s64>
+    <s64vector>
+    <s8>
+    <s8vector>
+    <special-form>
+    <string>
+    <structure>
+    <symbol>
+    <tuple>
+    <u128>
+    <u128vector>
+    <u16>
+    <u16vector>
+    <u32>
+    <u32vector>
+    <u64>
+    <u64vector>
+    <u8>
+    <u8vector>
+    <undefined>
+    <union>
+    <url>
+    <vector>
+    <warning>
+    <wbtree>
+
+
+### System tools
 
