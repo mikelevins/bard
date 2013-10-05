@@ -38,27 +38,43 @@ A **procedure** is a value that can be **applied** to other values to compute a 
 
 Strictly speaking, a function can't actually compute its result; that's the job of a **method**. A function just looks at the arguments to determine which method applies to them, then passes them to the method. It's the method that does the actual computing.
 
-That means that the same function can run different code for different arguments. This feature is known as **polymorphism**.
+That means that the same function can run different code for different arguments. This feature is known as **polymorphism**; we say that bard functions are **polymorphic** because they can do different things when they are given different arguments.
 
-**Macros** are procedures that can rewrite an expression before evaluating it. The most common use for macros is to exnted the syntax of the language, usually to make complicated expressions simpler to write and easer to read. Writing a macro is sort of like adding a new special form.
+**Macros** are procedures that can rewrite an expression before evaluating it. The most common use for macros is to extend the syntax of the language, usually to make complicated expressions simpler to write and easer to read. Writing a macro is sort of like adding a new special form.
 
-A **type** is a collection of values that can be treated the same way. For example, all of the values that you can use in arithmetic belong to the `Number` type, and all of the values that you can sort, reverse, and concatenate belong to the `List` types.
+A **type** is a collection of values that can be treated the same way. For example, all of the values that you can use in arithmetic belong to the `Number` type, and all of the values that you can sort, reverse, and concatenate belong to the `List` type.
 
-Types are completely abstract in Bard--in other words, a type doesn't say anything about how its instances are represented; it only describes how they behave. Bard uses structures to define how values are constructed, and types to describe what you can do with them.
+Bard types don't say anything about how values are represented; that's a structure's job. Types only say what you can do with values. If a value is an instance of a type, then you can use the type's functions on that value. If a value is a `Number`, then you can do arithmetic with it; if it's a `List` then you can sort it, append it, and reverse it.
 
-Types are defined by **protocols**. A **protocol** is a collection of related functions--and sometimes some macros--that defines a set of types and all the things you can do with them. For example, the `=Number=` protocol defines functions for addition, subtraction, multiplication, and so on, and it defines types including `Number`, `Integer`, `Ratio`, and so on.
+Types are defined by **protocols**. A **protocol** is a collection of related functions--and sometimes some macros--that defines a set of types and all the things you can do with them. For example, the `=Number=` protocol defines functions for addition, subtraction, and multiplication, and it defines types including `Number`, `Integer`, and `Ratio`.
 
-The `=Signaling=` protocol is worth a special mention: it defines **conditions** and procedures for working with them. A **condition** is a value that represents some exceptional situation that arose during evaluation. An **error** is one kind of the condition; a **warning** is another. Bard provides tools for **signaling**, **catching**, and **handling** errors, warnings, and other conditions, and for defining new kinds of conditions.
+The `=Signaling=` protocol is worth a special mention: it defines **conditions** and procedures for working with them. A **condition** is a value that represents some exceptional situation that can arise during evaluation. An **error** is one kind of the condition; a **warning** is another. Bard provides tools for **signaling**, **catching**, and **handling** errors, warnings, and other conditions, and for defining new kinds of conditions.
 
 Bard is designed to be used interactively; that is, it's designed to run as a program that you interact with. It prints a prompt and then waits for you to type expressions for it to evaluate. When you do, it **reads** the expressions, **evaluates** them to compute the results, and then **prints** the results.
 
-Each of these stages of processing is handled by a programmable service: the **reader**, **evaluator**, and **printer**.
+You can buikd whole programs in this kind of dialog, and Bard provides a collection of tools to help you.
 
-The reader and the printer are coordinated: the reader can read what the printer prints. Unless you tell it to do otherwise, the printer tries to print values in a form that allows the reader to read them and reconstruct equivalent values. That means that normally you can ask Bard to print a value to a file, for example, and then later ask it to read the file, and it can faithfully reproduce the values that were written earlier.
+Each stage of processing is handled by a programmable service: the **reader**, the **evaluator**, and the **printer**. Bard provides tools you can use to customize each of these for your needs.
 
-This process doesn' work for every kind of value; there are a few that resist being printed readably. As far as it can, though, Bard tries to make it possible to simply print and read its values.
+The reader and the printer are coordinated: the reader can read what the printer prints. Unless you tell it to do otherwise, the printer tries to print values in a form that allows the reader to read them and reconstruct equivalent values. For example, if you contruct a list, Bard prints it in a form that it can later read:
 
-The program that provides the reader, evaluator, and printer is called a Bard **agent**. Bard agents can spawn other agents, and they can send **messages** to them. They can also send messages to agents that they didn't spawn, as long as they first receive a message that supplies a reference to the destination agent.
+    bard> (add-first 0 [1 2 3])
+    (0 1 2 3)
+
+We can copy the text that bard printed, paste it into a string, and ask Bard to read it:
+    
+    bard> (read "(0 1 2 3)")
+    (0 1 2 3)
+
+The reader returns an equvalent value.
+
+Bard tries to do this with all its values--it tries to print them in a way that it can read. That means that normally you can ask Bard to print a value to a file, for example, and then later ask it to read the file, and it can faithfully reproduce the stored values.
+
+This process doesn't work for every kind of value; there are a few that resist being printed readably. Consider, for example, a network connection to a video stream. There isn't a straightforward way to write a text string that captures an object like that. For one thing, we don't have all of it! Most of it is somewhere else on the network. So Bard can't make *every* value readable. It tries to, though; and when it encounters one that refuses to cooperate, it prints it in a way that makes that clear; for example:
+
+   #{type: <video-stream> uuid: E4CA9200-ED24-4FC5-9D03-B91144D5F9EE readable: false url: "http://www.youtube.com/watch?v=o4-YnLpLgtk"}
+
+The program that provides the reader, evaluator, and printer is called a Bard **agent**. A Bard agent can spawn other agents, and it can send **messages** to them. It can also send messages to agents that it didn't spawn, as long as it has references to them.
 
 The state of a running agent is called a **session**. It's created when the agent starts running, and destroyed when it stops, but you can ask an agent to save its session in a file called an **image**. If you start an agent using a saved image, the stored session will resume as if it had never stopped--even if you start it on a different agent on a different machine.
 
@@ -66,7 +82,7 @@ Bard agents normally start from standard saved images, but you can save customiz
 
 One feature of the standard image is a standard Bard **library** that contains all of the built-in protocols that come with Bard, as well as the reader, evaluator, and printer, and a collection of useful programming tools to help you create Bard programs. The Bard language itself is not very big; a lot of its useful features are actually part of the library.
 
-That concludes a whirlwind tour of the Bard language. In the following sections we'll look at each of these concepts in greater detail. The manual concludes with a reference that describes the Bard library.
+That concludes a whirlwind tour of the Bard language. In the following sections we'll look at each of these concepts in greater detail. The manual concludes with a reference that describes the Bard library in detail.
 
 ## An Overview of Bard
 
