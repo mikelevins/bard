@@ -9,21 +9,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; TODO
-;;; ensure
-;;; let
-;;; loop
-;;; match
-;;; protocol
-;;; quasiquote
-;;; receive
-;;; send
-;;; set!
-;;; setter
-;;; time
-;;; with-exit
-;;; with-open
-
 ;;; ---------------------------------------------------------------------
 ;;; utils
 ;;; ---------------------------------------------------------------------
@@ -50,6 +35,53 @@
 
 (define method (not-yet-implemented name)
   (error [name " is not yet implemented "]))
+
+;;; ---------------------------------------------------------------------
+;;; global variables
+;;; ---------------------------------------------------------------------
+;;; global variables are anonymous, identified by id numbers
+;;; TODO: use a vector representation of globals in the compiler for
+;;;       improved efficiency
+
+(define variable *globals* [])
+(define variable *global-permissions* [])
+(define variable *next-global-id* 0)
+
+(define method (add-global! value mutable?)
+  (set! *globals* (append *globals* [value]))
+  (set! *global-permissions* (append *global-permissions* [mutable?]))
+  (set! *next-global-id* (+ 1 *next-global-id*))
+  (- *next-global-id* 1))
+
+(define method (gid-defined? gid)
+  (and (> gid -1)
+       (< gid *next-global-id*)))
+
+(define method (gid->value gid)
+  (if (gid-defined? gid)
+      (get *globals* gid)
+      (error ["Undefined global id: " gid])))
+
+(define method (gid-mutable? gid)
+  (if (gid-defined? gid)
+      (get *global-permissions* gid)
+      (error ["Undefined global id: " gid])))
+
+(define method (set-gid-value! gid val)
+  (if (gid-defined? gid)
+      (if (gid-mutable? gid)
+          (set! *globals*
+                (put *globals* gid val))
+          (error ["Tried to write to immutable global id: " gid]))
+      (error ["Undefined global id: " gid])))
+
+;;; ---------------------------------------------------------------------
+;;; modules
+;;; ---------------------------------------------------------------------
+;;; modules are namespaces
+;;; a module variable is a module-defined alias for a global
+;;; these aliases are the only way to make globals visible
+
 
 ;;; ---------------------------------------------------------------------
 ;;; environments
@@ -487,6 +519,9 @@
              (else (compile-when expression environment))))))
 
 ;;; with-exit
+;;; ---------------------------------------------------------------------
+
+;;; with-open
 ;;; ---------------------------------------------------------------------
 
 ;;; ---------------------------------------------------------------------
