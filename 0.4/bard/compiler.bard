@@ -82,6 +82,32 @@
 ;;; a module variable is a module-defined alias for a global
 ;;; these aliases are the only way to make globals visible
 
+(define variable *modules* {})
+
+(define method (find-module mname)
+  (get *modules* mname))
+
+(define method (list-modules)
+  (keys *modules*))
+
+(define record <module> name variables exports imports)
+
+(define macro (defmodule mname variables exports imports)
+  (let ((mvar (gensym)))
+    `(let ((,mvar (make <module> name: ',mname variables: ,variables exports: ,exports imports: ,imports)))
+       (set! *modules* (merge *modules* { ',mname ,mvar}))
+       ',mname)))
+
+(define method (delete-module! mname)
+  (if (something? (find-module mname))
+      (let ((mkeys (filter (^ (k)(not (= k mname)))
+                           (keys *modules*)))
+            (mvals (map (^ (k)(get *modules* k))
+                        mkeys))
+            (plist (reduce append (map list mkeys mvals)))
+            (new-modules (apply (partial make <alist-table>) plist)))
+        (set! *modules* new-modules))
+      nothing))
 
 ;;; ---------------------------------------------------------------------
 ;;; environments
