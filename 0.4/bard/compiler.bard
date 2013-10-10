@@ -90,11 +90,9 @@
 (define method (list-modules)
   (keys *modules*))
 
-(define record <module> name variables exports imports)
-
-(define macro (defmodule mname variables exports imports)
+(define macro (defmodule mname)
   (let ((mvar (gensym)))
-    `(let ((,mvar (make <module> name: ',mname variables: ,variables exports: ,exports imports: ,imports)))
+    `(let ((,mvar { name: ',mname variables: {} exports: {} imports: {}}))
        (set! *modules* (merge *modules* { ',mname ,mvar}))
        ',mname)))
 
@@ -108,6 +106,42 @@
             (new-modules (apply (partial make <alist-table>) plist)))
         (set! *modules* new-modules))
       nothing))
+
+(define method (add-module-variable! mname varname gid)
+  (let ((module (find-module mname))
+        (mvars (get module variables:))
+        (new-module (merge module {variables: (merge mvars {varname gid})})))
+    (set! *modules* (merge *modules* {mname new-module}))
+    mname))
+
+(define method (define-module-variable mname varname val mutable?)
+  (if (something? (find-module mname))
+      (let ((gid (add-global! val mutable?)))
+        (add-module-variable! mname varname gid)
+        (values varname mname))
+      (error ["No such module: " mname])))
+
+(define method (lookup-module-variable mname varname)
+  (let ((module (find-module mname)))
+    (if (something? module)
+        (let ((vars (get module variables:))
+              (gid (get vars varname)))
+          (if (something? gid)
+              (gid->value gid)
+              (error ["No variable " varname " defined in module " mname])))
+        (error ["No such module: " mname]))))
+
+(define method (set-module-variable! mname varname val)
+  (let ((module (find-module mname)))
+    (if (something? module)
+        (let ((vars (get module variables:))
+              (gid (get vars varname)))
+          (if (something? gid)
+              (begin
+               (set-gid-value! gid val)
+               val)
+              (error ["No variable " varname " defined in module " mname])))
+        (error ["No such module: " mname]))))
 
 ;;; ---------------------------------------------------------------------
 ;;; environments
