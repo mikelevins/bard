@@ -100,7 +100,8 @@
   (let ((var (element expression 2))
         (val-form (element expression 3))
         (val (compile val-form environment)))
-    `(,@val
+    `((GRW ,var)
+      ,@val
       (GSET ,var))))
 
 ;;; ---------------------------------------------------------------------
@@ -160,39 +161,25 @@
 ;;; and
 ;;; ---------------------------------------------------------------------
 
-(define-special-form 'and
+(define method (compile-and expression environment)
+  (if (something? expression)
+      (let ((else-label (gen-label))
+            (end-label (gen-label))
+            (test (first expression))
+            (more (rest expression))
+            (test-code (compile test environment))
+            (more-code (compile-and more environment)))
+        `(,@test-code
+          (DUP)
+          (FGO ,else-label)
+          (POP)
+          ,@more-code
+          ,else-label))
+      '((TRUE))))
+
+(define-special-form 'and 
   (method (expression environment)
-          (let ((expr (rest expression)))
-            (if (something? expr)
-                (let ((tests (reduce append
-                                     (map (^ (x)(compile x environment))
-                                          expr)))
-                      (else-label (gen-label))
-                      (end-label (gen-label))
-                      (test-count (length tests)))
-                  (if (> test-count 1)
-                      (let ((test-seq (reduce append
-                                              (map (^ (t) (list t '(DUP) `(FGO ,else-label) '(POP)))
-                                                   (take (- test-count 1) tests))))
-                            (last-test (last tests))
-                            (end-seq `(,last-test
-                                       (GO ,end-label)
-                                       ,else-label
-                                       (POP)
-                                       (FALSE)
-                                       ,end-label)))
-                        `(,@test-seq
-                          ,@end-seq))
-                      (let ((test (first tests)))
-                        `(,test
-                          (DUP)
-                          (FGO ,else-label)
-                          (GO ,end-label)
-                          ,else-label
-                          (POP)
-                          (FALSE)
-                          ,end-label))))
-                '((TRUE))))))
+          (compile-and (rest expression) environment)))
 
 ;;; begin
 ;;; ---------------------------------------------------------------------
@@ -583,7 +570,10 @@
                               environment))
 
 (define method (compile expression environment)
-  [['CONST expression]])
+  (cond
+   ((= expression true) '((TRUE)))
+   ((= expression false) '((FALSE)))
+   (else: [['CONST expression]])))
 
 (define method (compile expression environment)
   with: ((expression <symbol>))
