@@ -213,6 +213,23 @@
 ;;; cond
 ;;; ---------------------------------------------------------------------
 
+(define method (compile-cond clauses environment)
+  (if (something? clauses)
+      (let ((first-clause (first clauses))
+            (more-clauses (rest clauses))
+            (test (first first-clause))
+            (consequent (rest first-clause)))
+        (compile `(if ,test
+                      (begin ,@consequent)
+                      (cond ,@more-clauses))
+                 environment))
+      '((NOTHING))))
+
+(define-special-form 'cond
+  (method (expression environment)
+          (let ((clauses (rest expression)))
+            (compile-cond clauses environment))))
+
 ;;; def
 ;;; ---------------------------------------------------------------------
 
@@ -287,12 +304,12 @@
 ;;; ---------------------------------------------------------------------
 
 (define method (compile-if expression environment)
-  (let ((test-form (element expression 1))
+  (let ((test-form (element expression 0))
         (test-code (compile test-form environment))
-        (then-form (element expression 2))
+        (then-form (element expression 1))
         (then-code (compile then-form environment))
         (else-label (gen-label))
-        (else-form (element expression 3))
+        (else-form (element expression 2))
         (else-code (compile else-form environment))
         (end-label (gen-label)))
     `(,@test-code
@@ -308,7 +325,7 @@
           (let ((len (length expression)))
             (cond
              ((< len 4)(error ["syntax error in if expression: " expression]))
-             ((= len 4)(compile-if expression environment))
+             ((= len 4)(compile-if (rest expression) environment))
              (else (error ["syntax error in if expression: " expression]))))))
 
 ;;; let
