@@ -232,6 +232,34 @@
 
 ;;; def
 ;;; ---------------------------------------------------------------------
+;;; (def x 5)
+;;; (def x 5 mutable: true)
+;;; (def x 5 mutable: false)
+
+
+(define-special-form 'def
+  (method (expression environment)
+          (let ((len (length expression))
+                (var (element expression 1))
+                (val (element expression 2))
+                (val-code (compile val environment))
+                (mutable? (if (< len 4)
+                              true
+                              (if (= len 5)
+                                  (element expression 4)
+                                  (error ["Malformed def expression: " expression])))))
+            (if (or (= mutable? true)
+                    (= mutable? false))
+                (if mutable?
+                    `((GRW ,var)
+                      ,@val-code
+                      (GSET ,var))
+                    `((GRW ,var)
+                      ,@val-code
+                      (GSET ,var)
+                      (GRO ,var)))
+                (error ["mutability must be true or false in def expression; found: " mutable?])))))
+
 
 ;;; define
 ;;; ---------------------------------------------------------------------
