@@ -57,6 +57,20 @@
 (defun not-yet-implemented (name &optional (msg "Not yet implemented"))
   (error "~a: ~a" msg name))
 
+(defun primfib (n)
+  (if (< n 2)
+      1
+      (+ (primfib (- n 1))
+         (primfib (- n 2)))))
+
+;;; here's the bard version:
+;;; (def fib
+;;;     (method (n)
+;;;             (if (< n 2)
+;;;                 1
+;;;                 (+ (fib (- n 1))
+;;;                    (fib (- n 2))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; globals
 ;;; ---------------------------------------------------------------------
@@ -238,6 +252,7 @@
     (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
     (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
     (not 1 not) (null? 1 not)
+    (primfib 1 primfib)
     (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
     (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
     (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
@@ -568,7 +583,7 @@
           (push (funcall (opcode instr)) stack))
          
          ;; Unary operations:
-         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM) 
+         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM PRIMFIB) 
           (push (funcall (opcode instr) (pop stack)) stack))
          
          ;; Binary operations:
