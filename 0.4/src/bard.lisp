@@ -54,6 +54,9 @@
         (t (cons (first dotted-list)
                  (make-true-list (rest dotted-list))))))
 
+(defun not-yet-implemented (name &optional (msg "Not yet implemented"))
+  (error "~a: ~a" msg name))
+
 ;;; ---------------------------------------------------------------------
 ;;; globals
 ;;; ---------------------------------------------------------------------
@@ -65,7 +68,7 @@
   (let* ((default "unbound")
          (val (get var 'global-val default)))
     (if (eq val default)
-        (error "Unbound scheme variable: ~a" var)
+        (error "Unbound bard variable: ~a" var)
         val)))
 
 ;;; ---------------------------------------------------------------------
@@ -89,12 +92,12 @@
   (and (symbolp symbol) (get symbol 'bard-macro)))
 
 (defmacro def-bard-macro (name parmlist &body body)
-  "Define a Scheme macro."
+  "Define a Bard macro."
   `(setf (get ',name 'bard-macro)
          #'(lambda ,parmlist .,body)))
 
 (defun bard-macro-expand (x)
-  "Macro-expand this Scheme expression."
+  "Macro-expand this Bard expression."
   (if (and (listp x) (bard-macro (first x)))
       (bard-macro-expand
         (apply (bard-macro (first x)) (rest x)))
@@ -104,7 +107,7 @@
 ;;; --------------------
 
 (def-bard-macro %let (bindings &rest body)
-  `((lambda ,(mapcar #'first bindings) . ,body)
+  `((method ,(mapcar #'first bindings) . ,body)
     .,(mapcar #'second bindings)))
 
 (def-bard-macro let (bindings &rest body)
@@ -147,28 +150,23 @@
                           .,(rest clause))))
                 clauses)))))
 
-(def-bard-macro delay (computation)
-  `(lambda () ,computation))
+(def-bard-macro define (dtype name &rest body)
+  (case dtype
+    (constant (not-yet-implemented 'constant "Definition type not yet implemented"))
+    (macro (not-yet-implemented 'macro "Definition type not yet implemented"))
+    (method (not-yet-implemented 'method "Definition type not yet implemented"))
+    (protocol (not-yet-implemented 'protocol "Definition type not yet implemented"))
+    (variable (not-yet-implemented 'variable "Definition type not yet implemented"))
+    ;; defining structures
+    (enumeration (not-yet-implemented 'enumeration "Definition type not yet implemented"))
+    (record (not-yet-implemented 'record "Definition type not yet implemented"))
+    (tuple (not-yet-implemented 'tuple "Definition type not yet implemented"))
+    (union (not-yet-implemented 'union "Definition type not yet implemented"))
+    (t (error "Unrecognized definition type: ~a" dtype))))
 
-(def-bard-macro letrec (bindings &rest body)
-  `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
-     ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
-     .,body))
+(def-bard-macro def (name val-form)
+  `(set! ,name ,val-form))
 
-(defun name! (fn name)
-  "Set the name field of fn, if it is an un-named fn."
-  (when (and (fn-p fn) (null (fn-name fn)))
-    (setf (fn-name fn) name))
-  name)
-
-(def-bard-macro define (name &rest body)
-  (if (atom name)
-      `(name! (set! ,name . ,body) ',name)
-      (bard-macro-expand
-         `(define ,(first name) 
-            (lambda ,(rest name) . ,body)))))
-
-(set-global-var! 'name! #'name!)
 
 ;;; ---------------------------------------------------------------------
 ;;; method-functions
@@ -242,7 +240,7 @@
     (not 1 not) (null? 1 not)
     (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
     (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
+    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
     (write 1 write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t) 
     (name! 2 name! true t) (random 1 random true nil)))
@@ -309,9 +307,9 @@
       (first form) form n-args min (if (/= min max) max))))
 
 (defun compiler (x)
-  "Compile an expression as if it were in a parameterless lambda."
+  "Compile an expression as if it were in a parameterless method."
   (setf *label-num* 0)
-  (comp-lambda '() (list x) nil))
+  (comp-method '() (list x) nil))
 
 (defun comp (x env val? more?)
   "Compile the expression x into a list of instructions"
@@ -321,10 +319,10 @@
       ((atom x) (comp-const x val? more?))
       ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
       ((case (first x)
-         (QUOTE  (arg-count x 1)
+         (quote  (arg-count x 1)
                  (comp-const (second x) val? more?))
-         (BEGIN  (comp-begin (rest x) env val? more?))
-         (SET!   (arg-count x 2)
+         (begin  (comp-begin (rest x) env val? more?))
+         (set!   (arg-count x 2)
                  (assert (symbolp (second x)) (x)
                          "Only symbols can be set!, not ~a in ~a"
                          (second x) x)
@@ -332,11 +330,11 @@
                       (gen-set (second x) env)
                       (if (not val?) (gen 'POP))
                       (unless more? (gen 'RETURN))))
-         (IF     (arg-count x 2 3)
+         (if     (arg-count x 2 3)
                  (comp-if (second x) (third x) (fourth x)
                           env val? more?))
-         (LAMBDA (when val?
-                   (let ((f (comp-lambda (second x) (rest2 x) env)))
+         (method (when val?
+                   (let ((f (comp-method (second x) (rest2 x) env)))
                      (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
          (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
@@ -414,8 +412,8 @@
                 (gen (prim-opcode prim))
                 (unless val? (gen 'POP))
                 (unless more? (gen 'RETURN)))))
-      ((and (starts-with f 'lambda) (null (second f)))
-       ;; ((lambda () body)) => (begin body)
+      ((and (starts-with f 'method) (null (second f)))
+       ;; ((method () body)) => (begin body)
        (assert (null args) () "Too many arguments supplied")
        (comp-begin (rest2 f) env val? more?))
       (more? ; Need to save the continuation point
@@ -436,8 +434,8 @@
   (assemble (make-fn :env env :name name :args args
                      :code (optimize code))))
 
-(defun comp-lambda (args body env)
-  "Compile a lambda form into a closure with compiled code."
+(defun comp-method (args body env)
+  "Compile a method form into a closure with compiled code."
   (new-fn :env env :args args
           :code (seq (gen-args args 0)
                      (comp-begin body
@@ -566,7 +564,7 @@
                        stack))
          
          ;; Nullary operations:
-         ((SCHEME-READ NEWLINE) ; *** fix, gat, 11/9/92
+         ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
           (push (funcall (opcode instr)) stack))
          
          ;; Unary operations:
@@ -593,8 +591,8 @@
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))
 
-(defun init-scheme-comp ()
-  "Initialize values (including call/cc) for the Scheme compiler."
+(defun init-bard-comp ()
+  "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'exit 
     (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
@@ -609,18 +607,19 @@
 
 ;;; ==============================
 
-(defconstant scheme-top-level
-  '(begin (define (scheme)
+(defconstant bard-top-level
+  '(begin (def bard
+           (method ()
             (newline)
-            (display "=> ")
+            (display "bard> ")
             (write ((compiler (read))))
-            (scheme))
-          (scheme)))
+            (bard)))
+    (bard)))
 
-(defun scheme ()
-  "A compiled Scheme read-eval-print loop"
-  (init-scheme-comp)
-  (machine (compiler scheme-top-level)))
+(defun bard ()
+  "A compiled Bard read-eval-print loop"
+  (init-bard-comp)
+  (machine (compiler bard-top-level)))
 
 (defun comp-go (exp)
   "Compile and execute the expression."
@@ -751,40 +750,40 @@
 
 (defconstant eof "EoF")
 (defun eof-object? (x) (eq x eof))
-(defvar *scheme-readtable* (copy-readtable))
+(defvar *bard-readtable* (copy-readtable))
 
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
+(defun bard-read (&optional (stream *standard-input*))
+  (let ((*readtable* *bard-readtable*))
     (read stream nil eof)))
 
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t 
   #'(lambda (&rest ignore) (declare (ignore ignore)) t)
-  *scheme-readtable*)
+  *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\f 
   #'(lambda (&rest ignore) (declare (ignore ignore)) nil)
-  *scheme-readtable*)
+  *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\d
-  ;; In both Common Lisp and Scheme,
+  ;; In both Common Lisp and Bard,
   ;; #x, #o and #b are hexidecimal, octal, and binary,
   ;; e.g. #xff = #o377 = #b11111111 = 255
-  ;; In Scheme only, #d255 is decimal 255.
+  ;; In Bard only, #d255 is decimal 255.
   #'(lambda (stream &rest ignore)
       (declare (ignore ignore))
-      (let ((*read-base* 10)) (scheme-read stream)))
-  *scheme-readtable*)
+      (let ((*read-base* 10)) (bard-read stream)))
+  *bard-readtable*)
 
 ;;; ==============================
 
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
+(defun bard-read (&optional (stream *standard-input*))
+  (let ((*readtable* *bard-readtable*))
     (convert-numbers (read stream nil eof))))
 
 (defun convert-numbers (x)
-  "Replace symbols that look like Scheme numbers with their values."
+  "Replace symbols that look like Bard numbers with their values."
   ;; Don't copy structure, make changes in place.
   (typecase x
     (cons   (setf (car x) (convert-numbers (car x)))
@@ -816,8 +815,8 @@
 (set-macro-character #\` 
   #'(lambda (s ignore)
       (declare (ignore ignore))
-      (list 'quasiquote (scheme-read s))) 
-  nil *scheme-readtable*)
+      (list 'quasiquote (bard-read s))) 
+  nil *bard-readtable*)
 
 (set-macro-character #\, 
    #'(lambda (stream ignore)
@@ -827,7 +826,7 @@
              (list 'unquote-splicing (read stream))
              (progn (unread-char ch stream)
                     (list 'unquote (read stream))))))
-   nil *scheme-readtable*)
+   nil *bard-readtable*)
 
 ;(setf (bard-macro 'quasiquote) 'quasi-q)
 
