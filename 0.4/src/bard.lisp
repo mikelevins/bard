@@ -96,47 +96,47 @@
 
 ;;; ==============================
 
-(defun scheme-macro (symbol)
-  (and (symbolp symbol) (get symbol 'scheme-macro)))
+(defun bard-macro (symbol)
+  (and (symbolp symbol) (get symbol 'bard-macro)))
 
-(defmacro def-scheme-macro (name parmlist &body body)
+(defmacro def-bard-macro (name parmlist &body body)
   "Define a Scheme macro."
-  `(setf (get ',name 'scheme-macro)
+  `(setf (get ',name 'bard-macro)
          #'(lambda ,parmlist .,body)))
 
-(defun scheme-macro-expand (x)
+(defun bard-macro-expand (x)
   "Macro-expand this Scheme expression."
-  (if (and (listp x) (scheme-macro (first x)))
-      (scheme-macro-expand
-        (apply (scheme-macro (first x)) (rest x)))
+  (if (and (listp x) (bard-macro (first x)))
+      (bard-macro-expand
+        (apply (bard-macro (first x)) (rest x)))
       x))
 
 ;;; ==============================
 
-(def-scheme-macro let (bindings &rest body)
+(def-bard-macro %let (bindings &rest body)
   `((lambda ,(mapcar #'first bindings) . ,body)
     .,(mapcar #'second bindings)))
 
-(def-scheme-macro let* (bindings &rest body)
+(def-bard-macro let (bindings &rest body)
   (if (null bindings)
       `(begin .,body)
-      `(let (,(first bindings))
-         (let* ,(rest bindings) . ,body))))
+      `(%let (,(first bindings))
+         (let ,(rest bindings) . ,body))))
 
-(def-scheme-macro and (&rest args)
+(def-bard-macro and (&rest args)
   (cond ((null args) 'T)
         ((length=1 args) (first args))
         (t `(if ,(first args)
                 (and . ,(rest args))))))
 
-(def-scheme-macro or (&rest args)
+(def-bard-macro or (&rest args)
   (cond ((null args) 'nil)
         ((length=1 args) (first args))
         (t (let ((var (gensym)))
              `(let ((,var ,(first args)))
                 (if ,var ,var (or . ,(rest args))))))))
 
-(def-scheme-macro cond (&rest clauses)
+(def-bard-macro cond (&rest clauses)
   (cond ((null clauses) nil)
         ((length=1 (first clauses))
          `(or ,(first clauses) (cond .,(rest clauses))))
@@ -146,7 +146,7 @@
                 (begin .,(rest (first clauses)))
                 (cond .,(rest clauses))))))
 
-(def-scheme-macro case (key &rest clauses)
+(def-bard-macro case (key &rest clauses)
   (let ((key-val (gensym "KEY")))
     `(let ((,key-val ,key))
        (cond ,@(mapcar
@@ -157,16 +157,16 @@
                           .,(rest clause))))
                 clauses)))))
 
-(def-scheme-macro define (name &rest body)
+(def-bard-macro define (name &rest body)
   (if (atom name)
       `(begin (set! ,name . ,body) ',name)
       `(define ,(first name) 
          (lambda ,(rest name) . ,body))))
 
-(def-scheme-macro delay (computation)
+(def-bard-macro delay (computation)
   `(lambda () ,computation))
 
-(def-scheme-macro letrec (bindings &rest body)
+(def-bard-macro letrec (bindings &rest body)
   `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
      .,body))
@@ -226,10 +226,10 @@
 
 ;;; ==============================
 
-(def-scheme-macro define (name &rest body)
+(def-bard-macro define (name &rest body)
   (if (atom name)
       `(name! (set! ,name . ,body) ',name)
-      (scheme-macro-expand
+      (bard-macro-expand
          `(define ,(first name) 
             (lambda ,(rest name) . ,body)))))
 
@@ -282,7 +282,7 @@
       ((member x '(t nil)) (comp-const x val? more?))
       ((symbolp x) (comp-var x env val? more?))
       ((atom x) (comp-const x val? more?))
-      ((scheme-macro (first x)) (comp (scheme-macro-expand x) env val? more?))
+      ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
       ((case (first x)
          (QUOTE  (arg-count x 1)
                  (comp-const (second x) val? more?))
@@ -842,7 +842,7 @@
 
 ;;; ==============================
 
-;(setf (scheme-macro 'quasiquote) 'quasi-q)
+;(setf (bard-macro 'quasiquote) 'quasi-q)
 
 (defun quasi-q (x)
   "Expand a quasiquote form into append, list, and cons calls."
