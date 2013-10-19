@@ -1,11 +1,11 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          scheme.lisp
+;;;; Name:          bard.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       Norvig's Scheme compiler and vm
-;;;; Author:        Peter Norvig from PAIP
-;;;; Copyright:     1991 by Peter Norvig
+;;;; Purpose:       the bard compiler and vm in common lisp, derived from Norvig's Scheme
+;;;; Author:        mikel evins, from Norvig
+;;;; Copyright:     1991 by Peter Norvig, 2013 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
