@@ -9,625 +9,76 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; ---------------------------------------------------------------------
-;;; utils
-;;; ---------------------------------------------------------------------
+(define method (comp-const x val? more?)
+  )
 
-(define variable *label-counter* 0)
+(define method (comp-var x env val? more?)
+  )
 
-(define method (gen-label & nm)
-  (let ((nm (if nm (as <string> (first nm)) "L"))
-        (n *label-counter*))
-    (set! *label-counter* (+ *label-counter* 1))
-    (as <symbol> (append nm (as <string> n)))))
+(define method (arg-count x 1)
+  )
 
-(define method (interpose thing things)
-  with: ((things <null>))
-  [])
+(define method (comp-begin exprs env val? more?)
+  )
 
-(define method (interpose thing things)
-  with: ((things <pair>))
-  (if (empty? (rest things))
-      things
-      (pair (first things)
-            (pair thing
-                  (interpose thing (rest things))))))
+(define method (assert test msg)
+  )
 
-(define method (not-yet-implemented name)
-  (error [name " is not yet implemented "]))
+(define method (gen-set! var env)
+  )
 
-;;; ---------------------------------------------------------------------
-;;; environments
-;;; ---------------------------------------------------------------------
+(define method (gen op & args) 
+  )
 
-(define method (null-env)
-  [])
+(define method (comp-if test-form then-form else-form env val? more?)
+  )
 
-(define method (add-binding env var val)
-  with: ((var <symbol>))
-  (pair (pair var val)
-        env))
+(define method (comp-method params body env)
+  )
 
-(define method (add-bindings env vars vals)
-  (let ((bindings (map (method (k v)(pair k v))
-                       vars vals)))
-    (append bindings env)))
+(define method (seq & exprs)
+  )
 
-(define method (add-vars env vars)
-  (let ((bindings (map (method (k)(pair k nothing))
-                       vars)))
-    (append bindings env)))
+(define method (comp-funcall op args env val? more?)
+  )
 
-
-;;; ---------------------------------------------------------------------
-;;; compilers for define
-;;; ---------------------------------------------------------------------
-
-;;; define constant
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-constant expression environment)
-  (let ((var (element expression 2))
-        (val-form (element expression 3))
-        (val (compile val-form environment)))
-    `((GRW ,var)
-      ,@val
-      (GSET ,var)
-      (GRO ,var))))
-
-;;; define macro
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-macro expression environment)
-  (not-yet-implemented 'compile-define-macro))
-
-;;; define method
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-method expression environment)
-  (not-yet-implemented 'compile-define-method))
-
-;;; define protocol
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-protocol expression environment)
-  (not-yet-implemented 'compile-define-protocol))
-
-;;; define variable
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-variable expression environment)
-  (let ((var (element expression 2))
-        (val-form (element expression 3))
-        (val (compile val-form environment)))
-    `((GRW ,var)
-      ,@val
-      (GSET ,var))))
-
-;;; ---------------------------------------------------------------------
-;;; defining structures
-;;; ---------------------------------------------------------------------
-
-;;; define enumeration
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-enumeration expression environment)
-  (not-yet-implemented 'compile-define-enumeration))
-
-;;; define record
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-record expression environment)
-  (not-yet-implemented 'compile-define-record))
-
-;;; define tuple
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-tuple expression environment)
-  (not-yet-implemented 'compile-define-tuple))
-
-;;; define union
-;;; ---------------------------------------------------------------------
-
-(define method (compile-define-union expression environment)
-  (not-yet-implemented 'compile-define-union))
-
-;;; ---------------------------------------------------------------------
-;;; special form compilers
-;;; ---------------------------------------------------------------------
-
-;;; defining special forms
-
-(define variable *special-form-definitions* {})
-
-(define method (define-special-form name compiler-fn)
-  (set! *special-form-definitions*
-        (merge *special-form-definitions*
-               {name compiler-fn})))
-
-(define method (special-form? x)
-  (and (get *special-form-definitions* x)
-       true))
-
-(define method (compile-special-form expression environment)
-  (let ((name (first expression))
-        (special-compile (get *special-form-definitions* name)))
-    (special-compile expression environment)))
-
-;;; ---------
-;;; compilers
-;;; ---------
-
-;;; and
-;;; ---------------------------------------------------------------------
-
-(define method (compile-and expression environment)
-  (if (something? expression)
-      (let ((else-label (gen-label))
-            (end-label (gen-label))
-            (test (first expression))
-            (more (rest expression))
-            (test-code (compile test environment))
-            (more-code (compile-and more environment)))
-        `(,@test-code
-          (DUP)
-          (FGO ,else-label)
-          (POP)
-          ,@more-code
-          ,else-label))
-      '((TRUE))))
-
-(define-special-form 'and 
-  (method (expression environment)
-          (compile-and (rest expression) environment)))
-
-;;; begin
-;;; ---------------------------------------------------------------------
-
-(define method (insert-begin-pops instrs)
-  (if (something? instrs)
-      (let ((i (first instrs))
-            (more (rest instrs)))
-        (if (something? more)
-            (append i
-                  (pair '(POP)
-                        (insert-begin-pops more)))
-            i))
-      nothing))
-
-(define method (compile-begin-sequence exprs environment)
-  (let ((instrs (map (method (x)(compile x environment))
-                     exprs)))
-    (if (something? instrs)
-        (insert-begin-pops instrs)
-        instrs)))
-
-(define-special-form 'begin
-  (method (expression environment)
-          (compile-begin-sequence (rest expression) environment)))
-
-
-;;; case
-;;; ---------------------------------------------------------------------
-
-;;; cond
-;;; ---------------------------------------------------------------------
-
-(define method (compile-cond clauses environment)
-  (if (something? clauses)
-      (let ((first-clause (first clauses))
-            (more-clauses (rest clauses))
-            (test (first first-clause))
-            (consequent (rest first-clause)))
-        (compile `(if ,test
-                      (begin ,@consequent)
-                      (cond ,@more-clauses))
-                 environment))
-      '((NOTHING))))
-
-(define-special-form 'cond
-  (method (expression environment)
-          (let ((clauses (rest expression)))
-            (compile-cond clauses environment))))
-
-;;; def
-;;; ---------------------------------------------------------------------
-;;; (def x 5)
-;;; (def x 5 mutable: true)
-;;; (def x 5 mutable: false)
-
-
-(define-special-form 'def
-  (method (expression environment)
-          (let ((len (length expression))
-                (var (element expression 1))
-                (val (element expression 2))
-                (val-code (compile val environment))
-                (mutable? (if (< len 4)
-                              true
-                              (if (= len 5)
-                                  (element expression 4)
-                                  (error ["Malformed def expression: " expression])))))
-            (if (or (= mutable? true)
-                    (= mutable? false))
-                (if mutable?
-                    `((GRW ,var)
-                      ,@val-code
-                      (GSET ,var))
-                    `((GRW ,var)
-                      ,@val-code
-                      (GSET ,var)
-                      (GRO ,var)))
-                (error ["mutability must be true or false in def expression; found: " mutable?])))))
-
-
-;;; define
-;;; ---------------------------------------------------------------------
-
-(define-special-form 'define
-  (method (expression environment)
-          (if (and (list? expression)
-                   (> (length expression) 2))
-              (let ((deftype (second expression)))
-                (cond
-                 ((= deftype 'class)(compile-define-class expression environment))
-                 ((= deftype 'constant)(compile-define-constant expression environment))
-                 ((= deftype 'enumeration)(compile-define-enumeration expression environment))
-                 ((= deftype 'macro)(compile-define-macro expression environment))
-                 ((= deftype 'method)(compile-define-method expression environment))
-                 ((= deftype 'protocol)(compile-define-protocol expression environment))
-                 ((= deftype 'variable)(compile-define-variable expression environment))
-                 ((= deftype 'record)(compile-define-record expression environment))
-                 ((= deftype 'tuple)(compile-define-tuple expression environment))
-                 ((= deftype 'union)(compile-define-union expression environment))
-                 (else: (error ["don't know how to define " deftype]))))
-              (error ["not enough elements in define expression: " expression]))))
-
-
-;;; ensure
-;;; ---------------------------------------------------------------------
-
-;;; function
-;;; ---------------------------------------------------------------------
-;;; (-> Integer Anything -> Anything)
-;;; (function Integer Anything -> Anything)
-
-(define method (compile-function expression environment)
-  (let ((signature (rest expression))
-        (arrow-pos (position '-> signature)))
-    (if (something? arrow-pos)
-        (let ((input-types (map (^ (x)(compile x environment))
-                                (take arrow-pos signature)))
-              (input-types (if (something? input-types)
-                               (reduce append input-types)
-                               input-types))
-              (input-count (length input-types))
-              (output-types (map (^ (x)(compile x environment))
-                                 (rest (drop arrow-pos signature))))
-              (output-types (if (something? output-types)
-                                (reduce append output-types)
-                                output-types))
-              (output-count (length output-types)))
-          `(,@input-types
-            (CONST ,input-count)
-            (PRIM list)
-            ,@output-types
-            (CONST ,output-count)
-            (PRIM list)
-            (PRIM function)))
-        (error ["Syntax error in function form: " expression]))))
-
-(define-special-form '->
-  (method (expression environment)
-          (compile-function expression environment)))
-
-(define-special-form 'function
-  (method (expression environment)
-          (compile-function expression environment)))
-
-;;; getter
-;;; ---------------------------------------------------------------------
-
-;;; if
-;;; ---------------------------------------------------------------------
-
-(define method (compile-if expression environment)
-  (let ((test-form (element expression 0))
-        (test-code (compile test-form environment))
-        (then-form (element expression 1))
-        (then-code (compile then-form environment))
-        (else-label (gen-label))
-        (else-form (element expression 2))
-        (else-code (compile else-form environment))
-        (end-label (gen-label)))
-    `(,@test-code
-      (FGO ,else-label)
-      ,@then-code
-      (GO ,end-label)
-      ,else-label
-      ,@else-code
-      ,end-label)))
-
-(define-special-form 'if
-  (method (expression environment)
-          (let ((len (length expression)))
-            (cond
-             ((< len 4)(error ["syntax error in if expression: " expression]))
-             ((= len 4)(compile-if (rest expression) environment))
-             (else (error ["syntax error in if expression: " expression]))))))
-
-;;; let
-;;; ---------------------------------------------------------------------
-
-;;; loop
-;;; ---------------------------------------------------------------------
-
-;;; match
-;;; ---------------------------------------------------------------------
-
-;;; method
-;;; ---------------------------------------------------------------------
-;;; (^ (x) (+ x 1))
-;;; (method (x) (+ x 1))
-
-(define method (parse-method-args paramlist)
-  (let ((rest-pos (position '& paramlist)))
-    (if (something? rest-pos)
-        (let ((params (take rest-pos paramlist))
-              (rest-params (drop (+ rest-pos 1) paramlist)))
-          (if (= 1 (length rest-params))
-              (values params (first rest-params))
-              (error ["Syntax error in parameter list: " paramlist])))
-        (values paramlist nothing))))
-
-(define method (compile-method expression environment)
-  (let ((params restarg (parse-method-args (second expression)))
-        (body (drop 2 expression)))
-    (if (or (nothing? params)
-            (= <pair> (type params)))
-        (let ((compile-env (if (nothing? params)
-                               environment
-                               (add-vars environment params)))
-              (body-code (compile-begin-sequence body compile-env)))
-          `((CONST ,params)
-            (CONST ,restarg)
-            (CONST ,compile-env)
-            (CONST ,body-code)
-            (PRIM method)))
-        (error ["syntax error in method expression: " expression]))))
-
-(define-special-form '^ 
-  (method (expression environment)
-          (let ((len (length expression)))
-            (cond
-             ((< len 2)(error ["syntax error in method expression: " expression]))
-             (else (compile-method expression environment))))))
-
-(define-special-form 'method 
-  (method (expression environment)
-          (let ((len (length expression)))
-            (cond
-             ((< len 2)(error ["syntax error in method expression: " expression]))
-             (else (compile-method expression environment))))))
-
-;;; not
-;;; ---------------------------------------------------------------------
-
-;;; or
-;;; ---------------------------------------------------------------------
-
-;;; quasiquote
-;;; ---------------------------------------------------------------------
-
-;;; quote
-;;; ---------------------------------------------------------------------
-
-(define-special-form 'quote 
-  (method (expression environment)
-          [['CONST (second expression)]]))
-
-;;; repeat
-;;; ---------------------------------------------------------------------
-
-;;; setter
-;;; ---------------------------------------------------------------------
-
-;;; set!
-;;; ---------------------------------------------------------------------
-
-;;; undefine
-;;; ---------------------------------------------------------------------
-
-(define-special-form 'undefine
-  (method (expression environment)
-          (let ((len (length expression)))
-            (if (= 2 len)
-                `((UNDEF ,(second expression)))
-                (error ["syntax error in undefine expression: " expression])))))
-
-;;; unless
-;;; ---------------------------------------------------------------------
-
-(define method (compile-unless expression environment)
-  (let ((test-form (element expression 1))
-        (test-code (compile test-form environment))
-        (body-forms (drop 2 expression))
-        (body-code (compile-begin-sequence body-forms environment))
-        (end-label (gen-label)))
-    `(,@test-code
-      (TGO ,end-label)
-      ,@body-code
-      ,end-label)))
-
-(define-special-form 'unless
-  (method (expression environment)
-          (let ((len (length expression)))
-            (cond
-             ((< len 2)(error ["syntax error in unless expression: " expression]))
-             (else (compile-unless expression environment))))))
-
-;;; unquote
-;;; ---------------------------------------------------------------------
-
-;;; unquote-splicing
-;;; ---------------------------------------------------------------------
-
-;;; values
-;;; ---------------------------------------------------------------------
-
-(define-special-form 'values
-  (method (expression environment)
-          (let ((forms (rest expression))
-                (forms-count (length forms))
-                (forms-code (reduce append
-                                    (map (^ (f)(compile f environment))
-                                         forms))))
-            `(,@forms-code
-              (CONST ,forms-count)
-              (PRIM values)))))
-
-;;; when
-;;; ---------------------------------------------------------------------
-
-(define method (compile-when expression environment)
-  (let ((test-form (element expression 1))
-        (test-code (compile test-form environment))
-        (body-forms (drop 2 expression))
-        (body-code (compile-begin-sequence body-forms environment))
-        (end-label (gen-label)))
-    `(,@test-code
-      (FGO ,end-label)
-      ,@body-code
-      ,end-label)))
-
-(define-special-form 'when
-  (method (expression environment)
-          (let ((len (length expression)))
-            (cond
-             ((< len 2)(error ["syntax error in when expression: " expression]))
-             (else (compile-when expression environment))))))
-
-;;; with-exit
-;;; ---------------------------------------------------------------------
-
-;;; with-open
-;;; ---------------------------------------------------------------------
-
-;;; ---------------------------------------------------------------------
-;;; macro expanders
-;;; ---------------------------------------------------------------------
-
-(define variable *macro-definitions* {})
-
-(define method (define-macroexpander name expander-fn)
-  (set! *macro-definitions*
-        (merge *macro-definitions*
-               {name expander-fn})))
-
-(define method (macroname? x)
-  (and (get *macro-definitions* x)
-       true))
-
-(define method (macroexpand expression)
-  (let ((name (first expression))
-        (expand (get *macro-definitions* name)))
-    (if (something? expand)
-        (expand expression)
-        expression)))
-
-;;; ---------
-;;; expanders
-;;; ---------
-
-;;; ---------------------------------------------------------------------
-;;; primitives
-;;; ---------------------------------------------------------------------
-
-(define variable *primitives* {})
-
-(define method (define-primitive name prim-fn)
-  (set! *primitives*
-        (merge *primitives*
-               {name prim-fn})))
-
-(define method (primitive? x)
-  (and (get *primitives* x)
-       true))
-
-(define method (compile-primitive-call expression environment)
-  (let ((argcount (length (rest expression))))
-    [['PRIM (first expression) argcount]]))
-
-;;; ---------------------------------------------------------------------
-;;; environments
-;;; ---------------------------------------------------------------------
-
-(define method (environment-bindings env)
-  env)
-
-(define method (binding-key binding)
-  (left binding))
-
-(define method (find-variable-binding var-expr env)
-  (some? (^ (x)(= var-expr (binding-key x)))
-        (environment-bindings env)))
-
-(define method (in-environment? var-expr env)
-  (and (something? (find-variable-binding var-expr env))
-       true))
-
-;;; ---------------------------------------------------------------------
-;;; main compiler
-;;; ---------------------------------------------------------------------
-
-(define method (compile-variable-reference expression environment)
-  (if (in-environment? expression environment)
-      [['LREF expression]]
-      [['GREF expression]]))
-
-(define method (compile-apply-value expression environment)
-  (let ((val (first expression))
-        (val-code (compile val environment))
-        (arg-exprs (rest expression))
-        (args-code (reduce append
-                           (map (^ (x)(compile x environment))
-                                arg-exprs))))
-    (reverse (pair (pair 'APPLY [(length args-code)])
-                   (append val-code
-                         (reverse args-code))))))
-
-(define method (compile-procedure-call-for operator expression environment)
-  (compile-apply-value expression environment))
-
-(define method (compile-procedure-call-for operator expression environment)
-  with: ((operator <symbol>))
-  (if (special-form? operator)
-      (compile-special-form expression environment)
-      (if (macroname? operator)
-          (compile (macroexpand expression) environment)
-          (if (primitive? operator)
-              (compile-primitive-call expression environment)
-              (compile-apply-value expression environment)))))
-
-(define method (compile-procedure-call-for operator expression environment)
-  with: ((operator <pair>))
-  (compile-apply-value expression environment))
-
-(define method (compile-procedure-call expression environment)
-  (compile-procedure-call-for (first expression)
-                              expression
-                              environment))
-
-(define method (compile expression environment)
+(define method (comp x env val? more?)
   (cond
-   ((= expression true) '((TRUE)))
-   ((= expression false) '((FALSE)))
-   (else: [['CONST expression]])))
-
-(define method (compile expression environment)
-  with: ((expression <symbol>))
-  (compile-variable-reference expression environment))
-
-(define method (compile expression environment)
-  with: ((expression <pair>))
-  (compile-procedure-call expression environment))
+   ((= x true) (comp-const x val? more?))
+   ((= x false) (comp-const x val? more?))
+   ((= x nothing) (comp-const x val? more?))
+   ((symbol? x) (comp-var x env val? more?))
+   ((atom? x) (comp-const x val? more?))
+   (else: (let ((op (first x)))
+            (cond 
+             ;; quote
+             ((= 'quote op)
+              (arg-count x 1)
+              (comp-const (second x) val? more?))
+             ;; begin
+             ((= 'begin op)
+              (comp-begin (rest x) env val? more?))
+             ;; set!
+             ((= 'set! op)
+              (arg-count x 2)
+              (assert (symbol? (second x))
+                      ["only variables can be arguments to set!; found " (second x) " in " x])
+              (seq
+               (comp (third x) env true true)
+               (gen-set! (second x) env)
+               (if (not val?) (gen 'POP))
+               (unless more? (gen 'RETURN))))
+             ;; if
+             ((= 'if op)
+              (arg-count x 2 3)
+              (comp-if (second x) (third x) (fourth x) env val? more?))
+             ;; method
+             ((or (= '^ op)
+                  (= 'method op))
+              (when val?
+                    (let ((f (comp-method (second x) (drop 2 x) env)))
+                      (seq (gen 'FN f)
+                           (unless more?
+                                   (gen 'return))))))
+             ;; function application
+             (else: (comp-funcall (first x) (rest x) env val? more?)))))))
