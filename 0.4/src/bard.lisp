@@ -19,13 +19,8 @@
 ;;; utils
 ;;; ---------------------------------------------------------------------
 
-;;; LAST1
-(defun last1 (list)
-  "Return the last element (not last cons cell) of list"
-  (first (last list)))
-
-;;; LENGTH=1
-(defun length=1 (x) 
+;;; LENGTH=1?
+(defun length=1? (x) 
   "Is x a list of length 1?"
   (and (consp x) (null (cdr x))))
 
@@ -36,7 +31,7 @@
 ;;; MAYBE-ADD
 (defun maybe-add (op exps &optional if-nil)
   (cond ((null exps) if-nil)
-        ((length=1 exps) (first exps))
+        ((length=1? exps) (first exps))
         (t (cons op exps))))
 
 ;;; REST2
@@ -56,19 +51,6 @@
 ;;; interp1
 ;;; ---------------------------------------------------------------------
 
-(defun set-var! (var val env)
-  "Set a variable to a value, in the given or global environment."
-  (if (assoc var env)
-      (setf (second (assoc var env)) val)
-      (set-global-var! var val))
-  val)
-
-(defun get-var (var env)
-  "Get the value of a variable, from the given or global environment."
-    (if (assoc var env)
-        (second (assoc var env))
-        (get-global-var var)))
-
 (defun set-global-var! (var val)
   (setf (get var 'global-val) val))
 
@@ -82,17 +64,6 @@
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
   (nconc (mapcar #'list vars vals) env))
-
-(defparameter *scheme-procs*
-  '(+ - * / = < > <= >= cons car cdr not append list read member
-    (null? null) (eq? eq) (equal? equal) (eqv? eql)
-    (write prin1) (display princ) (newline terpri)))
-
-(defun init-scheme-proc (f)
-  "Define a Scheme procedure as a corresponding CL function."
-  (if (listp f)
-      (set-global-var! (first f) (symbol-function (second f)))
-      (set-global-var! f (symbol-function f))))
 
 ;;; ==============================
 
@@ -125,20 +96,20 @@
 
 (def-bard-macro and (&rest args)
   (cond ((null args) 'T)
-        ((length=1 args) (first args))
+        ((length=1? args) (first args))
         (t `(if ,(first args)
                 (and . ,(rest args))))))
 
 (def-bard-macro or (&rest args)
   (cond ((null args) 'nil)
-        ((length=1 args) (first args))
+        ((length=1? args) (first args))
         (t (let ((var (gensym)))
              `(let ((,var ,(first args)))
                 (if ,var ,var (or . ,(rest args))))))))
 
 (def-bard-macro cond (&rest clauses)
   (cond ((null clauses) nil)
-        ((length=1 (first clauses))
+        ((length=1? (first clauses))
          `(or ,(first clauses) (cond .,(rest clauses))))
         ((starts-with (first clauses) 'else)
          `(begin .,(rest (first clauses))))
@@ -156,12 +127,6 @@
                         `((member ,key-val ',(first clause))
                           .,(rest clause))))
                 clauses)))))
-
-(def-bard-macro define (name &rest body)
-  (if (atom name)
-      `(begin (set! ,name . ,body) ',name)
-      `(define ,(first name) 
-         (lambda ,(rest name) . ,body))))
 
 (def-bard-macro delay (computation)
   `(lambda () ,computation))
@@ -319,7 +284,7 @@
   "Compile a sequence of expressions,
   returning the last one as the value."
   (cond ((null exps) (comp-const nil val? more?))
-        ((length=1 exps) (comp (first exps) env val? more?))
+        ((length=1? exps) (comp (first exps) env val? more?))
         (t (seq (comp (first exps) env nil t)
                 (comp-begin (rest exps) env val? more?)))))
 
@@ -352,7 +317,7 @@
     ((constantp pred)     ; (if t x y) ==> x
      (comp then env val? more?))
     ((and (listp pred)    ; (if (not p) x y) ==> (if p y x)
-          (length=1 (rest pred))
+          (length=1? (rest pred))
           (primitive-p (first pred) env 1)
           (eq (prim-opcode (primitive-p (first pred) env 1)) 'not))
      (comp-if (second pred) else then env val? more?))
@@ -410,26 +375,28 @@
             (comp f env t t)
             (gen 'CALLJ (length args)))))))
 
+
 ;;; ==============================
 
 (defstruct (prim (:type list)) 
   symbol n-args opcode always side-effects)
 
-;;; Note change from book: some of the following primitive fns have had
-;;; trailing NIL fields made explicit, because some Lisp's will give
-;;; an error (rather than NIL), when asked to find the prim-side-effects
-;;; of a three-element list.
+(defun list1 (x) (list x))
+(defun list2 (x y) (list x y))
+(defun list3 (x y z) (list x y z))
+(defun display (x) (princ x))
+(defun newline () (terpri))
 
 (defparameter *primitive-fns*
-  '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
-    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)
-    (/= 2 /= nil nil) (= 2 = nil nil)
-    (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
-    (not 1 not nil nil) (null? 1 not nil nil) (cons 2 cons true nil)
-    (car 1 car nil nil) (cdr 1 cdr nil nil)  (cadr 1 cadr nil nil) 
-    (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)
-    (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t nil) 
+  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
+    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
+    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
+    (not 1 not) (null? 1 not)
+    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
+    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
+    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
+    (write 1 write nil t) (display 1 display nil t)
+    (newline 0 newline nil t) (compiler 1 compiler t) 
     (name! 2 name! true t) (random 1 random true nil)))
 
 (defun primitive-p (f env n-args)
@@ -440,12 +407,6 @@
              :test #'(lambda (f prim)
                        (and (eq f (prim-symbol prim))
                             (= n-args (prim-n-args prim)))))))
-
-(defun list1 (x) (list x))
-(defun list2 (x y) (list x y))
-(defun list3 (x y z) (list x y z))
-(defun display (x) (princ x))
-(defun newline () (terpri))
 
 ;;; ==============================
 
@@ -827,17 +788,6 @@
 
 ;;; ==============================
 
-(defparameter *primitive-fns*
-  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
-    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
-    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
-    (not 1 not) (null? 1 not)
-    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
-    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
-    (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t) 
-    (name! 2 name! true t) (random 1 random true nil)))
 
 
 ;;; ==============================
@@ -977,4 +927,3 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
-
