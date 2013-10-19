@@ -47,8 +47,15 @@
   (and (consp list)
        (eql (first list) x)))
 
+(defun make-true-list (dotted-list)
+  "Convert a possibly dotted list into a true, non-dotted list."
+  (cond ((null dotted-list) nil)
+        ((atom dotted-list) (list dotted-list))
+        (t (cons (first dotted-list)
+                 (make-true-list (rest dotted-list))))))
+
 ;;; ---------------------------------------------------------------------
-;;; interp1
+;;; globals
 ;;; ---------------------------------------------------------------------
 
 (defun set-global-var! (var val)
@@ -61,11 +68,22 @@
         (error "Unbound scheme variable: ~a" var)
         val)))
 
+;;; ---------------------------------------------------------------------
+;;; environments
+;;; ---------------------------------------------------------------------
+
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
   (nconc (mapcar #'list vars vals) env))
 
-;;; ==============================
+(defun in-env-p (symbol env)
+  "If symbol is in the environment, return its index numbers."
+  (let ((frame (find symbol env :test #'find)))
+    (if frame (list (position frame env) (position symbol frame)))))
+
+;;; ---------------------------------------------------------------------
+;;; macros
+;;; ---------------------------------------------------------------------
 
 (defun bard-macro (symbol)
   (and (symbolp symbol) (get symbol 'bard-macro)))
@@ -82,7 +100,8 @@
         (apply (bard-macro (first x)) (rest x)))
       x))
 
-;;; ==============================
+;;; built-in Bard macros
+;;; --------------------
 
 (def-bard-macro %let (bindings &rest body)
   `((lambda ,(mapcar #'first bindings) . ,body)
@@ -136,30 +155,110 @@
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
      .,body))
 
-;;; ---------------------------------------------------------------------
-;;; compile1
-;;; ---------------------------------------------------------------------
+(defun name! (fn name)
+  "Set the name field of fn, if it is an un-named fn."
+  (when (and (fn-p fn) (null (fn-name fn)))
+    (setf (fn-name fn) name))
+  name)
 
-;;; ==============================
+(def-bard-macro define (name &rest body)
+  (if (atom name)
+      `(name! (set! ,name . ,body) ',name)
+      (bard-macro-expand
+         `(define ,(first name) 
+            (lambda ,(rest name) . ,body)))))
+
+(set-global-var! 'name! #'name!)
+
+;;; ---------------------------------------------------------------------
+;;; method-functions
+;;; ---------------------------------------------------------------------
 
 (defstruct (fn (:print-function print-fn))
   code (env nil) (name nil) (args nil))
 
-;;; ==============================
-
 (defvar *label-num* 0)
 
-(defun compiler (x)
-  "Compile an expression as if it were in a parameterless lambda."
-  (setf *label-num* 0)
-  (comp-lambda '() (list x) nil))
+(defun print-fn (fn &optional (stream *standard-output*) depth)
+  (declare (ignore depth))
+  (format stream "{~a}" (or (fn-name fn) '??)))
 
-(defun comp-show (x)
-  "Compile an expression and show the resulting code"
-   (show-fn (compiler x))
-  (values))
+(defun show-fn (fn &optional (stream *standard-output*) (indent 2))
+  "Print all the instructions in a function.
+  If the argument is not a function, just princ it, 
+  but in a column at least 8 spaces wide."
+  ;; This version handles code that has been assembled into a vector
+  (if (not (fn-p fn))
+      (format stream "~8a" fn)
+      (progn
+        (fresh-line)
+        (dotimes (i (length (fn-code fn)))
+          (let ((instr (elt (fn-code fn) i)))
+            (if (label-p instr)
+                (format stream "~a:" instr)
+                (progn
+                  (format stream "~VT~2d: " indent i)
+                  (dolist (arg instr)
+                    (show-fn arg stream (+ indent 8)))
+                  (fresh-line))))))))
 
-;;; ==============================
+;;; ---------------------------------------------------------------------
+;;; instruction utilities
+;;; ---------------------------------------------------------------------
+
+(defun label-p (x) "Is x a label?" (atom x))
+
+(defun opcode (instr) (if (label-p instr) :label (first instr)))
+(defun args (instr) (if (listp instr) (rest instr)))
+(defun arg1 (instr) (if (listp instr) (second instr)))
+(defun arg2 (instr) (if (listp instr) (third instr)))
+(defun arg3 (instr) (if (listp instr) (fourth instr)))
+
+(defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
+
+(defun is (instr op)
+  "True if instr's opcode is OP, or one of OP when OP is a list."
+  (if (listp op) 
+      (member (opcode instr) op)
+      (eq (opcode instr) op)))
+
+;;; ---------------------------------------------------------------------
+;;; primitive procedures
+;;; ---------------------------------------------------------------------
+
+(defstruct (prim (:type list)) 
+  symbol n-args opcode always side-effects)
+
+(defun list1 (x) (list x))
+(defun list2 (x y) (list x y))
+(defun list3 (x y z) (list x y z))
+(defun display (x) (princ x))
+(defun newline () (terpri))
+
+(defparameter *primitive-fns*
+  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
+    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
+    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
+    (not 1 not) (null? 1 not)
+    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
+    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
+    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
+    (write 1 write nil t) (display 1 display nil t)
+    (newline 0 newline nil t) (compiler 1 compiler t) 
+    (name! 2 name! true t) (random 1 random true nil)))
+
+(defun primitive-p (f env n-args)
+  "F is a primitive if it is in the table, and is not shadowed
+  by something in the environment, and has the right number of args."
+  (and (not (in-env-p f env))
+       (find f *primitive-fns*
+             :test #'(lambda (f prim)
+                       (and (eq f (prim-symbol prim))
+                            (= n-args (prim-n-args prim)))))))
+
+;;; ---------------------------------------------------------------------
+;;; code generators
+;;; ---------------------------------------------------------------------
 
 (defun gen (opcode &rest args)
   "Return a one-element list of the specified instruction."
@@ -173,8 +272,6 @@
   "Generate a label (a symbol of the form Lnnn)"
   (intern (format nil "~a~d" label (incf *label-num*))))
 
-;;; ==============================
-
 (defun gen-var (var env)
   "Generate an instruction to reference a variable's value."
   (let ((p (in-env-p var env)))
@@ -187,59 +284,34 @@
   (let ((p (in-env-p var env)))
     (if p
         (gen 'LSET (first p) (second p) ";" var)
-        (gen 'GSET var))))
+        (if (assoc var *primitive-fns*)
+            (error "Can't alter the constant ~a" var)
+            (gen 'GSET var)))))
 
-;;; ==============================
-
-(def-bard-macro define (name &rest body)
-  (if (atom name)
-      `(name! (set! ,name . ,body) ',name)
-      (bard-macro-expand
-         `(define ,(first name) 
-            (lambda ,(rest name) . ,body)))))
-
-(defun name! (fn name)
-  "Set the name field of fn, if it is an un-named fn."
-  (when (and (fn-p fn) (null (fn-name fn)))
-    (setf (fn-name fn) name))
-  name)
-
-;; This should also go in init-scheme-interp:
-(set-global-var! 'name! #'name!)
-
-(defun print-fn (fn &optional (stream *standard-output*) depth)
-  (declare (ignore depth))
-  (format stream "{~a}" (or (fn-name fn) '??)))
-
-(defun show-fn (fn &optional (stream *standard-output*) (depth 0))
-  "Print all the instructions in a function.
-  If the argument is not a function, just princ it, 
-  but in a column at least 8 spaces wide."
-  (if (not (fn-p fn))
-      (format stream "~8a" fn)
-      (progn
-        (fresh-line)
-        (incf depth 8)
-        (dolist (instr (fn-code fn))
-          (if (label-p instr)
-              (format stream "~a:" instr)
-              (progn
-                (format stream "~VT" depth)
-                (dolist (arg instr)
-                  (show-fn arg stream depth))
-                (fresh-line)))))))
-
-(defun label-p (x) "Is x a label?" (atom x))
-
-(defun in-env-p (symbol env)
-  "If symbol is in the environment, return its index numbers."
-  (let ((frame (find symbol env :test #'find)))
-    (if frame (list (position frame env) (position symbol frame)))))
-
+(defun gen-args (args n-so-far)
+  "Generate an instruction to load the arguments."
+  (cond ((null args) (gen 'ARGS n-so-far))
+        ((symbolp args) (gen 'ARGS. n-so-far))
+        ((and (consp args) (symbolp (first args)))
+         (gen-args (rest args) (+ n-so-far 1)))
+        (t (error "Illegal argument list"))))
 
 ;;; ---------------------------------------------------------------------
-;;; compile2
+;;; the compiler
 ;;; ---------------------------------------------------------------------
+
+(defun arg-count (form min &optional (max min))
+  "Report an error if form has wrong number of args."
+  (let ((n-args (length (rest form))))
+    (assert (<= min n-args max) (form)
+      "Wrong number of arguments for ~a in ~a: 
+       ~d supplied, ~d~@[ to ~d~] expected"
+      (first form) form n-args min (if (/= min max) max))))
+
+(defun compiler (x)
+  "Compile an expression as if it were in a parameterless lambda."
+  (setf *label-num* 0)
+  (comp-lambda '() (list x) nil))
 
 (defun comp (x env val? more?)
   "Compile the expression x into a list of instructions"
@@ -270,16 +342,6 @@
 
 ;;; ==============================
 
-(defun arg-count (form min &optional (max min))
-  "Report an error if form has wrong number of args."
-  (let ((n-args (length (rest form))))
-    (assert (<= min n-args max) (form)
-      "Wrong number of arguments for ~a in ~a: 
-       ~d supplied, ~d~@[ to ~d~] expected"
-      (first form) form n-args min (if (/= min max) max))))
-
-;;; ==============================
-
 (defun comp-begin (exps env val? more?)
   "Compile a sequence of expressions,
   returning the last one as the value."
@@ -294,8 +356,6 @@
       (seq (comp (first exps) env t t)
            (comp-list (rest exps) env))))
 
-;;; ==============================
-
 (defun comp-const (x val? more?)
   "Compile a constant expression."
   (if val? (seq (if (member x '(t nil -1 0 1 2))
@@ -306,8 +366,6 @@
 (defun comp-var (x env val? more?)
   "Compile a variable reference."
   (if val? (seq (gen-var x env) (unless more? (gen 'RETURN)))))
-
-;;; ==============================
 
 (defun comp-if (pred then else env val? more?)
   "Compile a conditional (IF) expression."
@@ -343,8 +401,6 @@
                    (if more? (gen 'JUMP L2))
                    (list L1) ecode (if more? (list L2))))))))))
 
-;;; ==============================
-
 (defun comp-funcall (f args env val? more?)
   "Compile an application of a function to arguments."
   (let ((prim (primitive-p f env (length args))))
@@ -375,61 +431,10 @@
             (comp f env t t)
             (gen 'CALLJ (length args)))))))
 
-
-;;; ==============================
-
-(defstruct (prim (:type list)) 
-  symbol n-args opcode always side-effects)
-
-(defun list1 (x) (list x))
-(defun list2 (x y) (list x y))
-(defun list3 (x y z) (list x y z))
-(defun display (x) (princ x))
-(defun newline () (terpri))
-
-(defparameter *primitive-fns*
-  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
-    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
-    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
-    (not 1 not) (null? 1 not)
-    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
-    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
-    (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t) 
-    (name! 2 name! true t) (random 1 random true nil)))
-
-(defun primitive-p (f env n-args)
-  "F is a primitive if it is in the table, and is not shadowed
-  by something in the environment, and has the right number of args."
-  (and (not (in-env-p f env))
-       (find f *primitive-fns*
-             :test #'(lambda (f prim)
-                       (and (eq f (prim-symbol prim))
-                            (= n-args (prim-n-args prim)))))))
-
-;;; ==============================
-
-(defun gen-set (var env)
-  "Generate an instruction to set a variable to top-of-stack."
-  (let ((p (in-env-p var env)))
-    (if p
-        (gen 'LSET (first p) (second p) ";" var)
-        (if (assoc var *primitive-fns*)
-            (error "Can't alter the constant ~a" var)
-            (gen 'GSET var)))))
-
-;;; ==============================
-
-(defun init-scheme-comp ()
-  "Initialize the primitive functions."
-  (dolist (prim *primitive-fns*)
-     (setf (get (prim-symbol prim) 'global-val)
-           (new-fn :env nil :name (prim-symbol prim)
-                   :code (seq (gen 'PRIM (prim-symbol prim))
-                              (gen 'RETURN))))))
-
-;;; ==============================
+(defun new-fn (&key code env name args)
+  "Build a new function."
+  (assemble (make-fn :env env :name name :args args
+                     :code (optimize code))))
 
 (defun comp-lambda (args body env)
   "Compile a lambda form into a closure with compiled code."
@@ -439,46 +444,9 @@
                                  (cons (make-true-list args) env)
                                  t nil))))
 
-(defun gen-args (args n-so-far)
-  "Generate an instruction to load the arguments."
-  (cond ((null args) (gen 'ARGS n-so-far))
-        ((symbolp args) (gen 'ARGS. n-so-far))
-        ((and (consp args) (symbolp (first args)))
-         (gen-args (rest args) (+ n-so-far 1)))
-        (t (error "Illegal argument list"))))
-
-(defun make-true-list (dotted-list)
-  "Convert a possibly dotted list into a true, non-dotted list."
-  (cond ((null dotted-list) nil)
-        ((atom dotted-list) (list dotted-list))
-        (t (cons (first dotted-list)
-                 (make-true-list (rest dotted-list))))))
-
-(defun new-fn (&key code env name args)
-  "Build a new function."
-  (assemble (make-fn :env env :name name :args args
-                     :code (optimize code))))
-
-;;; ==============================
-
-(defun optimize (code) code)
-(defun assemble (fn) fn)
-
 ;;; ---------------------------------------------------------------------
-;;; compile3
+;;; the assembler
 ;;; ---------------------------------------------------------------------
-
-;;; ==============================
-
-(defun opcode (instr) (if (label-p instr) :label (first instr)))
-(defun args (instr) (if (listp instr) (rest instr)))
-(defun arg1 (instr) (if (listp instr) (second instr)))
-(defun arg2 (instr) (if (listp instr) (third instr)))
-(defun arg3 (instr) (if (listp instr) (fourth instr)))
-
-(defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
-
-;;; ==============================
 
 (defun assemble (fn)
   "Turn a list of instructions into a vector."
@@ -512,36 +480,11 @@
         (incf addr)))
     code-vector))
 
-;;; ==============================
-
-(defun show-fn (fn &optional (stream *standard-output*) (indent 2))
-  "Print all the instructions in a function.
-  If the argument is not a function, just princ it, 
-  but in a column at least 8 spaces wide."
-  ;; This version handles code that has been assembled into a vector
-  (if (not (fn-p fn))
-      (format stream "~8a" fn)
-      (progn
-        (fresh-line)
-        (dotimes (i (length (fn-code fn)))
-          (let ((instr (elt (fn-code fn) i)))
-            (if (label-p instr)
-                (format stream "~a:" instr)
-                (progn
-                  (format stream "~VT~2d: " indent i)
-                  (dolist (arg instr)
-                    (show-fn arg stream (+ indent 8)))
-                  (fresh-line))))))))
-
-;;; ==============================
+;;; ---------------------------------------------------------------------
+;;; the VM
+;;; ---------------------------------------------------------------------
 
 (defstruct ret-addr fn pc env)
-
-(defun is (instr op)
-  "True if instr's opcode is OP, or one of OP when OP is a list."
-  (if (listp op) 
-      (member (opcode instr) op)
-      (eq (opcode instr) op)))
 
 (defun top (stack) (first stack))
 
@@ -666,7 +609,6 @@
 
 ;;; ==============================
 
-
 (defconstant scheme-top-level
   '(begin (define (scheme)
             (newline)
@@ -684,10 +626,9 @@
   "Compile and execute the expression."
   (machine (compiler `(exit ,exp))))
 
-;;;; Peephole Optimizer
-
-
-;;; ==============================
+;;; ---------------------------------------------------------------------
+;;; optimizers
+;;; ---------------------------------------------------------------------
 
 (defun optimize (code)
   "Perform peephole optimization on assembly code."
@@ -738,131 +679,7 @@
   `(dolist (op ',opcodes)
      (put-optimizer op #'(lambda ,args .,body))))
 
-;;;; Now for some additions and answers to exercises:
-
 ;;; ==============================
-
-(defconstant eof "EoF")
-(defun eof-object? (x) (eq x eof))
-(defvar *scheme-readtable* (copy-readtable))
-
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
-    (read stream nil eof)))
-
-;;; ==============================
-
-(set-dispatch-macro-character #\# #\t 
-  #'(lambda (&rest ignore) (declare (ignore ignore)) t)
-  *scheme-readtable*)
-
-(set-dispatch-macro-character #\# #\f 
-  #'(lambda (&rest ignore) (declare (ignore ignore)) nil)
-  *scheme-readtable*)
-
-(set-dispatch-macro-character #\# #\d
-  ;; In both Common Lisp and Scheme,
-  ;; #x, #o and #b are hexidecimal, octal, and binary,
-  ;; e.g. #xff = #o377 = #b11111111 = 255
-  ;; In Scheme only, #d255 is decimal 255.
-  #'(lambda (stream &rest ignore)
-      (declare (ignore ignore))
-      (let ((*read-base* 10)) (scheme-read stream)))
-  *scheme-readtable*)
-
-(set-macro-character #\` 
-  #'(lambda (s ignore)
-      (declare (ignore ignore))
-      (list 'quasiquote (scheme-read s))) 
-  nil *scheme-readtable*)
-
-(set-macro-character #\, 
-   #'(lambda (stream ignore)
-       (declare (ignore ignore))
-       (let ((ch (read-char stream)))
-         (if (char= ch #\@)
-             (list 'unquote-splicing (read stream))
-             (progn (unread-char ch stream)
-                    (list 'unquote (read stream))))))
-   nil *scheme-readtable*)
-
-;;; ==============================
-
-
-
-;;; ==============================
-
-;(setf (bard-macro 'quasiquote) 'quasi-q)
-
-(defun quasi-q (x)
-  "Expand a quasiquote form into append, list, and cons calls."
-  (cond
-    ((vectorp x)
-     (list 'apply 'vector (quasi-q (coerce x 'list))))
-    ((atom x)
-     (if (constantp x) x (list 'quote x)))
-    ((starts-with x 'unquote)      
-     (assert (and (rest x) (null (rest2 x))))
-     (second x))
-    ((starts-with x 'quasiquote)
-     (assert (and (rest x) (null (rest2 x))))
-     (quasi-q (quasi-q (second x))))
-    ((starts-with (first x) 'unquote-splicing)
-     (if (null (rest x))
-         (second (first x))
-         (list 'append (second (first x)) (quasi-q (rest x)))))
-    (t (combine-quasiquote (quasi-q (car x))
-                           (quasi-q (cdr x))
-                           x))))
-
-(defun combine-quasiquote (left right x)
-  "Combine left and right (car and cdr), possibly re-using x."
-  (cond ((and (constantp left) (constantp right))
-         (if (and (eql (eval left) (first x))
-                  (eql (eval right) (rest x)))
-             (list 'quote x)
-             (list 'quote (cons (eval left) (eval right)))))
-        ((null right) (list 'list left))
-        ((starts-with right 'list)
-         (list* 'list left (rest right)))
-        (t (list 'cons left right))))
-
-;;; ==============================
-
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
-    (convert-numbers (read stream nil eof))))
-
-(defun convert-numbers (x)
-  "Replace symbols that look like Scheme numbers with their values."
-  ;; Don't copy structure, make changes in place.
-  (typecase x
-    (cons   (setf (car x) (convert-numbers (car x)))
-            (setf (cdr x) (convert-numbers (cdr x)))
-	    x) ; *** Bug fix, gat, 11/9/92
-    (symbol (or (convert-number x) x))
-    (vector (dotimes (i (length x))
-              (setf (aref x i) (convert-numbers (aref x i))))
-	    x) ; *** Bug fix, gat, 11/9/92
-    (t x)))
-
-(defun convert-number (symbol)
-  "If str looks like a complex number, return the number."
-  (let* ((str (symbol-name symbol))
-         (pos (position-if #'sign-p str))
-         (end (- (length str) 1)))
-    (when (and pos (char-equal (char str end) #\i))
-      (let ((re (read-from-string str nil nil :start 0 :end pos))
-            (im (read-from-string str nil nil :start pos :end end)))
-        (when (and (numberp re) (numberp im))
-          (complex re im))))))
-
-(defun sign-p (char) (find char "+-"))
-
-
-;;; ---------------------------------------------------------------------
-;;; compopt
-;;; ---------------------------------------------------------------------
 
 (def-optimizer (:LABEL) (instr code all-code)
   ;; ... L ... => ... ... ;if no reference to L
@@ -927,3 +744,122 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
+
+;;; ---------------------------------------------------------------------
+;;; reader and special values
+;;; ---------------------------------------------------------------------
+
+(defconstant eof "EoF")
+(defun eof-object? (x) (eq x eof))
+(defvar *scheme-readtable* (copy-readtable))
+
+(defun scheme-read (&optional (stream *standard-input*))
+  (let ((*readtable* *scheme-readtable*))
+    (read stream nil eof)))
+
+;;; ==============================
+
+(set-dispatch-macro-character #\# #\t 
+  #'(lambda (&rest ignore) (declare (ignore ignore)) t)
+  *scheme-readtable*)
+
+(set-dispatch-macro-character #\# #\f 
+  #'(lambda (&rest ignore) (declare (ignore ignore)) nil)
+  *scheme-readtable*)
+
+(set-dispatch-macro-character #\# #\d
+  ;; In both Common Lisp and Scheme,
+  ;; #x, #o and #b are hexidecimal, octal, and binary,
+  ;; e.g. #xff = #o377 = #b11111111 = 255
+  ;; In Scheme only, #d255 is decimal 255.
+  #'(lambda (stream &rest ignore)
+      (declare (ignore ignore))
+      (let ((*read-base* 10)) (scheme-read stream)))
+  *scheme-readtable*)
+
+;;; ==============================
+
+(defun scheme-read (&optional (stream *standard-input*))
+  (let ((*readtable* *scheme-readtable*))
+    (convert-numbers (read stream nil eof))))
+
+(defun convert-numbers (x)
+  "Replace symbols that look like Scheme numbers with their values."
+  ;; Don't copy structure, make changes in place.
+  (typecase x
+    (cons   (setf (car x) (convert-numbers (car x)))
+            (setf (cdr x) (convert-numbers (cdr x)))
+	    x) ; *** Bug fix, gat, 11/9/92
+    (symbol (or (convert-number x) x))
+    (vector (dotimes (i (length x))
+              (setf (aref x i) (convert-numbers (aref x i))))
+	    x) ; *** Bug fix, gat, 11/9/92
+    (t x)))
+
+(defun convert-number (symbol)
+  "If str looks like a complex number, return the number."
+  (let* ((str (symbol-name symbol))
+         (pos (position-if #'sign-p str))
+         (end (- (length str) 1)))
+    (when (and pos (char-equal (char str end) #\i))
+      (let ((re (read-from-string str nil nil :start 0 :end pos))
+            (im (read-from-string str nil nil :start pos :end end)))
+        (when (and (numberp re) (numberp im))
+          (complex re im))))))
+
+(defun sign-p (char) (find char "+-"))
+
+;;; ---------------------------------------------------------------------
+;;; quasiquote
+;;; ---------------------------------------------------------------------
+
+(set-macro-character #\` 
+  #'(lambda (s ignore)
+      (declare (ignore ignore))
+      (list 'quasiquote (scheme-read s))) 
+  nil *scheme-readtable*)
+
+(set-macro-character #\, 
+   #'(lambda (stream ignore)
+       (declare (ignore ignore))
+       (let ((ch (read-char stream)))
+         (if (char= ch #\@)
+             (list 'unquote-splicing (read stream))
+             (progn (unread-char ch stream)
+                    (list 'unquote (read stream))))))
+   nil *scheme-readtable*)
+
+;(setf (bard-macro 'quasiquote) 'quasi-q)
+
+(defun quasi-q (x)
+  "Expand a quasiquote form into append, list, and cons calls."
+  (cond
+    ((vectorp x)
+     (list 'apply 'vector (quasi-q (coerce x 'list))))
+    ((atom x)
+     (if (constantp x) x (list 'quote x)))
+    ((starts-with x 'unquote)      
+     (assert (and (rest x) (null (rest2 x))))
+     (second x))
+    ((starts-with x 'quasiquote)
+     (assert (and (rest x) (null (rest2 x))))
+     (quasi-q (quasi-q (second x))))
+    ((starts-with (first x) 'unquote-splicing)
+     (if (null (rest x))
+         (second (first x))
+         (list 'append (second (first x)) (quasi-q (rest x)))))
+    (t (combine-quasiquote (quasi-q (car x))
+                           (quasi-q (cdr x))
+                           x))))
+
+(defun combine-quasiquote (left right x)
+  "Combine left and right (car and cdr), possibly re-using x."
+  (cond ((and (constantp left) (constantp right))
+         (if (and (eql (eval left) (first x))
+                  (eql (eval right) (rest x)))
+             (list 'quote x)
+             (list 'quote (cons (eval left) (eval right)))))
+        ((null right) (list 'list left))
+        ((starts-with right 'list)
+         (list* 'list left (rest right)))
+        (t (list 'cons left right))))
