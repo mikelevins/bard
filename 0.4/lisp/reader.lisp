@@ -20,6 +20,10 @@
     (setf (reader:readtable-case tbl) :preserve)
     tbl))
 
+;;; ---------------------------------------------------------------------
+;;; character names
+;;; ---------------------------------------------------------------------
+
 (defparameter *character-name-table* (make-hash-table :test 'equalp))
 
 (defmethod define-character-name ((cid string)(ch cl:character))
@@ -35,18 +39,27 @@
     (define-character-name "newline" #\newline))
 
 ;;; ---------------------------------------------------------------------
-;;; dispatch-macro characters
+;;; special reader values
 ;;; ---------------------------------------------------------------------
 
-(reader:set-dispatch-macro-character #\# #\d
-                                     ;; In both Common Lisp and Bard,
-                                     ;; #x, #o and #b are hexidecimal, octal, and binary,
-                                     ;; e.g. #xff = #o377 = #b11111111 = 255
-                                     ;; In Bard only, #d255 is decimal 255.
-                                     #'(lambda (stream &rest ignore)
-                                         (declare (ignore ignore))
-                                         (let ((reader:*read-base* 10)) (bard-read stream)))
-                                     *bard-readtable*)
+(defclass eof ()())
+(defparameter $eof (make-instance 'eof))
+(defmethod eof? (x)(declare (ignore x)) nil)
+(defmethod eof? ((e eof))(declare (ignore e)) t)
+
+(defclass end-of-sequence ()())
+(defparameter $end-of-sequence (make-instance 'end-of-sequence))
+(defmethod end-of-sequence? (x)(declare (ignore x)) nil)
+(defmethod end-of-sequence? ((e end-of-sequence))(declare (ignore e)) t)
+
+(defclass end-of-map ()())
+(defparameter $end-of-map (make-instance 'end-of-map))
+(defmethod end-of-map? (x)(declare (ignore x)) nil)
+(defmethod end-of-map? ((e end-of-map))(declare (ignore e)) t)
+
+;;; ---------------------------------------------------------------------
+;;; dispatch-macro characters
+;;; ---------------------------------------------------------------------
 
 (reader:set-macro-character #\\ 
                             (lambda (stream char)
@@ -64,6 +77,27 @@
                                          (or (find-character char-name)
                                              (error "Invalid character syntax: ~x~S" char char-sym)))))
                                   (t (error "Invalid character syntax: ~S" char-sym)))))
+                            nil *bard-readtable*)
+
+(reader:set-macro-character #\{
+                            (lambda (stream char)
+                              (declare (ignore char))
+                              (let ((elements '()))
+                                (block reading
+                                  (loop
+                                     (let ((next-elt (reader:read stream)))
+                                       (cond
+                                         ((eof? next-elt)(error "Unexpected end of input while reading a map"))
+                                         ((end-of-map? next-elt) (return-from reading 
+                                                                   (cl:apply 'map (reverse elements))))
+                                         (t (progn
+                                              (setf elements (cons next-elt elements))))))))))
+                            nil *bard-readtable*)
+
+(reader:set-macro-character #\}
+                            (lambda (stream char)
+                              (declare (ignore stream char))
+                              $end-of-map)
                             nil *bard-readtable*)
 
 ;;; ---------------------------------------------------------------------
@@ -122,5 +156,4 @@
 (defun bard-read-from-string (s)
   (with-input-from-string (in s)
     (bard-read in)))
-
 
