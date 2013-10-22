@@ -14,8 +14,12 @@
   :description "The bard programming language, version 0.4"
   :author "mikel evins <mevins@me.com>"
   :license "Apache 2.0"
-  :components ((:file "simple-values")
+  :components ((:module "lib"
+                        :serial t
+                        :components ((:file "source-form")
+                                     (:file "reader")))
                (:file "package")
+               (:file "simple-values")
                (:file "reader")))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
