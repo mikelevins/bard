@@ -55,7 +55,6 @@
 
 ;;; modify the symbol parser from lib/reader.lisp to properly handle
 ;;; Bard symbols
-
 (defparser parse-symbol-token (token)
   "symbol ::= symbol-name
 symbol ::= package-marker symbol-name
@@ -64,37 +63,28 @@ symbol ::= package-name package-marker symbol-name
 symbol ::= package-name package-marker package-marker symbol-name
 symbol-name   ::= {alphabetic}+ 
 package-name  ::= {alphabetic}+ "
-  (let ((colon (position-if
+  (let ((txt (token-text token))
+        (colon (position-if
                 (lambda (traits) (traitp +ct-package-marker+ traits))
                 (token-traits token))))
     (if colon
-        (let* ((double-colon (and (< (1+ colon) (token-length token))
-                                  (traitp +ct-package-marker+
-                                          (token-char-traits token (1+ colon)))))
-               (pname (subseq (token-text token) 0 colon))
-               (sname (subseq (token-text token)
-                              (+ colon (if double-colon 2 1)))))
-          (when (position-if
-                 (lambda (traits) (traitp +ct-package-marker+ traits))
-                 (token-traits token) :start (+ colon (if double-colon 2 1)))
-            (reject t "Too many package markers in token ~S" (token-text token)))
-          (when (zerop colon)
-            ;; Keywords always exist, so let's intern them before finding them.
-            (setf pname "KEYWORD")
-            (intern sname pname))
-          ;; The following form thanks to Andrew Philpot <philpot@ISI.EDU>
-          ;; corrects a bug when reading with double-colon uninterned symbols:
-          (if (find-package pname)
-              (if double-colon
-                  (accept 'symbol (intern sname pname))
-                  (multiple-value-bind (sym where) (find-symbol sname pname)
-                    (if (eq where :external) 
-                        (accept 'symbol sym)
-                        (reject t "There is no external symbol named ~S in ~
-                               the package named ~S" sname pname))))
-              (reject t "There is no package with name ~S" pname)))
+        (if (= colon (- (length txt) 1))
+            (let ((sym (intern txt (find-package :bard-keyword))))
+              (setf (get sym 'bard::module) 'bard-modules::|bard.keyword|)
+              (accept 'symbol sym))
+            (let ((colon2 (position-if (lambda (ch)(char= ch #\:))
+                                       txt :start (1+ colon))))
+              (if colon2
+                  (reject t "Too many colons in symbol name ~S" txt)
+                  (let* ((mname (subseq txt 0 colon))
+                         (sname (subseq txt (1+ colon)))
+                         (sym (intern sname *package*)))
+                    (setf (get sym 'bard::module) (intern mname (find-package :bard-modules)))
+                    (accept 'symbol sym)))))
         ;; no colon in token, let's just intern the symbol in the current package:
-        (accept 'symbol (intern (token-text token) *package*)))))
+        (let ((sym (intern (token-text token) *package*)))
+          (setf (get sym 'bard::module) (bard::current-module-name))
+          (accept 'symbol sym)))))
 
 (in-package :bard)
 
@@ -104,9 +94,7 @@ package-name  ::= {alphabetic}+ "
 (defun bard-read (&optional (stream *standard-input*))
   (let ((reader:*readtable* *bard-readtable*)
         (*package* (find-package :bard)))
-    (multiple-value-bind (input mname)(read-with-bard-module-names stream nil (eof) nil)
-      (values (input->value input)
-              mname))))
+    (read-with-bard-module-names stream nil (eof) nil)))
 
 (defun bard-read-from-string (s)
   (with-input-from-string (in s)
