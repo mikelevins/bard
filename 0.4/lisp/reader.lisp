@@ -56,20 +56,14 @@
 ;;; modify the symbol parser from lib/reader.lisp to properly handle
 ;;; Bard symbols
 (defparser parse-symbol-token (token)
-  "symbol ::= symbol-name
-symbol ::= package-marker symbol-name
-symbol ::= package-marker package-marker symbol-name
-symbol ::= package-name package-marker symbol-name
-symbol ::= package-name package-marker package-marker symbol-name
-symbol-name   ::= {alphabetic}+ 
-package-name  ::= {alphabetic}+ "
   (let ((txt (token-text token))
         (colon (position-if
                 (lambda (traits) (traitp +ct-package-marker+ traits))
                 (token-traits token))))
     (if colon
         (if (= colon (- (length txt) 1))
-            (let ((sym (intern txt (find-package :bard-keyword))))
+            (let* ((symname (subseq txt 0 (- (length txt) 1)))
+                   (sym (intern symname (find-package :bard-keyword))))
               (setf (get sym 'bard::module) 'bard-modules::|bard.keyword|)
               (accept 'symbol sym))
             (let ((colon2 (position-if (lambda (ch)(char= ch #\:))
@@ -88,13 +82,10 @@ package-name  ::= {alphabetic}+ "
 
 (in-package :bard)
 
-(defun read-with-bard-module-names (stream eof-error-p eof-value recursive-p)
-  (reader:read stream eof-error-p eof-value recursive-p))
-
 (defun bard-read (&optional (stream *standard-input*))
   (let ((reader:*readtable* *bard-readtable*)
         (*package* (find-package :bard)))
-    (read-with-bard-module-names stream nil (eof) nil)))
+    (input->value (reader:read stream nil (eof) nil))))
 
 (defun bard-read-from-string (s)
   (with-input-from-string (in s)
