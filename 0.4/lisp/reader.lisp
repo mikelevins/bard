@@ -89,7 +89,7 @@
                                        (cond
                                          ((eof? next-elt)(error "Unexpected end of input while reading a map"))
                                          ((end-of-map? next-elt) (return-from reading 
-                                                                   (cl:apply 'map (reverse elements))))
+                                                                   (cl:apply 'make-map (reverse elements))))
                                          (t (progn
                                               (setf elements (cons next-elt elements))))))))))
                             nil *bard-readtable*)

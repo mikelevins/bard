@@ -21,6 +21,7 @@
                (:file "package")
                (:file "modules")
                (:file "simple-values")
+               (:file "maps")
                (:file "reader")))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
