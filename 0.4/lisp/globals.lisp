@@ -23,11 +23,9 @@
   ((variables :accessor variables
              :initform (make-array 256 :adjustable t :initial-element (undefined)))))
 
-(defmethod global ((gs <globals>)(i integer))
+(defmethod get-global ((gs <globals>)(i integer))
   (aref (variables gs) i))
 
-(defmethod %set-global! ((gs <globals>)(i integer) val)
+(defmethod set-global! ((gs <globals>)(i integer) val)
   (setf (aref (variables gs) i) val)
   val)
-
-(defsetf global %set-global!)
