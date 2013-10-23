@@ -47,10 +47,10 @@
 (defmethod eof? (x)(declare (ignore x)) nil)
 (defmethod eof? ((e eof))(declare (ignore e)) t)
 
-(defclass end-of-sequence ()())
-(defparameter $end-of-sequence (make-instance 'end-of-sequence))
-(defmethod end-of-sequence? (x)(declare (ignore x)) nil)
-(defmethod end-of-sequence? ((e end-of-sequence))(declare (ignore e)) t)
+(defclass end-of-list ()())
+(defparameter $end-of-list (make-instance 'end-of-list))
+(defmethod end-of-list? (x)(declare (ignore x)) nil)
+(defmethod end-of-list? ((e end-of-list))(declare (ignore e)) t)
 
 (defclass end-of-map ()())
 (defparameter $end-of-map (make-instance 'end-of-map))
@@ -77,6 +77,25 @@
                                          (or (find-character char-name)
                                              (error "Invalid character syntax: ~x~S" char char-sym)))))
                                   (t (error "Invalid character syntax: ~S" char-sym)))))
+                            nil *bard-readtable*)
+
+(reader:set-macro-character #\[
+                            (lambda (stream char)
+                              (declare (ignore char))
+                              (let ((elements '()))
+                                (block reading
+                                  (loop
+                                     (let ((next-elt (reader:read stream)))
+                                       (cond
+                                         ((eof? next-elt)(error "Unexpected end of input while reading a map"))
+                                         ((end-of-list? next-elt) (return-from reading (reverse elements)))
+                                         (t (progn (setf elements (cons next-elt elements))))))))))
+                            nil *bard-readtable*)
+
+(reader:set-macro-character #\]
+                            (lambda (stream char)
+                              (declare (ignore stream char))
+                              $end-of-list)
                             nil *bard-readtable*)
 
 (reader:set-macro-character #\{
