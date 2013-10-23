@@ -25,6 +25,20 @@
 (defmethod eof? ((x <eof>)) t)
 
 ;;; ---------------------------------------------------------------------
+;;; <undefined>
+;;; ---------------------------------------------------------------------
+
+(defclass <undefined> ()())
+
+(defparameter *undefined* (make-instance '<undefined>))
+
+(defun undefined () *undefined*)
+
+(defmethod undefined? (x) nil)
+(defmethod undefined? ((x <undefined>)) t)
+(defun defined? (x)(not (undefined? x)))
+
+;;; ---------------------------------------------------------------------
 ;;; nothing
 ;;; ---------------------------------------------------------------------
 

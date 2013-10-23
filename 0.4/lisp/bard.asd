@@ -19,8 +19,9 @@
                         :components ((:file "source-form")
                                      (:file "reader")))
                (:file "package")
-               (:file "modules")
                (:file "simple-values")
+               (:file "globals")
+               (:file "modules")
                (:file "maps")
                (:file "reader")))
 
