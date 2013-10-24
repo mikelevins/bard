@@ -125,32 +125,6 @@
                 (comp-begin (rest exps) env val? more?)))))
 
 (defun comp-if (pred then else env val? more?)
-  (cond
-    ((undefined? pred)    ; (if undefined x y) ==> x
-     (comp then env val? more?))
-    ((nothing? pred)      ; (if nothing x y) ==> y
-     (comp else env val? more?))
-    ((true? pred)         ; (if true x y) ==> y
-     (comp then env val? more?))
-    ((false? pred)        ; (if false x y) ==> y
-     (comp else env val? more?))
-    ((constantp pred)     ; (if t x y) ==> x
-     (comp then env val? more?))
-    (t (let ((pcode (comp pred env t t))
-             (tcode (comp then env val? more?))
-             (ecode (comp else env val? more?)))
-         (cond
-           ((equal tcode ecode) ; (if p x x) ==> (begin p x)
-            (seq (comp pred env nil t) ecode))
-           (t             ; (if p x y) ==> p (FJUMP L1) x L1: y
-                          ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
-            (let ((L1 (gen-label))
-                  (L2 (if more? (gen-label))))
-              (seq pcode (gen 'FGO L1) tcode
-                   (if more? (gen 'GO L2))
-                   (list L1) ecode (if more? (list L2))))))))))
-
-(defun comp-if (pred then else env val? more?)
   (let ((pcode (comp pred env t t))
         (tcode (comp then env val? more?))
         (ecode (comp else env val? more?)))
