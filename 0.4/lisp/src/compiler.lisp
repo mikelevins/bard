@@ -25,20 +25,31 @@
 ;;; macro support
 ;;; ---------------------------------------------------------------------
 
-(defun bard-macro? (symbol)
-  (and (symbolp symbol) (get symbol 'bard-macro)))
+(defparameter *bard-macroexpanders* (make-hash-table))
+
+(defmethod bard-macro? (x)
+  (declare (ignore x))
+  nil)
+
+(defmethod bard-macro? ((x symbol))
+  (gethash x *bard-macroexpanders*))
 
 (defmacro def-bard-macro (name parmlist &body body)
-  "Define a Bard macro."
-  `(setf (get ',name 'bard-macro)
+  `(setf (gethash ',name *bard-macroexpanders*)
          #'(lambda ,parmlist .,body)))
 
 (defun bard-macroexpand (x)
   "Macro-expand this Bard expression."
-  (if (and (listp x) (bard-macro (first x)))
-      (bard-macro-expand
-        (apply (bard-macro (first x)) (rest x)))
+  (if (and (listp x) (bard-macro? (first x)))
+      (bard-macroexpand
+        (apply (bard-macro? (first x)) (rest x)))
       x))
+
+;;; built-in macros
+;;; ---------------------------------------------------------------------
+
+(def-bard-macro |def| (name val-form)
+  `(|set!| ,name ,val-form))
 
 ;;; ---------------------------------------------------------------------
 ;;; code generators
@@ -51,8 +62,10 @@
   (list (cons opcode args)))
 
 (defun gen-set (var env)
-  (declare (ignore var env))
-  (not-yet-implemented 'gen-set))
+  (multiple-value-bind (i j)(in-environment? var env)
+    (if i
+        (gen 'LSET i j ";" var)
+        (gen 'GSET var))))
 
 (defun gen-var (var env)
   (multiple-value-bind (i j)(in-environment? var env)
@@ -98,6 +111,17 @@
                nil
                (gen 'RETURN)))
       nil))
+
+;;; ---------------------------------------------------------------------
+;;; compiler utils
+;;; ---------------------------------------------------------------------
+
+(defun arg-count (form min &optional (max min))
+  (let ((n-args (length (rest form))))
+    (assert (<= min n-args max) (form)
+      "Wrong number of arguments for ~a in ~a: 
+       ~d supplied, ~d~@[ to ~d~] expected"
+      (first form) form n-args min (if (/= min max) max))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
