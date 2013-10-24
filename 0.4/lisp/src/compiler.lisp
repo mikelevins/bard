@@ -112,6 +112,13 @@
                (gen 'RETURN)))
       nil))
 
+(defun comp-begin (exps env val? more?)
+  (cond ((null exps) (comp-const (nothing) val? more?))
+        ((length=1? exps) (comp (first exps) env val? more?))
+        (t (seq (comp (first exps) env t t)
+                `((POP))
+                (comp-begin (rest exps) env val? more?)))))
+
 ;;; ---------------------------------------------------------------------
 ;;; compiler utils
 ;;; ---------------------------------------------------------------------
