@@ -46,3 +46,8 @@
         ((atom dotted-list) (list dotted-list))
         (t (cons (first dotted-list)
                  (make-true-list (rest dotted-list))))))
+
+(defun times (n x)
+  (if (< n 1)
+      nil
+      (cons x (times (- n 1) x))))

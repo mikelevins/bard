@@ -21,6 +21,39 @@
       "Wrong number of arguments for ~a in ~a: ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
 
+(defun label-p (x) "Is x a label?" (atom x))
+
+(defun opcode (instr) (if (label-p instr) :label (first instr)))
+(defun args (instr) (if (listp instr) (rest instr)))
+(defun arg1 (instr) (if (listp instr) (second instr)))
+(defun arg2 (instr) (if (listp instr) (third instr)))
+(defun arg3 (instr) (if (listp instr) (fourth instr)))
+
+(defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
+
+(defun is (instr op)
+  "True if instr's opcode is OP, or one of OP when OP is a list."
+  (if (listp op) 
+      (member (opcode instr) op)
+      (eq (opcode instr) op)))
+
+;;; ---------------------------------------------------------------------
+;;; method-functions
+;;; ---------------------------------------------------------------------
+
+(defun print-mfn (mfn &optional (stream *standard-output*) depth)
+  (declare (ignore depth))
+  (if (mfn-name mfn)
+      (format stream "#<method-function>{name: ~a}" (mfn-name mfn))
+      (format stream "#<method-function>")))
+
+(defstruct (mfn (:print-function print-mfn))
+  code (env nil) (name nil) (args nil))
+
+(defun new-mfn (&key code env name args)
+  (assemble (make-mfn :env env :name name :args args
+                      :code (optimize code))))
+
 ;;; ---------------------------------------------------------------------
 ;;; macro support
 ;;; ---------------------------------------------------------------------
@@ -78,6 +111,13 @@
 (defun gen-label (&optional (label 'L))
   (intern (format nil "~a~d" label (incf *label-num*))))
 
+(defun gen-args (args n-so-far)
+  (cond ((null args) (gen 'ARGS n-so-far))
+        ((symbolp args) (gen 'ARGS. n-so-far))
+        ((and (consp args) (symbolp (first args)))
+         (gen-args (rest args) (+ n-so-far 1)))
+        (t (error "Illegal argument list"))))
+
 ;;; ---------------------------------------------------------------------
 ;;; expression compilers
 ;;; ---------------------------------------------------------------------
@@ -134,6 +174,13 @@
            (if more? (gen 'GO L2))
            (list L1) ecode (if more? (list L2))))))
 
+(defun comp-method (args body env)
+  (let* ((params (make-true-list args))
+         (call-env (extend-environment params (times (length params) (undefined)) env)))
+    (new-mfn :env env :args args
+             :code (seq (gen-args args 0)
+                        (comp-begin body call-env t nil)))))
+
 ;;; ---------------------------------------------------------------------
 ;;; compiler utils
 ;;; ---------------------------------------------------------------------
@@ -144,6 +191,44 @@
       "Wrong number of arguments for ~a in ~a: 
        ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
+
+
+;;; ---------------------------------------------------------------------
+;;; assembler
+;;; ---------------------------------------------------------------------
+
+(defun assemble (fn)
+  "Turn a list of instructions into a vector."
+  (multiple-value-bind (length labels)
+      (asm-first-pass (mfn-code fn))
+    (setf (mfn-code fn)
+          (asm-second-pass (mfn-code fn)
+                           length labels))
+    fn))
+
+(defun asm-first-pass (code)
+  "Return the labels and the total code length."
+  (let ((length 0)
+        (labels nil))
+    (dolist (instr code)
+      (if (label-p instr)
+          (push (cons instr length) labels)
+          (incf length)))
+    (values length labels)))
+
+(defun asm-second-pass (code length labels)
+  "Put code into code-vector, adjusting for labels."
+  (let ((addr 0)
+        (code-vector (make-array length)))
+    (dolist (instr code)
+      (unless (label-p instr)
+        (if (is instr '(JUMP TJUMP FJUMP SAVE))
+            (setf (arg1 instr)
+                  (cdr (assoc (arg1 instr) labels))))
+        (setf (aref code-vector addr) instr)
+        (incf addr)))
+    code-vector))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
@@ -166,7 +251,7 @@
                  (comp-const (second expr) val? more?))
        (|begin|  (comp-begin (rest expr) env val? more?))
        (|set!|   (arg-count expr 2)
-                 (assert (symbolp (second expr)) (x)
+                 (assert (symbolp (second expr)) (expr)
                          "Only variables can be set!, not ~a in ~a"
                          (second expr) expr)
                  (seq (comp (third expr) env t t)
@@ -178,5 +263,5 @@
                           env val? more?))
        ((|method| |^|) (when val?
                          (let ((f (comp-method (second expr) (rest2 expr) env)))
-                           (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+                           (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first expr) (rest expr) env val? more?))))))

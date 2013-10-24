@@ -29,6 +29,7 @@
                                      (:file "modules")
                                      (:file "primitives")
                                      (:file "reader")
+                                     (:file "optimizers")
                                      (:file "compiler")
                                      (:file "vm")))))
 
