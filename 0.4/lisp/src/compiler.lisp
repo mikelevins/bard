@@ -44,6 +44,9 @@
 ;;; code generators
 ;;; ---------------------------------------------------------------------
 
+(defun seq (&rest code)
+  (apply #'append code))
+
 (defun gen (opcode &rest args)
   (list (cons opcode args)))
 
@@ -51,9 +54,11 @@
   (declare (ignore var env))
   (not-yet-implemented 'gen-set))
 
-(defun seq (&rest code)
-  (apply #'append code))
-
+(defun gen-var (var env)
+  (multiple-value-bind (i j)(in-environment? var env)
+    (if i
+        (gen 'LREF i j ";" var)
+        (gen 'GREF var))))
 
 ;;; ---------------------------------------------------------------------
 ;;; expression compilers
@@ -87,8 +92,12 @@
       nil))
 
 (defun comp-var (x env val? more?)
-  (declare (ignore x env val? more?))
-  (not-yet-implemented 'comp-var))
+  (if val?
+      (seq (gen-var x env)
+           (if more?
+               nil
+               (gen 'RETURN)))
+      nil))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
