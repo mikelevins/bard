@@ -27,6 +27,7 @@
                                      (:file "globals")
                                      (:file "environments")
                                      (:file "modules")
+                                     (:file "primitives")
                                      (:file "reader")
                                      (:file "compiler")
                                      (:file "vm")))))

@@ -79,17 +79,19 @@
                                   (t (error "Invalid character syntax: ~S" char-sym)))))
                             nil *bard-readtable*)
 
+(defun read-list-form (stream char)
+  (declare (ignore char))
+  (let ((elements '()))
+    (block reading
+      (loop
+         (let ((next-elt (bard-read stream)))
+           (cond
+             ((eof? next-elt)(error "Unexpected end of input while reading a map"))
+             ((end-of-list? next-elt) (return-from reading (reverse elements)))
+             (t (progn (setf elements (cons next-elt elements))))))))))
+
 (reader:set-macro-character #\[
-                            (lambda (stream char)
-                              (declare (ignore char))
-                              (let ((elements '()))
-                                (block reading
-                                  (loop
-                                     (let ((next-elt (reader:read stream)))
-                                       (cond
-                                         ((eof? next-elt)(error "Unexpected end of input while reading a map"))
-                                         ((end-of-list? next-elt) (return-from reading (reverse elements)))
-                                         (t (progn (setf elements (cons next-elt elements))))))))))
+                            #'read-list-form
                             nil *bard-readtable*)
 
 (reader:set-macro-character #\]
@@ -98,19 +100,32 @@
                               $end-of-list)
                             nil *bard-readtable*)
 
-(reader:set-macro-character #\{
+
+(reader:set-macro-character #\(
+                            #'read-list-form
+                            nil *bard-readtable*)
+
+(reader:set-macro-character #\)
                             (lambda (stream char)
-                              (declare (ignore char))
-                              (let ((elements '()))
-                                (block reading
-                                  (loop
-                                     (let ((next-elt (reader:read stream)))
-                                       (cond
-                                         ((eof? next-elt)(error "Unexpected end of input while reading a map"))
-                                         ((end-of-map? next-elt) (return-from reading 
-                                                                   (cl:apply 'make-map (reverse elements))))
-                                         (t (progn
-                                              (setf elements (cons next-elt elements))))))))))
+                              (declare (ignore stream char))
+                              $end-of-list)
+                            nil *bard-readtable*)
+
+(defun read-map-form (stream char)
+  (declare (ignore char))
+  (let ((elements '()))
+    (block reading
+      (loop
+         (let ((next-elt (bard-read stream)))
+           (cond
+             ((eof? next-elt)(error "Unexpected end of input while reading a map"))
+             ((end-of-map? next-elt) (return-from reading 
+                                       (cl:apply 'make-map (reverse elements))))
+             (t (progn
+                  (setf elements (cons next-elt elements))))))))))
+
+(reader:set-macro-character #\{
+                            #'read-map-form
                             nil *bard-readtable*)
 
 (reader:set-macro-character #\}
