@@ -18,13 +18,17 @@
                         :serial t
                         :components ((:file "source-form")
                                      (:file "reader")))
-               (:file "package")
-               (:file "values-simple")
-               (:file "values-maps")
-               (:file "globals")
-               (:file "modules")
-               (:file "reader")
-               (:file "compiler")
-               (:file "vm")))
+               (:module "src"
+                        :serial t
+                        :components ((:file "package")
+                                     (:file "utils")
+                                     (:file "values-simple")
+                                     (:file "values-maps")
+                                     (:file "globals")
+                                     (:file "environments")
+                                     (:file "modules")
+                                     (:file "reader")
+                                     (:file "compiler")
+                                     (:file "vm")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)

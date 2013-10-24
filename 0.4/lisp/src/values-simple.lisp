@@ -43,6 +43,9 @@
 ;;; ---------------------------------------------------------------------
 
 (defun nothing () nil)
+(defparameter *nothing* nil)
+
+(defun nothing () *nothing*)
 
 (defmethod nothing? (x) nil)
 (defmethod nothing? ((x null)) t)

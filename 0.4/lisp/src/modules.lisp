@@ -62,24 +62,28 @@
 
 (defun make-module (gs)(make-instance '<module> :globals gs))
 
+(defun ensure-variable-with-id (globals id)
+  (declare (ignore globals id))
+  (not-yet-implemented 'ensure-variable-with-id))
+
 (defmethod add-module-variable! ((module <module>)(id integer)(name symbol) 
                           &key (mutable t) (exported nil) (import-from nil) (import-name nil))
   (let ((id (ensure-variable-with-id (globals module) id))
-        (mvar (make-mvar name id &key :mutable mutable :exported exported :import-from import-from :import-name import-name)))
+        (mvar (make-mvar name id :mutable mutable :exported exported :import-from import-from :import-name import-name)))
     (setf (gethash name (variables-by-name module)) mvar)
     (setf (gethash id (variables-by-id module)) mvar)
     module))
 
 (defmethod remove-module-variable! ((module <module>)(name symbol))
-  (let ((mvar (gethash name (variables-by-name module)))
-        (id (id mvar)))
+  (let* ((mvar (gethash name (variables-by-name module)))
+         (id (id mvar)))
     (remhash name (variables-by-name module))
     (remhash id (variables-by-id module))
     module))
 
 (defmethod lookup-module-variable ((module <module>)(name symbol))
-  (let ((mvar (gethash name (variables-by-name module)))
-        (id (id mvar)))
+  (let* ((mvar (gethash name (variables-by-name module)))
+         (id (id mvar)))
     (get-global (globals module) id)))
 
 ;;; ---------------------------------------------------------------------
