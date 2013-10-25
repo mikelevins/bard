@@ -10,20 +10,17 @@
 
 (in-package :bard)
 
-(defclass environment ()
-  ((bindings :accessor bindings :initform nil :initarg :bindings)))
-
 (defun null-environment ()
-  (make-instance 'environment))
+  (make-instance '<environment>))
 
-(defmethod extend-environment ((vars cons) (vals cons) (env environment))
+(defmethod extend-environment ((vars cons) (vals cons) (env <environment>))
   (let* ((bindings (bindings env))
          (bindings* (append (mapcar #'list vars vals)
                             bindings)))
     (setf (bindings env) bindings*)
     env))
 
-(defmethod in-environment? ((s symbol)(env environment))
+(defmethod in-environment? ((s symbol)(env <environment>))
   (let* ((bindings (bindings env))
          (frame (find s bindings :test #'find)))
     (if frame

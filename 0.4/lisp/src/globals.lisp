@@ -19,11 +19,6 @@
 ;;; above globals that provide namespaces and per-namespace named keys
 ;;; to the globals array.
 
-(defclass <globals> ()
-  ((next-id :accessor next-id :initform 0)
-   (variables :accessor variables
-             :initform (make-array 256 :adjustable t :initial-element (undefined)))))
-
 (defmethod next-global-id ((gs <globals>))
   (let ((id (next-id gs)))
     (incf (next-id gs))
@@ -36,3 +31,5 @@
   (setf (aref (variables gs) i) val)
   val)
 
+(defun make-standard-globals ()
+  (make-instance '<globals>))

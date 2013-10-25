@@ -10,12 +10,6 @@
 
 (in-package :bard)
 
-;;; ---------------------------------------------------------------------
-;;; compiler class
-;;; ---------------------------------------------------------------------
-
-(defclass <compiler> ()
-  (version globals agent primitives macros))
 
 ;;; ---------------------------------------------------------------------
 ;;; method-functions
@@ -195,5 +189,5 @@
                            (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall cpl (first expr) (rest expr) env val? more?))))))
 
-
-
+(defun make-standard-compiler ()
+  (make-instance '<compiler>))

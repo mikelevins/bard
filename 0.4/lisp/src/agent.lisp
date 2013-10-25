@@ -40,5 +40,3 @@
 ;;;
 ;;; A message may be any Bard data that can be serialized.
 
-(defclass <agent> ()
-  (compiler vm image messages))
