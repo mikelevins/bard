@@ -36,7 +36,7 @@
 (defun rest2 (x)(rest (rest x)))
 (defun rest3 (x)(rest (rest (rest x))))
 
-(defun starts-with (list x)
+(defun starts-with? (list x)
   (and (consp list)
        (eql (first list) x)))
 

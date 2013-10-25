@@ -30,6 +30,9 @@
                                      (:file "primitives")
                                      (:file "reader")
                                      (:file "optimizers")
+                                     (:file "assembler")
+                                     (:file "instructions")
+                                     (:file "macros")
                                      (:file "compiler")
                                      (:file "vm")))))
 

@@ -11,33 +11,6 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; instruction utilities
-;;; ---------------------------------------------------------------------
-
-(defun arg-count (form min &optional (max min))
-  "Report an error if form has wrong number of args."
-  (let ((n-args (length (rest form))))
-    (assert (<= min n-args max) (form)
-      "Wrong number of arguments for ~a in ~a: ~d supplied, ~d~@[ to ~d~] expected"
-      (first form) form n-args min (if (/= min max) max))))
-
-(defun label-p (x) "Is x a label?" (atom x))
-
-(defun opcode (instr) (if (label-p instr) :label (first instr)))
-(defun args (instr) (if (listp instr) (rest instr)))
-(defun arg1 (instr) (if (listp instr) (second instr)))
-(defun arg2 (instr) (if (listp instr) (third instr)))
-(defun arg3 (instr) (if (listp instr) (fourth instr)))
-
-(defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
-
-(defun is (instr op)
-  "True if instr's opcode is OP, or one of OP when OP is a list."
-  (if (listp op) 
-      (member (opcode instr) op)
-      (eq (opcode instr) op)))
-
-;;; ---------------------------------------------------------------------
 ;;; method-functions
 ;;; ---------------------------------------------------------------------
 
@@ -53,36 +26,6 @@
 (defun new-mfn (&key code env name args)
   (assemble (make-mfn :env env :name name :args args
                       :code (optimize code))))
-
-;;; ---------------------------------------------------------------------
-;;; macro support
-;;; ---------------------------------------------------------------------
-
-(defparameter *bard-macroexpanders* (make-hash-table))
-
-(defmethod bard-macro? (x)
-  (declare (ignore x))
-  nil)
-
-(defmethod bard-macro? ((x symbol))
-  (gethash x *bard-macroexpanders*))
-
-(defmacro def-bard-macro (name parmlist &body body)
-  `(setf (gethash ',name *bard-macroexpanders*)
-         #'(lambda ,parmlist .,body)))
-
-(defun bard-macroexpand (x)
-  "Macro-expand this Bard expression."
-  (if (and (listp x) (bard-macro? (first x)))
-      (bard-macroexpand
-        (apply (bard-macro? (first x)) (rest x)))
-      x))
-
-;;; built-in macros
-;;; ---------------------------------------------------------------------
-
-(def-bard-macro |def| (name val-form)
-  `(|set!| ,name ,val-form))
 
 ;;; ---------------------------------------------------------------------
 ;;; code generators
@@ -157,6 +100,11 @@
                (gen 'RETURN)))
       nil))
 
+(defun comp-list (exps env)
+  (if (null exps) nil
+      (seq (comp (first exps) env t t)
+           (comp-list (rest exps) env))))
+
 (defun comp-begin (exps env val? more?)
   (cond ((null exps) (comp-const (nothing) val? more?))
         ((length=1? exps) (comp (first exps) env val? more?))
@@ -181,6 +129,34 @@
              :code (seq (gen-args args 0)
                         (comp-begin body call-env t nil)))))
 
+(defun comp-funcall (f args env val? more?)
+  (let ((prim (primitive? f env (length args))))
+    (cond
+      (prim  ; function compilable to a primitive instruction
+       (if (and (not val?) (not (prim-side-effects prim)))
+           ;; Side-effect free primitive when value unused
+           (comp-begin args env nil more?)
+           ;; Primitive with value or call needed
+           (seq (comp-list args env)
+                (gen (prim-opcode prim))
+                (unless val? (gen 'POP))
+                (unless more? (gen 'RETURN)))))
+      ((and (starts-with? f '|method|) (null (second f)))
+       ;; ((method () body)) => (begin body)
+       (assert (null args) () "Too many arguments supplied")
+       (comp-begin (rest2 f) env val? more?))
+      (more? ; Need to save the continuation point
+       (let ((k (gen-label 'k)))
+         (seq (gen 'SAVE k)
+              (comp-list args env)
+              (comp f env t t)
+              (gen 'CALLJ (length args))
+              (list k)
+              (if (not val?) (gen 'POP)))))
+      (t (seq (comp-list args env)
+              (comp f env t t)
+              (gen 'CALLJ (length args)))))))
+
 ;;; ---------------------------------------------------------------------
 ;;; compiler utils
 ;;; ---------------------------------------------------------------------
@@ -191,44 +167,6 @@
       "Wrong number of arguments for ~a in ~a: 
        ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
-
-
-;;; ---------------------------------------------------------------------
-;;; assembler
-;;; ---------------------------------------------------------------------
-
-(defun assemble (fn)
-  "Turn a list of instructions into a vector."
-  (multiple-value-bind (length labels)
-      (asm-first-pass (mfn-code fn))
-    (setf (mfn-code fn)
-          (asm-second-pass (mfn-code fn)
-                           length labels))
-    fn))
-
-(defun asm-first-pass (code)
-  "Return the labels and the total code length."
-  (let ((length 0)
-        (labels nil))
-    (dolist (instr code)
-      (if (label-p instr)
-          (push (cons instr length) labels)
-          (incf length)))
-    (values length labels)))
-
-(defun asm-second-pass (code length labels)
-  "Put code into code-vector, adjusting for labels."
-  (let ((addr 0)
-        (code-vector (make-array length)))
-    (dolist (instr code)
-      (unless (label-p instr)
-        (if (is instr '(JUMP TJUMP FJUMP SAVE))
-            (setf (arg1 instr)
-                  (cdr (assoc (arg1 instr) labels))))
-        (setf (aref code-vector addr) instr)
-        (incf addr)))
-    code-vector))
-
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
