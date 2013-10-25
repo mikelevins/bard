@@ -28,11 +28,12 @@
                                      (:file "environments")
                                      (:file "modules")
                                      (:file "primitives")
+                                     (:file "macros")
                                      (:file "reader")
+                                     (:file "quasiquote")
                                      (:file "optimizers")
                                      (:file "assembler")
                                      (:file "instructions")
-                                     (:file "macros")
                                      (:file "compiler")
                                      (:file "vm")))))
 

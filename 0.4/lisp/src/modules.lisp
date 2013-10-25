@@ -84,7 +84,12 @@
 (defmethod lookup-module-variable ((module <module>)(name symbol))
   (let* ((mvar (gethash name (variables-by-name module)))
          (id (id mvar)))
-    (get-global (globals module) id)))
+    (get-global id)))
+
+(defmethod set-module-variable! ((module <module>)(name symbol) val)
+  (let* ((mvar (gethash name (variables-by-name module)))
+         (id (id mvar)))
+    (set-global! id val)))
 
 ;;; ---------------------------------------------------------------------
 ;;; module registry
@@ -100,8 +105,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-standard-modules ()
-  (let* ((globals (make-instance '<globals>))
-         (lang-module (make-module globals))
-         (user-module (make-module globals)))
-    (setf (gethash 'bard-modules::bard.lang *module-registry*) lang-module)
-    (setf (gethash 'bard-modules::bard.user *module-registry*) user-module)))
+  (let* ((lang-module (make-module *bard-globals*))
+         (user-module (make-module *bard-globals*)))
+    (setf (gethash 'bard-modules::|bard.lang| *module-registry*) lang-module)
+    (setf (gethash 'bard-modules::|bard.user| *module-registry*) user-module)))

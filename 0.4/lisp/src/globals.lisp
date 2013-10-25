@@ -19,13 +19,19 @@
 ;;; above globals that provide namespaces and per-namespace named keys
 ;;; to the globals array.
 
+(defparameter *bard-globals* nil)
+
 (defclass <globals> ()
   ((variables :accessor variables
              :initform (make-array 256 :adjustable t :initial-element (undefined)))))
 
-(defmethod get-global ((gs <globals>)(i integer))
-  (aref (variables gs) i))
+(defun init-globals ()
+  (setf *bard-globals* (make-instance '<globals>)))
 
-(defmethod set-global! ((gs <globals>)(i integer) val)
-  (setf (aref (variables gs) i) val)
+(defmethod get-global ((i integer))
+  (aref (variables *bard-globals*) i))
+
+(defmethod set-global! ((i integer) val)
+  (setf (aref (variables *bard-globals*) i) val)
   val)
+

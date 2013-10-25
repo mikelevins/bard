@@ -65,22 +65,6 @@
 ;;; expression compilers
 ;;; ---------------------------------------------------------------------
 
-(defun comp-funcall (f args env val? more?)
-  (declare (ignore f args env val? more?))
-  (not-yet-implemented 'comp-funcall))
-
-(defun comp-method (args body env)
-  (declare (ignore args body env))
-  (not-yet-implemented 'comp-method))
-
-(defun comp-if (pred then else env val? more?)
-  (declare (ignore pred then else env val? more?))
-  (not-yet-implemented 'comp-if))
-
-(defun comp-begin (exps env val? more?)
-  (declare (ignore exps env val? more?))
-  (not-yet-implemented 'comp-begin))
-
 (defun comp-const (x val? more?)
   (if val?
       (seq (cond
@@ -167,6 +151,20 @@
       "Wrong number of arguments for ~a in ~a: 
        ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
+
+;;; ---------------------------------------------------------------------
+;;; compiler init
+;;; ---------------------------------------------------------------------
+
+(defun init-bard-comp ()
+  (init-globals)
+  (init-standard-modules)
+  (let ((lang-module (find-module 'bard-modules::|bard.lang|)))
+    (set-module-variable! lang-module 'bard::|exit|
+                          (new-mfn :name '|exit| :args '(val) :code '((HALT))))
+    (set-module-variable! lang-module 'bard::|call/cc|
+                          (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                                                       (CALLJ 1))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
