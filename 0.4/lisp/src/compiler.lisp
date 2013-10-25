@@ -11,6 +11,13 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
+;;; compiler class
+;;; ---------------------------------------------------------------------
+
+(defclass <compiler> ()
+  (version globals agent primitives macros))
+
+;;; ---------------------------------------------------------------------
 ;;; method-functions
 ;;; ---------------------------------------------------------------------
 
@@ -65,23 +72,7 @@
 ;;; expression compilers
 ;;; ---------------------------------------------------------------------
 
-(defun comp-funcall (f args env val? more?)
-  (declare (ignore f args env val? more?))
-  (not-yet-implemented 'comp-funcall))
-
-(defun comp-method (args body env)
-  (declare (ignore args body env))
-  (not-yet-implemented 'comp-method))
-
-(defun comp-if (pred then else env val? more?)
-  (declare (ignore pred then else env val? more?))
-  (not-yet-implemented 'comp-if))
-
-(defun comp-begin (exps env val? more?)
-  (declare (ignore exps env val? more?))
-  (not-yet-implemented 'comp-begin))
-
-(defun comp-const (x val? more?)
+(defmethod comp-const ((cpl <compiler>) x val? more?)
   (if val?
       (seq (cond
              ((equal x *undefined*)(gen 'UNDEFINED))
@@ -92,7 +83,7 @@
            (unless more? (gen 'RETURN)))
       nil))
 
-(defun comp-var (x env val? more?)
+(defmethod comp-var ((cpl <compiler>) x env val? more?)
   (if val?
       (seq (gen-var x env)
            (if more?
@@ -100,61 +91,61 @@
                (gen 'RETURN)))
       nil))
 
-(defun comp-list (exps env)
+(defmethod comp-list ((cpl <compiler>) exps env)
   (if (null exps) nil
-      (seq (comp (first exps) env t t)
-           (comp-list (rest exps) env))))
+      (seq (comp cpl (first exps) env t t)
+           (comp-list cpl (rest exps) env))))
 
-(defun comp-begin (exps env val? more?)
-  (cond ((null exps) (comp-const (nothing) val? more?))
-        ((length=1? exps) (comp (first exps) env val? more?))
-        (t (seq (comp (first exps) env t t)
+(defmethod comp-begin ((cpl <compiler>) exps env val? more?)
+  (cond ((null exps) (comp-const cpl (nothing) val? more?))
+        ((length=1? exps) (comp cpl (first exps) env val? more?))
+        (t (seq (comp cpl (first exps) env t t)
                 `((POP))
-                (comp-begin (rest exps) env val? more?)))))
+                (comp-begin cpl (rest exps) env val? more?)))))
 
-(defun comp-if (pred then else env val? more?)
-  (let ((pcode (comp pred env t t))
-        (tcode (comp then env val? more?))
-        (ecode (comp else env val? more?)))
+(defmethod comp-if ((cpl <compiler>) pred then else env val? more?)
+  (let ((pcode (comp cpl pred env t t))
+        (tcode (comp cpl then env val? more?))
+        (ecode (comp cpl else env val? more?)))
     (let ((L1 (gen-label))
           (L2 (if more? (gen-label))))
       (seq pcode (gen 'FGO L1) tcode
            (if more? (gen 'GO L2))
            (list L1) ecode (if more? (list L2))))))
 
-(defun comp-method (args body env)
+(defmethod comp-method ((cpl <compiler>) args body env)
   (let* ((params (make-true-list args))
          (call-env (extend-environment params (times (length params) (undefined)) env)))
     (new-mfn :env env :args args
              :code (seq (gen-args args 0)
-                        (comp-begin body call-env t nil)))))
+                        (comp-begin cpl body call-env t nil)))))
 
-(defun comp-funcall (f args env val? more?)
+(defmethod comp-funcall ((cpl <compiler>) f args env val? more?)
   (let ((prim (primitive? f env (length args))))
     (cond
       (prim  ; function compilable to a primitive instruction
        (if (and (not val?) (not (prim-side-effects prim)))
            ;; Side-effect free primitive when value unused
-           (comp-begin args env nil more?)
+           (comp-begin cpl args env nil more?)
            ;; Primitive with value or call needed
-           (seq (comp-list args env)
+           (seq (comp-list cpl args env)
                 (gen (prim-opcode prim))
                 (unless val? (gen 'POP))
                 (unless more? (gen 'RETURN)))))
       ((and (starts-with? f '|method|) (null (second f)))
        ;; ((method () body)) => (begin body)
        (assert (null args) () "Too many arguments supplied")
-       (comp-begin (rest2 f) env val? more?))
+       (comp-begin cpl (rest2 f) env val? more?))
       (more? ; Need to save the continuation point
        (let ((k (gen-label 'k)))
          (seq (gen 'SAVE k)
-              (comp-list args env)
-              (comp f env t t)
+              (comp-list cpl args env)
+              (comp cpl f env t t)
               (gen 'CALLJ (length args))
               (list k)
               (if (not val?) (gen 'POP)))))
-      (t (seq (comp-list args env)
-              (comp f env t t)
+      (t (seq (comp-list cpl args env)
+              (comp cpl f env t t)
               (gen 'CALLJ (length args)))))))
 
 ;;; ---------------------------------------------------------------------
@@ -172,34 +163,37 @@
 ;;; main compiler entry point
 ;;; ---------------------------------------------------------------------
 
-(defun comp (expr env val? more?)
+(defmethod comp ((cpl <compiler>) expr env val? more?)
   (cond
     ;; simple constants
     ((member expr `(,*eof* ,*undefined* ,*nothing* ,*false* ,*true*))
-     (comp-const expr val? more?))
+     (comp-const cpl expr val? more?))
     ;; variable references
-    ((symbolp expr) (comp-var expr env val? more?))
+    ((symbolp expr) (comp-var cpl expr env val? more?))
     ;; other self-evaluating values
-    ((atom expr) (comp-const expr val? more?))
+    ((atom expr) (comp-const cpl expr val? more?))
     ;; macro forms
-    ((bard-macro? (first expr)) (comp (bard-macroexpand expr) env val? more?))
+    ((bard-macro? (first expr)) (comp cpl (bard-macroexpand expr) env val? more?))
     ;; procedure applications
     ((case (first expr)
        (|quote|  (arg-count expr 1)
-                 (comp-const (second expr) val? more?))
-       (|begin|  (comp-begin (rest expr) env val? more?))
+                 (comp-const cpl (second expr) val? more?))
+       (|begin|  (comp-begin cpl (rest expr) env val? more?))
        (|set!|   (arg-count expr 2)
                  (assert (symbolp (second expr)) (expr)
                          "Only variables can be set!, not ~a in ~a"
                          (second expr) expr)
-                 (seq (comp (third expr) env t t)
+                 (seq (comp cpl (third expr) env t t)
                       (gen-set (second expr) env)
                       (if (not val?) (gen 'POP))
                       (unless more? (gen 'RETURN))))
        (|if|     (arg-count expr 3)
-                 (comp-if (second expr) (third expr) (fourth expr)
+                 (comp-if cpl (second expr) (third expr) (fourth expr)
                           env val? more?))
        ((|method| |^|) (when val?
-                         (let ((f (comp-method (second expr) (rest2 expr) env)))
+                         (let ((f (comp-method cpl (second expr) (rest2 expr) env)))
                            (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
-       (t      (comp-funcall (first expr) (rest expr) env val? more?))))))
+       (t      (comp-funcall cpl (first expr) (rest expr) env val? more?))))))
+
+
+
