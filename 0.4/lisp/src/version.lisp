@@ -1,15 +1,15 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          vm.lisp
+;;;; Name:          version.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       the bard vm
-;;;; Author:        mikel evins, after Norvig
+;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 (in-package :bard)
 
-(defun make-standard-vm ()
-  nil)
+(defparameter *bard-compiler-version* `(0 4 0))
+
 

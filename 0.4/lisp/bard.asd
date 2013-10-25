@@ -21,7 +21,9 @@
                (:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "version")
                                      (:file "utils")
+                                     (:file "classes")
                                      (:file "values-simple")
                                      (:file "values-maps")
                                      (:file "globals")
@@ -34,6 +36,7 @@
                                      (:file "instructions")
                                      (:file "macros")
                                      (:file "compiler")
-                                     (:file "vm")))))
+                                     (:file "vm")
+                                     (:file "agent")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)

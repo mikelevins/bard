@@ -36,14 +36,6 @@
 ;;; module variables
 ;;; ---------------------------------------------------------------------
 
-(defclass <mvar> ()
-  ((name :accessor name :initform nil)
-   (id :accessor id :initform nil)
-   (mutable? :accessor mutable? :initform nil)
-   (exported? :accessor exported? :initform nil)
-   (import-from :accessor import-from :initform nil)
-   (import-name :accessor import-name :initform nil)))
-
 (defun make-mvar (name id &key (mutable t) (exported nil) (import-from nil) (import-name nil))
   (make-instance '<mvar> name id 
                  :mutable mutable 
@@ -54,11 +46,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; module names
 ;;; ---------------------------------------------------------------------
-
-(defclass <module> ()
-  ((globals :accessor globals :initform nil :initarg :globals)
-   (variables-by-name :accessor variables-by-name :initform (make-hash-table))
-   (variables-by-id :accessor variables-by-id :initform (make-hash-table))))
 
 (defun make-module (gs)(make-instance '<module> :globals gs))
 
@@ -86,22 +73,24 @@
          (id (id mvar)))
     (get-global (globals module) id)))
 
-;;; ---------------------------------------------------------------------
-;;; module registry
-;;; ---------------------------------------------------------------------
+(defmethod find-module ((comp <compiler>)(mname symbol))
+  (gethash mname (modules comp)))
 
-(defparameter *module-registry* (make-hash-table))
-
-(defmethod find-module ((mname symbol))
-  (gethash mname *module-registry*))
+(defmethod assert-module! ((comp <compiler>)(mname symbol))
+  (let ((already (gethash mname (modules comp))))
+    (or already
+        (let ((m (make-module (globals comp))))
+          (setf (gethash mname (modules comp)) m)
+          m))))
 
 ;;; ---------------------------------------------------------------------
 ;;; initializing standard modules
 ;;; ---------------------------------------------------------------------
 
-(defun init-standard-modules ()
-  (let* ((globals (make-instance '<globals>))
-         (lang-module (make-module globals))
-         (user-module (make-module globals)))
-    (setf (gethash 'bard-modules::bard.lang *module-registry*) lang-module)
-    (setf (gethash 'bard-modules::bard.user *module-registry*) user-module)))
+(defun make-standard-modules (comp)
+  (assert-module! comp 'bard-modules::bard.lang)
+  (assert-module! comp 'bard-modules::bard.user)
+  t)
+
+
+
