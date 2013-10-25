@@ -39,3 +39,6 @@
 
 (def-bard-macro |def| (name val-form)
   `(|set!| ,name ,val-form))
+
+(def-bard-macro |quasiquote| (x)
+  `(quasi-q ,x))
