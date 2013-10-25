@@ -10,6 +10,5 @@
 
 (in-package :bard)
 
-(defun make-standard-vm ()
-  nil)
+
 

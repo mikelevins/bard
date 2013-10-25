@@ -10,10 +10,6 @@
 
 (in-package :bard)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d6057b4c4644665b80e79c88cb3a3480ae368b64
 ;;; ---------------------------------------------------------------------
 ;;; method-functions
 ;;; ---------------------------------------------------------------------
@@ -206,11 +202,4 @@
        ((|method| |^|) (when val?
                          (let ((f (comp-method (second expr) (rest2 expr) env)))
                            (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
-<<<<<<< HEAD
        (t      (comp-funcall (first expr) (rest expr) env val? more?))))))
-=======
-       (t      (comp-funcall cpl (first expr) (rest expr) env val? more?))))))
-
-(defun make-standard-compiler ()
-  (make-instance '<compiler>))
->>>>>>> d6057b4c4644665b80e79c88cb3a3480ae368b64
