@@ -20,14 +20,8 @@
 ;;; to the globals array.
 
 (defclass <globals> ()
-  ((next-id :accessor next-id :initform 0)
-   (variables :accessor variables
+  ((variables :accessor variables
              :initform (make-array 256 :adjustable t :initial-element (undefined)))))
-
-(defmethod next-global-id ((gs <globals>))
-  (let ((id (next-id gs)))
-    (incf (next-id gs))
-    id))
 
 (defmethod get-global ((gs <globals>)(i integer))
   (aref (variables gs) i))
@@ -35,4 +29,3 @@
 (defmethod set-global! ((gs <globals>)(i integer) val)
   (setf (aref (variables gs) i) val)
   val)
-
