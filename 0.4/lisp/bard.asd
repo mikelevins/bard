@@ -37,7 +37,6 @@
                                      (:file "methods")
                                      (:file "compiler")
                                      (:file "vm")
-                                     ;;(:file "lispvm") ; compile bard programs to lisp and execute them instead o interpreting with a VM
                                      (:file "toplevel")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
