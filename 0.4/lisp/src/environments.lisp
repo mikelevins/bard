@@ -16,6 +16,9 @@
 (defun null-environment ()
   (make-instance 'environment))
 
+(defmethod extend-environment ((vars null) vals env)
+  env)
+
 (defmethod extend-environment ((vars cons) (vals cons) (env environment))
   (let* ((bindings (bindings env))
          (bindings* (append (mapcar #'list vars vals)

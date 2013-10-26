@@ -35,6 +35,8 @@
                                      (:file "assembler")
                                      (:file "instructions")
                                      (:file "compiler")
-                                     (:file "vm")))))
+                                     (:file "vm")
+                                     (:file "toplevel")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
+

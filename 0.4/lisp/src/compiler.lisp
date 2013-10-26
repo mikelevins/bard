@@ -200,3 +200,7 @@
                          (let ((f (comp-method (second expr) (rest2 expr) env)))
                            (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first expr) (rest expr) env val? more?))))))
+
+(defun compiler (x)
+  (setf *label-num* 0)
+  (comp-method '() (list x) nil))
