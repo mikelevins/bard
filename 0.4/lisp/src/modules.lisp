@@ -29,83 +29,96 @@
   `(and symbol
         (satisfies valid-module-name?)))
 
-(defun current-module-name ()
-  (intern "bard.user" (find-package :bard-modules)))
-
 ;;; ---------------------------------------------------------------------
 ;;; module variables
 ;;; ---------------------------------------------------------------------
 
 (defclass <mvar> ()
-  ((name :accessor name :initform nil)
-   (id :accessor id :initform nil)
-   (mutable? :accessor mutable? :initform nil)
-   (exported? :accessor exported? :initform nil)
-   (import-from :accessor import-from :initform nil)
-   (import-name :accessor import-name :initform nil)))
-
-(defun make-mvar (name id &key (mutable t) (exported nil) (import-from nil) (import-name nil))
-  (make-instance '<mvar> name id 
-                 :mutable mutable 
-                 :exported exported
-                 :import-from import-from
-                 :import-name import-name))
+  ((name :reader name :initarg :name)
+   (mutable? :reader mutable? :initarg :mutable)
+   (import-from :reader import-from :initform nil :initarg :import-from)
+   (id :reader id :initarg :id)))
 
 ;;; ---------------------------------------------------------------------
-;;; module names
+;;; modules
 ;;; ---------------------------------------------------------------------
 
 (defclass <module> ()
-  ((globals :accessor globals :initform nil :initarg :globals)
-   (variables-by-name :accessor variables-by-name :initform (make-hash-table))
-   (variables-by-id :accessor variables-by-id :initform (make-hash-table))))
+  ((name :reader module-name :initarg :name)
+   (variables :accessor variables :initform (make-hash-table))))
 
-(defun make-module (gs)(make-instance '<module> :globals gs))
+(defun make-module (mname)
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (make-instance '<module> :name mname))
 
-(defun ensure-variable-with-id (globals id)
-  (declare (ignore globals id))
-  (not-yet-implemented 'ensure-variable-with-id))
+(defmethod add-module-variable! ((mname symbol)(vname symbol) &key (val *undefined*)(mutable t))
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (let ((module (find-module mname)))
+    (if module
+        (let ((var (gethash vname (variables module))))
+          (assert (not var)() "Variable exists: ~s" vname)
+          (let ((id (add-global! val)))
+            (assert id () "Error defining a module variable: ~s" vname)
+            (let ((mvar (make-instance '<mvar>
+                                       :name vname
+                                       :mutable mutable
+                                       :id id)))
+              (set-global! id val)
+              val)))
+        (error "No such module: ~s" mname))))
 
-(defmethod add-module-variable! ((module <module>)(id integer)(name symbol) 
-                          &key (mutable t) (exported nil) (import-from nil) (import-name nil))
-  (let ((id (ensure-variable-with-id (globals module) id))
-        (mvar (make-mvar name id :mutable mutable :exported exported :import-from import-from :import-name import-name)))
-    (setf (gethash name (variables-by-name module)) mvar)
-    (setf (gethash id (variables-by-id module)) mvar)
-    module))
+(defmethod get-module-variable ((mname symbol)(vname symbol))
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (let ((module (find-module mname)))
+    (if module
+        (let ((var (gethash vname (variables module))))
+          (assert var () "Undefined module variable: ~a:~a" mname vname)
+          (let ((id (id var)))
+            (get-global id)))
+        (error "No such module: ~s" mname))))
 
-(defmethod remove-module-variable! ((module <module>)(name symbol))
-  (let* ((mvar (gethash name (variables-by-name module)))
-         (id (id mvar)))
-    (remhash name (variables-by-name module))
-    (remhash id (variables-by-id module))
-    module))
-
-(defmethod lookup-module-variable ((module <module>)(name symbol))
-  (let* ((mvar (gethash name (variables-by-name module)))
-         (id (id mvar)))
-    (get-global id)))
-
-(defmethod set-module-variable! ((module <module>)(name symbol) val)
-  (let* ((mvar (gethash name (variables-by-name module)))
-         (id (id mvar)))
-    (set-global! id val)))
+(defmethod set-module-variable! ((mname symbol)(vname symbol) val)
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (let ((module (find-module mname)))
+    (if module
+        (let ((var (gethash vname (variables module))))
+          (assert var () "Undefined module variable: ~a:~a" mname vname)
+          (let ((id (id var)))
+            (set-global! id val)
+            val))
+        (error "No such module: ~s" mname))))
 
 ;;; ---------------------------------------------------------------------
-;;; module registry
+;;; module registry and current module
 ;;; ---------------------------------------------------------------------
+
+(defparameter *module* (intern "bard.user" (find-package :bard-modules)))
 
 (defparameter *module-registry* (make-hash-table))
 
+(defmethod register-module! ((mname symbol))
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (let ((module (make-module mname)))
+    (setf (gethash mname *module-registry*)
+          module)))
+
 (defmethod find-module ((mname symbol))
   (gethash mname *module-registry*))
+
+(defun set-current-module! (mname)
+  (assert (typep mname 'module-name)()
+          "Not a valid module name: ~s" mname)
+  (assert (find-module mname)()
+          "No such module: ~s" mname)
+  (setf *module* mname))
+
+(defun get-current-module ()
+  *module*)
 
 ;;; ---------------------------------------------------------------------
 ;;; initializing standard modules
 ;;; ---------------------------------------------------------------------
 
 (defun init-standard-modules ()
-  (let* ((lang-module (make-module *bard-globals*))
-         (user-module (make-module *bard-globals*)))
-    (setf (gethash 'bard-modules::|bard.lang| *module-registry*) lang-module)
-    (setf (gethash 'bard-modules::|bard.user| *module-registry*) user-module)))
+  (register-module! 'bard-modules::bard.lang)
+  (register-module! 'bard-modules::bard.user))

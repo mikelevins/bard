@@ -21,17 +21,23 @@
 
 (defparameter *bard-globals* nil)
 
-(defclass <globals> ()
-  ((variables :accessor variables
-             :initform (make-array 256 :adjustable t :initial-element (undefined)))))
-
 (defun init-globals ()
-  (setf *bard-globals* (make-instance '<globals>)))
+  (setf *bard-globals* (make-array 256 :fill-pointer 0 :adjustable t :initial-element *undefined*)))
+
+(defun globals-capacity ()
+  (first (array-dimensions *bard-globals*)))
+
+(defun globals-count ()
+  (length *bard-globals*))
+
+(defun add-global! (&optional (val *undefined*))
+  (vector-push-extend val *bard-globals*)
+  (globals-count))
 
 (defmethod get-global ((i integer))
-  (aref (variables *bard-globals*) i))
+  (aref *bard-globals* i))
 
 (defmethod set-global! ((i integer) val)
-  (setf (aref (variables *bard-globals*) i) val)
+  (setf (aref *bard-globals* i) val)
   val)
 
