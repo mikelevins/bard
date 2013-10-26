@@ -179,7 +179,7 @@
                     (accept 'symbol sym)))))
         ;; no colon in token; intern it in the current module
         (let ((sym (intern (token-text token) *package*)))
-          (setf (get sym 'bard::module) (bard::current-module-name))
+          (setf (get sym 'bard::module) (bard::get-current-module))
           (accept 'symbol sym)))))
 
 (in-package :bard)
