@@ -159,12 +159,11 @@
 (defun init-bard-comp ()
   (init-globals)
   (init-standard-modules)
-  (let ((lang-module (find-module 'bard-modules::|bard.lang|)))
-    (set-module-variable! lang-module 'bard::|exit|
-                          (new-mfn :name '|exit| :args '(val) :code '((HALT))))
-    (set-module-variable! lang-module 'bard::|call/cc|
-                          (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-                                                                       (CALLJ 1))))))
+  (add-module-variable! 'bard-modules::|bard.lang| 'bard::|exit| :mutable nil
+                        :value (new-mfn :name '|exit| :args '(val) :code '((HALT))))
+  (add-module-variable! 'bard-modules::|bard.lang| 'bard::|call/cc| :mutable nil
+                        :value (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                                                            (CALLJ 1)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point

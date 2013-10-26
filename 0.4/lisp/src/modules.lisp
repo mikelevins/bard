@@ -51,20 +51,20 @@
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
   (make-instance '<module> :name mname))
 
-(defmethod add-module-variable! ((mname symbol)(vname symbol) &key (val *undefined*)(mutable t))
+(defmethod add-module-variable! ((mname symbol)(vname symbol) &key (value *undefined*)(mutable t))
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
   (let ((module (find-module mname)))
     (if module
         (let ((var (gethash vname (variables module))))
           (assert (not var)() "Variable exists: ~s" vname)
-          (let ((id (add-global! val)))
+          (let ((id (add-global! value)))
             (assert id () "Error defining a module variable: ~s" vname)
             (let ((mvar (make-instance '<mvar>
                                        :name vname
                                        :mutable mutable
                                        :id id)))
-              (set-global! id val)
-              val)))
+              (set-global! id value)
+              value)))
         (error "No such module: ~s" mname))))
 
 (defmethod get-module-variable ((mname symbol)(vname symbol))
@@ -120,5 +120,5 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-standard-modules ()
-  (register-module! 'bard-modules::bard.lang)
-  (register-module! 'bard-modules::bard.user))
+  (register-module! 'bard-modules::|bard.lang|)
+  (register-module! 'bard-modules::|bard.user|))
