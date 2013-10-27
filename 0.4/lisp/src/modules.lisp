@@ -35,6 +35,7 @@
 
 (defclass <mvar> ()
   ((name :reader name :initarg :name)
+   (module-name :reader module-name :initarg :module-name)
    (mutable? :reader mutable? :initarg :mutable)
    (import-from :reader import-from :initform nil :initarg :import-from)
    (id :reader id :initarg :id)))
@@ -61,6 +62,7 @@
             (assert id () "Error defining a module variable: ~s" vname)
             (let ((mvar (make-instance '<mvar>
                                        :name vname
+                                       :module-name mname
                                        :mutable mutable
                                        :id id)))
               (set-global! id value)

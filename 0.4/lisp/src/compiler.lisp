@@ -186,4 +186,4 @@
 
 (defun compiler (x)
   (setf *label-num* 0)
-  (comp-method '() (list x) nil))
+  (comp-method '() (list x) (null-environment)))
