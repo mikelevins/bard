@@ -139,13 +139,11 @@
 ;;; compiler init
 ;;; ---------------------------------------------------------------------
 
+
 (defun init-bard-comp ()
-  (init-standard-modules)
-  (add-module-variable! "exit" "bard.base" :mutable nil
-                        :value (new-mfn :name '|exit| :args '(val) :code '((HALT))))
-  (add-module-variable! "call/cc" "bard.base" :mutable nil
-                        :value (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-                                                                            (CALLJ 1)))))
+  (set-global! '|exit| (new-mfn :name '|exit| :args '(val) :code '((HALT))))
+  (set-global! '|call/cc| (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                                                       (CALLJ 1)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
@@ -157,40 +155,32 @@
     ((member expr `(,*eof* ,*undefined* ,*nothing* ,*false* ,*true*))
      (comp-const expr val? more?))
     ;; variable references
-    ((typep expr '<symbol>) (comp-var expr env val? more?))
+    ((symbolp expr) (comp-var expr env val? more?))
     ;; other self-evaluating values
     ((atom expr) (comp-const expr val? more?))
     ;; macro forms
     ((bard-macro? (first expr)) (comp (bard-macroexpand expr) env val? more?))
     ;; procedure applications
     (t (let* ((op (first expr)))
-         (if (typep op '<symbol>)
-             (let ((opname (name op)))
-               (cond ((equal "quote" opname)  
-                      (arg-count expr 1)
-                      (comp-const (second expr) val? more?))
-                     ((equal "begin" opname)
-                      (comp-begin (rest expr) env val? more?))
-                     ((equal "set!" opname)   
-                      (arg-count expr 2)
-                      (assert (typep (second expr) '<symbol>) (expr)
-                              "Only variables can be set!, not ~a in ~a"
-                              (second expr) expr)
-                      (seq (comp (third expr) env t t)
-                           (gen-set (second expr) env)
-                           (if (not val?) (gen 'POP))
-                           (unless more? (gen 'RETURN))))
-                     ((equal "if" opname)
-                      (arg-count expr 3)
-                      (comp-if (second expr) (third expr) (fourth expr)
-                               env val? more?))
-                     ((or (equal "method" opname)
-                          (equal "^" opname)) 
-                      (when val?
-                        (let ((f (comp-method (second expr) (rest2 expr) env)))
-                          (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
-                     (t (comp-funcall (first expr) (rest expr) env val? more?))))
-             (comp-funcall (first expr) (rest expr) env val? more?))))))
+         (case op
+           (|quote|  (arg-count expr 1)
+                     (comp-const (second expr) val? more?))
+           (|begin| (comp-begin (rest expr) env val? more?))
+           (|set!|  (arg-count expr 2)
+                    (assert (symbolp (second expr)) (expr)
+                            "Only variables can be set!, not ~a in ~a"
+                            (second expr) expr)
+                    (seq (comp (third expr) env t t)
+                         (gen-set (second expr) env)
+                         (if (not val?) (gen 'POP))
+                         (unless more? (gen 'RETURN))))
+           (|if| (arg-count expr 3)
+                 (comp-if (second expr) (third expr) (fourth expr)
+                          env val? more?))
+           ((|method| |^|) (when val?
+                             (let ((f (comp-method (second expr) (rest2 expr) env)))
+                               (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
+           (t (comp-funcall (first expr) (rest expr) env val? more?)))))))
 
 (defun compiler (x)
   (setf *label-num* 0)

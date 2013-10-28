@@ -157,7 +157,7 @@
     (if colon
         (if (= colon (- (length txt) 1))
             (let* ((symname (subseq txt 0 (- (length txt) 1)))
-                   (sym (bard::make-bard-keyword symname)))
+                   (sym (intern symname :bard-keywords)))
               (accept 'keyword sym))
             (let ((colon2 (position-if (lambda (ch)(char= ch #\:))
                                        txt :start (1+ colon))))
@@ -176,6 +176,20 @@
           ((equal tx "false") (accept 'symbol (bard::false)))
           (t (let ((sym (bard::bard-intern tx bard::*module*)))
                (accept 'symbol sym))))))))
+
+(defparser parse-symbol-token (token)
+  (let ((tx (token-text token)))
+    (if (char= #\: (elt tx (- (length tx) 1)))
+        (let* ((symname (subseq tx 0 (- (length tx) 1)))
+               (sym (intern symname :keyword)))
+          (accept 'keyword sym))
+        (cond
+          ((equal tx "undefined") (accept 'symbol (bard::undefined)))
+          ((equal tx "nothing") (accept 'symbol (bard::nothing)))
+          ((equal tx "true") (accept 'symbol (bard::true)))
+          ((equal tx "false") (accept 'symbol (bard::false)))
+          (t (let ((sym (intern tx :bard-symbols)))
+               (accept 'symbol sym)))))))
 
 (in-package :bard)
 

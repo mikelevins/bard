@@ -26,7 +26,7 @@
     (setf (bindings env) bindings*)
     env))
 
-(defmethod in-environment? ((s <symbol>)(env environment))
+(defmethod in-environment? ((s symbol)(env environment))
   (let* ((bindings (bindings env))
          (frame (find s bindings :test #'find)))
     (if frame

@@ -12,9 +12,9 @@
 (defpackage #:bard
   (:use #:cl))
 
-(defpackage #:bard-keyword
+(defpackage #:bard-keywords
   (:use #:cl))
 
-(defpackage #:bard-modules
+(defpackage #:bard-symbols
   (:use #:cl))
 
