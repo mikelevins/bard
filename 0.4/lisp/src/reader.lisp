@@ -165,21 +165,18 @@
     (if colon
         (if (= colon (- (length txt) 1))
             (let* ((symname (subseq txt 0 (- (length txt) 1)))
-                   (sym (intern symname (find-package :bard-keyword))))
-              (setf (get sym 'bard::module) 'bard-modules::|bard.keyword|)
-              (accept 'symbol sym))
+                   (sym (bard::make-bard-keyword symname)))
+              (accept 'keyword sym))
             (let ((colon2 (position-if (lambda (ch)(char= ch #\:))
                                        txt :start (1+ colon))))
               (if colon2
                   (reject t "Too many colons in symbol name ~S" txt)
                   (let* ((mname (subseq txt 0 colon))
                          (sname (subseq txt (1+ colon)))
-                         (sym (intern sname *package*)))
-                    (setf (get sym 'bard::module) (intern mname (find-package :bard-modules)))
+                         (sym (bard::bard-intern sname mname)))
                     (accept 'symbol sym)))))
         ;; no colon in token; intern it in the current module
-        (let ((sym (intern (token-text token) *package*)))
-          (setf (get sym 'bard::module) (bard::get-current-module))
+        (let ((sym (bard::bard-intern (token-text token) bard::*module*)))
           (accept 'symbol sym)))))
 
 (in-package :bard)

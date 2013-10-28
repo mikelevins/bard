@@ -17,28 +17,16 @@
 
 (defmethod valid-module-name? (x)(declare (ignore x)) nil)
 
-(defmethod valid-module-name? ((x symbol))
-  (let ((s (symbol-name x)))
-    (and (alpha-char-p (elt s 0))
-         (every (lambda (c) 
-                  (or (char= c #\.)
-                      (alphanumericp c))) 
-                s))))
+(defmethod valid-module-name? ((s string))
+  (and (alpha-char-p (elt s 0))
+       (every (lambda (c) 
+                (or (char= c #\.)
+                    (alphanumericp c))) 
+              s)))
 
 (deftype module-name ()
-  `(and symbol
+  `(and string
         (satisfies valid-module-name?)))
-
-;;; ---------------------------------------------------------------------
-;;; module variables
-;;; ---------------------------------------------------------------------
-
-(defclass <mvar> ()
-  ((name :reader name :initarg :name)
-   (module-name :reader module-name :initarg :module-name)
-   (mutable? :reader mutable? :initarg :mutable)
-   (import-from :reader import-from :initform nil :initarg :import-from)
-   (id :reader id :initarg :id)))
 
 ;;; ---------------------------------------------------------------------
 ;;; modules
@@ -52,66 +40,52 @@
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
   (make-instance '<module> :name mname))
 
-(defmethod add-module-variable! ((mname symbol)(vname symbol) &key (value *undefined*)(mutable t))
+(defmethod bard-intern ((str string)(mname string))
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
-  (let ((module (find-module mname)))
-    (if module
-        (let ((var (gethash vname (variables module))))
-          (assert (not var)() "Variable exists: ~s" vname)
-          (let ((id (add-global! value)))
-            (assert id () "Error defining a module variable: ~s" vname)
-            (let ((mvar (make-instance '<mvar>
-                                       :name vname
-                                       :module-name mname
-                                       :mutable mutable
-                                       :id id)))
-              (set-global! id value)
-              value)))
-        (error "No such module: ~s" mname))))
+  (assert (find-module mname) () "No such module: ~s" mname)
+  (let ((m (find-module mname))
+        (s (make-bard-symbol str)))
+    (setf (gethash (name s) (variables m)) s)
+    (setf (module s) mname)
+    s))
 
-(defmethod get-module-variable ((mname symbol)(vname symbol))
+(defmethod bard-intern ((s <symbol>)(mname string))
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
-  (let ((module (find-module mname)))
-    (if module
-        (let ((var (gethash vname (variables module))))
-          (assert var () "Undefined module variable: ~a:~a" mname vname)
-          (let ((id (id var)))
-            (get-global id)))
-        (error "No such module: ~s" mname))))
+  (let ((m (find-module mname)))
+    (assert m () "No such module: ~s" mname)
+    (setf (gethash (name s)(variables m)) s)
+    (setf (module s) (name m))
+    s))
 
-(defmethod set-module-variable! ((mname symbol)(vname symbol) val)
-  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
-  (let ((module (find-module mname)))
-    (if module
-        (let ((var (gethash vname (variables module))))
-          (assert var () "Undefined module variable: ~a:~a" mname vname)
-          (let ((id (id var)))
-            (set-global! id val)
-            val))
-        (error "No such module: ~s" mname))))
+(defmethod add-module-variable! ((var <symbol>) &key (value *undefined*)(mutable t))
+  )
+
+(defmethod get-module-variable ((var <symbol>))
+  )
+
+(defmethod set-module-variable! ((var <symbol>) val)
+  )
 
 ;;; ---------------------------------------------------------------------
 ;;; module registry and current module
 ;;; ---------------------------------------------------------------------
 
-(defparameter *module* (intern "bard.user" (find-package :bard-modules)))
+(defparameter *module* "bard.user")
 
-(defparameter *module-registry* (make-hash-table))
+(defparameter *module-registry* (make-hash-table :test 'equal))
 
-(defmethod register-module! ((mname symbol))
+(defmethod register-module! ((mname string))
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
   (let ((module (make-module mname)))
     (setf (gethash mname *module-registry*)
           module)))
 
-(defmethod find-module ((mname symbol))
+(defmethod find-module ((mname string))
   (gethash mname *module-registry*))
 
 (defun set-current-module! (mname)
-  (assert (typep mname 'module-name)()
-          "Not a valid module name: ~s" mname)
-  (assert (find-module mname)()
-          "No such module: ~s" mname)
+  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
+  (assert (find-module mname)() "No such module: ~s" mname)
   (setf *module* mname))
 
 (defun get-current-module ()
@@ -122,5 +96,11 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-standard-modules ()
-  (register-module! 'bard-modules::|bard.lang|)
-  (register-module! 'bard-modules::|bard.user|))
+  (register-module! "bard.base")
+  (register-module! "bard.user"))
+
+(defun list-modules ()
+  (let ((result nil))
+    (maphash (lambda (k v) (push k result)) 
+             *module-registry*)
+    (sort result (lambda (x y)(string< x y)))))
