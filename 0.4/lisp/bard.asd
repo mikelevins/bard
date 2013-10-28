@@ -25,7 +25,6 @@
                                      (:file "values-simple")
                                      (:file "values-maps")
                                      (:file "names")
-                                     (:file "globals")
                                      (:file "environments")
                                      (:file "modules")
                                      (:file "primitives")

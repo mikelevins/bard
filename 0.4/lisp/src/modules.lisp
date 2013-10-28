@@ -29,12 +29,26 @@
         (satisfies valid-module-name?)))
 
 ;;; ---------------------------------------------------------------------
+;;; module variables
+;;; ---------------------------------------------------------------------
+
+(defclass <variable> ()
+  ((name :accessor name :initarg :name)
+   (module :accessor module :initarg :module)
+   (value :accessor value :initarg :value :initform *undefined*)
+   (mutable? :accessor mutable? :initarg :mutable :initform nil)
+   (exported? :accessor exported? :initarg :exported :initform nil)
+   (import-name :accessor import-name :initarg :import-name :initform nil)
+   (import-module :accessor import-module :initarg :import-module :initform nil)))
+
+;;; ---------------------------------------------------------------------
 ;;; modules
 ;;; ---------------------------------------------------------------------
 
 (defclass <module> ()
   ((name :reader module-name :initarg :name)
-   (variables :accessor variables :initform (make-hash-table))))
+   (symbols :accessor symbols :initform (make-hash-table :test 'equal))
+   (variables :accessor variables :initform (make-hash-table :test 'equal))))
 
 (defun make-module (mname)
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
@@ -43,28 +57,35 @@
 (defmethod bard-intern ((str string)(mname string))
   (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
   (assert (find-module mname) () "No such module: ~s" mname)
-  (let ((m (find-module mname))
-        (s (make-bard-symbol str)))
-    (setf (gethash (name s) (variables m)) s)
+  (let* ((m (find-module mname))
+         (s (or (gethash str (symbols m))
+                (make-bard-symbol str))))
     (setf (module s) mname)
+    (setf (gethash str (symbols m)) s)
     s))
 
-(defmethod bard-intern ((s <symbol>)(mname string))
-  (assert (typep mname 'module-name)() "Not a valid module name: ~s" mname)
-  (let ((m (find-module mname)))
-    (assert m () "No such module: ~s" mname)
-    (setf (gethash (name s)(variables m)) s)
-    (setf (module s) (name m))
-    s))
+(defmethod add-module-variable! ((varname string)(mname string) &key (value *undefined*)(mutable t))
+  (let* ((s (bard-intern varname mname))
+         (m (find-module mname))
+         (v (make-instance '<variable> :name varname :module mname :value value :mutable mutable)))
+    (setf (gethash varname (variables m)) v)
+    varname))
 
-(defmethod add-module-variable! ((var <symbol>) &key (value *undefined*)(mutable t))
-  )
+(defmethod get-module-variable ((sym <symbol>))
+  (let* ((m (find-module (module sym)))
+         (s (name sym))
+         (v (gethash s (variables m))))
+    (assert v () "Undefined variable ~a:~a" (module sym) s)
+    (value v)))
 
-(defmethod get-module-variable ((var <symbol>))
-  )
-
-(defmethod set-module-variable! ((var <symbol>) val)
-  )
+(defmethod set-module-variable! ((sym <symbol>) val)
+  (let* ((m (find-module (module sym)))
+         (s (name sym))
+         (v (gethash s (variables m))))
+    (assert v () "Undefined variable ~a:~a" (module sym) s)
+    (assert (mutable? v) () "Immutable variable ~a:~a" (module sym) s)
+    (setf (value v) val)
+    val))
 
 ;;; ---------------------------------------------------------------------
 ;;; module registry and current module
