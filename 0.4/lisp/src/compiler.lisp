@@ -140,11 +140,10 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-bard-comp ()
-  (init-globals)
   (init-standard-modules)
-  (add-module-variable! 'bard-modules::|bard.lang| 'bard::|exit| :mutable nil
+  (add-module-variable! "exit" "bard.base" :mutable nil
                         :value (new-mfn :name '|exit| :args '(val) :code '((HALT))))
-  (add-module-variable! 'bard-modules::|bard.lang| 'bard::|call/cc| :mutable nil
+  (add-module-variable! "call/cc" "bard.base" :mutable nil
                         :value (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
                                                                             (CALLJ 1)))))
 
