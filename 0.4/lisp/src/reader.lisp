@@ -141,14 +141,6 @@
 
 (defmethod input->value (x) x)
 
-(defmethod input->value ((x symbol)) 
-  (cond
-    ((eql x '|undefined|) (undefined))
-    ((eql x '|nothing|) (nothing))
-    ((eql x '|true|) (true))
-    ((eql x '|false|) (false))
-    (t x)))
-
 ;;; ---------------------------------------------------------------------
 ;;; bard read
 ;;; ---------------------------------------------------------------------
@@ -176,8 +168,14 @@
                          (sym (bard::bard-intern sname mname)))
                     (accept 'symbol sym)))))
         ;; no colon in token; intern it in the current module
-        (let ((sym (bard::bard-intern (token-text token) bard::*module*)))
-          (accept 'symbol sym)))))
+        (let ((tx (token-text token)))
+          (cond
+          ((equal tx "undefined") (accept 'symbol (bard::undefined)))
+          ((equal tx "nothing") (accept 'symbol (bard::nothing)))
+          ((equal tx "true") (accept 'symbol (bard::true)))
+          ((equal tx "false") (accept 'symbol (bard::false)))
+          (t (let ((sym (bard::bard-intern tx bard::*module*)))
+               (accept 'symbol sym))))))))
 
 (in-package :bard)
 
