@@ -14,7 +14,7 @@
   (bard-read-from-string
    "
 (begin 
- (def bard.base:bard 
+ (set! bard 
      (method () 
              (newline)
              (display \"bard> \")

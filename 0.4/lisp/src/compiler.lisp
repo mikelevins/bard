@@ -163,10 +163,10 @@
     ;; procedure applications
     (t (let* ((op (first expr)))
          (case op
-           (|quote|  (arg-count expr 1)
+           (bard-symbols::|quote|  (arg-count expr 1)
                      (comp-const (second expr) val? more?))
-           (|begin| (comp-begin (rest expr) env val? more?))
-           (|set!|  (arg-count expr 2)
+           (bard-symbols::|begin| (comp-begin (rest expr) env val? more?))
+           (bard-symbols::|set!|  (arg-count expr 2)
                     (assert (symbolp (second expr)) (expr)
                             "Only variables can be set!, not ~a in ~a"
                             (second expr) expr)
@@ -174,10 +174,10 @@
                          (gen-set (second expr) env)
                          (if (not val?) (gen 'POP))
                          (unless more? (gen 'RETURN))))
-           (|if| (arg-count expr 3)
+           (bard-symbols::|if| (arg-count expr 3)
                  (comp-if (second expr) (third expr) (fourth expr)
                           env val? more?))
-           ((|method| |^|) (when val?
+           ((bard-symbols::|method| bard-symbols::|^|) (when val?
                              (let ((f (comp-method (second expr) (rest2 expr) env)))
                                (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
            (t (comp-funcall (first expr) (rest expr) env val? more?)))))))
