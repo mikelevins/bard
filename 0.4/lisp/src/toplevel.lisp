@@ -11,18 +11,22 @@
 (in-package :bard)
 
 (defparameter *bard-top-level*
-  '(|begin| (|def| |bard|
-             (|method| ()
-              (|newline|)
-              (|display| "bard> ")
-              (|write| ((|compiler| (|read|))))
-              (|bard|)))
-    (|bard|)))
+  (bard-read-from-string
+   "
+(begin 
+ (def bard.base:bard 
+     (method () 
+             (newline)
+             (display \"bard> \")
+             (write (compiler (read)))
+             (bard)))
+ (bard))
+"))
 
 (defun bard ()
   (init-bard-comp)
-  (vm (compiler *bard-top-level*)))
+  (vmrun (compiler *bard-top-level*)))
 
 (defun comp-go (exp)
-  (vm (compiler `(exit ,exp))))
+  (vmrun (compiler `(exit ,exp))))
 
