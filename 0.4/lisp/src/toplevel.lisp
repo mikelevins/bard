@@ -29,7 +29,8 @@
     (vmrun vm)))
 
 (defun comp-go (exp)
-  (let ((vm (make-instance '<vm> :mfn (compiler `(exit ,exp)))))
+  (init-bard-comp)
+  (let ((vm (make-instance '<vm> :mfn (compiler `(bard-symbols::|exit| ,exp)))))
     (vmrun vm)))
 
 (defun comp-show (exp)

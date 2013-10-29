@@ -139,10 +139,9 @@
 ;;; compiler init
 ;;; ---------------------------------------------------------------------
 
-
 (defun init-bard-comp ()
-  (set-global! '|exit| (new-mfn :name '|exit| :args '(val) :code '((HALT))))
-  (set-global! '|call/cc| (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+  (set-global! 'bard-symbols::|exit| (new-mfn :name '|exit| :args '(val) :code '((HALT))))
+  (set-global! 'bard-symbols::|call/cc| (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
                                                                        (CALLJ 1)))))
 
 ;;; ---------------------------------------------------------------------

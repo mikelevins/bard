@@ -54,4 +54,39 @@
                :always t
                :side-effects nil))
 
+(defprim 'bard-symbols::|newline| 
+    (make-prim :name 'bard-symbols::|newline|
+               :n-args 0
+               :opcode 'bard::newline
+               :always nil
+               :side-effects t))
+
+(defprim 'bard-symbols::|display| 
+    (make-prim :name 'bard-symbols::|display|
+               :n-args 1
+               :opcode 'bard::display
+               :always nil
+               :side-effects t))
+
+(defprim 'bard-symbols::|write| 
+    (make-prim :name 'bard-symbols::|write|
+               :n-args 1
+               :opcode 'cl:write
+               :always nil
+               :side-effects t))
+
+(defprim 'bard-symbols::|compiler| 
+    (make-prim :name 'bard-symbols::|compiler|
+               :n-args 1
+               :opcode 'bard::compiler
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|read| 
+    (make-prim :name 'bard-symbols::|read|
+               :n-args 0
+               :opcode 'bard::bard-read
+               :always nil
+               :side-effects t))
+
 
