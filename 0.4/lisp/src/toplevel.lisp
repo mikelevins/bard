@@ -25,10 +25,12 @@
 
 (defun bard ()
   (init-bard-comp)
-  (vmrun (compiler *bard-top-level*)))
+  (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+    (vmrun vm)))
 
 (defun comp-go (exp)
-  (vmrun (compiler `(exit ,exp))))
+  (let ((vm (make-instance '<vm> :mfn (compiler `(exit ,exp)))))
+    (vmrun vm)))
 
 (defun comp-show (exp)
   (show  (compiler exp)))
