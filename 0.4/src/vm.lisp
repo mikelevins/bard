@@ -59,9 +59,9 @@
     (case (opcode instr)
       
       ;; Variable/stack manipulation instructions:
-      (LREF   (push (elt (elt env (arg1 instr)) (arg2 instr))
+      (LREF   (push (elt (elt (vm-env vm) (arg1 instr)) (arg2 instr))
                     (vm-stack vm)))
-      (LSET   (setf (elt (elt env (arg1 instr)) (arg2 instr))
+      (LSET   (setf (elt (elt (vm-env vm) (arg1 instr)) (arg2 instr))
                     (vm-stack-top vm)))
       (GREF   (let ((var (arg1 instr)))
                 (push (get-global var)
@@ -162,4 +162,4 @@
      (if (< (vm-pc vm)
             (length (vm-code vm)))
          (vmstep vm)
-         (vm-stack-top vm))))
+         (return (vm-stack-top vm)))))
