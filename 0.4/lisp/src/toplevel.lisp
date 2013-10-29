@@ -30,3 +30,6 @@
 (defun comp-go (exp)
   (vmrun (compiler `(exit ,exp))))
 
+(defun comp-show (exp)
+  (show  (compiler exp)))
+

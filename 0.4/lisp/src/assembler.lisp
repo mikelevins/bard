@@ -45,4 +45,20 @@
         (incf addr)))
     code-vector))
 
+;;; ---------------------------------------------------------------------
+;;; code-vector utils
+;;; ---------------------------------------------------------------------
 
+(defmethod show ((code vector) &optional (stream *standard-output*))
+  (let ((len (length code)))
+    (format stream "  code:~%")
+    (dotimes (i len)
+      (let ((instr (elt code i)))
+        (format stream "    ~a~%" instr)))))
+
+(defmethod show ((code cons) &optional (stream *standard-output*))
+  (let ((len (length code)))
+    (format stream "  code:~%")
+    (dotimes (i len)
+      (let ((instr (elt code i)))
+        (format stream "    ~a~%" instr)))))

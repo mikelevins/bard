@@ -100,7 +100,7 @@
                    (push (pop (vm-stack vm)) (elt (first (vm-env vm)) (arg1 instr))))
               (loop for i from (- (arg1 instr) 1) downto 0 do
                    (setf (elt (first (vm-env vm)) i) (pop (vm-stack vm)))))
-      (MFN     (push (make-mfn :code (mfn-code (arg1 instr))
+      (MFN     (push (new-mfn :code (mfn-code (arg1 instr))
                                :env (vm-env vm)) (vm-stack vm)))
       (PRIM   (push (apply (arg1 instr)
                            (loop with args = nil repeat (vm-n-args vm)
@@ -110,7 +110,7 @@
       
       ;; Continuation instructions:
       (SET-CC (setf (vm-stack vm) (vm-stack-top vm)))
-      (CC     (push (make-mfn
+      (CC     (push (new-mfn
                      :env (list (vector (vm-stack vm)))
                      :code '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
                              (LREF 0 0) (RETURN)))
