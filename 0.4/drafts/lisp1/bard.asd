@@ -21,7 +21,22 @@
                (:module "src"
                         :serial t
                         :components ((:file "package")
-                                     (:file "bard")))))
+                                     (:file "utils")
+                                     (:file "values-simple")
+                                     (:file "values-maps")
+                                     (:file "globals")
+                                     (:file "environments")
+                                     (:file "primitives")
+                                     (:file "macros")
+                                     (:file "reader")
+                                     (:file "quasiquote")
+                                     (:file "optimizers")
+                                     (:file "assembler")
+                                     (:file "instructions")
+                                     (:file "methods")
+                                     (:file "compiler")
+                                     (:file "vm")
+                                     (:file "toplevel")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
 
