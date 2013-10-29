@@ -14,36 +14,28 @@
 ;;; assembler
 ;;; ---------------------------------------------------------------------
 
-(defun assemble (fn)
-  "Turn a list of instructions into a vector."
-  (if (vectorp (mfn-code fn))
-      fn
-      (multiple-value-bind (length labels)
-          (asm-first-pass (mfn-code fn))
-        (setf (mfn-code fn)
-              (asm-second-pass (mfn-code fn)
-                               length labels))
-        fn)))
+(defun assemble (instructions)
+  (multiple-value-bind (length labels)
+      (asm-first-pass instructions)
+    (asm-second-pass instructions length labels)))
 
 (defun asm-first-pass (code)
-  "Return the labels and the total code length."
   (let ((length 0)
         (labels nil))
     (dolist (instr code)
-      (if (label-p instr)
+      (if (label? instr)
           (push (cons instr length) labels)
           (incf length)))
     (values length labels)))
 
 (defun asm-second-pass (code length labels)
-  "Put code into code-vector, adjusting for labels."
   (let ((addr 0)
         (code-vector (make-array length)))
     (dolist (instr code)
-      (unless (label-p instr)
-        (if (is instr '(JUMP TJUMP FJUMP SAVE))
-            (set-arg1 instr
-                      (cdr (assoc (arg1 instr) labels))))
+      (unless (label? instr)
+        (if (is instr '(GO TGO FGO SAVE))
+            (setf (cdr instr)
+                  (list (cdr (assoc (arg1 instr) labels)))))
         (setf (aref code-vector addr) instr)
         (incf addr)))
     code-vector))

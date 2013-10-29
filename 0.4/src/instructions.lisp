@@ -21,9 +21,9 @@
       "Wrong number of arguments for ~a in ~a: ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
 
-(defun label-p (x) "Is x a label?" (atom x))
+(defun label? (x) "Is x a label?" (atom x))
 
-(defun opcode (instr) (if (label-p instr) :label (first instr)))
+(defun opcode (instr) (if (label? instr) :label (first instr)))
 (defun args (instr) (if (listp instr) (rest instr)))
 
 (defun arg1 (instr) (if (listp instr) (second instr)))

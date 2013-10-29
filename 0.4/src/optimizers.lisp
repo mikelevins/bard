@@ -46,7 +46,7 @@
 
 (defun gen1 (&rest args) "Generate a single instruction" args)
 (defun target (instr code) (second (member (arg1 instr) code)))
-(defun next-instr (code) (find-if (complement #'label-p) code))
+(defun next-instr (code) (find-if (complement #'label?) code))
 
 (defmacro def-optimizer (opcodes args &body body)
   "Define assembly language optimizers for these opcodes."
@@ -68,7 +68,7 @@
 (def-optimizer (JUMP CALL CALLJ RETURN) (instr code all-code)
   (declare (ignore all-code))
   ;; (JUMP L1) ...dead code... L2 ==> (JUMP L1) L2
-  (setf (rest code) (member-if #'label-p (rest code)))
+  (setf (rest code) (member-if #'label? (rest code)))
   ;; (JUMP L1) ... L1 (JUMP L2) ==> (JUMP L2)  ... L1 (JUMP L2)
   (when (and (is instr 'JUMP)
              (is (target instr code) '(JUMP RETURN))

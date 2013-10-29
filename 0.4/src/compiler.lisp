@@ -92,15 +92,16 @@
 (defun comp-method (args body env)
   (let* ((params (make-true-list args))
          (call-env (cons params env)))
-    (new-mfn :env env :args args
-             :code (seq (gen-args args 0)
-                        (comp-begin body call-env t nil)))))
+    (make-instance '<mfn> :env env :args args
+                   :code (assemble
+                          (seq (gen-args args 0)
+                               (comp-begin body call-env t nil))))))
 
 (defun comp-funcall (f args env val? more?)
   (let ((prim (primitive? f env (length args))))
     (cond
       (prim  ; function compilable to a primitive instruction
-       (if (and (not val?) (not (prim-side-effects prim)))
+       (if (and (not val?) (not (prim-side-effects? prim)))
            ;; Side-effect free primitive when value unused
            (comp-begin args env nil more?)
            ;; Primitive with value or call needed
@@ -140,9 +141,9 @@
 ;;; ---------------------------------------------------------------------
 
 (defun init-bard-comp ()
-  (set-global! 'bard-symbols::|exit| (new-mfn :name '|exit| :args '(val) :code '((HALT))))
-  (set-global! 'bard-symbols::|call/cc| (new-mfn :name '|call/cc| :args '(f) :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-                                                                       (CALLJ 1)))))
+  (set-global! 'bard-symbols::|exit| (make-instance '<mfn> :name '|exit| :args '(val) :code (assemble '((HALT)))))
+  (set-global! 'bard-symbols::|call/cc| (make-instance '<mfn> :name '|call/cc| :args '(f) :code (assemble '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                                                                                            (CALLJ 1))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point

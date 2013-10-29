@@ -23,10 +23,6 @@
 (defmethod print-object ((mfn <mfn>) (s stream))
   (show mfn s))
 
-(defun new-mfn (&key code env name args)
-  (assemble (make-instance '<mfn> :env env :name name :args args
-                           :code (optimize code))))
-
 (defmethod show ((mfn <mfn>) &optional (stream *standard-output*))
   (let ((mname (mfn-name mfn))
         (code (mfn-code mfn)))

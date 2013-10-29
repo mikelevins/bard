@@ -182,34 +182,6 @@
 ;;; modify the symbol parser from lib/reader.lisp to properly handle
 ;;; Bard symbols
 (defparser parse-symbol-token (token)
-  (let ((txt (token-text token))
-        (colon (position-if
-                (lambda (traits) (traitp +ct-package-marker+ traits))
-                (token-traits token))))
-    (if colon
-        (if (= colon (- (length txt) 1))
-            (let* ((symname (subseq txt 0 (- (length txt) 1)))
-                   (sym (intern symname :bard-keywords)))
-              (accept 'keyword sym))
-            (let ((colon2 (position-if (lambda (ch)(char= ch #\:))
-                                       txt :start (1+ colon))))
-              (if colon2
-                  (reject t "Too many colons in symbol name ~S" txt)
-                  (let* ((mname (subseq txt 0 colon))
-                         (sname (subseq txt (1+ colon)))
-                         (sym (bard::bard-intern sname mname)))
-                    (accept 'symbol sym)))))
-        ;; no colon in token; intern it in the current module
-        (let ((tx (token-text token)))
-          (cond
-          ((equal tx "undefined") (accept 'symbol (bard::undefined)))
-          ((equal tx "nothing") (accept 'symbol (bard::nothing)))
-          ((equal tx "true") (accept 'symbol (bard::true)))
-          ((equal tx "false") (accept 'symbol (bard::false)))
-          (t (let ((sym (bard::bard-intern tx bard::*module*)))
-               (accept 'symbol sym))))))))
-
-(defparser parse-symbol-token (token)
   (let ((tx (token-text token)))
     (if (char= #\: (elt tx (- (length tx) 1)))
         (let* ((symname (subseq tx 0 (- (length tx) 1)))

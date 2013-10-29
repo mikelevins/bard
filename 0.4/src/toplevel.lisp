@@ -25,11 +25,8 @@
 
 (defun bard ()
   (init-bard-comp)
-  (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
-                  (vmrun vm))
-    (serious-condition (err)
-      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
-      (ccl::quit))))
+  (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+    (vmrun vm)))
 
 (defun comp-go (exp)
   (init-bard-comp)
@@ -41,7 +38,9 @@
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
-  (bard))
-
-(defun build-bard (path)
-  (ccl::save-application path :toplevel-function 'bard-toplevel :prepend-kernel t))
+  (init-bard-comp)
+  (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+                  (vmrun vm))
+    (serious-condition (err)
+      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
+      (ccl::quit))))
