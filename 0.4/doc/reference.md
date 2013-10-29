@@ -1,10 +1,15 @@
 # Bard Reference
 
-Version 0.4.0a2
+Version 0.4.0a3
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a3
+
+* Fixed the implementation of `def`
+* added the `pair` function
 
 Version 0.4.0a2
 
@@ -80,6 +85,12 @@ Bard 0.4.0a defines several other types of values, but it's not yet convenient t
 
 `set!` assigns the value of *val* to the global variable named *var*, creating the variable if necessary.
 
+## 4. Macros
+
+**`def`** *var* *val* => *val*
+
+`def` creates a global variable named *var* and assigns the value of *exor* to it.
+
 ## 4. Primitive methods
 
 **`+`** *expr1* *expr2* => `Number`
@@ -98,25 +109,29 @@ Returns the difference of *expr1* and *expr2*. Both arguments must be numbers.
 
 Returns the quotient of *expr1* and *expr2*. Both arguments must be numbers.
 
-**`newline`** => 
+**`compiler`** *expr* => `<anything>`
 
-Prints a newline to standard output.
+Returns the code produced by compiling *expr*, which must be valid Bard code.
 
 **`display`** *expr* => `<anything>`
 
 Prints a human-readable serialization of *expr* to standard output.
 
-**`write`** *expr* => `<anything>`
+**`newline`** => 
 
-Prints a machine-readable serialization of *expr* to standard output.
+Prints a newline to standard output.
 
-**`compiler`** *expr* => `<anything>`
+**`pair`** *expr1* *expr2* => `Pair`
 
-Returns the code produced by compiling *expr*, which must be valid Bard code.
+Returns a pair whose left element is *expr1* and whose right element is *expr2*.
 
 **`read`** => `<anything>`
 
 Returns the next Bard value read from standard input.
+
+**`write`** *expr* => `<anything>`
+
+Prints a machine-readable serialization of *expr* to standard output.
 
 ## 5. Built-in methods
 
