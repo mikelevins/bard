@@ -155,6 +155,7 @@
     ((member expr `(,*eof* ,*undefined* ,*nothing* ,*false* ,*true*))
      (comp-const expr val? more?))
     ;; variable references
+    ((keywordp expr) (comp-const expr val? more?))
     ((symbolp expr) (comp-var expr env val? more?))
     ;; other self-evaluating values
     ((atom expr) (comp-const expr val? more?))

@@ -12,9 +12,6 @@
 (defpackage #:bard
   (:use #:cl))
 
-(defpackage #:bard-keywords
-  (:use #:cl))
-
 (defpackage #:bard-symbols
   (:use #:cl))
 

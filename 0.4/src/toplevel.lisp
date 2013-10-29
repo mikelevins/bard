@@ -44,3 +44,9 @@
     (serious-condition (err)
       (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
       (ccl::quit))))
+
+(defun build-bard (path)
+  (let* ((out-dir (format nil "~a/bard-~a/" path *bard-version-number*))
+         (out-path (merge-pathnames "bard" out-dir)))
+    (ensure-directories-exist out-dir)
+    (ccl::save-application out-path :toplevel-function 'bard-toplevel :prepend-kernel t)))

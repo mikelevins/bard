@@ -1,10 +1,16 @@
 # Bard Reference
 
-Version 0.4.0a
+Version 0.4.0a2
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a2
+
+* Fixed a bug that prevented correct self-evaluation of keywords
+
+Version 0.4.0a1
 
 * Fixed a bug in the assembler that cause it to generate bogus jump targets for labels (fixes the bug in compiling `if`)
 * Documented the built-in methods `exit` and `call/cc`

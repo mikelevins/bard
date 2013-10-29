@@ -41,9 +41,4 @@
 
 ;;; (asdf:oos 'asdf:load-op :bard)
 
-
-(defun build-bard (path)
-  (asdf:oos 'asdf:load-op :bard)
-  (ccl::save-application path :toplevel-function 'bard-toplevel :prepend-kernel t))
-
-;;; (build-bard (format nil "/Users/mikel/Desktop/bard-" bard::*bard-version-number*))
+;;; (bard::build-bard (format nil "/Users/mikel/Desktop/"))

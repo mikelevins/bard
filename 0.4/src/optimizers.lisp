@@ -65,11 +65,11 @@
           (rest code) (rest2 code))
     t))
 
-(def-optimizer (JUMP CALL CALLJ RETURN) (instr code all-code)
+(def-optimizer (GO CALL CALLJ RETURN) (instr code all-code)
   (declare (ignore all-code))
-  ;; (JUMP L1) ...dead code... L2 ==> (JUMP L1) L2
+  ;; (GO L1) ...dead code... L2 ==> (GO L1) L2
   (setf (rest code) (member-if #'label? (rest code)))
-  ;; (JUMP L1) ... L1 (JUMP L2) ==> (JUMP L2)  ... L1 (JUMP L2)
+  ;; (GO L1) ... L1 (JUMP L2) ==> (GO L2)  ... L1 (GO L2)
   (when (and (is instr 'JUMP)
              (is (target instr code) '(JUMP RETURN))
     (setf (first code) (copy-list (target instr code)))
