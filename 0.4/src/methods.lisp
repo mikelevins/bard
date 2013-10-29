@@ -21,10 +21,7 @@
    (args :accessor mfn-args :initform nil :initarg :args)))
 
 (defmethod print-object ((mfn <mfn>) (s stream))
-  (let ((mname (mfn-name mfn)))
-    (if mname
-        (format s "#<method>{name: ~a}" mname)
-        (format s "#<method>"))))
+  (show mfn s))
 
 (defun new-mfn (&key code env name args)
   (assemble (make-instance '<mfn> :env env :name name :args args

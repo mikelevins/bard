@@ -18,7 +18,7 @@
      (method () 
              (newline)
              (display \"bard> \")
-             (write (compiler (read)))
+             (write ((compiler (read))))
              (bard)))
  (bard))
 "))
