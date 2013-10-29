@@ -17,7 +17,7 @@
 (reader:set-macro-character #\` 
   #'(lambda (s ignore)
       (declare (ignore ignore))
-      (list '|quasiquote| (bard-read s))) 
+      (list 'bard-symbols::|quasiquote| (bard-read s))) 
   nil *bard-readtable*)
 
 (reader:set-macro-character #\, 
@@ -25,9 +25,9 @@
        (declare (ignore ignore))
        (let ((ch (read-char stream)))
          (if (char= ch #\@)
-             (list '|unquote-splicing| (reader:read stream))
+             (list 'bard-symbols::|unquote-splicing| (reader:read stream))
              (progn (unread-char ch stream)
-                    (list '|unquote| (reader:read stream))))))
+                    (list 'bard-symbols::|unquote| (reader:read stream))))))
    nil *bard-readtable*)
 
 ;;; ---------------------------------------------------------------------
@@ -38,27 +38,27 @@
   (cond ((and (constantp left) (constantp right))
          (if (and (eql (eval left) (first x))
                   (eql (eval right) (rest x)))
-             (list '|quote| x)
-             (list '|quote| (cons (eval left) (eval right)))))
-        ((null right) (list '|list| left))
-        ((starts-with? right '|list|)
-         (list* '|list| left (rest right)))
-        (t (list '|pair| left right))))
+             (list 'bard-symbols::|quote| x)
+             (list 'bard-symbols::|quote| (cons (eval left) (eval right)))))
+        ((null right) (list 'bard-symbols::|list| left))
+        ((starts-with? right 'bard-symbols::|list|)
+         (list* 'bard-symbols::|list| left (rest right)))
+        (t (list 'bard-symbols::|pair| left right))))
 
 (defun quasi-q (x)
   (cond
     ((atom x)
-     (if (constantp x) x (list '|quote| x)))
-    ((starts-with? x '|unquote|)      
+     (if (constantp x) x (list 'bard-symbols::|quote| x)))
+    ((starts-with? x 'bard-symbols::|unquote|)      
      (assert (and (rest x) (null (rest2 x))))
      (second x))
-    ((starts-with? x '|quasiquote|)
+    ((starts-with? x 'bard-symbols::|quasiquote|)
      (assert (and (rest x) (null (rest2 x))))
      (quasi-q (quasi-q (second x))))
-    ((starts-with? (first x) '|unquote-splicing|)
+    ((starts-with? (first x) 'bard-symbols::|unquote-splicing|)
      (if (null (rest x))
          (second (first x))
-         (list '|append| (second (first x)) (quasi-q (rest x)))))
+         (list 'bard-symbols::|append| (second (first x)) (quasi-q (rest x)))))
     (t (combine-quasiquote (quasi-q (car x))
                            (quasi-q (cdr x))
                            x))))
@@ -67,7 +67,7 @@
 ;;; define the quasiquote macro
 ;;; ---------------------------------------------------------------------
 
-(setf (gethash '|quasiquote| *bard-macroexpanders*)
+(setf (gethash 'bard-symbols::|quasiquote| *bard-macroexpanders*)
       #'quasi-q)
 
 

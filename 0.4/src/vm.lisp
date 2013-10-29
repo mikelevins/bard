@@ -136,7 +136,7 @@
        (push (funcall (opcode instr)) (vm-stack vm)))
       
       ;; Unary operations:
-      ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM PRIMFIB) 
+      ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM) 
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; Binary operations:

@@ -110,8 +110,8 @@
                :always nil
                :side-effects t))
 
-(defprim 'bard-symbols::|cons|
-    (make-prim :name 'bard-symbols::|cons|
+(defprim 'bard-symbols::|pair|
+    (make-prim :name 'bard-symbols::|pair|
                :n-args 2
                :opcode 'cl:cons
                :always t

@@ -37,8 +37,5 @@
 ;;; built-in macros
 ;;; ---------------------------------------------------------------------
 
-(def-bard-macro |def| (name val-form)
-  `(|set!| ,name ,val-form))
-
-(def-bard-macro |quasiquote| (x)
-  `(quasi-q ,x))
+(def-bard-macro bard-symbols::|def| (name val-form)
+  `(bard-symbols::|set!| ,name ,val-form))
