@@ -54,6 +54,27 @@
                :always t
                :side-effects nil))
 
+(defprim 'bard-symbols::*
+    (make-prim :name 'bard-symbols::*
+               :n-args 2
+               :opcode 'cl:*
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::-
+    (make-prim :name 'bard-symbols::-
+               :n-args 2
+               :opcode 'cl:-
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::/
+    (make-prim :name 'bard-symbols::/
+               :n-args 2
+               :opcode 'cl:/
+               :always t
+               :side-effects nil))
+
 (defprim 'bard-symbols::|newline| 
     (make-prim :name 'bard-symbols::|newline|
                :n-args 0
@@ -88,5 +109,14 @@
                :opcode 'bard::bard-read
                :always nil
                :side-effects t))
+
+(defprim 'bard-symbols::|cons|
+    (make-prim :name 'bard-symbols::|cons|
+               :n-args 2
+               :opcode 'cl:cons
+               :always t
+               :side-effects nil))
+
+
 
 

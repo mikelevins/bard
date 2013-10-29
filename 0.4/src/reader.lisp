@@ -15,8 +15,10 @@
 ;;; bard readtable
 ;;; ---------------------------------------------------------------------
 
+(defparameter *default-readtable* (reader:copy-readtable))
+
 (defparameter *bard-readtable*
-  (let ((tbl (reader:copy-readtable)))
+  (let ((tbl (reader:copy-readtable *default-readtable*)))
     (setf (reader:readtable-case tbl) :preserve)
     tbl))
 
@@ -79,6 +81,22 @@
                                   (t (error "Invalid character syntax: ~S" char-sym)))))
                             nil *bard-readtable*)
 
+(defun construct-list (elts)
+  (if (null elts)
+      nil
+      `(bard-symbols::|cons| ,(car elts) ,(construct-list (cdr elts)))))
+
+(defun read-app-form (stream char)
+  (declare (ignore char))
+  (let ((elements '()))
+    (block reading
+      (loop
+         (let ((next-elt (bard-read stream)))
+           (cond
+             ((eof? next-elt)(error "Unexpected end of input while reading a list"))
+             ((end-of-list? next-elt) (return-from reading (reverse elements)))
+             (t (progn (setf elements (cons next-elt elements))))))))))
+
 (defun read-list-form (stream char)
   (declare (ignore char))
   (let ((elements '()))
@@ -86,8 +104,9 @@
       (loop
          (let ((next-elt (bard-read stream)))
            (cond
-             ((eof? next-elt)(error "Unexpected end of input while reading a map"))
-             ((end-of-list? next-elt) (return-from reading (reverse elements)))
+             ((eof? next-elt)(error "Unexpected end of input while reading a list"))
+             ((end-of-list? next-elt) (let ((elts (reverse elements)))
+                                        (return-from reading (construct-list elts))))
              (t (progn (setf elements (cons next-elt elements))))))))))
 
 (reader:set-macro-character #\[
@@ -102,13 +121,26 @@
 
 
 (reader:set-macro-character #\(
-                            #'read-list-form
+                            #'read-app-form
                             nil *bard-readtable*)
 
 (reader:set-macro-character #\)
                             (lambda (stream char)
                               (declare (ignore stream char))
                               $end-of-list)
+                            nil *bard-readtable*)
+
+;;; quote reader
+(defparameter *quote-reader* (reader:get-macro-character #\' *default-readtable*))
+
+(reader:set-macro-character #\'
+                            (lambda (stream char)
+                              (let ((input (funcall *quote-reader* stream char)))
+                                (if (and (listp input)
+                                         (eql  'cl:quote
+                                               (first input)))
+                                    (list 'bard-symbols::|quote| (second input))
+                                    input)))
                             nil *bard-readtable*)
 
 (defun read-map-form (stream char)

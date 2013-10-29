@@ -21,6 +21,7 @@
                (:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "version")
                                      (:file "utils")
                                      (:file "values-simple")
                                      (:file "values-maps")

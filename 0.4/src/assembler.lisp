@@ -42,8 +42,8 @@
     (dolist (instr code)
       (unless (label-p instr)
         (if (is instr '(JUMP TJUMP FJUMP SAVE))
-            (setf (arg1 instr)
-                  (cdr (assoc (arg1 instr) labels))))
+            (set-arg1 instr
+                      (cdr (assoc (arg1 instr) labels))))
         (setf (aref code-vector addr) instr)
         (incf addr)))
     code-vector))
