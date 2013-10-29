@@ -35,7 +35,7 @@
   (declare (ignore x env argcount))
   nil)
 
-(defmethod primitive? ((x symbol) (env <environment>) (argcount integer))
+(defmethod primitive? ((x symbol) env (argcount integer))
   (and (not (in-environment? x env))
        (let ((p (gethash x *primitives*)))
          (and (typep p '<primitive>)

@@ -91,7 +91,7 @@
 
 (defun comp-method (args body env)
   (let* ((params (make-true-list args))
-         (call-env (extend-environment params (times (length params) (undefined)) env)))
+         (call-env (cons params env)))
     (new-mfn :env env :args args
              :code (seq (gen-args args 0)
                         (comp-begin body call-env t nil)))))
