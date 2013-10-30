@@ -11,6 +11,9 @@
 
 (in-package :bard)
 
+;;; ---------------------------------------------------------------------
+;;; primitive definitions
+;;; ---------------------------------------------------------------------
 
 (defprim 'bard-symbols::|compiler| 1
     (make-prim :name 'bard-symbols::|compiler|

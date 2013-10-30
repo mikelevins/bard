@@ -84,7 +84,7 @@
 (defun construct-list (elts)
   (if (null elts)
       nil
-      `(bard-symbols::|pair| ,(car elts) ,(construct-list (cdr elts)))))
+      `(bard-symbols::|cons| ,(car elts) ,(construct-list (cdr elts)))))
 
 (defun read-app-form (stream char)
   (declare (ignore char))

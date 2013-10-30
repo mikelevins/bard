@@ -43,7 +43,7 @@
         ((null right) (list 'bard-symbols::|list| left))
         ((starts-with? right 'bard-symbols::|list|)
          (list* 'bard-symbols::|list| left (rest right)))
-        (t (list 'bard-symbols::|pair| left right))))
+        (t (list 'bard-symbols::|cons| left right))))
 
 (defun quasi-q (x)
   (cond

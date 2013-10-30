@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          primitives-pairs.lisp
+;;;; Name:          primitives-cons.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       primitives for working with pairs and lists
+;;;; Purpose:       primitives for working with cons cells
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
@@ -11,26 +11,73 @@
 
 (in-package :bard)
 
-(defprim 'bard-symbols::|pair| 2
-    (make-prim :name 'bard-symbols::|pair|
+;;; ---------------------------------------------------------------------
+;;; cons constructors
+;;; ---------------------------------------------------------------------
+
+(defun list0 () nil)
+(defun list1 (a) (list a))
+(defun list2 (a b) (list a b))
+(defun list3 (a b c) (list a b c))
+(defun list4 (a b c d) (list a b c d))
+(defun list5 (a b c d e) (list a b c d e))
+(defun list6 (a b c d e f) (list a b c d e f))
+(defun list7 (a b c d e f g) (list a b c d e f g))
+(defun list8 (a b c d e f g h) (list a b c d e f g h))
+(defun list9 (a b c d e f g h i) (list a b c d e f g h i))
+(defun list10 (a b c d e f g h i j) (list a b c d e f g h i j))
+
+;;; ---------------------------------------------------------------------
+;;; cons accessors
+;;; ---------------------------------------------------------------------
+
+(defun cons.left (x) (car x))
+(defun cons.right (x) (cdr x))
+
+;;; ---------------------------------------------------------------------
+;;; cons converters
+;;; ---------------------------------------------------------------------
+
+(defmethod as-cons ((x null)) x)
+(defmethod as-cons ((x cons)) x)
+(defmethod as-cons ((x string)) (coerce x 'list))
+
+;;; ---------------------------------------------------------------------
+;;; primitive definitions
+;;; ---------------------------------------------------------------------
+
+(defprim 'bard-symbols::|cons| 2
+    (make-prim :name 'bard-symbols::|cons|
                :n-args 2
                :opcode 'cl:cons
                :always t
                :side-effects nil))
 
-(defprim 'bard-symbols::|pair.left| 1
-    (make-prim :name 'bard-symbols::|pair.left|
+(defprim 'bard-symbols::|cons.left| 1
+    (make-prim :name 'bard-symbols::|cons.left|
                :n-args 1
-               :opcode 'bard::pair.left
+               :opcode 'bard::cons.left
                :always t
                :side-effects nil))
 
-(defprim 'bard-symbols::|pair.right| 1
-    (make-prim :name 'bard-symbols::|pair.right|
+(defprim 'bard-symbols::|cons.right| 1
+    (make-prim :name 'bard-symbols::|cons.right|
                :n-args 1
-               :opcode 'bard::pair.right
+               :opcode 'bard::cons.right
                :always t
                :side-effects nil))
+
+(defprim 'bard-symbols::|as-cons| 1
+    (make-prim :name 'bard-symbols::|as-cons|
+               :n-args 1
+               :opcode 'bard::as-cons
+               :always t
+               :side-effects nil))
+
+
+;;; ---------------------------------------------------------------------
+;;; temporary list primitive
+;;; ---------------------------------------------------------------------
 
 (defprim 'bard-symbols::|list| 0
     (make-prim :name 'bard-symbols::|list|

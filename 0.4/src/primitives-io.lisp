@@ -11,6 +11,19 @@
 
 (in-package :bard)
 
+;;; ---------------------------------------------------------------------
+;;; I/O ops
+;;; ---------------------------------------------------------------------
+
+
+(defun display (x) (princ x))
+(defun bard-write (x) (princ (value->literal-string x)))
+(defun newline () (terpri))
+
+;;; ---------------------------------------------------------------------
+;;; primitive definitions
+;;; ---------------------------------------------------------------------
+
 (defprim 'bard-symbols::|display| 1
     (make-prim :name 'bard-symbols::|display|
                :n-args 1

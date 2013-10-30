@@ -12,10 +12,6 @@
 
 (defparameter *primitives* (make-hash-table))
 
-(defun defprim (name prim)
-  (setf (gethash name *primitives*) prim)
-  name)
-
 (defun defprim (name argcount prim)
   (let ((prim-array (or (gethash name *primitives* nil)
                         (make-array 16 :initial-element nil))))

@@ -58,74 +58,6 @@
   (first (vm-stack vm)))
 
 ;;; ---------------------------------------------------------------------
-;;; vm primitives
-;;; ---------------------------------------------------------------------
-
-;;; equivalence predicates
-(defun identical? (x y)
-  (if (eq x y)
-      *true*
-      *false*))
-
-(defun equal? (x y)
-  (if (equal x y)
-      *true*
-      *false*))
-
-;;; boolean ops
-
-(defmethod bard-not (x) (declare (ignore x)) *false*)
-(defmethod bard-not ((x null)) *true*)
-(defmethod bard-not ((x <false>)) *true*)
-(defmethod bard-not ((x <undefined>)) *true*)
-
-;;; arithmetic ops
-
-(defun bard< (x y)
-  (if (< x y)
-      *true*
-      *false*))
-
-(defun bard> (x y)
-  (if (> x y)
-      *true*
-      *false*))
-
-(defun bard<= (x y)
-  (if (<= x y)
-      *true*
-      *false*))
-
-(defun bard>= (x y)
-  (if (>= x y)
-      *true*
-      *false*))
-
-
-;;; pair and list constructors
-
-(defun list0 () nil)
-(defun list1 (a) (list a))
-(defun list2 (a b) (list a b))
-(defun list3 (a b c) (list a b c))
-(defun list4 (a b c d) (list a b c d))
-(defun list5 (a b c d e) (list a b c d e))
-(defun list6 (a b c d e f) (list a b c d e f))
-(defun list7 (a b c d e f g) (list a b c d e f g))
-(defun list8 (a b c d e f g h) (list a b c d e f g h))
-(defun list9 (a b c d e f g h i) (list a b c d e f g h i))
-(defun list10 (a b c d e f g h i j) (list a b c d e f g h i j))
-
-(defun pair.left (x) (car x))
-(defun pair.right (x) (cdr x))
-
-;;; I/O
-
-(defun display (x) (princ x))
-(defun bard-write (x) (princ (value->literal-string x)))
-(defun newline () (terpri))
-
-;;; ---------------------------------------------------------------------
 ;;; executing the vm
 ;;; ---------------------------------------------------------------------
 
@@ -216,21 +148,22 @@
        (push (funcall (opcode instr)) (vm-stack vm)))
       
       ;; Unary operations:
-      ((PAIR.LEFT PAIR.RIGHT CADR BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE RANDOM) 
+      ((CONS.LEFT CONS.RIGHT BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD AS-CONS
+                  STRING.FIRST STRING.REST STRING.LAST) 
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; Binary operations:
-      ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? )
+      ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? STRING.APPEND)
        (setf (vm-stack vm)
              (cons (funcall (opcode instr) (second (vm-stack vm))
                             (first (vm-stack vm)))
                    (drop 2 (vm-stack vm)))))
       
       ;; Ternary operations:
-      (LIST3 (setf (vm-stack vm)
-                   (cons (funcall (opcode instr) (third (vm-stack vm))
-                                  (second (vm-stack vm)) (first (vm-stack vm)))
-                         (drop 3 (vm-stack vm)))))
+      ((LIST3 STRING.SLICE)
+       (setf (vm-stack vm) (cons (funcall (opcode instr) (third (vm-stack vm))
+                                          (second (vm-stack vm)) (first (vm-stack vm)))
+                                 (drop 3 (vm-stack vm)))))
       
       ;; More list constructors:
       (LIST4 (setf (vm-stack vm) (cons (funcall (opcode instr) 

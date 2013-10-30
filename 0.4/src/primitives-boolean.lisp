@@ -11,6 +11,18 @@
 
 (in-package :bard)
 
+;;; ---------------------------------------------------------------------
+;;; boolean ops
+;;; ---------------------------------------------------------------------
+
+(defmethod bard-not (x) (declare (ignore x)) *false*)
+(defmethod bard-not ((x null)) *true*)
+(defmethod bard-not ((x <false>)) *true*)
+(defmethod bard-not ((x <undefined>)) *true*)
+
+;;; ---------------------------------------------------------------------
+;;; primitive definitions
+;;; ---------------------------------------------------------------------
 
 (defprim 'bard-symbols::|not| 1
     (make-prim :name 'bard-symbols::|not|
