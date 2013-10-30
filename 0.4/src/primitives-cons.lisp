@@ -31,8 +31,51 @@
 ;;; cons accessors
 ;;; ---------------------------------------------------------------------
 
-(defun cons.left (x) (car x))
-(defun cons.right (x) (cdr x))
+(defmethod cons.left ((x cons)) (car x))
+(defmethod cons.right ((x cons)) (cdr x))
+
+(defmethod cons.append ((x null) (y cons)) 
+  (declare (ignore x))
+  y)
+
+(defmethod cons.append ((x cons) (y null)) 
+  (declare (ignore y))
+  x)
+
+(defmethod cons.append ((x null) (y null)) 
+  (declare (ignore x y))
+  nil)
+
+(defmethod cons.append ((x cons) (y cons)) 
+    (append x y))
+
+(defmethod cons.slice ((c cons) (start integer) (end integer))
+  (subseq c start end))
+
+(defmethod cons.first ((x cons)) (car x))
+
+(defmethod cons.rest ((x cons)) (cdr x))
+
+(defmethod cons.last ((x cons))
+  (if (null (cdr x))
+      (car x)
+      (cons.last (cdr x))))
+
+(defmethod cons.drop ((n (eql 0))(x null)) nil)
+
+(defmethod cons.drop ((n integer)(x null)) 
+  (error "Can't drop elements from nothing"))
+
+(defmethod cons.drop ((n integer)(x cons)) 
+  (subseq x n))
+
+(defmethod cons.take ((n (eql 0))(x null)) nil)
+
+(defmethod cons.take ((n integer)(x null)) 
+  (error "Can't take elements from nothing"))
+
+(defmethod cons.take ((n integer)(x cons)) 
+  (subseq x 0 n))
 
 ;;; ---------------------------------------------------------------------
 ;;; cons converters
@@ -74,6 +117,54 @@
                :always t
                :side-effects nil))
 
+(defprim 'bard-symbols::|cons.append| 2
+    (make-prim :name 'bard-symbols::|cons.append|
+               :n-args 2
+               :opcode 'bard::cons.append
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.slice| 3
+    (make-prim :name 'bard-symbols::|cons.slice|
+               :n-args 3
+               :opcode 'bard::cons.slice
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.first| 1
+    (make-prim :name 'bard-symbols::|cons.first|
+               :n-args 1
+               :opcode 'bard::cons.first
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.rest| 1
+    (make-prim :name 'bard-symbols::|cons.rest|
+               :n-args 1
+               :opcode 'bard::cons.rest
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.last| 1
+    (make-prim :name 'bard-symbols::|cons.last|
+               :n-args 1
+               :opcode 'bard::cons.last
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.drop| 2
+    (make-prim :name 'bard-symbols::|cons.drop|
+               :n-args 2
+               :opcode 'bard::cons.drop
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|cons.take| 2
+    (make-prim :name 'bard-symbols::|cons.take|
+               :n-args 2
+               :opcode 'bard::cons.take
+               :always t
+               :side-effects nil))
 
 ;;; ---------------------------------------------------------------------
 ;;; temporary list primitive

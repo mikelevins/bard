@@ -34,6 +34,20 @@
 (defmethod string.last ((s string))
   (elt s (- (length s) 1)))
 
+(defmethod string.drop ((n (eql 0))(x string)) 
+  (declare (ignore n))
+  x)
+
+(defmethod string.drop ((n integer)(x string)) 
+  (subseq x n))
+
+(defmethod string.take ((n (eql 0))(x string)) 
+  (declare (ignore n x))
+  "")
+
+(defmethod string.take ((n integer)(x string)) 
+  (subseq x 0 n))
+
 ;;; ---------------------------------------------------------------------
 ;;; string converters
 ;;; ---------------------------------------------------------------------
@@ -96,6 +110,20 @@
     (make-prim :name 'bard-symbols::|string.last|
                :n-args 1
                :opcode 'bard::string.last
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|string.drop| 2
+    (make-prim :name 'bard-symbols::|string.drop|
+               :n-args 2
+               :opcode 'bard::string.drop
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|string.take| 2
+    (make-prim :name 'bard-symbols::|string.take|
+               :n-args 2
+               :opcode 'bard::string.take
                :always t
                :side-effects nil))
 

@@ -1,10 +1,22 @@
 # Bard Reference
 
-Version 0.4.0a10
+Version 0.4.0a11
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a11
+
+* Added `cons.append`
+* Added `cons.slice`
+* Added `cons.first`
+* Added `cons.rest`
+* Added `cons.last`
+* Added `cons.drop`
+* Added `cons.take`
+* Added `string.drop`
+* Added `string.take`
 
 Version 0.4.0a10
 
@@ -87,20 +99,16 @@ Any of these types of numbers may be written with a leading hyphen to signify a 
 
 #### Procedures that work with numbers
 
-*Primitive* **`+`** *expr1* *expr2* => `Number`
-
+*Primitive* **`+`** *expr1* *expr2* => `Number`<br>
 Returns the sum of *expr1* and *expr2*. Both arguments must be numbers.
 
-*Primitive* **`*`** *expr1* *expr2* => `Number`
-
+*Primitive* **`*`** *expr1* *expr2* => `Number`<br>
 Returns the product of *expr1* and *expr2*. Both arguments must be numbers.
 
-*Primitive* **`-`** *expr1* *expr2* => `Number`
-
+*Primitive* **`-`** *expr1* *expr2* => `Number`<br>
 Returns the difference of *expr1* and *expr2*. Both arguments must be numbers.
 
-*Primitive* **`/`** *expr1* *expr2* => `Number`
-
+*Primitive* **`/`** *expr1* *expr2* => `Number`<br>
 Returns the quotient of *expr1* and *expr2*. Both arguments must be numbers.
 
 
@@ -123,21 +131,40 @@ A **cons** is a value that associates two other values, called the **left elemen
 
 #### Procedures that work with conses
 
-*Constructor* **`cons`** *expr1* *expr2*  => `<cons>`
-
+*Constructor* **`cons`** *expr1* *expr2*  => `<cons>`<br>
 Returns a cons whose left element is the value of *expr1* and whose right element is the value of *expr2*. 
 
-*Converter* **`as-cons`** *expr* => `<cons>`
-
+*Converter* **`as-cons`** *expr* => `<cons>`<br>
 Returns a cons whose contents are equivalent to the contents of *expr*. *expr* must be `nothing`, a cons, or a string.
 
-*Accessor* **`cons.left`** *expr*  => `<anything>`
-
+*Accessor* **`cons.left`** *expr*  => `<anything>`<br>
 Returns the left element of *expr*.
 
-*Accessor* **`cons.right`** *expr*  => `<anything>`
-
+*Accessor* **`cons.right`** *expr*  => `<anything>`<br>
 Returns the right element of *expr*.
+
+*Constructor* **`cons.append`** *expr1* *expr2*  => `<cons>`<br>
+Returns a new cons that contains the elements of *expr1* followed by the elements of *expr2*.
+
+*Constructor* **`cons.slice`** *cons* *start* *end*  => `<cons>`<br>
+Returns a new cons that contains the elements of *cons* beginning with the element at position *start* and ending with the element before position *end*.
+
+*Accessor* **`cons.first`** *cons*  => `<anything>`<br>
+Returns the left (first) element of *expr*.
+
+*Accessor* **`cons.rest`** *cons*  => `<cons>`<br>
+Returns a cons containing all elements of *cons* except the first.
+
+*Accessor* **`cons.last`** *cons*  => `<anything>`<br>
+Returns the left element of the last cons in the chain of conses starting at *cons*. Another way to say it is that `cons.last` returns the last element of the List represented by *cons*.
+
+*Constructor* **`cons.drop`** *count* *cons*  => `<cons>`<br>
+Returns a cons chain that contains the same elements as *cons*, but without the first *count* elements.
+
+*Constructor* **`cons.take`** *count* *cons*  => `<cons>`<br>
+Returns a cons chain that contains the first *count* elements of *cons*.
+
+
 
 #### The `list` constructor and accessors
 
@@ -145,8 +172,7 @@ Bard defines **List** as an abstract data type with no specified representation.
 
 In later versions of Bard, these temporary expedients will be replaced by the Bard List protocol, which supports a variety of List representations.
 
-*Constructor* **`list`** *expr* * => `<cons>`
-
+*Constructor* **`list`** *expr* * => `<cons>`<br>
 Returns a cons whose left element is *expr* and whose right element is another cons containing the remaining arguments.
 
 Here are a few examples of calls to `list` and the `cons` structures that they return:
@@ -166,18 +192,15 @@ Bard provides special forms, macros, and functions for working with Booleans and
 
 #### Procedures that work with Booleans
 
-*Macro* **`and`** *expr* * => `Boolean`
-
+*Macro* **`and`** *expr* * => `Boolean`<br>
 `and` evaluates the first *expr*. If the result is false then `and` immediately returns `false` without evaluating any further expressions. If it's true, though, then `and` evaluates the next expression, repeating the same behavior. If all arguments to `and` return true values then `and` returns the last value produced. If any expression produces a false value then `and` immediately returns `false` without evaluating any further expressions.
 
 If you call `and` with no arguments it returns `true`.
 
-*Primitive* **`not`** *expr* => `Boolean`
-
+*Primitive* **`not`** *expr* => `Boolean`<br>
 `not` evaluates *expr*. If the result is true then `not` returns `false`. If the result is false then `not` returns `true`.
 
-*Macro* **`or`** *expr* * => `Boolean`
-
+*Macro* **`or`** *expr* * => `Boolean`<br>
 `or` evaluates the first *expr*. If the result is true then `or` immediately returns that value without evaluating any further expressions. If it's false, though, then `or` evaluates the next expression, repeating the same behavior. If all arguments to `or` return false values then `or` returns the last value produced. If any expression produces a true value then `or` immediately returns that value without evaluating any further expressions.
 
 If you call `or` with no arguments it returns `false`.
@@ -215,12 +238,10 @@ These are examples of quoted symbols:
     
 #### Procedures that work with names
 
-*Converter* **`as-keyword`** *expr*   => `<keyword>`
-
+*Converter* **`as-keyword`** *expr*   => `<keyword>`<br>
 Returns a keyword whose name is given by *expr*. *expr* must be a string or a symbol.
 
-*Converter* **`as-symbol`** *expr*   => `<symbol>`
-
+*Converter* **`as-symbol`** *expr*   => `<symbol>`<br>
 Returns a symbol whose name is given by *expr*. *expr* must be a string or a keyword.
 
     
@@ -235,29 +256,30 @@ Strings represent the abstract **Text** type. Bard 0.4.0a provides only strings,
 
 #### Procedures that work with strings
 
-*Converter* **`as-string`** *expr*   => `<string>`
-
+*Converter* **`as-string`** *expr*   => `<string>`<br>
 Returns a new string whose contents are given by *expr*. If *expr* is `nothing` an empty string is returned. If it's a sequence of characters then a new string containing the same sequence of characters is returned. Otherwise the result is the same sequence of characters that would be produced by printing the value using `write`.
 
-*Constructor* **`string.append`** *expr1* *expr2*  => `<string>`
-
+*Constructor* **`string.append`** *expr1* *expr2*  => `<string>`<br>
 Returns a string constructed by concatenating the two arguments, which must be strings.
 
-*Constructor* **`string.slice`** *string* *start* *end*  => `<string>`
-
+*Constructor* **`string.slice`** *string* *start* *end*  => `<string>`<br>
 Returns a string constructed by taking the characters in *string* starting at position *start*, and ending with the last character before *end*.
 
-*Accessor* **`string.first`** *string* => `<character>`
-
+*Accessor* **`string.first`** *string* => `<character>`<br>
 Returns the first character in *string*. 
 
-*Constructor* **`string.rest`** *string* => `<string>`
-
+*Constructor* **`string.rest`** *string* => `<string>`<br>
 Returns a new string containing all except the first character in *string*. 
 
-*Accessor* **`string.last`** *string* => `<character>`
-
+*Accessor* **`string.last`** *string* => `<character>`<br>
 Returns the last character in *string*. 
+
+*Constructor* **`string.drop`** *count* *string*  => `<string>`<br>
+Returns a string that contains the same character as *string*, but without the first *count* elements.
+
+*Constructor* **`string.take`** *count* *string*  => `<string>`<br>
+Returns a string that contains the first *count* elements of *string*.
+
 
 ### Comparisons
 
@@ -265,88 +287,69 @@ A **comparison** is a proceure that determines an equivalence or ordering relati
 
 #### Comparison procedures
 
-*Primitive* **`<`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`<`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is less than *expr2*, and `false` otherwise.
 
-*Primitive* **`>`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`>`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is greater than *expr2*, and `false` otherwise.
 
-*Primitive* **`<=`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`<=`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is less than or equal to *expr2*, and `false` otherwise.
 
-*Primitive* **`>=`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`>=`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is greater than or equal to *expr2*, and `false` otherwise.
 
-*Primitive* **`=`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`=`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is equal to *expr2*, and `false` otherwise.
 
-*Primitive* **`identical?`** *expr1* *expr2*  => `<boolean>`
-
+*Primitive* **`identical?`** *expr1* *expr2*  => `<boolean>`<br>
 Returns `true` if *expr1* is **identical** to *expr2*, and `false` otherwise. Two values are **identical** if they are exactly the same value--that is, they are both the exact same bits stored in exactly the same place in the computer's memory--or if they are both immediate numeric values that are equal to each other.
 
 
 ## 3. Special forms
 
-*Special form* **`begin`** *expr* * => `<anything>`
-
+*Special form* **`begin`** *expr* * => `<anything>`<br>
 `begin` evaluates each *expr* from left to right, returning the value of the last *expr*. The values of the expressions before the last one are lost; presumably they are evaluated for side effects.
 
-*Special form* **`if`** *test* *then-form* *else-form* => `<anything>`
-
+*Special form* **`if`** *test* *then-form* *else-form* => `<anything>`<br>
 `if` evaluates *test*. If the result is true then it evaluates *then-form*; otherwise it evaluates *else-form*. It is an error to evaluate an `if` expression with no *else-form*.
 
-*Special form* **`method`** `(`*parameter* * `)` *expr* * => `<method>`
-
+*Special form* **`method`** `(`*parameter* * `)` *expr* * => `<method>`<br>
 `method` creates and returns a new method. The formal parameters of the method are given by *parameter* *. The body of the method, given by *expr*, defines the evaluations that take place when the method is called.
 
-*Special form* **`quote`** *expr* => *expr*
-
+*Special form* **`quote`** *expr* => *expr*<br>
 `quote` returns its argument unevaluated.
 
-*Special form* **`set!`** *var* *val* => *val*
-
+*Special form* **`set!`** *var* *val* => *val*<br>
 `set!` assigns the value of *val* to the global variable named *var*, creating the variable if necessary.
 
 ## 4. Macros
 
-*Macro* **`def`** *var* *val* => *val*
-
+*Macro* **`def`** *var* *val* => *val*<br>
 `def` creates a global variable named *var* and assigns the value of *exor* to it.
 
 ## 5. Primitive methods
 
-**`compiler`** *expr* => `<anything>`
-
+**`compiler`** *expr* => `<anything>`<br>
 Returns the code produced by compiling *expr*, which must be valid Bard code.
 
-**`display`** *expr* => `<anything>`
-
+**`display`** *expr* => `<anything>`<br>
 Prints a human-readable serialization of *expr* to standard output.
 
-**`newline`** => 
-
+**`newline`** => <br>
 Prints a newline to standard output.
 
-**`read`** => `<anything>`
-
+**`read`** => `<anything>`<br>
 Returns the next Bard value read from standard input.
 
-**`write`** *expr* => `<anything>`
-
+**`write`** *expr* => `<anything>`<br>
 Prints a machine-readable serialization of *expr* to standard output.
 
 ## 6. Built-in methods
 
-**`exit`** => 
-
+**`exit`** => <br>
 Terminates the Bard process.
 
-**`call/cc`** *expr* => `<anything>`
-
+**`call/cc`** *expr* => `<anything>`<br>
 Calls the method given by *expr* with one argument: the current continuation.
 
