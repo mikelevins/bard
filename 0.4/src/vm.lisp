@@ -149,19 +149,19 @@
       
       ;; Unary operations:
       ((CONS.LEFT CONS.RIGHT CONS.FIRST CONS.REST CONS.LAST BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD AS-CONS
-                  STRING.FIRST STRING.REST STRING.LAST) 
+                  STRING.FIRST STRING.REST STRING.LAST ALIST-MAP? ALIST.KEYS ALIST.VALS AS-ALIST-MAP)
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; Binary operations:
       ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? STRING.APPEND CONS.APPEND CONS.DROP CONS.TAKE
-          STRING.DROP STRING.TAKE)
+          STRING.DROP STRING.TAKE ALIST.GET ALIST.MERGE)
        (setf (vm-stack vm)
              (cons (funcall (opcode instr) (second (vm-stack vm))
                             (first (vm-stack vm)))
                    (drop 2 (vm-stack vm)))))
       
       ;; Ternary operations:
-      ((LIST3 STRING.SLICE CONS.SLICE)
+      ((LIST3 STRING.SLICE CONS.SLICE ALIST.PUT)
        (setf (vm-stack vm) (cons (funcall (opcode instr) (third (vm-stack vm))
                                           (second (vm-stack vm)) (first (vm-stack vm)))
                                  (drop 3 (vm-stack vm)))))
