@@ -112,7 +112,7 @@
       ((and (starts-with? f '|method|) (null (second f)))
        ;; ((method () body)) => (begin body)
        (assert (null args) () "Too many arguments supplied")
-       (comp-begin (rest2 f) env val? more?))
+       (comp-begin (drop 2 f) env val? more?))
       (more? ; Need to save the continuation point
        (let ((k (gen-label 'k)))
          (seq (gen 'SAVE k)
@@ -135,15 +135,6 @@
       "Wrong number of arguments for ~a in ~a: 
        ~d supplied, ~d~@[ to ~d~] expected"
       (first form) form n-args min (if (/= min max) max))))
-
-;;; ---------------------------------------------------------------------
-;;; compiler init
-;;; ---------------------------------------------------------------------
-
-(defun init-bard-comp ()
-  (set-global! 'bard-symbols::|exit| (make-instance '<mfn> :name '|exit| :args '(val) :code (assemble '((HALT)))))
-  (set-global! 'bard-symbols::|call/cc| (make-instance '<mfn> :name '|call/cc| :args '(f) :code (assemble '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-                                                                                                            (CALLJ 1))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler entry point
@@ -179,7 +170,7 @@
                  (comp-if (second expr) (third expr) (fourth expr)
                           env val? more?))
            ((bard-symbols::|method| bard-symbols::|^|) (when val?
-                             (let ((f (comp-method (second expr) (rest2 expr) env)))
+                             (let ((f (comp-method (second expr) (drop 2 expr) env)))
                                (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
            (t (comp-funcall (first expr) (rest expr) env val? more?)))))))
 

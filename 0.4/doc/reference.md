@@ -6,6 +6,11 @@ Copyright 2013 by mikel evins
 
 ## 1. Changes
 
+Version 0.4.0a4
+
+* Added accessors `pair.left` and `pair.right`
+* Added constructor `list`
+
 Version 0.4.0a3
 
 * Fixed the implementation of `def`
@@ -59,9 +64,25 @@ Bard 0.4.0a defines four special constants:
 * **`nothing`** represents the empty set, list, or collection
 * **`true`** and **`false`** represent the two possible Boolean values
 
-### Other types of values
+### Pairs
 
-Bard 0.4.0a defines several other types of values, but it's not yet convenient to use them because the library functions needed to manipulate them are not yet implemented.
+A **pair** is a value that associates two other values, called the **left element** and the **right element**.
+
+*Constructor* **`pair`** *expr1* *expr2*  => `<pair>`
+
+Returns a pair whose left element is the value of *expr1* and whose right element is the value of *expr2*. 
+
+*Accessor* **`pair.left`** *expr*  => `<anything>`
+
+Returns the left element of *expr*.
+
+*Accessor* **`pair.right`** *expr*  => `<anything>`
+
+Returns the right element of *expr*.
+
+*Constructor* **`list`** *expr* *  => `<pair>`
+
+Returns a pair whose left element is the value of *expr1* and whose right element is another pair. The right element's left element is the value of the expression after *expr1*, and its right element is another pair containing the values of any expressions that follow. `list` can accept up to 10 arguments in Bard 0.4.0a3, enabling you to create chains of pairs up to 10 elements long.
 
 ## 3. Special forms
 

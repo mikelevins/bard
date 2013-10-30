@@ -10,6 +10,28 @@
 
 (in-package :bard)
 
+;;; ---------------------------------------------------------------------
+;;; init
+;;; ---------------------------------------------------------------------
+
+(defun init-bard ()
+  "Initialize the Bard toplevel environment"
+  ;; built-in methods
+  ;; ------------------------------------------------
+  ;; call/cc
+  (set-global! 'bard-symbols::|call/cc|
+               (make-instance '<mfn> :name '|call/cc|
+                              :args '(f) :code (assemble '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                                           (CALLJ 1)))))
+  ;; exit
+  (set-global! 'bard-symbols::|exit|
+               (make-instance '<mfn> :name '|exit|
+                              :args '(val) :code (assemble '((HALT))))))
+
+;;; ---------------------------------------------------------------------
+;;; bard toplevel
+;;; ---------------------------------------------------------------------
+
 (defparameter *bard-top-level*
   (bard-read-from-string
    "
@@ -24,9 +46,22 @@
 "))
 
 (defun bard ()
-  (init-bard-comp)
+  (init-bard)
   (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
     (vmrun vm)))
+
+(defun bard-toplevel ()
+  (format t "~%Bard version ~a~%~%" *bard-version-number*)
+  (init-bard)
+  (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+                  (vmrun vm))
+    (serious-condition (err)
+      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
+      (ccl::quit))))
+
+;;; ---------------------------------------------------------------------
+;;; toplevel utilities
+;;; ---------------------------------------------------------------------
 
 (defun comp-go (exp)
   (init-bard-comp)
@@ -36,14 +71,9 @@
 (defun comp-show (exp)
   (show  (compiler exp)))
 
-(defun bard-toplevel ()
-  (format t "~%Bard version ~a~%~%" *bard-version-number*)
-  (init-bard-comp)
-  (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
-                  (vmrun vm))
-    (serious-condition (err)
-      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
-      (ccl::quit))))
+;;; ---------------------------------------------------------------------
+;;; building bard
+;;; ---------------------------------------------------------------------
 
 (defun build-bard (path)
   (let* ((out-dir (format nil "~a/bard-~a/" path *bard-version-number*))

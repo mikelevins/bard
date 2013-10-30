@@ -33,8 +33,17 @@
         ((length=1? exps) (first exps))
         (t (cons op exps))))
 
-(defun rest2 (x)(rest (rest x)))
-(defun rest3 (x)(rest (rest (rest x))))
+(defmethod drop ((n integer) (ls null))
+  (cond
+    ((< n 0) (error "The count argument to drop must be a non-negative integer"))
+    ((= n 0) ls)
+    (t (error "Can't drop elements from the empty list"))))
+
+(defmethod drop ((n integer) (ls cons))
+  (cond
+    ((< n 0) (error "The count argument to drop must be a non-negative integer"))
+    ((= n 0) ls)
+    (t (drop (- n 1) (cdr ls)))))
 
 (defun starts-with? (list x)
   (and (consp list)

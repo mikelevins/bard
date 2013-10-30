@@ -62,7 +62,7 @@
   ;; ... L ... => ... ... ;if no reference to L
   (when (not (find instr all-code :key #'arg1))
     (setf (first code) (second code)
-          (rest code) (rest2 code))
+          (rest code) (drop 2 code))
     t))
 
 (def-optimizer (GO CALL CALLJ RETURN) (instr code all-code)
