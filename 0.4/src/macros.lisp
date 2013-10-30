@@ -39,3 +39,28 @@
 
 (def-bard-macro bard-symbols::|def| (name val-form)
   `(bard-symbols::|set!| ,name ,val-form))
+
+(def-bard-macro bard-symbols::|and| (&rest args)
+  (if (null args)
+      *true*
+      (let* ((test (first args))
+             (more (rest args))
+             (then-clause `(bard-symbols::|and| ,@more)))
+        (if (null more)
+            test
+            `(bard-symbols::|if| ,test
+                            ,then-clause
+                            ,*false*)))))
+
+(def-bard-macro bard-symbols::|or| (&rest args)
+  (if (null args)
+      *false*
+      (let* ((test (first args))
+             (more (rest args)))
+        (if (null more)
+            test
+            `((bard-symbols::|method| (result) 
+                             (bard-symbols::|if| result
+                                            result
+                                            (bard-symbols::|or| ,@more))) 
+              ,test)))))

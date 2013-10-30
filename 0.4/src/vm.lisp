@@ -61,6 +61,47 @@
 ;;; vm primitives
 ;;; ---------------------------------------------------------------------
 
+;;; equivalence predicates
+(defun identical? (x y)
+  (if (eq x y)
+      *true*
+      *false*))
+
+(defun equal? (x y)
+  (if (equal x y)
+      *true*
+      *false*))
+
+;;; boolean ops
+
+(defmethod bard-not (x) (declare (ignore x)) *false*)
+(defmethod bard-not ((x null)) *true*)
+(defmethod bard-not ((x <false>)) *true*)
+(defmethod bard-not ((x <undefined>)) *true*)
+
+;;; arithmetic ops
+
+(defun bard< (x y)
+  (if (< x y)
+      *true*
+      *false*))
+
+(defun bard> (x y)
+  (if (> x y)
+      *true*
+      *false*))
+
+(defun bard<= (x y)
+  (if (<= x y)
+      *true*
+      *false*))
+
+(defun bard>= (x y)
+  (if (>= x y)
+      *true*
+      *false*))
+
+
 ;;; pair and list constructors
 
 (defun list0 () nil)
@@ -175,11 +216,11 @@
        (push (funcall (opcode instr)) (vm-stack vm)))
       
       ;; Unary operations:
-      ((PAIR.LEFT PAIR.RIGHT CADR NOT LIST1 COMPILER DISPLAY BARD-WRITE RANDOM) 
+      ((PAIR.LEFT PAIR.RIGHT CADR BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE RANDOM) 
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; Binary operations:
-      ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
+      ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? )
        (setf (vm-stack vm)
              (cons (funcall (opcode instr) (second (vm-stack vm))
                             (first (vm-stack vm)))

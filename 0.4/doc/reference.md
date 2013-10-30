@@ -1,10 +1,25 @@
 # Bard Reference
 
-Version 0.4.0a4
+Version 0.4.0a8
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a8
+
+* Added `<`
+* Added `>`
+* Added `<=`
+* Added `>=`
+* Added `=`
+* Added `identical?`
+
+Version 0.4.0a7
+
+* Added `not`
+* Added `and`
+* Added `or`
 
 Version 0.4.0a6
 
@@ -91,6 +106,57 @@ Returns the right element of *expr*.
 *Constructor* **`list`** *expr* *  => `<pair>`
 
 Returns a pair whose left element is the value of *expr1* and whose right element is another pair. The right element's left element is the value of the expression after *expr1*, and its right element is another pair containing the values of any expressions that follow. `list` can accept up to 10 arguments in Bard 0.4.0a4, enabling you to create chains of pairs up to 10 elements long.
+
+### Booleans
+
+A **Boolean** is one of the special values `true` or `false`. A **generalized Boolean** is any Bard value when treated as true or false. The special values `false` and `nothing` are both false when treated as generalized booleans; all other Bard values are considered true.
+
+Bard provides special forms, macros, and functions for working with Booleans and generalized Booleans.
+
+**`and`** *expr* * => `Boolean`
+
+`and` evaluates the first *expr*. If the result is false then `and` immediately returns `false` without evaluating any further expressions. If it's true, though, then `and` evaluates the next expression, repeating the same behavior. If all arguments to `and` return true values then `and` returns the last value produced. If any expression produces a false value then `and` immediately returns `false` without evaluating any further expressions.
+
+If you call `and` with no arguments it returns `true`.
+
+**`not`** *expr* => `Boolean`
+
+`not` evaluates *expr*. If the result is true then `not` returns `false`. If the result is false then `not` returns `true`.
+
+**`or`** *expr* * => `Boolean`
+
+`or` evaluates the first *expr*. If the result is true then `or` immediately returns that value without evaluating any further expressions. If it's false, though, then `or` evaluates the next expression, repeating the same behavior. If all arguments to `or` return false values then `or` returns the last value produced. If any expression produces a true value then `or` immediately returns that value without evaluating any further expressions.
+
+If you call `or` with no arguments it returns `false`.
+
+### Comparisons
+
+A **comparison** is a proceure that determines an equivalence or ordering relations between values. In other words, a comparison tells you something like whether two values are equal, or whther one is greater than the other.
+
+**`<`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is less than *expr2*, and `false` otherwise.
+
+**`>`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is greater than *expr2*, and `false` otherwise.
+
+**`<=`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is less than or equal to *expr2*, and `false` otherwise.
+
+**`>=`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is greater than or equal to *expr2*, and `false` otherwise.
+
+**`=`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is equal to *expr2*, and `false` otherwise.
+
+**`identical?`** *expr1* *expr2*  => `<boolean>`
+
+Returns `true` if *expr1* is **identical** to *expr2*, and `false` otherwise. Two values are **identical** if they are exactly the same value--that is, they are both the exact same bits stored in exactly the same place in the computer's memory--or if they are both immediate numeric values that are equal to each other.
+
 
 ## 3. Special forms
 
