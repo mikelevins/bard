@@ -1,6 +1,6 @@
 # Bard Reference
 
-Version 0.4.0a3
+Version 0.4.0a4
 
 Copyright 2013 by mikel evins
 
@@ -82,7 +82,7 @@ Returns the right element of *expr*.
 
 *Constructor* **`list`** *expr* *  => `<pair>`
 
-Returns a pair whose left element is the value of *expr1* and whose right element is another pair. The right element's left element is the value of the expression after *expr1*, and its right element is another pair containing the values of any expressions that follow. `list` can accept up to 10 arguments in Bard 0.4.0a3, enabling you to create chains of pairs up to 10 elements long.
+Returns a pair whose left element is the value of *expr1* and whose right element is another pair. The right element's left element is the value of the expression after *expr1*, and its right element is another pair containing the values of any expressions that follow. `list` can accept up to 10 arguments in Bard 0.4.0a4, enabling you to create chains of pairs up to 10 elements long.
 
 ## 3. Special forms
 
