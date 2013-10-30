@@ -28,6 +28,10 @@
                                      (:file "globals")
                                      (:file "environments")
                                      (:file "primitives")
+                                     (:file "primitives-arithmetic")
+                                     (:file "primitives-io")
+                                     (:file "primitives-compiler")
+                                     (:file "primitives-pairs")
                                      (:file "macros")
                                      (:file "reader")
                                      (:file "quasiquote")
@@ -35,10 +39,12 @@
                                      (:file "assembler")
                                      (:file "instructions")
                                      (:file "methods")
+                                     (:file "printer")
                                      (:file "compiler")
                                      (:file "vm")
                                      (:file "toplevel")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
+;;; (bard::bard)
 
 ;;; (bard::build-bard (format nil "/Users/mikel/Desktop/"))

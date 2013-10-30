@@ -81,6 +81,7 @@
 ;;; I/O
 
 (defun display (x) (princ x))
+(defun bard-write (x) (princ (value->literal-string x)))
 (defun newline () (terpri))
 
 ;;; ---------------------------------------------------------------------
@@ -147,6 +148,7 @@
               (loop for i from (- (arg1 instr) 1) downto 0 do
                    (setf (elt (first (vm-env vm)) i) (pop (vm-stack vm)))))
       (MFN     (push (make-instance '<mfn> 
+                                    :expression (mfn-expression (arg1 instr))
                                     :code (mfn-code (arg1 instr))
                                     :env (vm-env vm)
                                     :name (mfn-name (arg1 instr))
@@ -161,10 +163,11 @@
       ;; Continuation instructions:
       (SET-CC (setf (vm-stack vm) (vm-stack-top vm)))
       (CC     (push (make-instance '<mfn>
-                     :env (list (vector (vm-stack vm)))
-                     :code (assemble
-                            '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
-                              (LREF 0 0) (RETURN))))
+                                   :name (gen-label 'continuation-)
+                                   :env (list (vector (vm-stack vm)))
+                                   :code (assemble
+                                          '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
+                                            (LREF 0 0) (RETURN))))
                     (vm-stack vm)))
       
       ;; Nullary operations:
@@ -172,7 +175,7 @@
        (push (funcall (opcode instr)) (vm-stack vm)))
       
       ;; Unary operations:
-      ((PAIR.LEFT PAIR.RIGHT CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM) 
+      ((PAIR.LEFT PAIR.RIGHT CADR NOT LIST1 COMPILER DISPLAY BARD-WRITE RANDOM) 
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; Binary operations:

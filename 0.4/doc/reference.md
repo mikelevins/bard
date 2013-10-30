@@ -6,6 +6,14 @@ Copyright 2013 by mikel evins
 
 ## 1. Changes
 
+Version 0.4.0a6
+
+* Fixed a bug in printing dotted pairs
+
+Version 0.4.0a5
+
+* Initial version of the Bard printer added
+
 Version 0.4.0a4
 
 * Added accessors `pair.left` and `pair.right`

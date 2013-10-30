@@ -92,7 +92,9 @@
 (defun comp-method (args body env)
   (let* ((params (make-true-list args))
          (call-env (cons params env)))
-    (make-instance '<mfn> :env env :args args
+    (make-instance '<mfn> 
+                   :expression (cons 'bard-symbols::|^| (cons args body))
+                   :env env :args args
                    :code (assemble
                           (seq (gen-args args 0)
                                (comp-begin body call-env t nil))))))

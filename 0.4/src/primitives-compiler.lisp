@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.lisp
+;;;; Name:          primitives-compiler.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard version number
+;;;; Purpose:       compiler primitives
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
@@ -11,4 +11,10 @@
 
 (in-package :bard)
 
-(defparameter *bard-version-number* "0.4.0a7")
+
+(defprim 'bard-symbols::|compiler| 1
+    (make-prim :name 'bard-symbols::|compiler|
+               :n-args 1
+               :opcode 'bard::compiler
+               :always t
+               :side-effects nil))
