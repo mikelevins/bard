@@ -18,7 +18,7 @@
 (defclass <alist-map> ()
   ((entries :accessor entries :initform nil :initarg :entries)))
 
-(defmethod alist-map? (x) nil)
+(defmethod alist-map? (x)(declare (ignore x)) nil)
 (defmethod alist-map? ((x <alist-map>)) t)
 
 

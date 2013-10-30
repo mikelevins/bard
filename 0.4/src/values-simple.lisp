@@ -21,7 +21,7 @@
 
 (defun eof () *eof*)
 
-(defmethod eof? (x) nil)
+(defmethod eof? (x)(declare (ignore x)) nil)
 (defmethod eof? ((x <eof>)) t)
 
 ;;; ---------------------------------------------------------------------
@@ -34,7 +34,7 @@
 
 (defun undefined () *undefined*)
 
-(defmethod undefined? (x) nil)
+(defmethod undefined? (x)(declare (ignore x)) nil)
 (defmethod undefined? ((x <undefined>)) t)
 (defun defined? (x)(not (undefined? x)))
 
@@ -45,9 +45,7 @@
 (defun nothing () nil)
 (defparameter *nothing* nil)
 
-(defun nothing () *nothing*)
-
-(defmethod nothing? (x) nil)
+(defmethod nothing? (x)(declare (ignore x)) nil)
 (defmethod nothing? ((x null)) t)
 
 (defun something? (x)(not (nothing? x)))
@@ -58,7 +56,7 @@
 
 (defclass <boolean> ()())
 
-(defmethod boolean? (x) nil)
+(defmethod boolean? (x)(declare (ignore x)) nil)
 (defmethod boolean? ((x <boolean>)) t)
 
 (defclass <false> (<boolean>)())
@@ -69,11 +67,11 @@
 (defparameter *true* (make-instance '<true>))
 (defun true () *true*)
 
-(defmethod true? (x) t)
+(defmethod true? (x)(declare (ignore x)) t)
 (defmethod true? ((x null)) nil)
 (defmethod true? ((x <false>)) nil)
 
-(defmethod false? (x) nil)
+(defmethod false? (x)(declare (ignore x)) nil)
 (defmethod false? ((x null)) t)
 (defmethod false? ((x <false>)) t)
 
