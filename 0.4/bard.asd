@@ -14,6 +14,7 @@
   :description "The bard programming language, version 0.4"
   :author "mikel evins <mevins@me.com>"
   :license "Apache 2.0"
+  :depends-on (:puri)
   :components ((:module "lib"
                         :serial t
                         :components ((:file "source-form")
@@ -31,9 +32,10 @@
                                      (:file "primitives-arithmetic")
                                      (:file "primitives-boolean")
                                      (:file "primitives-compiler")
-                                     (:file "primitives-io")
-                                     (:file "primitives-names")
                                      (:file "primitives-cons")
+                                     (:file "primitives-names")
+                                     (:file "primitives-resources")
+                                     (:file "primitives-streams")
                                      (:file "primitives-string")
                                      (:file "macros")
                                      (:file "reader")
