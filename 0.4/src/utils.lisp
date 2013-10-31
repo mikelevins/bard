@@ -45,6 +45,18 @@
     ((= n 0) ls)
     (t (drop (- n 1) (cdr ls)))))
 
+(defmethod take ((n (eql 0)) (ls null))
+  ls)
+
+(defmethod take ((n integer) (ls null))
+  (error "Can't take ~a elements from an empty list" n))
+
+(defmethod take ((n (eql 0)) (ls cons))
+  ls)
+
+(defmethod take ((n integer) (ls cons))
+  (subseq ls 0 n))
+
 (defun starts-with? (list x)
   (and (consp list)
        (eql (first list) x)))

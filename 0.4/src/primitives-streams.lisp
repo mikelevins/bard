@@ -12,6 +12,13 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
+;;; utils
+;;; ---------------------------------------------------------------------
+
+(defun directory? (pathspec)
+  (cl-fad:directory-pathname-p pathspec))
+
+;;; ---------------------------------------------------------------------
 ;;; I/O ops
 ;;; ---------------------------------------------------------------------
 
@@ -25,7 +32,8 @@
 
 (defclass <stream> ()
   ((url :accessor stream-url :initform nil :initarg :url)
-   (stream :accessor base-stream :initform nil :initarg :stream)))
+   (stream :accessor base-stream :initform nil :initarg :stream)
+   (element-type :accessor element-type :initform 'bard-symbols::|character| :initarg :element-type)))
 
 (defclass <file-stream> (<stream>)
   ((pathname :accessor stream-pathname :initform nil :initarg :pathname)))
@@ -43,39 +51,143 @@
 (defun stream.standard-error ()
   (make-instance '<stream> :url nil :stream cl:*error-output*))
 
-(defmethod open-stream (scheme url direction element-type)
+(defmethod make-stream (scheme url direction element-type)
   (error "Unsupported stream specification: ~s"
          (list scheme url direction element-type)))
 
-(defmethod stream.open ((url <url>)(direction symbol)(element-type symbol))
-  (open-stream (url.scheme url) url direction element-type))
+(defmethod make-stream ((scheme (eql 'bard-symbols::|file|)) (url puri:uri) 
+                        (direction (eql 'bard-symbols::|input|))
+                        (element-type (eql 'bard-symbols::|character|)))
+  (let* ((truename (probe-file (puri:uri-path url))))
+    (if truename
+        (if (directory? truename)
+            (error "URL names a directory: ~a" url)
+            (make-instance '<file-stream> :url url :pathname truename :element-type element-type))
+        (error "No such file ~a" url))))
+
+(defmethod stream.create ((url puri:uri)(direction symbol)(element-type symbol))
+  (make-stream (url.scheme url) url direction element-type))
+
+(defmethod stream.open? ((s <stream>))
+  (and (base-stream s)
+       (open-stream-p (base-stream s))))
 
 ;;; ---------------------------------------------------------------------
 ;;; accessors
 ;;; ---------------------------------------------------------------------
 
-(defmethod close-stream (s)
-  (error "Can't close: ~s; it is not an open stream" s))
+(defmethod %as-lisp-element-type ((etype (eql 'bard-symbols::|octet|)))
+  'cl:unsigned-byte)
 
-(defmethod stream.close ((s <stream>))
-  (close-stream s))
+(defmethod %as-lisp-element-type ((etype (eql 'bard-symbols::|character|)))
+  'cl:character)
 
-(defmethod stream.length ((s <stream>)) )
+(defmethod stream.element-type ((s <stream>)) 
+  (element-type s))
 
-(defmethod stream.read-octet ((in <file-stream>)) )
-(defmethod stream.read-octets ((in <file-stream>)(count integer)) )
-(defmethod stream.read-all-octets ((in <file-stream>)) )
+(defmethod stream.length ((s <file-stream>)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s))))
+        (elt-type (%as-lisp-element-type (element-type s))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type elt-type)
+      (file-length in))))
 
-(defmethod stream.read-character ((in <file-stream>)) )
-(defmethod stream.read-characters ((in <file-stream>)(count integer)) )
+(defmethod stream.read-octet ((s <file-stream>)(pos integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type '(unsigned-byte 8))
+      (let ((success? (file-position in pos)))
+        (if success?
+            (read-byte in)
+            (error "Invalid file position: ~s" pos))))))
+
+;;; NOTE: CCL-specific code
+(defmethod stream.read-octets ((s <file-stream>)(pos integer)(count integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type '(unsigned-byte 8))
+      (let ((len (file-length in))
+            (success? (file-position in pos)))
+        (if success?
+            (if (<= count (- len pos))
+                (let* ((buf (make-array count :element-type '(unsigned-byte 8) :initial-element 0))
+                       (octets-read (ccl:stream-read-ivector in buf 0 count)))
+                  (if (> octets-read 0)
+                      (subseq buf 0 octets-read)
+                      (error "Unable to read octets from stream: ~s" s)))
+                (error "Unable to read ~a octets from stream: ~s" count s))
+            (error "Invalid file position: ~s" pos))))))
+
+;;; NOTE: CCL-specific code
+(defmethod stream.read-all-octets ((s <file-stream>)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type '(unsigned-byte 8))
+      (let ((len (file-length in)))
+        (let* ((buf (make-array len :element-type '(unsigned-byte 8) :initial-element 0))
+               (octets-read (ccl:stream-read-ivector in buf 0 len)))
+          (if (> octets-read 0)
+              (values (subseq buf 0 octets-read) octets-read)
+              (error "Unable to read octets from stream: ~s" s)))))))
+
+(defmethod stream.read-character ((s <file-stream>)(pos integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (let ((success? (file-position in pos)))
+        (if success?
+            (read-char in)
+            (error "Invalid file position: ~s" pos))))))
+
+(defmethod stream.read-characters ((s <file-stream>)(pos integer)(count integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (let ((len (file-length in))
+            (success? (file-position in pos)))
+        (if success?
+            (if (<= count (- len pos))
+                (let* ((buf (make-array count :element-type 'cl:character :initial-element #\null))
+                       (chars-read (read-sequence buf in :start 0 :end count)))
+                  (if (> chars-read 0)
+                      (subseq buf 0 chars-read)
+                      (error "Unable to read characters from stream: ~s" s)))
+                (error "Unable to read ~a characters from stream: ~s" count s))
+            (error "Invalid file position: ~s" pos))))))
+
 (defmethod stream.read-all-characters ((in <file-stream>)) )
 
-(defmethod stream.read-line ((in <file-stream>)) )
-(defmethod stream.read-lines ((in <file-stream>)(count integer)) )
-(defmethod stream.read-all-lines ((in <file-stream>)) )
+(defmethod stream.read-line ((s <file-stream>)(pos integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (let ((success? (file-position in pos)))
+        (if success?
+            (read-line in)
+            (error "Invalid file position: ~s" pos))))))
 
-(defmethod stream.read-object ((in <file-stream>)) )
-(defmethod stream.read-objects ((in <file-stream>)(count integer)) )
+(defmethod stream.read-lines ((s <file-stream>)(pos integer)(count integer)) 
+  (take count (drop pos (stream.read-all-lines s))))
+
+(defmethod stream.read-all-lines ((s <file-stream>)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (let ((eof (gensym)))
+        (loop for line = (read-line in nil eof)
+           until (eq line eof)
+           collect line)))))
+
+(defmethod stream.read-object ((s <file-stream>)(pos integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (let ((success? (file-position in pos)))
+        (if success?
+            (bard-read in)
+            (error "Invalid file position: ~s" pos))))))
+
+(defmethod stream.read-objects ((in <file-stream>)(pos integer)(count integer)) )
 (defmethod stream.read-all-objects ((in <file-stream>)) )
 
 

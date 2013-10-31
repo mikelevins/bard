@@ -14,7 +14,7 @@
   :description "The bard programming language, version 0.4"
   :author "mikel evins <mevins@me.com>"
   :license "Apache 2.0"
-  :depends-on (:puri)
+  :depends-on (:puri :cl-fad)
   :components ((:module "lib"
                         :serial t
                         :components ((:file "source-form")
@@ -53,3 +53,5 @@
 ;;; (bard::bard)
 
 ;;; (bard::build-bard (format nil "/Users/mikel/Desktop/"))
+
+
