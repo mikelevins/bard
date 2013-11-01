@@ -70,6 +70,8 @@
     (case (opcode instr)
       
       ;; Variable/stack manipulation instructions:
+      ;; -----------------------------------------
+
       (LREF   (push (elt (elt (vm-env vm) (arg1 instr)) (arg2 instr))
                     (vm-stack vm)))
       (LSET   (setf (elt (elt (vm-env vm) (arg1 instr)) (arg2 instr))
@@ -83,11 +85,15 @@
       (CONST  (push (arg1 instr) (vm-stack vm)))
       
       ;; Branching instructions:
+      ;; -----------------------------------------
+
       (GO   (setf (vm-pc vm) (arg1 instr)))
       (FGO  (if (false? (pop (vm-stack vm))) (setf (vm-pc vm) (arg1 instr))))
       (TGO  (if (true? (pop (vm-stack vm))) (setf (vm-pc vm) (arg1 instr))))
       
       ;; Function call/return instructions:
+      ;; -----------------------------------------
+
       (SAVE   (push (make-ret-addr :pc (arg1 instr)
                                    :fn (vm-mfn vm) :env (vm-env vm))
                     (vm-stack vm)))
@@ -120,6 +126,10 @@
                    (push (pop (vm-stack vm)) (elt (first (vm-env vm)) (arg1 instr))))
               (loop for i from (- (arg1 instr) 1) downto 0 do
                    (setf (elt (first (vm-env vm)) i) (pop (vm-stack vm)))))
+
+      ;; built-in constructors
+      ;; -----------------------------------------
+
       (MFN     (push (make-instance '<mfn> 
                                     :expression (mfn-expression (arg1 instr))
                                     :code (mfn-code (arg1 instr))
@@ -134,6 +144,8 @@
                     (vm-stack vm)))
       
       ;; Continuation instructions:
+      ;; -----------------------------------------
+
       (SET-CC (setf (vm-stack vm) (vm-stack-top vm)))
       (CC     (push (make-instance '<mfn>
                                    :name (gen-label 'continuation-)
@@ -143,92 +155,130 @@
                                             (LREF 0 0) (RETURN))))
                     (vm-stack vm)))
       
+
+      ;; -----------------------------------------
+      ;; primitive procedures
+      ;; -----------------------------------------
+
       ;; zero arguments
-      ((BARD-READ NEWLINE LIST0)
+      ;; -----------------------------------------
+
+      ((BARD-READ NEWLINE STREAM.STANDARD-INPUT STREAM.STANDARD-OUTPUT STREAM.STANDARD-ERROR)
        (push (funcall (opcode instr)) (vm-stack vm)))
       
       ;; 1 argument
-      ((CONS.LEFT CONS.RIGHT CONS.FIRST CONS.REST CONS.LAST BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD
+      ;; -----------------------------------------
+
+      ((CONS.LEFT CONS.RIGHT CONS.FIRST CONS.REST CONS.LAST BARD-NOT COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD
                   AS-CONS STRING.FIRST STRING.REST STRING.LAST ALIST-MAP? ALIST.KEYS ALIST.VALS AS-ALIST-MAP
-                  URL URL.SCHEME URL.HOST URL.PATH URL.PORT URL.QUERY AS-URL)
+                  URL URL.SCHEME URL.HOST URL.PATH URL.PORT URL.QUERY AS-URL
+                  STREAM.LENGTH STREAM.READ-ALL-OCTETS STREAM.READ-ALL-CHARACTERS
+                  STREAM.READ-ALL-LINES STREAM.READ-ALL-OBJECTS)
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
       ;; 2 arguments
-      ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? STRING.APPEND CONS.APPEND CONS.DROP CONS.TAKE
-          STRING.DROP STRING.TAKE ALIST.GET ALIST.MERGE)
+      ;; -----------------------------------------
+
+      ((+ - * / bard< bard> bard<= bard>= /= = 
+          CONS NAME! IDENTICAL? EQUAL? STRING.APPEND CONS.APPEND CONS.DROP CONS.TAKE
+          STRING.DROP STRING.TAKE ALIST.GET ALIST.MERGE
+          STREAM.CREATE STREAM.READ-OCTET STREAM.READ-CHARACTER  STREAM.READ-LINE STREAM.READ-OBJECT)
        (setf (vm-stack vm)
              (cons (funcall (opcode instr) (second (vm-stack vm))
                             (first (vm-stack vm)))
                    (drop 2 (vm-stack vm)))))
       
       ;; 3 arguments
-      ((LIST3 STRING.SLICE CONS.SLICE ALIST.PUT)
+      ;; -----------------------------------------
+
+      ((STRING.SLICE CONS.SLICE ALIST.PUT STREAM.READ-OCTETS STREAM.READ-CHARACTERS STREAM.READ-LINES STREAM.READ-OBJECTS)
        (setf (vm-stack vm) (cons (funcall (opcode instr) (third (vm-stack vm))
                                           (second (vm-stack vm)) (first (vm-stack vm)))
                                  (drop 3 (vm-stack vm)))))
 
-      ;; 4 arguments
-      (()
-       (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                          (fourth (vm-stack vm))(third (vm-stack vm))
-                                          (second (vm-stack vm)) (first (vm-stack vm)))
-                                 (drop 4 (vm-stack vm)))))
       
-      ;; More list constructors:
-      (LIST4 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 4 (vm-stack vm)))))
+      ;; Primitive list constructors:
+      ;; -----------------------------------------
 
-      (LIST5 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (fifth (vm-stack vm))(fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 5 (vm-stack vm)))))
+      (LIST0 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) nil)
+                         (vm-stack vm))))
 
-      (LIST6 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (sixth (vm-stack vm))(fifth (vm-stack vm))
-                                                (fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 6 (vm-stack vm)))))
+      (LIST1 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) (first (vm-stack vm)))
+                         (drop 1 (vm-stack vm)))))
 
-      (LIST7 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (seventh (vm-stack vm))(sixth (vm-stack vm))(fifth (vm-stack vm))
-                                                (fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 7 (vm-stack vm)))))
+      (LIST2 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) (second (vm-stack vm))
+                                  (first (vm-stack vm)))
+                         (drop 2 (vm-stack vm)))))
 
-      (LIST8 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (eighth (vm-stack vm))(seventh (vm-stack vm))
-                                                (sixth (vm-stack vm))(fifth (vm-stack vm))
-                                                (fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 8 (vm-stack vm)))))
+      (LIST3 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) (third (vm-stack vm))
+                                  (second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 3 (vm-stack vm)))))
 
-      (LIST9 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                (ninth (vm-stack vm))(eighth (vm-stack vm))(seventh (vm-stack vm))
-                                                (sixth (vm-stack vm))(fifth (vm-stack vm))
-                                                (fourth (vm-stack vm))(third (vm-stack vm))
-                                                (second (vm-stack vm)) (first (vm-stack vm)))
-                                       (drop 9 (vm-stack vm)))))
+      (LIST4 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (fourth (vm-stack vm))(third (vm-stack vm))
+                                  (second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 4 (vm-stack vm)))))
 
-      (LIST10 (setf (vm-stack vm) (cons (funcall (opcode instr) 
-                                                 (tenth (vm-stack vm))
-                                                 (ninth (vm-stack vm))(eighth (vm-stack vm))(seventh (vm-stack vm))
-                                                 (sixth (vm-stack vm))(fifth (vm-stack vm))
-                                                 (fourth (vm-stack vm))(third (vm-stack vm))
-                                                 (second (vm-stack vm)) (first (vm-stack vm)))
-                                        (drop 10 (vm-stack vm)))))
+      (LIST5 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (fifth (vm-stack vm))(fourth (vm-stack vm))(third (vm-stack vm))
+                                  (second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 5 (vm-stack vm)))))
 
-      ;; Constants:
+      (LIST6 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (sixth (vm-stack vm))(fifth (vm-stack vm))(fourth (vm-stack vm))
+                                  (third (vm-stack vm))(second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 6 (vm-stack vm)))))
+
+      (LIST7 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (seventh (vm-stack vm))(sixth (vm-stack vm))(fifth (vm-stack vm))
+                                  (fourth (vm-stack vm))(third (vm-stack vm))(second (vm-stack vm))
+                                  (first (vm-stack vm)))
+                         (drop 7 (vm-stack vm)))))
+
+      (LIST8 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (eighth (vm-stack vm))(seventh (vm-stack vm))(sixth (vm-stack vm))
+                                  (fifth (vm-stack vm))(fourth (vm-stack vm))(third (vm-stack vm))
+                                  (second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 8 (vm-stack vm)))))
+
+      (LIST9 (setf (vm-stack vm)
+                   (cons (funcall (opcode instr) 
+                                  (ninth (vm-stack vm))(eighth (vm-stack vm))(seventh (vm-stack vm))
+                                  (sixth (vm-stack vm))(fifth (vm-stack vm))(fourth (vm-stack vm))
+                                  (third (vm-stack vm))(second (vm-stack vm)) (first (vm-stack vm)))
+                         (drop 9 (vm-stack vm)))))
+
+      (LIST10 (setf (vm-stack vm)
+                    (cons (funcall (opcode instr) 
+                                   (tenth (vm-stack vm))(ninth (vm-stack vm))(eighth (vm-stack vm))
+                                   (seventh (vm-stack vm))(sixth (vm-stack vm))(fifth (vm-stack vm))
+                                   (fourth (vm-stack vm))(third (vm-stack vm))(second (vm-stack vm))
+                                   (first (vm-stack vm)))
+                          (drop 10 (vm-stack vm)))))
+
+      ;; Push a constant
+      ;; -----------------------------------------
+
       (TRUE (push (true) (vm-stack vm)))
       (FALSE (push (false) (vm-stack vm)))
       (UNDEFINED (push (undefined) (vm-stack vm)))
       (NOTHING (push (nothing) (vm-stack vm)))
       
-      ;; Other:
+      ;; Other instructions
+      ;; -----------------------------------------
       
       ((HALT) (vm-stack-top vm))
       (otherwise (error "Unknown opcode: ~a" instr)))))
+
 
 (defmethod vmrun ((vm <vm>))
   (loop
@@ -236,4 +286,5 @@
             (length (vm-code vm)))
          (vmstep vm)
          (return (vm-stack-top vm)))))
+
 

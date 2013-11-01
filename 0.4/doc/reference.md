@@ -1,10 +1,30 @@
 # Bard Reference
 
-Version 0.4.0a13
+Version 0.4.0a14
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a14
+
+* Added `stream.standard-input`
+* Added `stream.standard-output`
+* Added `stream.standard-error`
+* Added `stream.create`
+* Added `stream.length`
+* Added `stream.read-octet`
+* Added `stream.read-octets`
+* Added `stream.read-all-octets`
+* Added `stream.read-character`
+* Added `stream.read-characters`
+* Added `stream.read-all-characters`
+* Added `stream.read-line`
+* Added `stream.read-lines`
+* Added `stream.read-all-lines`
+* Added `stream.read-object`
+* Added `stream.read-objects`
+* Added `stream.read-all-objects`
 
 Version 0.4.0a13
 
@@ -290,6 +310,62 @@ Returns the URL query, or `nothing` if it doesn't have one.
 
 *Primitive* **`as-url`** *expr*  => `<url>`<br>
 Returns a new URL. If *expr* is a string then the URL is constructed by parsing it; *expr* must conform to proper URL syntax. If *expr* is a URL, it is returned unchanged.
+
+
+### Streams
+
+#### Procedures that work with streams
+
+*Primitive* **`stream.standard-input`**  => `<stream>`<br>
+Returns a stream that represents the computer's standard input.
+
+*Primitive* **`stream.standard-output`** => `<stream>`<br>
+Returns a stream that represents the computer's standard output.
+
+*Primitive* **`stream.standard-error`**  => `<stream>`<br>
+Returns a stream that represents the computer's standard error.
+
+*Primitive* **`stream.create`** *URL* *element-type*  => `<stream>`<br>
+Returns a stream of values of type *element-type*. Reading the stream reads *element-type* values; writing values of *element-type* adds them to stream one after another. *element-type* can be `octet` or `character`.
+
+*Primitive* **`stream.length`** *stream*  => `Integer`<br>
+Returns the length of *stream* in octets. If the length of the stream cannot be determined it returns `undefined`.
+
+*Primitive* **`stream.read-octet`** *stream* *position*  => `<octet>`<br>
+Returns the octet at position *position* in *stream*. *position* is a count of octets.
+
+*Primitive* **`stream.read-octets`** *stream* *position* *count*  => `List`<br>
+Returns a list of up to *count* octets obtained by reading *stream*, starting at position *position*. If fewer than *count* octets are available, the ones actually read are returned. *position* is a count of octets.
+
+*Primitive* **`stream.read-all-octets`** *stream*  => `<List>`<br>
+Returns a list of all octets available in *stream*.
+
+*Primitive* **`stream.read-character`** *stream*  => `<character>`<br>
+Returns the character at position *position* in *stream*. *position* is a count of characters.
+
+*Primitive* **`stream.read-characters`** *stream* *position* *count*  => `Text`<br>
+Returns a list of up to *count* characters obtained by reading *stream*, starting at position *position*. If fewer than *count* characters are available, the ones actually read are returned. *position* is a count of characters.
+
+*Primitive* **`stream.read-all-characters`** *stream*  => `Text`<br>
+Returns a list of all characters available in *stream*.
+
+*Primitive* **`stream.read-line`** *stream*  => `Text`<br>
+Returns the line at position *position* in *stream*. *position* is a count of lines.
+
+*Primitive* **`stream.read-lines`** *stream* *position* *count*  => `List`<br>
+Returns a list of up to *count* lines obtained by reading *stream*, starting at position *position*. If fewer than *count* lines are available, the ones actually read are returned. *position* is a count of lines.
+
+*Primitive* **`stream.read-all-lines`** *stream*  => `List`<br>
+Returns a list of all lines available in *stream*.
+
+*Primitive* **`stream.read-object`** *stream*  => `<anything>`<br>
+Returns the **object** at position *position* in *stream*. An **object** is a Bard value obtained by applying `read` as if reading input at the Bard prompt. *position* is a count of objects.
+
+*Primitive* **`stream.read-objects`** *stream* *position* *count*  => `List`<br>
+Returns a list of up to *count* **objects** obtained by reading *stream*, starting at position *position*. An **object** is a Bard value obtained by applying `read` as if reading input at the Bard prompt. If fewer than *count* objects are available, the ones actually read are returned. *position* is a count of objects.
+
+*Primitive* **`stream.read-all-objects`** *stream*  => `List`<br>
+Returns a list of all **objects** available in *stream*. An **object** is a Bard value obtained by applying `read` as if reading input at the Bard prompt.
 
     
 ### Strings
