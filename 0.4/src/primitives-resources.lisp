@@ -72,3 +72,52 @@
 ;;; ---------------------------------------------------------------------
 ;;; primitive definitions
 ;;; ---------------------------------------------------------------------
+
+(defprim 'bard-symbols::|url| 1
+    (make-prim :name 'bard-symbols::|url|
+               :n-args 1
+               :opcode 'bard::url
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|url.scheme| 1
+    (make-prim :name 'bard-symbols::|url.scheme|
+               :n-args 1
+               :opcode 'bard::url.scheme
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|url.host| 1
+    (make-prim :name 'bard-symbols::|url.host|
+               :n-args 1
+               :opcode 'bard::url.host
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|url.path| 1
+    (make-prim :name 'bard-symbols::|url.path|
+               :n-args 1
+               :opcode 'bard::url.path
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|url.port| 1
+    (make-prim :name 'bard-symbols::|url.port|
+               :n-args 1
+               :opcode 'bard::url.port
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|url.query| 1
+    (make-prim :name 'bard-symbols::|url.query|
+               :n-args 1
+               :opcode 'bard::url.query
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|as-url| 1
+    (make-prim :name 'bard-symbols::|as-url|
+               :n-args 1
+               :opcode 'bard::as-url
+               :always t
+               :side-effects nil))

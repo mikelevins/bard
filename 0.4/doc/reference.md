@@ -1,10 +1,20 @@
 # Bard Reference
 
-Version 0.4.0a12
+Version 0.4.0a13
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a13
+
+* Added `url`
+* Added `url.scheme`
+* Added `url.host`
+* Added `url.path`
+* Added `url.port`
+* Added `url.query`
+* Added `as-url`
 
 Version 0.4.0a12
 
@@ -253,6 +263,33 @@ Returns a keyword whose name is given by *expr*. *expr* must be a string or a sy
 
 *Converter* **`as-symbol`** *expr*   => `<symbol>`<br>
 Returns a symbol whose name is given by *expr*. *expr* must be a string or a keyword.
+
+### Resources
+
+Resources are values that identify files, services, or other machine resources on the local system or on an accessible remote system. Resource values use URLs to idenity these system resources.
+
+#### Procedures that work with resources
+
+*Primitive* **`url`** *string*  => `<url>`<br>
+Returns a new URL constructed by parsing *string*. *string* must conform to proper URL syntax.
+
+*Primitive* **`url.scheme`** *url*  => `<symbol>`<br>
+Returns the URL scheme.
+
+*Primitive* **`url.host`** *url*  => `<string>`<br>
+Returns the URL host, or `nothing` if it doesn't have one.
+
+*Primitive* **`url.path`** *url*  => `<string>`<br>
+Returns the URL path, or `nothing` if it doesn't have one.
+
+*Primitive* **`url.port`** *url*  => `Number`<br>
+Returns the URL port, or `nothing` if it doesn't have one.
+
+*Primitive* **`url.query`** *url*  => `<string>`<br>
+Returns the URL query, or `nothing` if it doesn't have one.
+
+*Primitive* **`as-url`** *expr*  => `<url>`<br>
+Returns a new URL. If *expr* is a string then the URL is constructed by parsing it; *expr* must conform to proper URL syntax. If *expr* is a URL, it is returned unchanged.
 
     
 ### Strings

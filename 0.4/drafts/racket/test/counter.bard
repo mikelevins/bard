@@ -6,7 +6,7 @@
 ;;;
 ;;; executes in 4 milliseconds when compiled with exe
 
-#lang bard
+;;;#lang bard
 (require "special.rkt")
 (def x 0)
 (time (with-exit (return) 

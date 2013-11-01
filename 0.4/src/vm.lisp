@@ -143,16 +143,17 @@
                                             (LREF 0 0) (RETURN))))
                     (vm-stack vm)))
       
-      ;; Nullary operations:
+      ;; zero arguments
       ((BARD-READ NEWLINE LIST0)
        (push (funcall (opcode instr)) (vm-stack vm)))
       
-      ;; Unary operations:
-      ((CONS.LEFT CONS.RIGHT CONS.FIRST CONS.REST CONS.LAST BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD AS-CONS
-                  STRING.FIRST STRING.REST STRING.LAST ALIST-MAP? ALIST.KEYS ALIST.VALS AS-ALIST-MAP)
+      ;; 1 argument
+      ((CONS.LEFT CONS.RIGHT CONS.FIRST CONS.REST CONS.LAST BARD-NOT LIST1 COMPILER DISPLAY BARD-WRITE AS-STRING AS-SYMBOL AS-KEYWORD
+                  AS-CONS STRING.FIRST STRING.REST STRING.LAST ALIST-MAP? ALIST.KEYS ALIST.VALS AS-ALIST-MAP
+                  URL URL.SCHEME URL.HOST URL.PATH URL.PORT URL.QUERY AS-URL)
        (push (funcall (opcode instr) (pop (vm-stack vm))) (vm-stack vm)))
       
-      ;; Binary operations:
+      ;; 2 arguments
       ((+ - * / bard< bard> bard<= bard>= /= = CONS LIST2 NAME! IDENTICAL? EQUAL? STRING.APPEND CONS.APPEND CONS.DROP CONS.TAKE
           STRING.DROP STRING.TAKE ALIST.GET ALIST.MERGE)
        (setf (vm-stack vm)
@@ -160,11 +161,18 @@
                             (first (vm-stack vm)))
                    (drop 2 (vm-stack vm)))))
       
-      ;; Ternary operations:
+      ;; 3 arguments
       ((LIST3 STRING.SLICE CONS.SLICE ALIST.PUT)
        (setf (vm-stack vm) (cons (funcall (opcode instr) (third (vm-stack vm))
                                           (second (vm-stack vm)) (first (vm-stack vm)))
                                  (drop 3 (vm-stack vm)))))
+
+      ;; 4 arguments
+      (()
+       (setf (vm-stack vm) (cons (funcall (opcode instr) 
+                                          (fourth (vm-stack vm))(third (vm-stack vm))
+                                          (second (vm-stack vm)) (first (vm-stack vm)))
+                                 (drop 4 (vm-stack vm)))))
       
       ;; More list constructors:
       (LIST4 (setf (vm-stack vm) (cons (funcall (opcode instr) 

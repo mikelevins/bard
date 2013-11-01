@@ -55,7 +55,8 @@
   (error "Unsupported stream specification: ~s"
          (list scheme url direction element-type)))
 
-(defmethod make-stream ((scheme (eql 'bard-symbols::|file|)) (url puri:uri) 
+(defmethod make-stream ((scheme (eql 'bard-symbols::|file|)) 
+                        (url puri:uri) 
                         (direction (eql 'bard-symbols::|input|))
                         (element-type (eql 'bard-symbols::|character|)))
   (let* ((truename (probe-file (puri:uri-path url))))
@@ -167,7 +168,31 @@
             (error "Invalid file position: ~s" pos))))))
 
 (defmethod stream.read-lines ((s <file-stream>)(pos integer)(count integer)) 
-  (take count (drop pos (stream.read-all-lines s))))
+  (let ((truename (probe-file (puri:uri-path (stream-url s))))
+        (eof (gensym)))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      ;; skip over the objects before pos 
+      (let ((line-count 0))
+        (block counting
+          (loop (if (< line-count pos)
+                    (let ((line (read-line in nil eof)))
+                      (if (eql line eof)
+                          (return-from counting nil)
+                          (incf line-count)))
+                    (return-from counting nil)))))
+      ;; collect count lines
+      (let ((line-count 0)
+            (lines nil))
+        (block collecting
+          (loop (if (< line-count count)
+                    (let ((line (read-line in nil eof)))
+                      (if (eql line eof)
+                          (return-from collecting (reverse lines))
+                          (progn
+                            (push line lines)
+                            (incf line-count))))
+                    (return-from collecting (reverse lines)))))))))
 
 (defmethod stream.read-all-lines ((s <file-stream>)) 
   (let ((truename (probe-file (puri:uri-path (stream-url s)))))
@@ -187,9 +212,39 @@
             (bard-read in)
             (error "Invalid file position: ~s" pos))))))
 
-(defmethod stream.read-objects ((in <file-stream>)(pos integer)(count integer)) )
-(defmethod stream.read-all-objects ((in <file-stream>)) )
+(defmethod stream.read-objects ((s <file-stream>)(pos integer)(count integer)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      ;; skip over the objects before pos 
+      (let ((obj-count 0))
+        (block counting
+          (loop (if (< obj-count pos)
+                    (let ((obj (bard-read in)))
+                      (if (typep obj (find-class '<eof>))
+                          (return-from counting nil)
+                          (incf obj-count)))
+                    (return-from counting nil)))))
+      ;; collect count objects
+      (let ((obj-count 0)
+            (objs nil))
+        (block collecting
+          (loop (if (< obj-count count)
+                    (let ((obj (bard-read in)))
+                      (if (typep obj (find-class '<eof>))
+                          (return-from collecting (reverse objs))
+                          (progn
+                            (push obj objs)
+                            (incf obj-count))))
+                    (return-from collecting (reverse objs)))))))))
 
+(defmethod stream.read-all-objects ((s <file-stream>)) 
+  (let ((truename (probe-file (puri:uri-path (stream-url s)))))
+    (assert truename () "No such file: ~a" (stream-url s))
+    (with-open-file (in truename :direction :input :element-type 'cl:character)
+      (loop for obj = (bard-read in)
+         until (typep obj (find-class '<eof>))
+         collect obj))))
 
 (defmethod stream.write-octet ((in <file-stream>)(octet integer)) )
 (defmethod stream.write-octets ((in <file-stream>) (octets sequence)) )
@@ -238,3 +293,31 @@
                :opcode 'bard::bard-write
                :always nil
                :side-effects t))
+
+(defprim 'bard-symbols::|stream.standard-input| 0
+    (make-prim :name 'bard-symbols::|stream.standard-input|
+               :n-args 0
+               :opcode 'bard::stream.standard-input
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.standard-output| 0
+    (make-prim :name 'bard-symbols::|stream.standard-output|
+               :n-args 0
+               :opcode 'bard::stream.standard-output
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.standard-error| 0
+    (make-prim :name 'bard-symbols::|stream.standard-error|
+               :n-args 0
+               :opcode 'bard::stream.standard-error
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|make-stream| 4
+    (make-prim :name 'bard-symbols::|make-stream|
+               :n-args 4
+               :opcode 'bard::make-stream
+               :always t
+               :side-effects nil))
