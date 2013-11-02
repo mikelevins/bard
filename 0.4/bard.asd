@@ -62,7 +62,8 @@
                                      (:file "values-simple")
                                      (:file "globals")
                                      (:file "environments")
-                                     (:file "primitives")))))
+                                     (:file "primitives")
+                                     (:file "primitives-alist-map")))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
 ;;; (bard::bard)
