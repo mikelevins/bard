@@ -6,6 +6,17 @@ Copyright 2013 by mikel evins
 
 ## 1. Changes
 
+Version 0.4.0a15
+
+* Added `stream.write-octet`
+* Added `stream.write-octets`
+* Added `stream.write-character`
+* Added `stream.write-characters`
+* Added `stream.write-line`
+* Added `stream.write-lines`
+* Added `stream.write-object`
+* Added `stream.write-objects`
+
 Version 0.4.0a14
 
 * Added `stream.standard-input`
@@ -367,7 +378,30 @@ Returns a list of up to *count* **objects** obtained by reading *stream*, starti
 *Primitive* **`stream.read-all-objects`** *stream*  => `List`<br>
 Returns a list of all **objects** available in *stream*. An **object** is a Bard value obtained by applying `read` as if reading input at the Bard prompt.
 
-    
+*Primitive* **`stream.write-octet`** *stream* *position* *octet*  => `<anything>`<br>
+Writes *octet* at *position* on *stream*. *position* is a count of octets. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-octets`** *stream* *position* *octets*  => `<anything>`<br>
+Writes *octets* at *position* on *stream*. *position* is a count of octets. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-character`** *stream* *position* *character*  => `<anything>`<br>
+Writes *character* at *position* on *stream*. *position* is a count of characters. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-characters`** *stream* *position* *characters*  => `<anything>`<br>
+Writes *characters* at *position* on *stream*. *position* is a count of characters. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-line`** *stream* *position* *line*  => `<anything>`<br>
+Writes *line* at *position* on *stream*. *position* is a count of lines. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-lines`** *stream* *position* *lines*  => `<anything>`<br>
+Writes *lines* at *position* on *stream*. *position* is a count of lines. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-object`** *stream* *position* *object*  => `<anything>`<br>
+Writes *object* at *position* on *stream*. *position* is a count of objects. Overwrites any existing data starting at *position*.
+
+*Primitive* **`stream.write-objects`** *stream* *position* *objects*  => `<anything>`<br>
+Writes *objects* at *position* on *stream*. *position* is a count of objects. Overwrites any existing data starting at *position*.
+
 ### Strings
 
 A string value is a packed array of characters. Here are a couple of examples:

@@ -191,7 +191,10 @@
       ;; 3 arguments
       ;; -----------------------------------------
 
-      ((STRING.SLICE CONS.SLICE ALIST.PUT STREAM.READ-OCTETS STREAM.READ-CHARACTERS STREAM.READ-LINES STREAM.READ-OBJECTS)
+      ((STRING.SLICE CONS.SLICE ALIST.PUT 
+                     STREAM.READ-OCTETS STREAM.READ-CHARACTERS STREAM.READ-LINES STREAM.READ-OBJECTS
+                     STREAM.WRITE-OCTET STREAM.WRITE-OCTETS STREAM.WRITE-CHARACTER STREAM.WRITE-CHARACTERS
+                     STREAM.WRITE-LINE STREAM.WRITE-LINES  STREAM.WRITE-OBJECT STREAM.WRITE-OBJECTS)
        (setf (vm-stack vm) (cons (funcall (opcode instr) (third (vm-stack vm))
                                           (second (vm-stack vm)) (first (vm-stack vm)))
                                  (drop 3 (vm-stack vm)))))

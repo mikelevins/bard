@@ -53,17 +53,15 @@
 
 (defmethod make-stream (scheme url element-type)
   (error "Unsupported stream specification: ~s"
-         (list scheme url direction element-type)))
+         (list scheme url element-type)))
 
 (defmethod make-stream ((scheme (eql 'bard-symbols::|file|)) 
                         (url puri:uri) 
                         (element-type (eql 'bard-symbols::|character|)))
-  (let* ((truename (probe-file (puri:uri-path url))))
-    (if truename
-        (if (directory? truename)
-            (error "URL names a directory: ~a" url)
-            (make-instance '<file-stream> :url url :pathname truename :element-type element-type))
-        (error "No such file ~a" url))))
+  (let* ((path (puri:uri-path url)))
+    (if (directory? path)
+        (error "URL names a directory: ~a" url)
+        (make-instance '<file-stream> :url url :pathname path :element-type element-type))))
 
 (defmethod stream.create ((url puri:uri)(element-type (eql 'bard-symbols::|character|)))
   (make-stream (url.scheme url) url element-type))
@@ -266,17 +264,109 @@
          until (typep obj (find-class '<eof>))
          collect obj))))
 
-(defmethod stream.write-octet ((in <file-stream>)(octet integer)) )
-(defmethod stream.write-octets ((in <file-stream>) (octets sequence)) )
+(defmethod stream.write-octet ((s <file-stream>)(pos integer)(octet integer)) 
+  (assert (typep octet 'octet)() "Invalid octet argument to stream.write-octet: ~s" octet)
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :output :element-type '(unsigned-byte 8)
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (file-position out pos)))
+        (if success?
+            (write-byte octet out)
+            (error "Can't write an octet on stream ~S at position ~S"
+                   s pos))))))
 
-(defmethod stream.write-character ((in <file-stream>)(ch character)) )
-(defmethod stream.write-characters ((in <file-stream>) (characters sequence)) )
+(defmethod stream.write-octets ((s <file-stream>)(pos integer)(octets sequence)) 
+  (assert (every #'(lambda (o)(typep o 'octet)) octets)() "Invalid octet arguments in stream.write-octets: ~s" octets)
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :output :element-type '(unsigned-byte 8)
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (file-position out pos)))
+        (if success?
+            (write-sequence octets out)
+            (error "Can't write octets on stream ~S at position ~S"
+                   s pos))))))
 
-(defmethod stream.write-line ((in <file-stream>)(line string)) )
-(defmethod stream.write-lines ((in <file-stream>)(lines sequence)) )
+(defmethod stream.write-character ((s <file-stream>)(pos integer)(ch character)) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :output :element-type 'cl:character
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (file-position out pos)))
+        (if success?
+            (write-char ch out)
+            (error "Can't write a character on stream ~S at position ~S"
+                   s pos))))))
 
-(defmethod stream.write-object ((in <file-stream>) object) )
-(defmethod stream.write-objects ((in <file-stream>)(objects sequence)) )
+(defmethod stream.write-characters ((s <file-stream>)(pos integer)(characters string)) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :output :element-type 'cl:character
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (file-position out pos)))
+        (if success?
+            (write-sequence characters out)
+            (error "Can't write characters on stream ~S at position ~S"
+                   s pos))))))
+
+(defmethod %stream.go-to-line ((s stream)(pos integer))
+  (let ((line-count 0))
+    (block searching
+      (loop (if (>= line-count pos)
+                (return-from searching
+                  (file-position s))
+                (progn (read-line s)
+                       (incf line-count)))))))
+
+(defmethod stream.write-line ((s <file-stream>)(pos integer)(line string)) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :io :element-type 'cl:character
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (%stream.go-to-line out pos)))
+        (if success?
+            (write-line line out)
+            (error "Can't write a line on stream ~S at position ~S"
+                   s pos))))))
+
+(defmethod stream.write-lines ((s <file-stream>)(pos integer)(lines sequence)) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :io :element-type 'cl:character
+                         :if-exists :overwrite :if-does-not-exist :create)
+      (let ((success? (%stream.go-to-line out pos)))
+        (if success?
+            (dotimes (i (length lines))
+              (write-line (elt lines i) out))
+            (error "Can't write lines on stream ~S at position ~S"
+                   s pos))))))
+
+(defmethod %stream.go-to-object ((s stream)(pos integer))
+  (let ((object-count 0))
+    (block searching
+      (loop (if (>= object-count pos)
+                (return-from searching
+                  (file-position s))
+                (progn (bard-read s)
+                       (incf object-count)))))))
+
+(defmethod stream.write-object ((s <file-stream>)(pos integer) object) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :io :element-type 'cl:character
+                         :if-exists :append :if-does-not-exist :create)
+      (let ((success? (%stream.go-to-object out pos)))
+        (if success?
+            (let ((str (value->literal-string object)))
+              (write-string str out))
+            (error "Can't write object on stream ~S at position ~S"
+                   s pos))))))
+
+(defmethod stream.write-objects ((s <file-stream>)(pos integer)(objects sequence)) 
+  (let ((path (puri:uri-path (stream-url s))))
+    (with-open-file (out path :direction :io :element-type 'cl:character
+                         :if-exists :append :if-does-not-exist :create)
+      (let ((success? (%stream.go-to-object out pos)))
+        (if success?
+            (dotimes (i (length objects))
+              (let ((str (value->literal-string (elt objects i))))
+                (write-string str out)))
+            (error "Can't write object on stream ~S at position ~S"
+                   s pos))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; converters
@@ -431,5 +521,61 @@
     (make-prim :name 'bard-symbols::|stream.read-all-objects|
                :n-args 1
                :opcode 'bard::stream.read-all-objects
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-octet| 3
+    (make-prim :name 'bard-symbols::|stream.write-octet|
+               :n-args 3
+               :opcode 'bard::stream.write-octet
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-octets| 3
+    (make-prim :name 'bard-symbols::|stream.write-octets|
+               :n-args 3
+               :opcode 'bard::stream.write-octets
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-character| 3
+    (make-prim :name 'bard-symbols::|stream.write-character|
+               :n-args 3
+               :opcode 'bard::stream.write-character
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-characters| 3
+    (make-prim :name 'bard-symbols::|stream.write-characters|
+               :n-args 3
+               :opcode 'bard::stream.write-characters
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-line| 3
+    (make-prim :name 'bard-symbols::|stream.write-line|
+               :n-args 3
+               :opcode 'bard::stream.write-line
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-lines| 3
+    (make-prim :name 'bard-symbols::|stream.write-lines|
+               :n-args 3
+               :opcode 'bard::stream.write-lines
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-object| 3
+    (make-prim :name 'bard-symbols::|stream.write-object|
+               :n-args 3
+               :opcode 'bard::stream.write-object
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|stream.write-objects| 3
+    (make-prim :name 'bard-symbols::|stream.write-objects|
+               :n-args 3
+               :opcode 'bard::stream.write-objects
                :always t
                :side-effects nil))
