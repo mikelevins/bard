@@ -1,4 +1,4 @@
-;;;; ***********************************************************************
+2;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          bard.asd
@@ -49,9 +49,25 @@
                                      (:file "vm")
                                      (:file "toplevel")))))
 
+(asdf:defsystem #:bard-test
+  :serial t
+  :description "Tests of the Bard compiler and VM"
+  :author "mikel evins <mevins@me.com>"
+  :license "Apache 2.0"
+  :depends-on (:lift :bard)
+  :components ((:module "test"
+                        :serial t
+                        :components ((:file "package")
+                                     (:file "utils")
+                                     (:file "values-simple")
+                                     (:file "globals")
+                                     (:file "environments")
+                                     (:file "primitives")))))
+
 ;;; (asdf:oos 'asdf:load-op :bard)
 ;;; (bard::bard)
 
 ;;; (bard::build-bard (format nil "/Users/mikel/Desktop/"))
 
+;;; (asdf:oos 'asdf:load-op :bard-test)
 
