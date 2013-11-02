@@ -32,28 +32,48 @@
 ;;; bard toplevel
 ;;; ---------------------------------------------------------------------
 
+(defparameter *the-bard-vm* nil)
+
 (defparameter *bard-top-level*
   (bard-read-from-string
    "
 (begin 
+
+ (set! map
+       (method (f ls)
+               (if (<= (cons.length ls) 0)
+                   nothing
+                   (cons (f (cons.left ls))
+                         (map f (cons.right ls))))))
+
+ (set! load
+       (method (url)
+               (map (^ (exp) ((compiler exp)))
+                    (stream.read-all-objects
+                     (stream.create url 'character)))))
+
  (set! bard 
-     (method () 
-             (newline)
-             (display \"bard> \")
-             (write ((compiler (read))))
-             (bard)))
+       (method () 
+               (newline)
+               (display \"bard> \")
+               (write ((compiler (read))))
+               (bard)))
+
  (bard))
+
 "))
 
 (defun bard ()
   (init-bard)
   (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+    (setf *the-bard-vm* vm)
     (vmrun vm)))
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
   (init-bard)
   (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
+                  (setf *the-bard-vm* vm)
                   (vmrun vm))
     (serious-condition (err)
       (format t "~%Unhandled error in the bard VM: ~S; terminating" err)

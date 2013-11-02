@@ -171,9 +171,10 @@
            (bard-symbols::|if| (arg-count expr 3)
                  (comp-if (second expr) (third expr) (fourth expr)
                           env val? more?))
-           ((bard-symbols::|method| bard-symbols::|^|) (when val?
-                             (let ((f (comp-method (second expr) (drop 2 expr) env)))
-                               (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
+           ((bard-symbols::|method| bard-symbols::|^|)
+            (when val?
+              (let ((f (comp-method (second expr) (drop 2 expr) env)))
+                (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
            (t (comp-funcall (first expr) (rest expr) env val? more?)))))))
 
 (defun compiler (x)

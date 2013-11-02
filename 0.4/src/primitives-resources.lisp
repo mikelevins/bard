@@ -70,6 +70,29 @@
   (url x))
 
 ;;; ---------------------------------------------------------------------
+;;; file operations
+;;; ---------------------------------------------------------------------
+
+(defmethod resource.directory? ((url puri:uri)) )
+(defmethod resource.file? ((url puri:uri)) )
+(defmethod resource.link? ((url puri:uri)) )
+(defmethod resource.exists? ((url puri:uri)) )
+(defmethod resource.readable? ((url puri:uri)) )
+(defmethod resource.writable? ((url puri:uri)) )
+(defmethod resource.executable? ((url puri:uri)) )
+(defmethod resource.permissions ((url puri:uri)) )
+(defmethod resource.owner ((url puri:uri)) )
+(defmethod resource.group ((url puri:uri)) )
+(defmethod resource.create-time ((url puri:uri)) )
+(defmethod resource.modified-time ((url puri:uri)) )
+(defmethod resource.delete ((url puri:uri)) )
+(defmethod resource.rename ((url puri:uri)(name string)) )
+(defmethod resource.copy ((src puri:uri)(dst puri:uri)) )
+
+(defmethod directory.list ((url puri:uri)) )
+(defmethod file.length ((url puri:uri)) )
+
+;;; ---------------------------------------------------------------------
 ;;; primitive definitions
 ;;; ---------------------------------------------------------------------
 

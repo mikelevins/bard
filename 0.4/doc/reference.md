@@ -1,10 +1,15 @@
 # Bard Reference
 
-Version 0.4.0a14
+Version 0.4.0a16
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a16
+
+* Added `load`
+* Added Bard source "fib.bard"
 
 Version 0.4.0a15
 

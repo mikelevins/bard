@@ -77,6 +77,14 @@
 (defmethod cons.take ((n integer)(x cons)) 
   (subseq x 0 n))
 
+
+(defmethod cons.length ((x null)) 
+  (declare (ignore x))
+  0)
+
+(defmethod cons.length ((x cons)) 
+  (length x))
+
 ;;; ---------------------------------------------------------------------
 ;;; cons converters
 ;;; ---------------------------------------------------------------------
@@ -166,8 +174,15 @@
                :always t
                :side-effects nil))
 
+(defprim 'bard-symbols::|cons.length| 1
+    (make-prim :name 'bard-symbols::|cons.length|
+               :n-args 1
+               :opcode 'bard::cons.length
+               :always t
+               :side-effects nil))
+
 ;;; ---------------------------------------------------------------------
-;;; temporary list primitive
+;;; temporary list primitives
 ;;; ---------------------------------------------------------------------
 
 (defprim 'bard-symbols::|list| 0
