@@ -1,10 +1,15 @@
 # Bard Reference
 
-Version 0.4.0a16
+Version 0.4.0a17
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a17
+
+* Added `let`
+* Added `map`
 
 Version 0.4.0a16
 
@@ -240,6 +245,10 @@ Here are a few examples of calls to `list` and the `cons` structures that they r
 
 **Note:** In Bard 0.4.0a, `list` is limited to 10 arguments.
 
+*Function* **`map`** *proc* *list* * => `List`<br>
+Returns a list constructed by applying the procedure *proc* to each element of *list* from left to right. The values returned by *proc* are collected in a new list in the same order that they were produced.
+
+
 ### Booleans
 
 A **Boolean** is one of the special values `true` or `false`. A **generalized Boolean** is any Bard value when treated as true or false. The special values `false` and `nothing` are both false when treated as generalized booleans; all other Bard values are considered true.
@@ -331,6 +340,9 @@ Returns a new URL. If *expr* is a string then the URL is constructed by parsing 
 ### Streams
 
 #### Procedures that work with streams
+
+*Method* **`load`** *stream*  => `<anything>`<br>
+Reads Bard value from *stream*, which must be a character input stream. Compiles and evaluates each Bard value in the order read. Values that denote expressions that have side effects may change the state of the running Bard process--for example, `def` expressions may create or alter the values of global variables. `load` can be used to load new definitions into a running Bard process.
 
 *Primitive* **`stream.standard-input`**  => `<stream>`<br>
 Returns a stream that represents the computer's standard input.
@@ -503,6 +515,15 @@ Returns `true` if *expr1* is **identical** to *expr2*, and `false` otherwise. Tw
 
 *Special form* **`if`** *test* *then-form* *else-form* => `<anything>`<br>
 `if` evaluates *test*. If the result is true then it evaluates *then-form*; otherwise it evaluates *else-form*. It is an error to evaluate an `if` expression with no *else-form*.
+
+*Special form* **`let`** ((*var* *expr*) * ...) *body* ... => `<anything>`<br>
+`let` creates a local environment in which the variables given by *var* ... are defined. Any number of variables *var* may appear in the `let` form. Each *var* is bound to the value of the corresponding *expr* form. Any number of expressions may appear in *body*. Expressions in *body* are evaluated from left to right as if in a `begin` form. They may refer to *var* and any other variables defined in the `let` form.
+
+`let` binds variables in the order that they appear. Later variables may refer to the values of earlier variables. For example, the following `let` form is valid:
+
+    (let ((x 2)
+          (y (+ x 1)))
+      (* x y))
 
 *Special form* **`method`** `(`*parameter* * `)` *expr* * => `<method>`<br>
 `method` creates and returns a new method. The formal parameters of the method are given by *parameter* *. The body of the method, given by *expr*, defines the evaluations that take place when the method is called.

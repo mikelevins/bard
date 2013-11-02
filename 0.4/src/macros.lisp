@@ -64,3 +64,21 @@
                                             result
                                             (bard-symbols::|or| ,@more))) 
               ,test)))))
+
+;;; let
+
+(def-bard-macro bard-symbols::|%simple-let| (bindings &rest body)
+  (let ((vars (mapcar #'car bindings))
+        (vals (mapcar #'cadr bindings)))
+    `((bard-symbols::|method| (,@vars) ,@body)
+      ,@vals)))
+
+(def-bard-macro bard-symbols::|let| (bindings &rest body)
+  (if (null bindings)
+      `(bard-symbols::|begin| ,@body)
+      (if (null (cdr bindings))
+          `(bard-symbols::|%simple-let| ,bindings ,@body)
+          (let ((first-binding (first bindings))
+                (rest-bindings (rest bindings)))
+            `(bard-symbols::|%simple-let| (,first-binding) 
+               (bard-symbols::|let| (,@rest-bindings) ,@body))))))
