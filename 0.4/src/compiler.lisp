@@ -127,6 +127,14 @@
               (comp f env t t)
               (gen 'CALLJ (length args)))))))
 
+
+(defun comp-time (exp env val? more?)
+  (seq (gen 'START-TIMER)
+       (comp exp env val? t)
+       (gen 'REPORT-TIME)
+       (unless val? (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
 ;;; ---------------------------------------------------------------------
 ;;; compiler utils
 ;;; ---------------------------------------------------------------------
@@ -160,6 +168,7 @@
            (bard-symbols::|quote|  (arg-count expr 1)
                      (comp-const (second expr) val? more?))
            (bard-symbols::|begin| (comp-begin (rest expr) env val? more?))
+           (bard-symbols::|time| (comp-time (second expr) env val? more?))
            (bard-symbols::|set!|  (arg-count expr 2)
                     (assert (symbolp (second expr)) (expr)
                             "Only variables can be set!, not ~a in ~a"

@@ -51,6 +51,30 @@
   (make-instance '<ret-addr> :pc pc :fn fn :env env))
 
 ;;; ---------------------------------------------------------------------
+;;; system tools
+;;; ---------------------------------------------------------------------
+
+(defparameter *vm-timer-start* nil)
+
+(defun start-timer ()
+  (setf *vm-timer-start* (get-internal-run-time))
+  (format t "~%START-TIMER: timer started with value ~a" *vm-timer-start*)
+  (force-output)
+  (values))
+
+(defun report-time ()
+  (when *vm-timer-start*
+    (let* ((end-time (get-internal-run-time))
+           (elapsed (- end-time *vm-timer-start*))
+           (secs (float (/ elapsed internal-time-units-per-second))))
+      (format t "~%REPORT-TIME: timer stopped with value: ~a~%" end-time)
+      (format t "  elapsed: ~a~%" elapsed)
+      (format t "  (~a seconds)~%~%" secs)
+      (force-output)
+      (setf *vm-timer-start* nil)
+      (values))))
+
+;;; ---------------------------------------------------------------------
 ;;; vm accessors and utils
 ;;; ---------------------------------------------------------------------
 
@@ -281,6 +305,7 @@
       ;; Other instructions
       ;; -----------------------------------------
       
+      ((START-TIMER REPORT-TIME) (funcall (opcode instr)))
       ((HALT) (vm-stack-top vm))
       (otherwise (error "Unknown opcode: ~a" instr)))))
 

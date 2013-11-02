@@ -1,10 +1,14 @@
 # Bard Reference
 
-Version 0.4.0a17
+Version 0.4.0a18
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a18
+
+* Added `time`
 
 Version 0.4.0a17
 
@@ -533,6 +537,9 @@ Returns `true` if *expr1* is **identical** to *expr2*, and `false` otherwise. Tw
 
 *Special form* **`set!`** *var* *val* => *val*<br>
 `set!` assigns the value of *val* to the global variable named *var*, creating the variable if necessary.
+
+*Special form* **`time`** *expr* => `<anything>`<br>
+`time` returns the value of *expr* and prints some rough information about the time it took to evaluate.
 
 ## 4. Macros
 
