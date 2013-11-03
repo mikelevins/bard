@@ -27,11 +27,8 @@
 (defun args (instr) (if (listp instr) (rest instr)))
 
 (defun arg1 (instr) (if (listp instr) (second instr)))
-(defun set-arg1 (instr val)(setf (second instr) val))
 (defun arg2 (instr) (if (listp instr) (third instr)))
 (defun arg3 (instr) (if (listp instr) (fourth instr)))
-
-(defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
 
 (defun is (instr op)
   "True if instr's opcode is OP, or one of OP when OP is a list."

@@ -23,15 +23,11 @@
    (n-args :accessor vm-n-args :initform nil :initarg :n-args)
    (instr :accessor vm-instr :initform nil :initarg :instr)))
 
-(defmethod initialize-instance :after ((vm <vm>) 
-                                       &rest initargs
-                                       &key (mfn nil)
-                                         &allow-other-keys)
+(defmethod initialize-instance :after ((vm <vm>) &rest initargs
+                                       &key (mfn nil) &allow-other-keys)
   (declare (ignore initargs))
   (setf (vm-mfn vm) mfn)
-  (setf (vm-code vm) (if mfn
-                         (mfn-code mfn)
-                         nil))
+  (setf (vm-code vm) (if mfn (mfn-code mfn) nil))
   (setf (vm-pc vm) 0)
   (setf (vm-env vm) (null-environment))
   (setf (vm-stack vm) nil)
@@ -42,13 +38,13 @@
 ;;; return address class
 ;;; ---------------------------------------------------------------------
 
-(defclass <ret-addr> () 
-  ((fn :accessor ret-addr-fn :initform nil :initarg :fn)
-   (pc :accessor ret-addr-pc :initform nil :initarg :pc)
-   (env :accessor ret-addr-env :initform nil :initarg :env)))
+(defclass <return-address> () 
+  ((fn :accessor return-address-fn :initform nil :initarg :fn)
+   (pc :accessor return-address-pc :initform nil :initarg :pc)
+   (env :accessor return-address-env :initform nil :initarg :env)))
 
-(defun make-ret-addr (&key pc fn env)
-  (make-instance '<ret-addr> :pc pc :fn fn :env env))
+(defun make-return-address (&key pc fn env)
+  (make-instance '<return-address> :pc pc :fn fn :env env))
 
 ;;; ---------------------------------------------------------------------
 ;;; system tools
@@ -85,6 +81,8 @@
 ;;; executing the vm
 ;;; ---------------------------------------------------------------------
 
+
+;;; execute one instruction
 (defmethod vmstep ((vm <vm>))
   
   (setf (vm-instr vm) (elt (vm-code vm) (vm-pc vm)))
@@ -118,15 +116,15 @@
       ;; Function call/return instructions:
       ;; -----------------------------------------
 
-      (SAVE   (push (make-ret-addr :pc (arg1 instr)
+      (SAVE   (push (make-return-address :pc (arg1 instr)
                                    :fn (vm-mfn vm) :env (vm-env vm))
                     (vm-stack vm)))
-      (RETURN ;; return value is top of stack; ret-addr is second
-        (setf (vm-mfn vm) (ret-addr-fn (second (vm-stack vm)))
+      (RETURN ;; return value is top of stack; return-address is second
+        (setf (vm-mfn vm) (return-address-fn (second (vm-stack vm)))
               (vm-code vm) (mfn-code (vm-mfn vm))
-              (vm-env vm) (ret-addr-env (second (vm-stack vm)))
-              (vm-pc vm) (ret-addr-pc (second (vm-stack vm))))
-        ;; Get rid of the ret-addr, but keep the value
+              (vm-env vm) (return-address-env (second (vm-stack vm)))
+              (vm-pc vm) (return-address-pc (second (vm-stack vm))))
+        ;; Get rid of the return-address, but keep the value
         (setf (vm-stack vm)
               (cons (first (vm-stack vm))
                     (drop 2 (vm-stack vm)))))
@@ -309,12 +307,13 @@
       ((HALT) (vm-stack-top vm))
       (otherwise (error "Unknown opcode: ~a" instr)))))
 
-
+;;; run the vm
 (defmethod vmrun ((vm <vm>))
   (loop
      (if (< (vm-pc vm)
             (length (vm-code vm)))
          (vmstep vm)
          (return (vm-stack-top vm)))))
+
 
 
