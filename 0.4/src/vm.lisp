@@ -19,6 +19,7 @@
    (code :accessor vm-code :initform nil :initarg :code)
    (pc :accessor vm-pc :initform nil :initarg :pc)
    (env :accessor vm-env :initform nil :initarg :env)
+   (globals :accessor vm-globals :initform (make-hash-table))
    (stack :accessor vm-stack :initform nil :initarg :stack)
    (n-args :accessor vm-n-args :initform nil :initarg :n-args)
    (instr :accessor vm-instr :initform nil :initarg :instr)))
@@ -32,7 +33,20 @@
   (setf (vm-env vm) (null-environment))
   (setf (vm-stack vm) nil)
   (setf (vm-n-args vm) 0)
-  (setf (vm-instr vm) nil))
+  (setf (vm-instr vm) nil)
+
+  ;; built-in methods
+
+  ;; call/cc
+  (set-global! vm 'bard-symbols::|call/cc|
+               (make-instance '<mfn> :name '|call/cc|
+                              :args '(f) :code (assemble '((CC) (LVAR 0 0 ";" f)
+                                                           (CALLJ 1)))))
+
+  ;; exit
+  (set-global! vm 'bard-symbols::|exit|
+               (make-instance '<mfn> :name '|exit|
+                              :args '() :code (assemble '((HALT))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; return address class
@@ -77,6 +91,12 @@
 (defmethod vm-stack-top ((vm <vm>))
   (first (vm-stack vm)))
 
+(defmethod get-global ((vm <vm>)(var symbol))
+  (gethash var (vm-globals vm) *undefined*))
+
+(defmethod set-global! ((vm <vm>)(var symbol) val)
+  (setf (gethash var (vm-globals vm)) val))
+
 ;;; ---------------------------------------------------------------------
 ;;; instruction execution
 ;;; ---------------------------------------------------------------------
@@ -100,12 +120,12 @@
 
 (defmethod vmexec ((vm <vm>) (op (eql 'GREF)) args)
   (declare (ignore op))
-  (push (get-global (first args))
+  (push (get-global vm (first args))
         (vm-stack vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'GSET)) args)
   (declare (ignore op))
-  (set-global! (first args) (vm-stack-top vm)))
+  (set-global! vm (first args) (vm-stack-top vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'POP)) args)
   (declare (ignore op args))

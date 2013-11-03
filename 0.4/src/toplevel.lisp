@@ -11,24 +11,6 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; init
-;;; ---------------------------------------------------------------------
-
-(defun init-bard ()
-  "Initialize the Bard toplevel environment"
-  ;; built-in methods
-  ;; ------------------------------------------------
-  ;; call/cc
-  (set-global! 'bard-symbols::|call/cc|
-               (make-instance '<mfn> :name '|call/cc|
-                              :args '(f) :code (assemble '((CC) (LVAR 0 0 ";" f)
-                                                           (CALLJ 1)))))
-  ;; exit
-  (set-global! 'bard-symbols::|exit|
-               (make-instance '<mfn> :name '|exit|
-                              :args '() :code (assemble '((HALT))))))
-
-;;; ---------------------------------------------------------------------
 ;;; bard toplevel
 ;;; ---------------------------------------------------------------------
 
@@ -64,14 +46,12 @@
 "))
 
 (defun bard ()
-  (init-bard)
   (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
     (setf *the-bard-vm* vm)
     (vmrun vm)))
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
-  (init-bard)
   (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
                   (setf *the-bard-vm* vm)
                   (vmrun vm))

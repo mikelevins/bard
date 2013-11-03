@@ -6,6 +6,12 @@ Copyright 2013 by mikel evins
 
 ## 1. Changes
 
+Version 0.4.0a20
+
+* globals are now stored in a slot on the vm, so multiple vms per bard
+  process are now possible
+* name change: alist-map -> alist
+
 Version 0.4.0a19
 
 * bugfix: list constructors no longer reverse their elements
