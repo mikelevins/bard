@@ -288,47 +288,47 @@
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST2))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 2)
+        (cons (reverse (subseq (vm-stack vm) 0 2))
               (drop 2 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST3))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 3)
+        (cons (reverse (subseq (vm-stack vm) 0 3))
               (drop 3 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST4))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 4)
+        (cons (reverse (subseq (vm-stack vm) 0 4))
               (drop 4 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST5))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 5)
+        (cons (reverse (subseq (vm-stack vm) 0 5))
               (drop 5 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST6))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 6)
+        (cons (reverse (subseq (vm-stack vm) 0 6))
               (drop 6 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST7))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 7)
+        (cons (reverse (subseq (vm-stack vm) 0 7))
               (drop 7 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST8))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 8)
+        (cons (reverse (subseq (vm-stack vm) 0 8))
               (drop 8 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST9))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 9)
+        (cons (reverse (subseq (vm-stack vm) 0 9))
               (drop 9 (vm-stack vm)))))
 
 (defmethod exec-list-construction-primitive ((vm <vm>) (op (eql 'LIST10))) 
   (setf (vm-stack vm) 
-        (cons (subseq (vm-stack vm) 0 10)
+        (cons (reverse (subseq (vm-stack vm) 0 10))
               (drop 10 (vm-stack vm)))))
 
 (defparameter $zero-argument-primitives
