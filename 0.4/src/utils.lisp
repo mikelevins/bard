@@ -4,8 +4,9 @@
 ;;;; Name:          utils.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       general-purpose utilities
-;;;; Author:        mikel evins, after Norvig
-;;;; Copyright:     1991 by Peter Norvig, 2013 mikel evins
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 

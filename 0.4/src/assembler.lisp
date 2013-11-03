@@ -5,6 +5,8 @@
 ;;;; Project:       Bard
 ;;;; Purpose:       the assembler for compiled bard code
 ;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 

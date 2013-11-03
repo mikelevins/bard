@@ -1,6 +1,6 @@
 # Bard Reference
 
-Version 0.4.0a19
+Version 0.4.0a20
 
 Copyright 2013 by mikel evins
 

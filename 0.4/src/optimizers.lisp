@@ -5,6 +5,8 @@
 ;;;; Project:       Bard
 ;;;; Purpose:       code-optimizers for the compiler
 ;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 

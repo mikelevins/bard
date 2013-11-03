@@ -4,7 +4,7 @@
 ;;;; Name:          environments.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       representation of lexical environments
-;;;; Author:        mikel evins, after Norvig
+;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 

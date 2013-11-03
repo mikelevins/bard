@@ -4,7 +4,7 @@
 ;;;; Name:          methods.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       implementation of method functions
-;;;; Author:        mikel evins, after Norvig
+;;;; Author:        mikel evins
 ;;;;
 ;;;; ***********************************************************************
 

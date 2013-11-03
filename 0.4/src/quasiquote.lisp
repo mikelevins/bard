@@ -4,7 +4,9 @@
 ;;;; Name:          quasiquote.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       implementation of quasiquote and friends
-;;;; Author:        mikel evins, after Norvig
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 

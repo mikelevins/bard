@@ -4,7 +4,9 @@
 ;;;; Name:          compiler.lisp
 ;;;; Project:       Bard
 ;;;; Purpose:       the bard compiler
-;;;; Author:        mikel evins, after Norvig
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 
