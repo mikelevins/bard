@@ -1,10 +1,18 @@
 # Bard Reference
 
-Version 0.4.0a18
+Version 0.4.0a19
 
 Copyright 2013 by mikel evins
 
 ## 1. Changes
+
+Version 0.4.0a19
+
+* bugfix: list constructors no longer reverse their elements
+* bugfix: single-element lists no longer print as dotted pairs
+* refactored the vm for modularity
+* removed dead code
+* refactored the compiler into more modular form
 
 Version 0.4.0a18
 

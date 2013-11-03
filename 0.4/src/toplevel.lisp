@@ -21,12 +21,12 @@
   ;; call/cc
   (set-global! 'bard-symbols::|call/cc|
                (make-instance '<mfn> :name '|call/cc|
-                              :args '(f) :code (assemble '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                              :args '(f) :code (assemble '((CC) (LVAR 0 0 ";" f)
                                                            (CALLJ 1)))))
   ;; exit
   (set-global! 'bard-symbols::|exit|
                (make-instance '<mfn> :name '|exit|
-                              :args '(val) :code (assemble '((HALT))))))
+                              :args '() :code (assemble '((HALT))))))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard toplevel

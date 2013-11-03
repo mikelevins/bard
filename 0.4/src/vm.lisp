@@ -90,13 +90,13 @@
 
 (defmethod vmexec ((vm <vm>) (op (eql 'LREF)) args)
   (declare (ignore op))
-  (push (elt (elt (vm-env vm) (first args)) (second args))
+  (push (env-ref (vm-env vm) (first args))
         (vm-stack vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'LSET)) args)
   (declare (ignore op))
-  (setf (elt (elt (vm-env vm) (first args)) (second args))
-        (vm-stack-top vm)))
+  (env-set! (vm-env vm) (first args)
+            (vm-stack-top vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'GREF)) args)
   (declare (ignore op))
@@ -155,34 +155,17 @@
 
 (defmethod vmexec ((vm <vm>) (op (eql 'CALLJ)) args)
   (declare (ignore op))
-  (pop (vm-env vm)) ; discard the top env frame
-  (setf (vm-mfn vm) (pop (vm-stack vm))
-        (vm-code vm) (mfn-code (vm-mfn vm))
-        (vm-env vm) (mfn-env (vm-mfn vm))
-        (vm-pc vm) 0
-        (vm-n-args vm) (first args)))
-
-
-(defmethod vmexec ((vm <vm>) (op (eql 'ARGS)) args)
-  (declare (ignore op))
-  (assert (= (vm-n-args vm) (first args)) ()
-          "Wrong number of arguments: ~d expected, ~d supplied"
-          (first args) (vm-n-args vm))
-  (push (make-array (first args)) (vm-env vm))
-  (loop for i from (- (vm-n-args vm) 1) downto 0 do
-       (setf (elt (first (vm-env vm)) i) (pop (vm-stack vm)))))
-
-(defmethod vmexec ((vm <vm>) (op (eql 'ARGS.)) args)
-  (declare (ignore op))
-  (assert (>= (vm-n-args vm) (first args)) ()
-          "Wrong number of arguments: ~d or more expected, ~d supplied"
-          (first args) (vm-n-args vm))
-  (push (make-array (+ 1 (first args))) (vm-env vm))
-  (loop repeat (- (vm-n-args vm) (first args)) do
-       (push (pop (vm-stack vm)) (elt (first (vm-env vm)) (first args))))
-  (loop for i from (- (first args) 1) downto 0 do
-       (setf (elt (first (vm-env vm)) i) (pop (vm-stack vm)))))
-
+  (let* ((mfn (pop (vm-stack vm)))
+         (found-arg-count (first args))
+         (found-args (reverse
+                      (subseq (vm-stack vm)
+                              0 found-arg-count))))
+    (setf (vm-stack vm)(drop found-arg-count (vm-stack vm)))
+    (setf (vm-mfn vm) mfn
+          (vm-code vm) (mfn-code mfn)
+          (vm-env vm) (make-call-env mfn (vm-env vm) found-args)
+          (vm-pc vm) 0
+          (vm-n-args vm) found-arg-count)))
 
 ;;; built-in constructors
 ;;; -----------------------------------------
@@ -192,7 +175,7 @@
   (push (make-instance '<mfn> 
                        :expression (mfn-expression (first args))
                        :code (mfn-code (first args))
-                       :env (vm-env vm)
+                       :env (merge-environments (vm-env vm)(mfn-env (first args)))
                        :name (mfn-name (first args))
                        :args (mfn-args (first args)))
         (vm-stack vm)))
@@ -209,7 +192,8 @@
   (declare (ignore op args))
   (push (make-instance '<mfn>
                        :name (gen-label 'continuation-)
-                       :env (list (vector (vm-stack vm)))
+                       :env (make-instance '<environment> 
+                                           :frames (list (vector (vm-stack vm))))
                        :code (assemble
                               '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
                                 (LREF 0 0) (RETURN))))

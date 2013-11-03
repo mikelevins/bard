@@ -26,27 +26,18 @@
 (defun gen (opcode &rest args)
   (list (cons opcode args)))
 
-(defun gen-args (args n-so-far)
-  (cond ((null args) (gen 'ARGS n-so-far))
-        ((symbolp args) (gen 'ARGS. n-so-far))
-        ((and (consp args) (symbolp (first args)))
-         (gen-args (rest args) (+ n-so-far 1)))
-        (t (error "Illegal argument list"))))
-
 (defun gen-label (&optional (label 'L))
   (intern (format nil "~a~d" label (incf *label-num*))))
 
 (defun gen-set (var env)
-  (multiple-value-bind (i j)(in-environment? var env)
-    (if i
-        (gen 'LSET i j ";" var)
-        (gen 'GSET var))))
+  (if (in-environment? var env)
+      (gen 'LSET var)
+      (gen 'GSET var)))
 
 (defun gen-var (var env)
-  (multiple-value-bind (i j)(in-environment? var env)
-    (if i
-        (gen 'LREF i j ";" var)
-        (gen 'GREF var))))
+  (if (in-environment? var env)
+      (gen 'LREF var)
+      (gen 'GREF var)))
 
 ;;; ---------------------------------------------------------------------
 ;;; expression compilers
@@ -105,19 +96,35 @@
       (seq (comp (first exps) env t t)
            (comp-list (rest exps) env))))
 
+(defun parse-method-args (args)
+  (let* ((rest-marker 'bard-symbols::|&|)
+         (marker-pos (position rest-marker args)))
+    (if marker-pos
+        (let ((len (length args)))
+          (assert (= len (+ 2 marker-pos))() "Invalid parameter list ~a" 
+                  (value->literal-string args))
+          (let ((required-args (subseq args 0 marker-pos))
+                (restarg (elt args (+ marker-pos 1))))
+            (assert (symbolp restarg)() "Invalid rest argument ~a" 
+                    (value->literal-string restarg))
+            (values required-args restarg)))
+        (values args nil))))
+
 (defun comp-method (args body env)
-  (let* ((params (make-true-list args))
-         (call-env (cons params env)))
-    (make-instance '<mfn> 
-                   :expression (cons 'bard-symbols::|^| (cons args body))
-                   :env env :args args
-                   :code (assemble
-                          (seq (gen-args args 0)
-                               (comp-begin body call-env t nil))))))
+  (multiple-value-bind (params restarg)(parse-method-args args)
+    (let* ((param-vals (times (length params) *undefined*))
+           (restval nil)
+           (call-env (extend-environment env 
+                                         (append params (list restarg))
+                                         (append param-vals (list restval)))))
+      (make-instance '<mfn> 
+                     :expression (cons 'bard-symbols::|^| (cons args body))
+                     :env env :args args
+                     :code (assemble
+                            (seq (comp-begin body call-env t nil)))))))
 
 (defun comp-set! (var-form val-form env val? more?)
-  (assert (symbolp var-form) (expr)
-          "Only variables can be set!, not ~a" var-form)
+  (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
   (seq (comp val-form env t t)
        (gen-set var-form env)
        (if (not val?) (gen 'POP))
