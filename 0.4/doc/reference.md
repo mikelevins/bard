@@ -468,18 +468,18 @@ Returns a string that contains the first *count* elements of *string*.
 
 ### Association lists
 
-An **association list**, represented by the structure `<alist-map>`, is a collection of key/value pairs. The `<alist-map>` structure is one representation of the abstract type **Map**.
+An **association list**, represented by the structure `<alist>`, is a collection of key/value pairs. The `<alist>` structure is one representation of the abstract type **Map**.
 
-#### Procedures that work with `<alist-map>`
+#### Procedures that work with `<alist>`
 
-*Primitive* **`alist-map?`** *expr* => `<boolean>`<br>
-Returns `true` if *expr* is an `<alist-map>`, and `false` otherwise.
+*Primitive* **`alist?`** *expr* => `<boolean>`<br>
+Returns `true` if *expr* is an `<alist>`, and `false` otherwise.
 
 *Primitive* **`alist.get`** *map* *key*  => `<anything>`<br>
 Returns the value associated with *key* in *map*, or, if *key* doesn't appear in *map*, returns `undefined`.
 
-*Primitive* **`alist.put`** *map* *key* *val*  => `<alist-map>`<br>
-Returns a new `<alist-map>` with the same key/value pairs as *map*, but with the pair (*key* . *val*) added. If *key* appears in *map* then its value is replaced by *val* in the result.
+*Primitive* **`alist.put`** *map* *key* *val*  => `<alist>`<br>
+Returns a new `<alist>` with the same key/value pairs as *map*, but with the pair (*key* . *val*) added. If *key* appears in *map* then its value is replaced by *val* in the result.
 
 *Primitive* **`alist.keys`** *map*  => `List`<br>
 Returns a list of the keys in *map*.
@@ -487,11 +487,11 @@ Returns a list of the keys in *map*.
 *Primitive* **`alist.vals`** *map*  => `List`<br>
 Returns a list of the values in *map*.
 
-*Primitive* **`alist.merge`** *map1* *map2*  => `<alist-map>`<br>
+*Primitive* **`alist.merge`** *map1* *map2*  => `<alist>`<br>
 Returns a new map that contains the key/value pairs of both *map1* and *map2*. If the same key appears in both maps then the key/value pair from *map2* is chosen to appear in the result.
 
-*Primitive* **`as-alist-map`** *plist* => `<alist-map>`<br>
-Returns a new `<alist-map>` whose keys and values are given by *plist*. *plist* must contain an even number of elements. The first element, and every other element after it, are used as keys; the value for each key is the element that appears directly after it in *plist*. If *plist* is empty then the empty map is returned.
+*Primitive* **`as-alist`** *plist* => `<alist>`<br>
+Returns a new `<alist>` whose keys and values are given by *plist*. *plist* must contain an even number of elements. The first element, and every other element after it, are used as keys; the value for each key is the element that appears directly after it in *plist*. If *plist* is empty then the empty map is returned.
 
 
 

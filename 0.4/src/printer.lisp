@@ -42,7 +42,7 @@
                 (princ (value->literal-string (cdr x)) out)
                 (princ #\) out))))))
 
-(defmethod value->literal-string ((m <alist-map>))
+(defmethod value->literal-string ((m <alist>))
   (let ((entries (entries m)))
     (if (null entries)
         "{}"

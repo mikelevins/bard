@@ -151,7 +151,7 @@
          (let ((next-elt (bard-read stream)))
            (cond
              ((eof? next-elt)(error "Unexpected end of input while reading a map"))
-             ((end-of-map? next-elt) (return-from reading `(bard-symbols::|as-alist-map| ,(construct-list (reverse elements)))))
+             ((end-of-map? next-elt) (return-from reading `(bard-symbols::|as-alist| ,(construct-list (reverse elements)))))
              (t (progn
                   (setf elements (cons next-elt elements))))))))))
 
