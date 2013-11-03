@@ -35,7 +35,7 @@
       (unless (label? instr)
         (if (is instr '(GO TGO FGO SAVE))
             (setf (cdr instr)
-                  (list (cdr (assoc (arg1 instr) labels)))))
+                  (list (cdr (assoc (first (args instr)) labels)))))
         (setf (aref code-vector addr) instr)
         (incf addr)))
     code-vector))

@@ -45,7 +45,7 @@
     (setf (gethash opcode optimizers) fn)))
 
 (defun gen1 (&rest args) "Generate a single instruction" args)
-(defun target (instr code) (second (member (arg1 instr) code)))
+(defun target (instr code) (second (member (first (args instr)) code)))
 (defun next-instr (code) (find-if (complement #'label?) code))
 
 (defmacro def-optimizer (opcodes args &body body)
@@ -60,7 +60,7 @@
 
 (def-optimizer (:LABEL) (instr code all-code)
   ;; ... L ... => ... ... ;if no reference to L
-  (when (not (find instr all-code :key #'arg1))
+  (when (not (find instr all-code :key #'(lambda (x)(first (args x)))))
     (setf (first code) (second code)
           (rest code) (drop 2 code))
     t))
@@ -79,7 +79,7 @@
   (declare (ignore all-code))
   ;; (FGO L1) ... L1 (GO L2) ==> (FGO L2) ... L1 (GO L2)
   (when (is (target instr code) 'GO)
-    (setf (second instr) (arg1 (target instr code)))
+    (setf (second instr) (first (args (target instr code))))
     t))
 
 

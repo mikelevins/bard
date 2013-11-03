@@ -26,10 +26,6 @@
 (defun opcode (instr) (if (label? instr) :label (first instr)))
 (defun args (instr) (if (listp instr) (rest instr)))
 
-(defun arg1 (instr) (if (listp instr) (second instr)))
-(defun arg2 (instr) (if (listp instr) (third instr)))
-(defun arg3 (instr) (if (listp instr) (fourth instr)))
-
 (defun is (instr op)
   "True if instr's opcode is OP, or one of OP when OP is a list."
   (if (listp op) 
