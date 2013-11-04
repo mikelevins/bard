@@ -37,13 +37,30 @@
   (setf (vm-n-args vm) 0)
   (setf (vm-instr vm) nil)
 
-  ;; built-in methods
+  ;; built-in globals
+  ;; ----------------------------------------
 
-  ;; call/cc
-  (set-global! vm 'bard-symbols::|call/cc|
-               (make-instance '<mfn> :name '|call/cc|
-                              :args '(f) :code (assemble '((CC) (LVAR 0 0 ";" f)
-                                                           (CALLJ 1)))))
+  (set-global! vm 'bard-symbols::|<alist>| *alist-structure*)
+  (set-global! vm 'bard-symbols::|<bignum>| *bignum-structure*)
+  (set-global! vm 'bard-symbols::|<boolean>| *boolean-structure*)
+  (set-global! vm 'bard-symbols::|<character>| *character-structure*)
+  (set-global! vm 'bard-symbols::|<cons>| *cons-structure*)
+  (set-global! vm 'bard-symbols::|<eof>| *eof-structure*)
+  (set-global! vm 'bard-symbols::|<fixnum>| *fixnum-structure*)
+  (set-global! vm 'bard-symbols::|<file-stream>| *file-stream-structure*)
+  (set-global! vm 'bard-symbols::|<flonum>| *flonum-structure*)
+  (set-global! vm 'bard-symbols::|<keyword>| *keyword-structure*)
+  (set-global! vm 'bard-symbols::|<method>| *method-structure*)
+  (set-global! vm 'bard-symbols::|<null>| *null-structure*)
+  (set-global! vm 'bard-symbols::|<ratnum>| *ratnum-structure*)
+  (set-global! vm 'bard-symbols::|<stream>| *stream-structure*)
+  (set-global! vm 'bard-symbols::|<string>| *string-structure*)
+  (set-global! vm 'bard-symbols::|<symbol>| *symbol-structure*)
+  (set-global! vm 'bard-symbols::|<undefined>| *undefined-structure*)
+  (set-global! vm 'bard-symbols::|<url>| *url-structure*)
+
+  ;; built-in methods
+  ;; ----------------------------------------
 
   ;; exit
   (set-global! vm 'bard-symbols::|exit|
@@ -203,24 +220,6 @@
         (vm-stack vm)))
 
 
-;;; Continuation instructions:
-;;; -----------------------------------------
-
-(defmethod vmexec ((vm <vm>) (op (eql 'SET-CC)) args)
-  (declare (ignore op args))
-  (setf (vm-stack vm) (vm-stack-top vm)))
-
-(defmethod vmexec ((vm <vm>) (op (eql 'CC)) args)
-  (declare (ignore op args))
-  (push (make-instance '<mfn>
-                       :name (gen-label 'continuation-)
-                       :env (make-instance '<environment> 
-                                           :frames (list (vector (vm-stack vm))))
-                       :code (assemble
-                              '((ARGS 1) (LREF 1 0 ";" stack) (SET-CC)
-                                (LREF 0 0) (RETURN))))
-        (vm-stack vm)))
-
 ;;; Constants
 ;;; -----------------------------------------
 
@@ -347,7 +346,8 @@
     STRING.FIRST STRING.REST STRING.LAST ALIST? ALIST.KEYS ALIST.VALS AS-ALIST
     URL URL.SCHEME URL.HOST URL.PATH URL.PORT URL.QUERY AS-URL
     STREAM.LENGTH STREAM.READ-ALL-OCTETS STREAM.READ-ALL-CHARACTERS
-    STREAM.READ-ALL-LINES STREAM.READ-ALL-OBJECTS))
+    STREAM.READ-ALL-LINES STREAM.READ-ALL-OBJECTS
+    GET-STRUCTURE))
 
 (defparameter $two-argument-primitives
   '(+ - * / bard< bard> bard<= bard>= /= = 

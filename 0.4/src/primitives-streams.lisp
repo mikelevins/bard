@@ -35,8 +35,16 @@
    (stream :accessor base-stream :initform nil :initarg :stream)
    (element-type :accessor element-type :initform 'bard-symbols::|character| :initarg :element-type)))
 
+(defmethod get-structure ((x <stream>))
+  (declare (ignore x))
+  *stream-structure*)
+
 (defclass <file-stream> (<stream>)
   ((pathname :accessor stream-pathname :initform nil :initarg :pathname)))
+
+(defmethod get-structure ((x <file-stream>))
+  (declare (ignore x))
+  *file-stream-structure*)
 
 ;;; ---------------------------------------------------------------------
 ;;; constructors

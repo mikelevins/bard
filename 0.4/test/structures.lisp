@@ -1,14 +1,16 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.lisp
+;;;; Name:          structures.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard version number
+;;;; Purpose:       tests of the structures
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :bard)
+(in-package :bard-test)
 
-(defparameter *bard-version-number* "0.4.0a21")
+(deftestsuite structures-tests ()())
+
+;;; (let ((lift:*test-describe-if-not-successful?* t))(run-tests :suite 'structures-tests))

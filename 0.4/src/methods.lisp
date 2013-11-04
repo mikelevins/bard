@@ -43,3 +43,7 @@
     (merge-environments (merge-environments base-env mfn-env)
                         args-env)))
 
+
+(defmethod get-structure ((x <mfn>))
+  (declare (ignore x))
+  *method-structure*)

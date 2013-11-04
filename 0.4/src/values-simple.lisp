@@ -38,6 +38,10 @@
 (defmethod eof? (x)(declare (ignore x)) nil)
 (defmethod eof? ((x <eof>)) t)
 
+(defmethod get-structure ((x <eof>))
+  (declare (ignore x))
+  *eof-structure*)
+
 ;;; ---------------------------------------------------------------------
 ;;; <undefined>
 ;;; ---------------------------------------------------------------------
@@ -52,6 +56,10 @@
 (defmethod undefined? ((x <undefined>)) t)
 (defun defined? (x)(not (undefined? x)))
 
+(defmethod get-structure ((x <undefined>))
+  (declare (ignore x))
+  *undefined-structure*)
+
 ;;; ---------------------------------------------------------------------
 ;;; nothing
 ;;; ---------------------------------------------------------------------
@@ -63,6 +71,10 @@
 (defmethod nothing? ((x null)) t)
 
 (defun something? (x)(not (nothing? x)))
+
+(defmethod get-structure ((x null))
+  (declare (ignore x))
+  *null-structure*)
 
 ;;; ---------------------------------------------------------------------
 ;;; booleans
@@ -88,4 +100,12 @@
 (defmethod false? (x)(declare (ignore x)) nil)
 (defmethod false? ((x null)) t)
 (defmethod false? ((x <false>)) t)
+
+(defmethod get-structure ((x <true>))
+  (declare (ignore x))
+  *boolean-structure*)
+
+(defmethod get-structure ((x <false>))
+  (declare (ignore x))
+  *boolean-structure*)
 
