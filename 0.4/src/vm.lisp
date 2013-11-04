@@ -49,6 +49,7 @@
   (set-global! vm 'bard-symbols::|<fixnum>| *fixnum-structure*)
   (set-global! vm 'bard-symbols::|<file-stream>| *file-stream-structure*)
   (set-global! vm 'bard-symbols::|<flonum>| *flonum-structure*)
+  (set-global! vm 'bard-symbols::|<function>| *function-structure*)
   (set-global! vm 'bard-symbols::|<keyword>| *keyword-structure*)
   (set-global! vm 'bard-symbols::|<method>| *method-structure*)
   (set-global! vm 'bard-symbols::|<null>| *null-structure*)
@@ -217,6 +218,13 @@
                        :env (merge-environments (vm-env vm)(mfn-env (first args)))
                        :name (mfn-name (first args))
                        :args (mfn-args (first args)))
+        (vm-stack vm)))
+
+(defmethod vmexec ((vm <vm>) (op (eql 'FN)) args)
+  (declare (ignore op))
+  (push (make-instance '<fn> 
+                       :input-types (fn-input-types (first args))
+                       :output-types (fn-output-types (first args)))
         (vm-stack vm)))
 
 

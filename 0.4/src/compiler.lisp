@@ -63,6 +63,14 @@
            (unless more? (gen 'RETURN)))
       nil))
 
+(defmethod comp-define (dtype expr env val? more?)
+  (error "Unrecognized definition type: ~a" dtype))
+
+(defmethod comp-define ((dtype (eql 'bard-symbols::|variable|)) expr env val? more?)
+  (let ((var-form (first expr))
+        (val-form (second expr)))
+    (comp `(bard-symbols::|set!| ,var-form ,val-form) env val? more?)))
+
 (defun comp-if (pred then else env val? more?)
   (let ((pcode (comp pred env t t))
         (tcode (comp then env val? more?))
@@ -125,6 +133,16 @@
                      :code (assemble
                             (seq (comp-begin body call-env t nil)))))))
 
+;;; (-> input* -> output*)
+(defun comp-function (expr env)
+  (let* ((expr* (rest expr))
+         (arrow-pos (position 'bard-symbols::|->| expr*)))
+    (if arrow-pos
+        (let* ((inputs (subseq expr* 0 arrow-pos))
+               (outputs (subseq expr* (+ 1 arrow-pos))))
+          (make-instance '<fn> :input-types inputs :output-types outputs))
+        (error "Invalid function syntax: ~s" expr))))
+
 (defun comp-set! (var-form val-form env val? more?)
   (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
   (seq (comp val-form env t t)
@@ -146,6 +164,8 @@
                nil
                (gen 'RETURN)))
       nil))
+
+
 
 ;;; ---------------------------------------------------------------------
 ;;; compiler utils
@@ -185,19 +205,16 @@
 
            ;; special forms
            ;; ------------------
-           (bard-symbols::|quote|
-                          (arg-count expr 1)
-                          (comp-const (second expr) val? more?))
-
            (bard-symbols::|begin|
                           (comp-begin (rest expr) env val? more?))
+           
+           (bard-symbols::|define|
+                          (comp-define (second expr) (drop 2 expr) env val? more?))
 
-           (bard-symbols::|time|
-                          (comp-time (second expr) env val? more?))
-
-           (bard-symbols::|set!|
-                          (arg-count expr 2)
-                          (comp-set! (second expr)(third expr) env val? more?))
+           ((bard-symbols::|function| bard-symbols::|->|)
+            (when val?
+              (let ((f (comp-function expr env)))
+                (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
 
            (bard-symbols::|if|
                           (arg-count expr 3)
@@ -208,6 +225,17 @@
             (when val?
               (let ((f (comp-method (second expr) (drop 2 expr) env)))
                 (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
+
+           (bard-symbols::|quote|
+                          (arg-count expr 1)
+                          (comp-const (second expr) val? more?))
+
+           (bard-symbols::|set!|
+                          (arg-count expr 2)
+                          (comp-set! (second expr)(third expr) env val? more?))
+
+           (bard-symbols::|time|
+                          (comp-time (second expr) env val? more?))
 
            ;; function and method calls
            ;; --------------------------

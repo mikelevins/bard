@@ -43,6 +43,7 @@
 (defparameter *fixnum-structure* (primitive-structure "<fixnum>" 'cl:fixnum))
 (defparameter *file-stream-structure* (primitive-structure "<file-stream>" '<file-stream>))
 (defparameter *flonum-structure* (primitive-structure "<flonum>" 'cl:float))
+(defparameter *function-structure* (primitive-structure "<function>" '<fn>))
 (defparameter *keyword-structure* (primitive-structure "<keyword>" 'cl:keyword))
 (defparameter *method-structure* (primitive-structure "<method>" '<mfn>))
 (defparameter *null-structure* (primitive-structure "<null>" 'cl:null))

@@ -89,3 +89,26 @@
          (expr-string (format nil "expression: ~a" (value->literal-string expr))))
     (format nil "#<method>{~a ~a ~a }" name-string args-string expr-string)))
 
+(defmethod value->literal-string ((fn <fn>))
+  (let* ((input-types (fn-input-types fn))
+         (input-type-names (mapcar (lambda (tp) (if (symbolp tp) (symbol-name tp) (structure-name tp)))
+                                   input-types))
+         (inputs-string (if input-type-names
+                            (with-output-to-string (out)
+                              (format out " ~a" (first input-type-names))
+                              (dolist (tp (rest input-type-names))
+                                (format out " ~a" tp)))
+                            ""))
+         (output-types (fn-output-types fn))
+         (output-type-names (mapcar (lambda (tp) (if (symbolp tp) (symbol-name tp) (structure-name tp)))
+                                    output-types))
+         (outputs-string (if output-type-names
+                             (with-output-to-string (out)
+                               (format out " ~a" (first output-type-names))
+                               (dolist (tp (rest output-type-names))
+                                 (format out " ~a" tp)))
+                             "")))
+    (with-output-to-string (out)
+      (format out "(->~a" inputs-string)
+      (format out " ->~a)" outputs-string))))
+
