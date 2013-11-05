@@ -40,31 +40,31 @@
   ;; built-in globals
   ;; ----------------------------------------
 
-  (set-global! vm 'bard-symbols::|<alist>| *alist-structure*)
-  (set-global! vm 'bard-symbols::|<bignum>| *bignum-structure*)
-  (set-global! vm 'bard-symbols::|<boolean>| *boolean-structure*)
-  (set-global! vm 'bard-symbols::|<character>| *character-structure*)
-  (set-global! vm 'bard-symbols::|<cons>| *cons-structure*)
-  (set-global! vm 'bard-symbols::|<eof>| *eof-structure*)
-  (set-global! vm 'bard-symbols::|<fixnum>| *fixnum-structure*)
-  (set-global! vm 'bard-symbols::|<file-stream>| *file-stream-structure*)
-  (set-global! vm 'bard-symbols::|<flonum>| *flonum-structure*)
-  (set-global! vm 'bard-symbols::|<function>| *function-structure*)
-  (set-global! vm 'bard-symbols::|<keyword>| *keyword-structure*)
-  (set-global! vm 'bard-symbols::|<method>| *method-structure*)
-  (set-global! vm 'bard-symbols::|<null>| *null-structure*)
-  (set-global! vm 'bard-symbols::|<ratnum>| *ratnum-structure*)
-  (set-global! vm 'bard-symbols::|<stream>| *stream-structure*)
-  (set-global! vm 'bard-symbols::|<string>| *string-structure*)
-  (set-global! vm 'bard-symbols::|<symbol>| *symbol-structure*)
-  (set-global! vm 'bard-symbols::|<undefined>| *undefined-structure*)
-  (set-global! vm 'bard-symbols::|<url>| *url-structure*)
+  (def-global! vm 'bard-symbols::|<alist>| *alist-structure*)
+  (def-global! vm 'bard-symbols::|<bignum>| *bignum-structure*)
+  (def-global! vm 'bard-symbols::|<boolean>| *boolean-structure*)
+  (def-global! vm 'bard-symbols::|<character>| *character-structure*)
+  (def-global! vm 'bard-symbols::|<cons>| *cons-structure*)
+  (def-global! vm 'bard-symbols::|<eof>| *eof-structure*)
+  (def-global! vm 'bard-symbols::|<fixnum>| *fixnum-structure*)
+  (def-global! vm 'bard-symbols::|<file-stream>| *file-stream-structure*)
+  (def-global! vm 'bard-symbols::|<flonum>| *flonum-structure*)
+  (def-global! vm 'bard-symbols::|<function>| *function-structure*)
+  (def-global! vm 'bard-symbols::|<keyword>| *keyword-structure*)
+  (def-global! vm 'bard-symbols::|<method>| *method-structure*)
+  (def-global! vm 'bard-symbols::|<null>| *null-structure*)
+  (def-global! vm 'bard-symbols::|<ratnum>| *ratnum-structure*)
+  (def-global! vm 'bard-symbols::|<stream>| *stream-structure*)
+  (def-global! vm 'bard-symbols::|<string>| *string-structure*)
+  (def-global! vm 'bard-symbols::|<symbol>| *symbol-structure*)
+  (def-global! vm 'bard-symbols::|<undefined>| *undefined-structure*)
+  (def-global! vm 'bard-symbols::|<url>| *url-structure*)
 
   ;; built-in methods
   ;; ----------------------------------------
 
   ;; exit
-  (set-global! vm 'bard-symbols::|exit|
+  (def-global! vm 'bard-symbols::|exit|
                (make-instance '<mfn> :name '|exit|
                               :args '() :code (assemble '((HALT))))))
 
@@ -111,11 +111,22 @@
 (defmethod vm-stack-top ((vm <vm>))
   (first (vm-stack vm)))
 
+(defmethod mutable? ((var symbol)(vm <vm>))
+  t)
+
+(defmethod def-global! ((vm <vm>)(var symbol) val)
+  (setf (gethash var (vm-globals vm)) val))
+
 (defmethod get-global ((vm <vm>)(var symbol))
   (gethash var (vm-globals vm) *undefined*))
 
 (defmethod set-global! ((vm <vm>)(var symbol) val)
-  (setf (gethash var (vm-globals vm)) val))
+  (multiple-value-bind (val present?)(gethash var (vm-globals vm))
+    (if present?
+        (if (mutable? var vm)
+            (setf (gethash var (vm-globals vm)) val)
+            (error "Can't set an immutable variable: ~s" var))
+        (error "Undefined variable ~s" var))))
 
 ;;; ---------------------------------------------------------------------
 ;;; instruction execution
@@ -137,6 +148,10 @@
   (declare (ignore op))
   (env-set! (vm-env vm) (first args)
             (vm-stack-top vm)))
+
+(defmethod vmexec ((vm <vm>) (op (eql 'GDEF)) args)
+  (declare (ignore op))
+  (def-global! vm (first args) (vm-stack-top vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'GREF)) args)
   (declare (ignore op))

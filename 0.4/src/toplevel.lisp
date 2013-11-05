@@ -23,20 +23,20 @@
    "
 (begin 
 
- (set! map
+ (def map
        (method (f ls)
                (if (<= (cons.length ls) 0)
                    nothing
                    (cons (f (cons.left ls))
                          (map f (cons.right ls))))))
 
- (set! load
+ (def load
        (method (url)
                (map (^ (exp) ((compiler exp)))
                     (stream.read-all-objects
                      (stream.create url 'character)))))
 
- (set! bard 
+ (def bard 
        (method () 
                (newline)
                (display \"bard> \")

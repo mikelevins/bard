@@ -31,6 +31,9 @@
 (defun gen-label (&optional (label 'L))
   (intern (format nil "~a~d" label (incf *label-num*))))
 
+(defun gen-def (var env)
+  (gen 'GDEF var))
+
 (defun gen-set (var env)
   (if (in-environment? var env)
       (gen 'LSET var)
@@ -143,6 +146,13 @@
           (make-instance '<fn> :input-types inputs :output-types outputs))
         (error "Invalid function syntax: ~s" expr))))
 
+(defun comp-def (var-form val-form env val? more?)
+  (assert (symbolp var-form) () "Only variables can be defined, not ~a" var-form)
+  (seq (comp val-form env t t)
+       (gen-def var-form env)
+       (if (not val?) (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
 (defun comp-set! (var-form val-form env val? more?)
   (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
   (seq (comp val-form env t t)
@@ -208,6 +218,10 @@
            (bard-symbols::|begin|
                           (comp-begin (rest expr) env val? more?))
            
+           (bard-symbols::|def|
+                          (arg-count expr 2)
+                          (comp-def (second expr)(third expr) env val? more?))
+
            (bard-symbols::|define|
                           (comp-define (second expr) (drop 2 expr) env val? more?))
 

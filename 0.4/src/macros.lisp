@@ -39,9 +39,6 @@
 ;;; built-in macros
 ;;; ---------------------------------------------------------------------
 
-(def-bard-macro bard-symbols::|def| (name val-form)
-  `(bard-symbols::|set!| ,name ,val-form))
-
 (def-bard-macro bard-symbols::|and| (&rest args)
   (if (null args)
       *true*
