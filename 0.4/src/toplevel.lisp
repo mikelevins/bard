@@ -56,12 +56,11 @@
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
-  (handler-case (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
-                  (setf *the-bard-vm* vm)
-                  (vmrun vm))
-    (serious-condition (err)
-      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
-      (ccl::quit))))
+  (let ((vm (make-bardvm)))
+    (handler-case (vmrun vm)
+      (serious-condition (err)
+        (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
+        (ccl::quit)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; building bard
