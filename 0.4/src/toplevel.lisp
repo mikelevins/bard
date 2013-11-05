@@ -47,8 +47,11 @@
 
 "))
 
+(defun make-bardvm (&optional (toplevel-method *bard-top-level*))
+  (make-instance '<vm> :mfn (compiler toplevel-method)))
+
 (defun bard ()
-  (setf *the-bard-vm* (make-instance '<vm> :mfn (compiler *bard-top-level*)))
+  (setf *the-bard-vm* (make-bardvm))
   (vmrun *the-bard-vm*))
 
 (defun bard-toplevel ()
