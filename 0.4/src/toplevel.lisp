@@ -48,9 +48,8 @@
 "))
 
 (defun bard ()
-  (let ((vm (make-instance '<vm> :mfn (compiler *bard-top-level*))))
-    (setf *the-bard-vm* vm)
-    (vmrun vm)))
+  (setf *the-bard-vm* (make-instance '<vm> :mfn (compiler *bard-top-level*)))
+  (vmrun *the-bard-vm*))
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)

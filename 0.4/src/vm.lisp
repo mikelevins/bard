@@ -276,7 +276,8 @@
 
 (defmethod vmexec ((vm <vm>) (op (eql 'HALT)) args)
   (declare (ignore op args))
-  (vm-stack-top vm))
+  ;;(vm-stack-top vm)
+  (values))
 
 ;;; primitive procedures
 ;;; -----------------------------------------
@@ -419,7 +420,7 @@
      (if (< (vm-pc vm)
             (length (vm-code vm)))
          (vmstep vm)
-         (return (vm-stack-top vm)))))
+         (return (values)))))
 
 
 
