@@ -42,7 +42,7 @@
                (display \"bard> \")
                (write ((compiler (read))))
                (bard)))
-
+ (if *init-file* (load *init-file*) nothing)
  (bard))
 
 "))
@@ -52,12 +52,22 @@
 
 (defun bard ()
   (setf *the-bard-vm* (make-bardvm))
+  (let* ((init-path (probe-file "~/init.bard"))
+         (init-url (if init-path
+                       (url (format nil "file://~a" (namestring init-path)))
+                       nil)))
+    (def-global! *the-bard-vm* 'bard-symbols::|*init-file*| init-url))
   (vmrun *the-bard-vm*))
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
   (let ((vm (make-bardvm)))
-    (handler-case (vmrun vm)
+    (handler-case (let* ((init-path (probe-file "~/init.bard"))
+                         (init-url (if init-path
+                                       (url (format nil "file://~a" (namestring init-path)))
+                                       nil)))
+                    (def-global! vm 'bard-symbols::|*init-file*| init-url)
+                    (vmrun vm))
       (serious-condition (err)
         (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
         (ccl::quit)))))
