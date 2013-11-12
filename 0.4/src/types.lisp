@@ -1,15 +1,37 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          structures.lisp
+;;;; Name:          types.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       representation of Bard structures
+;;;; Purpose:       representation of Bard types
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 (in-package :bard)
+
+;;; ---------------------------------------------------------------------
+;;; <singleton>
+;;; ---------------------------------------------------------------------
+;;; values as types
+
+(defparameter *singletons* (make-hash-table :test 'equal))
+
+(defclass <singleton> ()
+  ((value :accessor singleton-value :initform nil :initarg :value)))
+
+(defmethod print-object ((thing <singleton>)(s stream))
+  (princ "#<singleton " s)
+  (print-object (singleton-value thing) s)
+  (princ ">" s))
+
+(defun singleton (thing)
+  (let ((already (gethash thing *singletons*)))
+    (or already
+        (let ((sing (make-instance '<singleton> :value thing)))
+          (setf (gethash thing *singletons*) sing)
+          sing))))
 
 ;;; ---------------------------------------------------------------------
 ;;; <structure>
@@ -112,3 +134,52 @@
 (defmethod get-structure ((x puri:uri))
   (declare (ignore x))
   *url-structure*)
+
+;;; ---------------------------------------------------------------------
+;;; instance and subtype tests
+;;; ---------------------------------------------------------------------
+
+(defmethod instance-of? (val type)
+  (declare (ignore val type))
+  nil)
+
+(defmethod instance-of? (val (type <anything>))
+  (declare (ignore val type))
+  t)
+
+(defmethod instance-of? (val (type <singleton>))
+  (equal val (singleton-value type)))
+
+(defmethod instance-of? (val (type <primitive-structure>))
+  (equal (get-structure val)
+         type))
+
+(defmethod matching-types? (vals types)
+  (declare (ignore vals types))
+  nil)
+
+(defmethod matching-types? (vals (types null))
+  (declare (ignore vals types))
+  nil)
+
+(defmethod matching-types? ((vals null) (types null))
+  (declare (ignore vals types))
+  t)
+
+(defmethod matching-types? ((vals cons) (types cons))
+  (and (= (length vals)(length types))
+       (every (lambda (val type)(instance-of? val type))
+              vals types)))
+
+(defmethod subtype? (type1 type2)
+  (equal type1 type2))
+
+(defmethod subtype? (type1 (type2 <anything>))
+  (declare (ignore type1 type2))
+  t)
+
+(defmethod subtype? ((type1 <singleton>) type2)
+  (instance-of? (singleton-value type1) type2))
+
+
+

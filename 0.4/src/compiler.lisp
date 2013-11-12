@@ -66,6 +66,14 @@
            (unless more? (gen 'RETURN)))
       nil))
 
+
+(defun comp-def (var-form val-form env val? more?)
+  (assert (symbolp var-form) () "Only variables can be defined, not ~a" var-form)
+  (seq (comp val-form env t t)
+       (gen-def var-form env)
+       (if (not val?) (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
 (defmethod comp-define (dtype expr env val? more?)
   (error "Unrecognized definition type: ~a" dtype))
 
@@ -104,24 +112,22 @@
               (comp f env t t)
               (gen 'CALLJ (length args)))))))
 
+;;; (-> input* -> output*)
+(defun comp-function (expr env)
+  (let* ((expr* (rest expr))
+         (arrow-pos (position 'bard-symbols::|->| expr*)))
+    (if arrow-pos
+        (let* ((inputs (subseq expr* 0 arrow-pos))
+               (outputs (subseq expr* (+ 1 arrow-pos))))
+          (assert (every 'symbolp inputs)() "Invalid input types: ~s" inputs)
+          (assert (every 'symbolp outputs)() "Invalid output types: ~s" outputs)
+          (make-instance '<function> :input-types inputs :output-types outputs))
+        (error "Invalid function syntax: ~s" expr))))
+
 (defun comp-list (exps env)
   (if (null exps) nil
       (seq (comp (first exps) env t t)
            (comp-list (rest exps) env))))
-
-(defun parse-method-args (args)
-  (let* ((rest-marker 'bard-symbols::|&|)
-         (marker-pos (position rest-marker args)))
-    (if marker-pos
-        (let ((len (length args)))
-          (assert (= len (+ 2 marker-pos))() "Invalid parameter list ~a" 
-                  (value->literal-string args))
-          (let ((required-args (subseq args 0 marker-pos))
-                (restarg (elt args (+ marker-pos 1))))
-            (assert (symbolp restarg)() "Invalid rest argument ~a" 
-                    (value->literal-string restarg))
-            (values required-args restarg)))
-        (values args nil))))
 
 (defun comp-method (args body env)
   (multiple-value-bind (params restarg)(parse-method-args args)
@@ -135,26 +141,6 @@
                      :env env :args args
                      :code (assemble
                             (seq (comp-begin body call-env t nil)))))))
-
-;;; (-> input* -> output*)
-(defun comp-function (expr env)
-  (let* ((expr* (rest expr))
-         (arrow-pos (position 'bard-symbols::|->| expr*)))
-    (if arrow-pos
-        (let* ((inputs (subseq expr* 0 arrow-pos))
-               (outputs (subseq expr* (+ 1 arrow-pos))))
-          (assert (every 'symbolp inputs)() "Invalid input types: ~s" inputs)
-          (assert (every 'symbolp outputs)() "Invalid output types: ~s" outputs)
-          (make-instance '<function> :input-types inputs :output-types outputs))
-        (error "Invalid function syntax: ~s" expr))))
-
-(defun comp-def (var-form val-form env val? more?)
-  (assert (symbolp var-form) () "Only variables can be defined, not ~a" var-form)
-  (seq (comp val-form env t t)
-       (gen-def var-form env)
-       (if (not val?) (gen 'POP))
-       (unless more? (gen 'RETURN))))
-
 (defun comp-set! (var-form val-form env val? more?)
   (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
   (seq (comp val-form env t t)
@@ -177,6 +163,19 @@
                (gen 'RETURN)))
       nil))
 
+(defun parse-method-args (args)
+  (let* ((rest-marker 'bard-symbols::|&|)
+         (marker-pos (position rest-marker args)))
+    (if marker-pos
+        (let ((len (length args)))
+          (assert (= len (+ 2 marker-pos))() "Invalid parameter list ~a" 
+                  (value->literal-string args))
+          (let ((required-args (subseq args 0 marker-pos))
+                (restarg (elt args (+ marker-pos 1))))
+            (assert (symbolp restarg)() "Invalid rest argument ~a" 
+                    (value->literal-string restarg))
+            (values required-args restarg)))
+        (values args nil))))
 
 
 ;;; ---------------------------------------------------------------------

@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          primitives-structures.lisp
+;;;; Name:          primitives-types.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       structures primitives
+;;;; Purpose:       types primitives
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
@@ -19,5 +19,12 @@
     (make-prim :name 'bard-symbols::|get-structure|
                :n-args 1
                :opcode 'bard::get-structure
+               :always t
+               :side-effects nil))
+
+(defprim 'bard-symbols::|exactly| 1
+    (make-prim :name 'bard-symbols::|exactly|
+               :n-args 1
+               :opcode 'bard::singleton
                :always t
                :side-effects nil))
