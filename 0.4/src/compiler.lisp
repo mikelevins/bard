@@ -130,7 +130,7 @@
            (call-env (extend-environment env 
                                          (append params (list restarg))
                                          (append param-vals (list restval)))))
-      (make-instance '<mfn> 
+      (make-instance '<method> 
                      :expression (cons 'bard-symbols::|^| (cons args body))
                      :env env :args args
                      :code (assemble
@@ -143,7 +143,9 @@
     (if arrow-pos
         (let* ((inputs (subseq expr* 0 arrow-pos))
                (outputs (subseq expr* (+ 1 arrow-pos))))
-          (make-instance '<fn> :input-types inputs :output-types outputs))
+          (assert (every 'symbolp inputs)() "Invalid input types: ~s" inputs)
+          (assert (every 'symbolp outputs)() "Invalid output types: ~s" outputs)
+          (make-instance '<function> :input-types inputs :output-types outputs))
         (error "Invalid function syntax: ~s" expr))))
 
 (defun comp-def (var-form val-form env val? more?)
@@ -228,7 +230,7 @@
            ((bard-symbols::|function| bard-symbols::|->|)
             (when val?
               (let ((f (comp-function expr env)))
-                (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+                (seq (gen 'FUNCTION f) (unless more? (gen 'RETURN))))))
 
            (bard-symbols::|if|
                           (arg-count expr 3)
@@ -238,7 +240,7 @@
            ((bard-symbols::|method| bard-symbols::|^|)
             (when val?
               (let ((f (comp-method (second expr) (drop 2 expr) env)))
-                (seq (gen 'MFN f) (unless more? (gen 'RETURN))))))
+                (seq (gen 'METHOD f) (unless more? (gen 'RETURN))))))
 
            (bard-symbols::|quote|
                           (arg-count expr 1)

@@ -21,6 +21,24 @@
 (defclass <structure> ()
   ((name :accessor structure-name :initform nil :initarg :name)))
 
+;;; ---------------------------------------------------------------------
+;;; Anything
+;;; ---------------------------------------------------------------------
+;;; a special built-in structure that serves as the universal type;
+;;; every Bard value is an instance of Anything
+
+(defclass <anything> (<structure>)())
+
+(defmethod print-object ((thing <anything>)(s stream))
+  (format s "Anything"))
+
+(defun anything ()(make-instance '<anything>))
+
+;;; ---------------------------------------------------------------------
+;;; <primitive-structure>
+;;; ---------------------------------------------------------------------
+;;; built-in structures
+
 (defclass <primitive-structure> (<structure>)
   ((lisp-type :accessor lisp-type :initform nil :initarg :lisp-type)))
 
@@ -34,6 +52,7 @@
 ;;; built-in structures
 ;;; ---------------------------------------------------------------------
 
+(defparameter *anything-structure* (anything))
 (defparameter *alist-structure* (primitive-structure "<alist>" '<alist>))
 (defparameter *bignum-structure* (primitive-structure "<bignum>" 'cl:bignum))
 (defparameter *boolean-structure* (primitive-structure "<boolean>" '<boolean>))
@@ -43,9 +62,9 @@
 (defparameter *fixnum-structure* (primitive-structure "<fixnum>" 'cl:fixnum))
 (defparameter *file-stream-structure* (primitive-structure "<file-stream>" '<file-stream>))
 (defparameter *flonum-structure* (primitive-structure "<flonum>" 'cl:float))
-(defparameter *function-structure* (primitive-structure "<function>" '<fn>))
+(defparameter *function-structure* (primitive-structure "<function>" '<function>))
 (defparameter *keyword-structure* (primitive-structure "<keyword>" 'cl:keyword))
-(defparameter *method-structure* (primitive-structure "<method>" '<mfn>))
+(defparameter *method-structure* (primitive-structure "<method>" '<method>))
 (defparameter *null-structure* (primitive-structure "<null>" 'cl:null))
 (defparameter *ratnum-structure* (primitive-structure "<ratnum>" 'cl:ratio))
 (defparameter *stream-structure* (primitive-structure "<stream>" '<stream>))

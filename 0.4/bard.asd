@@ -83,6 +83,7 @@
                                      (:file "assembler")
                                      (:file "instructions")
                                      (:file "methods")
+                                     (:file "method-tables")
                                      (:file "functions")
                                      (:file "printer")
                                      (:file "compiler")

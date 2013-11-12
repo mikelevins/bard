@@ -73,24 +73,24 @@
       (format nil "~a:" (symbol-name x))
       (format nil "~a" (symbol-name x))))
 
-(defmethod value->literal-string ((mfn <mfn>))
-  (let* ((nm (mfn-name mfn))
+(defmethod value->literal-string ((method <method>))
+  (let* ((nm (method-name method))
          (name-string (if nm
                           (format nil "name: ~a " 
                                   (if (symbolp nm)
                                       (symbol-name nm)
                                       (format nil "~s" nm)))
                           ""))
-         (args (mfn-args mfn))
+         (args (method-args method))
          (args-string (if args
                           (format nil "args: ~a " (value->literal-string args))
                           "args: () "))
-         (expr (mfn-expression mfn))
+         (expr (method-expression method))
          (expr-string (format nil "expression: ~a" (value->literal-string expr))))
     (format nil "#<method>{~a ~a ~a }" name-string args-string expr-string)))
 
-(defmethod value->literal-string ((fn <fn>))
-  (let* ((input-types (fn-input-types fn))
+(defmethod value->literal-string ((fn <function>))
+  (let* ((input-types (function-input-types fn))
          (input-type-names (mapcar (lambda (tp) (if (symbolp tp) (symbol-name tp) (structure-name tp)))
                                    input-types))
          (inputs-string (if input-type-names
@@ -99,7 +99,7 @@
                               (dolist (tp (rest input-type-names))
                                 (format out " ~a" tp)))
                             ""))
-         (output-types (fn-output-types fn))
+         (output-types (function-output-types fn))
          (output-type-names (mapcar (lambda (tp) (if (symbolp tp) (symbol-name tp) (structure-name tp)))
                                     output-types))
          (outputs-string (if output-type-names

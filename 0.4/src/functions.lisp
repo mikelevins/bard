@@ -14,17 +14,18 @@
 ;;; functions
 ;;; ---------------------------------------------------------------------
 
-(defclass <fn> ()
-  ((input-types :accessor fn-input-types :initform nil :initarg :input-types)
-   (output-types :accessor fn-output-types :initform nil :initarg :output-types)))
+(defclass <function> ()
+  ((input-types :accessor function-input-types :initform nil :initarg :input-types)
+   (output-types :accessor function-output-types :initform nil :initarg :output-types)
+   (method-table :accessor function-method-table :initform (make-method-table) :initarg :method-table)))
 
-(defmethod print-object ((fn <fn>)(s stream))
-  (format s (value->literal-string fn)))
+(defmethod print-object ((function <function>)(s stream))
+  (format s (value->literal-string function)))
 
 (defun make-function (inputs outputs)
-  (make-instance '<fn> :input-types inputs :output-types outputs))
+  (make-instance '<function> :input-types inputs :output-types outputs))
 
-(defmethod get-structure ((x <fn>))
+(defmethod get-structure ((x <function>))
   (declare (ignore x))
   *function-structure*)
 

@@ -48,29 +48,30 @@
 "))
 
 (defun make-bardvm (&optional (toplevel-method *bard-top-level*))
-  (make-instance '<vm> :mfn (compiler toplevel-method)))
+  (make-instance '<vm> :method (compiler toplevel-method)))
 
-(defun bard ()
-  (setf *the-bard-vm* (make-bardvm))
+(defun initvm (vm)
   (let* ((init-path (probe-file "~/init.bard"))
          (init-url (if init-path
                        (url (format nil "file://~a" (namestring init-path)))
                        nil)))
-    (def-global! *the-bard-vm* 'bard-symbols::|*init-file*| init-url))
+    (def-global! vm 'bard-symbols::|*init-file*| init-url)
+    (def-global! vm 'bard-symbols::|Anything| (anything))))
+
+(defun bard ()
+  (setf *the-bard-vm* (make-bardvm))
+  (initvm *the-bard-vm*)
   (vmrun *the-bard-vm*))
 
 (defun bard-toplevel ()
   (format t "~%Bard version ~a~%~%" *bard-version-number*)
-  (let ((vm (make-bardvm)))
-    (handler-case (let* ((init-path (probe-file "~/init.bard"))
-                         (init-url (if init-path
-                                       (url (format nil "file://~a" (namestring init-path)))
-                                       nil)))
-                    (def-global! vm 'bard-symbols::|*init-file*| init-url)
-                    (vmrun vm))
-      (serious-condition (err)
-        (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
-        (ccl::quit)))))
+  (handler-case (let ((vm (make-bardvm)))
+                  (initvm vm)
+                  (vmrun vm))
+    (serious-condition (err)
+      (format t "~%Unhandled error in the bard VM: ~S; terminating" err)
+      (ccl::quit))))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; building bard

@@ -17,7 +17,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defclass <vm> ()
-  ((mfn :accessor vm-mfn :initform nil :initarg :mfn)
+  ((method :accessor vm-method :initform nil :initarg :method)
    (code :accessor vm-code :initform nil :initarg :code)
    (pc :accessor vm-pc :initform nil :initarg :pc)
    (env :accessor vm-env :initform nil :initarg :env)
@@ -27,10 +27,10 @@
    (instr :accessor vm-instr :initform nil :initarg :instr)))
 
 (defmethod initialize-instance :after ((vm <vm>) &rest initargs
-                                       &key (mfn nil) &allow-other-keys)
+                                       &key (method nil) &allow-other-keys)
   (declare (ignore initargs))
-  (setf (vm-mfn vm) mfn)
-  (setf (vm-code vm) (if mfn (mfn-code mfn) nil))
+  (setf (vm-method vm) method)
+  (setf (vm-code vm) (if method (method-code method) nil))
   (setf (vm-pc vm) 0)
   (setf (vm-env vm) (null-environment))
   (setf (vm-stack vm) nil)
@@ -65,7 +65,7 @@
 
   ;; exit
   (def-global! vm 'bard-symbols::|exit|
-               (make-instance '<mfn> :name '|exit|
+               (make-instance '<method> :name '|exit|
                               :args '() :code (assemble '((HALT))))))
 
 ;;; ---------------------------------------------------------------------
@@ -73,12 +73,12 @@
 ;;; ---------------------------------------------------------------------
 
 (defclass <return-address> () 
-  ((fn :accessor return-address-fn :initform nil :initarg :fn)
+  ((function :accessor return-address-function :initform nil :initarg :function)
    (pc :accessor return-address-pc :initform nil :initarg :pc)
    (env :accessor return-address-env :initform nil :initarg :env)))
 
-(defun make-return-address (&key pc fn env)
-  (make-instance '<return-address> :pc pc :fn fn :env env))
+(defun make-return-address (&key pc function env)
+  (make-instance '<return-address> :pc pc :function function :env env))
 
 ;;; ---------------------------------------------------------------------
 ;;; system tools
@@ -193,15 +193,15 @@
 (defmethod vmexec ((vm <vm>) (op (eql 'SAVE)) args)
   (declare (ignore op))
   (push (make-return-address :pc (first args)
-                             :fn (vm-mfn vm)
+                             :function (vm-method vm)
                              :env (vm-env vm))
         (vm-stack vm)))
 
 (defmethod vmexec ((vm <vm>) (op (eql 'RETURN)) args)
   (declare (ignore op args))
   ;; return value is top of stack; return-address is second
-  (setf (vm-mfn vm) (return-address-fn (second (vm-stack vm)))
-        (vm-code vm) (mfn-code (vm-mfn vm))
+  (setf (vm-method vm) (return-address-function (second (vm-stack vm)))
+        (vm-code vm) (method-code (vm-method vm))
         (vm-env vm) (return-address-env (second (vm-stack vm)))
         (vm-pc vm) (return-address-pc (second (vm-stack vm))))
   ;; Get rid of the return-address, but keep the value
@@ -210,36 +210,36 @@
 
 (defmethod vmexec ((vm <vm>) (op (eql 'CALLJ)) args)
   (declare (ignore op))
-  (let* ((mfn (pop (vm-stack vm)))
+  (let* ((method (pop (vm-stack vm)))
          (found-arg-count (first args))
          (found-args (reverse
                       (subseq (vm-stack vm)
                               0 found-arg-count))))
     (setf (vm-stack vm)(drop found-arg-count (vm-stack vm)))
-    (setf (vm-mfn vm) mfn
-          (vm-code vm) (mfn-code mfn)
-          (vm-env vm) (make-call-env mfn (vm-env vm) found-args)
+    (setf (vm-method vm) method
+          (vm-code vm) (method-code method)
+          (vm-env vm) (make-call-env method (vm-env vm) found-args)
           (vm-pc vm) 0
           (vm-n-args vm) found-arg-count)))
 
 ;;; built-in constructors
 ;;; -----------------------------------------
 
-(defmethod vmexec ((vm <vm>) (op (eql 'MFN)) args)
+(defmethod vmexec ((vm <vm>) (op (eql 'METHOD)) args)
   (declare (ignore op))
-  (push (make-instance '<mfn> 
-                       :expression (mfn-expression (first args))
-                       :code (mfn-code (first args))
-                       :env (merge-environments (vm-env vm)(mfn-env (first args)))
-                       :name (mfn-name (first args))
-                       :args (mfn-args (first args)))
+  (push (make-instance '<method> 
+                       :expression (method-expression (first args))
+                       :code (method-code (first args))
+                       :env (merge-environments (vm-env vm)(method-env (first args)))
+                       :name (method-name (first args))
+                       :args (method-args (first args)))
         (vm-stack vm)))
 
-(defmethod vmexec ((vm <vm>) (op (eql 'FN)) args)
+(defmethod vmexec ((vm <vm>) (op (eql 'FUNCTION)) args)
   (declare (ignore op))
-  (push (make-instance '<fn> 
-                       :input-types (fn-input-types (first args))
-                       :output-types (fn-output-types (first args)))
+  (push (make-instance '<function> 
+                       :input-types (function-input-types (first args))
+                       :output-types (function-output-types (first args)))
         (vm-stack vm)))
 
 
