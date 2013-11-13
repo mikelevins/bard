@@ -55,8 +55,7 @@
          (init-url (if init-path
                        (url (format nil "file://~a" (namestring init-path)))
                        nil)))
-    (def-global! vm 'bard-symbols::|*init-file*| init-url)
-    (def-global! vm 'bard-symbols::|Anything| (anything))))
+    (def-global! vm 'bard-symbols::|*init-file*| init-url)))
 
 (defun bard ()
   (setf *the-bard-vm* (make-bardvm))

@@ -391,6 +391,13 @@
                :always nil
                :side-effects t))
 
+(defprim 'bard-symbols::|error| 1
+    (make-prim :name 'bard-symbols::|error|
+               :n-args 1
+               :opcode 'bard::bard-error
+               :always nil
+               :side-effects t))
+
 (defprim 'bard-symbols::|newline| 0
     (make-prim :name 'bard-symbols::|newline|
                :n-args 0

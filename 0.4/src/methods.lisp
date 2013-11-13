@@ -47,3 +47,11 @@
 (defmethod get-structure ((x <method>))
   (declare (ignore x))
   *method-structure*)
+
+(defmethod method? (x)
+  (declare (ignore x))
+  nil)
+
+(defmethod method? ((x <method>))
+  (declare (ignore x))
+  t)

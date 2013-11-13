@@ -40,6 +40,7 @@
   ;; built-in globals
   ;; ----------------------------------------
 
+  (def-global! vm 'bard-symbols::|Anything| (anything))
   (def-global! vm 'bard-symbols::|<alist>| *alist-structure*)
   (def-global! vm 'bard-symbols::|<bignum>| *bignum-structure*)
   (def-global! vm 'bard-symbols::|<boolean>| *boolean-structure*)
@@ -91,6 +92,9 @@
   (format t "~%START-TIMER: timer started with value ~a" *vm-timer-start*)
   (force-output)
   (values))
+
+(defun bard-error (msg)
+  (format t "~%ERROR: ~A~%~%" msg))
 
 (defun report-time ()
   (when *vm-timer-start*
@@ -208,19 +212,36 @@
   (setf (vm-stack vm) (cons (first (vm-stack vm))
                             (drop 2 (vm-stack vm)))))
 
+(defun exec-method (vm method args)
+  (let ((arg-count (length args)))
+    (setf (vm-stack vm)(drop arg-count (vm-stack vm)))
+    (setf (vm-method vm) method
+          (vm-code vm) (method-code method)
+          (vm-env vm) (make-call-env method (vm-env vm) args)
+          (vm-pc vm) 0
+          (vm-n-args vm) arg-count)))
+
+(defun exec-function (vm function args)
+  (let ((arg-count (length args))
+        (method (most-specific-method function args)))
+    (setf (vm-stack vm)(drop arg-count (vm-stack vm)))
+    (setf (vm-method vm) method
+          (vm-code vm) (method-code method)
+          (vm-env vm) (make-call-env method (vm-env vm) args)
+          (vm-pc vm) 0
+          (vm-n-args vm) arg-count)))
+
 (defmethod vmexec ((vm <vm>) (op (eql 'CALLJ)) args)
   (declare (ignore op))
-  (let* ((method (pop (vm-stack vm)))
+  (let* ((proc (pop (vm-stack vm)))
          (found-arg-count (first args))
          (found-args (reverse
                       (subseq (vm-stack vm)
                               0 found-arg-count))))
-    (setf (vm-stack vm)(drop found-arg-count (vm-stack vm)))
-    (setf (vm-method vm) method
-          (vm-code vm) (method-code method)
-          (vm-env vm) (make-call-env method (vm-env vm) found-args)
-          (vm-pc vm) 0
-          (vm-n-args vm) found-arg-count)))
+    (cond
+      ((method? proc)(exec-method vm proc found-args))
+      ((function? proc)(exec-function vm proc found-args))
+      (t (error "Unrecognized procedure type: ~s" proc)))))
 
 ;;; built-in constructors
 ;;; -----------------------------------------
@@ -371,7 +392,7 @@
     URL URL.SCHEME URL.HOST URL.PATH URL.PORT URL.QUERY AS-URL
     STREAM.LENGTH STREAM.READ-ALL-OCTETS STREAM.READ-ALL-CHARACTERS
     STREAM.READ-ALL-LINES STREAM.READ-ALL-OBJECTS
-    GET-STRUCTURE SINGLETON))
+    GET-STRUCTURE SINGLETON BARD-ERROR))
 
 (defparameter $two-argument-primitives
   '(+ - * / bard< bard> bard<= bard>= /= = 
@@ -383,7 +404,8 @@
   '(STRING.SLICE CONS.SLICE ALIST.PUT 
     STREAM.READ-OCTETS STREAM.READ-CHARACTERS STREAM.READ-LINES STREAM.READ-OBJECTS
     STREAM.WRITE-OCTET STREAM.WRITE-OCTETS STREAM.WRITE-CHARACTER STREAM.WRITE-CHARACTERS
-    STREAM.WRITE-LINE STREAM.WRITE-LINES  STREAM.WRITE-OBJECT STREAM.WRITE-OBJECTS))
+    STREAM.WRITE-LINE STREAM.WRITE-LINES  STREAM.WRITE-OBJECT STREAM.WRITE-OBJECTS
+    ASSERT-METHOD!))
 
 (defparameter $list-construction-primitives
   '(LIST0 LIST1 LIST2 LIST3 LIST4 LIST5 LIST6 LIST7 LIST8 LIST9 LIST10))

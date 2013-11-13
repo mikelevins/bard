@@ -42,20 +42,24 @@
 (defun make-method-table ()
   (make-instance '<method-table>))
 
-(defun assert-method! ((table <method-table>)(types cons)(method <method>))
-  (let ((entry (assoc types (entries table) :test 'equal)))
+(defmethod assert-method! ((table <method-table>)(types cons)(method <method>))
+  (let ((entry (assoc types (method-table-entries table) :test 'equal)))
     (if entry
         (setf (cdr entry) method)
-        (setf (entries table)
+        (setf (method-table-entries table)
               (cons (cons (copy-tree types) method)
-                    (entries table))))
+                    (method-table-entries table))))
     table))
 
-(defun find-methods ((table <method-table>)(vals cons))
-  (mapcar (lambda (entry)
-            (if (matching-types? vals (car entry))
-                (cdr entry)
-                nil)) 
-          (entries table)))
-
-
+(defun more-specific? (types1 types2)
+  (if (null types1)
+      nil
+      (if (null types2)
+          t
+          (let ((type1 (car types1))
+                (type2 (car types2)))
+            (if (equal type1 type2)
+                (more-specific? (cdr types1)(cdr types2))
+                (if (subtype? type1 type2)
+                    t
+                    nil))))))

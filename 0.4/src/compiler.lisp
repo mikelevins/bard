@@ -95,12 +95,13 @@
 (defun comp-funcall (f args env val? more?)
   (let ((prim (primitive? f env (length args))))
     (cond
-      (prim  ; function compilable to a primitive instruction
-       (seq (comp-list args env)
-            (gen (prim-opcode prim))
-            (unless val? (gen 'POP))
-            (unless more? (gen 'RETURN))))
-      (more? ; Need to save the continuation point
+      ;; function compilable to a primitive instruction
+      (prim (seq (comp-list args env)
+                 (gen (prim-opcode prim))
+                 (unless val? (gen 'POP))
+                 (unless more? (gen 'RETURN))))
+      ;; Need to save the continuation point
+      (more? 
        (let ((k (gen-label 'k)))
          (seq (gen 'SAVE k)
               (comp-list args env)
