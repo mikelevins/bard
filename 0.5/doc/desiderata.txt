@@ -1,0 +1,141 @@
+Desiderata for Bard 0.5
+
+Bard is made up of values, types, and protocols.
+
+Implementation
+--------------
+
+Bard 0.5 commits to CCL as a platform and leverages its
+characteristics. It abandons bytecode as an intermediate
+format. Instead, the portable form of a Bard program is the
+fully-expanded source s-epxressions. The Bard VM can execute them
+directly, by walking the s-expression tree, but the preferred mode of
+execution is to compile the s-expressions to Common Lisp code and them
+use CCL's built-n compiler to turn it into native code.
+
+Values
+------
+
+Values are data, instances of Bard structures.
+
+Types
+-----
+
+Types come in two flavors: structures are like Common Lisp defstructs,
+or like CLOS classes, but without inheritance. Classes are named sets
+of types.
+
+By convention, structures are given lower-case named enclosed in angle brackets:
+
+  <fixnum>
+  <bignum>
+  <string>
+  <point2d>
+
+Classes are given capitalized names:
+
+  Integer
+  Number
+  List
+  Map
+
+Protocols and procedures
+------------------------
+
+Protocols are named sets of procedures.
+
+There are five kinds of procedures: accessors, methods, functions,
+macros, and special forms.
+
+Accessors are simple methods that get and set fields of
+structures. They are automatically created when a structure is
+defined.
+
+Methods are monomorphic procedures.
+
+Functions are polymorphic procedures--generic functions in Common Lisp
+terminology.
+
+Macros are CL-style defmacros.
+
+Special forms are CL-style special forms.
+
+Protocols are named objects. Defining a protocol creates the protocol
+object, gives it the name specified in the definition, and creates a
+global variable of the same name bound to the protocol object.
+
+When a protocol is defined the variable with its name is marked
+special. Any attempt to set or rebind the name of the protocol is
+prevented and an error signaled, unless the new value is also a
+protocol definition. You can explicitly disacrd the protocol
+definition if you really want to reuse the variable name for something
+else.
+
+By convention, a protocol is given a capitalized name enclosed in
+hyphens:
+
+  -List-
+  -Map-
+  -System-
+  -Resource-
+
+Emphasis on immutable data
+--------------------------
+
+Bard offers a comprehensive set of data structures familiar to any
+Common Lisp programmer: conses, vectors, arrays, strings, streams, and
+so on. 
+
+Assignment and side-effects are permitted, but the protocols are
+written with an emphasis on functional style and immutable data
+structures. For example, although hashtables are provided, immutable
+weight-balanced trees are preferred for representation of maps.
+
+Distributed and concurrent programming
+--------------------------------------
+
+Bard has a VM model: there is a single VM that contains all of the
+dynamic state associated with a Bard program; all of its global
+variables and similar process state. This VM is represented in Bard as
+an instance of <actor>.
+
+A Bard program can spawn additional instances of <actor>. Each one
+gets its own set of globals, dynamic state, and thread of
+control. Each actor is a separate world, sharing nothing with the
+actor that spawned it.
+
+Each actor has its own thread of control; Bard can run that thread in
+the same OS process that spawned it, or in a spearate OS process, or
+even on a different host. Although the latencies associated with each
+of these cases will be different, the semantics is the same. In all
+cases, two actors share no state, except the data that they can pass
+to one another in messages.
+
+Bard includes a set of procedures for spawning actors, for sending
+messages to them, and for receiving messages sent to it from other
+actors. Its Locator class includes member structures for representing
+addresses for remote actors, enabling a Bard process to open
+commuications with remote Bard actors.
+
+All communication is accomplished by passing messages; a message is
+simply a Bard value in serialized form, transferred somehow (typically
+over a socket connection) from one actor to another.
+
+Messages are not guaranteed to be delivered. When they are delivered,
+no guarantee is made about the order in which they arrive. The
+receiving Bard actor can retrieve them in the order they arrive by
+calling receive, or can influence whic of several pending messages it
+receives by passing a pattern as a parameter to receive; it will
+receive those pending messages that match the pattern.
+
+A Bard actor is free to spawn local actors that run in the same
+process as the spawning actor, but the spawning actor gets no
+privileged access to the internal state of the spawned actor. All
+communication between parent and child actors is through messages,
+just as if they were running on separate machines. Commuication with
+local actors will typically be more efficient than with remote ones,
+simply because network latency is eliminated from the communication,
+but again, there is still no sharing and no privileged access between
+local actors.
+
+
