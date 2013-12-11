@@ -6016,7 +6016,7 @@
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{0, 0}, {2556, 1418}}</string>
+		<string>{{-1920, 72}, {1536, 1296}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
@@ -6030,15 +6030,15 @@
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-51, 97}, {2407, 1279}}</string>
+		<string>{{0, -28}, {1868, 1522.6666666666667}}</string>
 		<key>Zoom</key>
-		<real>1</real>
+		<real>0.75</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>Canvas 1</string>
-				<real>1</real>
 				<real>0.75</real>
+				<real>1</real>
 			</array>
 		</array>
 	</dict>
