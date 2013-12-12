@@ -1,0 +1,63 @@
+;;; special constants
+
+undefined
+nothing
+true 
+false
+eof
+
+;;; numbers
+
+0
+1.2
+2/3
+1.0e2
+1.0d2
+
+;;; characters
+
+#\a
+#\b
+#\space
+#\tab
+#\U+03bb
+
+;;; strings
+
+""
+"Foo"
+"Foo Bar Baz"
+"A string \"within\" a string"
+
+;;; keywords
+
+:foo
+:Bar
+:FooBar
+
+;;; symbols
+
+foo
+Bar
+FooBar
+
+;;; quoted pairs and lists
+
+'()
+'(a . b)
+'(a b c)
+'(a b (c d) e f (g . h) i j)
+
+;;; list literals
+
+[]
+[1 2 3]
+['a 'b ['c 'd] 'e 'f]
+
+;;; maps
+
+{}
+{1 2 3 4}
+{'a 'b 'c ['d 'e] 'f 'g}
+
+

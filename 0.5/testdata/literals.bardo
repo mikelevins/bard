@@ -1,0 +1,35 @@
+(%UNDEFINED%)
+(%NOTHING%)
+(%TRUE%)
+(%FALSE%)
+(%EOF%)
+0
+1.2
+2/3
+100.0
+100.0D0
+#\a
+#\b
+#\ 
+#\Tab
+#\Greek_Small_Letter_Lamda
+""
+"Foo"
+"Foo Bar Baz"
+"A string \"within\" a string"
+:|foo|
+:|Bar|
+:|FooBar|
+|foo|
+|Bar|
+|FooBar|
+'NIL
+'(\a . \b)
+'(\a \b \c)
+'(\a \b (\c \d) \e \f (\g . \h) \i \j)
+(FUNCALL |list|)
+(FUNCALL |list| 1 2 3)
+(FUNCALL |list| '\a '\b (FUNCALL |list| '\c '\d) '\e '\f)
+(FUNCALL |map|)
+(FUNCALL |map| 1 2 3 4)
+(FUNCALL |map| '\a '\b '\c (FUNCALL |list| '\d '\e) '\f '\g)

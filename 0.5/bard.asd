@@ -23,6 +23,7 @@
                                      (:file "classes")
                                      (:file "values")
                                      (:file "reader")
+                                     (:file "compiler")
                                      (:file "printer")
                                      ))))
 ;;; (asdf:oos 'asdf:load-op :bard)

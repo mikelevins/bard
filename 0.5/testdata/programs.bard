@@ -1,0 +1,40 @@
+;;; simple program fragments for compiler testing
+
+;;; a few literals
+
+1
+2
+3
+nothing
+undefined
+true
+false
+eof
+
+;;; variables
+
+x
+Foo
+
+;;; setters
+
+(setter x)
+
+;;; special forms
+
+(begin 1 2 3)
+(begin (+ 2 3)(* 2 3))
+
+(if 1 2 3)
+(if (> (+ 2 3) 2)
+    'yes
+    'no)
+(quote Frobbozz)
+
+;;; function calls
+
+(pair 'a 'b)
+
+(BARD::DEFINE-BARD-METHOD BARD::|valid-name-part?| (COMMON-LISP:LIST Anything)
+                          (COMMON-LISP:LAMBDA (BARD::\p)
+                                              (COMMON-LISP:PROGN (BARD::%FALSE%))))

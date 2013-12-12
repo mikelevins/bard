@@ -1,5 +1,5 @@
 (define method (read-names (path <string>))
-  (with-open-file (in path)
+  (with-open (in path)
     (lines in)))
 
 (define method (triples (name <string>))

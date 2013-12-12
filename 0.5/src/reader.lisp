@@ -22,6 +22,44 @@
     (setf (readtable-case tbl) :preserve)
     tbl))
 
+;;; list literal reader
+
+(set-syntax-from-char #\[ #\( *bard-readtable* *default-readtable*)
+(set-syntax-from-char #\] #\) *bard-readtable* *default-readtable*)
+
+(set-macro-character 
+ #\[
+ (lambda (stream ch)(cons 'bard::|list| (read-delimited-list #\] stream)))
+ nil *bard-readtable*)
+
+(set-syntax-from-char #\{ #\( *bard-readtable* *default-readtable*)
+(set-syntax-from-char #\} #\) *bard-readtable* *default-readtable*)
+
+(set-macro-character 
+ #\{
+ (lambda (stream ch)(cons 'bard::|map| (read-delimited-list #\} stream)))
+ nil *bard-readtable*)
+
+;;; ---------------------------------------------------------------------
+;;; token-to-value conversions
+;;; ---------------------------------------------------------------------
+
+(defmethod token->value (x) x)
+
+(defmethod token->value ((x null)) nil)
+
+(defmethod token->value ((x (eql 'quote))) 'bard::|quote|)
+
+(defmethod token->value ((x cons)) 
+  (cons (token->value (car x))
+        (token->value (cdr x))))
+
+(defmethod token->value ((x (eql 'bard::|undefined|))) (%undefined))
+(defmethod token->value ((x (eql 'bard::|nothing|))) nil)
+(defmethod token->value ((x (eql 'bard::|true|))) (%true))
+(defmethod token->value ((x (eql 'bard::|false|))) (%false))
+(defmethod token->value ((x (eql 'bard::|eof|))) (%eof))
+
 ;;; ---------------------------------------------------------------------
 ;;; bard read
 ;;; ---------------------------------------------------------------------
@@ -29,7 +67,7 @@
 (defun bard-read (&optional (stream *standard-input*)(eof nil))
   (let ((*readtable* *bard-readtable*)
         (*package* (find-package :bard)))
-    (read stream nil eof nil)))
+    (token->value (read stream nil eof nil))))
 
 (defun bard-read-from-string (s)
   (with-input-from-string (in s)
@@ -59,3 +97,4 @@
   (bard-read-convert in (pathname path)))
 
 ;;; (bard-read-convert "/Users/mikel/Workshop/bard/0.5/testdata/namer.bard" "/Users/mikel/Workshop/bard/0.5/testdata/namer.bardo")
+;;; (bard-read-convert "/Users/mikel/Workshop/bard/0.5/testdata/literals.bard" "/Users/mikel/Workshop/bard/0.5/testdata/literals.bardo")

@@ -20,9 +20,7 @@
   ((name :accessor %structure-name :initarg :structure-name)))
 
 (defmethod print-object ((struct %bard-structure%)(s stream))
-  (print-unreadable-object (struct s :type nil :identity nil)
-    (princ "structure " s)
-    (princ (%structure-name struct) s)))
+  (princ (%structure-name struct) s))
 
 (defclass %bard-structure-instance% ()())
 
@@ -40,7 +38,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <bignum> (make-instance '%lisp-type-structure%
-                                      :structure-name 'bard-symbols::|<bignum>|
+                                      :structure-name 'bard::|<bignum>|
                                       :type-specifier 'cl:bignum))
 
 (defmethod %<bignum>? (x)(declare (ignore x)) nil)
@@ -52,7 +50,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <bitvector> (make-instance '%lisp-type-structure%
-                                         :structure-name 'bard-symbols::|<bitvector>|
+                                         :structure-name 'bard::|<bitvector>|
                                          :type-specifier 'cl:bit-vector))
 
 (defmethod %<bitvector>? (x) (typep x 'bit-vector))
@@ -63,7 +61,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <cons> (make-instance '%lisp-type-structure%
-                                    :structure-name 'bard-symbols::|<cons>|
+                                    :structure-name 'bard::|<cons>|
                                     :type-specifier 'cl:cons))
 
 (defmethod %<cons>? (x)(declare (ignore x)) nil)
@@ -75,7 +73,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <double-float> (make-instance '%lisp-type-structure%
-                                            :structure-name 'bard-symbols::|<double-float>|
+                                            :structure-name 'bard::|<double-float>|
                                             :type-specifier 'cl:double-float))
 
 (defmethod %<double-float>? (x) (typep x 'cl:double-float))
@@ -86,7 +84,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <fixnum> (make-instance '%lisp-type-structure%
-                                      :structure-name 'bard-symbols::|<fixnum>|
+                                      :structure-name 'bard::|<fixnum>|
                                       :type-specifier 'cl:fixnum))
 
 (defmethod %<fixnum>? (x)(declare (ignore x)) nil)
@@ -98,7 +96,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <hash-table> (make-instance '%lisp-type-structure%
-                                          :structure-name 'bard-symbols::|<hash-table>|
+                                          :structure-name 'bard::|<hash-table>|
                                           :type-specifier 'cl:hash-table))
 
 (defmethod %<hash-table>? (x)(declare (ignore x)) nil)
@@ -111,7 +109,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <nothing> (make-instance '%lisp-type-structure%
-                                       :structure-name 'bard-symbols::|<nothing>|
+                                       :structure-name 'bard::|<nothing>|
                                        :type-specifier 'cl:null))
 
 (defmethod %<nothing>? (x)(declare (ignore x)) nil)
@@ -124,7 +122,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <package> (make-instance '%lisp-type-structure%
-                                       :structure-name 'bard-symbols::|<package>|
+                                       :structure-name 'bard::|<package>|
                                        :type-specifier 'cl:package))
 
 (defmethod %<package>? (x)(declare (ignore x)) nil)
@@ -136,7 +134,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <random-state> (make-instance '%lisp-type-structure%
-                                            :structure-name 'bard-symbols::|<random-state>|
+                                            :structure-name 'bard::|<random-state>|
                                             :type-specifier 'cl:random-state))
 
 (defmethod %<random-state>? (x)(declare (ignore x)) nil)
@@ -148,7 +146,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <readtable> (make-instance '%lisp-type-structure%
-                                         :structure-name 'bard-symbols::|<readtable>|
+                                         :structure-name 'bard::|<readtable>|
                                          :type-specifier 'cl:readtable))
 
 (defmethod %<readtable>? (x)(declare (ignore x)) nil)
@@ -160,7 +158,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <restart> (make-instance '%lisp-type-structure%
-                                       :structure-name 'bard-symbols::|<restart>|
+                                       :structure-name 'bard::|<restart>|
                                        :type-specifier 'cl:restart))
 
 (defmethod %<restart>? (x)(declare (ignore x)) nil)
@@ -171,7 +169,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <single-float> (make-instance '%lisp-type-structure%
-                                            :structure-name 'bard-symbols::|<single-float>|
+                                            :structure-name 'bard::|<single-float>|
                                             :type-specifier 'cl:single-float))
 
 (defmethod %<single-float>? (x) (typep x 'cl:single-float))
@@ -182,7 +180,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <string> (make-instance '%lisp-type-structure%
-                                      :structure-name 'bard-symbols::|<string>|
+                                      :structure-name 'bard::|<string>|
                                       :type-specifier 'cl:string))
 
 (defmethod %<string>? (x)(declare (ignore x)) nil)
@@ -194,7 +192,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <vector> (make-instance '%lisp-type-structure%
-                                      :structure-name 'bard-symbols::|<vector>|
+                                      :structure-name 'bard::|<vector>|
                                       :type-specifier 'cl:simple-vector))
 
 (defmethod %<vector>? (x)(declare (ignore x)) nil)
@@ -206,7 +204,7 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter <wordvector> (make-instance '%lisp-type-structure%
-                                          :structure-name 'bard-symbols::|<wordvector>|
+                                          :structure-name 'bard::|<wordvector>|
                                           :type-specifier 'cl:simple-array))
 
 (defmethod %<wordvector>? (x)(declare (ignore x)) nil)
@@ -236,10 +234,7 @@
   ((structure-class :accessor %structure-class :initarg :structure-class)))
 
 (defmethod print-object ((struct %bard-base-structure%)(s stream))
-  (print-unreadable-object (struct s :type nil :identity nil)
-    (princ "structure " s)
-    (princ (class-name (%structure-class struct)) s)
-    (princ " " s)))
+  (princ (class-name (%structure-class struct)) s))
 
 ;;; <actor>
 ;;; ---------------------------------------------------------------------
@@ -305,9 +300,7 @@
   ((name :accessor %class-name :initarg :name)))
 
 (defmethod print-object ((class |<class>|)(s stream))
-  (print-unreadable-object (class s :type nil :identity nil)
-    (princ "class " s)
-    (princ (%class-name class) s)))
+  (princ (%class-name class) s))
 
 ;;; the object used to represent the <class> structure in Bard
 (defparameter <class> (make-instance '%bard-base-structure% :structure-class (find-class '|<class>|)))
