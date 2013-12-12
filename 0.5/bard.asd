@@ -14,7 +14,7 @@
   :description "The bard programming language, version 0.5"
   :author "mikel evins <mevins@me.com>"
   :license "Apache 2.0"
-  :depends-on ()
+  :depends-on (:cl-store)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
