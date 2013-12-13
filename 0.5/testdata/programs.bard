@@ -1,6 +1,6 @@
 ;;; simple program fragments for compiler testing
 
-;;; a few literals
+;;; literals
 
 1
 2
@@ -9,7 +9,26 @@ nothing
 undefined
 true
 false
-eof
+[]
+[2 3 4]
+
+:keyword
+
+{}
+{:a 1 :b 2}
+
+"Frob!"
+
+(->  ->)
+(-> Integer Integer List -> List)
+(-> List -> List Integer)
+
+(method () foo)
+(method (x) x)
+(method (x y) (foo x y))
+(method (x y & more) (reverse more))
+(method (x y { :name nothing })
+  (pair x name))
 
 ;;; variables
 
@@ -35,6 +54,17 @@ Foo
 
 (pair 'a 'b)
 
-(BARD::DEFINE-BARD-METHOD BARD::|valid-name-part?| (COMMON-LISP:LIST Anything)
-                          (COMMON-LISP:LAMBDA (BARD::\p)
-                                              (COMMON-LISP:PROGN (BARD::%FALSE%))))
+;;; definitions
+
+(define class Foo [] sup (-> Foo -> Anything))
+
+(define class Point2D [] 
+  point-x (-> Point2D -> Number)
+  point-y (-> Point2D -> Number))
+
+(define class Point3D [Point2D] 
+  point-z (-> Point2D -> Number))
+
+(define constant PI 3.14159)
+(define variable *fruits* ['apple 'banana 'cherry])
+

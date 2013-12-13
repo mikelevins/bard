@@ -29,7 +29,7 @@
 
 (set-macro-character 
  #\[
- (lambda (stream ch)(cons 'bard::|list| (read-delimited-list #\] stream)))
+ (lambda (stream ch)(cons 'bard-symbols::|list| (read-delimited-list #\] stream)))
  nil *bard-readtable*)
 
 (set-syntax-from-char #\{ #\( *bard-readtable* *default-readtable*)
@@ -37,7 +37,7 @@
 
 (set-macro-character 
  #\{
- (lambda (stream ch)(cons 'bard::|map| (read-delimited-list #\} stream)))
+ (lambda (stream ch)(cons 'bard-symbols::|map| (read-delimited-list #\} stream)))
  nil *bard-readtable*)
 
 ;;; ---------------------------------------------------------------------
@@ -48,17 +48,22 @@
 
 (defmethod token->value ((x null)) nil)
 
-(defmethod token->value ((x (eql 'quote))) 'bard::|quote|)
+(defmethod token->value ((x (eql 'quote))) 'bard-symbols::|quote|)
 
 (defmethod token->value ((x cons)) 
   (cons (token->value (car x))
         (token->value (cdr x))))
 
-(defmethod token->value ((x (eql 'bard::|undefined|))) (%undefined))
-(defmethod token->value ((x (eql 'bard::|nothing|))) nil)
-(defmethod token->value ((x (eql 'bard::|true|))) (%true))
-(defmethod token->value ((x (eql 'bard::|false|))) (%false))
-(defmethod token->value ((x (eql 'bard::|eof|))) (%eof))
+(defmethod token->value ((x symbol)) 
+  (if (keywordp x)
+      x
+      (intern (symbol-name x) :bard-symbols)))
+
+(defmethod token->value ((x (eql 'bard-symbols::|undefined|))) (%undefined))
+(defmethod token->value ((x (eql 'bard-symbols::|nothing|))) nil)
+(defmethod token->value ((x (eql 'bard-symbols::|true|))) (%true))
+(defmethod token->value ((x (eql 'bard-symbols::|false|))) (%false))
+(defmethod token->value ((x (eql 'bard-symbols::|eof|))) (%eof))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard read
@@ -66,7 +71,7 @@
 
 (defun bard-read (&optional (stream *standard-input*)(eof nil))
   (let ((*readtable* *bard-readtable*)
-        (*package* (find-package :bard)))
+        (*package* (find-package :bard-symbols)))
     (token->value (read stream nil eof nil))))
 
 (defun bard-read-from-string (s)
@@ -74,11 +79,10 @@
     (bard-read in)))
 
 (defmethod bard-read-convert ((in stream)(out stream))
-  (let* ((eof (gensym)))
-    (loop for obj = (bard-read in eof)
-       until (eql obj eof)
-       do (format out "~S~%" obj))
-    (finish-output out)))
+  (loop for obj = (bard-read in (%eof))
+     until (%eof? obj)
+     do (format out "~S~%" obj))
+  (finish-output out))
 
 (defmethod bard-read-convert ((path pathname) out)
   (with-open-file (in path :direction :input)

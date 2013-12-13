@@ -19,6 +19,7 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
+                                     (:file "utils")
                                      (:file "structures")
                                      (:file "classes")
                                      (:file "values")
