@@ -172,6 +172,12 @@
         (elt param-list restpos)
         nil)))
 
+;;; TODO: this compiler produces code in the right general form, but I
+;;; need to alter it to compile the body and the value forms in the
+;;; bindings
+(defun comp1-let (exp env)
+  `(bard-let ,@(cdr exp)))
+
 (defun comp1-method-simple-param-list (exp env)
   (let* ((param-list (second exp))
          (env* (append (mapcar (lambda (p)(cons p nil))
@@ -257,6 +263,9 @@
            ,(comp1 then env)
            ,(comp1 else env)))))
 
+(defspecial 'bard-symbols::|let|
+  (lambda (exp env)(comp1-let exp env)))
+
 (defspecial 'bard-symbols::|method|
   (lambda (exp env)(comp1-method exp env)))
 
@@ -271,11 +280,40 @@
   (funcall (gethash (car exp) $special-forms nil)
            exp env))
 
+(defparameter $macro-forms (make-hash-table))
+
+(defun def-bard-macro (name expander-fn)
+  (setf (gethash name $macro-forms) expander-fn))
+
+(def-bard-macro 'bard-symbols::|set!|
+  (lambda (exp)
+    (let* ((place-form (second exp))
+           (val-form (third exp)))
+      (if (listp place-form)
+          `((bard-symbols::|setter| ,(first place-form)) ,(second place-form) ,val-form)
+          `((bard-symbols::|setter| ,place-form) ,val-form)))))
+
+;;; TODO: this is the right idea, but I should use ensure so that the
+;;;       file is guaranteed to be closed, and I should gensym the
+;;;       local variable names to avoid variable aliasing
+(def-bard-macro 'bard-symbols::|with-open|
+  (lambda (exp)
+    (let* ((binding-form (second exp))
+           (varname (first binding-form))
+           (path (second binding-form))
+           (open-args (drop 2 binding-form))
+           (body-forms (drop 2 exp)))
+      `(bard-symbols::|let| ((,varname (bard-symbols::|open| ,path ,@open-args))
+                             (_result (bard-symbols::|begin| ,@body-forms)))
+                      (bard-symbols::|close| ,varname)
+                      _result))))
+
 (defun macro-form? (exp)
-  nil)
+  (gethash (car exp) $macro-forms nil))
 
 (defun expand-bard-macro (exp)
-  nil)
+  (funcall (gethash (car exp) $macro-forms nil)
+           exp))
 
 (defun comp1-funcall (exp &optional (env nil))
   (let ((op (car exp))
@@ -324,6 +362,16 @@
 (defmethod comp1-file (in (path string))
   (comp1-file in (pathname path)))
 
+(defun comp1-file-binary (path)
+  (let* ((out (merge-pathnames (make-pathname :type "box") path))
+         (objs (with-open-file (in path :direction :input)
+                 (loop for obj = (bard-read in (%eof))
+                    until (%eof? obj)
+                    collect (let ((*package* (find-package :keyword)))
+                              (comp1 obj))))))
+    (cl-store:store objs out)))
+
 ;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/namer.bard" "/Users/mikel/Workshop/bard/0.5/testdata/namer.bardo")
 ;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/literals.bard" "/Users/mikel/Workshop/bard/0.5/testdata/literals.bardo")
 ;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/programs.bard" "/Users/mikel/Workshop/bard/0.5/testdata/programs.bardo")
+;;; (comp1-file-binary "/Users/mikel/Workshop/bard/0.5/testdata/programs.bard")

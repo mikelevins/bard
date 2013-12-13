@@ -38,6 +38,8 @@ Foo
 ;;; setters
 
 (setter x)
+(set! x 1)
+(set! (first x) 1)
 
 ;;; special forms
 
@@ -68,3 +70,17 @@ Foo
 (define constant PI 3.14159)
 (define variable *fruits* ['apple 'banana 'cherry])
 
+;;; macros and special forms
+
+(let ((x 1))
+  x)
+
+(let ((x 2)
+      (y (+ x 1)))
+  (* x y))
+
+(let ((x y (values 2 3)))
+  (* x y))
+
+(with-open (in "~/.emacs" :direction :input)
+  (count-lines in))
