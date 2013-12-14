@@ -3,7 +3,9 @@
 
 (define class Accessor [Procedure])
 
-(define class Actor [Atom])
+(define class Actor [Atom]
+  receive (-> {} -> Anything)
+  send (-> Actor Anything {} -> ))
 
 (define class AdjustableArray [Array]
   adjust! (->  -> )
@@ -84,17 +86,10 @@
   assert (->  -> )  
   break (->  -> )  
   continue (->  -> )  
-  define-condition (->  -> )  
   error (->  -> )  
   find-restart (->  -> )  
-  handler-bind (->  -> )  
-  handler-case (->  -> )  
   ignore-errors (->  -> )  
   ignore-warnings (->  -> )  
-  invoke-restart (->  -> )  
-  restart-bind (->  -> )  
-  restart-case (->  -> )  
-  signal (->  -> )  
   warn (->  -> ))
 
 (define class EndOfFile [Name])
@@ -107,7 +102,6 @@
   add-method! (-> Function List Method -> Function)
   all-applicable-methods (-> Function List -> Function)
   find-method (-> Function List -> Method)
-  next-method (-> Function List -> Method)
   next-method? (-> Function List -> Boolean)
   no-applicable-method (-> Function List -> )
   remove-method! (-> Function List -> Function)
