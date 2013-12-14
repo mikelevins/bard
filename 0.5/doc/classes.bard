@@ -1,152 +1,188 @@
-(define class Accessor [Procedure]
-  accessor? (-> Anything -> Boolean))
 
-(define class Actor [Anything]
-  actor? (-> Anything -> Boolean))
+;;; Bard's built-in classes defined
 
-(define class Bard [Actor]
-  bard? (-> Anything -> Boolean))
+(define class Accessor [Procedure])
+
+(define class Actor [Atom])
+
+(define class AdjustableArray [Array])
+
+(define class AdjustableVector [Vector])
 
 (define class Anything []
   as (-> Type Anything -> Anything)
-  make (-> Type {} -> Anything)
-  something? (-> Anything -> Boolean))
+  copy (-> Anything {} -> Anything)
+  equal? (-> Anything Anything * -> Boolean)
+  equivalent? (-> Anything Anything * -> Boolean)
+  identical? (-> Anything Anything * -> Boolean)
+  identity (-> Anything -> Anything))
 
-(define class Array [Collection]
-  array? (-> Anything -> Boolean))
+(define class Array [Collection])
 
-(define class Atom [Anything]
-  atom? (-> Anything -> Boolean))
+(define class Atom [Anything])
 
 (define class Boolean [Atom]
-  boolean? (-> Anything -> Boolean))
+  atom? (-> Anything -> Boolean)
+  not (-> Anything -> Boolean))
 
 (define class Character [Atom]
-  character? (-> Anything -> Boolean))
+  alphabetic-character? (-> Character -> Boolean)
+  alphanumeric-character? (-> Character -> Boolean)
+  capitalize (-> Character -> Character)
+  capitalized? (-> Character -> Boolean)
+  character->code (-> Character -> Integer)
+  character-name (-> Character -> Name)
+  character? (-> Anything -> Boolean)
+  code->character (-> Integer -> Character)
+  digit-character? (-> Character -> Boolean)
+  downcase (-> Character -> Character)
+  downcase? (-> Character -> Boolean)
+  graphic-character? (-> Character -> Boolean)
+  name->character (-> Name -> Character)
+  numeric-character? (-> Character -> Boolean)
+  standard-character? (-> Character -> Boolean)
+  upcase (-> Character -> Character)
+  upcase? (-> Character -> Boolean)
+  whitespace-character? (-> Character -> Boolean))
 
-(define class Class [Mutable Type]
+(define class Class [Type]
+  class-of (-> Anything -> Class)
   class? (-> Anything -> Boolean))
 
 (define class Collection [Anything]
-  any (-> Collection -> Anything)
-  collection? (-> Anything -> Boolean)
   count (-> Collection -> Integer)
   empty? (-> Collection -> Boolean)
   every? (-> Procedure Collection -> Boolean)
-  filter (-> Procedure Collection -> Collection)
-  find (-> Procedure Collection -> Anything)
-  remove (-> Procedure Collection -> Collection))
+  member? (-> Anything Collection { :test Procedure } -> Boolean)
+  mutable? (-> Collection -> Boolean)
+  remove (-> Anything Collection { :test Procedure } -> Collection))
 
-(define class Complex [Number]
-  complex? (-> Anything -> Boolean))
+(define class Complex [Number])
 
-(define class Condition [Atom]
-  condition? (-> Anything -> Boolean))
+(define class Condition [Atom])
 
-(define class EndOfFile [Name]
-  eof? (-> Anything -> Boolean))
+(define class EndOfFile [Name])
 
-(define class Float [Real]
-  float? (-> Anything -> Boolean))
+(define class Error [Condition])
+
+(define class Float [Real])
 
 (define class Function [Procedure]
+  add-method! (-> Function List Method -> Function)
+  all-applicable-methods (-> Function List -> Function)
+  find-method (-> Function List -> Method)
+  next-method (-> Function List -> Method)
+  next-method? (-> Function List -> Boolean)
+  no-applicable-method (-> Function List -> )
+  remove-method! (-> Function List -> Function)
   function? (-> Anything -> Boolean))
 
-(define class Gatherer [Stream]
-  gatherer? (-> Anything -> Boolean))
+(define class Gatherer [Stream])
 
 (define class Generator [Stream]
-  choose (-> Procedure Generator -> Generator)
-  collect (-> Generator -> List)
-  collect-map (-> Procedure Generator -> List)
-  elements (-> Stream -> Generator)
-  generator? (-> Anything -> Boolean)
+  coalesce (-> Function List * -> Generator)
   range-from (-> Integer {} -> Generator)
-  repeat (-> Anything -> Generator)
-  scan (-> List -> Generator)
-  scan-map (-> Procedure List -> Generator))
+  repeat (-> Anything -> Generator))
 
-(define class Getter [Accessor]
-  getter? (-> Anything -> Boolean))
+(define class Getter [Accessor])
 
-(define class Integer [Rational]
-  integer? (-> Anything -> Boolean))
+(define class HashTable [MutableTable]
+  hash (-> Anything -> Anything)
+  hashtable-test (-> Table -> Procedure)
+  hashtable? (-> Anything -> Boolean)
+  rehash-threshold (-> Table -> Number))
 
-(define class Keyword [Name]
-  keyword? (-> Anything -> Boolean))
+(define class HomogeneousVector [Vector])
+
+(define class Integer [Rational])
+
+(define class Keyword [Name])
 
 (define class List [Collection]
-  add-first (-> Anything List -> List)
   add-last (-> List Anything -> List)
-  append (-> List * -> List)
+  acons (-> Anything Anything List -> List)
+  adjoin (-> Anything List -> List)
+  any (-> List -> Anything)
+  append (-> List List * -> List)
+  assoc (-> Anything List -> Pair)
   by (-> Integer List -> List)
+  count-if (-> Procedure List -> Integer)
   drop (-> Integer List -> List)
   drop-while (-> Procedure List -> List)
-  element (-> Integer List -> Anything)
+  eighth (-> List -> Anything)
+  element (-> List Integer -> Anything)
+  fifth (-> List -> Anything)
+  filter (-> Procedure List -> Anything)
+  find (-> Procedure List -> Anything)
   first (-> List -> Anything)
+  fourth (-> List -> Anything)
+  head (-> List -> Anything)
+  image (-> Procedure List -> List)
   indexes (-> List -> List)
+  insert (-> List Integer Anything -> List)
   interleave (-> List List -> List)
   interpose (-> Anything List -> List)
-  join (-> List -> List)
+  join (-> List Anything -> List)
   last (-> List -> Anything)
-  list (-> Anything * -> List)
   list? (-> Anything -> Boolean)
-  map (-> Procedure List * -> List)
-  match-prefix? (-> List List -> Boolean)
+  ninth (-> List -> Anything)
+  not-any? (-> Procedure List -> Boolean)
+  not-every? (-> Procedure List -> Boolean)
   partition (-> Procedure List -> List List)
   penult (-> List -> Anything)
-  position (-> Procedure List -> (or Integer Nothing))
+  pop (-> List -> Anything)
+  pop! (-> List -> Anything)
+  position-if (-> Procedure List -> Integer)
+  prefix-match? (-> List List -> Boolean)
+  push (-> Anything List -> List)
+  push! (-> Anything List -> List)
+  pushnew (-> Anything List -> List)
+  pushnew! (-> Anything List -> List)
   range (-> Integer Integer {} -> List)
   reduce (-> Procedure Anything List -> Anything)
   rest (-> List -> List)
   reverse (-> List -> List)
   second (-> List -> Anything)
-  some? (-> Procedure List -> Anything)
-  sort (-> List Proceduer -> List)
-  split (-> Procedure List -> List)
+  select (-> List List -> List)
+  seventh (-> List -> Anything)
+  shuffle (-> List -> List)
+  sixth (-> List -> Anything)
+  some? (-> Procedure List -> Boolean)
+  sort (-> List Procedure -> List)
+  split (-> List Procedure -> List)
+  sublist (-> List Integer Integer -> List)
+  suffix-match? (-> List List -> Boolean)
+  tail (-> List -> List)
   tails (-> List -> List)
   take (-> Integer List -> List)
   take-by (-> Integer Integer List -> List)
   take-while (-> Procedure List -> List)
-  unique (-> List {} -> List)
+  tenth (-> List -> Anything)
+  third (-> List -> Anything)
+  trim (-> List List -> List)
+  unique (-> List Procedure -> List)
   unzip (-> List -> List List)
   zip (-> List List -> List))
 
-(define class Macro [Procedure]
-  macro? (-> Anything -> Boolean))
-
-(define class Map [Collection]
-  contains-key? (-> Map Anything {} -> Boolean)
-  contains-value? (-> Map Anything {} -> Boolean)
-  get (-> Map Anything {} -> Anything)
-  keys (-> Map -> List)
-  map? (-> Anything -> Boolean)
-  merge (-> Map Map Map * -> Map)
-  put (-> Map Anything Anything -> Map)
-  remove-key (-> Map Anything -> Map)
-  vals (-> Map -> List))
+(define class Macro [Procedure])
 
 (define class Method [Procedure]
   method? (-> Anything -> Boolean))
 
-(define class Mutable [Anything]
-  mutable? (-> Anything -> Boolean))
-
-(define class MutableMap [Mutable Map]
-  mutable-map? (-> Anything -> Boolean))
+(define class MutableTable [Table]
+  put! (-> MutableTable Anything Anything -> MutableTable)
+  remove! (-> Anything MutableTable { :test Procedure } -> MutableTable))
 
 (define class Name [Atom]
-  name? (-> Anything -> Boolean))
+  bound? (-> Name -> Boolean)
+  make-unbound! (-> Name -> Name))
 
-(define class Number [Atom]
-  number? (-> Anything -> Boolean))
+(define class Nothing [*] ; Nothing is a subclass of all classes
+  )
 
-(define class Ordered [Anything]
-  < (-> Ordered Ordered Ordered * -> Boolean)
-  <= (-> Ordered Ordered Ordered * -> Boolean)
-  > (-> Ordered Ordered Ordered * -> Boolean)
-  >= (-> Ordered Ordered Ordered * -> Boolean)
-  ordered? (-> Anything -> Boolean))
+(define class Number [Atom])
+
+(define class Package [MutableTable])
 
 (define class Pair [List]
   left (-> Pair -> Anything)
@@ -154,67 +190,77 @@
   pair? (-> Anything -> Boolean)
   right (-> Pair -> Anything))
 
+(define class Pathname [ResourceName])
+
 (define class Procedure [Atom]
-  applicable? (-> Anything -> Boolean)
-  apply (-> Procedure List -> Anything * )
-  cascade (@ (arg * ) fn *)
-  compose (-> Procedure * -> Procedure)
-  conjoin (-> Procedure * -> Procedure)
-  disjoin (-> Procedure * -> Procedure)
-  flip (-> Procedure -> Procedure)
-  partial (-> Procedure Anything * -> Procedure)
-  procedure? (-> Anything -> Boolean)
-  rotate-left (-> Procedure -> Procedure)
-  rotate-right (-> Procedure -> Procedure)
-  rpartial (-> Procedure Anything * -> Procedure)
-  spread (-> Anything * -> Procedure))
+  apply (-> Procedure List -> Anything)
+  complement (-> Procedure -> Procedure)
+  constantly (-> Anything -> Procedure))
 
-(define class Ratio [Rational]
-  ratio? (-> Anything -> Boolean))
+(define class RandomState [Atom])
 
-(define class Rational [Real]
-  rational? (-> Anything -> Boolean))
+(define class Ratio [Rational])
 
-(define class Real [Number]
-  real? (-> Anything -> Boolean))
+(define class Rational [Real])
 
-(define class ResourceName [Name]
-  resource-name? (-> Anything -> Boolean))
+(define class ReadTable [MutableTable])
 
-(define class Set [List]
-  adjoin (-> Anything Set -> Set)
-  difference (-> Set Set Set * -> Set)
-  intersection (-> Set Set Set * -> Set)
-  set? (-> Anything -> Boolean)
-  union (-> Set Set Set * -> Set))
+(define class Real [Number])
 
-(define class Setter [Accessor]
-  setter? (-> Anything -> Boolean))
+(define class Record [Structure])
 
-(define class Stream [Collection]
-  stream? (-> Anything -> Boolean))
+(define class ResourceLocator [ResourceName])
 
-(define class Structure [Mutable Type]
-  structure? (-> Anything -> Boolean))
+(define class ResourceName [Name])
 
-(define class Symbol [Name]
-  symbol? (-> Anything -> Boolean))
+(define class Set [List])
 
-(define class Text [UniformVector]
-  text? (-> Anything -> Boolean))
+(define class Setter [Accessor])
 
-(define class Type [Anything]
-  type? (-> Anything -> Boolean))
+(define class Singleton [Type])
 
-(define class Undefined [Anything]
-  undefined? (-> Anything -> Boolean))
+(define class Stream [Collection])
 
-(define class UniformVector [Vector]
-  uniform-vector? (-> Anything -> Boolean))
+(define class Structure [Type]
+  initialize (-> Structure {} -> Structure)
+  slot-bound? (-> Structure Name -> Boolean)
+  slot-exists? (-> Structure Name -> Boolean))
 
-(define class Vector [Array List]
-  vector? (-> Anything -> Boolean))
+(define class Symbol [Name])
 
-(define class Word [Integer]
-  word? (-> Anything -> Boolean))
+(define class Table [Collection]
+  contains-key? (-> Table Anything { :test Procedure } -> Boolean)
+  contains-value? (-> Table Anything { :test Procedure } -> Boolean)
+  do-entries (-> Procedure Table -> Anything)
+  do-keys (-> Procedure Table -> Anything)
+  drop-all-keys (-> Table -> Table)
+  get (-> Table Anything -> Anything)
+  image (-> Procedure Table -> Table)
+  keys (-> Table -> List)
+  merge (-> Table Table * -> Table)
+  put (-> Table Anything Anything -> Table)
+  readtable? (-> Anything -> Boolean)
+  table? (-> Table ->)
+  tree-table? (-> Anything -> Boolean)
+  vals (-> Table -> List))
 
+(define class Text [HomogeneousVector])
+
+(define class Tuple [Structure])
+
+(define class Type [Atom]
+  make (-> Type {} -> Anything)
+  instance-of? (-> Anything Type -> Boolean)
+  subtype? (-> Type Type -> Boolean))
+
+(define class TypeSynonym [Type])
+
+(define class Undefined [Anything])
+
+(define class Union [Structure])
+
+(define class Vector [Array List])
+
+(define class Warning [Condition])
+
+(define class Word [Integer])

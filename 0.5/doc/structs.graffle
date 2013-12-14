@@ -53,18 +53,18 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{159.99999491373873, 223.99997965494791}, {154, 32}}</string>
+			<string>{{138.33331298828125, 527.49998982747445}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1478</integer>
+			<integer>1643</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -76,28 +76,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;bard&gt;}</string>
+\f0\b\fs26 \cf2 &lt;character&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 361.66666666666617}, {154, 32}}</string>
+			<string>{{138.33331298828125, 645.49998982747491}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1470</integer>
+			<integer>1644</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -109,28 +109,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;undefined&gt;}</string>
+\f0\b\fs26 \cf2 &lt;complexnum&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 293.6666666666664}, {154, 32}}</string>
+			<string>{{138.33331298828125, 586.49998982747491}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1471</integer>
+			<integer>1645</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -142,28 +142,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;true&gt;}</string>
+\f0\b\fs26 \cf2 &lt;class&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 633.66666666666629}, {154, 32}}</string>
+			<string>{{138.33331298828125, 173.49998982747431}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1472</integer>
+			<integer>1646</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -175,28 +175,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;wordvector&gt;}</string>
+\f0\b\fs26 \cf2 &lt;adjustable-object-array&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 225.66666666666629}, {154, 32}}</string>
+			<string>{{138.33331298828125, 350.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1473</integer>
+			<integer>1647</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -208,28 +208,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;structure&gt;}</string>
+\f0\b\fs26 \cf2 &lt;array&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 497.66666666666669}, {154, 32}}</string>
+			<string>{{138.33331298828125, 232.49998982747437}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1474</integer>
+			<integer>1648</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -241,28 +241,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;url&gt;}</string>
+\f0\b\fs26 \cf2 &lt;adjustable-vector&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 157.66666666666629}, {154, 32}}</string>
+			<string>{{138.33331298828125, 468.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1475</integer>
+			<integer>1649</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -274,28 +274,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;string&gt;}</string>
+\f0\b\fs26 \cf2 &lt;bitvector&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 565.66666666666629}, {154, 32}}</string>
+			<string>{{138.33331298828125, 409.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1476</integer>
+			<integer>1650</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -307,28 +307,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;vector&gt;}</string>
+\f0\b\fs26 \cf2 &lt;bignum&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000171, 429.6666666666668}, {154, 32}}</string>
+			<string>{{138.33331298828125, 291.49998982747377}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1477</integer>
+			<integer>1651</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -340,28 +340,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;unsigned-byte&gt;}</string>
+\f0\b\fs26 \cf2 &lt;alist-table&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{611.9999796549489, 88.000002543131814}, {154, 32}}</string>
+			<string>{{138.33331298828125, 114.499989827474}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1450</integer>
+			<integer>1652</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -373,28 +373,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;nothing&gt;}</string>
+\f0\b\fs26 \cf2 &lt;actor&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 155.99997965494811}, {154, 32}}</string>
+			<string>{{821.66664505004928, 468.50003051757761}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1451</integer>
+			<integer>1677</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -406,28 +406,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;false&gt;}</string>
+\f0\b\fs26 \cf2 &lt;vector&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 563.99997965494867}, {154, 32}}</string>
+			<string>{{821.66664505004928, 527.50003051757938}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1452</integer>
+			<integer>1678</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -439,28 +439,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;macro&gt;}</string>
+\f0\b\fs26 \cf2 &lt;windows-pathname&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 359.99997965494771}, {154, 32}}</string>
+			<string>{{821.66664505004928, 409.50003051757761}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1453</integer>
+			<integer>1679</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -472,28 +472,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;getter&gt;}</string>
+\f0\b\fs26 \cf2 &lt;url&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 631.99997965494867}, {154, 32}}</string>
+			<string>{{821.66664505004928, 291.50003051757761}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1454</integer>
+			<integer>1680</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -505,28 +505,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;method&gt;}</string>
+\f0\b\fs26 \cf2 &lt;undefined&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 291.99997965494771}, {154, 32}}</string>
+			<string>{{821.66664505004928, 114.50003051757824}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1455</integer>
+			<integer>1681</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -538,28 +538,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;function&gt;}</string>
+\f0\b\fs26 \cf2 &lt;synonym&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 223.99997965494802}, {154, 32}}</string>
+			<string>{{821.66664505004928, 173.50003051757869}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1456</integer>
+			<integer>1682</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -571,28 +571,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;fixnum&gt;}</string>
+\f0\b\fs26 \cf2 &lt;true&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 495.99997965494839}, {154, 32}}</string>
+			<string>{{821.66664505004928, 232.50003051757867}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1457</integer>
+			<integer>1683</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -604,28 +604,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;long-float&gt;}</string>
+\f0\b\fs26 \cf2 &lt;tuple&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{386.00002543131603, 427.99997965494782}, {154, 32}}</string>
+			<string>{{821.66664505004928, 350.50003051757761}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1458</integer>
+			<integer>1684</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -637,28 +637,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;hash-table&gt;}</string>
+\f0\b\fs26 \cf2 &lt;union&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{385.99993387858171, 87.999997456868684}, {154, 32}}</string>
+			<string>{{821.66664505004928, 586.5000305175796}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1440</integer>
+			<integer>1685</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -670,28 +670,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;eof&gt;}</string>
+\f0\b\fs26 \cf2 &lt;word&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00000000000136, 88}, {154, 32}}</string>
+			<string>{{821.66664632161496, 645.50001017252805}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1441</integer>
+			<integer>1686</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -703,28 +703,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;actor&gt;}</string>
+\f0\b\fs26 \cf2 &lt;wordvector&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 497.66666666666652}, {154, 32}}</string>
+			<string>{{366.33331298828006, 586.49998982747491}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1442</integer>
+			<integer>1654</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -736,28 +736,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;class&gt;}</string>
+\f0\b\fs26 \cf2 &lt;lisp-pathname&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00000000000136, 156}, {154, 32}}</string>
+			<string>{{366.33331298828006, 645.49998982747491}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1443</integer>
+			<integer>1655</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -769,28 +769,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;alist-table&gt;}</string>
+\f0\b\fs26 \cf2 &lt;macro&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 429.6666666666664}, {154, 32}}</string>
+			<string>{{366.33331298828006, 409.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1444</integer>
+			<integer>1656</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -802,28 +802,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;bitvector&gt;}</string>
+\f0\b\fs26 \cf2 &lt;function&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 565.66666666666742}, {154, 32}}</string>
+			<string>{{598.99995930989655, 114.49999237060572}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1445</integer>
+			<integer>1657</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -835,28 +835,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;cons&gt;}</string>
+\f0\b\fs26 \cf2 &lt;method&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 361.6666666666664}, {154, 32}}</string>
+			<string>{{366.33331298828006, 468.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1446</integer>
+			<integer>1658</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -868,28 +868,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;bit&gt;}</string>
+\f0\b\fs26 \cf2 &lt;getter&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 293.66666666666629}, {154, 32}}</string>
+			<string>{{366.33331298828006, 350.49998982747366}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1447</integer>
+			<integer>1659</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -901,28 +901,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;bignum&gt;}</string>
+\f0\b\fs26 \cf2 &lt;fixnum&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{160.00002034505343, 633.66666666666742}, {154, 32}}</string>
+			<string>{{366.33331298828006, 291.49998982747377}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1448</integer>
+			<integer>1660</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -934,28 +934,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;double-float&gt;}</string>
+\f0\b\fs26 \cf2 &lt;false&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 429.66670735677081}, {154, 32}}</string>
+			<string>{{366.33331298828006, 232.49998982747437}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1460</integer>
+			<integer>1661</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -967,28 +967,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;setter&gt;}</string>
+\f0\b\fs26 \cf2 &lt;eof&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{838.00000000000182, 88.000002543131501}, {154, 32}}</string>
+			<string>{{366.33331298828006, 173.49998982747431}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1461</integer>
+			<integer>1662</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1000,28 +1000,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;singleton&gt;}</string>
+\f0\b\fs26 \cf2 &lt;double-float&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 565.6667073567711}, {154, 32}}</string>
+			<string>{{366.33331298828006, 114.499989827474}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1462</integer>
+			<integer>1663</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1033,28 +1033,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;signed-byte&gt;}</string>
+\f0\b\fs26 \cf2 &lt;cons&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 497.66670735677093}, {154, 32}}</string>
+			<string>{{366.33331298828006, 527.49998982747422}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1463</integer>
+			<integer>1664</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1066,28 +1066,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;short-float&gt;}</string>
+\f0\b\fs26 \cf2 &lt;hashtable&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 633.66670735677121}, {154, 32}}</string>
+			<string>{{594.33328183492119, 232.49996948242242}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1464</integer>
+			<integer>1666</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1099,28 +1099,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;single-float&gt;}</string>
+\f0\b\fs26 \cf2 &lt;posix-pathname&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 293.66670735677081}, {154, 32}}</string>
+			<string>{{594.33328183492119, 468.49996948242142}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1465</integer>
+			<integer>1667</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1132,28 +1132,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;readtable&gt;}</string>
+\f0\b\fs26 \cf2 &lt;restart&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 361.66670735677081}, {154, 32}}</string>
+			<string>{{594.33328183492119, 291.49996948242188}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1466</integer>
+			<integer>1668</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1165,28 +1165,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 restart}</string>
+\f0\b\fs26 \cf2 &lt;random-state&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 157.6667073567711}, {154, 32}}</string>
+			<string>{{594.33328183492119, 645.49996948242381}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1467</integer>
+			<integer>1669</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1198,28 +1198,28 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 &lt;package&gt;}</string>
+\f0\b\fs26 \cf2 &lt;singleton&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{612.00002034505337, 225.6667073567711}, {154, 32}}</string>
+			<string>{{594.33328183492119, 527.49996948242199}, {192, 32}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
 			<dict>
 				<key>Font</key>
-				<string>Courier</string>
+				<string>Courier-Bold</string>
 				<key>Size</key>
 				<real>13</real>
 			</dict>
 			<key>ID</key>
-			<integer>1468</integer>
+			<integer>1670</integer>
 			<key>Magnets</key>
 			<array>
 				<string>{1, 0}</string>
@@ -1231,17 +1231,182 @@
 			<dict>
 				<key>Text</key>
 				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
-\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;}
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\fs26 \cf0 random-state}</string>
+\f0\b\fs26 \cf2 &lt;setter&gt;}</string>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{485.00002034505269, 15.999999999999986}, {182, 29}}</string>
+			<string>{{594.33328183492119, 586.49996948242358}, {192, 32}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Courier-Bold</string>
+				<key>Size</key>
+				<real>13</real>
+			</dict>
+			<key>ID</key>
+			<integer>1671</integer>
+			<key>Magnets</key>
+			<array>
+				<string>{1, 0}</string>
+				<string>{-1, 0}</string>
+			</array>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Text</key>
+			<dict>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\b\fs26 \cf2 &lt;single-float&gt;}</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{594.33328183492119, 409.49996948242131}, {192, 32}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Courier-Bold</string>
+				<key>Size</key>
+				<real>13</real>
+			</dict>
+			<key>ID</key>
+			<integer>1672</integer>
+			<key>Magnets</key>
+			<array>
+				<string>{1, 0}</string>
+				<string>{-1, 0}</string>
+			</array>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Text</key>
+			<dict>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\b\fs26 \cf2 &lt;record&gt;}</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{821.66665585835858, 55.500012715658585}, {192, 32}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Courier-Bold</string>
+				<key>Size</key>
+				<real>13</real>
+			</dict>
+			<key>ID</key>
+			<integer>1673</integer>
+			<key>Magnets</key>
+			<array>
+				<string>{1, 0}</string>
+				<string>{-1, 0}</string>
+			</array>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Text</key>
+			<dict>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\b\fs26 \cf2 &lt;string&gt;}</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{594.33328183492119, 173.49996948242219}, {192, 32}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Courier-Bold</string>
+				<key>Size</key>
+				<real>13</real>
+			</dict>
+			<key>ID</key>
+			<integer>1674</integer>
+			<key>Magnets</key>
+			<array>
+				<string>{1, 0}</string>
+				<string>{-1, 0}</string>
+			</array>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Text</key>
+			<dict>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\b\fs26 \cf2 &lt;package&gt;}</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{594.33328183492119, 350.49996948242131}, {192, 32}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Courier-Bold</string>
+				<key>Size</key>
+				<real>13</real>
+			</dict>
+			<key>ID</key>
+			<integer>1675</integer>
+			<key>Magnets</key>
+			<array>
+				<string>{1, 0}</string>
+				<string>{-1, 0}</string>
+			</array>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Text</key>
+			<dict>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
+\cocoascreenfonts1{\fonttbl\f0\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red85\green85\blue85;}
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\b\fs26 \cf2 &lt;readtable&gt;}</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{485.00002034505269, 6.9999999999999858}, {182, 29}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -1346,7 +1511,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-12-11 06:41:49 +0000</string>
+	<string>2013-12-14 12:22:51 +0000</string>
 	<key>Modifier</key>
 	<string>mikel evins</string>
 	<key>NotesVisible</key>
@@ -1449,7 +1614,7 @@
 			<array>
 				<string>Canvas 1</string>
 				<real>0.75</real>
-				<real>0.5</real>
+				<real>1</real>
 			</array>
 		</array>
 	</dict>
