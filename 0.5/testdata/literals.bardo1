@@ -1,0 +1,44 @@
+|bard.language|:|undefined|
+|bard.language|:|nothing|
+|bard.language|:|true|
+|bard.language|:|false|
+0
+1.2
+2/3
+100.0
+100.0D0
+#\a
+#\b
+#\ 
+#\Tab
+#\Greek_Small_Letter_Lamda
+""
+"Foo"
+"Foo Bar Baz"
+"A string \"within\" a string"
+:|foo|
+:|Bar|
+:|FooBar|
+|bard.user|::|foo|
+|bard.user|::|Bar|
+|bard.user|::|FooBar|
+'COMMON-LISP:NIL
+'(|bard.user|::\a . |bard.user|::\b)
+'(|bard.user|::\a |bard.user|::\b |bard.user|::\c)
+'(|bard.user|::\a |bard.user|::\b (|bard.user|::\c |bard.user|::\d) |bard.user|::\e |bard.user|::\f (|bard.user|::\g . |bard.user|::\h) |bard.user|::\i |bard.user|::\j)
+'COMMON-LISP:NIL
+'(|bard.user|::\a . |bard.user|::\b)
+'(|bard.user|::\a |bard.user|::\b |bard.user|::\c)
+'(|bard.user|::\a |bard.user|::\b (|bard.user|::\c |bard.user|::\d) |bard.user|::\e |bard.user|::\f (|bard.user|::\g . |bard.user|::\h) |bard.user|::\i |bard.user|::\j)
+COMMON-LISP:NIL
+'(|bard.user|::\a . |bard.user|::\b)
+'(|bard.user|::\a 2 |bard.user|::\c)
+(COMMON-LISP:LIST* '|bard.user|::\a (COMMON-LISP:LIST* '|bard.user|::\b (COMMON-LISP:LIST* (COMMON-LISP:+ 2 3) '(|bard.user|::\e |bard.user|::\f (|bard.user|::\g . |bard.user|::\h) |bard.user|::\i |bard.user|::\j))))
+(|bard.language|::|list|)
+(|bard.language|:|as| |bard.language|:|<cons>| (|bard.language|::|list| 1 2 3))
+(|bard.language|:|as| |bard.language|:|<random-access-list>| (|bard.language|::|list| '|bard.user|::\a '|bard.user|::\b (|bard.language|::|list| '|bard.user|::\c '|bard.user|::\d) '|bard.user|::\e '|bard.user|::\f))
+(|bard.language|::|map|)
+(|bard.language|::|map| 1 2 3 4)
+(|bard.language|::|map| '|bard.user|::\a '|bard.user|::\b '|bard.user|::\c (|bard.language|::|list| '|bard.user|::\d '|bard.user|::\e) '|bard.user|::\f '|bard.user|::\g)
+(|bard.language|:|as| |bard.language|:|<alist-table>| (|bard.language|::|map| '|bard.user|::\a '|bard.user|::\b '|bard.user|::\c (|bard.language|::|list| '|bard.user|::\d '|bard.user|::\e) '|bard.user|::\f '|bard.user|::\g))
+(|bard.language|:|as| |bard.language|:|<tree-table>| (|bard.language|::|map| '|bard.user|::\a '|bard.user|::\b '|bard.user|::\c (|bard.language|::|list| '|bard.user|::\d '|bard.user|::\e) '|bard.user|::\f '|bard.user|::\g))

@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          reader.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       the bard reader
+;;;; Purpose:       the Bard reader
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
@@ -29,7 +29,7 @@
 
 (set-macro-character 
  #\[
- (lambda (stream ch)(cons 'bard-symbols::|list| (read-delimited-list #\] stream)))
+ (lambda (stream ch)(cons '|bard.language|::|list| (read-delimited-list #\] stream)))
  nil *bard-readtable*)
 
 (set-syntax-from-char #\{ #\( *bard-readtable* *default-readtable*)
@@ -37,33 +37,18 @@
 
 (set-macro-character 
  #\{
- (lambda (stream ch)(cons 'bard-symbols::|map| (read-delimited-list #\} stream)))
+ (lambda (stream ch)(cons '|bard.language|::|map| (read-delimited-list #\} stream)))
  nil *bard-readtable*)
 
-;;; ---------------------------------------------------------------------
-;;; token-to-value conversions
-;;; ---------------------------------------------------------------------
-
-(defmethod token->value (x) x)
-
-(defmethod token->value ((x null)) nil)
-
-(defmethod token->value ((x (eql 'quote))) 'bard-symbols::|quote|)
-
-(defmethod token->value ((x cons)) 
-  (cons (token->value (car x))
-        (token->value (cdr x))))
-
-(defmethod token->value ((x symbol)) 
-  (if (keywordp x)
-      x
-      (intern (symbol-name x) :bard-symbols)))
-
-(defmethod token->value ((x (eql 'bard-symbols::|undefined|))) (%undefined))
-(defmethod token->value ((x (eql 'bard-symbols::|nothing|))) nil)
-(defmethod token->value ((x (eql 'bard-symbols::|true|))) (%true))
-(defmethod token->value ((x (eql 'bard-symbols::|false|))) (%false))
-(defmethod token->value ((x (eql 'bard-symbols::|eof|))) (%eof))
+(set-dispatch-macro-character 
+ #\# #\<
+ (lambda (stream ch numarg)
+   (let* ((token (ccl::read-symbol-token stream))
+          (constraint-name (concatenate 'string "<" token))
+          (constraint (intern constraint-name :bard-symbols))
+          (expr (bard-read stream)))
+     `(bard-symbols::|as| ,constraint ,expr)))
+ *bard-readtable*)
 
 ;;; ---------------------------------------------------------------------
 ;;; bard read
@@ -72,33 +57,26 @@
 (defun bard-read (&optional (stream *standard-input*)(eof nil))
   (let ((*readtable* *bard-readtable*)
         (*package* (find-package :bard-symbols)))
-    (token->value (read stream nil eof nil))))
+    (read stream nil eof nil)))
 
 (defun bard-read-from-string (s)
   (with-input-from-string (in s)
     (bard-read in)))
 
-(defmethod bard-read-convert ((in stream)(out stream))
-  (loop for obj = (bard-read in (%eof))
-     until (%eof? obj)
-     do (format out "~S~%" obj))
-  (finish-output out))
+;;; ---------------------------------------------------------------------
+;;; reader tests
+;;; ---------------------------------------------------------------------
 
-(defmethod bard-read-convert ((path pathname) out)
-  (with-open-file (in path :direction :input)
-    (bard-read-convert in out)))
+(defun test-read (path)
+  (let ((out-path (merge-pathnames (make-pathname :type "log") path)))
+    (with-log (out out-path)
+      (with-open-file (in path :direction :input)
+        (loop for obj = (bard-read in :eof)
+           until (eq obj :eof)
+           do (let ((*package* (find-package :keyword)))
+                (write obj :stream out :escape t :readably t)
+                (terpri out)))))))
 
-(defmethod bard-read-convert (in (path pathname))
-  (with-open-file (out path :direction :output)
-    (bard-read-convert in out)))
-
-(defmethod bard-read-convert ((path string) out)
-  (bard-read-convert (pathname path) out))
-
-;;; test function:
-;;; writes the s-expressions obtained by running the bard reader on a source file
-(defmethod bard-read-convert (in (path string))
-  (bard-read-convert in (pathname path)))
-
-;;; (bard-read-convert "/Users/mikel/Workshop/bard/0.5/testdata/namer.bard" "/Users/mikel/Workshop/bard/0.5/testdata/namer.bardo")
-;;; (bard-read-convert "/Users/mikel/Workshop/bard/0.5/testdata/literals.bard" "/Users/mikel/Workshop/bard/0.5/testdata/literals.bardo")
+;;; (test-read "/Users/mikel/Workshop/bard/0.5/testdata/literals.bard")
+;;; (test-read "/Users/mikel/Workshop/bard/0.5/testdata/namer.bard")
+;;; (test-read "/Users/mikel/Workshop/bard/0.5/testdata/programs.bard")

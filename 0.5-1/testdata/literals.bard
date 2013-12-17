@@ -47,29 +47,16 @@ FooBar
 '(a b c)
 '(a b (c d) e f (g . h) i j)
 
-'()
-'(a . b)
-'(a b c)
-'(a b (c d) e f (g . h) i j)
-
-;;; quasiquoted pairs and lists
-
-`()
-`(a . b)
-`(a 2 c)
-`(a b ,(+ 2 3) e f (g . h) i j)
-
 ;;; list literals
 
 []
-#<cons> [1 2 3]
-#<random-access-list> ['a 'b ['c 'd] 'e 'f]
+[1 2 3]
+['a 'b ['c 'd] 'e 'f]
 
 ;;; maps
 
 {}
 {1 2 3 4}
- {'a 'b 'c ['d 'e] 'f 'g}
-#<alist-table> {'a 'b 'c ['d 'e] 'f 'g}
-#<tree-table> {'a 'b 'c ['d 'e] 'f 'g}
+{'a 'b 'c ['d 'e] 'f 'g}
+
 

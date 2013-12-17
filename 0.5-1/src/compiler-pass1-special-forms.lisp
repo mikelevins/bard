@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          compiler.lisp
+;;;; Name:          compiler-pass1-special-forms.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       the bard compiler
+;;;; Purpose:       compiling special forms
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 mikel evins
 ;;;;
@@ -12,68 +12,27 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; comp1
+;;; the special-form registry
 ;;; ---------------------------------------------------------------------
-;;; the first pass: expand all macros and reader macros
 
-;;; comp1
+(defparameter $special-forms (make-hash-table))
 
-(defparameter $named-constants
-  '(bard-symbols::|nothing| bard-symbols::|undefined| bard-symbols::|true| bard-symbols::|false| bard-symbols::|eof|))
+(defun defspecial (name compiler-fn)
+  (setf (gethash name $special-forms) compiler-fn))
 
-(defun named-constant? (exp &optional (env nil))
-  (member exp $named-constants))
+(defun special-form? (exp)
+  (gethash exp $special-forms nil))
 
-(defun comp1-named-constant (exp &optional (env nil))
-  (ecase exp
-    (bard-symbols::|nothing| '(%nothing%))
-    (bard-symbols::|undefined| '(%undefined%))
-    (bard-symbols::|true| '(%true%))
-    (bard-symbols::|false| '(%false%))
-    (bard-symbols::|eof| '(%eof%))))
+;;; ---------------------------------------------------------------------
+;;; auxiliary compiler functions
+;;; ---------------------------------------------------------------------
 
-(defun self-evaluating? (exp &optional (env nil))
-  (or (null exp)
-   (and (atom exp)
-        (not (named-constant? exp))
-        (or (keywordp exp)
-            (not (symbolp exp))))))
+(defun comp1-special-form (exp &optional (env nil))
+  (funcall (gethash (car exp) $special-forms nil)
+           exp env))
 
-(defmethod comp1-self-evaluating (exp &optional (env nil))
-  exp)
-
-(defmethod comp1-self-evaluating ((exp null) &optional (env nil))
-  '(%nothing%))
-
-(defmethod comp1-self-evaluating ((exp %undefined%) &optional (env nil))
-  '(%undefined%))
-
-(defmethod comp1-self-evaluating ((exp %true%) &optional (env nil))
-  '(%true%))
-
-(defmethod comp1-self-evaluating ((exp %false%) &optional (env nil))
-  '(%false%))
-
-(defmethod comp1-self-evaluating ((exp %eof%) &optional (env nil))
-  '(%eof%))
-
-(defun find-in-env? (exp env)
-  (assoc exp env))
-
-(defun comp1-variable-reference (exp &optional (env nil))
-  (if (find-in-env? exp env)
-      exp
-      `(gref ,exp)))
-
-(defun setter-form? (exp)
-  (and (listp exp)
-       (cdr exp)
-       (eql 'bard-symbols::|setter| (car exp))))
-
-(defun comp1-setter-form (exp &optional (env nil))
-  (assert (and (cdr exp)(not (cddr exp)))()
-          "Malformed setter expression: ~s" exp)
-  `(setter ,(second exp)))
+;;; definitions
+;;; ---------------------------------------------------------------------
 
 (defun comp1-define-method-parameters (argforms env)
   (if (null argforms)
@@ -131,10 +90,19 @@
   (assert (cdr exp)() "Malformed definition: ~s" exp)
   (case (second exp)
     (bard-symbols::|class| (comp1-define-class exp env))
+    (bard-symbols::|condition| (warn "define condition is not yet implemented"))
     (bard-symbols::|constant| (comp1-define-constant exp env))
+    (bard-symbols::|macro| (warn "define macro is not yet implemented"))
     (bard-symbols::|method| (comp1-define-method exp env))
+    (bard-symbols::|record| (warn "define record is not yet implemented"))
+    (bard-symbols::|setter| (warn "define setter is not yet implemented"))
+    (bard-symbols::|tuple| (warn "define tuple is not yet implemented"))
+    (bard-symbols::|union| (warn "define union is not yet implemented"))
     (bard-symbols::|variable| (comp1-define-variable exp env))
     (t (error "Unrecognized definition type: ~s" (second exp)))))
+
+;;; functions
+;;; ---------------------------------------------------------------------
 
 ;;; (-> Integer Integer List -> List)
 (defun comp1-function (exp env)
@@ -149,6 +117,9 @@
                                 output-list)))
           `(bard-function (list ,@inputs) (list ,@outputs)))
         (error "Malformed literal function expression: ~s" exp))))
+
+;;; methods
+;;; ---------------------------------------------------------------------
 
 (defun symbol-restarg? (thing)
   (eql thing 'bard-symbols::&))
@@ -171,12 +142,6 @@
     (if restpos
         (elt param-list restpos)
         nil)))
-
-;;; TODO: this compiler produces code in the right general form, but I
-;;; need to alter it to compile the body and the value forms in the
-;;; bindings
-(defun comp1-let (exp env)
-  `(bard-let ,@(cdr exp)))
 
 (defun comp1-method-simple-param-list (exp env)
   (let* ((param-list (second exp))
@@ -234,24 +199,73 @@
       ((map-restarg? restarg)(comp1-method-map-restarg exp env))
       (t (comp1-method-simple-param-list exp env)))))
 
-(defparameter $special-forms (make-hash-table))
+;;; let
+;;; ---------------------------------------------------------------------
 
-(defun defspecial (name compiler-fn)
-  (setf (gethash name $special-forms) compiler-fn))
+;;; TODO: this compiler produces code in the right general form, but I
+;;; need to alter it to compile the body and the value forms in the
+;;; bindings
+(defun comp1-let (exp env)
+  `(bard-let ,@(cdr exp)))
+
+;;; ---------------------------------------------------------------------
+;;; the special forms
+;;; ---------------------------------------------------------------------
+
+(defspecial 'bard-symbols::|and|
+  (lambda (exp env)
+    `(warn "and is not yet implemented")))
 
 (defspecial 'bard-symbols::|begin|
   (lambda (exp env)
     `(progn ,@(mapcar (lambda (e)(comp1 e env))
                       (cdr exp)))))
 
+(defspecial 'bard-symbols::|case|
+  (lambda (exp env)
+    `(warn "case is not yet implemented")))
+
+(defspecial 'bard-symbols::|catch|
+  (lambda (exp env)
+    `(warn "catch is not yet implemented")))
+
+(defspecial 'bard-symbols::|cond|
+  (lambda (exp env)
+    `(warn "cond is not yet implemented")))
+
 (defspecial 'bard-symbols::|define|
   (lambda (exp env)
     (comp1-definition exp env)))
 
+(defspecial 'bard-symbols::|do|
+  (lambda (exp env)
+    `(warn "do is not yet implemented")))
+
+(defspecial 'bard-symbols::|dolist|
+  (lambda (exp env)
+    `(warn "dolist is not yet implemented")))
+
+(defspecial 'bard-symbols::|dotimes|
+  (lambda (exp env)
+    `(warn "dotimes is not yet implemented")))
+
+(defspecial 'bard-symbols::|ensure|
+  (lambda (exp env)
+    `(warn "ensure is not yet implemented")))
+
 (defspecial 'bard-symbols::|function|
   (lambda (exp env)(comp1-function exp env)))
+
 (defspecial 'bard-symbols::|->|
   (lambda (exp env)(comp1-function exp env)))
+
+(defspecial 'bard-symbols::|handler-bind|
+  (lambda (exp env)
+    `(warn "handler-bind is not yet implemented")))
+
+(defspecial 'bard-symbols::|handler-case|
+  (lambda (exp env)
+    `(warn "handler-case is not yet implemented")))
 
 (defspecial 'bard-symbols::|if|
   (lambda (exp env)
@@ -263,115 +277,62 @@
            ,(comp1 then env)
            ,(comp1 else env)))))
 
+(defspecial 'bard-symbols::|invoke-restart|
+  (lambda (exp env)
+    `(warn "invoke-restart is not yet implemented")))
+
 (defspecial 'bard-symbols::|let|
   (lambda (exp env)(comp1-let exp env)))
 
+(defspecial 'bard-symbols::|loop|
+  (lambda (exp env)
+    `(warn "loop is not yet implemented")))
+
+(defspecial 'bard-symbols::|match|
+  (lambda (exp env)
+    `(warn "match is not yet implemented")))
+
 (defspecial 'bard-symbols::|method|
   (lambda (exp env)(comp1-method exp env)))
+
+(defspecial 'bard-symbols::|next-method|
+  (lambda (exp env)
+    `(warn "next-method is not yet implemented")))
+
+(defspecial 'bard-symbols::|or|
+  (lambda (exp env)
+    `(warn "or is not yet implemented")))
 
 (defspecial 'bard-symbols::|quote|
   (lambda (exp env)
     `(quote ,(second exp))))
 
-(defun special-form? (exp)
-  (gethash exp $special-forms nil))
+(defspecial 'bard-symbols::|restart-bind|
+  (lambda (exp env)
+    `(warn "restart-bind is not yet implemented")))
 
-(defun comp1-special-form (exp &optional (env nil))
-  (funcall (gethash (car exp) $special-forms nil)
-           exp env))
+(defspecial 'bard-symbols::|restart-case|
+  (lambda (exp env)
+    `(warn "restart-case is not yet implemented")))
 
-(defparameter $macro-forms (make-hash-table))
+(defspecial 'bard-symbols::|signal|
+  (lambda (exp env)
+    `(warn "signal is not yet implemented")))
 
-(defun def-bard-macro (name expander-fn)
-  (setf (gethash name $macro-forms) expander-fn))
+(defspecial 'bard-symbols::|throw|
+  (lambda (exp env)
+    `(warn "throw is not yet implemented")))
 
-(def-bard-macro 'bard-symbols::|set!|
-  (lambda (exp)
-    (let* ((place-form (second exp))
-           (val-form (third exp)))
-      (if (listp place-form)
-          `((bard-symbols::|setter| ,(first place-form)) ,(second place-form) ,val-form)
-          `((bard-symbols::|setter| ,place-form) ,val-form)))))
+(defspecial 'bard-symbols::|unless|
+  (lambda (exp env)
+    `(warn "unless is not yet implemented")))
 
-;;; TODO: this is the right idea, but I should use ensure so that the
-;;;       file is guaranteed to be closed, and I should gensym the
-;;;       local variable names to avoid variable aliasing
-(def-bard-macro 'bard-symbols::|with-open|
-  (lambda (exp)
-    (let* ((binding-form (second exp))
-           (varname (first binding-form))
-           (path (second binding-form))
-           (open-args (drop 2 binding-form))
-           (body-forms (drop 2 exp)))
-      `(bard-symbols::|let| ((,varname (bard-symbols::|open| ,path ,@open-args))
-                             (_result (bard-symbols::|begin| ,@body-forms)))
-                      (bard-symbols::|close| ,varname)
-                      _result))))
+(defspecial 'bard-symbols::|values|
+  (lambda (exp env)
+    `(warn "values is not yet implemented")))
 
-(defun macro-form? (exp)
-  (gethash (car exp) $macro-forms nil))
-
-(defun expand-bard-macro (exp)
-  (funcall (gethash (car exp) $macro-forms nil)
-           exp))
-
-(defun comp1-funcall (exp &optional (env nil))
-  (let ((op (car exp))
-        (args (cdr exp)))
-    `(bard-funcall ,(comp1 op env)
-                   ,@(mapcar (lambda (arg)(comp1 arg env))
-                             args))))
-
-(defun comp1 (exp &optional (env nil)) 
-  (cond
-    ((named-constant? exp) (comp1-named-constant exp env))
-    ((self-evaluating? exp) (comp1-self-evaluating exp env))
-    ((symbolp exp) (comp1-variable-reference exp env))
-    ((listp exp) (cond
-                   ((setter-form? exp)(comp1-setter-form exp env))
-                   ((special-form? (car exp))(comp1-special-form exp env))
-                   ((macro-form? exp) (comp1 (expand-bard-macro exp) env))
-                   (t (comp1-funcall exp env))))
-    (t (error "Syntax error: ~s" exp))))
+(defspecial 'bard-symbols::|when|
+  (lambda (exp env)
+    `(warn "when is not yet implemented")))
 
 
-
-;;; ---------------------------------------------------------------------
-;;; file compilation
-;;; ---------------------------------------------------------------------
-
-(defmethod comp1-file ((in stream)(out stream))
-  (loop for obj = (bard-read in (%eof))
-     until (%eof? obj)
-     do (let ((*package* (find-package :keyword)))
-          (write (comp1 obj) :stream out :escape t :readably t)
-          (terpri out)))
-  (finish-output out))
-
-(defmethod comp1-file ((path pathname) out)
-  (with-open-file (in path :direction :input)
-    (comp1-file in out)))
-
-(defmethod comp1-file (in (path pathname))
-  (with-open-file (out path :direction :output)
-    (comp1-file in out)))
-
-(defmethod comp1-file ((path string) out)
-  (comp1-file (pathname path) out))
-
-(defmethod comp1-file (in (path string))
-  (comp1-file in (pathname path)))
-
-(defun comp1-file-binary (path)
-  (let* ((out (merge-pathnames (make-pathname :type "box") path))
-         (objs (with-open-file (in path :direction :input)
-                 (loop for obj = (bard-read in (%eof))
-                    until (%eof? obj)
-                    collect (let ((*package* (find-package :keyword)))
-                              (comp1 obj))))))
-    (cl-store:store objs out)))
-
-;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/namer.bard" "/Users/mikel/Workshop/bard/0.5/testdata/namer.bardo")
-;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/literals.bard" "/Users/mikel/Workshop/bard/0.5/testdata/literals.bardo")
-;;; (comp1-file "/Users/mikel/Workshop/bard/0.5/testdata/programs.bard" "/Users/mikel/Workshop/bard/0.5/testdata/programs.bardo")
-;;; (comp1-file-binary "/Users/mikel/Workshop/bard/0.5/testdata/programs.bard")

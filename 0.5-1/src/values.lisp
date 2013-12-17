@@ -42,7 +42,6 @@
 (defun %true () $true)
 
 (defmethod %true? (x) t)
-(defmethod %true? ((x %false%)) nil)
 (defmethod %true? ((x null)) nil)
 
 (defmethod print-object ((x %true%)(s stream))
@@ -55,6 +54,7 @@
 (defun %false () $false)
 
 (defun %false? (x) (not (%true? x)))
+(defmethod %true? ((x %false%)) nil)
 
 (defmethod print-object ((x %false%)(s stream))
   (princ "false" s))

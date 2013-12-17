@@ -1,5 +1,5 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
+;;;; File IDENTIFICATION
 ;;;;
 ;;;; Name:          bard.asd
 ;;;; Project:       Bard
@@ -19,12 +19,8 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "utils")
-                                     (:file "structures")
-                                     (:file "classes")
-                                     (:file "values")
+                                     (:file "log")
                                      (:file "reader")
-                                     (:file "compiler")
-                                     (:file "printer")
+                                     (:file "compiler1")
                                      ))))
 ;;; (asdf:oos 'asdf:load-op :bard)
