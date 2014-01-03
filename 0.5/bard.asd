@@ -21,6 +21,5 @@
                                      (:file "version")
                                      (:file "log")
                                      (:file "reader")
-                                     (:file "compiler1")
-                                     ))))
+                                     (:file "values")))))
 ;;; (asdf:oos 'asdf:load-op :bard)
