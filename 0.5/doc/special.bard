@@ -1,5 +1,6 @@
 ;;; built-in system special forms and macros
 
+abort
 and
 begin
 case
@@ -20,7 +21,9 @@ do
 dolist
 dotimes
 ensure
+eval
 function
+generate
 handler-bind
 handler-case
 if
@@ -31,9 +34,11 @@ match
 method
 next-method
 or
+receive
 restart-bind
 restart-case
 set!
+send
 setter
 signal
 throw
@@ -42,6 +47,8 @@ values
 when
 with-exit
 with-open
+
+
 
 
 
