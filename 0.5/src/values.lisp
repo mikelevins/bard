@@ -5,7 +5,7 @@
 ;;;; Project:       Bard
 ;;;; Purpose:       basic Bard values
 ;;;; Author:        mikel evins
-;;;; Copyright:     2013 mikel evins
+;;;; Copyright:     2014 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
