@@ -1,0 +1,6 @@
+Bard 0.5 system plan
+
+- language: Bard 0.5
+- libraries: Dylan class heterarchy + networking, functional data structures, SK8 stage and container abstractions
+
+

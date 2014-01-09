@@ -12,7 +12,7 @@
 
 (defpackage #:bard
   (:use #:cl)
-  (:shadow #:map))
+  (:shadow #:class #:map #:union))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard packages
