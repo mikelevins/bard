@@ -21,6 +21,7 @@
                                      (:file "version")
                                      (:file "values")
                                      (:file "special")
+                                     (:file "reader")
                                      ))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
