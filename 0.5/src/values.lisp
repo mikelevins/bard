@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Name:          values.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       basic Bard values
+;;;; Purpose:       representation of primitive Bard values
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2014 mikel evins
 ;;;;
@@ -12,28 +12,35 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; unique values
+;;; unique literals
 ;;; ---------------------------------------------------------------------
 
-(defconstant |bard.language|:|undefined| '|bard.language|:|undefined|)
+(defconstant |undefined| '|undefined|)
+(defconstant |nothing| nil)
+(defconstant |true| '|true|)
+(defconstant |false| '|false|)
 
-(defmethod defined? (x)(declare (ignore x)) t)
-(defmethod defined? ((x (eql '|bard.language|:|undefined|))) nil)
-(defun undefined () |bard.language|:|undefined|)
+(defmethod defined? (x) t)
+(defmethod defined? ((x (eql '|undefined|))) nil)
 
-(defconstant |bard.language|:|nothing| '())
+(defmethod print-object ((obj (eql '|undefined|))(out stream))
+  (princ "undefined" out))
 
-(defmethod something? (x)(declare (ignore x)) t)
-(defmethod something? ((x cl:null)) nil)
-(defun nothing () nil)
+(defmethod print-object ((obj (eql '|true|))(out stream))
+  (princ "true" out))
 
-(defconstant |bard.language|:|true| '|bard.language|:|true|)
-(defconstant |bard.language|:|false| '|bard.language|:|false|)
+(defmethod print-object ((obj (eql '|false|))(out stream))
+  (princ "false" out))
 
-(defmethod true? (x)(declare (ignore x)) t)
-(defmethod true? ((x (eql '|bard.language|:|false|))) nil)
+(defmethod something? (x) t)
+(defmethod something? ((x null)) nil)
 
-(defun true () |bard.language|:|true|)
-(defun false () |bard.language|:|false|)
+(defmethod true? (x) t)
+(defmethod true? ((x null)) nil)
+(defmethod true? ((x (eql '|false|))) nil)
+(defmethod true? ((x (eql '|undefined|))) nil)
 
+(defmethod false? (x) nil)
+(defmethod false? ((x (eql '|false|))) t)
+(defmethod false? ((x null)) t)
 

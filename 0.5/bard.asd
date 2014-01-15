@@ -14,18 +14,13 @@
   :description "The bard programming language, version 0.5"
   :author "mikel evins <mevins@me.com>"
   :license "Apache 2.0"
-  :depends-on (:cl-store)
+  :depends-on (:cl-store :fset :series :recur :com.informatimago.common-lisp.lisp-reader)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
                                      (:file "version")
-                                     (:file "log")
                                      (:file "values")
-                                     (:file "functions")
-                                     (:file "structures")
-                                     (:file "singletons")
-                                     (:file "classes")
-                                     (:file "modules")
-                                     (:file "reader")
-                                     (:file "special-forms")))))
+                                     (:file "special")
+                                     ))))
+
 ;;; (asdf:oos 'asdf:load-op :bard)
