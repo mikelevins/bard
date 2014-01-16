@@ -22,6 +22,9 @@
                                      (:file "values")
                                      (:file "special")
                                      (:file "reader")
+                                     (:file "eval")
+                                     (:file "print")
+                                     (:file "repl")
                                      ))))
 
 ;;; (asdf:oos 'asdf:load-op :bard)
