@@ -19,60 +19,45 @@
 
 ;;; modify the symbol-reader to handle Bard syntax
 
+(defun ensure-valid-colons (tx)
+  (let ((colon1-pos (position #\: tx :test 'char=)))
+    (if colon1-pos
+        (let* ((module-name (subseq tx 0 colon1-pos))
+               (symbol-name (subseq tx (1+ colon1-pos)))
+               (colon2-pos (position #\: symbol-name :test 'char=)))
+          (if colon2-pos
+              (error "Too many colons in a symbol name: ~s" tx)
+              t))
+        t)))
+
+(defun parse-qualified-symbol (tx)
+  (let ((colon-pos (position #\: tx :test 'char=)))
+    (if colon-pos
+        (let* ((module-name (subseq tx 0 colon-pos))
+               (symbol-name (subseq tx (1+ colon-pos))))
+          (values module-name symbol-name))
+        (values nil symbol-name))))
+
 (defparser parse-symbol-token (token)
-  "symbol ::= symbol-name
-symbol ::= package-marker symbol-name
-symbol ::= package-marker package-marker symbol-name
-symbol ::= package-name package-marker symbol-name
-symbol ::= package-name package-marker package-marker symbol-name
-symbol-name   ::= {alphabetic}+ 
-package-name  ::= {alphabetic}+ "
-  (let ((colon (position-if
-                (lambda (traits) (traitp +ct-package-marker+ traits))
-                (token-traits token))))
-    (if colon
-        (let* ((double-colon (and (< (1+ colon) (token-length token))
-                                  (traitp +ct-package-marker+
-                                          (token-char-traits token (1+ colon)))))
-               (pname (subseq (token-text token) 0 colon))
-               (sname (subseq (token-text token)
-                              (+ colon (if double-colon 2 1)))))
-          (when (position-if
-                 (lambda (traits) (traitp +ct-package-marker+ traits))
-                 (token-traits token) :start (+ colon (if double-colon 2 1)))
-            (reject t "Too many package markers in token ~S" (token-text token)))
-          (when (zerop colon)
-            ;; Keywords always exist, so let's intern them before finding them.
-            (setf pname "KEYWORD")
-            (intern sname pname))
-          ;; The following form thanks to Andrew Philpot <philpot@ISI.EDU>
-          ;; corrects a bug when reading with double-colon uninterned symbols:
-          (if (find-package pname)
-              (if double-colon
-                  (accept 'symbol (intern sname pname))
-                  (multiple-value-bind (sym where) (find-symbol sname pname)
-                    (if (eq where :external) 
-                        (accept 'symbol sym)
-                        (accept 'symbol
-                                (restart-case (error 'symbol-missing-in-package-error
-                                                     :stream *input-stream* :package-name pname :symbol-name sname)
-                                  (make-symbol (&rest rest)
-                                    :report "Make the missing symbol in the specified package"
-                                    (declare (ignore rest))
-                                    (intern sname pname)))))))
-              (accept 'symbol
-                      (restart-case (error 'symbol-in-missing-package-error
-                                           :stream *input-stream* :package-name pname :symbol-name sname)
-                        (intern-here (&rest rest)
-                          :report "Intern the symbol in the current package, instead"
-                          (declare (ignore rest))
-                          (intern sname))
-                        (return-uninterned (&rest rest)
-                          :report "Return an uninterned symbol, instead"
-                          (declare (ignore rest))
-                          (make-symbol sname))))))
-        ;; no colon in token, let's just intern the symbol in the current package :
-        (accept 'symbol (intern (token-text token) *package*)))))
+  (let ((tx (token-text token)))
+    (ensure-valid-colons tx)
+    (if (char= #\: (elt tx 0))
+        (let* ((symname (subseq tx 1))
+               (sym (intern symname :keyword)))
+          (accept 'keyword sym))
+        (cond
+          ((equal tx "undefined") (accept 'symbol 'bard::|undefined|))
+          ((equal tx "nothing") (accept 'symbol 'bard::|nothing|))
+          ((equal tx "true") (accept 'symbol 'bard::|true|))
+          ((equal tx "false") (accept 'symbol 'bard::|false|))
+          (t (multiple-value-bind (module-name symbol-name)(parse-qualified-symbol tx)
+               (let ((mod (if module-name 
+                              (intern module-name :bard)
+                              nil))
+                     (sym (if symbol-name
+                              (intern symbol-name :bard)
+                              nil)))
+                 (accept 'symbol (cons mod sym)))))))))
 
 (in-package :bard)
 
