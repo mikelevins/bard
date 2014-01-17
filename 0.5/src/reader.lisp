@@ -11,9 +11,11 @@
 
 (in-package :bard)
 
-(rename-package :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
-                :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
-                '(:reader))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (rename-package :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
+                  :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
+                  '(:reader)))
 
 (in-package :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER)
 
@@ -22,8 +24,7 @@
 (defun ensure-valid-colons (tx)
   (let ((colon1-pos (position #\: tx :test 'char=)))
     (if colon1-pos
-        (let* ((module-name (subseq tx 0 colon1-pos))
-               (symbol-name (subseq tx (1+ colon1-pos)))
+        (let* ((symbol-name (subseq tx (1+ colon1-pos)))
                (colon2-pos (position #\: symbol-name :test 'char=)))
           (if colon2-pos
               (error "Too many colons in a symbol name: ~s" tx)
@@ -36,7 +37,7 @@
         (let* ((module-name (subseq tx 0 colon-pos))
                (symbol-name (subseq tx (1+ colon-pos))))
           (values module-name symbol-name))
-        (values nil symbol-name))))
+        (values nil tx))))
 
 (defparser parse-symbol-token (token)
   (let ((tx (token-text token)))
@@ -51,13 +52,8 @@
           ((equal tx "true") (accept 'symbol 'bard::|true|))
           ((equal tx "false") (accept 'symbol 'bard::|false|))
           (t (multiple-value-bind (module-name symbol-name)(parse-qualified-symbol tx)
-               (let ((mod (if module-name 
-                              (intern module-name :bard)
-                              nil))
-                     (sym (if symbol-name
-                              (intern symbol-name :bard)
-                              nil)))
-                 (accept 'symbol (cons mod sym)))))))))
+               (let ((sym (bard::assert-symbol! symbol-name (bard::find-module module-name))))
+                 (accept 'symbol sym))))))))
 
 (in-package :bard)
 
@@ -72,6 +68,7 @@
 
 (reader:set-macro-character #\[
                             (lambda (stream char)
+                              (declare (ignore char))
                               (let ((elts (read-delimited-list #\] stream t)))
                                 `(fset:seq ,@elts)))
                             *bard-read-table*)
@@ -80,6 +77,7 @@
 
 (reader:set-macro-character #\{
                             (lambda (stream char)
+                              (declare (ignore char))
                               (let ((elts (read-delimited-list #\} stream t)))
                                 `(fset:convert 'fset:wb-map 
                                                (loop for tail on (cl:list ,@elts) by #'cddr collect (cons (car tail)(cadr tail))))))
@@ -99,5 +97,7 @@
 ;;; (bard-read-from-string "{'a 1 'b 2}")
 ;;; (bard-read-from-string "nothing")
 ;;; (bard-read-from-string "true")
+;;; (bard-read-from-string ":Foo")
+;;; (bard-read-from-string "bard.user:Foo")
 
 
