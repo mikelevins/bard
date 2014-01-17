@@ -118,4 +118,4 @@
 (assert-module! "bard.base" (make-module "bard.base"))
 (assert-module! "bard.user" (make-module "bard.user"))
 
-(defparameter *module* "bard.user")
+(defparameter *module* (find-module "bard.user"))

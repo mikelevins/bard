@@ -52,7 +52,10 @@
           ((equal tx "true") (accept 'symbol 'bard::|true|))
           ((equal tx "false") (accept 'symbol 'bard::|false|))
           (t (multiple-value-bind (module-name symbol-name)(parse-qualified-symbol tx)
-               (let ((sym (bard::assert-symbol! symbol-name (bard::find-module module-name))))
+               (let* ((module (if module-name
+                                  (bard::find-module module-name)
+                                  bard::*module*))
+                      (sym (bard::assert-symbol! symbol-name module)))
                  (accept 'symbol sym))))))))
 
 (in-package :bard)
@@ -62,28 +65,33 @@
 
 ;;; bard is case-preserving
 
-(setf (reader:readtable-case *bard-read-table*) :preserve)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (reader:readtable-case *bard-read-table*) :preserve))
 
 ;;; map and sequence readers
 
-(reader:set-macro-character #\[
-                            (lambda (stream char)
-                              (declare (ignore char))
-                              (let ((elts (read-delimited-list #\] stream t)))
-                                `(fset:seq ,@elts)))
-                            *bard-read-table*)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (reader:set-macro-character #\[
+                              (lambda (stream char)
+                                (declare (ignore char))
+                                (let ((elts (reader:read-delimited-list #\] stream)))
+                                  `(fset:seq ,@elts)))
+                              *bard-read-table*))
 
-(reader:set-macro-character #\] (reader:get-macro-character #\)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (reader:set-macro-character #\] (reader:get-macro-character #\) *standard-read-table*) nil *bard-read-table*))
 
-(reader:set-macro-character #\{
-                            (lambda (stream char)
-                              (declare (ignore char))
-                              (let ((elts (read-delimited-list #\} stream t)))
-                                `(fset:convert 'fset:wb-map 
-                                               (loop for tail on (cl:list ,@elts) by #'cddr collect (cons (car tail)(cadr tail))))))
-                            *bard-read-table*)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (reader:set-macro-character #\{
+                              (lambda (stream char)
+                                (declare (ignore char))
+                                (let ((elts (reader:read-delimited-list #\} stream)))
+                                  `(fset:convert 'fset:wb-map 
+                                                 (loop for tail on (cl:list ,@elts) by #'cddr collect (cons (car tail)(cadr tail))))))
+                              *bard-read-table*))
 
-(reader:set-macro-character #\} (reader:get-macro-character #\)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (reader:set-macro-character #\} (reader:get-macro-character #\) *standard-read-table*) nil *bard-read-table*))
 
 (defun bard-read (&optional input-stream eof-error-p eof-value recursive-p)
   (let ((reader:*readtable* *bard-read-table*))
@@ -99,5 +107,7 @@
 ;;; (bard-read-from-string "true")
 ;;; (bard-read-from-string ":Foo")
 ;;; (bard-read-from-string "bard.user:Foo")
+;;; (bard-read-from-string "bard.base:+")
+;;; (bard-read-from-string "+")
 
 
