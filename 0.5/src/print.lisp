@@ -56,3 +56,17 @@
                 (bard-print (fset:@ tail i) out))))))
   (princ #\) out)
   obj)
+
+
+(defmethod bard-print ((obj fset:map) &optional (out *standard-output*))
+  (princ #\{ out)
+  (unless (fset:empty? obj)
+    (let ((keys (fset:convert 'list (keys obj))))
+      (dolist (key keys)
+        (princ #\space out)
+        (bard-print key out)
+        (princ #\space out)
+        (bard-print (get-key obj key) out))))
+  (princ #\space out)
+  (princ #\} out)
+  obj)

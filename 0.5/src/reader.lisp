@@ -11,8 +11,7 @@
 
 (in-package :bard)
 
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
+(eval-when (:compile-toplevel :load-toplevel)
   (rename-package :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
                   :COM.INFORMATIMAGO.COMMON-LISP.LISP-READER.READER
                   '(:reader)))
@@ -60,38 +59,43 @@
 
 (in-package :bard)
 
-(defparameter *standard-read-table* (reader:copy-readtable))
-(defparameter *bard-read-table* (reader:copy-readtable *standard-read-table*))
+(eval-when (:compile-toplevel :load-toplevel)
+  (defparameter *standard-read-table* (reader:copy-readtable))
+  (defparameter *bard-read-table* (reader:copy-readtable *standard-read-table*)))
 
 ;;; bard is case-preserving
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
+(eval-when (:compile-toplevel :load-toplevel)
   (setf (reader:readtable-case *bard-read-table*) :preserve))
 
-;;; map and sequence readers
+;;; map reader
+;;; ---------------------------------------------------------------------
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (reader:set-macro-character #\[
-                              (lambda (stream char)
-                                (declare (ignore char))
-                                (let ((elts (reader:read-delimited-list #\] stream)))
-                                  `(fset:seq ,@elts)))
-                              *bard-read-table*))
+(eval-when (:compile-toplevel :load-toplevel)
+  (reader:set-syntax-from-char #\{ #\( *bard-read-table* *standard-read-table*)
+  (reader:set-syntax-from-char #\} #\) *bard-read-table* *standard-read-table*)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (reader:set-macro-character #\] (reader:get-macro-character #\) *standard-read-table*) nil *bard-read-table*))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
   (reader:set-macro-character #\{
                               (lambda (stream char)
-                                (declare (ignore char))
-                                (let ((elts (reader:read-delimited-list #\} stream)))
-                                  `(fset:convert 'fset:wb-map 
-                                                 (loop for tail on (cl:list ,@elts) by #'cddr collect (cons (car tail)(cadr tail))))))
-                              *bard-read-table*))
+                                (let ((elts (reader:read-delimited-list #\} stream t)))
+                                  `(map ,@elts)))
+                              t *bard-read-table*))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (reader:set-macro-character #\} (reader:get-macro-character #\) *standard-read-table*) nil *bard-read-table*))
+;;; sequence reader
+;;; ---------------------------------------------------------------------
+
+(eval-when (:compile-toplevel :load-toplevel)
+  (reader:set-syntax-from-char #\[ #\( *bard-read-table* *standard-read-table*)
+  (reader:set-syntax-from-char #\] #\) *bard-read-table* *standard-read-table*)
+
+  (reader:set-macro-character #\[
+                              (lambda (stream char)
+                                (let ((elts (reader:read-delimited-list #\] stream t)))
+                                  `(fset:seq ,@elts)))
+                              t *bard-read-table*))
+
+;;; bard reader
+;;; ---------------------------------------------------------------------
 
 (defun bard-read (&optional input-stream eof-error-p eof-value recursive-p)
   (let ((reader:*readtable* *bard-read-table*))
