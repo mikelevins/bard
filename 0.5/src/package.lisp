@@ -12,7 +12,13 @@
 
 (defpackage #:bard
   (:use :cl)
-  (:shadow #:find-symbol #:map #:merge #:*modules* #:values))
+  (:shadow #:find-symbol 
+           #:intern 
+           #:keyword
+           #:map #:merge #:*modules* 
+           #:symbol #:symbol-name
+           #:unintern
+           #:values))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard packages

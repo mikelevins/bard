@@ -12,38 +12,8 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; ABOUT
+;;; module-construction helpers
 ;;; ---------------------------------------------------------------------
-;;; Bard modules have different semantics from Common Lisp packages. Most
-;;; noticeably, symbols imported in modules can be renamed, unlike symbols
-;;; in CL packages.
-;;;
-;;; It's useful to reuse the CL package system because it provides an 
-;;; efficient built-in way to map symbols to modules (by using package
-;;; names as module names). That way, Bard can reuse all of the efficient
-;;; symbol-handling infrastructure of Common Lisp, rather than reinventing
-;;; it.
-;;;
-;;; However, we can;t simply use packages as modules, because of the
-;;; differences in semantics. So Bard modules are distinct from Common
-;;; Lisp packages, but, in order to leverage package names to identify
-;;; modules, there is a Common Lisp package defined for each Bard
-;;; module.  Symbols in a Bard module are interned in the Common Lisp
-;;; Package of of the same name, enabling us to easily find a symbol's
-;;; home module by examining its package.
-;;;
-;;; NOTE: this note was written just after implementing modules, and
-;;; before implementing the corresponding package support.
-
-;;; ---------------------------------------------------------------------
-;;; utilities
-;;; ---------------------------------------------------------------------
-
-(defmethod module-name ((name symbol))
-  (intern (symbol-name name) :bard))
-
-(defmethod module-name ((name string))
-  (intern name :bard))
 
 (defmethod module-name-constituent? ((ch character))
   (find ch ".-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" :test 'char=))
@@ -51,10 +21,12 @@
 (defmethod valid-module-name? ((name string))
   (and (not (zerop (length name)))
        (alpha-char-p (elt name 0))
-       (every 'module-name-constituent? name)))
+       (every #'module-name-constituent? name)))
 
-(defmethod valid-module-name? ((name symbol))
-  (valid-module-name? (symbol-name name)))
+(defmethod ensure-valid-module-name ((name string))
+  (if (valid-module-name? name)
+      name
+      (error "Invalid module name: ~a" name)))
 
 ;;; ---------------------------------------------------------------------
 ;;; module class
@@ -62,60 +34,71 @@
 
 (defclass module ()
   ((name :accessor module-name :initarg :name)
-   (package :accessor module-package :initarg :package)
-   (renames :accessor module-renames :initform (fset:map) :initarg :renames)))
+   (symbols :accessor %symbols :initform (fset:map) :initarg :symbols)
+   (imports :accessor %imports :initform (fset:map) :initarg :imports)
+   (exports :accessor %exports :initform (fset:map) :initarg :exports)))
 
-(defmethod make-module ((name string))
-  (assert (valid-module-name? name)() "Invalid module name: ~a" name)
-  (let* ((mname (module-name name))
-         (package (or (find-package name)
-                      (make-package name :use nil))))
-    (make-instance 'module :name mname :package package)))
-
-;;; ---------------------------------------------------------------------
-;;; symbol api
-;;; ---------------------------------------------------------------------
-
-(defmethod assert-symbol! ((name string)(module module))
-  (let ((package (module-package module)))
-    (intern name package)))
-
-(defmethod find-symbol ((name string)(module module))
-  (let ((package (module-package module)))
-    (cl:find-symbol name package)))
-
-(defmethod symbol-module ((sym symbol))
-  (find-module (package-name (symbol-package sym))))
+(defmethod print-object ((obj module)(out stream))
+  (princ "#<module " out)
+  (princ (module-name obj) out)
+  (princ ">" out))
 
 ;;; ---------------------------------------------------------------------
 ;;; module registry
 ;;; ---------------------------------------------------------------------
-;;; TODO: make registry operations thread-safe
 
 (defparameter *modules* (fset:map))
 
-(defmethod assert-module! ((name string)(module module))
-  (setf *modules*
-        (put-key *modules* (module-name name) module)))
-
-(defmethod assert-module! ((name symbol)(module module))
-  (assert-module! (symbol-name name) module))
-
-(defmethod retract-module! ((name string))
-  (setf *modules*
-        (remove-key *modules* (module-name name))))
-
-(defmethod retract-module! ((name symbol))
-  (retract-module! (symbol-name name)))
+(defmethod register-module ((name string)(module module))
+  (assert (equal (module-name module) name)() "The module's name is ~A, not ~A" (module-name module) name)
+  (let ((mname (ensure-valid-module-name name)))
+    (setf *modules* 
+          (put-key *modules*
+                   mname module))
+    mname))
 
 (defmethod find-module ((name string))
-  (get-key *modules* (module-name name)))
+  (let ((mname (ensure-valid-module-name name)))
+    (get-key *modules* mname)))
+
+;;; (register-module "bard.test" (make-instance 'module :name "bard.test"))
+;;; (find-module "bard.test")
 
 ;;; ---------------------------------------------------------------------
-;;; bard modules
+;;; symbol-handling
 ;;; ---------------------------------------------------------------------
 
-(assert-module! "bard.base" (make-module "bard.base"))
-(assert-module! "bard.user" (make-module "bard.user"))
+(defmethod intern ((name string)(module module) &key (export nil))
+  (let* ((already (get-key (%symbols module) name))
+         (sym (or already (make-instance 'symbol :name name :module module))))
+    (unless already
+      (setf (%symbols module)
+            (put-key (%symbols module)
+                     name sym)))
+    (when export
+      (setf (%exports module)
+            (put-key (%exports module)
+                     name t)))
+    sym))
 
-(defparameter *module* (find-module "bard.user"))
+;;; (intern "Foo" (find-module "bard.test"))
+
+(defmethod find-symbol ((name string)(module module))
+  (get-key (%symbols module) name :default nil))
+
+;;; (find-symbol "Foo" $mod)
+
+;;; ---------------------------------------------------------------------
+;;; standard modules
+;;; ---------------------------------------------------------------------
+
+(defparameter *module* nil)
+
+(defun current-module () *module*)
+(defmethod set-current-module! ((m module)) 
+  (setf *module* m))
+
+(defun init-modules ()
+  (register-module "bard.base" (make-instance 'module :name "bard.base"))
+  (register-module "bard.user" (make-instance 'module :name "bard.user"))
+  (setf *module* (find-module "bard.user")))
