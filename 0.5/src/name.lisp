@@ -18,6 +18,9 @@
 
 (defclass name ()())
 
+(defmethod name? (thing) (declare (ignore thing)) nil)
+(defmethod name? ((obj name)) t)
+
 ;;; ---------------------------------------------------------------------
 ;;; keywords
 ;;; ---------------------------------------------------------------------
@@ -25,19 +28,38 @@
 (defclass keyword (name)
   ((name :accessor keyword-name :initarg :name)))
 
+(defmethod print-object ((obj keyword)(out stream))
+  (princ #\: out)
+  (princ (keyword-name obj) out))
+
+(defmethod keyword? (thing) (declare (ignore thing)) nil)
+(defmethod keyword? ((obj keyword)) t)
+
 ;;; ---------------------------------------------------------------------
 ;;; symbols
 ;;; ---------------------------------------------------------------------
 
 (defclass symbol (name)
-  ((name :accessor symbol-name :initarg :name)
-   (module :accessor symbol-module :initarg :module)))
+  ((module :accessor symbol-module :initarg :module)))
 
-(defmethod print-object ((obj symbol)(out stream))
-  (let ((module (symbol-module obj)))
-    (unless (equal module (current-module))
-      (princ (module-name module) out)
-      (princ #\: out))
-    (princ (symbol-name obj) out)))
+(defmethod symbol? (thing) (declare (ignore thing)) nil)
+(defmethod symbol? ((obj symbol)) t)
+
+(defmethod print-object ((symbol symbol)(out stream))
+  (let* ((symbol-module (if (in-module? symbol (current-module))
+                            (current-module)
+                            (symbol-module symbol))))
+    (if (eql symbol-module (current-module))
+        (princ (symbol-name symbol (current-module)) out)
+        (progn
+          (princ (module-name (symbol-module symbol)) out)
+          (princ #\: out)
+          (princ (symbol-name symbol) out)))
+    symbol))
+
+;;; ---------------------------------------------------------------------
+;;; locators
+;;; ---------------------------------------------------------------------
+
 
 

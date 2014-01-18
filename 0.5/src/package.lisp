@@ -13,6 +13,7 @@
 (defpackage #:bard
   (:use :cl)
   (:shadow #:find-symbol 
+           #:import 
            #:intern 
            #:keyword
            #:map #:merge #:*modules* 

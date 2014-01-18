@@ -25,6 +25,8 @@
                                      (:file "name")
                                      ;;(:file "special")
                                      ;;(:file "reader")
+                                     ;;(:file "env")
+                                     ;;(:file "compile")
                                      ;;(:file "eval")
                                      ;;(:file "print")
                                      ;;(:file "repl")

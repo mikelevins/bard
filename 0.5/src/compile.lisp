@@ -1,9 +1,9 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          eval.lisp
+;;;; Name:          compile.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       Bard evaluator
+;;;; Purpose:       Bard compiler
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2014 mikel evins
 ;;;;
@@ -15,5 +15,5 @@
 ;;; 
 ;;; ---------------------------------------------------------------------
 
-(defun bard-eval (exp)
-  (cl:eval (bard-compile exp)))
+(defun bard-compile (exp &optional env)
+  )

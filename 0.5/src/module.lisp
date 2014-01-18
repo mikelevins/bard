@@ -12,21 +12,23 @@
 (in-package :bard)
 
 ;;; ---------------------------------------------------------------------
-;;; module-construction helpers
+;;; constructor helpers
 ;;; ---------------------------------------------------------------------
 
-(defmethod module-name-constituent? ((ch character))
-  (find ch ".-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" :test 'char=))
+(defmethod valid-module-name-constituent? ((ch character))
+  (find ch ".-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" :test #'char=))
+
+(defmethod valid-module-name? (x) nil)
 
 (defmethod valid-module-name? ((name string))
   (and (not (zerop (length name)))
        (alpha-char-p (elt name 0))
-       (every #'module-name-constituent? name)))
+       (every #'valid-module-name-constituent? name)))
 
 (defmethod ensure-valid-module-name ((name string))
-  (if (valid-module-name? name)
-      name
-      (error "Invalid module name: ~a" name)))
+  (or (and (valid-module-name? name)
+           name)
+      (error "Invalid module name: ~S" name)))
 
 ;;; ---------------------------------------------------------------------
 ;;; module class
@@ -34,71 +36,71 @@
 
 (defclass module ()
   ((name :accessor module-name :initarg :name)
-   (symbols :accessor %symbols :initform (fset:map) :initarg :symbols)
-   (imports :accessor %imports :initform (fset:map) :initarg :imports)
-   (exports :accessor %exports :initform (fset:map) :initarg :exports)))
+   ;; symbol->name
+   (symbols :accessor %symbols :initform (make-hash-table) :initarg :symbols)
+   ;; name->symbol
+   (names :accessor %names :initform (make-hash-table :test #'equal) :initarg :names)))
 
-(defmethod print-object ((obj module)(out stream))
+(defmethod print-object ((module module)(out stream))
   (princ "#<module " out)
-  (princ (module-name obj) out)
+  (princ (module-name module) out)
   (princ ">" out))
+
+;;; ---------------------------------------------------------------------
+;;; interning symbols
+;;; ---------------------------------------------------------------------
+
+(defmethod symbol-name ((symbol symbol) &optional (module nil))
+  (let ((module (or module (symbol-module symbol))))
+    (gethash symbol (%symbols module))))
+
+(defmethod intern ((name string)(module module) &key (as nil))
+  (let ((local-name (or as name)))
+    (if (equal name local-name)
+        (let ((sym (make-instance 'symbol :module module)))
+          (setf (gethash sym (%symbols module)) local-name)
+          (setf (gethash local-name (%names module)) sym)
+          sym)
+        (error "Tried to intern a string (~S) as a different string (~S)"
+               name as))))
+
+(defmethod intern ((name symbol)(module module) &key (as nil))
+  (let* ((symbol-module (symbol-module name))
+         (local-name (or as (symbol-name name))))
+    (setf (gethash sym (%symbols module)) local-name)
+    (setf (gethash local-name (%names module)) sym)
+    sym))
+
+(defmethod in-module? ((symbol symbol)(module module))
+  (multiple-value-bind (val found?)(gethash symbol (%symbols module))
+    (declare (ignore val))
+    found?))
 
 ;;; ---------------------------------------------------------------------
 ;;; module registry
 ;;; ---------------------------------------------------------------------
 
-(defparameter *modules* (fset:map))
+(defparameter *modules* (map))
+(defparameter *module* |undefined|)
+
+(defun current-module () *module*)
 
 (defmethod register-module ((name string)(module module))
-  (assert (equal (module-name module) name)() "The module's name is ~A, not ~A" (module-name module) name)
   (let ((mname (ensure-valid-module-name name)))
-    (setf *modules* 
-          (put-key *modules*
-                   mname module))
+    (assert (equal mname (module-name module))() 
+            "Cannot register module named ~S under a different name (~S)"
+            (module-name module) mname)
+    (setf *modules* (put-key *modules* name module))
     mname))
 
 (defmethod find-module ((name string))
-  (let ((mname (ensure-valid-module-name name)))
-    (get-key *modules* mname)))
-
-;;; (register-module "bard.test" (make-instance 'module :name "bard.test"))
-;;; (find-module "bard.test")
-
-;;; ---------------------------------------------------------------------
-;;; symbol-handling
-;;; ---------------------------------------------------------------------
-
-(defmethod intern ((name string)(module module) &key (export nil))
-  (let* ((already (get-key (%symbols module) name))
-         (sym (or already (make-instance 'symbol :name name :module module))))
-    (unless already
-      (setf (%symbols module)
-            (put-key (%symbols module)
-                     name sym)))
-    (when export
-      (setf (%exports module)
-            (put-key (%exports module)
-                     name t)))
-    sym))
-
-;;; (intern "Foo" (find-module "bard.test"))
-
-(defmethod find-symbol ((name string)(module module))
-  (get-key (%symbols module) name :default nil))
-
-;;; (find-symbol "Foo" $mod)
-
-;;; ---------------------------------------------------------------------
-;;; standard modules
-;;; ---------------------------------------------------------------------
-
-(defparameter *module* nil)
-
-(defun current-module () *module*)
-(defmethod set-current-module! ((m module)) 
-  (setf *module* m))
+  (get-key *modules* name))
 
 (defun init-modules ()
-  (register-module "bard.base" (make-instance 'module :name "bard.base"))
-  (register-module "bard.user" (make-instance 'module :name "bard.user"))
+  (register-module "bard.base" (make-instance 'module :name (ensure-valid-module-name "bard.base")))
+  (register-module "bard.user" (make-instance 'module :name (ensure-valid-module-name "bard.user")))
   (setf *module* (find-module "bard.user")))
+
+;;; (init-modules)
+;;; (intern "Foo" (current-module))
+;;; (intern "Bar" (find-module "bard.base"))

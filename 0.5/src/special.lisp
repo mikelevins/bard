@@ -14,7 +14,7 @@
 ;;; abort
 ;;; and
 
-(defmacro |bard.base|::|and| (&rest forms)
+(defmacro |and| (&rest forms)
   (if (null forms)
       |true|
       (let ((test (first forms))
@@ -27,7 +27,7 @@
 
 ;;; begin
 
-(defmacro |bard.base|::|begin| (&rest forms)
+(defmacro |begin| (&rest forms)
   `(cl:progn ,@forms))
 
 ;;; case
@@ -55,7 +55,7 @@
 ;;; handler-case
 ;;; if
 
-(defmacro |bard.base|::|if| (test then else)
+(defmacro |if| (test then else)
   `(if (true? ,test)
        ,then
        ,else))
@@ -64,7 +64,7 @@
 ;;; let
 ;;; loop
 
-(defmacro |bard.base|::|loop| (loop-name bindings &rest body)
+(defmacro |loop| (loop-name bindings &rest body)
   `(recur:recur ,loop-name ,bindings ,@body))
 
 ;;; match
@@ -72,7 +72,7 @@
 ;;; next-method
 ;;; or
 
-(defmacro |bard.base|::|or| (&rest forms)
+(defmacro |or| (&rest forms)
   (if (null forms)
       |nothing|
       (let ((test (first forms))
@@ -95,7 +95,7 @@
 ;;; throw
 ;;; unless
 
-(defmacro |bard.base|::|unless| (test &rest forms)
+(defmacro |unless| (test &rest forms)
   `(if (false? ,test)
        (progn ,@forms)
        |nothing|))
@@ -103,7 +103,7 @@
 ;;; values
 ;;; when
 
-(defmacro |bard.base|::|when| (test &rest forms)
+(defmacro |when| (test &rest forms)
   `(if (true? ,test)
        (progn ,@forms)
        |nothing|))

@@ -54,7 +54,7 @@
                (let* ((module (if module-name
                                   (bard::find-module module-name)
                                   bard::*module*))
-                      (sym (bard::assert-symbol! symbol-name module)))
+                      (sym (bard::intern symbol-name module)))
                  (accept 'symbol sym))))))))
 
 (in-package :bard)
@@ -105,6 +105,7 @@
   (let ((reader:*readtable* *bard-read-table*))
     (reader:read-from-string string eof-error-p eof-value :start start :end end :preserve-whitespace preserve-whitespace)))
 
+;;; (init-modules)
 ;;; (bard-read-from-string "[1 (+ 2 3) 3]")
 ;;; (bard-read-from-string "{'a 1 'b 2}")
 ;;; (bard-read-from-string "nothing")
