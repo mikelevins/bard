@@ -12,7 +12,8 @@
 
 (defpackage #:bard
   (:use :cl)
-  (:shadow #:find-symbol 
+  (:shadow #:export
+           #:find-symbol 
            #:import 
            #:intern 
            #:keyword

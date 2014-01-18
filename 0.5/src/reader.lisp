@@ -53,7 +53,7 @@
           (t (multiple-value-bind (module-name symbol-name)(parse-qualified-symbol tx)
                (let* ((module (if module-name
                                   (bard::find-module module-name)
-                                  bard::*module*))
+                                  (bard::current-module)))
                       (sym (bard::intern symbol-name module)))
                  (accept 'symbol sym))))))))
 
