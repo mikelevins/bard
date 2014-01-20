@@ -26,7 +26,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2014-01-09 14:11:38 +0000</string>
+	<string>2014-01-19 21:41:57 +0000</string>
 	<key>Modifier</key>
 	<string>mikel evins</string>
 	<key>NotesVisible</key>
@@ -14489,8 +14489,6 @@
 				<real>18</real>
 				<key>circoSeparation</key>
 				<real>0.0</real>
-				<key>dotNodekSep</key>
-				<real>0.2222222238779068</real>
 				<key>dotRankSep</key>
 				<real>2.6666667461395264</real>
 				<key>layoutEngine</key>
@@ -14554,61 +14552,6 @@
 			<string>1 pt = 1 px</string>
 			<key>GraphicsList</key>
 			<array>
-				<dict>
-					<key>Class</key>
-					<string>LineGraphic</string>
-					<key>FontInfo</key>
-					<dict>
-						<key>Font</key>
-						<string>Courier</string>
-						<key>Size</key>
-						<real>12</real>
-					</dict>
-					<key>Head</key>
-					<dict>
-						<key>ID</key>
-						<integer>2462</integer>
-						<key>Info</key>
-						<integer>1</integer>
-					</dict>
-					<key>ID</key>
-					<integer>2572</integer>
-					<key>Points</key>
-					<array>
-						<string>{908.00000000000011, 689.8787830622457}</string>
-						<string>{715.99999999999989, 689.8787830622457}</string>
-					</array>
-					<key>Style</key>
-					<dict>
-						<key>stroke</key>
-						<dict>
-							<key>Color</key>
-							<dict>
-								<key>b</key>
-								<string>0.42303</string>
-								<key>g</key>
-								<string>0.423023</string>
-								<key>r</key>
-								<string>0.423036</string>
-							</dict>
-							<key>HeadArrow</key>
-							<string>0</string>
-							<key>Legacy</key>
-							<true/>
-							<key>TailArrow</key>
-							<string>0</string>
-							<key>Width</key>
-							<real>3</real>
-						</dict>
-					</dict>
-					<key>Tail</key>
-					<dict>
-						<key>ID</key>
-						<integer>2571</integer>
-						<key>Info</key>
-						<integer>2</integer>
-					</dict>
-				</dict>
 				<dict>
 					<key>Bounds</key>
 					<string>{{908, 673.8787830622457}, {232, 32}}</string>
@@ -15786,7 +15729,7 @@
 \deftab720
 \pard\pardeftab720\qc
 
-\f0\i\b\fs30 \cf2 TypeRestricted}</string>
+\f0\i\b\fs30 \cf2 Limited}</string>
 					</dict>
 				</dict>
 				<dict>
@@ -18085,6 +18028,171 @@
 					</dict>
 					<key>Wrap</key>
 					<string>NO</string>
+				</dict>
+				<dict>
+					<key>Class</key>
+					<string>LineGraphic</string>
+					<key>FontInfo</key>
+					<dict>
+						<key>Font</key>
+						<string>Courier</string>
+						<key>Size</key>
+						<real>12</real>
+					</dict>
+					<key>Head</key>
+					<dict>
+						<key>ID</key>
+						<integer>2236</integer>
+						<key>Info</key>
+						<integer>1</integer>
+					</dict>
+					<key>ID</key>
+					<integer>2574</integer>
+					<key>Points</key>
+					<array>
+						<string>{908.00000000000011, 745.8787830622457}</string>
+						<string>{291.99999999999994, 606.8787830622457}</string>
+					</array>
+					<key>Style</key>
+					<dict>
+						<key>stroke</key>
+						<dict>
+							<key>Color</key>
+							<dict>
+								<key>b</key>
+								<string>0.42303</string>
+								<key>g</key>
+								<string>0.423023</string>
+								<key>r</key>
+								<string>0.423036</string>
+							</dict>
+							<key>HeadArrow</key>
+							<string>0</string>
+							<key>Legacy</key>
+							<true/>
+							<key>TailArrow</key>
+							<string>0</string>
+							<key>Width</key>
+							<real>3</real>
+						</dict>
+					</dict>
+					<key>Tail</key>
+					<dict>
+						<key>ID</key>
+						<integer>2093</integer>
+						<key>Info</key>
+						<integer>2</integer>
+					</dict>
+				</dict>
+				<dict>
+					<key>Class</key>
+					<string>LineGraphic</string>
+					<key>FontInfo</key>
+					<dict>
+						<key>Font</key>
+						<string>Courier</string>
+						<key>Size</key>
+						<real>12</real>
+					</dict>
+					<key>Head</key>
+					<dict>
+						<key>ID</key>
+						<integer>2236</integer>
+						<key>Info</key>
+						<integer>1</integer>
+					</dict>
+					<key>ID</key>
+					<integer>2573</integer>
+					<key>Points</key>
+					<array>
+						<string>{908.00000000000011, 689.8787830622457}</string>
+						<string>{291.99999999999994, 606.8787830622457}</string>
+					</array>
+					<key>Style</key>
+					<dict>
+						<key>stroke</key>
+						<dict>
+							<key>Color</key>
+							<dict>
+								<key>b</key>
+								<string>0.42303</string>
+								<key>g</key>
+								<string>0.423023</string>
+								<key>r</key>
+								<string>0.423036</string>
+							</dict>
+							<key>HeadArrow</key>
+							<string>0</string>
+							<key>Legacy</key>
+							<true/>
+							<key>TailArrow</key>
+							<string>0</string>
+							<key>Width</key>
+							<real>3</real>
+						</dict>
+					</dict>
+					<key>Tail</key>
+					<dict>
+						<key>ID</key>
+						<integer>2571</integer>
+						<key>Info</key>
+						<integer>2</integer>
+					</dict>
+				</dict>
+				<dict>
+					<key>Class</key>
+					<string>LineGraphic</string>
+					<key>FontInfo</key>
+					<dict>
+						<key>Font</key>
+						<string>Courier</string>
+						<key>Size</key>
+						<real>12</real>
+					</dict>
+					<key>Head</key>
+					<dict>
+						<key>ID</key>
+						<integer>2462</integer>
+						<key>Info</key>
+						<integer>1</integer>
+					</dict>
+					<key>ID</key>
+					<integer>2572</integer>
+					<key>Points</key>
+					<array>
+						<string>{908.00000000000011, 689.8787830622457}</string>
+						<string>{715.99999999999989, 689.8787830622457}</string>
+					</array>
+					<key>Style</key>
+					<dict>
+						<key>stroke</key>
+						<dict>
+							<key>Color</key>
+							<dict>
+								<key>b</key>
+								<string>0.42303</string>
+								<key>g</key>
+								<string>0.423023</string>
+								<key>r</key>
+								<string>0.423036</string>
+							</dict>
+							<key>HeadArrow</key>
+							<string>0</string>
+							<key>Legacy</key>
+							<true/>
+							<key>TailArrow</key>
+							<string>0</string>
+							<key>Width</key>
+							<real>3</real>
+						</dict>
+					</dict>
+					<key>Tail</key>
+					<dict>
+						<key>ID</key>
+						<integer>2571</integer>
+						<key>Info</key>
+						<integer>2</integer>
+					</dict>
 				</dict>
 				<dict>
 					<key>Class</key>
@@ -21474,8 +21582,6 @@
 				<real>18</real>
 				<key>circoSeparation</key>
 				<real>0.0</real>
-				<key>dotNodekSep</key>
-				<real>0.3333333432674408</real>
 				<key>dotRankSep</key>
 				<real>2.6666667461395264</real>
 				<key>layoutEngine</key>
@@ -24803,7 +24909,7 @@
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{71, 2}, {2067, 1394}}</string>
+		<string>{{-2430, 22}, {2067, 1394}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>

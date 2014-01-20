@@ -31,7 +31,7 @@
   (setf (%bindings env)
         (fset:with (%bindings env) key val)))
 
-(defmethod bound? ((env env) (key symbol))
+(defmethod bound? ((key symbol) (env env))
   (multiple-value-bind (val found?)(fset:lookup (%bindings env) key)
     found?))
 

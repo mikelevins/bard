@@ -1,0 +1,238 @@
+
+;;; Bard classes and protocols
+
+(define class Abort [Condition]
+  abort? (-> Anything -> Boolean)
+  make (-> (exactly Abort) & {} -> Abort))
+
+(define class Accessor [Procedure]
+  accessor? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Adjustable [Anything]
+  adjustable? (-> Anything -> Boolean)
+  adjust! (-> Adjustable List -> Adjustable)
+  make (-> (exactly ) & {} -> ))
+
+(define class Agent [Consumer MessageStream Producer]
+  agent? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Anything []
+  anything? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Array [Collection]
+  array? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Bard [Agent]
+  bard? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Boolean [Anything]
+  boolean? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class BufferStream [Stream]
+  buffer-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Character [Ordered Anything]
+  character? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Class [Type]
+  class? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Collection [Anything]
+  collection? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Complex [Number]
+  complex? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class ComputeStream [Stream]
+  compute-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Condition [Anything]
+  condition? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Consumer [Stream]
+  consumer? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Duration [Ordered Anything]
+  duration? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Error [Condition]
+  error? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class False [Boolean]
+  false? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class FileStream [Stream]
+  file-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Float [Real]
+  float? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Function [Procedure]
+  function? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Getter [Accessor]
+  getter? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Integer [Rational]
+  integer? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Limited [Anything]
+  limited? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class List [Collection]
+  list? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Map [Collection]
+  map? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class MessageStream [Stream]
+  message-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Method [Procedure]
+  method? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Mutable [Anything]
+  mutable? (-> Anything -> Boolean)
+  set-slot! (-> Mutable Anything Anything -> Anything)
+  make (-> (exactly ) & {} -> ))
+
+(define class Name [Ordered Anything]
+  name? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class NetworkStream [Stream]
+  network-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Number [Ordered Anything]
+  number? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Ordered [Anything]
+  ordered? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Pair [Collection]
+  pair? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Pathname [ResourceName]
+  pathname? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class PosixPathname [Pathname]
+  posix-pathname? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Procedure [Anything]
+  apply (-> Procedure List -> Anything)
+  procedure? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Producer [Stream]
+  producer? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Ratio [Rational]
+  ratio? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Rational [Real]
+  rational? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Real [Number]
+  real? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class ResourceName [Name]
+  resource-name? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Restart [Condition]
+  restart? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Setter [Accessor]
+  setter? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Singleton [Type]
+  singleton? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class StandardIOStream [Stream]
+  standard-io-stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Stream [Collection]
+  stream? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Structure [Type]
+  structure? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Symbol [Name]
+  symbol? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class SymbolicPathname [Pathname]
+  symbolic-pathname? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Text [Limited Ordered Vector]
+  text? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Time [Ordered Anything]
+  time? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class True [Boolean]
+  true? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Type [Anything]
+  type? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class URL [ResourceName]
+  url? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Vector [Array List]
+  vector? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+
+(define class Warning [Condition]
+  warning? (-> Anything -> Boolean)
+  make (-> (exactly ) & {} -> ))
+

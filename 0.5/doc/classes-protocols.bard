@@ -1,0 +1,457 @@
+
+;;; Bard classes and protocols
+
+(define class Abort [Condition])
+
+(define protocol ~Abort
+  abort? (-> Anything -> Boolean))
+
+(define class Accessor [Procedure])
+
+(define protocol ~Accessor
+  accessor? (-> Anything -> Boolean))
+
+(define class Adjustable [Anything])
+
+(define protocol ~Adjustable
+  adjustable? (-> Anything -> Boolean)
+  adjust! (-> Adjustable List -> Adjustable))
+
+(define class Agent [Consumer MessageStream Producer])
+
+(define protocol ~Agent
+  agent? (-> Anything -> Boolean)
+  receive (-> Anything -> Anything)
+  send (-> Agent Anything ->)
+  spawn (-> Procedure & {} -> Agent))
+
+(define class Anything [])
+
+(define protocol ~Anything
+  and (-> Anything & -> Anything)
+  anything? (-> Anything -> Boolean)
+  identity (-> Anything -> Anything)
+  not (-> Anything -> Boolean)
+  or (-> Anything & -> Anything))
+
+(define class Array [Collection])
+
+(define class Array
+  array? (-> Anything -> Boolean)
+  array-ref (-> Array List -> Anything)
+  array-set! (-> Array List Anything -> Anything))
+
+(define class Bard [Agent])
+
+(define protocol ~Bard
+  bard? (-> Anything -> Boolean)
+  gc (-> ->)
+  restore-image (-> Pathname & {} -> )
+  room (-> ->)
+  save-image (-> Pathname & {} -> )
+  self (-> -> Bard))
+
+(define class Boolean [Anything])
+
+(define protocol ~Boolean
+  boolean? (-> Anything -> Boolean))
+
+(define class BufferStream [Stream])
+
+(define protocol ~BufferStream
+  buffer-stream? (-> Anything -> Boolean))
+
+(define class Character [Ordered Anything])
+
+(define protocol ~Character
+  alphabetic? (-> Character -> Boolean)
+  alphanumeric? (-> Character -> Boolean)
+  character? (-> Anything -> Boolean)
+  character->code (-> Character -> Integer)
+  character->name (-> Character -> Name)
+  code->character (-> Integer -> Character)
+  name->character (-> Name -> Character)
+  whitespace? (-> Character -> Boolean))
+
+(define class Class [Type])
+
+(define protocol ~Class
+  class? (-> Anything -> Boolean)
+  members (-> Class -> List)
+  superclasses-of (-> Class -> List)
+  superclass-of? (-> Class Class -> Boolean))
+
+(define class Collection [Anything])
+
+(define protocol ~Collection
+  collection? (-> Anything -> Boolean)
+  member? (-> Anything Collection & {:test = :key identity} -> Boolean)
+  members (-> Collection -> Generator))
+
+(define class Complex [Number])
+
+(define protocol ~Complex
+  complex? (-> Anything -> Boolean)
+  imaginary-part (-> Complex -> Real)
+  real-part (-> Complex -> Real))
+
+(define class ComputeStream [Stream])
+
+(define protocol ~ComputeStream
+  compute-stream? (-> Anything -> Boolean))
+
+(define class Condition [Anything])
+
+(define protocol ~Condition
+  condition? (-> Anything -> Boolean))
+
+(define protocol ~Construction
+  make (-> Type & {} -> Anything))
+
+(define class Consumer [Stream])
+
+(define protocol ~Consumer
+  consumer? (-> Anything -> Boolean))
+
+(define protocol ~Conversion
+  as (-> Type Anything & {} -> Anything))
+
+(define protocol ~Copying
+  copy (-> Anything & {} -> Anything)
+  deep-copy (-> Anything & {} -> Anything)
+  shallow-copy (-> Anything & {} -> Anything))
+
+(define class Duration [Ordered Anything])
+
+(define protocol ~Duration
+  duration? (-> Anything -> Boolean))
+
+(define class Error [Condition])
+
+(define protocol ~Error
+  error? (-> Anything -> Boolean))
+
+(define class False [Boolean])
+
+(define protocol ~False
+  false? (-> Anything -> Boolean))
+
+(define class FileStream [Stream])
+
+(define protocol ~FileStream
+  file-stream? (-> Anything -> Boolean))
+
+(define class Float [Real])
+
+(define protocol ~Float
+  float? (-> Anything -> Boolean))
+
+(define class Function [Procedure])
+
+(define protocol ~Function
+  function? (-> Anything -> Boolean))
+
+(define class Generator [Producer])
+
+(define protocol ~Generator
+  generator? (-> Anything -> Boolean))
+
+(define class Getter [Accessor])
+
+(define protocol ~Getter
+  getter? (-> Anything -> Boolean))
+
+(define class Integer [Rational])
+
+(define protocol ~Integer
+  integer? (-> Anything -> Boolean))
+
+(define class Limited [Anything])
+
+(define protocol ~Limited
+  limited? (-> Anything -> Boolean))
+
+(define class List [Collection])
+
+(define protocol ~List
+  add-first (-> Anything List -> List)
+  add-last (-> List Anything -> List)
+  any (-> List -> Anything)
+  append (-> List List & -> List)
+  apportion (-> List Procedure & -> List)
+  assoc (-> Anything List & {:test =} -> Anything)
+  binary-append (-> List List -> List)
+  by (-> Integer List -> List)
+  coalesce (-> Procedure List & -> List)
+  count (-> Procedure List -> Integer)
+  drop (-> Integer List -> List)
+  drop-while (-> Procedure List -> List)
+  eighth (-> List -> Anything)
+  element (-> List Integer -> Anything)
+  empty? (-> List -> Boolean)
+  fifth (-> List -> Anything)
+  filter (-> Procedure List -> List)
+  find (-> Procedure List -> Anything)
+  first (-> List -> Anything)
+  fourth (-> List -> Anything)
+  head (-> List -> Anything)
+  image (-> Procedure List -> List)
+  indexes (-> List -> List)
+  interleave (-> List List -> List)
+  interpose (-> Anything List -> List)
+  join (-> Anything List -> List)
+  last (-> List -> Anything)
+  leave (-> Integer List -> List)
+  length (-> List -> Integer)
+  mismatch (-> List List -> Integer)
+  ninth (-> List -> Anything)
+  partition (-> Procedure List -> List List)
+  penult (-> List -> Anything)
+  position (-> Procedure List -> Integer)
+  prefix-match? (-> List List -> Boolean)
+  range (-> Integer & -> List)
+  range-from (-> Integer & {} -> List)
+  reduce (-> Procedure Anything List -> Anything)
+  remove (-> Procedure List -> List)
+  remove-duplicates (-> List & {:test =} -> )
+  rest (-> List -> List)
+  reverse (-> List -> List)
+  scan (-> List -> Generator)
+  search (-> List List & {:test =} -> Integer)
+  second (-> List -> Anything)
+  select (-> List List -> List)
+  seventh (-> List -> Anything)
+  shuffle (-> List -> List)
+  sixth (-> List -> Anything)
+  some? (-> Procedure List -> Anything)
+  sort (-> List {:test <} -> List)
+  split (-> List List -> List)
+  sublist (-> List Integer & -> List)
+  substitute (-> Anything List & {:test =} -> List)
+  suffix-match? (-> List List & {:test =} -> Boolean)
+  tail (-> List -> List)
+  tails (-> List -> List)
+  take (-> Integer List -> List)
+  take-by (-> Integer Integer List -> List)
+  take-while (-> Procedure List -> List)
+  tenth (-> List -> Anything)
+  third (-> List -> Anything)
+  unzip (-> List -> List List)
+  zip (-> List List -> List)
+  list? (-> Anything -> Boolean))
+
+(define class Map [Collection])
+
+(define protocol ~Map
+  contains-key? (-> Map Anything & {:test =} -> Boolean)
+  contains-value? (-> Map Anything & {:test =} -> Boolean)
+  get (-> Map Anything & {:test =} -> Anything)
+  keys (-> Map -> List)
+  map? (-> Anything -> Boolean)
+  merge (-> Map Map & {:test =} -> Map)
+  put (-> Map Anything Anything & {:test =} -> Map)
+  vals (-> Map -> List))
+
+(define class MessageStream [Stream])
+
+(define protocol ~MessageStream
+  message-stream? (-> Anything -> Boolean))
+
+(define class Method [Procedure])
+
+(define protocol ~Method
+  method? (-> Anything -> Boolean))
+
+(define class Mutable [Anything])
+
+(define protocol ~Mutable
+  mutable? (-> Anything -> Boolean)
+  set-slot! (-> Mutable Anything Anything -> Anything))
+
+(define class Name [Ordered Anything])
+
+(define protocol ~Name
+  name? (-> Anything -> Boolean))
+
+(define class NetworkStream [Stream])
+
+(define protocol ~NetworkStream
+  network-stream? (-> Anything -> Boolean))
+
+(define class Number [Ordered Anything])
+
+(define protocol ~Number
+  + (-> Number & -> Number)
+  - (-> Number & -> Number)
+  * (-> Number & -> Number)
+  / (-> Number & -> Number)
+  number? (-> Anything -> Boolean))
+
+(define class Ordered [Anything])
+
+(define protocol ~Ordered
+  < (-> Ordered & -> Boolean)
+  <= (-> Ordered & -> Boolean)
+  > (-> Ordered & -> Boolean)
+  >= (-> Ordered & -> Boolean)
+  ordered? (-> Anything -> Boolean))
+
+(define class Pair [Collection])
+
+(define protocol ~Pair
+  left (-> Pair -> Anything)
+  pair (-> Anything Anything -> Pair)
+  pair? (-> Anything -> Boolean)
+  right (-> Pair -> Anything))
+
+(define class Pathname [ResourceName])
+
+(define protocol ~Pathname
+  absolute? (-> Pathname -> Boolean)
+  pathname? (-> Anything -> Boolean)
+  pathname-exists? (-> Pathname -> Boolean)
+  relative? (-> Pathname -> Boolean))
+
+(define class PosixPathname [Pathname])
+
+(define protocol ~PosixPathname
+  pathname-directory (-> PosixPathname -> PosixPathname)
+  pathname-filename (-> PosixPathname -> Name)
+  posix-pathname? (-> PosixAnything -> Boolean))
+
+(define class Procedure [Anything])
+
+(define protocol ~Procedure
+  apply (-> Procedure List -> Anything)
+  flip (-> Procedure -> Procedure)
+  partial (-> Procedure & -> Anything)
+  rpartial (-> Procedure & -> Anything)
+  procedure? (-> Anything -> Boolean)
+  :macros [$ (fn & exprs)
+           ^ ((& args) & body)
+           cascade ((& args) & fns)
+           spread ((& args) & body)])
+
+(define class Producer [Stream])
+
+(define protocol ~Producer
+  producer? (-> Anything -> Boolean))
+
+(define class Protocol [Type])
+
+(define protocol ~Protocol
+  members (-> Protocol -> List)
+  protocol? (-> Anything -> Boolean))
+
+(define class Ratio [Rational])
+
+(define protocol ~Ratio
+  denominator (-> Ratio -> Integer)
+  numerator (-> Ratio -> Integer)
+  ratio? (-> Anything -> Boolean))
+
+(define class Rational [Real])
+
+(define protocol ~Rational
+  rational? (-> Anything -> Boolean))
+
+(define class Real [Number])
+
+(define protocol ~Real
+  real? (-> Anything -> Boolean))
+
+(define class ResourceName [Name])
+
+(define protocol ~ResourceName
+  resource-name? (-> Anything -> Boolean))
+
+(define class Restart [Condition])
+
+(define protocol ~Restart
+  restart? (-> Anything -> Boolean))
+
+(define class Setter [Accessor])
+
+(define protocol ~Setter
+  setter? (-> Anything -> Boolean))
+
+(define class Singleton [Type])
+
+(define protocol ~Singleton
+  value (-> Singleton -> Anything)
+  singleton? (-> Anything -> Boolean))
+
+(define class StandardIOStream [Stream])
+
+(define protocol ~StandardIOStream
+  standard-input (-> -> StandardIOStream)
+  standard-io-stream? (-> Anything -> Boolean)
+  standard-error (-> -> StandardIOStream)
+  standard-output (-> -> StandardIOStream))
+
+(define class Stream [Collection])
+
+(define protocol ~Stream
+  stream? (-> Anything -> Boolean))
+
+(define class Structure [Type])
+
+(define protocol ~Structure
+  structure? (-> Anything -> Boolean)
+  structure-of (-> Anything -> Structure))
+
+(define class Symbol [Name])
+
+(define protocol ~Symbol
+  symbol? (-> Anything -> Boolean))
+
+(define class SymbolicPathname [Pathname])
+
+(define protocol ~SymbolicPathname
+  symbolic-pathname? (-> Anything -> Boolean))
+
+(define class Text [Limited Ordered Vector])
+
+(define protocol ~Text
+  characters (-> Text -> Generator))
+  lines (-> Text -> Generator))
+  text? (-> Anything -> Boolean))
+
+(define class Time [Ordered Anything])
+
+(define protocol ~Time
+  time? (-> Anything -> Boolean))
+
+(define class True [Boolean])
+
+(define protocol ~True
+  true? (-> Anything -> Boolean))
+
+(define class Type [Anything])
+
+(define protocol ~Type
+  isa? (-> Anything Type -> Boolean)
+  type? (-> Anything -> Boolean))
+
+(define class URL [ResourceName])
+
+(define protocol ~URL
+  host (-> URL -> Name)
+  path (-> URL -> Pathname)
+  port (-> URL -> Integer)
+  query (-> URL -> Text)
+  schema (-> URL -> Name)
+  url? (-> Anything -> Boolean))
+
+(define class Vector [Array List])
+
+(define protocol ~Vector
+  vector? (-> Anything -> Boolean))
+
+(define class Warning [Condition])
+
+(define protocol ~Warning
+  warn (-> & {} ->)
+  warning? (-> Anything -> Boolean))
+
+

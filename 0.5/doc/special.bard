@@ -7,16 +7,19 @@ case
 catch
 cond
 define
-  class
-  condition
-  constant
-  macro
-  method
-  record
-  setter
-  tuple
-  union
-  variable
+  define class
+  define condition
+  define constant
+  define enumeration
+  define limited
+  define macro
+  define method
+  define protocol
+  define record
+  define setter
+  define tuple
+  define union
+  define variable
 do
 dolist
 dotimes

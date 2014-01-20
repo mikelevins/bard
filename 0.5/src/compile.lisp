@@ -15,5 +15,9 @@
 ;;; 
 ;;; ---------------------------------------------------------------------
 
-(defun bard-compile (exp &optional env)
+(defmethod bard-compile (exp &optional env)
   )
+
+
+
+
