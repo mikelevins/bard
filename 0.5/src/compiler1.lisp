@@ -54,90 +54,6 @@
         (funcall compiler expr env)
         (error "No such special form defined: ~s" sym))))
 
-;;; ---------------------------------------------------------------------
-;;; special form definitions
-;;; ---------------------------------------------------------------------
-
-;;; abort
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|abort|
-      (lambda (expr env)
-        (argument-count expr 1)
-        (let* ((condition (compile (cadr expr) env)))
-          `(:abort ,condition)))))
-
-;;; and
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|and|
-      (lambda (expr env)
-        (let ((exprs (cdr expr)))
-          (if (null exprs)
-              (compile (true) env)
-              (let ((test (compile (car exprs) env))
-                    (more (cdr exprs)))
-                (if more
-                    `(:if ,test ,(compile (cons '|and| more) env) ,(compile (false) env))
-                    test)))))))
-
-;;; begin
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|begin|
-      (lambda (expr env)
-        (let* ((exprs (rest expr))
-               (body (mapcar (lambda (ex)(compile ex env))
-                             exprs)))
-          `(:begin ,@body)))))
-
-;;; case
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|case|
-      (lambda (expr env)
-        (let* ((case-val (compile (second expr) env))
-               (clause-forms (nthcdr 2 expr))
-               (clauses (mapcar (lambda (clause)
-                                  (let* ((test (first clause))
-                                         (body (rest clause)))
-                                    (list test (compile (cons '|begin| body)))))
-                                clause-forms)))
-          `(:case ,case-val ,@clauses)))))
-
-
-;;; catch
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|catch|
-      (lambda (expr env)
-        (let ((tag (cadr expr))
-              (body (compile (cons '|begin| (cddr expr)) env)))
-          `(:catch ,tag ,body)))))
-
-;;; quote
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|quote|
-      (lambda (expr env)
-        (argument-count expr 1)
-        `(:constant ,(cadr expr)))))
-
-;;; throw
-;;; ---------------------------------------------------------------------
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (define-special '|throw|
-      (lambda (expr env)
-        (let ((tag (cadr expr))
-              (val (caddr expr)))
-          `(:throw ,tag val)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; bard macros
@@ -171,7 +87,7 @@
 
 (defun compile-variable (expr env)
   (if (find-variable expr env)
-      `(:lexical-variable-ref ,expr)
+      `(:lexical-variable-ref ,expr ,env)
       `(:global-variable-ref ,expr)))
 
 (defun compile-application (expr env)

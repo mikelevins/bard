@@ -22,6 +22,7 @@
                                        (:file "version")
                                        (:file "base-singletons")
                                        (:file "env")
-                                       (:file "compiler1")))))
+                                       (:file "compiler1")
+                                       (:file "special-forms")))))
 
 ;;; (asdf:load-system :bard)

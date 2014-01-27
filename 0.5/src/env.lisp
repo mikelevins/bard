@@ -22,3 +22,15 @@
     (if binding
         (cdr binding)
         nil)))
+
+(defmethod extend-env ((env cons) var val &rest more) 
+  (if more
+      (apply #'extend-env
+             (cons :env
+                   (cons (cons var val)
+                         (cdr env)))
+             more)
+      (cons :env
+            (cons (cons var val)
+                  (cdr env)))))
+
