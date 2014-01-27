@@ -142,6 +142,7 @@
                      :env env :args args
                      :code (assemble
                             (seq (comp-begin body call-env t nil)))))))
+
 (defun comp-set! (var-form val-form env val? more?)
   (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
   (seq (comp val-form env t t)

@@ -1,0 +1,42 @@
+
+(define method (triples (s <cons>))
+  (take-by 3 1 s))
+
+(define method (good-line? (s <string>))
+  (and (not (empty? s))
+       (not (prefix-match? "--" s))))
+
+(define method (read-names (path <posix-pathname>))
+  (dispose (image triples (filter good-line? (lines path)))
+           first
+           (compose (partial reduce append) rest)))
+
+(define method (read-names (path <string>))
+  (read-names (as <posix-pathname> path)))
+
+(define method (merge-names (start <string>)(more <string>))
+  (append start (drop (max 0 (- (length more) 2)) more)))
+
+(define method (find-extension (start <string>) (parts <cons>))
+  (any (filter (partial prefix-match? (leave 2 start)) parts)))
+
+(define method (expander (parts <cons>))
+  (^ (start) 
+     (let ((ex  (find-extension start parts)))
+       (if ex
+           (merge-names start ex)
+           nothing))))
+
+(define method (gen-name (start <string>)(parts <cons>))
+  (last (take-while something? (iterate (expander parts) start))))
+
+(define method (gen-names (starts <cons>) (parts <cons>))
+  (repeat (gen-name (any starts) parts)))
+
+(define method ((path <string>) &optional (number 10))
+  (let ((starts parts (read-names path)))
+    (take number (gen-names starts parts))))
+
+
+
+
