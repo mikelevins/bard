@@ -1,14 +1,10 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          package.lisp
+;;;; Name:          bard.asd
 ;;;; Project:       Bard
-;;;; Purpose:       Bard package definition
+;;;; Purpose:       bard  in common lisp
 ;;;; Author:        mikel evins
-;;;; Copyright:     2014 mikel evins
+;;;; Copyright:     2013 mikel evins
 ;;;;
 ;;;; ***********************************************************************
-
-(defpackage #:bard
-  (:use #:cl)
-  (:shadow #:export #:find-symbol #:import #:intern #:keyword #:symbol #:symbol-name))

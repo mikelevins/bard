@@ -3,30 +3,12 @@
 ;;;;
 ;;;; Name:          package.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       packages used by the bard compiler and VM
+;;;; Purpose:       Bard package definition
 ;;;; Author:        mikel evins
-;;;; Copyright:     2013 mikel evins
-;;;;                Portions copyright 1991 by Peter Norvig
+;;;; Copyright:     2014 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 (defpackage #:bard
-  (:use :cl)
-  (:shadow #:export
-           #:find-symbol 
-           #:import 
-           #:intern 
-           #:keyword
-           #:map #:merge #:*modules* 
-           #:symbol #:symbol-name
-           #:unintern
-           #:values))
-
-;;; ---------------------------------------------------------------------
-;;; bard packages
-;;; ---------------------------------------------------------------------
-
-(in-package :bard)
-
-
-
+  (:use #:cl)
+  (:shadow #:compile))
