@@ -87,7 +87,7 @@
 
 (defun compile-variable (expr env)
   (if (find-variable expr env)
-      `(:lexical-variable-ref ,expr ,env)
+      `(:lexical-variable-ref ,expr)
       `(:global-variable-ref ,expr)))
 
 (defun compile-application (expr env)

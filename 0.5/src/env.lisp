@@ -15,22 +15,32 @@
 ;;; environments
 ;;; ---------------------------------------------------------------------
 
-(defun null-env () (cons :env nil))
+(defun null-env () nil)
+
+(defmethod find-variable ((var symbol)(env null)) 
+  nil)
 
 (defmethod find-variable ((var symbol)(env cons)) 
-  (let ((binding (assoc var (cdr env))))
+  (let ((binding (assoc var env)))
     (if binding
         (cdr binding)
         nil)))
 
+(defmethod extend-env ((env null) var val &rest more) 
+  (if more
+      (apply #'extend-env
+             (cons (cons var val)
+                   (cdr env))
+             more)
+      (cons (cons var val)
+            env)))
+
 (defmethod extend-env ((env cons) var val &rest more) 
   (if more
       (apply #'extend-env
-             (cons :env
-                   (cons (cons var val)
-                         (cdr env)))
+             (cons (cons var val)
+                   (cdr env))
              more)
-      (cons :env
-            (cons (cons var val)
-                  (cdr env)))))
+      (cons (cons var val)
+            env)))
 
