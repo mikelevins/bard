@@ -14,12 +14,6 @@
 
 (in-package :bard)
 
-(defmacro read-time-case (first-case &rest other-cases)
-  "Do the first case, where normally cases are
-  specified with #+ or possibly #- marks."
-  (declare (ignore other-cases))
-  first-case)
-
 (defun rest2 (x)
   "The rest of a list after the first TWO elements."
   (rest (rest x)))
@@ -58,12 +52,6 @@
   '(+ - * / = < > <= >= cons car cdr not append list read member
     (null? null) (eq? eq) (equal? equal) (eqv? eql)
     (write prin1) (display princ) (newline terpri)))
-
-(defun init-bard-proc (f)
-  "Define a Bard procedure as a corresponding CL function."
-  (if (listp f)
-      (set-global-var! (first f) (symbol-function (second f)))
-      (set-global-var! f (symbol-function f))))
 
 ;;; ==============================
 
