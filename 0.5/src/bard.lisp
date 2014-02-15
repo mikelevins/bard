@@ -51,30 +51,8 @@
 
 ;;; ==============================
 
-;;;; CLtL2 and ANSI CL Compatibility
-
-(defun set-var! (var val env)
-  "Set a variable to a value, in the given or global environment."
-  (if (assoc var env)
-      (setf (second (assoc var env)) val)
-      (set-global-var! var val))
-  val)
-
-(defun get-var (var env)
-  "Get the value of a variable, from the given or global environment."
-  (if (assoc var env)
-      (second (assoc var env))
-      (get-global-var var)))
-
 (defun set-global-var! (var val)
   (setf (get var 'global-val) val))
-
-(defun get-global-var (var)
-  (let* ((default "unbound")
-         (val (get var 'global-val default)))
-    (if (eq val default)
-        (error "Unbound bard variable: ~a" var)
-        val)))
 
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
@@ -225,7 +203,6 @@
     (setf (fn-name fn) name))
   name)
 
-;; This should also go in init-bard-interp:
 (set-global-var! 'name! #'name!)
 
 (defun print-fn (fn &optional (stream *standard-output*) depth)
@@ -834,8 +811,6 @@
 
 (defun sign-p (char) (find char "+-"))
 
-#|
-
 (def-optimizer (:LABEL) (instr code all-code)
   ;; ... L ... => ... ... ;if no reference to L
   (when (not (find instr all-code :key #'arg1))
@@ -899,5 +874,3 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
-
-|#
