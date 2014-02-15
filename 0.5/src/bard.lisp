@@ -14,35 +14,34 @@
 
 (in-package :bard)
 
-(eval-when (load eval compile)
-  (defun side-effect-free? (exp)
-    "Is exp a constant, variable, or function,
+(defun side-effect-free? (exp)
+  "Is exp a constant, variable, or function,
   or of the form (THE type x) where x is side-effect-free?"
-    (or (atom exp) (constantp exp)
-	(starts-with exp 'function)
-	(and (starts-with exp 'the)
-	     (side-effect-free? (third exp)))))
+  (or (atom exp) (constantp exp)
+      (starts-with exp 'function)
+      (and (starts-with exp 'the)
+           (side-effect-free? (third exp)))))
 
-  (defmacro read-time-case (first-case &rest other-cases)
-    "Do the first case, where normally cases are
+(defmacro read-time-case (first-case &rest other-cases)
+  "Do the first case, where normally cases are
   specified with #+ or possibly #- marks."
-    (declare (ignore other-cases))
-    first-case)
+  (declare (ignore other-cases))
+  first-case)
 
-  (defun rest2 (x)
-    "The rest of a list after the first TWO elements."
-    (rest (rest x)))
+(defun rest2 (x)
+  "The rest of a list after the first TWO elements."
+  (rest (rest x)))
 
-  (defun find-anywhere (item tree)
-    "Does item occur anywhere in tree?"
-    (if (atom tree)
-	(if (eql item tree) tree)
-	(or (find-anywhere item (first tree))
-	    (find-anywhere item (rest tree)))))
+(defun find-anywhere (item tree)
+  "Does item occur anywhere in tree?"
+  (if (atom tree)
+      (if (eql item tree) tree)
+      (or (find-anywhere item (first tree))
+          (find-anywhere item (rest tree)))))
 
   (defun starts-with (list x)
     "Is x a list whose first element is x?"
-    (and (consp list) (eql (first list) x))))
+    (and (consp list) (eql (first list) x)))
 
 ;;;; Auxiliary Functions
 
@@ -806,6 +805,20 @@
 
 ;;; ==============================
 
+(defparameter *primitive-fns*
+  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
+    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
+    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
+    (not 1 not) (null? 1 not)
+    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
+    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
+    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
+    (write 1 write nil t) (display 1 display nil t)
+    (newline 0 newline nil t) (compiler 1 compiler t) 
+    (name! 2 name! true t) (random 1 random true nil)))
+
+;;; ==============================
+
 (defstruct (prim (:type list)) 
   symbol n-args opcode always side-effects)
 
@@ -1047,19 +1060,6 @@
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))
 
-;;; ==============================
-
-(defparameter *primitive-fns*
-  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
-    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
-    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
-    (not 1 not) (null? 1 not)
-    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
-    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
-    (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t) 
-    (name! 2 name! true t) (random 1 random true nil)))
 
 ;;; ==============================
 
