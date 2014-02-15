@@ -15,23 +15,6 @@
 (in-package :bard)
 
 (eval-when (load eval compile)
-  (defmacro once-only (variables &rest body)
-    "Returns the code built by BODY.  If any of VARIABLES
-  might have side effects, they are evaluated once and stored
-  in temporary variables that are then passed to BODY."
-    (assert (every #'symbolp variables))
-    (let ((temps nil))
-      (dotimes (i (length variables)) (push (gensym) temps))
-      `(if (every #'side-effect-free? (list .,variables))
-           (progn .,body)
-           (list 'let
-                 ,`(list ,@(mapcar #'(lambda (tmp var)
-                                       `(list ',tmp ,var))
-                                   temps variables))
-                 (let ,(mapcar #'(lambda (var tmp) `(,var ',tmp))
-                               variables temps)
-                   .,body)))))
-
   (defun side-effect-free? (exp)
     "Is exp a constant, variable, or function,
   or of the form (THE type x) where x is side-effect-free?"
@@ -39,10 +22,6 @@
 	(starts-with exp 'function)
 	(and (starts-with exp 'the)
 	     (side-effect-free? (third exp)))))
-
-  (defmacro funcall-if (fn arg)
-    (once-only (fn)
-      `(if ,fn (funcall ,fn ,arg) ,arg)))
 
   (defmacro read-time-case (first-case &rest other-cases)
     "Do the first case, where normally cases are
@@ -830,23 +809,6 @@
 (defstruct (prim (:type list)) 
   symbol n-args opcode always side-effects)
 
-;;; Note change from book: some of the following primitive fns have had
-;;; trailing NIL fields made explicit, because some Lisp's will give
-;;; an error (rather than NIL), when asked to find the prim-side-effects
-;;; of a three-element list.
-
-(defparameter *primitive-fns*
-  '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
-    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)
-    (/= 2 /= nil nil) (= 2 = nil nil)
-    (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
-    (not 1 not nil nil) (null? 1 not nil nil) (cons 2 cons true nil)
-    (car 1 car nil nil) (cdr 1 cdr nil nil)  (cadr 1 cadr nil nil) 
-    (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)
-    (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t nil) 
-    (name! 2 name! true t) (random 1 random true nil)))
-
 (defun primitive-p (f env n-args)
   "F is a primitive if it is in the table, and is not shadowed
   by something in the environment, and has the right number of args."
@@ -1085,6 +1047,22 @@
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))
 
+;;; ==============================
+
+(defparameter *primitive-fns*
+  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
+    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
+    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
+    (not 1 not) (null? 1 not)
+    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
+    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
+    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
+    (write 1 write nil t) (display 1 display nil t)
+    (newline 0 newline nil t) (compiler 1 compiler t) 
+    (name! 2 name! true t) (random 1 random true nil)))
+
+;;; ==============================
+
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'exit 
@@ -1180,10 +1158,6 @@
 (defun eof-object? (x) (eq x eof))
 (defvar *bard-readtable* (copy-readtable))
 
-(defun bard-read (&optional (stream *standard-input*))
-  (let ((*readtable* *bard-readtable*))
-    (read stream nil eof)))
-
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t 
@@ -1218,19 +1192,6 @@
                                       (list 'unquote (read stream))))))
                      nil *bard-readtable*)
 
-;;; ==============================
-
-(defparameter *primitive-fns*
-  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
-    (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
-    (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
-    (not 1 not) (null? 1 not)
-    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
-    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
-    (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t) 
-    (name! 2 name! true t) (random 1 random true nil)))
 
 
 ;;; ==============================
@@ -1283,7 +1244,7 @@
     (cons   (setf (car x) (convert-numbers (car x)))
             (setf (cdr x) (convert-numbers (cdr x)))
 	    x) ; *** Bug fix, gat, 11/9/92
-    (symbol (or (convert-number x) x))
+    (cl:symbol (or (convert-number x) x))
     (vector (dotimes (i (length x))
               (setf (aref x i) (convert-numbers (aref x i))))
 	    x) ; *** Bug fix, gat, 11/9/92
@@ -1302,6 +1263,7 @@
 
 (defun sign-p (char) (find char "+-"))
 
+#|
 
 (def-optimizer (:LABEL) (instr code all-code)
   ;; ... L ... => ... ... ;if no reference to L
@@ -1366,3 +1328,5 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
+
+|#
