@@ -429,10 +429,8 @@
 ;;; ==============================
 
 (defun opcode (instr) (if (label-p instr) :label (first instr)))
-(defun args (instr) (if (listp instr) (rest instr)))
 (defun arg1 (instr) (if (listp instr) (second instr)))
 (defun arg2 (instr) (if (listp instr) (third instr)))
-(defun arg3 (instr) (if (listp instr) (fourth instr)))
 
 (defsetf arg1 (instr) (val) `(setf (second ,instr) ,val))
 
