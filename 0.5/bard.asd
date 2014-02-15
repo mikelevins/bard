@@ -11,15 +11,28 @@
 ;;;; ***********************************************************************
 
 (asdf:defsystem #:bard
-    :serial t
-    :description "The bard programming language, version 0.4"
-    :author "mikel evins <mevins@me.com>"
-    :license "Apache 2.0"
-    :depends-on (:puri :cl-fad :fset :singleton-classes)
-    :components ((:module "src"
-                          :serial t
-                          :components ((:file "package")
-                                       (:file "version")
-                                       (:file "bard")))))
+  :serial t
+  :description "The bard programming language, version 0.4"
+  :author "mikel evins <mevins@me.com>"
+  :license "Apache 2.0"
+  :depends-on (:puri :cl-fad :fset :singleton-classes)
+  :components ((:module "src"
+                        :serial t
+                        :components ((:file "package")
+                                     (:File "version")
+                                     (:file "utils")
+                                     (:file "globals")
+                                     (:file "builtins")
+                                     (:file "procedures")
+                                     (:file "macros")
+                                     (:file "quasiquote")
+                                     (:file "env")
+                                     (:file "prims")
+                                     (:file "compiler")
+                                     (:file "assembler")
+                                     (:file "optimize")
+                                     (:file "vm")
+                                     (:file "reader")
+                                     (:file "bard")))))
 
 ;;; (asdf:load-system :bard)
