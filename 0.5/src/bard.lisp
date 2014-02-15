@@ -621,41 +621,8 @@
 
 ;;; ==============================
 
-(defun comp-begin (exps env)
-  "Compile a sequence of expressions, popping all but the last."
-  (cond ((null exps) (gen 'CONST nil))
-        ((length=1 exps) (comp (first exps) env))
-        (t (seq (comp (first exps) env)
-                (gen 'POP)
-                (comp-begin (rest exps) env)))))
-
-;;; ==============================
-
-(defun comp-if (pred then else env)
-  "Compile a conditional expression."
-  (let ((L1 (gen-label))
-        (L2 (gen-label)))
-    (seq (comp pred env) (gen 'FJUMP L1)
-         (comp then env) (gen 'JUMP L2)
-         (list L1) (comp else env)
-         (list L2))))
-
-;;; ==============================
-
 (defstruct (fn (:print-function print-fn))
   code (env nil) (name nil) (args nil))
-
-(defun comp-lambda (args body env)
-  "Compile a lambda form into a closure with compiled code."
-  (assert (and (listp args) (every #'symbolp args)) ()
-          "Lambda arglist must be a list of symbols, not ~a" args)
-  ;; For now, no &rest parameters.  
-  ;; The next version will support Bard's version of &rest
-  (make-fn
-   :env env :args args
-   :code (seq (gen 'ARGS (length args))
-              (comp-begin body (cons args env))
-              (gen 'RETURN))))
 
 ;;; ==============================
 
@@ -694,13 +661,6 @@
         (gen 'LVAR (first p) (second p) ";" var)
         (gen 'GVAR var))))
 
-(defun gen-set (var env)
-  "Generate an instruction to set a variable to top-of-stack."
-  (let ((p (in-env-p var env)))
-    (if p
-        (gen 'LSET (first p) (second p) ";" var)
-        (gen 'GSET var))))
-
 ;;; ==============================
 
 (def-bard-macro define (name &rest body)
@@ -722,24 +682,6 @@
 (defun print-fn (fn &optional (stream *standard-output*) depth)
   (declare (ignore depth))
   (format stream "{~a}" (or (fn-name fn) '??)))
-
-(defun show-fn (fn &optional (stream *standard-output*) (depth 0))
-  "Print all the instructions in a function.
-  If the argument is not a function, just princ it, 
-  but in a column at least 8 spaces wide."
-  (if (not (fn-p fn))
-      (format stream "~8a" fn)
-      (progn
-        (fresh-line)
-        (incf depth 8)
-        (dolist (instr (fn-code fn))
-          (if (label-p instr)
-              (format stream "~a:" instr)
-              (progn
-                (format stream "~VT" depth)
-                (dolist (arg instr)
-                  (show-fn arg stream depth))
-                (fresh-line)))))))
 
 (defun label-p (x) "Is x a label?" (atom x))
 
@@ -933,16 +875,6 @@
 
 ;;; ==============================
 
-(defun init-bard-comp ()
-  "Initialize the primitive functions."
-  (dolist (prim *primitive-fns*)
-    (setf (get (prim-symbol prim) 'global-val)
-          (new-fn :env nil :name (prim-symbol prim)
-                  :code (seq (gen 'PRIM (prim-symbol prim))
-                             (gen 'RETURN))))))
-
-;;; ==============================
-
 (defun comp-lambda (args body env)
   "Compile a lambda form into a closure with compiled code."
   (new-fn :env env :args args
@@ -970,12 +902,6 @@
   "Build a new function."
   (assemble (make-fn :env env :name name :args args
                      :code (optimize code))))
-
-;;; ==============================
-
-(defun optimize (code) code)
-(defun assemble (fn) fn)
-
 
 ;;; ==============================
 
@@ -1433,5 +1359,4 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
-
 
