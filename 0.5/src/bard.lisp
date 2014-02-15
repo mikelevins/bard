@@ -14,14 +14,6 @@
 
 (in-package :bard)
 
-(defun side-effect-free? (exp)
-  "Is exp a constant, variable, or function,
-  or of the form (THE type x) where x is side-effect-free?"
-  (or (atom exp) (constantp exp)
-      (starts-with exp 'function)
-      (and (starts-with exp 'the)
-           (side-effect-free? (third exp)))))
-
 (defmacro read-time-case (first-case &rest other-cases)
   "Do the first case, where normally cases are
   specified with #+ or possibly #- marks."
@@ -32,67 +24,9 @@
   "The rest of a list after the first TWO elements."
   (rest (rest x)))
 
-(defun find-anywhere (item tree)
-  "Does item occur anywhere in tree?"
-  (if (atom tree)
-      (if (eql item tree) tree)
-      (or (find-anywhere item (first tree))
-          (find-anywhere item (rest tree)))))
-
-  (defun starts-with (list x)
-    "Is x a list whose first element is x?"
-    (and (consp list) (eql (first list) x)))
-
-;;;; Auxiliary Functions
-
-(setf (symbol-function 'find-all-if) #'remove-if-not)
-
-(defun find-all (item sequence &rest keyword-args
-                 &key (test #'eql) test-not &allow-other-keys)
-  "Find all those elements of sequence that match item,
-  according to the keywords.  Doesn't alter sequence."
-  (if test-not
-      (apply #'remove item sequence 
-             :test-not (complement test-not) keyword-args)
-      (apply #'remove item sequence
-             :test (complement test) keyword-args)))
-
-(defun partition-if (pred list)
-  "Return 2 values: elements of list that satisfy pred,
-  and elements that don't."
-  (let ((yes-list nil)
-        (no-list nil))
-    (dolist (item list)
-      (if (funcall pred item)
-          (push item yes-list)
-          (push item no-list)))
-    (values (nreverse yes-list) (nreverse no-list))))
-
-(defun maybe-add (op exps &optional if-nil)
-  "For example, (maybe-add 'and exps t) returns
-  t if exps is nil, exps if there is only one,
-  and (and exp1 exp2...) if there are several exps."
-  (cond ((null exps) if-nil)
-        ((length=1 exps) (first exps))
-        (t (cons op exps))))
-
-;;; ==============================
-
-(defun seq-ref (seq index)
-  "Return code that indexes into a sequence, using
-  the pop-lists/aref-vectors strategy."
-  `(if (listp ,seq)
-       (prog1 (first ,seq)
-         (setq ,seq (the list (rest ,seq))))
-       (aref ,seq ,index)))
-
-(defun maybe-set-fill-pointer (array new-length)
-  "If this is an array with a fill pointer, set it to
-  new-length, if that is longer than the current length."
-  (if (and (arrayp array)
-           (array-has-fill-pointer-p array))
-      (setf (fill-pointer array) 
-            (max (fill-pointer array) new-length))))
+(defun starts-with (list x)
+  "Is x a list whose first element is x?"
+  (and (consp list) (eql (first list) x)))
 
 ;;; ==============================
 
@@ -104,72 +38,6 @@
 (defun symbol (&rest args)
   "Concatenate symbols or strings to form an interned symbol"
   (intern (format nil "~{~a~}" args)))
-
-(defun new-symbol (&rest args)
-  "Concatenate symbols or strings to form an uninterned symbol"
-  (make-symbol (format nil "~{~a~}" args)))
-
-(defun last1 (list)
-  "Return the last element (not last cons cell) of list"
-  (first (last list)))
-
-;;; ==============================
-
-(defun mappend (fn list)
-  "Append the results of calling fn on each element of list.
-  Like mapcon, but uses append instead of nconc."
-  (apply #'append (mapcar fn list)))
-
-(defun mklist (x) 
-  "If x is a list return it, otherwise return the list of x"
-  (if (listp x) x (list x)))
-
-(defun flatten (exp)
-  "Get rid of imbedded lists (to one level only)."
-  (mappend #'mklist exp))
-
-(defun random-elt (seq) 
-  "Pick a random element out of a sequence."
-  (elt seq (random (length seq))))
-
-;;; ==============================
-
-(defun member-equal (item list)
-  (member item list :test #'equal))
-
-;;; ==============================
-
-(defun compose (&rest functions)
-  #'(lambda (x)
-      (reduce #'funcall functions :from-end t :initial-value x)))
-
-;;;; The Debugging Output Facility:
-
-(defvar *dbg-ids* nil "Identifiers used by dbg")
-
-(defun dbg (id format-string &rest args)
-  "Print debugging info if (DEBUG ID) has been specified."
-  (when (member id *dbg-ids*)
-    (fresh-line *debug-io*)
-    (apply #'format *debug-io* format-string args)))
-
-(defun debug (&rest ids)
-  "Start dbg output on the given ids."
-  (setf *dbg-ids* (union ids *dbg-ids*)))
-
-(defun undebug (&rest ids)
-  "Stop dbg on the ids.  With no ids, stop dbg altogether."
-  (setf *dbg-ids* (if (null ids) nil
-                      (set-difference *dbg-ids* ids))))
-
-;;; ==============================
-
-(defun dbg-indent (id indent format-string &rest args)
-  "Print indented debugging info if (DEBUG ID) has been specified."
-  (when (member id *dbg-ids*)
-    (fresh-line *debug-io*)
-    (dotimes (i indent) (princ "  " *debug-io*))
-    (apply #'format *debug-io* format-string args)))
 
 ;;;; PATTERN MATCHING FACILITY
 
