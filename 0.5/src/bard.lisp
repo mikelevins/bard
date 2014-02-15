@@ -1187,11 +1187,11 @@
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t 
-                              #'(lambda (&rest ignore) t)
+                              #'(lambda (&rest ignore)(declare (ignore ignore)) t)
                               *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\f 
-                              #'(lambda (&rest ignore) nil)
+                              #'(lambda (&rest ignore)(declare (ignore ignore)) nil)
                               *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\d
@@ -1199,16 +1199,18 @@
                               ;; #x, #o and #b are hexidecimal, octal, and binary,
                               ;; e.g. #xff = #o377 = #b11111111 = 255
                               ;; In Bard only, #d255 is decimal 255.
-                              #'(lambda (stream &rest ignore) 
+                              #'(lambda (stream &rest ignore)
+                                  (declare (ignore ignore))
                                   (let ((*read-base* 10)) (bard-read stream)))
                               *bard-readtable*)
 
 (set-macro-character #\` 
-                     #'(lambda (s ignore) (list 'quasiquote (bard-read s))) 
+                     #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s))) 
                      nil *bard-readtable*)
 
 (set-macro-character #\, 
                      #'(lambda (stream ignore)
+                         (declare (ignore ignore))
                          (let ((ch (read-char stream)))
                            (if (char= ch #\@)
                                (list 'unquote-splicing (read stream))
@@ -1309,6 +1311,7 @@
     t))
 
 (def-optimizer (GSET LSET) (instr code all-code)
+  (declare (ignore all-code))
   ;; ex: (begin (set! x y) (if x z))
   ;; (SET X) (POP) (VAR X) ==> (SET X)
   (when (and (is (second code) 'POP)
@@ -1318,6 +1321,7 @@
     t))
 
 (def-optimizer (JUMP CALL CALLJ RETURN) (instr code all-code)
+  (declare (ignore all-code))
   ;; (JUMP L1) ...dead code... L2 ==> (JUMP L1) L2
   (setf (rest code) (member-if #'label-p (rest code)))
   ;; (JUMP L1) ... L1 (JUMP L2) ==> (JUMP L2)  ... L1 (JUMP L2)
@@ -1327,12 +1331,14 @@
              t)))
 
 (def-optimizer (TJUMP FJUMP) (instr code all-code)
+    (declare (ignore all-code))
   ;; (FJUMP L1) ... L1 (JUMP L2) ==> (FJUMP L2) ... L1 (JUMP L2)
   (when (is (target instr code) 'JUMP)
     (setf (second instr) (arg1 (target instr code)))
     t))
 
 (def-optimizer (T -1 0 1 2) (instr code all-code)
+  (declare (ignore instr all-code))
   (case (opcode (second code))
     (NOT ;; (T) (NOT) ==> NIL
      (setf (first code) (gen1 'NIL)
@@ -1347,6 +1353,7 @@
      t)))
 
 (def-optimizer (NIL) (instr code all-code)
+  (declare (ignore instr all-code))
   (case (opcode (second code))
     (NOT ;; (NIL) (NOT) ==> T
      (setf (first code) (gen1 'T)
@@ -1359,4 +1366,3 @@
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
      t)))
-
