@@ -32,11 +32,11 @@
 
 ;;; ==============================
 
-(defconstant bard-top-level
+(defparameter bard-top-level
   '(begin (define (bard)
            (newline)
            (display "bard> ")
-           (write ((compiler (read))))
+           (display ((compiler (read))))
            (bard))
     (bard)))
 
