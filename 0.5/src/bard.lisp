@@ -54,10 +54,6 @@
 (defun set-global-var! (var val)
   (setf (get var 'global-val) val))
 
-(defun extend-env (vars vals env)
-  "Add some variables and values to an environment."
-  (nconc (mapcar #'list vars vals) env))
-
 (defparameter *bard-procs*
   '(+ - * / = < > <= >= cons car cdr not append list read member
     (null? null) (eq? eq) (equal? equal) (eqv? eql)
