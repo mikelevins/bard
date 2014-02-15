@@ -301,6 +301,12 @@
         (argument-count expr 1)
         `(:constant ,(cadr expr)))))
 
+(eval-when (:compile-toplevel :load-toplevel)
+  (define-special 'quote
+      (lambda (expr env)
+        (argument-count expr 1)
+        `(:constant ,(cadr expr)))))
+
 ;;; throw
 ;;; ---------------------------------------------------------------------
 

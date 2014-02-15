@@ -1,16 +1,14 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.lisp
+;;;; Name:          package.lisp
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard version number
+;;;; Purpose:       Bard package definition
 ;;;; Author:        mikel evins
-;;;; Copyright:     2013 mikel evins
+;;;; Copyright:     2014 mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :bard)
-
-(defparameter *bard-version-number* "0.5.0a2")
-
-
+(defpackage #:bard
+  (:use #:cl)
+  (:shadow #:compile))

@@ -29,8 +29,7 @@
 (defmethod extend-env ((env null) var val &rest more) 
   (if more
       (apply #'extend-env
-             (cons (cons var val)
-                   (cdr env))
+             (cons (cons var val) env)
              more)
       (cons (cons var val)
             env)))
@@ -38,8 +37,7 @@
 (defmethod extend-env ((env cons) var val &rest more) 
   (if more
       (apply #'extend-env
-             (cons (cons var val)
-                   (cdr env))
+             (cons (cons var val) env)
              more)
       (cons (cons var val)
             env)))

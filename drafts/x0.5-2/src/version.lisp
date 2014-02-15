@@ -11,6 +11,6 @@
 
 (in-package :bard)
 
-(defparameter *bard-version-number* "0.5.0a2")
+(defparameter *bard-version-number* "0.5.0a1")
 
 

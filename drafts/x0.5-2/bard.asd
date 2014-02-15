@@ -20,6 +20,10 @@
                           :serial t
                           :components ((:file "package")
                                        (:file "version")
-                                       (:file "bard")))))
+                                       (:file "base-singletons")
+                                       (:file "env")
+                                       (:file "compiler1")
+                                       (:file "special-forms")))))
 
 ;;; (asdf:load-system :bard)
+
