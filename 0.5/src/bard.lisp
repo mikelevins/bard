@@ -19,14 +19,14 @@
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'exit 
-                   (new-fn :name 'exit :args '(val) :code '((HALT))))
+                   (new-method :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
-                   (new-fn :name 'call/cc :args '(f)
+                   (new-method :name 'call/cc :args '(f)
                            :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
                                    (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
   (dolist (prim *primitive-fns*)
     (setf (get (prim-symbol prim) 'global-val)
-          (new-fn :env nil :name (prim-symbol prim)
+          (new-method :env nil :name (prim-symbol prim)
                   :code (seq (gen 'PRIM (prim-symbol prim))
                              (gen 'RETURN))))))
 

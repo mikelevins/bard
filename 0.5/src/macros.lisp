@@ -88,10 +88,10 @@
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
      .,body))
 
-(defun name! (fn name)
-  "Set the name field of fn, if it is an un-named fn."
-  (when (and (fn-p fn) (null (fn-name fn)))
-    (setf (fn-name fn) name))
+(defun name! (method name)
+  "Set the name field of method, if it is an un-named method."
+  (when (and (method-p method) (null (method-name method)))
+    (setf (method-name method) name))
   name)
 
 (set-global-var! 'name! #'name!)

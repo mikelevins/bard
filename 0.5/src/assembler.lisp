@@ -24,14 +24,14 @@
 
 ;;; ==============================
 
-(defun assemble (fn)
+(defun assemble (method)
   "Turn a list of instructions into a vector."
   (multiple-value-bind (length labels)
-      (asm-first-pass (fn-code fn))
-    (setf (fn-code fn)
-          (asm-second-pass (fn-code fn)
+      (asm-first-pass (method-code method))
+    (setf (method-code method)
+          (asm-second-pass (method-code method)
                            length labels))
-    fn))
+    method))
 
 (defun asm-first-pass (code)
   "Return the labels and the total code length."

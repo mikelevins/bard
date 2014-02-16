@@ -17,7 +17,7 @@
 
 ;;; ==============================
 
-(defstruct ret-addr fn pc env)
+(defstruct ret-addr method pc env)
 
 (defun is (instr op)
   "True if instr's opcode is OP, or one of OP when OP is a list."
@@ -29,7 +29,7 @@
 
 (defun machine (f)
   "Run the abstract machine on the code for f."
-  (let* ((code (fn-code f))
+  (let* ((code (method-code f))
          (pc 0)
          (env nil)
          (stack nil)
@@ -57,19 +57,19 @@
          
          ;; Function call/return instructions:
          (SAVE   (push (make-ret-addr :pc (arg1 instr)
-                                      :fn f :env env)
+                                      :method f :env env)
                        stack))
          (RETURN ;; return value is top of stack; ret-addr is second
-           (setf f (ret-addr-fn (second stack))
-                 code (fn-code f)
+           (setf f (ret-addr-method (second stack))
+                 code (method-code f)
                  env (ret-addr-env (second stack))
                  pc (ret-addr-pc (second stack)))
            ;; Get rid of the ret-addr, but keep the value
            (setf stack (cons (first stack) (rest2 stack))))
          (CALLJ  (pop env)                 ; discard the top frame
                  (setf f  (pop stack)
-                       code (fn-code f)
-                       env (fn-env f)
+                       code (method-code f)
+                       env (method-env f)
                        pc 0
                        n-args (arg1 instr)))
          (ARGS   (assert (= n-args (arg1 instr)) ()
@@ -88,7 +88,7 @@
                       (push (pop stack) (elt (first env) (arg1 instr))))
                  (loop for i from (- (arg1 instr) 1) downto 0 do
                       (setf (elt (first env) i) (pop stack))))
-         (FN     (push (make-fn :code (fn-code (arg1 instr))
+         (METHOD     (push (make-method :code (method-code (arg1 instr))
                                 :env env) stack))
          (PRIM   (push (apply (arg1 instr)
                               (loop with args = nil repeat n-args
@@ -98,7 +98,7 @@
          
          ;; Continuation instructions:
          (SET-CC (setf stack (top stack)))
-         (CC     (push (make-fn
+         (CC     (push (make-method
                         :env (list (vector stack))
                         :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
                                 (LVAR 0 0) (RETURN)))

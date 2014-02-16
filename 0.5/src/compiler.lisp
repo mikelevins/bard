@@ -25,7 +25,7 @@
 
 (defun comp-show (x)
   "Compile an expression and show the resulting code"
-  (show-fn (compiler x))
+  (show-method (compiler x))
   (values))
 
 ;;; ==============================
@@ -77,7 +77,7 @@
                         env val? more?))
        (LAMBDA (when val?
                  (let ((f (comp-lambda (second x) (rest2 x) env)))
-                   (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+                   (seq (gen 'METHOD f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
 
@@ -204,7 +204,7 @@
 
 (defun comp-lambda (args body env)
   "Compile a lambda form into a closure with compiled code."
-  (new-fn :env env :args args
+  (new-method :env env :args args
           :code (seq (gen-args args 0)
                      (comp-begin body
                                  (cons (make-true-list args) env)
