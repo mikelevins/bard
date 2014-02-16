@@ -52,8 +52,8 @@
          
          ;; Branching instructions:
          (JUMP   (setf pc (arg1 instr)))
-         (FJUMP  (if (null (pop stack)) (setf pc (arg1 instr))))
-         (TJUMP  (if (pop stack) (setf pc (arg1 instr))))
+         (FJUMP  (if (false? (pop stack)) (setf pc (arg1 instr))))
+         (TJUMP  (if (true? (pop stack)) (setf pc (arg1 instr))))
          
          ;; Function call/return instructions:
          (SAVE   (push (make-ret-addr :pc (arg1 instr)

@@ -11,4 +11,4 @@
 
 (defpackage #:bard
   (:use #:cl)
-  (:shadow #:compile #:debug #:method #:optimize #:symbol))
+  (:shadow #:compile #:debug #:make-method #:method #:optimize #:symbol))
