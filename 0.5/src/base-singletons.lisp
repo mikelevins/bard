@@ -14,6 +14,22 @@
 
 (in-package :bard)
 
+
+;;; ---------------------------------------------------------------------
+;;; undefined
+;;; ---------------------------------------------------------------------
+
+(defclass undefined ()()
+  (:metaclass org.tfeb.hax.singleton-classes:singleton-class))
+
+(defparameter *undefined* (make-instance 'undefined))
+
+(defun undefined () *undefined*)
+
+(defmethod undefined? (x)(declare (ignore x)) nil)
+(defmethod undefined? ((x undefined)) t)
+(defun defined? (x)(not (undefined? x)))
+
 ;;; ---------------------------------------------------------------------
 ;;; nothing
 ;;; ---------------------------------------------------------------------
@@ -56,21 +72,16 @@
 (defmethod false? ((x null))(declare (ignore x)) t)
 
 ;;; ---------------------------------------------------------------------
-;;; eof
+;;; end
 ;;; ---------------------------------------------------------------------
 
-;;; ---------------------------------------------------------------------
-;;; undefined
-;;; ---------------------------------------------------------------------
-
-(defclass undefined ()()
+(defclass end ()()
   (:metaclass org.tfeb.hax.singleton-classes:singleton-class))
 
-(defparameter *undefined* (make-instance 'undefined))
+(defparameter *end* (make-instance 'end))
 
-(defun undefined () *undefined*)
+(defun end () *end*)
 
-(defmethod undefined? (x)(declare (ignore x)) nil)
-(defmethod undefined? ((x undefined)) t)
-(defun defined? (x)(not (undefined? x)))
+(defmethod end? (x)(declare (ignore x)) nil)
+(defmethod end? ((x end)) t)
 

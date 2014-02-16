@@ -27,8 +27,16 @@
   (with-output-to-string (out)
     (princ "true" out)))
 
+(defmethod object->display-string ((obj (eql cl:t)))
+  (with-output-to-string (out)
+    (princ "true" out)))
+
 (defmethod object->display-string ((obj false))
   (with-output-to-string (out)
     (princ "false" out)))
+
+(defmethod object->display-string ((obj end))
+  (with-output-to-string (out)
+    (princ "end" out)))
 
 (defun display (x) (princ (object->display-string x)))

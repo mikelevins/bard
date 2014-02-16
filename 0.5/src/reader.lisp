@@ -17,8 +17,6 @@
 
 ;;; ==============================
 
-(defconstant eof "EoF")
-(defun eof-object? (x) (eq x eof))
 (defvar *bard-readtable* (copy-readtable))
 
 (set-macro-character #\` 
@@ -39,7 +37,7 @@
 
 (defun bard-read (&optional (stream *standard-input*))
   (let ((*readtable* *bard-readtable*))
-    (convert-numbers (read stream nil eof))))
+    (convert-numbers (read stream nil (end)))))
 
 (defun convert-numbers (x)
   "Replace symbols that look like Bard numbers with their values."

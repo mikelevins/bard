@@ -23,7 +23,7 @@
     (not 1 not) (null? 1 not)
     (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
     (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
+    (read 0 bard-read nil t) (end? 1 end?)
     (write 1 write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t) 
     (name! 2 name! true t) (random 1 random true nil)))

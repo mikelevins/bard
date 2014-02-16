@@ -22,6 +22,7 @@
   (set-global-var! 'nothing (nothing))
   (set-global-var! 'true (true))
   (set-global-var! 'false (false))
+  (set-global-var! 'end (end))
   (set-global-var! 'exit 
                    (new-method :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
