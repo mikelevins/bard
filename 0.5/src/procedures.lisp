@@ -15,10 +15,9 @@
 (in-package :bard)
 
 ;;; TODO:
-;;; 1. repurpose fn as method
-;;; 2. add representation of (generic) functions
-;;; 3. add dispatch
-;;; 4. modify method representation so that it
+;;; 1. add representation of (generic) functions
+;;; 2. add dispatch
+;;; 3. modify method representation so that it
 ;;;    can optionally contain a native-code version
 ;;;    of the compiled method
 

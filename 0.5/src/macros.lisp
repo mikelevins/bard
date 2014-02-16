@@ -31,7 +31,7 @@
       x))
 
 (def-bard-macro let (bindings &rest body)
-  `((lambda ,(mapcar #'first bindings) . ,body)
+  `((method ,(mapcar #'first bindings) . ,body)
     .,(mapcar #'second bindings)))
 
 (def-bard-macro let* (bindings &rest body)
@@ -78,10 +78,10 @@
   (if (atom name)
       `(begin (set! ,name . ,body) ',name)
       `(define ,(first name) 
-           (lambda ,(rest name) . ,body))))
+           (method ,(rest name) . ,body))))
 
 (def-bard-macro delay (computation)
-  `(lambda () ,computation))
+  `(method () ,computation))
 
 (def-bard-macro letrec (bindings &rest body)
   `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
@@ -101,5 +101,5 @@
       `(name! (set! ,name . ,body) ',name)
       (bard-macro-expand
        `(define ,(first name) 
-            (lambda ,(rest name) . ,body)))))
+            (method ,(rest name) . ,body)))))
 
