@@ -19,4 +19,8 @@
   (with-output-to-string (out)
     (princ "nothing" out)))
 
+(defmethod object->display-string ((obj undefined))
+  (with-output-to-string (out)
+    (princ "undefined" out)))
+
 (defun display (x) (princ (object->display-string x)))

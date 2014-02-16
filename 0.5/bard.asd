@@ -23,6 +23,7 @@
                                      (:file "utils")
                                      (:file "globals")
                                      (:file "procedures")
+                                     (:file "base-singletons")
                                      (:file "macros")
                                      (:file "quasiquote")
                                      (:file "env")
