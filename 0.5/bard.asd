@@ -24,6 +24,7 @@
                                      (:file "globals")
                                      (:file "procedures")
                                      (:file "base-singletons")
+                                     (:file "types")
                                      (:file "macros")
                                      (:file "quasiquote")
                                      (:file "env")
