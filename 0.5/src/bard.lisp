@@ -18,11 +18,19 @@
 
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
+  ;; base singletons
   (set-global-var! 'undefined (undefined))
   (set-global-var! 'nothing (nothing))
   (set-global-var! 'true (true))
   (set-global-var! 'false (false))
   (set-global-var! 'end (end))
+  ;; base types
+  (set-global-var! 'bits +bits+)
+  (set-global-var! 'procedure +procedure+)
+  (set-global-var! 'record +record+)
+  (set-global-var! 'list-type +list+)
+  (set-global-var! 'values +values+)
+  ;; built-in methods
   (set-global-var! 'exit 
                    (new-method :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc

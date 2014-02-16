@@ -39,4 +39,10 @@
   (with-output-to-string (out)
     (princ "end" out)))
 
+(defmethod object->display-string ((obj base-type))
+  (with-output-to-string (out)
+    (princ "#<base-type " out)
+    (princ (type-name obj) out)
+    (princ ">" out)))
+
 (defun display (x) (princ (object->display-string x)))
