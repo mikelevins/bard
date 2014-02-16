@@ -18,13 +18,42 @@
 ;;; nothing
 ;;; ---------------------------------------------------------------------
 
+(defparameter *nothing* nil)
+
+(defun nothing () *nothing*)
+
+(defmethod nothing? (x)(declare (ignore x)) nil)
+(defmethod nothing? ((x null)) t)
+(defun something? (x)(not (nothing? x)))
+
 ;;; ---------------------------------------------------------------------
 ;;; true
 ;;; ---------------------------------------------------------------------
 
+(defclass true ()()
+  (:metaclass org.tfeb.hax.singleton-classes:singleton-class))
+
+(defparameter *true* (make-instance 'true))
+
+(defun true () *true*)
+
+(defmethod true? (x)(declare (ignore x)) t)
+
 ;;; ---------------------------------------------------------------------
 ;;; false
 ;;; ---------------------------------------------------------------------
+
+(defclass false ()()
+  (:metaclass org.tfeb.hax.singleton-classes:singleton-class))
+
+(defparameter *false* (make-instance 'false))
+
+(defun false () *false*)
+
+(defmethod false? (x)(declare (ignore x)) nil)
+(defmethod false? ((x false))(declare (ignore x)) t)
+(defmethod false? ((x undefined))(declare (ignore x)) t)
+(defmethod false? ((x null))(declare (ignore x)) t)
 
 ;;; ---------------------------------------------------------------------
 ;;; eof
