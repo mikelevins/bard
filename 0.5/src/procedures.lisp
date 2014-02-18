@@ -20,12 +20,10 @@
 ;;; 3. modify method representation so that it
 ;;;    can optionally contain a native-code version
 ;;;    of the compiled method
-;;; 4. make types applicable
-
 
 (defclass procedure ()
   ((code :accessor code :initarg :code)
-   (env :accessor env :initarg :env)
+   (env :accessor env :initform nil :initarg :env)
    (name :accessor name :initform nil :initarg :name)
    (args :accessor args :initform nil :initarg :args)))
 

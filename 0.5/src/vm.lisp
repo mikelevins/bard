@@ -83,7 +83,7 @@
                          "Wrong number of arguments:~
                          ~d or more expected, ~d supplied"
                          (arg1 instr) n-args)
-                 (push (make-array (+ 1 (arg1 instr))) env)
+                 (push (make-array (+ 1 (arg1 instr)) :initial-element nil) env)
                  (loop repeat (- n-args (arg1 instr)) do
                       (push (pop stack) (elt (first env) (arg1 instr))))
                  (loop for i from (- (arg1 instr) 1) downto 0 do
