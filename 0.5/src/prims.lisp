@@ -26,7 +26,8 @@
     (read 0 bard-read nil t) (end? 1 end?)
     (write 1 write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t) 
-    (name! 2 name! true t) (random 1 random true nil)))
+    (name! 2 name! true t) (random 1 random true nil)
+    (mkrecord 1 mkrecord true)))
 
 ;;; ==============================
 
@@ -46,3 +47,4 @@
 (defun list2 (x y) (list x y))
 (defun list3 (x y z) (list x y z))
 (defun newline () (terpri))
+(defun mkrecord (slots)(make-record-instance nil slots))

@@ -128,6 +128,12 @@
          ((T NIL -1 0 1 2)
           (push (opcode instr) stack))
          
+         ;; Base-type constructors:
+         (MKRECORD
+          (setf stack
+                (cons (funcall (opcode instr)(first stack))
+                      (rest stack))))
+         
          ;; Other:
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))

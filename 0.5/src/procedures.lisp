@@ -50,7 +50,7 @@
 
 (defmethod show-method (thing &optional (stream *standard-output*) indent)
   (declare (ignore indent))
-  (format stream "~8a" thing))
+  (format stream "~8s" thing))
 
 (defmethod show-method ((method method) &optional (stream *standard-output*) (indent 2))
   (progn

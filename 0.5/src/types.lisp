@@ -51,7 +51,12 @@
 (defparameter +bits+ (make-instance 'base-type :name 'bits))
 (defparameter +procedure+ (make-instance 'base-type :name 'procedure))
 
-(defparameter +record+ (make-instance 'base-type :name 'record))
+(defparameter +record+ (make-instance 'base-type :name 'record :args 'args :env nil
+                                      :code (seq
+                                             (gen 'ARGS. 0)
+                                             (gen 'LVAR 0 0)
+                                             (gen 'MKRECORD)
+                                             (gen 'RETURN))))
 
 (defparameter +list+ (make-instance 'base-type :name 'list))
 (defparameter +values+ (make-instance 'base-type :name 'values))
