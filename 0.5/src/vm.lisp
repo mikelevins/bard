@@ -29,7 +29,7 @@
 
 (defun machine (f)
   "Run the abstract machine on the code for f."
-  (let* ((code (method-code f))
+  (let* ((code (code f))
          (pc 0)
          (env nil)
          (stack nil)
@@ -61,15 +61,15 @@
                        stack))
          (RETURN ;; return value is top of stack; ret-addr is second
            (setf f (ret-addr-method (second stack))
-                 code (method-code f)
+                 code (code f)
                  env (ret-addr-env (second stack))
                  pc (ret-addr-pc (second stack)))
            ;; Get rid of the ret-addr, but keep the value
            (setf stack (cons (first stack) (rest2 stack))))
          (CALLJ  (pop env)                 ; discard the top frame
                  (setf f  (pop stack)
-                       code (method-code f)
-                       env (method-env f)
+                       code (code f)
+                       env (env f)
                        pc 0
                        n-args (arg1 instr)))
          (ARGS   (assert (= n-args (arg1 instr)) ()
@@ -88,7 +88,7 @@
                       (push (pop stack) (elt (first env) (arg1 instr))))
                  (loop for i from (- (arg1 instr) 1) downto 0 do
                       (setf (elt (first env) i) (pop stack))))
-         (METHOD     (push (make-method :code (method-code (arg1 instr))
+         (METHOD     (push (make-instance 'method :code (code (arg1 instr))
                                 :env env) stack))
          (PRIM   (push (apply (arg1 instr)
                               (loop with args = nil repeat n-args
@@ -98,7 +98,7 @@
          
          ;; Continuation instructions:
          (SET-CC (setf stack (top stack)))
-         (CC     (push (make-method
+         (CC     (push (make-instance 'method
                         :env (list (vector stack))
                         :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
                                 (LVAR 0 0) (RETURN)))

@@ -27,9 +27,9 @@
 (defun assemble (method)
   "Turn a list of instructions into a vector."
   (multiple-value-bind (length labels)
-      (asm-first-pass (method-code method))
-    (setf (method-code method)
-          (asm-second-pass (method-code method)
+      (asm-first-pass (code method))
+    (setf (code method)
+          (asm-second-pass (code method)
                            length labels))
     method))
 

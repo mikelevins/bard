@@ -15,7 +15,7 @@
 ;;; base types
 ;;; ---------------------------------------------------------------------
 
-(defclass base-type ()
+(defclass base-type (procedure)
   ((name :reader type-name :initarg :name)))
 
 (defclass bits-type (base-type)

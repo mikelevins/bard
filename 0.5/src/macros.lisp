@@ -66,8 +66,8 @@
 
 (defun name! (method name)
   "Set the name field of method, if it is an un-named method."
-  (when (and (method-p method) (null (method-name method)))
-    (setf (method-name method) name))
+  (when (and (method-p method) (null (name method)))
+    (setf (name method) name))
   name)
 
 (set-global-var! 'name! #'name!)
