@@ -28,7 +28,7 @@
   (set-global-var! 'bits +bits+)
   (set-global-var! 'procedure +procedure+)
   (set-global-var! 'record +record+)
-  (set-global-var! 'list-type +list+)
+  (set-global-var! 'list +list+)
   (set-global-var! 'values +values+)
   ;; built-in methods
   (set-global-var! 'exit 

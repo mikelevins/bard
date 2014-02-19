@@ -109,26 +109,25 @@
           (push (funcall (opcode instr)) stack))
          
          ;; Unary operations:
-         ((CAR CDR CADR END? NOT LIST1 COMPILER DISPLAY WRITE RANDOM) 
+         ((CAR CDR CADR END? NOT COMPILER DISPLAY WRITE RANDOM) 
           (push (funcall (opcode instr) (pop stack)) stack))
          
          ;; Binary operations:
-         ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
+         ((+ - * / < > <= >= /= = CONS NAME! EQ EQUAL EQL)
           (setf stack (cons (funcall (opcode instr) (second stack)
                                      (first stack))
                             (rest2 stack))))
-         
-         ;; Ternary operations:
-         (LIST3
-          (setf stack (cons (funcall (opcode instr) (third stack)
-                                     (second stack) (first stack))
-                            (rest3 stack))))
          
          ;; Constants:
          ((T NIL -1 0 1 2)
           (push (opcode instr) stack))
          
          ;; Base-type constructors:
+         (MKLIST
+          (setf stack
+                (cons (funcall (opcode instr)(first stack))
+                      (rest stack))))
+         
          (MKRECORD
           (setf stack
                 (cons (funcall (opcode instr)(first stack))

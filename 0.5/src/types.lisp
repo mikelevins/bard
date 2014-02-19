@@ -51,6 +51,13 @@
 (defparameter +bits+ (make-instance 'base-type :name 'bits))
 (defparameter +procedure+ (make-instance 'base-type :name 'procedure))
 
+(defparameter +list+ (make-instance 'base-type :name 'list :args 'args :env nil
+                                    :code (seq
+                                           (gen 'ARGS. 0)
+                                           (gen 'LVAR 0 0)
+                                           (gen 'MKLIST)
+                                           (gen 'RETURN))))
+
 (defparameter +record+ (make-instance 'base-type :name 'record :args 'args :env nil
                                       :code (seq
                                              (gen 'ARGS. 0)
@@ -58,8 +65,12 @@
                                              (gen 'MKRECORD)
                                              (gen 'RETURN))))
 
-(defparameter +list+ (make-instance 'base-type :name 'list))
 (defparameter +values+ (make-instance 'base-type :name 'values))
+
+;;; ---------------------------------------------------------------------
+;;; list instances
+;;; ---------------------------------------------------------------------
+;;; the default list instance is just a Lisp cons-based list
 
 ;;; ---------------------------------------------------------------------
 ;;; record instances
