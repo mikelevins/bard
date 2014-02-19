@@ -11,10 +11,10 @@
 
 (in-package :bard)
 
+
 ;;; ---------------------------------------------------------------------
 ;;; base types
 ;;; ---------------------------------------------------------------------
-
 
 ;;; base-type is a subclass of procedure because types are applicable;
 ;;; applying a type constructs an instance of the type
@@ -123,3 +123,19 @@
 
 (defun make-values-instance (vals)
   (make-instance 'values-instance :vals vals))
+
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; primitive types
+;;; ---------------------------------------------------------------------
+;;; primitive types are the type objects that identify native Lisp
+;;; representations of values. For example, the underlying
+;;; representations of character objects are of Common Lisp type
+;;; CHARACTER. The Bard primitive type character is a wrapper for the
+;;; native Common Lisp type that provides type-like behavior for it in
+;;; the Bard environment. As an example, unlike the Common Lisp
+;;; CHARACTER type, the Bard character type is a data constructor that
+;;; can be applied to some arguments to construct an instance of
+;;; itself.
+
