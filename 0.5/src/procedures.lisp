@@ -32,35 +32,35 @@
     (format out "~a" (or (name proc)
                          "(anonymous)"))))
 
-;;; ---------------------------------------------------------------------
-
-(defclass method (procedure)())
-
-(defmethod method-p (x)
+(defmethod procedure-p (x)
   (declare (ignore x))
   nil)
 
-(defmethod method-p ((x method))
+(defmethod procedure-p ((x procedure))
   (declare (ignore x))
   t)
 
-(defun new-method (&key code env name args)
-  (assemble (make-instance 'method :env env :name name :args args
+(defun new-procedure (&key (type 'procedure) code env name args)
+  (assemble (make-instance type :env env :name name :args args
                            :code (optimize code))))
 
-(defmethod show-method (thing &optional (stream *standard-output*) indent)
+(defmethod show-procedure (thing &optional (stream *standard-output*) indent)
   (declare (ignore indent))
   (format stream "~8s" thing))
 
-(defmethod show-method ((method method) &optional (stream *standard-output*) (indent 2))
+(defmethod show-procedure ((proc procedure) &optional (stream *standard-output*) (indent 2))
   (progn
     (fresh-line)
-    (dotimes (i (length (code method)))
-      (let ((instr (elt (code method) i)))
+    (dotimes (i (length (code proc)))
+      (let ((instr (elt (code proc) i)))
         (if (label-p instr)
             (format stream "~a:" instr)
             (progn
               (format stream "~VT~2d: " indent i)
               (dolist (arg instr)
-                (show-method arg stream (+ indent 8)))
+                (show-procedure arg stream (+ indent 8)))
               (fresh-line)))))))
+
+;;; ---------------------------------------------------------------------
+
+(defclass method (procedure)())

@@ -73,6 +73,11 @@
                 (format out "~S" val)))))
     (princ "}>" out)))
 
+(defmethod object->display-string ((obj values-instance))
+  (with-output-to-string (out)
+    (loop for item in (vals obj) 
+       do (format out "~%~S" item))))
+
 ;;; ---------------------------------------------------------------------
 ;;; printer entry points
 ;;; ---------------------------------------------------------------------

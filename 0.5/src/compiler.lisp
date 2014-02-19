@@ -79,6 +79,9 @@
        (METHOD (when val?
                  (let ((f (comp-method (second x) (rest2 x) env)))
                    (seq (gen 'METHOD f) (unless more? (gen 'RETURN))))))
+       (PROCEDURE (when val?
+                    (let ((f (comp-procedure (second x) (rest2 x) env)))
+                      (seq (gen 'PROCEDURE f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
 
@@ -204,12 +207,20 @@
 ;;; ==============================
 
 (defun comp-method (args body env)
-  "Compile a method form into a closure with compiled code."
-  (new-method :env env :args args
-          :code (seq (gen-args args 0)
-                     (comp-begin body
-                                 (cons (make-true-list args) env)
-                                 t nil))))
+  "Compile a method form into a closure of type method with compiled code."
+  (new-procedure :type 'method :env env :args args
+                 :code (seq (gen-args args 0)
+                            (comp-begin body
+                                        (cons (make-true-list args) env)
+                                        t nil))))
+
+(defun comp-procedure (args body env)
+  "Compile a method form into a closure of type procedure with compiled code."
+  (new-procedure :type 'procedure :env env :args args
+                 :code (seq (gen-args args 0)
+                            (comp-begin body
+                                        (cons (make-true-list args) env)
+                                        t nil))))
 
 (defun gen-args (args n-so-far)
   "Generate an instruction to load the arguments."

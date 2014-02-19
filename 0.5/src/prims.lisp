@@ -27,8 +27,10 @@
     (newline 0 newline nil t) (compiler 1 compiler t) 
     (name! 2 name! true t) (random 1 random true nil)
     ;; base-type constructors
+    (mkbits 1 mkbits true)
     (mklist 1 mklist true)
-    (mkrecord 1 mkrecord true)))
+    (mkrecord 1 mkrecord true)
+    (mkvalues 1 mkvalues true)))
 
 ;;; ==============================
 
@@ -48,5 +50,7 @@
 (defun list2 (x y) (list x y))
 (defun list3 (x y z) (list x y z))
 (defun newline () (terpri))
+(defun mkbits (n) (if (integerp n) n (error "bits constructor expected an integer but found ~S" n)))
 (defun mklist (elts) elts)
 (defun mkrecord (slots)(make-record-instance nil slots))
+(defun mkvalues (vals)(make-values-instance vals))

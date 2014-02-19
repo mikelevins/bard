@@ -90,6 +90,8 @@
                       (setf (elt (first env) i) (pop stack))))
          (METHOD     (push (make-instance 'method :code (code (arg1 instr))
                                 :env env) stack))
+         (PROCEDURE     (push (make-instance 'procedure :code (code (arg1 instr))
+                                             :env env) stack))
          (PRIM   (push (apply (arg1 instr)
                               (loop with args = nil repeat n-args
                                  do (push (pop stack) args)
@@ -123,16 +125,12 @@
           (push (opcode instr) stack))
          
          ;; Base-type constructors:
-         (MKLIST
+
+         ((MKBITS MKLIST MKRECORD MKVALUES)
           (setf stack
                 (cons (funcall (opcode instr)(first stack))
                       (rest stack))))
-         
-         (MKRECORD
-          (setf stack
-                (cons (funcall (opcode instr)(first stack))
-                      (rest stack))))
-         
+
          ;; Other:
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))

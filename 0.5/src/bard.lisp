@@ -32,16 +32,16 @@
   (set-global-var! 'values +values+)
   ;; built-in methods
   (set-global-var! 'exit 
-                   (new-method :name 'exit :args '(val) :code '((HALT))))
+                   (new-procedure :type 'method :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
-                   (new-method :name 'call/cc :args '(f)
+                   (new-procedure :type 'method :name 'call/cc :args '(f)
                            :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
                                    (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
   (dolist (prim *primitive-fns*)
     (setf (get (prim-symbol prim) 'global-val)
-          (new-method :env nil :name (prim-symbol prim)
-                  :code (seq (gen 'PRIM (prim-symbol prim))
-                             (gen 'RETURN))))))
+          (new-procedure :type 'method :env nil :name (prim-symbol prim)
+                         :code (seq (gen 'PRIM (prim-symbol prim))
+                                    (gen 'RETURN))))))
 
 ;;; ==============================
 

@@ -64,10 +64,11 @@
                 (begin .,(rest (first clauses)))
                 (cond .,(rest clauses))))))
 
-(defun name! (method name)
-  "Set the name field of method, if it is an un-named method."
-  (when (and (method-p method) (null (name method)))
-    (setf (name method) name))
+(defun name! (procedure name)
+  "Set the name field of procedure, if it is an un-named method."
+  (when (and (procedure-p procedure) 
+             (null (name procedure)))
+    (setf (name procedure) name))
   name)
 
 (set-global-var! 'name! #'name!)

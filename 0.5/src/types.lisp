@@ -48,8 +48,19 @@
 (defclass values-type (base-type)())
 
 
-(defparameter +bits+ (make-instance 'base-type :name 'bits))
-(defparameter +procedure+ (make-instance 'base-type :name 'procedure))
+(defparameter +bits+ (make-instance 'base-type :name 'bits :args '(n) :env nil
+                                    :code (seq
+                                           (gen 'ARGS 1)
+                                           (gen 'LVAR 0 0)
+                                           (gen 'MKBITS)
+                                           (gen 'RETURN))))
+
+(defparameter +procedure+ (make-instance 'base-type :name 'procedure :args 'args :env nil
+                                         :code (seq
+                                                (gen 'ARGS. 0)
+                                                (gen 'LVAR 0 0)
+                                                (gen 'MKPROC)
+                                                (gen 'RETURN))))
 
 (defparameter +list+ (make-instance 'base-type :name 'list :args 'args :env nil
                                     :code (seq
@@ -65,7 +76,22 @@
                                              (gen 'MKRECORD)
                                              (gen 'RETURN))))
 
-(defparameter +values+ (make-instance 'base-type :name 'values))
+(defparameter +values+ (make-instance 'base-type :name 'values  :args 'args :env nil
+                                      :code (seq
+                                             (gen 'ARGS. 0)
+                                             (gen 'LVAR 0 0)
+                                             (gen 'MKVALUES)
+                                             (gen 'RETURN))))
+
+;;; ---------------------------------------------------------------------
+;;; bits instances
+;;; ---------------------------------------------------------------------
+;;; the default bits instance is just a Lisp integer
+
+;;; ---------------------------------------------------------------------
+;;; procedure instances
+;;; ---------------------------------------------------------------------
+;;; the default procedure instance is an instance of the Bard class procedure
 
 ;;; ---------------------------------------------------------------------
 ;;; list instances
@@ -86,3 +112,14 @@
                   collect (cons (car tail)(cadr tail)))))
     (make-instance 'record-instance :record-type record-type 
                    :slots (fset:convert 'fset:map slots))))
+
+;;; ---------------------------------------------------------------------
+;;; values instances
+;;; ---------------------------------------------------------------------
+;;; objects that represent multiple return values
+
+(defclass values-instance ()
+  ((vals :accessor vals :initform nil :initarg :vals)))
+
+(defun make-values-instance (vals)
+  (make-instance 'values-instance :vals vals))
