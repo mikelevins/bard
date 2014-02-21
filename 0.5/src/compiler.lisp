@@ -25,7 +25,7 @@
 
 (defun comp-show (x)
   "Compile an expression and show the resulting code"
-  (show-method (compiler x))
+  (show-procedure (compiler x))
   (values))
 
 ;;; ==============================
