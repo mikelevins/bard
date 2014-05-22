@@ -1,0 +1,219 @@
+Bard 0.5 features
+
+I. Special Forms
+
+A. Evaluation
+
+   apply
+        (apply procedure argument-list) => (Values Anything)
+
+   eval
+         (eval expression) => (Values Anything)
+
+B. Definitions
+
+  define variable
+         (define variable value-expression) => Anything
+
+  define class
+         (define class class-name (superclass*)) => Name
+
+  define macro
+         (define macro (macro-name parameter*)
+           body-expression*) => Name
+
+  define method
+         (define method (function-name parameter*)
+           body-expression*) => Name
+
+         (define method (function-name (parameter type)*)
+           body-expression*) => Name
+
+  define protocol
+         (define protocol (extended-protocol*)
+           function-name function-signature
+           ...) -> Name
+
+  Type definitions
+
+  define enumerated type
+         (define enumerated type
+            type-name [value*]) => Enumerated
+
+  define record type
+         (define record type
+           type-name
+           {slot-name slot-description}) => Record
+  
+  define synonym type
+         (define synonym type
+           type-name original-type-name) => Synonym
+
+  define union type
+         (define union type
+           type-name [original-type-name*]) => Union
+
+  define vector type
+         (define vector type
+           type-name
+           :count nothing
+           :minimum-count 0
+           :maximum-count nothing
+           :element-type Anything) => Vector
+
+C. Control
+
+   begin
+        (begin expression*) => (Values Anything)
+
+   case
+        (case value-expression
+          ((constant*) result-expression*)*
+          (else else-expression*)) => (Values Anything)
+
+   catch
+       (catch tag &optional result-value*) => result-value*
+
+   cond
+       (cond 
+         (test-expression* expression*)
+         ...
+         (else else-expression*)) => (Values Anything)
+
+   ensure
+        (ensure cleanup-expression :after body-expression) => (Values Anything)
+
+   if
+        (if test-expression then-expression result-expression else-expression) => (Values Anything)
+
+   throw
+        (throw tag)
+
+   unless
+        (unless test-expression
+          expression*) => (Values Anything)
+
+   when
+        (when test-expression
+          expression*) => (Values Anything)
+
+   with exit
+        (with exit (exit-name)
+          expression*) => (Values Anything)
+
+   with open
+        (with open (stream-name stream-expression open-param*)
+          expression*) => (Values Anything)
+
+D. Bindings
+   
+   let
+        (let ((var-name* vals-expression)*)
+          expression*) => (Values Anything)
+
+   match
+        (match ((pattern vals-expression)*)
+          expression*) => (Values Anything)
+
+E. Iteration
+
+   current-value
+        (value iteration-state) => Anything*
+
+   for
+        (for var-name in collection
+          do expression*) => (Values Anything)
+
+   generate
+        (generate resume-name ((var-name initial-value)*)
+          expression*
+          [(yield value)]
+          expression*
+          (resume-name new-initial-value*)) => Generator
+
+   loop
+        (loop loop-name ((var-name* vals-expression)*)
+          expression*
+          [(loop-name new-initial-value*)]
+          expression*) => (Values Anything)
+
+   next
+        (next iteration-state) => iteration-state'
+
+   next?
+        (next? iteration-state) => Boolean
+
+   repeat
+        (repeat expression)
+
+   start
+        (start collection) => iteration-state
+
+F. Conditions
+
+   abort
+        (abort &optonal value) => value
+
+   handle
+        (handle (condition-variable handler-expression*)
+          expression*) => (Values Anything)
+
+   restart
+        (restart restart-value &optional restart-parameters)
+
+   signal
+        (signal condition-value &optional condition parameters)
+
+G. Functions and methods
+
+   add-method!
+        (add-method! function signature method) => Function
+
+   function
+        (function input-type* -> output-type*) => Function
+
+   method
+        (method (parameter-name*)
+          expression*) => Method
+
+   methods
+        (methods function) => (List Method)
+
+   next-method
+        (next-method &optional parameter-value*) => Method
+
+   remove-method!
+        (remove-method! function signature) => Function
+
+H. Assignment
+
+   set!
+        (set! variable-name value-expression) => Anything
+        (set! (getter-name object) value-expression) => Anything
+
+   setter
+        (setter variable) => Method
+        (setter (getter-name variable)) => Method
+
+I. Concurrency and distributed processing
+
+   spawn
+        (spawn procedure &key actor timeout) => Actor
+
+   send
+        (send actor value &optional metadata-map) => Actor
+
+   receive
+        (receive &key pattern timeout) => Message ; Messages wrap received value so we can get metadata from them
+   
+J. Types
+
+   as
+        (as type value) => Anything
+
+   limited
+        (limited type limit-parameter*) => LimitedType
+
+   the
+        (the type expression) => value' ; signals an error if expression cannot be interpreted as type
+

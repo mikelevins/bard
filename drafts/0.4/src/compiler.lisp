@@ -1,0 +1,267 @@
+;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          compiler.lisp
+;;;; Project:       Bard
+;;;; Purpose:       the bard compiler
+;;;; Author:        mikel evins
+;;;; Copyright:     2013 mikel evins
+;;;;                Portions copyright 1991 by Peter Norvig
+;;;;
+;;;; ***********************************************************************
+
+(in-package :bard)
+
+;;; ---------------------------------------------------------------------
+;;; code sequencer
+;;; ---------------------------------------------------------------------
+
+(defun seq (&rest code)
+  (apply #'append code))
+
+;;; ---------------------------------------------------------------------
+;;; code generators
+;;; ---------------------------------------------------------------------
+
+(defvar *label-num* 0)
+
+(defun gen (opcode &rest args)
+  (list (cons opcode args)))
+
+(defun gen-label (&optional (label 'L))
+  (intern (format nil "~a~d" label (incf *label-num*))))
+
+(defun gen-def (var env)
+  (gen 'GDEF var))
+
+(defun gen-set (var env)
+  (if (in-environment? var env)
+      (gen 'LSET var)
+      (gen 'GSET var)))
+
+(defun gen-var (var env)
+  (if (in-environment? var env)
+      (gen 'LREF var)
+      (gen 'GREF var)))
+
+;;; ---------------------------------------------------------------------
+;;; expression compilers
+;;; ---------------------------------------------------------------------
+
+(defun comp-begin (exps env val? more?)
+  (cond ((null exps) (comp-const (nothing) val? more?))
+        ((length=1? exps) (comp (first exps) env val? more?))
+        (t (seq (comp (first exps) env t t)
+                `((POP))
+                (comp-begin (rest exps) env val? more?)))))
+
+(defun comp-const (x val? more?)
+  (if val?
+      (seq (cond
+             ((equal x *undefined*)(gen 'UNDEFINED))
+             ((equal x *nothing*)(gen 'NOTHING))
+             ((equal x *false*)(gen 'FALSE))
+             ((equal x *true*)(gen 'TRUE))
+             (t (gen 'CONST x)))
+           (unless more? (gen 'RETURN)))
+      nil))
+
+
+(defun comp-def (var-form val-form env val? more?)
+  (assert (symbolp var-form) () "Only variables can be defined, not ~a" var-form)
+  (seq (comp val-form env t t)
+       (gen-def var-form env)
+       (if (not val?) (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
+(defmethod comp-define (dtype expr env val? more?)
+  (error "Unrecognized definition type: ~a" dtype))
+
+(defmethod comp-define ((dtype (eql 'bard-symbols::|variable|)) expr env val? more?)
+  (let ((var-form (first expr))
+        (val-form (second expr)))
+    (comp `(bard-symbols::|set!| ,var-form ,val-form) env val? more?)))
+
+(defun comp-if (pred then else env val? more?)
+  (let ((pcode (comp pred env t t))
+        (tcode (comp then env val? more?))
+        (ecode (comp else env val? more?)))
+    (let ((L1 (gen-label))
+          (L2 (if more? (gen-label))))
+      (seq pcode (gen 'FGO L1) tcode
+           (if more? (gen 'GO L2))
+           (list L1) ecode (if more? (list L2))))))
+
+(defun comp-funcall (f args env val? more?)
+  (let ((prim (primitive? f env (length args))))
+    (cond
+      ;; function compilable to a primitive instruction
+      (prim (seq (comp-list args env)
+                 (gen (prim-opcode prim))
+                 (unless val? (gen 'POP))
+                 (unless more? (gen 'RETURN))))
+      ;; Need to save the continuation point
+      (more? 
+       (let ((k (gen-label 'k)))
+         (seq (gen 'SAVE k)
+              (comp-list args env)
+              (comp f env t t)
+              (gen 'CALLJ (length args))
+              (list k)
+              (if (not val?) (gen 'POP)))))
+      (t (seq (comp-list args env)
+              (comp f env t t)
+              (gen 'CALLJ (length args)))))))
+
+;;; (-> input* -> output*)
+(defun comp-function (expr env)
+  (let* ((expr* (rest expr))
+         (arrow-pos (position 'bard-symbols::|->| expr*)))
+    (if arrow-pos
+        (let* ((inputs (subseq expr* 0 arrow-pos))
+               (outputs (subseq expr* (+ 1 arrow-pos))))
+          (assert (every 'symbolp inputs)() "Invalid input types: ~s" inputs)
+          (assert (every 'symbolp outputs)() "Invalid output types: ~s" outputs)
+          (make-instance '<function> :input-types inputs :output-types outputs))
+        (error "Invalid function syntax: ~s" expr))))
+
+(defun comp-list (exps env)
+  (if (null exps) nil
+      (seq (comp (first exps) env t t)
+           (comp-list (rest exps) env))))
+
+(defun comp-method (args body env)
+  (multiple-value-bind (params restarg)(parse-method-args args)
+    (let* ((param-vals (times (length params) *undefined*))
+           (restval nil)
+           (call-env (extend-environment env 
+                                         (append params (list restarg))
+                                         (append param-vals (list restval)))))
+      (make-instance '<method> 
+                     :expression (cons 'bard-symbols::|^| (cons args body))
+                     :env env :args args
+                     :code (assemble
+                            (seq (comp-begin body call-env t nil)))))))
+
+(defun comp-set! (var-form val-form env val? more?)
+  (assert (symbolp var-form) () "Only variables can be set!, not ~a" var-form)
+  (seq (comp val-form env t t)
+       (gen-set var-form env)
+       (if (not val?) (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
+(defun comp-time (exp env val? more?)
+  (seq (gen 'START-TIMER)
+       (comp exp env val? t)
+       (gen 'REPORT-TIME)
+       (unless val? (gen 'POP))
+       (unless more? (gen 'RETURN))))
+
+(defun comp-var (x env val? more?)
+  (if val?
+      (seq (gen-var x env)
+           (if more?
+               nil
+               (gen 'RETURN)))
+      nil))
+
+(defun parse-method-args (args)
+  (let* ((rest-marker 'bard-symbols::|&|)
+         (marker-pos (position rest-marker args)))
+    (if marker-pos
+        (let ((len (length args)))
+          (assert (= len (+ 2 marker-pos))() "Invalid parameter list ~a" 
+                  (value->literal-string args))
+          (let ((required-args (subseq args 0 marker-pos))
+                (restarg (elt args (+ marker-pos 1))))
+            (assert (symbolp restarg)() "Invalid rest argument ~a" 
+                    (value->literal-string restarg))
+            (values required-args restarg)))
+        (values args nil))))
+
+
+;;; ---------------------------------------------------------------------
+;;; compiler utils
+;;; ---------------------------------------------------------------------
+
+(defun arg-count (form min &optional (max min))
+  (let ((n-args (length (rest form))))
+    (assert (<= min n-args max) (form)
+      "Wrong number of arguments for ~a in ~a: 
+       ~d supplied, ~d~@[ to ~d~] expected"
+      (first form) form n-args min (if (/= min max) max))))
+
+;;; ---------------------------------------------------------------------
+;;; main compiler entry point
+;;; ---------------------------------------------------------------------
+
+(defun comp (expr env val? more?)
+  (cond
+    ;; named constants
+    ((member expr `(,*eof* ,*undefined* ,*nothing* ,*false* ,*true*))
+     (comp-const expr val? more?))
+
+    ((keywordp expr) (comp-const expr val? more?))
+
+    ;; variable references
+    ((symbolp expr) (comp-var expr env val? more?))
+
+    ;; self-evaluating values
+    ((atom expr) (comp-const expr val? more?))
+
+    ;; macro forms
+    ((bard-macro? (first expr)) (comp (bard-macroexpand expr) env val? more?))
+
+    ;; procedure applications
+    (t (let* ((op (first expr)))
+         (case op
+
+           ;; special forms
+           ;; ------------------
+           (bard-symbols::|begin|
+                          (comp-begin (rest expr) env val? more?))
+           
+           (bard-symbols::|def|
+                          (arg-count expr 2)
+                          (comp-def (second expr)(third expr) env val? more?))
+
+           (bard-symbols::|define|
+                          (comp-define (second expr) (drop 2 expr) env val? more?))
+
+           ((bard-symbols::|function| bard-symbols::|->|)
+            (when val?
+              (let ((f (comp-function expr env)))
+                (seq (gen 'FUNCTION f) (unless more? (gen 'RETURN))))))
+
+           (bard-symbols::|if|
+                          (arg-count expr 3)
+                          (comp-if (second expr) (third expr) (fourth expr)
+                                   env val? more?))
+
+           ((bard-symbols::|method| bard-symbols::|^|)
+            (when val?
+              (let ((f (comp-method (second expr) (drop 2 expr) env)))
+                (seq (gen 'METHOD f) (unless more? (gen 'RETURN))))))
+
+           (bard-symbols::|quote|
+                          (arg-count expr 1)
+                          (comp-const (second expr) val? more?))
+
+           (bard-symbols::|set!|
+                          (arg-count expr 2)
+                          (comp-set! (second expr)(third expr) env val? more?))
+
+           (bard-symbols::|time|
+                          (comp-time (second expr) env val? more?))
+
+           ;; function and method calls
+           ;; --------------------------
+           (t (comp-funcall (first expr) (rest expr) env val? more?)))))))
+
+;;; ---------------------------------------------------------------------
+;;; compiler for use from Bard code
+;;; ---------------------------------------------------------------------
+
+(defun compiler (x)
+  (setf *label-num* 0)
+  (comp-method '() (list x) (null-environment)))

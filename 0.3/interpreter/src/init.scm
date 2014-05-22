@@ -157,6 +157,7 @@
   (%defglobal 'odd? prim:odd?)
   (%defglobal 'random prim:random)
   (%defglobal 'remainder prim:remainder)
+
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Comparing
 ;;; ---------------------------------------------------------------------
@@ -188,7 +189,6 @@
   (%defglobal 'next-n prim:next-n)
   (%defglobal 'range-from prim:range-from)
 
-
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Listing
 ;;; ---------------------------------------------------------------------
@@ -207,7 +207,6 @@
   (%defglobal 'last bard:last)
   (%defglobal 'length bard:length)
   (%defglobal 'list prim:list)
-  (%defglobal 'list? bard:list?)
   (%defglobal 'map prim:map)
   (%defglobal 'member? bard:member?)
   (%defglobal 'next-last bard:next-last)
@@ -292,7 +291,8 @@
 ;;; ---------------------------------------------------------------------
 
   (%defglobal 'boolean? prim:boolean?)
-  (%defglobal 'char? prim:char?)
+  (%defglobal 'character? prim:char?)
+  (%defglobal 'class? bard:class?)
   (%defglobal 'false? prim:false?)
   (%defglobal 'float? prim:float?)
   (%defglobal 'foreign-value? prim:foreign-value?)
@@ -300,10 +300,15 @@
   (%defglobal 'input-stream? prim:input-stream?)
   (%defglobal 'integer? prim:integer?)
   (%defglobal 'iostream? prim:iostream?)
+  (%defglobal 'keyword? bard:keyword?)
   (%defglobal 'nothing? bard:nothing?)
   (%defglobal 'output-stream? prim:output-stream?)
   (%defglobal 'protocols prim:protocols)
+  (%defglobal 'list? bard:list?)
   (%defglobal 'list-protocols prim:list-protocols)
+  (%defglobal 'method? bard:method?)
+  (%defglobal 'pair? bard:pair?)
+  (%defglobal 'protocol? bard:protocol?)
   (%defglobal 'singleton prim:singleton)
   (%defglobal 'something? bard:something?)
   (%defglobal 'symbol? bard:symbol?)
@@ -311,6 +316,7 @@
   (%defglobal 'text? bard:text?)
   (%defglobal 'true? prim:true?)
   (%defglobal 'type bard:type)
+  (%defglobal 'undefined? bard:undefined?) ;;; *** unimplemented
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Writing

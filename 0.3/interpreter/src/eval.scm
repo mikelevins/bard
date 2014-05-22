@@ -20,7 +20,7 @@
             (let ((global-val (%global-value var)))
               (if (%defined? global-val)
                   global-val
-                  (error (string-append "Undefined variable: " (object->string var)))))))))
+                  #!unbound))))))
 
 (define (%eval-sequence seq env)
   (let loop ((exprs seq)

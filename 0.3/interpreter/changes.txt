@@ -1,3 +1,8 @@
+0.3.8
+
+- evaluating an undefined variable returns undefined
+- added keyword? pair? class? protocol? undefined?
+
 0.3.7
 
 - fixed a bug (a cut-paste error) in types the broke singleton definition

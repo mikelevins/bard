@@ -13,6 +13,72 @@
 (##include "type-signature-macros.scm")
 (##include "protocol-macros.scm")
 
+;;; class?
+
+(define-protocol-function Typing class?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method class? (Anything)
+  (constantly #f))
+
+(define-primitive-method class? (<class>)
+  (constantly #t))
+
+;;; keyword?
+
+(define-protocol-function Typing keyword?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method keyword? (Anything)
+  (constantly #f))
+
+(define-primitive-method keyword? (<keyword>)
+  (constantly #t))
+
+;;; method?
+
+(define-protocol-function Typing method?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method method? (Anything)
+  (constantly #f))
+
+(define-primitive-method method? (<interpreted-method>)
+  (constantly #t))
+
+;;; pair?
+
+(define-protocol-function Typing pair?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method pair? (Anything)
+  (constantly #f))
+
+(define-primitive-method pair? (<pair>)
+  (constantly #t))
+
+;;; protocol?
+
+(define-protocol-function Typing protocol?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method protocol? (Anything)
+  (constantly #f))
+
+(define-primitive-method protocol? (<protocol>)
+  (constantly #t))
+
+;;; undefined?
+
+(define-protocol-function Typing undefined?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method undefined? (Anything)
+  (constantly #f))
+
+(define-primitive-method undefined? (<undefined>)
+  (constantly #t))
+
 ;;; list?
 
 (define-protocol-function Typing list?
@@ -76,12 +142,6 @@
   (constantly #f))
 
 (define-primitive-method text? (<string>) 
-  (constantly #t))
-
-(define-primitive-method text? (<symbol>) 
-  (constantly #t))
-
-(define-primitive-method text? (<keyword>) 
   (constantly #t))
 
 (define-protocol-function Typing type
