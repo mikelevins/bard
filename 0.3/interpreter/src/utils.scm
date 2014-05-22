@@ -468,3 +468,6 @@
               i
               (loop (+ 1 i)))
           #f))))
+
+(define (vector-next-last vec)
+  (vector-ref vec (- (vector-length vec) 2)))

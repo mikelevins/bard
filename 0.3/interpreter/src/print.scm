@@ -113,6 +113,9 @@
 (define-printer-function (schema-tag <string>) object->string)
 (define-printer-function (schema-tag <symbol>) object->string)
 (define-printer-function (schema-tag <keyword>) object->string)
+(define-printer-function (schema-tag <vector>) object->string)
+
+
 (define-printer-function (schema-tag <primitive-procedure>) 
   (lambda (x)(string-append "#<primitive-procedure " (object->string (object->serial-number x)) ">")))
 

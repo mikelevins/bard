@@ -43,6 +43,9 @@
 (define-primitive-method add-first (<character> <string>) 
   (lambda (ch str)(string-append (string ch) str)))
 
+(define-primitive-method add-first (Anything <vector>) 
+  (lambda (it vec)(vector-append (vector it) vec)))
+
 (define-primitive-method add-first (<pair> <alist-table>) 
   (lambda (entry table)(%make-alist-table (cons entry (alist-table-slots table)))))
 
@@ -64,6 +67,9 @@
 
 (define-primitive-method add-last (<string> <character>) 
   (lambda (str ch)(string-append str (string ch))))
+
+(define-primitive-method add-last (<vector> Anything) 
+  (lambda (vec it)(vector-append vec (vector it))))
 
 (define-primitive-method add-last (<alist-table> <pair>) 
   (lambda (table entry)
@@ -87,6 +93,9 @@
 
 (define-primitive-method any (<string>) 
   (lambda (str)(string-ref str (random-integer (string-length str)))))
+
+(define-primitive-method any (<vector>) 
+  (lambda (vec)(vector-ref vec (random-integer (vector-length vec)))))
 
 (define-primitive-method any (<alist-table>) 
   (lambda (table)(alist-table-get table (car (any (alist-table-keys table))))))
@@ -122,6 +131,9 @@
 (define-primitive-method append (<string> <string>)
   string-append)
 
+(define-primitive-method append (<vector> <vector>)
+  vector-append)
+
 (define-primitive-method append (<alist-table> <alist-table>)
   (lambda (a b) (%make-alist-table (append (alist-table-slots a)(alist-table-slots b)))))
 
@@ -141,6 +153,12 @@
 (define-primitive-method by (<fixnum> <string>)
   (lambda (n s)(map (lambda (i)(list->string i))
                     (by n (string->list s)))))
+
+(define-primitive-method by (<fixnum> <vector>)
+  (lambda (n s)
+    (list->vector
+     (map (lambda (i)(list->vector i))
+          (by n (vector->list s))))))
 
 (define-primitive-method by (<fixnum> <alist-table>)
   (lambda (n s)(by n (alist-table-slots s))))
@@ -178,6 +196,9 @@
 (define-primitive-method drop (<fixnum> <string>)
   (lambda (n str)(substring str n (string-length str))))
 
+(define-primitive-method drop (<fixnum> <vector>)
+  (lambda (n vec)(subvector vec n (vector-length vec))))
+
 (define-primitive-method drop (<fixnum> <alist-table>)
   (lambda (n s)(%make-alist-table (drop n (alist-table-slots s)))))
 
@@ -205,6 +226,9 @@
 
 (define-primitive-method element (<string> <fixnum>)
   string-ref)
+
+(define-primitive-method element (<vector> <fixnum>)
+  vector-ref)
 
 (define-primitive-method element (<alist-table> <fixnum>)
   (lambda (table n)
@@ -246,6 +270,9 @@
 
 (define-primitive-method empty? (<string>)
   (lambda (str)(<= (string-length str) 0)))
+
+(define-primitive-method empty? (<vector>)
+  (lambda (vec)(<= (vector-length vec) 0)))
 
 (define-primitive-method empty? (<alist-table>)
   (lambda (table)(null? (alist-table-slots table))))
@@ -306,6 +333,22 @@
 (define-primitive-method filter (<function> <string>)
   %bard-filter-string)
 
+;;; <vector>
+
+(define (%bard-filter-vector fn vec)
+  (let* ((invals (vector->list vec))
+         (outvals (%bard-filter-list fn invals)))
+    (list->vector outvals)))
+
+(define-primitive-method filter (<primitive> <vector>)
+  %bard-filter-vector)
+
+(define-primitive-method filter (<interpreted-method> <vector>)
+  %bard-filter-vector)
+
+(define-primitive-method filter (<function> <vector>)
+  %bard-filter-vector)
+
 ;;; <alist-table>
 
 (define (%bard-filter-alist-table fn table)
@@ -358,6 +401,9 @@
 (define-primitive-method first (<string>)
   (lambda (s)(string-ref s 0)))
 
+(define-primitive-method first (<vector>)
+  (lambda (v)(vector-ref v 0)))
+
 (define-primitive-method first (<alist-table>)
   (lambda (table)(car (alist-table-slots table))))
 
@@ -389,6 +435,9 @@
 (define-primitive-method last (<string>)
   (lambda (string)(string-ref string (- (string-length string) 1))))
 
+(define-primitive-method last (<vector>)
+  (lambda (vec)(vector-ref vec (- (vector-length vec) 1))))
+
 (define-primitive-method last (<alist-table>)
   (lambda (table)
     (%pair-last (alist-table-slots table))))
@@ -408,6 +457,9 @@
 
 (define-primitive-method length (<string>)
   string-length)
+
+(define-primitive-method length (<vector>)
+  vector-length)
 
 (define-primitive-method length (<alist-table>)
   (lambda (table)(length (alist-table-slots table))))
@@ -432,6 +484,11 @@
 
 (define-primitive-method member? (<character> <string>)
   (lambda (ch str)(and (string-char-position ch str) #t)))
+
+(define-primitive-method member? (Anything <vector>)
+  (lambda (it vec)(and (vector-position (lambda (e)(equal? it e))
+                                        vec)
+                       #t)))
 
 (define-primitive-method member? (<pair> <alist-table>)
   (lambda (p tbl)
@@ -463,6 +520,9 @@
 (define-primitive-method next-last (<string>)
   string-next-last)
 
+(define-primitive-method next-last (<vector>)
+  vector-next-last)
+
 (define-primitive-method next-last (<alist-table>)
   (lambda (table)(next-last (alist-table-slots table))))
 
@@ -491,6 +551,9 @@
 
 (define-primitive-method position (<character> <string>)
   (lambda (ch str)(or (string-char-position ch str) '())))
+
+(define-primitive-method position (Anything <vector>)
+  (lambda (it vec)(or (vector-position (lambda (e)(= e it)) vec) '())))
 
 (define-primitive-method position (<pair> <alist-table>)
   (lambda (entry tbl)
@@ -523,6 +586,11 @@
     (let ((test (lambda (x)(%funcall test x))))
       (or (string-char-position-if test str) '()))))
 
+(define-primitive-method position-if (Anything <vector>)
+  (lambda (test vec)
+    (let ((test (lambda (x)(%funcall test x))))
+      (or (vector-position test vec) '()))))
+
 (define-primitive-method position-if (<pair> <alist-table>)
   (lambda (test tbl)
     (let ((test (lambda (x)(%funcall test x))))
@@ -545,6 +613,9 @@
 
 (define-primitive-method rest (<string>)
   (lambda (str)(substring str 1 (string-length str))))
+
+(define-primitive-method rest (<vector>)
+  (lambda (vec)(subvector vec 1 (vector-length vec))))
 
 (define-primitive-method rest (<alist-table>)
   (lambda (tbl)(%make-alist-table (cdr (alist-table-slots tbl)))))
@@ -578,6 +649,9 @@
 (define-primitive-method reverse (<string>)
   (lambda (str)(list->string (reverse (string->list str)))))
 
+(define-primitive-method reverse (<vector>)
+  (lambda (vec)(list->vector (reverse (vector->list vec)))))
+
 ;;; ---------------------------------------------------------------------
 ;;; second
 ;;; ---------------------------------------------------------------------
@@ -590,6 +664,9 @@
 
 (define-primitive-method second (<string>)
   (lambda (s)(string-ref s 1)))
+
+(define-primitive-method second (<vector>)
+  (lambda (v)(vector-ref v 1)))
 
 (define-primitive-method second (<alist-table>)
   (lambda (tbl)(list-ref (alist-table-slots tbl) 1)))
@@ -643,6 +720,21 @@
 (define-primitive-method some? (<function> <string>)
   %bard-string-some?)
 
+;;; <vector>
+
+(define (%bard-vector-some? fn vec)
+  (let ((ls (vector->list vec)))
+    (%bard-some? fn ls)))
+
+(define-primitive-method some? (<primitive> <vector>)
+  %bard-vector-some?)
+
+(define-primitive-method some? (<interpreted-method> <vector>)
+  %bard-vector-some?)
+
+(define-primitive-method some? (<function> <vector>)
+  %bard-vector-some?)
+
 ;;; <alist-table>
 
 (define (%bard-alist-table-some? fn tbl)
@@ -687,6 +779,9 @@
 (define-primitive-method take (<fixnum> <string>)
   (lambda (n str)(substring str 0 n)))
 
+(define-primitive-method take (<fixnum> <vector>)
+  (lambda (n vec)(subvector vec 0 n)))
+
 (define-primitive-method take (<fixnum> <alist-table>)
   (lambda (n tbl)(%make-alist-table (%bard-list-take n (alist-table-slots tbl)))))
 
@@ -715,6 +810,10 @@
   (lambda (len advance s)(map (lambda (i)(list->string i))
                               (take-by len advance (string->list s)))))
 
+(define-primitive-method take-by (<fixnum> <fixnum> <vector>)
+  (lambda (len advance v)(map (lambda (i)(list->vector i))
+                              (take-by len advance (vector->list v)))))
+
 (define-primitive-method take-by (<fixnum> <fixnum> <alist-table>)
   (lambda (len advance tbl)
     (let* ((inslots (alist-table-slots tbl))
@@ -736,6 +835,9 @@
 
 (define-primitive-method take-one (<string>)
   (lambda (s)(list (string-ref s 0))))
+
+(define-primitive-method take-one (<vector>)
+  (lambda (s)(vector (vector-ref s 0))))
 
 (define-primitive-method take-one (<fixnum> <alist-table>)
   (lambda (tbl)(%make-alist-table (list (car (alist-table-slots tbl))))))

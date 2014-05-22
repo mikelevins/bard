@@ -70,10 +70,9 @@
 
 ;;; List
 
-(define-primitive-method make ((%singleton <function>)) 
+(define-primitive-method make ((%singleton List)) 
   (lambda (type . args)
-    (let ((vals (getf values: args default: '())))
-      (copy-tree vals))))
+    (copy-tree args)))
 
 ;;; <pair>
 
@@ -129,6 +128,12 @@
 
 (define-primitive-method make (<tuple>) 
   (lambda (type . args)(instantiate-tuple type args)))
+
+;;; <vector>
+
+(define-primitive-method make ((%singleton <vector>)) 
+  (lambda (type . args)
+    (list->vector args)))
 
 ;;; <url>
 

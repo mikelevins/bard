@@ -59,6 +59,7 @@
   (%defglobal '<undefined>           <undefined>)
   (%defglobal '<union>               <union>)
   (%defglobal '<url>                 <url>)
+  (%defglobal '<vector>              <vector>)
 
   ;;; classes
 
@@ -222,6 +223,7 @@
   (%defglobal 'split-text bard:split-text)
   (%defglobal 'take bard:take)
   (%defglobal 'take-by bard:take-by)
+  (%defglobal 'vector prim:vector)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Mapping

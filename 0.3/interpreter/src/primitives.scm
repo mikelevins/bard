@@ -771,6 +771,13 @@
    required-count: 1
    restarg: #f))
 
+(define prim:vector
+  (make-primitive
+   procedure: vector
+   debug-name: 'vector
+   required-count: 0
+   restarg: 'more))
+
 (define (%bard-write data out)
   (let ((data (if (string? data)
                   data

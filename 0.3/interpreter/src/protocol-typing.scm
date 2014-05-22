@@ -79,6 +79,17 @@
 (define-primitive-method undefined? (<undefined>)
   (constantly #t))
 
+;;; vector?
+
+(define-protocol-function Typing vector?
+  signatures: (list (signature (Anything) #f (Boolean))))
+
+(define-primitive-method vector? (Anything)
+  (constantly #f))
+
+(define-primitive-method vector? (<vector>)
+  (constantly #t))
+
 ;;; list?
 
 (define-protocol-function Typing list?
@@ -94,6 +105,9 @@
   (lambda (ls)(list? ls)))
 
 (define-primitive-method list? (<string>)
+  (constantly #t))
+
+(define-primitive-method list? (<vector>)
   (constantly #t))
 
 (define-primitive-method list? (<alist-table>)

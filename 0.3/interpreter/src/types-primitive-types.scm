@@ -76,6 +76,8 @@
 (%register-primitive-schema! <primitive-procedure> tags:$procedure)
 (define <string> (make-primitive-schema '<string> tags:$string))
 (%register-primitive-schema! <string> tags:$string)
+(define <vector> (make-primitive-schema '<vector> tags:$vector))
+(%register-primitive-schema! <vector> tags:$vector)
 (define <pair> (make-primitive-schema '<pair> tags:$pair))
 (%register-primitive-schema! <pair> tags:$pair)
 
