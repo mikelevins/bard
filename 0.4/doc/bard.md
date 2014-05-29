@@ -70,7 +70,7 @@ Special forms are procedures that are built into the language and form its found
 |`define`|(define *var* *val*)| Creates a global variable named *var* with the value *val*.|  
 |`if`|(if *test* *then* *else*)| Evaluates *test*; if the result is true, evaluates *then*; otherwise, evaluates *else*.|  
 |`quote`|(quote *x*) | Returns *x* without evaluating it.	|  
-|`set!`|(set! *var* *val*)| Changes the value of `x` to `val`.|  
+|`set!`|(set! *var* *val*)| Changes the value of `var` to `val`.|  
 
 ## Built-in protocols
 
