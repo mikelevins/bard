@@ -58,6 +58,21 @@ Base structures are built-in representations of common values.
 |`function`|polymorphic generic functions|
 |`protocol`|mutable collections of functions and variables|
 
+## Base classes
+Base classes are abstract types that organize the built-in structures into related families.
+
+|class|description|
+|---------|-----------|  
+|`<anything>`|all values|  
+|`<atom>`|simple values that are not collections|  
+|`<collection>`|containers for groups of values such as `vector` and `pair`|  
+|`<number>`|numeric values such as `integer` and `float`|  
+|`<name>`|values such as `symbol`, `keyword`, and `uri`, which are used as names for variables, resources, or elements of structures|  
+|`<procedure>`|values that represent executable code, such as `function` and `method`|  
+|`<list>`|collections organized as finite sequences|  
+|`<map>`|collections organized as associative arrays|  
+|`<stream>`|values that can produce or consume other values one after another|  
+|`<type>`|values that represent families of types, such as `structure` and `class`|  
 
 ## Special forms
 
