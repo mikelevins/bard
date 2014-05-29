@@ -13,6 +13,8 @@ primarily to make me happy--to make my work more pleasant. If someone
 else likes it or finds it interesting that's a good thing, but it is
 not my primary goal.
 
+You can find a terse high-level description of the language in the 0.4 doc directory.
+
 ## Versions of Bard
 
 ### 0.2
