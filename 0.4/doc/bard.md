@@ -54,7 +54,7 @@ Base structures are built-in representations of common values.
 |`class`|named, mutable collections of types|
 |`map`|immutable associative arrays|
 |`seq`|immutable sequences|
-|`stream`|sequential produces or consumers of values|
+|`stream`|sequential producers or consumers of values|
 |`function`|polymorphic generic functions|
 |`protocol`|mutable collections of functions and variables|
 
