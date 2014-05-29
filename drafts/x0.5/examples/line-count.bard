@@ -1,5 +1,0 @@
-
-(define method (line-count path)
-  with {path Pathname}
-  (length (take-while something? (lines path))))
-

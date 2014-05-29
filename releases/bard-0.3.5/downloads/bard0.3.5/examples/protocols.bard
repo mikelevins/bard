@@ -1,4 +1,0 @@
-
-(define protocol Rational
-  (numerator Ratio -> Integer)
-  (denominator Ratio -> Integer))
