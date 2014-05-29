@@ -15,9 +15,15 @@ not my primary goal.
 
 ## Versions of Bard
 
+### 0.2
+
 The Bard 0.2 interpreter was a partial implementation of the language that served as a useful scripting tool and rules language during development of a family of educational games funded by the Office of Naval Research. It includes features specific to the game framework from that project. It's an AST-walking interpreter implemented in Gambit Scheme. It's not particularly fast, but it performed quite well enough for the purposes we used it for.
 
+### 0.3
+
 Bard 0.3 is an evolution of the 0.2 interpreter. It removes features specific to the game framework of the 0.2 version, and implements more of the Bard language design as it existed during the development of 0.3. It's roughly as fast as the 0.2 interpreter, which is to say fast enough for casual use and experimentation, but not very fast.
+
+### 0.4
 
 Bard 0.4 is a major change in the design and implementation of the language. After experimenting with several different compilers, I settled on using Per Bothner's [Kawa framework](http://www.gnu.org/software/kawa/index.html) to write the 0.4 compiler. It's too early in the development of 0.4 to assess its performance, but it's reasonable to expect it to be drastically faster than the 0.2 and 0.3 versions; Kawa performs very well.
 
