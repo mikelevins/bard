@@ -1,4 +1,4 @@
-Bard 
+# Bard 
 A programming language
 by mikel evins
 
