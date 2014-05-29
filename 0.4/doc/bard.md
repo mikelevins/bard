@@ -7,11 +7,13 @@ by mikel evins
 ## Base singletons
 Base singletons are simple atomic named constants.
 
-|name|description|
-|-|-|  
-|`true` , `false`| the Boolean truth values |  
-|`nothing`| the empty set; the absence of a useful value |  
-|`undefined`| the result of a failed computation |  
+
+name | description
+---- | -----------
+`true` , `false` | the Boolean truth values 
+`nothing`        | the empty set; the absence of a useful value 
+`undefined`      | the result of a failed computation 
+
 
 ## Types
 
@@ -35,7 +37,7 @@ Structures are also functions; they can be applied to parameters to create new i
 Base structures are built-in representations of common values. 
 
 |structure|description|
-|-|-|  
+|---------|-----------|  
 |`none`|the structure of `nothing`|  
 |`boolean`|`true` and `false`|  
 |`integer`|integers|  
@@ -62,7 +64,7 @@ Base structures are built-in representations of common values.
 Special forms are procedures that are built into the language and form its foundation. 
 
 |special form|syntax|description|  
-|-|-|  
+|------------|------|-----------|
 |`^`|(^ (*parameters*) *expressions*)| Constructs a `method`. |  
 |`begin`|(begin *expressions*)| Evaluates the *expressions* left to right and returns the value of the last one.|  
 |`define`|(define *var* *val*)| Creates a global variable named *var* with the value *val*.|  
@@ -75,7 +77,7 @@ Special forms are procedures that are built into the language and form its found
 The built-in protocols provide Bard's standard library.
 
 |protocol|description|
-|-|-|  
+|--------|-----------|  
 |`Assignment`|Procedures for updating mutable values|  
 |`Binding`|Procedures for working with lexical bindings|  
 |`Construction`|Procedures for constructing and initializing values|  
