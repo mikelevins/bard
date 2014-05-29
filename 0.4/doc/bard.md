@@ -74,7 +74,7 @@ Special forms are procedures that are built into the language and form its found
 
 ## Built-in protocols
 
-The built-in protocols provide Bard's standard library.
+The built-in protocols provide Bard's standard library. Follwing is an incomplete list of built-in protocols.
 
 |protocol|description|
 |--------|-----------|  
