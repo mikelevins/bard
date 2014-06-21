@@ -1,4 +1,4 @@
-#define ___VERSION 406006
+#define ___VERSION 407002
 #include "gambit.h"
 
 #define BardValue ___SCMOBJ

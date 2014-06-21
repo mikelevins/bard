@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#define ___VERSION 406006
+#define ___VERSION 407002
 #include "cbard.h"
 
 #define SCHEME_LIBRARY_LINKER ____20_bard__

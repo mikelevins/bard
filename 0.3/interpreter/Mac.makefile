@@ -9,6 +9,10 @@ GAMBIT_HOME=/usr/local/Gambit-C
 # Mac
 # ----------------------------------------
 
+BUILD_DIR=./build
+LIBRARY=Bard
+EXECUTABLE=bard
+
 ARCH=x86_64
 TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
 SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
