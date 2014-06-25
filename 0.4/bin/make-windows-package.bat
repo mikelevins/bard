@@ -1,0 +1,1 @@
+"C:\Program Files\Java\jdk1.8.0_05\bin\javafxpackager.exe" -deploy -native -outdir C:\Users\mevin_000\Desktop\Fabric_build\windows -outfile Fabric -srcdir . -srcfiles Fabric.jar -appclass Fabric -name "The Fabric" -title "The Fabric"

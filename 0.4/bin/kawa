@@ -1,0 +1,23 @@
+#!/bin/sh
+
+export PLATFORM="`uname`"
+export thisdir="`dirname \"$0\"`"
+export PROJECT_HOME="`( cd \"$thisdir/..\" && pwd )`"
+export PROJECT_LIB="${PROJECT_HOME}/lib"
+export PROJECT_SOURCES="${PROJECT_HOME}/src"
+
+if [ "${PLATFORM}" == "Linux" ]
+then
+    export JAVA_HOME=/usr/lib64/jvm/java-7-openjdk
+else
+    export JAVA_HOME=$(/usr/libexec/java_home)
+fi
+
+export JRE="${JAVA_HOME}/jre/lib/*"
+
+
+export PROJECT_CLASSPATH="${PROJECT_LIB}/*:${JRE}"
+
+exec java -Dproject.home=${PROJECT_HOME} -cp ${PROJECT_CLASSPATH} kawa.repl --output-format readable-scheme "$@"
+
+

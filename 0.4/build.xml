@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="jar" name="bard">
+<project name="fabric" default="jar">
 
   <path id="library.class.path">
     <pathelement location="./lib/kawa-1.14.jar"/>
-    <pathelement location="./lib/pcollections-2.1.2.jar"/>
     <pathelement location="./src"/>
     <pathelement location="."/>
   </path>
 
-  <!--bard jar-->
 
-  <target depends="compile" name="jar">
-    <jar basedir="./src" destfile="bard.jar" includes="**/*.class" manifest="MANIFEST.MF">
+  <!--jar -->
+  <target name="jar" depends="compile-main">
+    <jar destfile="bard.jar"
+         basedir="./src"
+         includes="**/*.class"
+         manifest="MANIFEST.txt">
       <zipfileset src="./lib/kawa-1.14.jar"/>
-      <zipfileset src="./lib/pcollections-2.1.2.jar"/>
     </jar>
   </target>
 
-  <!--compile bard -->
-  
-  <target name="compile">
-    <javac srcdir="./src"
-           destdir="./src"
-	   includeantruntime="true">
-      <include name="**/*.java"/>
+  <!--compile main -->
+  <target name="compile-main">
+    <java taskname="kawa"
+          classname="kawa.repl"
+          failOnError="true"
+          dir="./src"
+          fork="true">
       <classpath refid="library.class.path"/>
-    </javac>
-    <java classname="kawa.repl" dir="./src" failOnError="true" fork="true" taskname="kawa">
-      <classpath refid="library.class.path"/>
-      <arg line="-C 'structures.scm' 'ports.scm' 'toplevel.scm'"/>
+      <arg line="--main -C 'bard.scm'"/>
     </java>
   </target>
 
-  <!-- clean -->
+  <target name="run" depends="compile-main">
+    <java taskname="bard" classname="bard" classpath="${library.class.path}" fork="true"/>
+  </target>
 
-  <target description="Clean binary files" name="clean">
+  <!-- clean -->
+  <target name="clean"
+          description="Clean binary files">
     <delete verbose="true">
       <fileset dir="." includes="**/*.class"/>
       <fileset dir="." includes="bard.jar"/>
     </delete>
   </target>
 
+
 </project>
+

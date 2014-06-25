@@ -1,0 +1,5 @@
+Main-Class: bard
+Class-Path: .
+
+
+
