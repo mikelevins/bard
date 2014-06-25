@@ -18,6 +18,93 @@ name | description
 `undefined`      | the result of a failed computation 
 `end`      | the value returned by taking the next value from an empty stream 
 
+## Literals
+
+Bard is intended to provide convenient literal syntax for all its values, to the extent that it's practical to do so. It also tries to print values in a form that it can re-read to construct equivalent values.
+
+Bard does not promise to construct instances of any specific data structure when you present it with a literal expression, unless you include the type constraints that you want it to satisfy (see "Type descriptions").
+
+### Characters
+
+    #\λ
+    #\U+03BB
+    #\U_Greek_Small_Letter_Lambda
+    #\Space
+    #\NUL
+
+### Numbers
+
+    0
+    1001
+    2.3
+    6.0221413e+23
+    2/3
+    1+2i
+    #b1011
+    #x00FF
+
+### Names
+
+    begin
+    Fred
+    |Hello, World!|
+    name:
+    #,(uri "file:///dev/null")
+
+### Pairs
+
+    [1 2]
+    [name: "Fred"]
+    ["Hello" nothing]
+
+### Lists
+Bard lists are instances of the class `<list>`. Classes in Bard are abstract types; a list value might be represented by any of several different concrete structures. Lists in Bard are not necessarily made up of chained `cons` structures.
+
+Once consequence of this design is that the class `<list>` includes many kinds of sequential types, including vectors and strings.
+
+    ()
+    (1)
+    (a b c d)
+    (+ (* 2 3)(/ 16 4))
+    "This is a text value. It's also a list."
+
+### Arrays
+
+    #()
+    #(1 2 3 4)
+    #((0 1 2 3)(4 5 6 7)(8 9 10 11))
+
+### Maps
+
+    {}
+    {name: "Fred" color: 'orange shape: 'square}
+    {{}{}}
+
+### Functions and methods
+
+**Methods** are simple procedures that compute results from inputs. **Functions** are polymorphic procedures that examine their inputs and choose methods according to the properties of those inputs. Functions cannot compute anything unless methods have been defined for them.
+
+A function is written: 
+
+    (-> inType1 inType2 ... typeK -> outType1 outType2 ... outTypeN)
+
+A method is written:
+
+    (^ (arg1 arg2 ... argK) expr1 expr2 ... exprN)
+
+    (^ x x)
+    (^ (x y) (* x y))
+    (-> ->)
+    (-> <list> -> <integer>)
+
+## Type constraints
+
+Although Bard doesn't normally promise to convert input text into any specific data structure, you can require it to choose a structure that you specify. There are two ways to do this:
+
+1. Wrap a value expression in an `as` expression: `(as cons '(1 2 3))`
+2. Tag an expression with a **type constraint**: `#:cons '(1 2 3)`
+
+Type constraints and `as` accept any valid **type description** (see "Type Descriptions").
 
 ## Types
 
@@ -140,7 +227,9 @@ The base structures are built-in representations of common values.
 |`restart`|A condition that offers a choice of control transfers|
 |`abort`|A condition that exits a control path |
 
-###Type structures
+###Type constructors
+
+**Type constructors** are structures whose instances are user-defined types.
 
 |structure|description|
 |---------|-----------|  
@@ -152,24 +241,12 @@ The base structures are built-in representations of common values.
 
 ## Type descriptions
 
-A **type description** is an expression that specifies a type.  It consists of a list in the following form:
+A second way to create a user-defined type is to use a **type description**. A type description is an expression that specifies a type by combining and limiting existing types.  The details are still being designed, but generally, a type description will look something like these examples:
 
-( *constructor* [*constraint*] * )
-
-The constructor is one of the following:
-
-* `anything`
-* `a` *type*, or `an` *type*
-* `the value` *var* `where` 
-
-The constraint or constraints, if present, place restrictions on the values that match the type description.
-
-### Limited types: `a` *`type`* 
-
-### Predicate types: `anything`  
-
-### Predicate types: `the value` *var* `where`
-
+    (a List)
+    (a sequence of small-integer)
+    (a Map of [Name Number])
+    
 
 
 ## Base classes
@@ -177,16 +254,20 @@ Base classes are abstract types that organize the built-in structures into relat
 
 |class|description|
 |---------|-----------|  
-|`<anything>`|all values|  
-|`<atom>`|simple values that are not collections|  
-|`<collection>`|containers for groups of values such as `vector` and `pair`|  
-|`<number>`|numeric values such as `integer` and `float`|  
-|`<name>`|values such as `symbol`, `keyword`, and `uri`, which are used as names for variables, resources, or elements of structures|  
-|`<procedure>`|values that represent executable code, such as `function` and `method`|  
-|`<list>`|collections organized as finite sequences|  
-|`<map>`|collections organized as associative arrays|  
-|`<stream>`|values that can produce or consume other values one after another|  
-|`<type>`|values that represent families of types, such as `structure` and `class`|  
+|`Anything`|all values|  
+|`Atom`|simple values that are not collections|  
+|`Character`|elements of text strings|  
+|`Collection`|containers for groups of values|  
+|`Condition`|notable events that occur during computation|  
+|`Number`|numeric values|  
+|`Name`|`symbol`, `keyword`, and `uri`, values used as names for variables, resources, or elements of structures|  
+|`Procedure`|executable code|  
+|`List`|finite sequences|  
+|`Map`|associative arrays|  
+|`Mutable`|values that can be modified in-place|  
+|`Stream`|values that produce or consume other values |  
+|`Text`|lists whose elements are characters|  
+|`Type`|families of values|  
 
 ## Special forms
 
@@ -195,22 +276,34 @@ Special forms are procedures that are built into the language and form its found
 |special form|syntax|description|  
 |------------|------|-----------|
 |`^`|(^ (*parameters*) *expressions*)| Constructs a `method`. |  
-|`a`, `an`, `anything`, `the value`|see "Type descriptions"| Constructs a **type description**|  
+|`->`|(-> *in-type* ... -> *out-type* ...)| Constructs a `function`. |  
 |`begin`|(begin *expressions*)| Evaluates the *expressions* left to right and returns the value of the last one.|  
 |`define`|(define *var* *val*)| Creates a global variable named *var* with the value *val*.|  
+|`define` *kind*|(define *kind* *form* ...)| Creates or modifies global definitions of several kinds, including functions, macros, structures, and protocols.|  
 |`if`|(if *test* *then* *else*)| Evaluates *test*; if the result is true, evaluates *then*; otherwise, evaluates *else*.|  
+|`let`|(let ( (*var* ... *val*) ...) *exp* ...)| Evaluates *exp*... in an environment where *var* ... are defined. `let` can bind multiple values returned by a single function call.|  
+|`loop`|(loop *loop-name* ( (*var* ... *val*) ...) *exp* ...)| Exactly like `let` except that it also binds *loop-name* to a function that can be applied to recursively execute the body of the `loop` form with updated values for *var*...|  
 |`quasiquote`|(quasiquote *x*) | Returns *x* without evaluating it, except for any subexpressions in `unquote` or `unquote-splicing` forms	|  
 |`quote`|(quote *x*) | Returns *x* without evaluating it.	|  
 |`receive`|(receive [*pattern*]) | Returns the next pending message for this process, or,  with *pattern*, the next message matching *pattern*	|  
+|`repeat`|(repeat *procedure* [ *arg* ... ]) | Returns an endless stream of values produced by repeatedly applying *procedure* to *arg*...	|  
 |`send`|(send *agent* *msg*) | Sends *msg* (s Bard value) to *agent* (a running local or remote process)	|  
 |`set!`|(set! *var* *val*)| Changes the value of `var` to `val`.|  
 |`with-exit`|(with-exit (*var*) *expr* ...)| Binds an **exit procedure** to *var*, then evaluates *expr* ... Within the `with-exit` form, calling *var* immediately returns from the `with-exit` form, returning any arguments supplied to *var*.|  
+
+## Protocols
+
+A **protocol** is a collection of related variables and named procedures. Each protocol behaves like a map or dictionary: you can list its names and retrieve the values associated with them. A protocol is a **namespace**; you can use protocols to help prevent name collisions in your code, and to hide implementation details, while presenting a coherent API.
+
+A protocol is also a documentation tool. It serves as a dictionary of the variables and procedures that it contains, and provides fields for documentation of its contents.
+
+Bard is made of protocols. All of its built-in procedures, variables, and data structures are contained in protocols.
 
 ## Built-in protocols
 
 The built-in protocols provide Bard's standard library. Following is an incomplete list of built-in protocols.
 
-### Built-in structure protocols
+### Structure protocols
 
 Each built-in structure has an associated protocol that includes a **constructor**, **type-description clauses**,  and **accessors**.
 
@@ -220,97 +313,26 @@ The **constructor** is just the structure itself, but each structure can define 
 
 **Accessors** are functions used to fetch parts of a value or, if the structure is mutable, to update them with new values.
 
-**`abort`**
-
-| constructor arguments |  
-|  ------	|  
-| 
-
-### **array**
-
-#### Constructor arguments
-
-<pre>
-(array [<em>dimensions</em>]<br/>
-       [:initial-element <em>value</em>]<br/>
-       [:initial-contents <em>values</em>]<br/>
-       [:element-type <em>type-description</em>]&nbsp;)
-</pre>
-
-#### Type-descriptions clauses
-
-#### Accessors
-
-<pre>
-(array.ref <em>array</em>  [<em>index</em>]+)
-</pre>
-
-<pre>
-(array.set! <em>array</em>  [<em>index</em>]+ <em>value</em>)
-</pre>
-
-
-`ascii-character`
-`ascii-string`
-`bard`
-`big-integer`
-`boolean`
-`box`
-`class`
-`complex`
-`cons`
-`double-float`
-`error`
-`expanding-vector`
-`function`
-`generator`
-`hash-table`
-`input-stream`
-`io-stream`
-`keyword`
-`macro`
-`method`
-`none`
-`output-stream`
-`process`
-`protocol`
-`ratio`
-`record`
-`restart`
-`sequence`
-`single-float`
-`singleton`
-`small-integer`
-`special-form`
-`symbol`
-`synonym`
-`thread`
-`tree-map`
-`tuple`
-`unicode-code-point`
-`unicode-string`
-`uri`
-`vector`
-`warning`
-`word`
-`word-array`
-`word-vector`
-
 ###General protocols
+
+**General protocols** are not specifically associated with particular structures; they're general-purpose protocols the provide sets of related variables and procedures. For example, the protocol `bard.math` provides procedures for working with numbersw and calculations, and `bard.system` provides procedures and variables for examining and modifying the state of the running system.
 
 |protocol|description|
 |--------|-----------|  
-|`Assignment`|Procedures for updating mutable values|  
-|`Binding`|Procedures for working with lexical bindings|  
-|`Construction`|Procedures for constructing and initializing values|  
-|`Conversion`|Procedures for constructing new values from values of another type|  
-|`Functions`|Procedures for working with function-like values|  
-|`Lists`|Procedures that construct and manipulate lists|  
-|`Maps`|Procedures for working with dictionary-like values|  
-|`Math`|Arithmetic, transcendental, and other mathematical procedures and values|  
-|`Ordering`|Procedures for comparing and sorting values|  
-|`Resources`|Procedures for working with resources and resource names|  
-|`Streams`|Procedures for constructing and working with streams, including common I/O operations|  
-|`System`|Procedures and variables that report and configure system status and features |  
-|`Types`|Procedures for constructing and working with types |  
+|`bard.assignment`|Procedures for updating mutable values|  
+|`bard.binding`|Procedures for working with lexical bindings|  
+|`bard.construction`|Procedures for constructing and initializing values|  
+|`bard.conversion`|Procedures for constructing new values from values of another type|  
+|`bard.functions`|Procedures for working with function-like values|  
+|`bard.iteration`|Procedures that visit elements of collections|  
+|`bard.language`|The kernel language and flow-of-control forms.|  
+|`bard.lists`|Procedures that construct and manipulate lists|  
+|`bard.macros`|Procedures for defining and expanding macros|  
+|`bard.maps`|Procedures for working with dictionary-like values|  
+|`bard.math`|Arithmetic, transcendental, and other mathematical procedures and values|  
+|`bard.ordering`|Procedures for comparing and sorting values|  
+|`bard.resources`|Procedures for working with resources and resource names|  
+|`bard.streams`|Procedures for constructing and working with streams, including common I/O operations|  
+|`bard.system`|Procedures and variables that report and configure system status and features |  
+|`bard.types`|Procedures for constructing and working with types |  
 
