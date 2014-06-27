@@ -86,6 +86,12 @@
           ;; special forms
           ;; -------------
           (*:defSntxStFld (this) "^" "kawa.standard.SchemeCompilation" "lambda")
+          (*:defSntxStFld (this) "begin" "kawa.standard.begin" "begin")
+          (*:defSntxStFld (this) "%define" "kawa.standard.define" "defineRaw")
+          (*:defSntxStFld (this) "define" "kawa.lib.prim_syntax" "define")
+          (*:defSntxStFld (this) "if" "kawa.lib.prim_syntax")
+          (*:defSntxStFld (this) "%let" "kawa.standard.let" "let")
+          (*:defSntxStFld (this) "let" "kawa.lib.std_syntax")
           ;; builtins
           ;; --------
           ;; instance?

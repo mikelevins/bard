@@ -11,5 +11,5 @@
 
 (require "repl.scm")
 
-(begin (format #t "~%bard 0.4.1d2~%")
+(begin (format #t "~%bard 0.4.1d3~%")
        (bard-repl))
