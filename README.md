@@ -26,3 +26,19 @@ The version of Bard that is currently under construction is both faster and more
 
 Bard 0.4.x has not yet been released, but has been built and tested on OS X, Windows, and Linux. Work on a 0.4 release is ongoing.
 
+### Another Bard?
+
+In a post to Google Code dated June 18th, 2011, Abe Pralle announced that he was changing the name of his in-development programming language from "Slag" to "Bard". I posted a comment to his blog (http://bard-dev.blogspot.com/2012/10/welcome-to-bard-blog.html) to let him know I was already using the name. The exchange was friendly enough, but he's still using it, so the possibility of confusion still exists. To be clear: Abe Pralle's Bard language (at https://github.com/plasmaworks/bard) has nothing to do with my Bard language. 
+
+We just happen to have chosen the same name for our language experiments. I chose it nine years earlier; here's an excerpt from the CVS repo of a version of Bard packaged in April of 2002:
+
+```
+;;; bard
+;;; Version: $Id: repl.bard,v 1.4 2002/04/30 17:30:29 mikel Exp $
+;;; 
+;;; bard repl written in bard
+
+
+(begin
+  ;;; define the standard toplevel functions
+```
