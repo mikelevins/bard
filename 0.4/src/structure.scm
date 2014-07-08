@@ -21,13 +21,14 @@
 
 (define-simple-class structure (ProcedureN Type)
   (name init-form: #!null)
+  ((getName) name)
   ((applyN args::Object[]) #!abstract))
 
 (define (%construct constructor-fn initargs)
   (apply constructor-fn initargs))
 
-(define (structure? x)
-  (instance? x structure))
+(define (bard-structure? x)
+  (instance? x bard-structure))
 
 ;;; ---------------------------------------------------------------------
 ;;; primitive-structure
@@ -42,6 +43,9 @@
                                   (set! native-constructor constr)))
   ((applyN args::Object[]) (let ((initargs (LList:makeList args 0)))
                              (%construct native-constructor initargs))))
+
+;;; simple structures
+;;; ---------------------------------------------------------------------
 
 (define none
   (primitive-structure "none" gnu.lists.EmptyList
@@ -58,6 +62,9 @@
                           ((char? val) val)
                           ((integer? val)(integer->char val))
                           (#t (error (format #f "Not a character: ~S" val)))))))
+
+;;; numbers
+;;; ---------------------------------------------------------------------
 
 ;;; example: 5
 (define big-integer
@@ -92,6 +99,9 @@
                              val
                              (error (format #f "Not a ratio: ~S" val))))))
 
+;;; names
+;;; ---------------------------------------------------------------------
+
 (define bard-symbol
   (primitive-structure "symbol" gnu.mapping.Symbol
                        (lambda (val)
@@ -115,5 +125,118 @@
 (define uri
   (primitive-structure "uri" URI (lambda (val)(URI val))))
 
+;;; lists
+;;; ---------------------------------------------------------------------
+
+(define-simple-class Box ()
+  (value init-form: #!null)
+  ((*init* val)(set! value val))
+  ((getBox) value)
+  ((setBox val) (set! value val)))
+
+(define box
+  (primitive-structure "box" Box 
+                       (lambda (val)(Box val))))
+
+
+(define bard-cons
+  (primitive-structure "cons" gnu.lists.Pair 
+                       (lambda (a b)(gnu.lists.Pair a b))))
+
+(define bard-vector
+  (primitive-structure "vector" gnu.lists.FVector
+                       (lambda (#!rest args)(apply vector args))))
+
+(define expanding-vector
+  (primitive-structure "vector" gnu.lists.FVector
+                       (lambda (#!rest args)(apply vector args))))
+
+(define sequence
+  (primitive-structure "sequence" org.pcollections.ConsPStack
+                       (lambda (#!rest args)(org.pcollections.ConsPStack:from args))))
+
+(define unicode-string
+  (primitive-structure "unicode-string" java.lang.String
+                       (lambda (#!rest args)(apply string args))))
+
+
+;;; arrays
+;;; ---------------------------------------------------------------------
+
+;;; array
+;;; word-array
+
+;;; maps
+;;; ---------------------------------------------------------------------
+
+;;; tree-map
+;;; hash-table
+;;; protocol
+
+;;; streams
+;;; ---------------------------------------------------------------------
+
+;;; input-stream
+;;; output-stream
+;;; generator
+;;; io-stream
+
+;;; procedures
+;;; ---------------------------------------------------------------------
+
+;;; method
+;;; function
+;;; macro
+;;; special-form
+
+;;; processes
+;;; ---------------------------------------------------------------------
+
+;;; thread
+;;; process
+;;; bard
+
+;;; conditions
+;;; ---------------------------------------------------------------------
+
+;;; warning
+;;; error
+;;; restart
+;;; abort
+;;; exit
+
+;;; ---------------------------------------------------------------------
+;;; type constructors
+;;; ---------------------------------------------------------------------
+
+(define-simple-class type-constructor (structure)
+  (type-constructor init-form: #!null)
+  ((*init* nm constr)(begin (set! name nm)
+                            (set! type-constructor constr)))
+  ((applyN args::Object[]) (let ((initargs (LList:makeList args 0)))
+                             (%construct type-constructor initargs))))
+
+;;; class
+
+;;; singleton
+
+;;; record
+
+;;; tuple
+
+;;; synonym
+
+(define-simple-class TypeSynonym ()
+  (original-type init-form: #!null)
+  (name init-form: #!null)
+  ((getName) name)
+
+  ((*init* nm tp)(begin (set! name nm)
+                        (set! original-type tp)))
+  ((getOriginalType) original-type)
+  ((setOriginalType tp) (set! original-type tp)))
+
+(define synonym
+  (type-constructor "synonym" (lambda (nm tp)(TypeSynonym nm tp))))
 
 
