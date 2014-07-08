@@ -90,11 +90,9 @@
           (*:defSntxStFld (this) "%define" "kawa.standard.define" "defineRaw")
           (*:defSntxStFld (this) "define" "kawa.lib.prim_syntax" "define")
           (*:defSntxStFld (this) "if" "kawa.lib.prim_syntax")
-          (*:defSntxStFld (this) "%let" "kawa.standard.let" "let")
-          (*:defSntxStFld (this) "let" "kawa.lib.std_syntax")
-          ;; builtins
-          ;; --------
-          ;; instance?
+          ;; ;; builtins
+          ;; ;; --------
+          ;; ;; instance?
           (begin (set! instanceOf (InstanceOf (this) "instance?"))
                  (*:defProcStFld (this) "instance?" "BardLanguage" "instanceOf"))
           ;; not

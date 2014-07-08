@@ -11,7 +11,8 @@
 (require 'list-lib)
 (require 'srfi-95) ; sorting
 
-(require "language.scm")
-(require "repl.scm")
+(require "protocol.scm")
+;;(require "language.scm")
+;;(require "repl.scm")
 ;;;(require "bard.scm")
 
