@@ -92,19 +92,27 @@ A method is written:
 
     (^ (arg1 arg2 ... argK) expr1 expr2 ... exprN)
 
+
+Here are a few more methods:
+
     (^ x x)
     (^ (x y) (* x y))
+
+...and a few more functions:
+
     (-> ->)
     (-> <list> -> <integer>)
 
 ## Type constraints
 
-Although Bard doesn't normally promise to convert input text into any specific data structure, you can require it to choose a structure that you specify. There are two ways to do this:
+Normally Bard makes no promise about the specific data structure you'll get when you type in a literal, you can require it to choose a structure that you specify. There are two ways to do this:
 
 1. Wrap a value expression in an `as` expression: `(as cons '(1 2 3))`
 2. Tag an expression with a **type constraint**: `#:cons '(1 2 3)`
 
-Type constraints and `as` accept any valid **type description** (see "Type Descriptions").
+The two types of expression are completely equivalent.
+
+Type constraints and `as` expressions accept any valid **type description** (see "Type Descriptions").
 
 ## Types
 
@@ -128,10 +136,10 @@ Structures are also functions; they can be applied to parameters to create new i
 
 Type names are treated specially. For most purposes, the names of structures and classes behave like constants; that is, they're like variables whose values cannot be changed. They aren't quite constants, though; `define` can update the value of a type name,if it's used with the correct defining clause. For example, `define method` can change the definition of a function; `define macro` can change the macro bound to a macro name.
 
-Type names behave differently from variables in one other respect as well: when you define a type, the name becomes part of the type. If you define the variable `x` with the value 5, you can't ask 5 for its name in order to get `x`. When you define a record named `point`, on the other hand, you can ask the new type for its name and get the name `point`.
+Type names behave differently from variables in one other respect as well: when you define a type, the name becomes part of the type. If you define the variable `x` with the value 5, you can't ask 5 for its name in order to get `x`. When you define a record type named `point`, on the other hand, you can ask the new type for its name and get the name `point`.
 
 ## Base structures
-The base structures are built-in representations of common values. 
+The base structures are built-in representations of common types of values. 
 
 ### Simple structures
 
@@ -237,7 +245,7 @@ The base structures are built-in representations of common values.
 |`singleton`|a structure with exactly one instance|
 |`record`|a structure with named slots|
 |`tuple`|a structure with numbered slots|
-|`synonym`|a name for another type|
+|`synonym`|an alias for another type|
 
 ## Type descriptions
 
@@ -260,9 +268,10 @@ Base classes are abstract types that organize the built-in structures into relat
 |`Collection`|containers for groups of values|  
 |`Condition`|notable events that occur during computation|  
 |`Number`|numeric values|  
-|`Name`|`symbol`, `keyword`, and `uri`, values used as names for variables, resources, or elements of structures|  
+|`Name`|`symbol`, `keyword`, and `uri`; values used as names for variables, resources, or elements of structures|  
 |`Procedure`|executable code|  
 |`List`|finite sequences|  
+|`Pair`|associations of a key with a value|  
 |`Map`|associative arrays|  
 |`Mutable`|values that can be modified in-place|  
 |`Stream`|values that produce or consume other values |  
@@ -283,11 +292,11 @@ Special forms are procedures that are built into the language and form its found
 |`if`|(if *test* *then* *else*)| Evaluates *test*; if the result is true, evaluates *then*; otherwise, evaluates *else*.|  
 |`let`|(let ( (*var* ... *val*) ...) *exp* ...)| Evaluates *exp*... in an environment where *var* ... are defined. `let` can bind multiple values returned by a single function call.|  
 |`loop`|(loop *loop-name* ( (*var* ... *val*) ...) *exp* ...)| Exactly like `let` except that it also binds *loop-name* to a function that can be applied to recursively execute the body of the `loop` form with updated values for *var*...|  
-|`quasiquote`|(quasiquote *x*) | Returns *x* without evaluating it, except for any subexpressions in `unquote` or `unquote-splicing` forms	|  
-|`quote`|(quote *x*) | Returns *x* without evaluating it.	|  
-|`receive`|(receive [*pattern*]) | Returns the next pending message for this process, or,  with *pattern*, the next message matching *pattern*	|  
-|`repeat`|(repeat *procedure* [ *arg* ... ]) | Returns an endless stream of values produced by repeatedly applying *procedure* to *arg*...	|  
-|`send`|(send *agent* *msg*) | Sends *msg* (s Bard value) to *agent* (a running local or remote process)	|  
+|`quasiquote`|(quasiquote *x*) | Returns *x* without evaluating it, except for any subexpressions in `unquote` or `unquote-splicing` forms  |  
+|`match`|(match ( (*pattern* *expr*) ...) *body-exp* ...)| Binds variables in *pattern* by matching them against the value of *expr*, then evaluates *body-expr...* in the resulting environment. |  
+|`receive`|(receive [*pattern*]) | Returns the next pending message for this process, or,  with *pattern*, the next message matching *pattern*|
+|`repeat`|(repeat *procedure* [ *arg* ... ]) | Returns an endless stream of values produced by repeatedly applying *procedure* to *arg*...|  
+|`send`|(send *agent* *msg*) | Sends *msg* (a Bard value) to *agent* (a running local or remote process)|  
 |`set!`|(set! *var* *val*)| Changes the value of `var` to `val`.|  
 |`with-exit`|(with-exit (*var*) *expr* ...)| Binds an **exit procedure** to *var*, then evaluates *expr* ... Within the `with-exit` form, calling *var* immediately returns from the `with-exit` form, returning any arguments supplied to *var*.|  
 
@@ -315,7 +324,7 @@ The **constructor** is just the structure itself, but each structure can define 
 
 ###General protocols
 
-**General protocols** are not specifically associated with particular structures; they're general-purpose protocols the provide sets of related variables and procedures. For example, the protocol `bard.math` provides procedures for working with numbersw and calculations, and `bard.system` provides procedures and variables for examining and modifying the state of the running system.
+**General protocols** are not specifically associated with particular structures; they're general-purpose protocols that provide sets of related variables and procedures. For example, the protocol `bard.math` provides procedures for working with numbers and calculations, and `bard.system` provides procedures and variables for examining and modifying the state of the running system.
 
 |protocol|description|
 |--------|-----------|  
