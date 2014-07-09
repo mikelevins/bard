@@ -105,7 +105,7 @@ Here are a few more methods:
 
 ## Type constraints
 
-Normally Bard makes no promise about the specific data structure you'll get when you type in a literal, you can require it to choose a structure that you specify. There are two ways to do this:
+Normally Bard makes no promise about the specific data structure you'll get when you type in a literal, but you can require it to choose a structure that you specify. There are two ways to do this:
 
 1. Wrap a value expression in an `as` expression: `(as cons '(1 2 3))`
 2. Tag an expression with a **type constraint**: `#:cons '(1 2 3)`
