@@ -60,7 +60,7 @@ Bard does not promise to construct instances of any specific data structure when
 ### Lists
 Bard lists are instances of the class `List`. Classes in Bard are abstract types; a list value might be represented by any of several different concrete structures. Lists in Bard are not necessarily made up of chained `cons` structures.
 
-Once consequence of this design is that the class `List` includes many kinds of sequential types, including vectors and strings.
+One consequence of this design is that the class `List` includes many kinds of sequential types, including vectors and strings.
 
     ()
     (1)
