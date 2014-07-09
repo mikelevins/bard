@@ -233,7 +233,7 @@ The base structures are built-in representations of common types of values.
 |`warning`|A condition that reports a notable event|
 |`error`|A condition that reports an error and may transfer control|
 |`restart`|A condition that offers a choice of control transfers|
-|`abort`|A condition that exits a control path |
+|`exit`|A condition that exits a control path |
 
 ###Type constructors
 
