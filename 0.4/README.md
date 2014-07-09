@@ -58,9 +58,9 @@ Bard does not promise to construct instances of any specific data structure when
     ["Hello" nothing]
 
 ### Lists
-Bard lists are instances of the class `<list>`. Classes in Bard are abstract types; a list value might be represented by any of several different concrete structures. Lists in Bard are not necessarily made up of chained `cons` structures.
+Bard lists are instances of the class `List`. Classes in Bard are abstract types; a list value might be represented by any of several different concrete structures. Lists in Bard are not necessarily made up of chained `cons` structures.
 
-Once consequence of this design is that the class `<list>` includes many kinds of sequential types, including vectors and strings.
+Once consequence of this design is that the class `List` includes many kinds of sequential types, including vectors and strings.
 
     ()
     (1)
@@ -101,7 +101,7 @@ Here are a few more methods:
 ...and a few more functions:
 
     (-> ->)
-    (-> <list> -> <integer>)
+    (-> List -> Integer)
 
 ## Type constraints
 

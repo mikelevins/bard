@@ -7,10 +7,13 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(module-export structure primitive-structure)
+(module-export structure primitive-structure singleton)
 
+(require "map.scm")
+
+(define-private-alias HashPMap org.pcollections.HashPMap)
 (define-private-alias LList gnu.lists.LList)
-(define-private-alias PersistentHashMap com.github.krukow.clj_lang.PersistentHashMap)
+(define-private-alias Map java.util.Map)
 (define-private-alias ProcedureN gnu.mapping.ProcedureN)
 (define-private-alias Type java.lang.reflect.Type)
 
@@ -217,14 +220,98 @@
                              (%construct type-constructor initargs))))
 
 ;;; class
+;;; ---------------------------------------------------------------------
+
+(define-simple-class BardClass ()
+  (name init-form: #!null)
+  ((getName) name)
+
+  (direct-superclasses init-form: '())
+  ((getDirectSuperclasses) direct-superclasses)
+  ((setDirectSuperclasses classes) (set! direct-superclasses classes))
+  
+  ((*init* nm cls)(begin (set! name nm)
+                         (set! direct-superclasses cls))))
+
+(define bard-class 
+  (type-constructor "class" (lambda (nm cls)(BardClass nm cls))))
 
 ;;; singleton
+;;; ---------------------------------------------------------------------
+
+(define-simple-class SingletonType ()
+  (singletons type: HashPMap allocation: 'static init-form: (hashpmap))
+  ((getSingletons) allocation: 'static singletons)
+  ((setSingletons sings) allocation: 'static (set! singletons sings))
+
+  (value init-form: #!null)
+  ((getValue) value)
+
+  ((*init* val)(set! value val)))
+
+(define singleton
+  (type-constructor "singleton"
+                    (lambda (val)
+                      (let ((singletons::HashPMap (SingletonType:getSingletons)))
+                        (if (*:containsKey singletons val)
+                            (*:get singletons val)
+                            (let ((sing (SingletonType val)))
+                              (SingletonType:setSingletons (*:plus singletons val sing))
+                              sing))))))
 
 ;;; record
+;;; ---------------------------------------------------------------------
 
 ;;; tuple
+;;; ---------------------------------------------------------------------
+;;; TODO: make TupleInsstance into a Procedure so that tuple instances
+;;; can beused as constructors
+
+(define-simple-class TupleInstance ()
+  (type init-form: #!null)
+  ((getType) type)
+  (entries type: java.util.AbstractList init-form: #!null)
+  ((getEntries) entries)
+  ((getTupleRef index)(*:get entries index)))
+
+(define-simple-class MutableTupleInstance (TupleInstance)
+  ((setTupleRef index val)(*:set entries index val)))
+
+(define-simple-class TupleType ()
+  (name init-form: #!null)
+  ((getName) name)
+
+  (element-type init-form: #!null)
+  ((getElementType) element-type)
+
+  (min-count init-form: -1)
+  ((getMinCount) min-count)
+
+  (max-count init-form: -1)
+  ((getMaxCount) max-count)
+
+  ((*init*) #!void)
+  ((*init* nm tp min max)(begin (set! name nm)
+                                (set! element-type tp)
+                                (set! min-count min)
+                                (set! max-count max))))
+
+(define-simple-class MutableTupleType (TupleType)
+  ((*init* nm tp min max)(begin (set! name nm)
+                                (set! element-type tp)
+                                (set! min-count min)
+                                (set! max-count max))))
+
+;;; (tuple "foo" java.lang.Object 0 4 #f)
+;;; (tuple "bar" java.lang.Object 0 4 #t)
+(define tuple
+  (type-constructor "tuple" (lambda (name item-type min-count max-count mutable?)
+                              (if mutable?
+                                  (MutableTupleType name item-type min-count max-count)
+                                  (TupleType name item-type min-count max-count)))))
 
 ;;; synonym
+;;; ---------------------------------------------------------------------
 
 (define-simple-class TypeSynonym ()
   (original-type init-form: #!null)
@@ -236,6 +323,7 @@
   ((getOriginalType) original-type)
   ((setOriginalType tp) (set! original-type tp)))
 
+;;; (define dollars (synonym 'dollars gnu.math.DFloNum))
 (define synonym
   (type-constructor "synonym" (lambda (nm tp)(TypeSynonym nm tp))))
 
