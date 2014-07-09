@@ -58,6 +58,12 @@
   (primitive-structure "boolean" java.lang.Boolean
                        (lambda (val) (if val #t #f))))
 
+;;; end
+;;; undefined
+
+;;; Character
+;;; ---------------------------------------------------------------------
+
 (define unicode-character
   (primitive-structure "unicode-character" gnu.text.Char
                        (lambda (val)
@@ -66,7 +72,9 @@
                           ((integer? val)(integer->char val))
                           (#t (error (format #f "Not a character: ~S" val)))))))
 
-;;; numbers
+;;; ascii-character
+
+;;; Number
 ;;; ---------------------------------------------------------------------
 
 ;;; example: 5
@@ -102,7 +110,9 @@
                              val
                              (error (format #f "Not a ratio: ~S" val))))))
 
-;;; names
+;;; complex
+
+;;; Name
 ;;; ---------------------------------------------------------------------
 
 (define bard-symbol
@@ -128,7 +138,15 @@
 (define uri
   (primitive-structure "uri" URI (lambda (val)(URI val))))
 
-;;; lists
+
+;;; Pair
+;;; ---------------------------------------------------------------------
+
+(define bard-cons
+  (primitive-structure "cons" gnu.lists.Pair 
+                       (lambda (a b)(gnu.lists.Pair a b))))
+
+;;; List
 ;;; ---------------------------------------------------------------------
 
 (define-simple-class Box ()
@@ -142,13 +160,12 @@
                        (lambda (val)(Box val))))
 
 
-(define bard-cons
-  (primitive-structure "cons" gnu.lists.Pair 
-                       (lambda (a b)(gnu.lists.Pair a b))))
-
 (define bard-vector
   (primitive-structure "vector" gnu.lists.FVector
                        (lambda (#!rest args)(apply vector args))))
+
+;;; adjustable-vector
+;;; word-vector
 
 (define expanding-vector
   (primitive-structure "vector" gnu.lists.FVector
@@ -162,21 +179,20 @@
   (primitive-structure "unicode-string" java.lang.String
                        (lambda (#!rest args)(apply string args))))
 
-
 ;;; arrays
 ;;; ---------------------------------------------------------------------
 
 ;;; array
 ;;; word-array
 
-;;; maps
+;;; Map
 ;;; ---------------------------------------------------------------------
 
 ;;; tree-map
 ;;; hash-table
 ;;; protocol
 
-;;; streams
+;;; Stream
 ;;; ---------------------------------------------------------------------
 
 ;;; input-stream

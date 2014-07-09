@@ -262,21 +262,30 @@ Base classes are abstract types that organize the built-in structures into relat
 
 |class|description|
 |---------|-----------|  
+|`Adjustable`|collections whose size can be changed|  
 |`Anything`|all values|  
 |`Atom`|simple values that are not collections|  
 |`Character`|elements of text strings|  
 |`Collection`|containers for groups of values|  
-|`Condition`|notable events that occur during computation|  
-|`Number`|numeric values|  
-|`Name`|`symbol`, `keyword`, and `uri`; values used as names for variables, resources, or elements of structures|  
-|`Procedure`|executable code|  
+|`Condition`|notable events that may cause a transfer of control|  
+|`Consumer`|streams that consume values|  
+|`Float`|floating-point numbers|  
+|`Generator`|streams that produce values by executing iterative processes|  
 |`List`|finite sequences|  
-|`Pair`|associations of a key with a value|  
 |`Map`|associative arrays|  
-|`Mutable`|values that can be modified in-place|  
+|`Mutable`|collections that can be modified in-place|  
+|`Name`|values used as names for variables, resources, or elements of structures|  
+|`Number`|numeric values|  
+|`Pair`|associations of a key with a value|  
+|`Procedure`|executable code|  
+|`Producer`|streams that produce values|  
+|`Rational`|numbers that can be expressed as ratios of integers |  
+|`Real`|numbers with fractional parts |  
 |`Stream`|values that produce or consume other values |  
+|`Structure`|concrete type specifications |  
 |`Text`|lists whose elements are characters|  
 |`Type`|families of values|  
+|`Uniform`|collections whose elements are all the same concrete type|  
 
 ## Special forms
 
