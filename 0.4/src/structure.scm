@@ -7,7 +7,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(module-export structure primitive-structure singleton)
+(module-export structure primitive-structure)
 
 (require "map.scm")
 
@@ -30,8 +30,8 @@
 (define (%construct constructor-fn initargs)
   (apply constructor-fn initargs))
 
-(define (bard-structure? x)
-  (instance? x bard-structure))
+(define (structure? x)
+  (instance? x structure))
 
 ;;; ---------------------------------------------------------------------
 ;;; primitive-structure
@@ -50,134 +50,31 @@
 ;;; simple structures
 ;;; ---------------------------------------------------------------------
 
-(define none
-  (primitive-structure "none" gnu.lists.EmptyList
-                       (lambda () '())))
-
-(define boolean
-  (primitive-structure "boolean" java.lang.Boolean
-                       (lambda (val) (if val #t #f))))
-
 ;;; end
 ;;; undefined
 
 ;;; Character
 ;;; ---------------------------------------------------------------------
 
-(define unicode-character
-  (primitive-structure "unicode-character" gnu.text.Char
-                       (lambda (val)
-                         (cond
-                          ((char? val) val)
-                          ((integer? val)(integer->char val))
-                          (#t (error (format #f "Not a character: ~S" val)))))))
-
 ;;; ascii-character
 
 ;;; Number
 ;;; ---------------------------------------------------------------------
-
-;;; example: 5
-(define big-integer
-  (primitive-structure "big-integer" gnu.math.IntNum
-                       (lambda (val)
-                         (if (eq? (val:getClass) gnu.math.IntNum)
-                             val
-                             (error (format #f "Not an integer: ~S" val))))))
-
-
-;;; example: 2.0f0
-(define single-float
-  (primitive-structure "single-float" java.lang.Float
-                       (lambda (val)
-                         (if (eq? (val:getClass) java.lang.Float)
-                             val
-                             (error (format #f "Not a single-float: ~S" val))))))
-
-;;; example: 2.0
-(define double-float
-  (primitive-structure "double-float" gnu.math.DFloNum
-                       (lambda (val)
-                         (if (eq? (val:getClass) gnu.math.DFloNum)
-                             val
-                             (error (format #f "Not a double-float: ~S" val))))))
-
-;;; example: 2/3
-(define ratio
-  (primitive-structure "ratio" gnu.math.IntFraction
-                       (lambda (val)
-                         (if (eq? (val:getClass) gnu.math.IntFraction)
-                             val
-                             (error (format #f "Not a ratio: ~S" val))))))
 
 ;;; complex
 
 ;;; Name
 ;;; ---------------------------------------------------------------------
 
-(define bard-symbol
-  (primitive-structure "symbol" gnu.mapping.Symbol
-                       (lambda (val)
-                         (cond
-                          ((keyword? val) (string->symbol (keyword->string val)))
-                          ((symbol? val) val)
-                          ((string? val) (string->symbol val))
-                          (#t (error (format #f "Can't convert to a symbol: ~S"
-                                             val)))))))
-
-(define bard-keyword
-  (primitive-structure "keyword" gnu.expr.Keyword
-                       (lambda (val)
-                         (cond
-                          ((keyword? val) val)
-                          ((symbol? val) (string->keyword (symbol->string val)))
-                          ((string? val) (string->keyword val))
-                          (#t (error (format #f "Can't convert to a keyword: ~S"
-                                             val)))))))
-
-(define uri
-  (primitive-structure "uri" URI (lambda (val)(URI val))))
-
 
 ;;; Pair
 ;;; ---------------------------------------------------------------------
 
-(define bard-cons
-  (primitive-structure "cons" gnu.lists.Pair 
-                       (lambda (a b)(gnu.lists.Pair a b))))
-
 ;;; List
 ;;; ---------------------------------------------------------------------
 
-(define-simple-class Box ()
-  (value init-form: #!null)
-  ((*init* val)(set! value val))
-  ((getBox) value)
-  ((setBox val) (set! value val)))
-
-(define box
-  (primitive-structure "box" Box 
-                       (lambda (val)(Box val))))
-
-
-(define bard-vector
-  (primitive-structure "vector" gnu.lists.FVector
-                       (lambda (#!rest args)(apply vector args))))
-
 ;;; adjustable-vector
 ;;; word-vector
-
-(define expanding-vector
-  (primitive-structure "vector" gnu.lists.FVector
-                       (lambda (#!rest args)(apply vector args))))
-
-(define sequence
-  (primitive-structure "sequence" org.pcollections.ConsPStack
-                       (lambda (#!rest args)(org.pcollections.ConsPStack:from args))))
-
-(define unicode-string
-  (primitive-structure "unicode-string" java.lang.String
-                       (lambda (#!rest args)(apply string args))))
 
 ;;; arrays
 ;;; ---------------------------------------------------------------------
@@ -189,8 +86,53 @@
 ;;; ---------------------------------------------------------------------
 
 ;;; tree-map
+
+(define tree-map
+  (primitive-structure "tree-map" HashPMap
+                       (lambda (#!rest args)(apply hashpmap args))))
+
+
 ;;; hash-table
+
+(define hash-table
+  (primitive-structure "hash-table" java.util.concurrent.ConcurrentHashMap
+                       (lambda (#!rest args)
+                         (let ((hmap (java.util.concurrent.ConcurrentHashMap)))
+                           (let loop ((plist args))
+                             (if (null? plist)
+                                 hmap
+                                 (if (null? (cdr plist))
+                                     (error (format #f "Malformed initargs to hash-table: ~s"
+                                                    args))
+                                     (begin (*:put hmap (car plist)(cadr plist))
+                                            (loop (cddr plist))))))))))
+
+
 ;;; protocol
+
+
+(define-simple-class BardProtocol ()
+  (name init-form: #!null)
+  ((getName) name)
+  ((setName nm) (set! name nm))
+
+  (variables init-form: (java.util.concurrent.ConcurrentHashMap))
+  ((getVariables) variables))
+
+(define protocol
+  (primitive-structure "protocol" BardProtocol
+                       (lambda (name #!rest args)
+                         (let* ((proto (BardProtocol))
+                                (hmap (*:getVariables proto)))
+                           (*:setName proto name)
+                           (let loop ((plist args))
+                             (if (null? plist)
+                                 proto
+                                 (if (null? (cdr plist))
+                                     (error (format #f "Malformed initargs to protocol: ~s"
+                                                    args))
+                                     (begin (*:put hmap (car plist)(cadr plist))
+                                            (loop (cddr plist))))))))))
 
 ;;; Stream
 ;;; ---------------------------------------------------------------------
@@ -199,14 +141,6 @@
 ;;; output-stream
 ;;; generator
 ;;; io-stream
-
-;;; procedures
-;;; ---------------------------------------------------------------------
-
-;;; method
-;;; function
-;;; macro
-;;; special-form
 
 ;;; processes
 ;;; ---------------------------------------------------------------------
@@ -233,6 +167,7 @@
                             (set! type-constructor constr)))
   ((applyN args::Object[]) (let ((initargs (LList:makeList args 0)))
                              (%construct type-constructor initargs))))
+
 
 ;;; class
 ;;; ---------------------------------------------------------------------
@@ -285,7 +220,7 @@
 (define-simple-class TupleInstance ()
   (type init-form: #!null)
   ((getType) type)
-  (entries type: java.util.AbstractList init-form: #!null)
+  (entries access: 'public type: java.util.AbstractList init-form: #!null)
   ((getEntries) entries)
   ((getTupleRef index)(*:get entries index)))
 
@@ -293,16 +228,16 @@
   ((setTupleRef index val)(*:set entries index val)))
 
 (define-simple-class TupleType ()
-  (name init-form: #!null)
+  (name access: 'public init-form: #!null)
   ((getName) name)
 
-  (element-type init-form: #!null)
+  (element-type access: 'public init-form: #!null)
   ((getElementType) element-type)
 
-  (min-count init-form: -1)
+  (min-count access: 'public init-form: -1)
   ((getMinCount) min-count)
 
-  (max-count init-form: -1)
+  (max-count access: 'public init-form: -1)
   ((getMaxCount) max-count)
 
   ((*init*) #!void)
@@ -342,4 +277,58 @@
 (define synonym
   (type-constructor "synonym" (lambda (nm tp)(TypeSynonym nm tp))))
 
+
+
+;;; procedures
+;;; ---------------------------------------------------------------------
+
+;;; method
+;;; special-case method so we can use it both as an alias for ^ (lambda)
+;;; and also as the structure (type) of simple procedures
+
+(define-syntax method
+  (syntax-rules ()
+    ((method params expr ...)
+     (lambda params expr ...))))
+
+;;; we'll write dispatch code for type discriminators that recognizes
+;;; bard-method as a type
+
+(define bard-method
+  method)
+
+;;; function
+
+(define-simple-class BardFunction ()
+  (name init-form: #!null)
+  ((getName) name)
+  ((setName nm) (set! name nm))
+
+  (methods init-form: #!null)
+  ((getMethods) methods)
+  ((setMethods ms) (set! methods ms))
+
+  (input-types init-form: '())
+  ((getInputTypes) input-types)
+  ((setInputTypes tps) (set! input-types tps))
+
+  (output-types init-form: '())
+  ((getOutputTypes) output-types)
+  ((setOutputTypes tps) (set! output-types tps)))
+
+(define function
+  (primitive-structure "function" BardFunction
+                       (lambda (nm inputs outputs)
+                         (let ((fn (BardFunction)))
+                           (*:setName fn nm)
+                           (*:setInputTypes fn inputs)
+                           (*:setOutputTypes fn outputs)
+                           fn))))
+
+
+;;; macro
+;;; special-form
+
+(define special-form
+  (type-constructor "special-form" (lambda (#!rest args)(error "Objects of type special-form cannot be created at runtime."))))
 

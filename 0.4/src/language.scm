@@ -11,6 +11,8 @@
 
 (module-export BardLanguage bard-instance)
 
+(require "structure.scm")
+
 ;;; ---------------------------------------------------------------------
 ;;; Java imports
 ;;; ---------------------------------------------------------------------
@@ -53,6 +55,16 @@
         (%bard-instance))))
 
 ;;; ---------------------------------------------------------------------
+;;; supporting classes
+;;; ---------------------------------------------------------------------
+
+(define-simple-class Box ()
+  (value init-form: #!null)
+  ((*init* val)(set! value val))
+  ((getBox) value)
+  ((setBox val) (set! value val)))
+
+;;; ---------------------------------------------------------------------
 ;;; BardLanguage class
 ;;; ---------------------------------------------------------------------
 
@@ -71,6 +83,76 @@
   (numLessEqFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
   (numGreaterFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
   (numGreaterEqFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
+  ;; primitive structures
+  ;; ---------------
+  (structureBoolean :: structure allocation: 'static access: 'public
+                    init-form: (primitive-structure "boolean" java.lang.Boolean
+                                                    (lambda (val) (if val #t #f))))
+  (structureUnicodeChar :: structure allocation: 'static access: 'public
+                        init-form: (primitive-structure "unicode-character" gnu.text.Char
+                                                        (lambda (val)
+                                                          (cond
+                                                           ((char? val) val)
+                                                           ((integer? val)(integer->char val))
+                                                           (#t (error (format #f "Not a character: ~S" val)))))))
+  (structureBigInteger :: structure allocation: 'static access: 'public
+                       init-form: (primitive-structure "big-integer" gnu.math.IntNum
+                                                       (lambda (val)
+                                                         (if (eq? (val:getClass) gnu.math.IntNum)
+                                                             val
+                                                             (error (format #f "Not an integer: ~S" val))))))
+  (structureSingleFloat :: structure allocation: 'static access: 'public
+                        init-form: (primitive-structure "single-float" java.lang.Float
+                                                        (lambda (val)
+                                                          (if (eq? (val:getClass) java.lang.Float)
+                                                              val
+                                                              (error (format #f "Not a single-float: ~S" val))))))
+  (structureDoubleFloat :: structure allocation: 'static access: 'public
+                        init-form: (primitive-structure "double-float" gnu.math.DFloNum
+                                                        (lambda (val)
+                                                          (if (eq? (val:getClass) gnu.math.DFloNum)
+                                                              val
+                                                              (error (format #f "Not a double-float: ~S" val))))))
+  (structureRatio :: structure allocation: 'static access: 'public
+                  init-form: (primitive-structure "ratio" gnu.math.IntFraction
+                                                  (lambda (val)
+                                                    (if (eq? (val:getClass) gnu.math.IntFraction)
+                                                        val
+                                                        (error (format #f "Not a ratio: ~S" val))))))
+  (structureSymbol :: structure allocation: 'static access: 'public
+                   init-form: (primitive-structure "symbol" gnu.mapping.Symbol
+                                                   (lambda (val)
+                                                     (cond
+                                                      ((keyword? val) (string->symbol (keyword->string val)))
+                                                      ((symbol? val) val)
+                                                      ((string? val) (string->symbol val))
+                                                      (#t (error (format #f "Can't convert to a symbol: ~S"
+                                                                         val)))))))
+  (structureKeyword :: structure allocation: 'static access: 'public
+                    init-form: (primitive-structure "keyword" gnu.expr.Keyword
+                                                    (lambda (val)
+                                                      (cond
+                                                       ((keyword? val) val)
+                                                       ((symbol? val) (string->keyword (symbol->string val)))
+                                                       ((string? val) (string->keyword val))
+                                                       (#t (error (format #f "Can't convert to a keyword: ~S"
+                                                                          val)))))))
+  (structureURI :: structure allocation: 'static access: 'public
+                init-form: (primitive-structure "uri" URI (lambda (val)(URI val))))
+  (structureCons :: structure allocation: 'static access: 'public
+                 init-form: (primitive-structure "cons" gnu.lists.Pair 
+                                                 (lambda (a b)(gnu.lists.Pair a b))))
+  (structureBox :: structure allocation: 'static access: 'public
+                init-form: (primitive-structure "box" Box (lambda (val)(Box val))))
+  (structureVector :: structure allocation: 'static access: 'public
+                   init-form: (primitive-structure "vector" gnu.lists.FVector
+                                                   (lambda (#!rest args)(apply vector args))))
+  (structureSequence :: structure allocation: 'static access: 'public
+                     init-form: (primitive-structure "sequence" org.pcollections.ConsPStack
+                                                     (lambda (#!rest args)(org.pcollections.ConsPStack:from args))))
+  (structureUnicodeString :: structure allocation: 'static access: 'public
+                          init-form: (primitive-structure "unicode-string" java.lang.String
+                                                          (lambda (#!rest args)(apply string args))))
 
   ;; set up the bard runtime environment
   ;; ----------------------------------
@@ -90,6 +172,22 @@
           (*:defSntxStFld (this) "%define" "kawa.standard.define" "defineRaw")
           (*:defSntxStFld (this) "define" "kawa.lib.prim_syntax" "define")
           (*:defSntxStFld (this) "if" "kawa.lib.prim_syntax")
+          ;; ;; builtin structures
+          ;; ;; --------
+          (*:defProcStFld (this) "boolean" "BardLanguage" "structureBoolean")
+          (*:defProcStFld (this) "unicode-character" "BardLanguage" "structureUnicodeChar")
+          (*:defProcStFld (this) "big-integer" "BardLanguage" "structureBigInteger")
+          (*:defProcStFld (this) "single-float" "BardLanguage" "structureSingleFloat")
+          (*:defProcStFld (this) "double-float" "BardLanguage" "structureDoubleFloat")
+          (*:defProcStFld (this) "ratio" "BardLanguage" "structureRatio")
+          (*:defProcStFld (this) "symbol" "BardLanguage" "structureSymbol")
+          (*:defProcStFld (this) "keyword" "BardLanguage" "structureKeyword")
+          (*:defProcStFld (this) "uri" "BardLanguage" "structureURI")
+          (*:defProcStFld (this) "cons" "BardLanguage" "structureCons")
+          (*:defProcStFld (this) "box" "BardLanguage" "structureBox")
+          (*:defProcStFld (this) "vector" "BardLanguage" "structureVector")
+          (*:defProcStFld (this) "sequence" "BardLanguage" "structureSequence")
+          (*:defProcStFld (this) "unicode-string" "BardLanguage" "structureUnicodeString")
           ;; ;; builtins
           ;; ;; --------
           ;; ;; instance?

@@ -3,6 +3,7 @@
 
   <path id="library.class.path">
     <pathelement location="./lib/kawa-1.14.jar"/>
+    <pathelement location="./lib/pcollections-2.1.2.jar"/>
     <pathelement location="./src"/>
     <pathelement location="."/>
   </path>
@@ -15,6 +16,7 @@
          includes="**/*.class"
          manifest="MANIFEST.txt">
       <zipfileset src="./lib/kawa-1.14.jar"/>
+      <zipfileset src="./lib/pcollections-2.1.2.jar"/>
     </jar>
   </target>
 
@@ -26,7 +28,7 @@
           dir="./src"
           fork="true">
       <classpath refid="library.class.path"/>
-      <arg line="--main -C 'bard.scm'"/>
+      <arg line="--main -C  'map.scm' 'structure.scm' 'language.scm' 'repl.scm' 'bard.scm'"/>
     </java>
   </target>
 
