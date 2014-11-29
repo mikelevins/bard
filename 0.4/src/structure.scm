@@ -215,7 +215,7 @@
 ;;; tuple
 ;;; ---------------------------------------------------------------------
 ;;; TODO: make TupleInsstance into a Procedure so that tuple instances
-;;; can beused as constructors
+;;; can be used as constructors
 
 (define-simple-class TupleInstance ()
   (type init-form: #!null)
@@ -255,10 +255,10 @@
 ;;; (tuple "foo" java.lang.Object 0 4 #f)
 ;;; (tuple "bar" java.lang.Object 0 4 #t)
 (define tuple
-  (type-constructor "tuple" (lambda (name item-type min-count max-count mutable?)
-                              (if mutable?
-                                  (MutableTupleType name item-type min-count max-count)
-                                  (TupleType name item-type min-count max-count)))))
+  (type-constructor "tuple" (lambda (name #!key type mininum-count maximum-count mutable)
+                              (if mutable
+                                  (MutableTupleType name type minimum-count maximum-count)
+                                  (TupleType name type minimum-count maximum-count)))))
 
 ;;; synonym
 ;;; ---------------------------------------------------------------------
@@ -276,7 +276,6 @@
 ;;; (define dollars (synonym 'dollars gnu.math.DFloNum))
 (define synonym
   (type-constructor "synonym" (lambda (nm tp)(TypeSynonym nm tp))))
-
 
 
 ;;; procedures
@@ -330,5 +329,7 @@
 ;;; special-form
 
 (define special-form
-  (type-constructor "special-form" (lambda (#!rest args)(error "Objects of type special-form cannot be created at runtime."))))
+  (type-constructor "special-form"
+                    (lambda (#!rest args)
+                      (error "Objects of type special-form cannot be created at runtime."))))
 

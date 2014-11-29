@@ -29,7 +29,6 @@
 (define-private-alias NumberCompare gnu.kawa.functions.NumberCompare)
 (define-private-alias Scheme kawa.standard.Scheme)
 
-
 ;;; ---------------------------------------------------------------------
 ;;; global language environment
 ;;; ---------------------------------------------------------------------

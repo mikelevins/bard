@@ -8,7 +8,7 @@ by mikel evins
 Base singletons are simple atomic named constants. They are special in a couple of ways:
 
 * like numbers or characters, they evaluate to themselves
-* they are values, but they are also **structures** and **constructors**
+* they're values, but they're also **structures** and **constructors**
 
 
 name | description
@@ -20,11 +20,33 @@ name | description
 
 ## Literals
 
-Bard is intended to provide convenient literal syntax for all its values, to the extent that it's practical to do so. It also tries to print values in a form that it can re-read to construct equivalent values.
+Bard tries to provide convenient literal syntax for as many of its values as possible. It also tries to print values so that it can read them and reconstruct them.
 
-Bard does not promise to construct instances of any specific data structure when you present it with a literal expression, unless you include the type constraints that you want it to satisfy (see "Type descriptions").
+When Bard reads a value, it doesn't promise to construct any specific representation of the value. For example, if you write
+
+    (1 2 3)
+
+you can be sure that the value produced by the reader will be a list, but you can't be sure exactly what *representation* of a list will be used. Depending on the implementation, you might get a vector or a tree-based sequence or the traditional chain of `cons` cells. All of those are valid representations of lists in Bard, and Bard only promises to build a list for you; it doesn't promise to build any specific representation of a list.
+
+You can take control of representation is you want to, though. For example, you can use a **type constraint** to restrict the representation that Bard chooses:
+
+    #:cons (1 2 3)
+
+The form `#:cons` is a **type constraint**; it instructs Bard to ensure that the following value is an instance of the `cons` structure.
+
+Generally speaking, when you write a Bard literal you're asking for an instance of some abstract class—`List`, for example. If you want a specific concrete type, you have to specify which one using a type constraint.
+
+If you write a literal with a type constraint that it can't satisfy, Bard signals an error. For example, the following will cause an error:
+
+    #cons 1.3
+
+The problem is that `1.3` denotes a `Float`, and `cons` is not a member of the `Float` class.
+
+For more information about abstract and concrete types in Bard, see the "Types" section.
 
 ### Characters
+
+**Characters** are the elements of **Text** values. Texts are lists; their elements are characters.
 
     #\λ
     #\U+03BB
@@ -45,6 +67,8 @@ Bard does not promise to construct instances of any specific data structure when
 
 ### Names
 
+**Names** are values used to name parts of Bard programs, such as variables, files, and classes.
+
     begin
     Fred
     |Hello, World!|
@@ -53,14 +77,26 @@ Bard does not promise to construct instances of any specific data structure when
 
 ### Pairs
 
+A **Pair** is a value that associates two other values, called the pair's **left** value and its **right** value.
+
     [1 2]
     [name: "Fred"]
     ["Hello" nothing]
 
 ### Lists
-Bard lists are instances of the class `List`. Classes in Bard are abstract types; a list value might be represented by any of several different concrete structures. Lists in Bard are not necessarily made up of chained `cons` structures.
+**Lists** are sequences of values with finite length. Types that implement lists are members of the class `List`.
 
-One consequence of this design is that the class `List` includes many kinds of sequential types, including vectors and strings.
+Historically, lists have been represented in Lisp implementations using a specific data structure known as a **cons cell**. A cons cell is a pair of pointers; in a normal list, one of the pointers points to the first element and the other points to another list that contains the remaining elements.
+
+Bard provides cons cells, represented as instances of the `cons` structure. Unlike older Lisps, though, Bard doesn't make `cons` synonymous with `List`. In Bard, `List` is a class, which means it's an abstract type. There are many different representations of `List`; `cons` is just one of them.
+
+This design means that there are many kinds of lists, but all of them support Bard's list protocol. You can use list functions on any `List` instance, regardless of its representation.
+
+It also means that all sequential data of finite length are lists: `cons` instances are lists, but so are vectors and strings.
+
+Strings are lists in Haskell as well, but in Haskell that means that they are represented inefficiently as linked lists of characters. In Bard the fact that a string is a list implies nothing about its representation. A string can be represented as a packed, uniform array of bytes, or as a vlist, or as a hashed array-mapped trie, or as any representation that can reasonably support the list protocol.
+
+So, on one hand, all of the following values are lists:
 
     ()
     (1)
@@ -68,17 +104,29 @@ One consequence of this design is that the class `List` includes many kinds of s
     (+ (* 2 3)(/ 16 4))
     "This is a text value. It's also a list."
 
+On the other hand, none of them has to be represented as `cons` cells, unless you want to represent them that way.
+
 ### Arrays
+
+**Arrays** are n-dimensional collections whose elements are indexed by sequences of integers. A 1-dimensional array is equivalent to a list. 
 
     #()
     #(1 2 3 4)
     #((0 1 2 3)(4 5 6 7)(8 9 10 11))
 
+Arrays are also lists. A one-dimensional array supports the list protocol directly, in the obvious way. A two-dimensional array is a list of the array's elements in row-major order (see [http://en.wikipedia.org/wiki/Row-major_order](http://en.wikipedia.org/wiki/Row-major_order)).
+
 ### Maps
+
+A **map** is a **finite map**; that is, a collection that represents a one-to-one mapping of **keys** to **values**.  Any Bard object except `nothing` or `undefined` can be a key. Any object except `undefined` can be a value.
 
     {}
     {name: "Fred" color: 'orange shape: 'square}
     {{}{}}
+
+Like all Bard classes, `Map` is abstract. Instances of `Map` may be represented by any of a variety of structures: hash tables, tree maps, association lists, and so on.
+
+A map is also a list. The map protocol includes the list protocol. Bard maps support list functions by treating the map data as a list of pairs, where the left element of each pair is the key and the right element is the value.
 
 ### Functions and methods
 
@@ -93,15 +141,18 @@ A method is written:
     (^ (arg1 arg2 ... argK) expr1 expr2 ... exprN)
 
 
-Here are a few more methods:
+Here are a few methods:
 
     (^ x x)
     (^ (x y) (* x y))
 
-...and a few more functions:
+...and a few functions:
 
     (-> ->)
     (-> List -> Integer)
+    (-> Anything Map -> Anything Boolean)
+
+If a function has more than one type after the second arrow then it returns more than one value.
 
 ## Type constraints
 
@@ -134,7 +185,7 @@ Structures are also functions; they can be applied to parameters to create new i
 
 ### Type names
 
-Type names are treated specially. For most purposes, the names of structures and classes behave like constants; that is, they're like variables whose values cannot be changed. They aren't quite constants, though; `define` can update the value of a type name,if it's used with the correct defining clause. For example, `define method` can change the definition of a function; `define macro` can change the macro bound to a macro name.
+Type names are symbols used to identify structures and classes. A type name is similar to a  global variable, but with a few differences. For the most part, they behave like read-only variables (constants), but certain special forms can be used to change them. `define` can update the value of a type name,if it's used with the correct defining clause. For example, `define method` can change the definition of a function; `define macro` can change the macro bound to a macro name.
 
 Type names behave differently from variables in one other respect as well: when you define a type, the name becomes part of the type. If you define the variable `x` with the value 5, you can't ask 5 for its name in order to get `x`. When you define a record type named `point`, on the other hand, you can ask the new type for its name and get the name `point`.
 
@@ -251,11 +302,15 @@ The base structures are built-in representations of common types of values.
 
 A second way to create a user-defined type is to use a **type description**. A type description is an expression that specifies a type by combining and limiting existing types.  The details are still being designed, but generally, a type description will look something like these examples:
 
+    (a small-integer)
     (a List)
+    (an Atom)
     (a sequence of small-integer)
+    (a sequence of small-integer with minimum-count: 0 maximum-count: nothing)
     (a Map of [Name Number])
+    (a Map of [Name Number] with defaults: {anonymous: 0})
     
-
+`a` and `an` are macros that return type-description objects. The syntax names `of` and `with` are not evaluated, but their parameters are.
 
 ## Base classes
 Base classes are abstract types that organize the built-in structures into related families.
