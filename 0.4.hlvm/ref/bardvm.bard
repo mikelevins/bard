@@ -1,0 +1,116 @@
+;;; the bardvm in bard
+
+(define (standard-globals){})
+
+(define (empty-environment)())
+
+(define (opcode instr)
+  (first instr))
+
+(define-record vm
+  (halted accessor: 'halted? default: false)
+  (fn accessor: 'fn default: nothing)
+  (code accessor: 'code default: ())
+  (pc accessor: 'pc default: 0)
+  (instruction accessor: 'instruction default: nothing)
+  (globals accessor: 'globals default: (standard-globals))
+  (environment accessor: 'environment default: (empty-environment))
+  (stack accessor: 'stack default: ()))
+
+(define-record return-record
+  (pc accessor: 'pc default: 0)
+  (env accessor: 'env default: (empty-environment))
+  (fn accessor: 'fn default: nothing))
+
+(define-record fn
+  (code accessor: 'code)
+  (env accessor: 'env))
+
+(define (coderef vm n)
+  (element (code vm) n))
+
+(define (vmfetch! vm)
+  (set! (instruction vm)
+        (coderef vm (pc vm))))
+
+(define (incpc! vm)
+  (set! (pc vm)
+        (+ 1 (pc vm))))
+
+(define (vmpush! vm val)
+  (set! (stack vm)
+        (cons val (stack vm))))
+
+(define (vmtop vm)
+  (first (stack vm)))
+
+(define (vmpop! vm)
+  (let ((val (vmtop vm)))
+    (set! (stack vm)
+          (rest (stack vm)))
+    val))
+
+(define (arg n vm)
+  (element (instruction vm) n))
+
+(define (envref vm i j)
+  (element (element (environment vm)
+                    i)
+           j))
+
+(define (envset! vm i j val)
+  (set! (element (element (environment vm)
+                          i)
+                 j)
+        val))
+
+(define (gref vm var)
+  (get (globals vm) var))
+
+(define (gset! vm var val)
+  (set! (globals vm)
+        (put (globals vm)
+             var val)))
+
+(define (vmexec! vm)
+  (let ((instr (instruction vm))
+        (opc (opcode instr)))
+    (case opc
+          (HALT (set! (halted? vm) true))
+          (CONST (vmpush! vm (arg 1 vm)))
+          (LREF (vmpush! vm (envref vm (arg 1 vm)(arg 2 vm))))
+          (LSET (envset! vm (arg 1 vm)(arg 1 vm)(vmpop! vm)))
+          (GREF (vmpush! vm (gref vm (arg 1 vm))))
+          (GSET (gset! vm (arg 1 vm)(vmpop! vm)))
+          (GO (set! (pc vm) (arg 1 vm)))
+          (TGO (when (true? (vmpop! vm))
+                     (set! (pc vm) (arg 1 vm))))
+          (FGO (when (false? (vmpop! vm))
+                     (set! (pc vm) (arg 1 vm))))
+          (SAVE (vmpush! vm (return-record pc: (arg 1 vm)
+                                           env: (environment vm)
+                                           fn: (fn vm))))
+          (CALL )
+          (RETURN (let ((val (element (stack vm) 0))
+                        (ret (element (stack vm) 1))
+                        (new-stack (drop 2 (stack vm))))
+                    (set! (pc vm)(pc ret))
+                    (set! (environment vm)(env ret))
+                    (set! (fn vm)(fn ret))
+                    (set! (code vm)(code (fn vm)))))
+          (ARGS )
+          (ARGS. )
+          (SETCC )
+          (CC ))))
+
+(define (vmstep! vm)
+  (vmfetch! vm)
+  (incpc! vm)
+  (vmexec! vm))
+
+(define (vmrun vm)
+  (with-exit (return)
+    (repeat
+     (if (halted? vm)
+         (return vm)
+         (vmstep! vm)))))
