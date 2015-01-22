@@ -25,6 +25,8 @@
          "/src/utils.scm"
          "/src/version.scm"
          "/src/error.scm"
+         "/src/globals.scm"
+         "/src/env.scm"
          "/src/kernel.scm"
          ))
 

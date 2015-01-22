@@ -10,6 +10,10 @@
 
 (declare (extended-bindings))
 
+;;; ----------------------------------------------------------------------
+;;; list utils
+;;; ----------------------------------------------------------------------
+
 (define (filter test ls)
   (if (null? ls)
       '()
@@ -18,6 +22,10 @@
             (cons next
                   (filter test (cdr ls)))
             (filter test (cdr ls))))))
+
+
+(define (first expr)
+  (car expr))
 
 (define (interpose thing ls)
   (let loop ((elts ls)
