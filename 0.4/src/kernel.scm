@@ -16,9 +16,12 @@
        (eq? 'with-exit (first expr))))
 
 (define (kernel:eval-variable expr env)
-  (if (globals:bound? expr)
-      (globals:ref expr)
-      (env:ref env expr)))
+  (let ((binding (env:get-binding expr env)))
+    (if binding
+        (binding-value binding)
+        (if (globals:bound? expr)
+            (globals:ref expr)
+            (error "Unbound variable" expr)))))
 
 (define (kernel:eval-with-exit expr env)
   (let* ((form (cdr expr))
@@ -33,25 +36,42 @@
   (not-yet-implemented 'kernel:eval-lambda))
 
 (define (kernel:eval-begin expr env)
-  (not-yet-implemented 'kernel:eval-begin))
+  (let loop ((exprs (cdr expr))
+             (result (nothing)))
+    (if (null? exprs)
+        result
+        (loop (cdr exprs)
+              (kernel:eval (car exprs))))))
 
 (define (kernel:eval-cond expr env)
   (not-yet-implemented 'kernel:eval-cond))
 
 (define (kernel:eval-define expr env)
-  (not-yet-implemented 'kernel:eval-define))
+  (let ((var (cadr expr))
+        (val-expr (caddr expr)))
+    (globals:set! var (kernel:eval val-expr env))))
 
 (define (kernel:eval-ensure expr env)
   (not-yet-implemented 'kernel:eval-ensure))
 
 (define (kernel:eval-if expr env)
-  (not-yet-implemented 'kernel:eval-if))
+  (let ((test-val (kernel:eval (second expr) env)))
+    (if (true? test-val)
+        (kernel:eval (third expr) env)
+        (kernel:eval (fourth expr) env))))
 
 (define (kernel:eval-quote expr env)
-  (not-yet-implemented 'kernel:eval-quote))
+  (cadr expr))
 
 (define (kernel:eval-set! expr env)
-  (not-yet-implemented 'kernel:eval-set!))
+  (let* ((var (cadr expr))
+         (val-expr (caddr expr))
+         (binding (env:get-binding var env)))
+    (if binding
+        (binding-set! binding (kernel:eval val-expr env))
+        (if (globals:bound? var)
+            (globals:set! var (kernel:eval val-expr env))
+            (error "Undefined variable" expr)))))
 
 (define (kernel:eval-application expr env)
   (case (first expr)
@@ -72,6 +92,7 @@
 (define (kernel:eval expr #!optional (env '()))
   (cond
    ((symbol? expr) (kernel:eval-variable expr env))
+   ((null? expr)(kernel:eval-constant expr))
    ((list? expr) (if (with-exit-form? expr)
                      (kernel:eval-with-exit expr env)
                      (kernel:eval-application expr env)))

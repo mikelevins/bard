@@ -24,8 +24,10 @@
             (filter test (cdr ls))))))
 
 
-(define (first expr)
-  (car expr))
+(define first car)
+(define second cadr)
+(define third caddr)
+(define fourth cadddr)
 
 (define (interpose thing ls)
   (let loop ((elts ls)

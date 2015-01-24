@@ -22,7 +22,13 @@
              name
              #!unbound))
 
+(define (globals:set! name val)
+  (table-set! *globals*
+              name
+              val))
+
 (define (globals:def! name val)
   (table-set! *globals*
               name
               val))
+

@@ -27,6 +27,7 @@
          "/src/error.scm"
          "/src/globals.scm"
          "/src/env.scm"
+         "/src/values.scm"
          "/src/kernel.scm"
          ))
 
