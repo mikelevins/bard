@@ -35,16 +35,27 @@
 (define (kernel:eval-lambda expr env)
   (not-yet-implemented 'kernel:eval-lambda))
 
-(define (kernel:eval-begin expr env)
-  (let loop ((exprs (cdr expr))
+(define (eval-sequence exprs env)
+  (let loop ((items exprs)
              (result (nothing)))
-    (if (null? exprs)
+    (if (null? items)
         result
-        (loop (cdr exprs)
-              (kernel:eval (car exprs))))))
+        (loop (cdr items)
+              (kernel:eval (car items))))))
+
+(define (kernel:eval-begin expr env)
+  (let ((exprs (cdr expr)))
+    (eval-sequence exprs)))
 
 (define (kernel:eval-cond expr env)
-  (not-yet-implemented 'kernel:eval-cond))
+  (let loop ((clauses (cdr expr)))
+    (if (null? clauses)
+        (nothing)
+        (let* ((clause (car clauses))
+               (testval (kernel:eval (car clause) env)))
+          (if (true? testval)
+              (eval-sequence (cdr clause) env)
+              (loop (cdr clauses)))))))
 
 (define (kernel:eval-define expr env)
   (let ((var (cadr expr))
