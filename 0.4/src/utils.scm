@@ -36,6 +36,7 @@
 
 
 (define first car)
+(define rest cdr)
 (define second cadr)
 (define third caddr)
 (define fourth cadddr)
@@ -63,3 +64,16 @@
             i
             (loop (+ 1 i)
                   (cdr items))))))
+
+(define (zip left-list right-list)
+  (let loop ((keys left-list)
+             (vals right-list)
+             (result '()))
+    (if (or (null? keys)
+            (null? vals))
+        (reverse result)
+        (loop (cdr keys)
+              (cdr vals)
+              (cons (cons (car keys)
+                          (car vals))
+                    result)))))

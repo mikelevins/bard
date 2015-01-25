@@ -32,3 +32,9 @@
               name
               val))
 
+(define (globals:init)
+  (globals:def! '+ +)
+  (globals:def! '- -)
+  (globals:def! '* *)
+  (globals:def! '/ /)
+  )

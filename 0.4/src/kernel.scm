@@ -30,10 +30,17 @@
     (call/cc (lambda (k)(kernel:eval body (env:add-binding env exit-var k))))))
 
 (define (kernel:eval-function-application expr env)
-  (not-yet-implemented 'kernel:eval-function-application))
+  (let ((op (kernel:eval (first expr) env))
+        (args (map (lambda (e)(kernel:eval e env))
+                   (rest expr))))
+    (cond ((lambda:native-method? op)(apply (lambda:method-native-function op) args))
+          ((kernel-lambda? op) (lambda:apply op args))
+          (else (error "Unrecognized function type" expr)))))
 
 (define (kernel:eval-lambda expr env)
-  (not-yet-implemented 'kernel:eval-lambda))
+  (let ((lambda-list (list-ref expr 1))
+        (body (cons 'begin (drop 2 expr))))
+    (lambda:create lambda-list body env)))
 
 (define (eval-sequence exprs env)
   (let loop ((items exprs)

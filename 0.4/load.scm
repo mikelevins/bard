@@ -28,6 +28,7 @@
          "/src/globals.scm"
          "/src/env.scm"
          "/src/values.scm"
+         "/src/lambda.scm"
          "/src/kernel.scm"
          ))
 
@@ -40,5 +41,5 @@
             $bard-files))
 
 ;;; (load-bard)
-;;; (%init-bard)
+;;; (globals:init)
 ;;; (bard:repl)
