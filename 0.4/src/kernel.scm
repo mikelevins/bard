@@ -62,8 +62,24 @@
         (val-expr (caddr expr)))
     (globals:set! var (kernel:eval val-expr env))))
 
+(define (parse-ensure-form expr)
+  (let ((after-pos (position-if (lambda (x)(eqv? x after:))
+                                expr)))
+    (if after-pos
+        (if (eqv? 2 after-pos)
+            (let ((cleanup-form (list-ref expr 1))
+                  (body-forms (drop 3 expr)))
+              (values cleanup-form body-forms))
+            (error "Malformed ensure form"))
+        (error "Missing after: in ensure form"))))
+
+;;; (ensure cleanup-form
+;;;         after: expr1 expr2 ...)
 (define (kernel:eval-ensure expr env)
-  (not-yet-implemented 'kernel:eval-ensure))
+  (receive (cleanup body)(parse-ensure-form expr)
+           (dynamic-wind (lambda () #f)
+               (lambda () (eval-sequence body env))
+               (lambda () (kernel:eval cleanup env)))))
 
 (define (kernel:eval-if expr env)
   (let ((test-val (kernel:eval (second expr) env)))
