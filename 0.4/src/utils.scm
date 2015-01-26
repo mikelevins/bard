@@ -34,7 +34,6 @@
                   (filter test (cdr ls)))
             (filter test (cdr ls))))))
 
-
 (define first car)
 (define rest cdr)
 (define second cadr)
@@ -77,3 +76,14 @@
               (cons (cons (car keys)
                           (car vals))
                     result)))))
+
+;;; ----------------------------------------------------------------------
+;;; string utils
+;;; ----------------------------------------------------------------------
+
+(define (match-prefix? pref str)
+  (not-yet-implemented 'match-prefix?))
+
+(define (trim-whitespace str)
+  (not-yet-implemented 'trim-whitespace))
+

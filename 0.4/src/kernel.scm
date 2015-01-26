@@ -132,3 +132,9 @@
                      (kernel:eval-application expr env)))
    (else (kernel:eval-constant expr))))
 
+(define (kernel:read line)
+  (reader:string->object line))
+
+(define (kernel:print object)
+  (display (printer:object->string object)))
+

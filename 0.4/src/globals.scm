@@ -32,6 +32,9 @@
               name
               val))
 
+;;; TODO: these really belong in the standard library
+;;;       I define them here in order to remind myself
+;;;       how to initialize the globals.
 (define (globals:init)
   (globals:def! '+ +)
   (globals:def! '- -)

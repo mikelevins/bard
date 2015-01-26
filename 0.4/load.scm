@@ -29,7 +29,11 @@
          "/src/env.scm"
          "/src/values.scm"
          "/src/lambda.scm"
+         "/src/reader.scm"
+         "/src/printer.scm"
          "/src/kernel.scm"
+         "/src/shell.scm"
+         "/src/compiler.scm"
          ))
 
 ;;; load sources
