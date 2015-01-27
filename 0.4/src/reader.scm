@@ -10,6 +10,6 @@
 
 (declare (extended-bindings))
 
-(define (kernel:read str)
-  (not-yet-implemented 'kernel:read))
+(define (reader:string->object str)
+  (call-with-input-string str (lambda (in)(read in))))
 

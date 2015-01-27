@@ -10,6 +10,6 @@
 
 (declare (extended-bindings))
 
-(define (kernel:print str)
-  (not-yet-implemented 'kernel:print))
+(define (printer:object->string obj)
+  (object->string obj))
 

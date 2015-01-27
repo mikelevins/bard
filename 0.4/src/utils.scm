@@ -11,6 +11,14 @@
 (declare (extended-bindings))
 
 ;;; ----------------------------------------------------------------------
+;;; function utils
+;;; ----------------------------------------------------------------------
+
+(define (complement proc)
+  (lambda args
+    (not (apply proc args))))
+
+;;; ----------------------------------------------------------------------
 ;;; list utils
 ;;; ----------------------------------------------------------------------
 
@@ -82,8 +90,44 @@
 ;;; ----------------------------------------------------------------------
 
 (define (match-prefix? pref str)
-  (not-yet-implemented 'match-prefix?))
+  (let loop ((i 0))
+    (if (< i (string-length str))
+        (if (< i (string-length pref))
+            (if (char=? (string-ref pref i)
+                        (string-ref str i))
+                (loop (+ 1 i))
+                #f)
+            #t)
+        (string=? pref str))))
+
+(define (string-position-if test str)
+  (let loop ((i 0))
+    (if (< i (string-length str))
+        (if (test (string-ref str i))
+            i
+            (loop (+ i 1)))
+        #f)))
+
+(define (string-right-position-if test str)
+  (let loop ((i (- (string-length str) 1)))
+    (if (>= i 0)
+        (if (test (string-ref str i))
+            (+ 1 i)
+            (loop (- i 1)))
+        #f)))
+
+(define (trim-whitespace-left str)
+  (let ((pos (string-position-if (complement char-whitespace?) str)))
+    (if pos
+        (substring str pos (string-length str))
+        "")))
+
+(define (trim-whitespace-right str)
+  (let ((pos (string-right-position-if (complement char-whitespace?) str)))
+    (if pos
+        (substring str 0 pos)
+        "")))
 
 (define (trim-whitespace str)
-  (not-yet-implemented 'trim-whitespace))
+  (trim-whitespace-left (trim-whitespace-right str)))
 
