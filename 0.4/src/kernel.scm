@@ -52,7 +52,7 @@
 
 (define (kernel:eval-begin expr env)
   (let ((exprs (cdr expr)))
-    (eval-sequence exprs)))
+    (eval-sequence exprs env)))
 
 (define (kernel:eval-cond expr env)
   (let loop ((clauses (cdr expr)))
