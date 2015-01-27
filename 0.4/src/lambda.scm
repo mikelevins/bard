@@ -30,8 +30,8 @@
       (error "Wrong number of arguments to kernel lambda" params args)))
 
 (define (lambda:apply op args)
-  (let ((params (kernel-lambda-parameters op))
-        (body (kernel-lambda-body op))
-        (env (kernel-lambda-env op))
-        (call-env (make-call-env params args env)))
+  (let* ((params (kernel-lambda-parameters op))
+         (body (kernel-lambda-body op))
+         (env (kernel-lambda-env op))
+         (call-env (make-call-env params args env)))
     (kernel:eval body call-env)))
