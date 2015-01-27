@@ -19,6 +19,31 @@
 ;;; and powerful constructs of full bard as expressions
 ;;; that use only the kernel language.
 
+;;; ---------------------------------------------------------------------
+;;; nacros
+;;; ---------------------------------------------------------------------
+
+(define (bard:macro-form? expr)(not-yet-implemented 'bard:macro-form?))
+(define (bard:macroexpand expr)(not-yet-implemented 'bard:macroexpand))
+
+;;; ---------------------------------------------------------------------
+;;; compilers for special forms
+;;; ---------------------------------------------------------------------
+
+(define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
+(define (bard:compile-let expr env) (not-yet-implemented 'bard:compile-let))
+(define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
+(define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
+(define (bard:compile-quasiquote expr env) (not-yet-implemented 'bard:compile-quasiquote))
+(define (bard:compile-receive expr env) (not-yet-implemented 'bard:compile-receive))
+(define (bard:compile-repeat expr env) (not-yet-implemented 'bard:compile-repeat))
+(define (bard:compile-send expr env) (not-yet-implemented 'bard:compile-send))
+(define (bard:compile-set! expr env) (not-yet-implemented 'bard:compile-set!))
+
+;;; ---------------------------------------------------------------------
+;;; main compiler
+;;; ---------------------------------------------------------------------
+
 (define (bard:compile-variable expr env)
   expr)
 
@@ -32,8 +57,19 @@
                        (drop 2 expr)))))
 
 (define (bard::compile-application expr env)
-  (case (first expr)
-    (else expr)))
+  (if (bard:macro-form? expr)
+      (bard::compile-application (bard:macroexpand expr) env)
+      (case (first expr)
+        ((define)(bard:compile-define expr env))
+        ((let)(bard:compile-let expr env))
+        ((loop)(bard:compile-loop expr env))
+        ((macro)(bard:compile-macro expr env))
+        ((quasiquote)(bard:compile-quasiquote expr env))
+        ((receive)(bard:compile-receive expr env))
+        ((repeat)(bard:compile-repeat expr env))
+        ((send)(bard:compile-send expr env))
+        ((set!)(bard:compile-set! expr env))
+        (else expr))))
 
 (define (bard:compile expr #!optional (env '()))
   (cond
