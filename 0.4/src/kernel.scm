@@ -18,7 +18,7 @@
 (define (kernel:eval-variable expr env)
   (let ((binding (env:get-binding expr env)))
     (if binding
-        (binding-value binding)
+        (env:binding-value binding)
         (if (globals:bound? expr)
             (globals:ref expr)
             (error "Unbound variable" expr)))))
@@ -48,7 +48,7 @@
     (if (null? items)
         result
         (loop (cdr items)
-              (kernel:eval (car items))))))
+              (kernel:eval (car items) env)))))
 
 (define (kernel:eval-begin expr env)
   (let ((exprs (cdr expr)))
