@@ -46,4 +46,3 @@
 
 ;;; (load-bard)
 ;;; (globals:init)
-;;; (bard:repl)
