@@ -31,7 +31,9 @@
 ;;; ---------------------------------------------------------------------
 
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
+(define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
 (define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
+(define (bard:compile-with-exit expr env)(not-yet-implemented 'bard:compile-with-exit))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler
@@ -52,12 +54,21 @@
 (define (bard::compile-application expr env)
   (if (bard:macro-form? expr)
       (bard::compile-application (bard:macroexpand expr) env)
-      (case (first expr)
-        ((define)(bard:compile-define expr env))
-        ((let)(bard:compile-let expr env))
-        ((macro)(bard:compile-macro expr env))
-        ((set!)(bard:compile-set! expr env))
-        (else expr))))
+      (let ((comp (lambda (ex) (bard:compile ex env))))
+        (case (first expr)
+          ((^) `(FN ,(cadr expr) ,@(map comp (cddr expr))))
+          ((begin) `(BEGIN ,@(map comp (cdr expr))))
+          ((cond) `(COND ,@(map comp (cdr expr))))
+          ((define)(bard:compile-define expr env))
+          ((ensure) `(ENSURE ,@(map comp (cdr expr))))
+          ((if) `(IF ,@(map comp (cdr expr))))
+          ((let)(bard:compile-let expr env))
+          ((loop) (bard:compile-loop expr env))
+          ((macro)(bard:compile-macro expr env))
+          ((quote) `(QUOTE ,@(cdr expr)))
+          ((set!)(bard:compile-set! expr env))
+          ((with-exit)(bard:compile-with-exit expr env))
+          (else expr)))))
 
 (define (bard:compile expr #!optional (env '()))
   (cond

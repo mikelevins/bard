@@ -26,7 +26,7 @@
 (define (kernel:eval-with-exit expr env)
   (let* ((form (cdr expr))
          (exit-var (car (car form)))
-         (body (cons 'begin (drop 1 form))))
+         (body (cons 'BEGIN (drop 1 form))))
     (call/cc (lambda (k)(kernel:eval body (env:add-binding env exit-var k))))))
 
 (define (kernel:eval-function-application expr env)
@@ -39,7 +39,7 @@
 
 (define (kernel:eval-lambda expr env)
   (let ((lambda-list (list-ref expr 1))
-        (body (cons 'begin (drop 2 expr))))
+        (body (cons 'BEGIN (drop 2 expr))))
     (lambda:create lambda-list body env)))
 
 (define (eval-sequence exprs env)
@@ -100,9 +100,9 @@
          (vals (map cadr bindings))
          (body (drop 2 expr))
          (again-fn (lambda:create vars
-                                  (cons 'begin body)
+                                  (cons 'BEGIN body)
                                   env)))
-    (kernel-lambda-env-set! again-fn (env:add-binding env 'again again-fn))
+    (kernel-lambda-env-set! again-fn (env:add-binding env 'AGAIN again-fn))
     (kernel:eval `(,again-fn ,@vals) (kernel-lambda-env again-fn))))
 
 (define (kernel:eval-quote expr env)
@@ -120,16 +120,16 @@
 
 (define (kernel:eval-application expr env)
   (case (first expr)
-    ((^)(kernel:eval-lambda expr env))
-    ((begin)(kernel:eval-begin expr env))
-    ((cond)(kernel:eval-cond expr env))
-    ((def)(kernel:eval-def expr env))
-    ((ensure)(kernel:eval-ensure expr env))
-    ((if)(kernel:eval-if expr env))
-    ((loop)(kernel:eval-loop expr env))
-    ((quote)(kernel:eval-quote expr env))
-    ((assign!)(kernel:eval-assign! expr env))
-    ((with-exit)(kernel:eval-with-exit expr env))
+    ((ASSIGN)(kernel:eval-assign! expr env))
+    ((BEGIN)(kernel:eval-begin expr env))
+    ((COND)(kernel:eval-cond expr env))
+    ((DEF)(kernel:eval-def expr env))
+    ((ENSURE)(kernel:eval-ensure expr env))
+    ((FN)(kernel:eval-lambda expr env))
+    ((IF)(kernel:eval-if expr env))
+    ((LOOP)(kernel:eval-loop expr env))
+    ((QUOTE)(kernel:eval-quote expr env))
+    ((WITH-EXIT)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
 
 (define (kernel:eval-constant expr)
