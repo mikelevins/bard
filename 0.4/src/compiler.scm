@@ -20,10 +20,10 @@
 ;;; that use only the kernel language.
 
 ;;; ---------------------------------------------------------------------
-;;; nacros
+;;; macros
 ;;; ---------------------------------------------------------------------
 
-(define (bard:macro-form? expr)(not-yet-implemented 'bard:macro-form?))
+(define (bard:macro-form? expr) #f)
 (define (bard:macroexpand expr)(not-yet-implemented 'bard:macroexpand))
 
 ;;; ---------------------------------------------------------------------
@@ -31,7 +31,6 @@
 ;;; ---------------------------------------------------------------------
 
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
-(define (bard:compile-let expr env) (not-yet-implemented 'bard:compile-let))
 (define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
 (define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
 (define (bard:compile-quasiquote expr env) (not-yet-implemented 'bard:compile-quasiquote))
