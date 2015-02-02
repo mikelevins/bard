@@ -32,8 +32,6 @@
 
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
 (define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
-(define (bard:compile-receive expr env) (not-yet-implemented 'bard:compile-receive))
-(define (bard:compile-send expr env) (not-yet-implemented 'bard:compile-send))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler
@@ -58,8 +56,6 @@
         ((define)(bard:compile-define expr env))
         ((let)(bard:compile-let expr env))
         ((macro)(bard:compile-macro expr env))
-        ((receive)(bard:compile-receive expr env))
-        ((send)(bard:compile-send expr env))
         ((set!)(bard:compile-set! expr env))
         (else expr))))
 
