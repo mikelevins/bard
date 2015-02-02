@@ -64,7 +64,7 @@
               (eval-sequence (cdr clause) env)
               (loop (cdr clauses)))))))
 
-(define (kernel:eval-define expr env)
+(define (kernel:eval-def expr env)
   (let ((var (cadr expr))
         (val-expr (caddr expr)))
     (globals:set! var (kernel:eval val-expr env))))
@@ -97,12 +97,12 @@
 (define (kernel:eval-quote expr env)
   (cadr expr))
 
-(define (kernel:eval-set! expr env)
+(define (kernel:eval-assign! expr env)
   (let* ((var (cadr expr))
          (val-expr (caddr expr))
          (binding (env:get-binding var env)))
     (if binding
-        (binding-set! binding (kernel:eval val-expr env))
+        (env:binding-set! binding (kernel:eval val-expr env))
         (if (globals:bound? var)
             (globals:set! var (kernel:eval val-expr env))
             (error "Undefined variable" expr)))))
@@ -112,11 +112,11 @@
     ((^)(kernel:eval-lambda expr env))
     ((begin)(kernel:eval-begin expr env))
     ((cond)(kernel:eval-cond expr env))
-    ((define)(kernel:eval-define expr env))
+    ((def)(kernel:eval-def expr env))
     ((ensure)(kernel:eval-ensure expr env))
     ((if)(kernel:eval-if expr env))
     ((quote)(kernel:eval-quote expr env))
-    ((set!)(kernel:eval-set! expr env))
+    ((assign!)(kernel:eval-assign! expr env))
     ((with-exit)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
 
