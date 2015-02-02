@@ -94,17 +94,6 @@
         (kernel:eval (third expr) env)
         (kernel:eval (fourth expr) env))))
 
-(define (kernel:eval-loop expr env)
-  (let* ((bindings (list-ref expr 1))
-         (vars (map car bindings))
-         (vals (map cadr bindings))
-         (body (drop 2 expr))
-         (again-fn (lambda:create vars
-                                  (cons 'BEGIN body)
-                                  env)))
-    (kernel-lambda-env-set! again-fn (env:add-binding env 'AGAIN again-fn))
-    (kernel:eval `(,again-fn ,@vals) (kernel-lambda-env again-fn))))
-
 (define (kernel:eval-quote expr env)
   (cadr expr))
 
@@ -118,6 +107,12 @@
             (globals:set! var (kernel:eval val-expr env))
             (error "Undefined variable" expr)))))
 
+(define (kernel:eval-repeat expr env)
+  (let ((op (cadr expr)))
+    (let loop ()
+      (kernel:eval op env)
+      (loop))))
+
 (define (kernel:eval-application expr env)
   (case (first expr)
     ((ASSIGN)(kernel:eval-assign! expr env))
@@ -127,8 +122,8 @@
     ((ENSURE)(kernel:eval-ensure expr env))
     ((FN)(kernel:eval-lambda expr env))
     ((IF)(kernel:eval-if expr env))
-    ((LOOP)(kernel:eval-loop expr env))
     ((QUOTE)(kernel:eval-quote expr env))
+    ((REPEAT)(kernel:eval-repeat expr env))
     ((WITH-EXIT)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
 

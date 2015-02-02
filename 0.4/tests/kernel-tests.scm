@@ -63,11 +63,21 @@
 (kernel:eval '(IF (< y x) (QUOTE YES)(QUOTE NO)) $env3) ; => NO
 (kernel:eval '(IF (< x y) (QUOTE YES)(QUOTE NO)) $env3) ; => YES
 
-;;; LOOP
 
-(kernel:eval '(LOOP ((i 0))(IF (< i 10)(AGAIN (+ i 1)) i)) $env0) ; => 10
 
-;;; with-exit
+;;; REPEAT & WITH-EXIT
+(define $env4 '((i . 0)))
 (kernel:eval '(WITH-EXIT (return) (return x)) $env1) ; => 1
+
+;;; REPEAT creates an infinite loop, but WITH-EXIT binds
+;;; return to an exit continuation. the IF test uses the
+;;; exit to return from the loop
+(kernel:eval
+ '(WITH-EXIT (return)
+             (REPEAT
+              (IF (> i 5)
+                  (return i)
+                  (ASSIGN i (+ i 1)))))
+ $env4) ; => 6
 
 
