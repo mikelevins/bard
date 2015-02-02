@@ -47,7 +47,6 @@
 
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
 (define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
-(define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler
@@ -78,7 +77,7 @@
           ((if) `(IF ,@(map comp (cdr expr))))
           ((let)(bard:compile-let expr env))
           ((loop) (bard:compile-loop expr env))
-          ((macro)(bard:compile-macro expr env))
+          ((macro) `(MACRO ,@(cdr expr)))
           ((quote) `(QUOTE ,@(cdr expr)))
           ((set!)(bard:compile-set! expr env))
           ((with-exit)(bard:compile-with-exit expr env))
