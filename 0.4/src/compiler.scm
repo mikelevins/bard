@@ -67,7 +67,7 @@
           ((quote) `(QUOTE ,@(cdr expr)))
           ((set!)(bard:compile-set! expr env))
           ((with-exit)(bard:compile-with-exit expr env))
-          (else expr)))))
+          (else (map (lambda (e)(bard:compile e env)) expr))))))
 
 (define (bard:compile expr #!optional (env '()))
   (cond
