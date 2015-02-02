@@ -117,10 +117,21 @@
   (let ((op (cadr expr)))
     (time (kernel:eval op env))))
 
+;;; (CC (FN (k) ...))
+(define (kernel:eval-cc expr env)
+  (let* ((fn (cadr expr))
+         (kvar (car (cadr fn)))
+         (body (drop 2 fn)))
+    (call/cc
+     (lambda (k)
+       (kernel:eval `(BEGIN ,@body)
+                    (env:add-binding env kvar k))))))
+
 (define (kernel:eval-application expr env)
   (case (first expr)
     ((ASSIGN)(kernel:eval-assign! expr env))
     ((BEGIN)(kernel:eval-begin expr env))
+    ((CC)(kernel:eval-cc expr env))
     ((COND)(kernel:eval-cond expr env))
     ((DEF)(kernel:eval-def expr env))
     ((ENSURE)(kernel:eval-ensure expr env))

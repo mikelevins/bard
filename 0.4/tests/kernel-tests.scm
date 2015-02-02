@@ -40,6 +40,16 @@
 (kernel:eval '(BEGIN 1) '()) ; => 1
 (kernel:eval '(BEGIN (+ 2 3)(< 2 3)(= 2 3)) '()) ; => #f
 
+;;; CC
+(kernel:eval '(DEF i 0) '())
+(kernel:eval '(CC (FN (exit)
+                      (REPEAT
+                       (IF (> i 100)
+                           (exit i)
+                           (ASSIGN i (+ i 1))))))
+             '())
+
+
 ;;; COND
 (kernel:eval '(COND ((= 2 3) (QUOTE naw))((> 2 3) (QUOTE nope))((< 2 3) (QUOTE yay))) '()) ; => yay
 
