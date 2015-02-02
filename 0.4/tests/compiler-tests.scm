@@ -33,13 +33,37 @@
 (kernel:eval (bard:compile '(begin (DEF Barney "Barney") Barney) '()) $env0) ; => "Barney"
 
 ;;; cond
+(kernel:eval (bard:compile '(cond ((< 3 1) 'nonsense)((> 3 1) 'YEP)(#t 'default)) '()) $env0) ; => YEP
+
 ;;; define
 ;;; ensure
+(kernel:eval (bard:compile '(ensure (DEF q 2) after: q) '()) $env0) ;=> error: Unbound variable q
+(kernel:eval (bard:compile 'q '()) $env0) ; => 2
+
 ;;; if
+(kernel:eval (bard:compile '(if (> 1 3) 'yep 'nope) '()) $env0) ; => nope
+
 ;;; let
+(kernel:eval (bard:compile '(let ((x 2)(y (+ x 1))) (* x y)) '()) $env0) ; => 6
+
 ;;; loop
 ;;; macro
 ;;; quote
+(kernel:eval (bard:compile '(quote Frobby) '()) $env0) ; => Frobby
+
 ;;; set!
+(kernel:eval '(DEF W "double-you") '())
+(kernel:eval (bard:compile '(set! W 101) '()) $env0)
+(kernel:eval (bard:compile 'W '()) $env0) ; => 101
+
 ;;; with-exit
+(kernel:eval '(DEF i 0) '())
+(kernel:eval (bard:compile '(with-exit (return)
+                                       (REPEAT (if (> i 10)
+                                                   (return i)
+                                                   (set! i (+ i 1)))))
+                           '()) $env0) ; => 11
+
+
+
 

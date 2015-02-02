@@ -14,7 +14,7 @@
 ;;; 
 ;;; ---------------------------------------------------------------------
 ;;; simple case
-;;; (set! var val) => (kernel:assign! var val)
+;;; (set! var val) => (ASSIGN var val)
 ;;; general setter
 ;;; (set! (car foo) val) => ((setter car) foo val)
 
@@ -23,7 +23,7 @@
       (let ((place (list-ref expr 1))
             (val (list-ref expr 2)))
         (if (symbol? place)
-            (bard:compile `(assign! ,place ,val) env)
+            (bard:compile `(ASSIGN ,place ,val) env)
             (if (= 2 (length place))
                 (let ((accessor (car place))
                       (destination (cadr place)))

@@ -23,8 +23,23 @@
 ;;; macros
 ;;; ---------------------------------------------------------------------
 
-(define (bard:macro-form? expr) #f)
-(define (bard:macroexpand expr)(not-yet-implemented 'bard:macroexpand))
+(define *bard-macro-forms* (make-table test: eqv?))
+
+;;; an expander has the form (lambda (expr) ...) => expr*
+(define (define-bard-macro mname expander)
+  (table-set! *bard-macro-forms* mname expander))
+
+(define (bard:get-macro-expander mname)
+  (table-ref *bard-macro-forms* mname #f))
+
+(define (bard:macro-form? expr)
+  (bard:get-macro-expander (car expr)))
+
+(define (bard:macroexpand expr)
+  (let ((expand (bard:get-macro-expander (car expr))))
+    (if expand
+        (expand expr)
+        (error "Undefined macro" (car expr)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; compilers for special forms
