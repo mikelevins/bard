@@ -31,3 +31,7 @@
   (cons (cons var val)
         env))
 
+(define (env:add-bindings env vars vals)
+  (append (zip vars vals)
+          env))
+

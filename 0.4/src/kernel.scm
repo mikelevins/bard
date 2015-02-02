@@ -94,6 +94,17 @@
         (kernel:eval (third expr) env)
         (kernel:eval (fourth expr) env))))
 
+(define (kernel:eval-loop expr env)
+  (let* ((bindings (list-ref expr 1))
+         (vars (map car bindings))
+         (vals (map cadr bindings))
+         (body (drop 2 expr))
+         (again-fn (lambda:create vars
+                                  (cons 'begin body)
+                                  env)))
+    (kernel-lambda-env-set! again-fn (env:add-binding env 'again again-fn))
+    (kernel:eval `(,again-fn ,@vals) (kernel-lambda-env again-fn))))
+
 (define (kernel:eval-quote expr env)
   (cadr expr))
 
@@ -115,6 +126,7 @@
     ((def)(kernel:eval-def expr env))
     ((ensure)(kernel:eval-ensure expr env))
     ((if)(kernel:eval-if expr env))
+    ((loop)(kernel:eval-loop expr env))
     ((quote)(kernel:eval-quote expr env))
     ((assign!)(kernel:eval-assign! expr env))
     ((with-exit)(kernel:eval-with-exit expr env))
