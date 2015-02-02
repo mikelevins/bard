@@ -113,6 +113,10 @@
       (kernel:eval op env)
       (loop))))
 
+(define (kernel:eval-time expr env)
+  (let ((op (cadr expr)))
+    (time (kernel:eval op env))))
+
 (define (kernel:eval-application expr env)
   (case (first expr)
     ((ASSIGN)(kernel:eval-assign! expr env))
@@ -124,6 +128,7 @@
     ((IF)(kernel:eval-if expr env))
     ((QUOTE)(kernel:eval-quote expr env))
     ((REPEAT)(kernel:eval-repeat expr env))
+    ((TIME)(kernel:eval-time expr env))
     ((WITH-EXIT)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
 

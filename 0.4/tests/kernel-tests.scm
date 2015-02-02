@@ -80,4 +80,15 @@
                   (ASSIGN i (+ i 1)))))
  $env4) ; => 6
 
+;;; for time testing:
+(define $env5 '((i . 0)))
+(time
+ (kernel:eval
+  '(WITH-EXIT (return)
+              (REPEAT
+               (IF (> i 100000)
+                   (return i)
+                   (ASSIGN i (+ i 1)))))
+  $env5)) ; => 6
+
 

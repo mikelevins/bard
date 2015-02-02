@@ -33,7 +33,6 @@
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
 (define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
 (define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
-(define (bard:compile-with-exit expr env)(not-yet-implemented 'bard:compile-with-exit))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler
