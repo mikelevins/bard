@@ -34,6 +34,7 @@
          "/src/kernel.scm"
          "/src/shell.scm"
          "/src/compiler-let.scm"
+         "/src/compiler-set!.scm"
          "/src/compiler.scm"
          ))
 

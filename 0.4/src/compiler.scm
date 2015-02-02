@@ -37,7 +37,6 @@
 (define (bard:compile-receive expr env) (not-yet-implemented 'bard:compile-receive))
 (define (bard:compile-repeat expr env) (not-yet-implemented 'bard:compile-repeat))
 (define (bard:compile-send expr env) (not-yet-implemented 'bard:compile-send))
-(define (bard:compile-set! expr env) (not-yet-implemented 'bard:compile-set!))
 
 ;;; ---------------------------------------------------------------------
 ;;; main compiler
