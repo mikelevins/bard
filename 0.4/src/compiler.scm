@@ -32,7 +32,6 @@
 
 (define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
 (define (bard:compile-macro expr env) (not-yet-implemented 'bard:compile-macro))
-(define (bard:compile-quasiquote expr env) (not-yet-implemented 'bard:compile-quasiquote))
 (define (bard:compile-receive expr env) (not-yet-implemented 'bard:compile-receive))
 (define (bard:compile-send expr env) (not-yet-implemented 'bard:compile-send))
 
@@ -59,7 +58,6 @@
         ((define)(bard:compile-define expr env))
         ((let)(bard:compile-let expr env))
         ((macro)(bard:compile-macro expr env))
-        ((quasiquote)(bard:compile-quasiquote expr env))
         ((receive)(bard:compile-receive expr env))
         ((send)(bard:compile-send expr env))
         ((set!)(bard:compile-set! expr env))
