@@ -21,7 +21,7 @@
 ;;; (define foo bar)
 (define (bard:compile-define-variable expr env)
   (let ((var (cadr expr))
-        (val (caddr expr)))
+        (val (bard:compile (caddr expr) env)))
     `(DEF ,var ,val)))
 
 (define (bard:compile-define expr env)

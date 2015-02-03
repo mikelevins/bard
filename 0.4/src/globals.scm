@@ -36,6 +36,9 @@
 ;;;       I define them here in order to remind myself
 ;;;       how to initialize the globals.
 (define (globals:init)
+  (globals:def! 'nothing '())
+  (globals:def! 'true #t)
+  (globals:def! 'false #f)
   (globals:def! '+ +)
   (globals:def! '- -)
   (globals:def! '* *)

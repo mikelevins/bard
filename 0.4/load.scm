@@ -39,6 +39,7 @@
          "/src/compiler-define.scm"
          "/src/compiler.scm"
          "/src/macros.scm"
+         "/src/repl.scm"
          ))
 
 ;;; load sources
@@ -51,6 +52,6 @@
 
 ;;; (load-bard)
 ;;; (globals:init)
-
+;;; (bard:repl)
 
 
