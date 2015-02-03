@@ -45,4 +45,8 @@
   (globals:def! '<= <=)
   (globals:def! '> >)
   (globals:def! '>= >=)
+  (globals:def! 'list list)
+  (globals:def! 'cons cons)
+  (globals:def! 'car car)
+  (globals:def! 'cdr cdr)
   )

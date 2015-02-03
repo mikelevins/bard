@@ -78,8 +78,11 @@
           ((let)(bard:compile-let expr env))
           ((loop) (bard:compile-loop expr env))
           ((macro) `(MACRO ,@(cdr expr)))
+          ((quasiquote) (bard:compile (%expand-quasiquote (cadr expr) 0) env))
           ((quote) `(QUOTE ,@(cdr expr)))
           ((set!)(bard:compile-set! expr env))
+          ((unquote) (error "Invalid context for unquote"))
+          ((unquote-splicing) (error "Invalid context for unquote-splicing"))
           ((with-exit)(bard:compile-with-exit expr env))
           (else (map (lambda (e)(bard:compile e env)) expr))))))
 
