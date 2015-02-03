@@ -13,8 +13,8 @@
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
-;;; the main program of the bard kernel
+;;; the main program of the bard vm
 
-(kernel:shell)
+(bard:repl)
 
 
