@@ -36,6 +36,7 @@
          "/src/quasiquote.scm"
          "/src/compiler-let.scm"
          "/src/compiler-set!.scm"
+         "/src/compiler-define.scm"
          "/src/compiler.scm"
          "/src/macros.scm"
          ))

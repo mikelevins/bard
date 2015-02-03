@@ -51,7 +51,6 @@
 ;;; compilers for special forms
 ;;; ---------------------------------------------------------------------
 
-(define (bard:compile-define expr env) (not-yet-implemented 'bard:compile-define))
 (define (bard:compile-loop expr env) (not-yet-implemented 'bard:compile-loop))
 
 ;;; ---------------------------------------------------------------------

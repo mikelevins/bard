@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          compiler-let.scm
+;;;; Name:          compiler-set!.scm
 ;;;; Project:       Bard
-;;;; Purpose:       compilation of let forms
+;;;; Purpose:       compilation of set! forms
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2015 by mikel evins
 ;;;;
