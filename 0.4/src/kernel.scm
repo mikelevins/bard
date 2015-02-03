@@ -42,6 +42,7 @@
         (body (cons 'BEGIN (drop 2 expr))))
     (lambda:create lambda-list body env)))
 
+
 (define (eval-sequence exprs env)
   (let loop ((items exprs)
              (result (nothing)))
@@ -127,9 +128,6 @@
        (kernel:eval `(BEGIN ,@body)
                     (env:add-binding env kvar k))))))
 
-(define (kernel:eval-macro-definition expr env)
-  (error "Macro definition is not yet implemented" macro))
-
 (define (kernel:eval-application expr env)
   (case (first expr)
     ((ASSIGN)(kernel:eval-assign! expr env))
@@ -140,8 +138,7 @@
     ((ENSURE)(kernel:eval-ensure expr env))
     ((FN)(kernel:eval-lambda expr env))
     ((IF)(kernel:eval-if expr env))
-    ((MACRO)(kernel:eval-macro-definition expr env))
-    ((QUOTE)(kernel:eval-quote expr env))
+    ((quote)(kernel:eval-quote expr env))
     ((REPEAT)(kernel:eval-repeat expr env))
     ((TIME)(kernel:eval-time expr env))
     ((WITH-EXIT)(kernel:eval-with-exit expr env))

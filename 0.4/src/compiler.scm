@@ -38,8 +38,14 @@
 (define (bard:macroexpand expr)
   (let ((expand (bard:get-macro-expander (car expr))))
     (if expand
-        (expand expr)
+        (lambda:apply expand `(,expr))
         (error "Undefined macro" (car expr)))))
+
+;;; (macro mname (^ (expr) ...))
+(define (bard:compile-macro-definition expr)
+  (let ((mname (list-ref expr 1))
+        (mexpander (kernel:eval (bard:compile (list-ref expr 2)))))
+    (define-bard-macro mname mexpander)))
 
 ;;; ---------------------------------------------------------------------
 ;;; compilers for special forms
@@ -66,7 +72,7 @@
 
 (define (bard::compile-application expr env)
   (if (bard:macro-form? expr)
-      (bard::compile-application (bard:macroexpand expr) env)
+      (bard:compile (bard:macroexpand expr) env)
       (let ((comp (lambda (ex) (bard:compile ex env))))
         (case (first expr)
           ((^) `(FN ,(cadr expr) ,@(map comp (cddr expr))))
@@ -77,9 +83,8 @@
           ((if) `(IF ,@(map comp (cdr expr))))
           ((let)(bard:compile-let expr env))
           ((loop) (bard:compile-loop expr env))
-          ((macro) `(MACRO ,@(cdr expr)))
+          ((macro)(bard:compile-macro-definition expr))
           ((quasiquote) (bard:compile (%expand-quasiquote (cadr expr) 0) env))
-          ((quote) `(QUOTE ,@(cdr expr)))
           ((set!)(bard:compile-set! expr env))
           ((unquote) (error "Invalid context for unquote"))
           ((unquote-splicing) (error "Invalid context for unquote-splicing"))

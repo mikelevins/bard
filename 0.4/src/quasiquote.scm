@@ -13,8 +13,10 @@
 ;;; ----------------------------------------------------------------------
 ;;; ABOUT
 ;;; ----------------------------------------------------------------------
-;;; based on the quasiquote expander in Peter Norvig's
-;;; Paradigms of Artificial Intelligence Programming
+;;; quasiquote, unquote and unquote-splicing exist only
+;;; in the compiler; they're not in the kernel language
+
+;;; (quasiquote foo)
 
 ;;; quasiquote
 ;;; ----------------------------------------------------------------------
@@ -28,10 +30,10 @@
 (define (combine-skeletons left right exp)
   (cond
    ((and (constant? left) (constant? right)) 
-    (if (and (eqv? (%eval left) (car exp))
-             (eqv? (%eval right) (cdr exp)))
+    (if (and (eqv? (kernel:eval left) (car exp))
+             (eqv? (kernel:eval right) (cdr exp)))
         (list 'quote exp)
-        (list 'quote (cons (%eval left) (%eval right)))))
+        (list 'quote (cons (kernel:eval left) (kernel:eval right)))))
    ((null? right) (list 'list left))
    ((and (pair? right) (eq? (car right) 'list))
     (cons 'list (cons left (cdr right))))
