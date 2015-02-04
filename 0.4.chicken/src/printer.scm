@@ -8,8 +8,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(use extras)
-
 (define (printer:object->string obj)
-  (format #f "~S" obj))
+  (->string obj))
 

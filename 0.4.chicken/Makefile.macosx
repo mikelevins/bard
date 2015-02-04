@@ -1,7 +1,7 @@
 default: vm
 
 vm:
-	gsc -exe src/utils.scm \
+	csc -exe src/utils.scm \
 		src/version.scm \
 		src/error.scm \
 		src/globals.scm \

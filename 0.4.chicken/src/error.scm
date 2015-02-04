@@ -8,7 +8,5 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(use extras)
-
 (define (not-yet-implemented fname #!optional (message ""))
-  (error (string-append (format #f "~A" fname) " is not yet implemented")))
+  (error (string-append (->string fname) " is not yet implemented")))
