@@ -1,0 +1,28 @@
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          kernel.parenscript
+;;;; Project:       bardvm
+;;;; Purpose:       vm implementation
+;;;; Author:        mikel evins
+;;;; Copyright:     2015 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+
+(defun kernel-eval-application (expr env)
+  )
+
+(defun kernel-eval (expr env)
+  (cond
+    ((null expr) nil)
+    ((undefined expr) undefined)
+    ((or (stringp expr)
+         (numberp expr)
+         (functionp expr)) expr)
+    ((objectp expr)(if (eql |Array| (@ expr 'constructor))
+                       (kernel-eval-application expr env)
+                       expr))
+    (t expr)))
+
+
+
