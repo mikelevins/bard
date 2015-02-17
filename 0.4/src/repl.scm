@@ -20,11 +20,18 @@
   (let loop ((halt #f))
     (if halt
         'ok
-        (begin (newline)
-               (display "bard> ")
-               (let ((line (trim-whitespace (read-line))))
-                 (if (or (match-prefix? ":quit" line)
-                         (match-prefix? ":q" line))
-                     (loop #t)
-                     (begin (kernel:print (kernel:eval (bard:compile (kernel:read line))))
-                            (loop #f))))))))
+        (with-exception-catcher
+         (lambda (err)
+           (display (string-append "ERROR: "
+                                   (object->string err)))
+           (newline)
+           (loop #f))
+         (lambda ()
+           (begin (newline)
+                  (display "bard> ")
+                  (let ((line (trim-whitespace (read-line))))
+                    (if (or (match-prefix? ":quit" line)
+                            (match-prefix? ":q" line))
+                        (loop #t)
+                        (begin (kernel:print (kernel:eval (bard:compile (kernel:read line))))
+                               (loop #f))))))))))

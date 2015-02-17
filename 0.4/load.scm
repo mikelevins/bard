@@ -35,6 +35,7 @@
          "/src/shell.scm"
          "/src/quasiquote.scm"
          "/src/compiler-let.scm"
+         "/src/compiler-loop.scm"
          "/src/compiler-set!.scm"
          "/src/compiler-define.scm"
          "/src/compiler.scm"
