@@ -38,7 +38,7 @@
 (define (bard:macroexpand expr)
   (let ((expand (bard:get-macro-expander (car expr))))
     (if expand
-        (lambda:apply expand `(,expr))
+        (apply-method expand `(,expr))
         (error "Undefined macro" (car expr)))))
 
 ;;; (macro mname (^ (expr) ...))
@@ -59,7 +59,7 @@
 
 (define (bard:compile-with-exit expr env)
   (let ((exit-form (list-ref expr 1)))
-    `(with-exit ,exit-form
+    `(WITH-EXIT ,exit-form
                 ,@(map (lambda (x)(bard:compile x env))
                        (drop 2 expr)))))
 

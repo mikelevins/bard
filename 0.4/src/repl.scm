@@ -22,10 +22,17 @@
         'ok
         (with-exception-catcher
          (lambda (err)
-           (display (string-append "ERROR: "
-                                   (object->string (error-exception-message err))
-                                   " "
-                                   (object->string (error-exception-parameters err))))
+           (cond
+            ((error-exception? err)
+             (display (string-append "ERROR: " (object->string (error-exception-message err))
+                                     " " (object->string (error-exception-parameters err)))))
+            ((type-exception? err)
+             (display (string-append "ERROR: " (object->string (type-exception-message err))
+                                     " " (object->string (type-exception-type-id err)))))
+            ((unbound-global-exception? err)
+             (display (string-append "ERROR: unbound global: "
+                                     (object->string (unbound-global-exception-variable err)))))
+            (else (display (string-append "ERROR: " (object->string err)))))
            (newline)
            (loop #f))
          (lambda ()
@@ -37,3 +44,6 @@
                         (loop #t)
                         (begin (kernel:print (kernel:eval (bard:compile (kernel:read line))))
                                (loop #f))))))))))
+
+
+

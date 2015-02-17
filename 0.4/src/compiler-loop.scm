@@ -21,7 +21,7 @@
          (formals (map car bindings))
          (inits (map cadr bindings))
          (call-env (env:add-binding env 'continue #f))
-         (continue-fn (lambda:create formals (bard:compile (cons 'begin body)) call-env)))
+         (continue-fn (method:create formals (bard:compile (cons 'begin body)) call-env)))
     (env:binding-set! (env:get-binding 'continue call-env)
                       continue-fn)
     `(,continue-fn ,@inits)))

@@ -65,7 +65,7 @@
 ;;; with-exit
 (kernel:eval '(DEF i 0) '())
 (kernel:eval (bard:compile '(with-exit (return)
-                                       (REPEAT (if (> i 10)
+                                       (repeat (if (> i 10)
                                                    (return i)
                                                    (set! i (+ i 1)))))
                            '()) $env0) ; => 11

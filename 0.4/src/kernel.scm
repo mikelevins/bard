@@ -13,7 +13,7 @@
 (define (with-exit-form? expr)
   (and (list? expr)
        (not (null? expr))
-       (eq? 'with-exit (first expr))))
+       (eq? 'WITH-EXIT (first expr))))
 
 (define (kernel:eval-variable expr env)
   (let ((binding (env:get-binding expr env)))
@@ -26,22 +26,22 @@
 (define (kernel:eval-with-exit expr env)
   (let* ((form (cdr expr))
          (exit-var (car (car form)))
-         (body (cons 'BEGIN (drop 1 form))))
-    (call/cc (lambda (k)(kernel:eval body (env:add-binding env exit-var k))))))
+         (body (bard:compile (cons 'begin (drop 1 form)) env)))
+    (call/cc (lambda (k)
+               (kernel:eval body
+                            (env:add-binding env exit-var
+                                             (make-native-method k)))))))
 
 (define (kernel:eval-function-application expr env)
   (let ((op (kernel:eval (first expr) env))
         (args (map (lambda (e)(kernel:eval e env))
                    (rest expr))))
-    (cond ((lambda:native-method? op)(apply (lambda:method-native-function op) args))
-          ((kernel-lambda? op) (lambda:apply op args))
-          (else (error "Unrecognized function type" expr)))))
+    (apply-method op args)))
 
-(define (kernel:eval-lambda expr env)
+(define (kernel:eval-method expr env)
   (let ((lambda-list (list-ref expr 1))
         (body (cons 'BEGIN (drop 2 expr))))
-    (lambda:create lambda-list body env)))
-
+    (method:create lambda-list body env)))
 
 (define (eval-sequence exprs env)
   (let loop ((items exprs)
@@ -136,10 +136,10 @@
     ((COND)(kernel:eval-cond expr env))
     ((DEF)(kernel:eval-def expr env))
     ((ENSURE)(kernel:eval-ensure expr env))
-    ((FN)(kernel:eval-lambda expr env))
+    ((FN)(kernel:eval-method expr env))
     ((IF)(kernel:eval-if expr env))
     ((quote)(kernel:eval-quote expr env))
-    ((REPEAT)(kernel:eval-repeat expr env))
+    ((repeat)(kernel:eval-repeat expr env))
     ((time)(kernel:eval-time expr env))
     ((WITH-EXIT)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
