@@ -140,7 +140,7 @@
     ((IF)(kernel:eval-if expr env))
     ((quote)(kernel:eval-quote expr env))
     ((REPEAT)(kernel:eval-repeat expr env))
-    ((TIME)(kernel:eval-time expr env))
+    ((time)(kernel:eval-time expr env))
     ((WITH-EXIT)(kernel:eval-with-exit expr env))
     (else (kernel:eval-function-application expr env))))
 

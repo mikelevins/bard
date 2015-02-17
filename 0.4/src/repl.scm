@@ -23,7 +23,9 @@
         (with-exception-catcher
          (lambda (err)
            (display (string-append "ERROR: "
-                                   (object->string err)))
+                                   (object->string (error-exception-message err))
+                                   " "
+                                   (object->string (error-exception-parameters err))))
            (newline)
            (loop #f))
          (lambda ()
