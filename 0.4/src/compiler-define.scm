@@ -16,7 +16,13 @@
 
 ;;; (define (foo bar baz) expr1 expr2 ...)
 (define (bard:compile-define-function expr env)
-  (error "function definition is not yet implemented"))
+  (let* ((proto (cadr expr))
+         (fname (car proto))
+         (params (cdr proto))
+         (body (drop 2 expr)))
+    `(DEF ,fname
+          (FN ,params ,(bard:compile
+                        (cons 'begin body))))))
 
 ;;; (define foo bar)
 (define (bard:compile-define-variable expr env)

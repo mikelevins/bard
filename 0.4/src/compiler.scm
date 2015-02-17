@@ -99,4 +99,3 @@
                      (bard::compile-application expr env)))
    (else (bard:compile-constant expr))))
 
-

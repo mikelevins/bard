@@ -36,6 +36,12 @@
 (kernel:eval (bard:compile '(cond ((< 3 1) 'nonsense)((> 3 1) 'YEP)(#t 'default)) '()) $env0) ; => YEP
 
 ;;; define
+(kernel:eval (bard:compile '(define x 1001) '()) $env0)
+(kernel:eval (bard:compile 'x '()) $env0)
+(kernel:eval (bard:compile '(define (add x y)(+ x y)) '()) $env0)
+(kernel:eval (bard:compile 'add '()) $env0)
+(kernel:eval (bard:compile '(add 2 3) '()) $env0)
+
 ;;; ensure
 (kernel:eval (bard:compile '(ensure (DEF q 2) after: q) '()) $env0) ;=> error: Unbound variable q
 (kernel:eval (bard:compile 'q '()) $env0) ; => 2
