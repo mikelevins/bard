@@ -15,6 +15,19 @@
 ;;; ---------------------------------------------------------------------
 ;;; an interactive read-eval-print-loop for the bard language
 
+(define (display-error err)
+  (cond
+   ((error-exception? err)
+    (display (string-append "ERROR: " (error-exception-message err)
+                            " " (object->string (error-exception-parameters err)))))
+   ((type-exception? err)
+    (display (string-append "ERROR: type error: " 
+                            (object->string (type-exception-type-id err)))))
+   ((unbound-global-exception? err)
+    (display (string-append "ERROR: unbound global: "
+                            (object->string (unbound-global-exception-variable err)))))
+   (else (display (string-append "ERROR: " (object->string err))))))
+
 (define (bard:repl)
   (globals:init)
   (let loop ((halt #f))
@@ -22,17 +35,7 @@
         'ok
         (with-exception-catcher
          (lambda (err)
-           (cond
-            ((error-exception? err)
-             (display (string-append "ERROR: " (object->string (error-exception-message err))
-                                     " " (object->string (error-exception-parameters err)))))
-            ((type-exception? err)
-             (display (string-append "ERROR: " (object->string (type-exception-message err))
-                                     " " (object->string (type-exception-type-id err)))))
-            ((unbound-global-exception? err)
-             (display (string-append "ERROR: unbound global: "
-                                     (object->string (unbound-global-exception-variable err)))))
-            (else (display (string-append "ERROR: " (object->string err)))))
+           (display-error err)
            (newline)
            (loop #f))
          (lambda ()
