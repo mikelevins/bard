@@ -59,3 +59,11 @@
 ;;; (bard:repl)
 
 
+;;; TODO:
+;;; - implement function dispatch (method calling is done)
+;;; - implement class taxonomies
+;;; - implement a way of marking functions and methods with a debug name
+;;; - implement send and receive
+;;; - implement protocols and the standard library
+;;; - implement a mechanism for making foreign calls, for instance to a windowing subsystem
+
