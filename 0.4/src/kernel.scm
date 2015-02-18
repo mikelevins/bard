@@ -41,7 +41,7 @@
 (define (kernel:eval-method expr env)
   (let ((lambda-list (list-ref expr 1))
         (body (cons 'BEGIN (drop 2 expr))))
-    (method:create lambda-list body env)))
+    (make-method lambda-list body env)))
 
 (define (eval-sequence exprs env)
   (let loop ((items exprs)

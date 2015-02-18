@@ -11,5 +11,7 @@
 (declare (extended-bindings))
 
 (define (printer:object->string obj)
-  (object->string obj))
+  (if (eqv? obj #!void)
+      ""
+      (object->string obj)))
 

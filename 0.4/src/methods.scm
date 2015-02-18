@@ -10,18 +10,11 @@
 
 (declare (extended-bindings))
 
-;;; ---------------------------------------------------------------------
-;;; ABOUT
-;;; ---------------------------------------------------------------------
-
 (define-structure native-method
   procedure)
 
 (define-structure method
   parameters body env)
-
-(define (method:create lambda-list body env)
-  (make-method lambda-list body env))
 
 (define (make-call-env params args env)
   (if (list? params)
