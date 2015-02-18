@@ -29,11 +29,8 @@
           (error "Invalid lambda list" params))))
 
 (define (apply-method op args)
-  (if (native-method? op)
-      (apply (native-method-procedure op) args)
-      (let* ((params (method-parameters op))
-             (body (method-body op))
-             (env (method-env op))
-             (call-env (make-call-env params args env)))
-        (kernel:eval body call-env))))
-
+  (let* ((params (method-parameters op))
+         (body (method-body op))
+         (env (method-env op))
+         (call-env (make-call-env params args env)))
+    (kernel:eval body call-env)))

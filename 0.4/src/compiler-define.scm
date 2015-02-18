@@ -21,7 +21,7 @@
          (params (cdr proto))
          (body (drop 2 expr)))
     `(DEF ,fname
-          (FN ,params ,(bard:compile
+          (METHOD ,params ,(bard:compile
                         (cons 'begin body))))))
 
 ;;; (define foo bar)

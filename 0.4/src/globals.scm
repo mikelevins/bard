@@ -39,6 +39,7 @@
   (globals:def! 'nothing '())
   (globals:def! 'true #t)
   (globals:def! 'false #f)
+  (globals:def! 'Integer (make-class 'Integer))
   (globals:def! '+ (make-native-method +))
   (globals:def! '- (make-native-method -))
   (globals:def! '* (make-native-method *))

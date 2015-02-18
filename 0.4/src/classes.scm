@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          functions.scm
+;;;; Name:          classes.scm
 ;;;; Project:       Bard
-;;;; Purpose:       representation of Bard functions
+;;;; Purpose:       representation of Bard classes
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2015 by mikel evins
 ;;;;
@@ -10,8 +10,5 @@
 
 (declare (extended-bindings))
 
-(define-structure function
-  input-types output-types methods)
-
-(define (kernel:eval-function expr env)
-  #f)
+(define-structure class
+  name)
