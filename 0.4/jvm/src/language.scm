@@ -99,8 +99,6 @@
   (identicalFn :: IsEq allocation: 'static access: 'public init-form: #!null)
   (equivalentFn :: IsEqv allocation: 'static access: 'public init-form: #!null)
   (equalFn :: IsEqual allocation: 'static access: 'public init-form: #!null)
-  (mapFn :: Map allocation: 'static access: 'public init-form: #!null)
-  (foreachFn :: Map allocation: 'static access: 'public init-form: #!null)
   (numEqFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
   (numLessFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
   (numLessEqFn :: NumberCompare allocation: 'static access: 'public init-form: #!null)
@@ -250,9 +248,6 @@
           ;; equal?
           (begin (set! equalFn (IsEqual (this) "equal?"))
                  (*:defProcStFld (this) "equal?" "BardLanguage" "equalFn"))
-          ;; for-each
-          (begin (set! mapFn (Map #f applyToArgsFn identicalFn))
-                 (*:defProcStFld (this) "for-each" "BardLanguage" "foreachFn"))
           ;; =
           (begin (set! numEqFn (NumberCompare:make (this) "=" NumberCompare:TRUE_IF_EQU))
                  (*:defProcStFld (this) "=" "BardLanguage" "numEqFn"))
