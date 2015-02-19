@@ -1,0 +1,23 @@
+#!/bin/sh
+
+export PLATFORM="`uname`"
+export thisdir="`dirname \"$0\"`"
+export BARD_HOME="`( cd \"$thisdir/..\" && pwd )`"
+export BARD_SOURCES="${BARD_HOME}/src"
+export BARD_LIB="${BARD_HOME}/lib"
+
+if [ "${PLATFORM}" == "Linux" ]
+then
+    export JAVA_HOME=/usr/lib64/jvm/java-7-openjdk
+else
+    export JAVA_HOME=$(/usr/libexec/java_home)
+fi
+
+export JRE_LIB="${JAVA_HOME}/jre/lib"
+
+
+export BARD_CLASSPATH="${BARD_LIB}/*:${JRE_LIB}/*:."
+
+exec java -Dbard.home=${BARD_HOME} -cp ${BARD_CLASSPATH} kawa.repl --output-format readable-scheme "$@"
+
+
