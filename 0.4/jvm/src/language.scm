@@ -310,12 +310,14 @@
           ;; odd?
           (begin (set! isOddFn (NumberPredicate (this) "odd?" NumberPredicate:ODD))
                  (*:defProcStFld (this) "odd?" "BardLanguage" "isOddFn"))
-          (begin (set! isEvenFn (NumberPredicate (this) "even?" NumberPredicate:EVEN))
-                 (*:defProcStFld (this) "even?" "BardLanguage" "isEvenFn"))
           ;; even?
-          ))
+          (begin (set! isEvenFn (NumberPredicate (this) "even?" NumberPredicate:EVEN))
+                 (*:defProcStFld (this) "even?" "BardLanguage" "isEvenFn"))))
 
+  ;; ----------------------------------
+  ;; methods
   ;; ----------------------------------
 
   ((getInstance) allocation: 'static (bard-instance))
   ((builtin) allocation: 'static (bard-environment)))
+
