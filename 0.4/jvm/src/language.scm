@@ -21,17 +21,23 @@
 
 (define-private-alias Apply gnu.kawa.functions.Apply)
 (define-private-alias ApplyToArgs gnu.kawa.functions.ApplyToArgs)
+(define-private-alias ClassType gnu.bytecode.ClassType)
 (define-private-alias Environment gnu.mapping.Environment)
 (define-private-alias HashPMap org.pcollections.HashPMap)
 (define-private-alias InstanceOf gnu.kawa.reflect.InstanceOf)
 (define-private-alias IsEq gnu.kawa.functions.IsEq)
 (define-private-alias IsEqv gnu.kawa.functions.IsEqv)
 (define-private-alias IsEqual gnu.kawa.functions.IsEqual)
+(define-private-alias LispLanguage gnu.kawa.lispexpr.LispLanguage)
 (define-private-alias Map gnu.kawa.functions.Map)
 (define-private-alias Not gnu.kawa.functions.Not)
 (define-private-alias NumberCompare gnu.kawa.functions.NumberCompare)
 (define-private-alias NumberPredicate gnu.kawa.functions.NumberPredicate)
 (define-private-alias Procedure gnu.mapping.Procedure)
+(define-private-alias ReaderDispatch gnu.kawa.lispexpr.ReaderDispatch)
+(define-private-alias ReaderDispatchSyntaxQuote gnu.kawa.lispexpr.ReaderDispatchSyntaxQuote)
+(define-private-alias ReaderQuote gnu.kawa.lispexpr.ReaderQuote)
+(define-private-alias ReadTable gnu.kawa.lispexpr.ReadTable)
 (define-private-alias Scheme kawa.standard.Scheme)
 
 ;;; ---------------------------------------------------------------------
@@ -217,6 +223,29 @@
    allocation: 'static access: 'public
    init-form: (primitive-structure "vector" gnu.lists.FVector
                                    (lambda (#!rest args)(apply vector args))))
+
+  ;; BardLanguage methods
+  ;; ----------------------------------
+  ((keywordsAreSelfEvaluating)(@java.lang.Override) ::boolean
+   (begin #t))
+  ((createReadTable)(@java.lang.Override) ::ReadTable
+   (let* ((table::ReadTable (ReadTable:createInitial))
+          (dispatchTable (as ReaderDispatch (*:lookup table (char->integer #\#))))
+          (sentry (ReaderDispatchSyntaxQuote)))
+     (*:set dispatchTable (char->integer #\') sentry)
+     (*:set dispatchTable (char->integer #\`) sentry)
+     (*:set dispatchTable (char->integer #\,) sentry)
+     (*:putReaderCtorFld table "path" "gnu.kawa.lispexpr.LangObjType" "pathType")
+     (*:putReaderCtorFld table "filepath" "gnu.kawa.lispexpr.LangObjType" "filepathType")
+     (*:putReaderCtorFld table "URI" "gnu.kawa.lispexpr.LangObjType" "URIType")
+     (*:putReaderCtor table "symbol" (ClassType:make "gnu.mapping.Symbol"))
+     (*:putReaderCtor table "namespace" (ClassType:make "gnu.mapping.Namespace"))
+     (*:putReaderCtorFld table "duration" "kawa.lib.numbers" "duration")
+     (set! table:postfixLookupOperator #\:)
+     (*:setFinalColonIsKeyword table #t)
+     (*:set table (char->integer #\@)
+            (ReaderQuote LispLanguage:splice_sym ReadTable:NON_TERMINATING_MACRO))
+     table))
 
   ;; set up the bard runtime environment
   ;; ----------------------------------
