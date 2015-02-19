@@ -7,7 +7,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(module-export structure structure? primitive-structure)
+(module-export BardClass structure structure? primitive-structure)
 
 (require "map.scm")
 
@@ -84,20 +84,6 @@
 
 ;;; Dictionary
 ;;; ---------------------------------------------------------------------
-;;; hash-table
-
-(define hash-table
-  (primitive-structure "hash-table" java.util.concurrent.ConcurrentHashMap
-                       (lambda (#!rest args)
-                         (let ((hmap (java.util.concurrent.ConcurrentHashMap)))
-                           (let loop ((plist args))
-                             (if (null? plist)
-                                 hmap
-                                 (if (null? (cdr plist))
-                                     (error (format #f "Malformed initargs to hash-table: ~s"
-                                                    args))
-                                     (begin (*:put hmap (car plist)(cadr plist))
-                                            (loop (cddr plist))))))))))
 
 ;;; Stream
 ;;; ---------------------------------------------------------------------
@@ -140,16 +126,10 @@
 (define-simple-class BardClass ()
   (name init-form: #!null)
   ((getName) name)
-
-  (direct-superclasses init-form: '())
-  ((getDirectSuperclasses) direct-superclasses)
-  ((setDirectSuperclasses classes) (set! direct-superclasses classes))
-  
-  ((*init* nm cls)(begin (set! name nm)
-                         (set! direct-superclasses cls))))
+  ((*init* nm)(begin (set! name nm))))
 
 (define bard-class 
-  (type-constructor "class" (lambda (nm cls)(BardClass nm cls))))
+  (type-constructor "class" (lambda (nm)(BardClass nm))))
 
 ;;; singleton
 ;;; ---------------------------------------------------------------------

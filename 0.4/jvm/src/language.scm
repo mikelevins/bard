@@ -123,6 +123,8 @@
                                                     (lambda (val) (if val #t #f))))
   (structureBox :: structure allocation: 'static access: 'public
                 init-form: (primitive-structure "box" Box (lambda (val)(Box val))))
+  (structureClass :: structure allocation: 'static access: 'public
+                  init-form: (primitive-structure "class" BardClass (lambda (name)(BardClass name))))
   (structureCons :: structure allocation: 'static access: 'public
                  init-form: (primitive-structure "cons" gnu.lists.Pair 
                                                  (lambda (a b)(gnu.lists.Pair a b))))
@@ -207,6 +209,7 @@
           (*:defProcStFld (this) "big-integer" "BardLanguage" "structureBigInteger")
           (*:defProcStFld (this) "boolean" "BardLanguage" "structureBoolean")
           (*:defProcStFld (this) "box" "BardLanguage" "structureBox")
+          (*:defProcStFld (this) "class" "BardLanguage" "structureClass")
           (*:defProcStFld (this) "cons" "BardLanguage" "structureCons")
           (*:defProcStFld (this) "dict" "BardLanguage" "structureDict")
           (*:defProcStFld (this) "double-float" "BardLanguage" "structureDoubleFloat")
@@ -219,6 +222,7 @@
           (*:defProcStFld (this) "unicode-string" "BardLanguage" "structureUnicodeString")
           (*:defProcStFld (this) "uri" "BardLanguage" "structureURI")
           (*:defProcStFld (this) "vector" "BardLanguage" "structureVector")
+          ;;;;
           ;;;; built-in procedures
           ;;;; --------
           ;;;; repl prompt
