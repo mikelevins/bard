@@ -108,80 +108,115 @@
   (isEvenFn :: NumberPredicate allocation: 'static access: 'public init-form: #!null)
   (defaultPrompter :: Procedure allocation: 'static access: 'public init-form: default-prompter)
   (bardQuit :: Procedure allocation: 'static access: 'public init-form: bard-quit)
+  ;; ---------------
   ;; primitive structures
   ;; ---------------
-  (structureBigInteger :: structure allocation: 'static access: 'public
-                       init-form: (primitive-structure "big-integer" gnu.math.IntNum
-                                                       (lambda (val)
-                                                         (if (eq? (val:getClass) gnu.math.IntNum)
-                                                             val
-                                                             (error (format #f "Not an integer: ~S" val))))))
-  (structureBoolean :: structure allocation: 'static access: 'public
-                    init-form: (primitive-structure "boolean" java.lang.Boolean
-                                                    (lambda (val) (if val #t #f))))
-  (structureBox :: structure allocation: 'static access: 'public
-                init-form: (primitive-structure "box" Box (lambda (val)(Box val))))
-  (structureClass :: structure allocation: 'static access: 'public
-                  init-form: (primitive-structure "class" BardClass (lambda (name)(BardClass name))))
-  (structureCons :: structure allocation: 'static access: 'public
-                 init-form: (primitive-structure "cons" gnu.lists.Pair 
-                                                 (lambda (a b)(gnu.lists.Pair a b))))
-  (structureDict :: structure allocation: 'static access: 'public
-                init-form: (primitive-structure "dict" HashPMap (lambda (#!rest args)(apply hashpmap args))))
-  (structureDoubleFloat :: structure allocation: 'static access: 'public
-                        init-form: (primitive-structure "double-float" gnu.math.DFloNum
-                                                        (lambda (val)
-                                                          (if (eq? (val:getClass) gnu.math.DFloNum)
-                                                              val
-                                                              (error (format #f "Not a double-float: ~S" val))))))
-  (structureKeyword :: structure allocation: 'static access: 'public
-                    init-form: (primitive-structure "keyword" gnu.expr.Keyword
-                                                    (lambda (val)
-                                                      (cond
-                                                       ((keyword? val) val)
-                                                       ((symbol? val) (string->keyword (symbol->string val)))
-                                                       ((string? val) (string->keyword val))
-                                                       (#t (error (format #f "Can't convert to a keyword: ~S"
-                                                                          val)))))))
-  (structureRatio :: structure allocation: 'static access: 'public
-                  init-form: (primitive-structure "ratio" gnu.math.IntFraction
-                                                  (lambda (val)
-                                                    (if (eq? (val:getClass) gnu.math.IntFraction)
-                                                        val
-                                                        (error (format #f "Not a ratio: ~S" val))))))
-  (structureSequence :: structure allocation: 'static access: 'public
-                     init-form: (primitive-structure "sequence" org.pcollections.ConsPStack
-                                                     (lambda (#!rest args)(org.pcollections.ConsPStack:from args))))
-  (structureSingleFloat :: structure allocation: 'static access: 'public
-                        init-form: (primitive-structure "single-float" java.lang.Float
-                                                        (lambda (val)
-                                                          (if (eq? (val:getClass) java.lang.Float)
-                                                              val
-                                                              (error (format #f "Not a single-float: ~S" val))))))
-  (structureSymbol :: structure allocation: 'static access: 'public
-                   init-form: (primitive-structure "symbol" gnu.mapping.Symbol
-                                                   (lambda (val)
-                                                     (cond
-                                                      ((keyword? val) (string->symbol (keyword->string val)))
-                                                      ((symbol? val) val)
-                                                      ((string? val) (string->symbol val))
-                                                      (#t (error (format #f "Can't convert to a symbol: ~S"
-                                                                         val)))))))
-  (structureUnicodeChar :: structure allocation: 'static access: 'public
-                        init-form: (primitive-structure "unicode-character" gnu.text.Char
-                                                        (lambda (val)
-                                                          (cond
-                                                           ((char? val) val)
-                                                           ((integer? val)(integer->char val))
-                                                           (#t (error (format #f "Not a character: ~S" val)))))))
-  (structureUnicodeString :: structure allocation: 'static access: 'public
-                          init-form: (primitive-structure "unicode-string" java.lang.String
-                                                          (lambda (#!rest args)(apply string args))))
-  (structureURI :: structure allocation: 'static access: 'public
-                init-form: (primitive-structure "uri" URI (lambda (val)(URI val))))
-  (structureVector :: structure allocation: 'static access: 'public
-                   init-form: (primitive-structure "vector" gnu.lists.FVector
-                                                   (lambda (#!rest args)(apply vector args))))
+  (structureBigInteger::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "big-integer" gnu.math.IntNum
+                                   (lambda (val)
+                                     (if (eq? (val:getClass) gnu.math.IntNum)
+                                         val
+                                         (error (format #f "Not an integer: ~S" val))))))
+  
+  (structureBoolean::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "boolean" java.lang.Boolean
+                                   (lambda (val) (if val #t #f))))
+  
+  (structureBox::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "box" Box
+                                   (lambda (val)(Box val))))
+  
+  (structureClass::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "class" BardClass
+                                   (lambda (name)(BardClass name))))
+  
+  (structureCons::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "cons" gnu.lists.Pair 
+                                   (lambda (a b)(gnu.lists.Pair a b))))
+  
+  (structureDict::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "dict" HashPMap
+                                   (lambda (#!rest args)(apply hashpmap args))))
+  
+  (structureDoubleFloat::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "double-float" gnu.math.DFloNum
+                                   (lambda (val)
+                                     (if (eq? (val:getClass) gnu.math.DFloNum)
+                                         val
+                                         (error (format #f "Not a double-float: ~S" val))))))
+  
+  (structureKeyword::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "keyword" gnu.expr.Keyword
+                                   (lambda (val)
+                                     (cond
+                                      ((keyword? val) val)
+                                      ((symbol? val) (string->keyword (symbol->string val)))
+                                      ((string? val) (string->keyword val))
+                                      (#t (error (format #f "Can't convert to a keyword: ~S"
+                                                         val)))))))
+  
+  (structureRatio::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "ratio" gnu.math.IntFraction
+                                   (lambda (val)
+                                     (if (eq? (val:getClass) gnu.math.IntFraction)
+                                         val
+                                         (error (format #f "Not a ratio: ~S" val))))))
+  
+  (structureSequence::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "sequence" org.pcollections.ConsPStack
+                                   (lambda (#!rest args)(org.pcollections.ConsPStack:from args))))
+  
+  (structureSingleFloat::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "single-float" java.lang.Float
+                                   (lambda (val)
+                                     (if (eq? (val:getClass) java.lang.Float)
+                                         val
+                                         (error (format #f "Not a single-float: ~S" val))))))
+  
+  (structureSymbol::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "symbol" gnu.mapping.Symbol
+                                   (lambda (val)
+                                     (cond
+                                      ((keyword? val) (string->symbol (keyword->string val)))
+                                      ((symbol? val) val)
+                                      ((string? val) (string->symbol val))
+                                      (#t (error (format #f "Can't convert to a symbol: ~S"
+                                                         val)))))))
+  
+  (structureUnicodeChar::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "unicode-character" gnu.text.Char
+                                   (lambda (val)
+                                     (cond
+                                      ((char? val) val)
+                                      ((integer? val)(integer->char val))
+                                      (#t (error (format #f "Not a character: ~S" val)))))))
+  
+  (structureUnicodeString::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "unicode-string" java.lang.String
+                                   (lambda (#!rest args)(apply string args))))
+  
+  (structureURI::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "uri" URI (lambda (val)(URI val))))
+  
+  (structureVector::structure
+   allocation: 'static access: 'public
+   init-form: (primitive-structure "vector" gnu.lists.FVector
+                                   (lambda (#!rest args)(apply vector args))))
 
   ;; set up the bard runtime environment
   ;; ----------------------------------
@@ -189,21 +224,24 @@
   ((*init* env::Environment)
    (begin (invoke-special kawa.standard.Scheme (this) '*init* env)
           (Environment:setCurrent env)
+          ;; ---------------
           ;; named constants
           ;; ---------------
           (*:defAliasStFld (this) "true" "java.lang.Boolean" "TRUE")
           (*:defAliasStFld (this) "false" "java.lang.Boolean" "FALSE")
           (*:defAliasStFld (this) "nothing" "gnu.lists.LList" "Empty")
+          ;; ---------------
           ;; special forms
-          ;; -------------
+          ;; ---------------
           (*:defSntxStFld (this) "^" "kawa.standard.SchemeCompilation" "lambda")
           (*:defSntxStFld (this) "begin" "kawa.standard.begin" "begin")
           (*:defSntxStFld (this) "%define" "kawa.standard.define" "defineRaw")
           (*:defSntxStFld (this) "def" "kawa.lib.prim_syntax" "define")
           (*:defSntxStFld (this) "if" "kawa.lib.prim_syntax")
           (*:defSntxStFld (this) "quote" "kawa.lang.Quote" "plainQuote")
-          ;; ;; built-in structures
-          ;; ;; --------
+          ;; ---------------
+          ;; built-in structures
+          ;; ---------------
           (*:defProcStFld (this) "big-integer" "BardLanguage" "structureBigInteger")
           (*:defProcStFld (this) "boolean" "BardLanguage" "structureBoolean")
           (*:defProcStFld (this) "box" "BardLanguage" "structureBox")
@@ -220,10 +258,10 @@
           (*:defProcStFld (this) "unicode-string" "BardLanguage" "structureUnicodeString")
           (*:defProcStFld (this) "uri" "BardLanguage" "structureURI")
           (*:defProcStFld (this) "vector" "BardLanguage" "structureVector")
-          ;;;;
-          ;;;; built-in procedures
-          ;;;; --------
-          ;;;; repl prompt
+          ;; ---------------
+          ;; built-in procedures
+          ;; ---------------
+          ;; repl prompt
           (*:defProcStFld (this) "default-prompter" "BardLanguage" "defaultPrompter")
           ;;;; quit
           (*:defProcStFld (this) "quit" "BardLanguage" "bardQuit")
