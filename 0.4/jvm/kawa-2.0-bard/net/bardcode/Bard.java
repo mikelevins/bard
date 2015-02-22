@@ -123,11 +123,18 @@ public class Bard extends LispLanguage
   private void initBard ()
   {
       environ = nullEnvironment;
-      // bard-specific syntax
+      // -------------
+      // bard-specific 
+      // -------------
+      defAliasStFld("true", "java.lang.Boolean", "TRUE");
+      defAliasStFld("false", "java.lang.Boolean", "FALSE");
+      defAliasStFld("nothing", "gnu.lists.LList", "Empty");
       defSntxStFld("^", "kawa.standard.SchemeCompilation", "lambda");
       defSntxStFld("let", "net.bardcode.bard_syntax");
       defSntxStFld("def", "net.bardcode.bard_syntax");
+      // -------------
       // Kawa syntax
+      // -------------
       defSntxStFld("lambda", "kawa.standard.SchemeCompilation", "lambda");
       defSntxStFld("$bracket-apply$", "gnu.kawa.lispexpr.BracketApply", "instance");
       defSntxStFld("$string$", "kawa.lib.syntax");
