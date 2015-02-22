@@ -81,6 +81,7 @@
      <include name="gnu/**/*.class"/>
      <include name="kawa/**/*.class"/>
      <include name="net/**/*.class"/>
+     <include name="org/**/*.class"/>
   </fileset>
   
   <!-- 
@@ -615,6 +616,9 @@
       <arg line="--warn-undefined-variable --warn-unknown-member --warn-as-error"/>
       <filelist dir="${src.dir}/net/bardcode">
         <file name="bard_syntax.scm"/>
+        <file name="map.scm"/>
+        <file name="structure.scm"/>
+        <file name="language.scm"/>
       </filelist>
     </kawac>
   </target>
