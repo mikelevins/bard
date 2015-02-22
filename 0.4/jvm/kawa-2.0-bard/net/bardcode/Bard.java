@@ -20,7 +20,7 @@ public class Bard extends LispLanguage
   public static final Environment r4Environment;
   public static final Environment r5Environment;
   public static final Environment r6Environment;
-  protected static final SimpleEnvironment kawaEnvironment;
+  protected static final SimpleEnvironment bardEnvironment;
 
   public static final LangPrimType booleanType;
 
@@ -67,9 +67,9 @@ public class Bard extends LispLanguage
     r4Environment = Environment.make("r4rs-environment", nullEnvironment);
     r5Environment = Environment.make("r5rs-environment", r4Environment);
     r6Environment = Environment.make("r6rs-environment", r5Environment);
-    kawaEnvironment = Environment.make("kawa-environment", r6Environment);
+    bardEnvironment = Environment.make("kawa-environment", r6Environment);
 
-    instance = new Bard(kawaEnvironment);
+    instance = new Bard(bardEnvironment);
     instanceOf = new gnu.kawa.reflect.InstanceOf(instance, "instance?");
     not = new Not(instance, "not");
     applyToArgs = new ApplyToArgs("apply-to-args", instance);
@@ -117,13 +117,15 @@ public class Bard extends LispLanguage
 
   public static Environment builtin ()
   {
-    return kawaEnvironment;
+    return bardEnvironment;
   }
 
   private void initBard ()
   {
       environ = nullEnvironment;
-
+      // bard-specific syntax
+      defSntxStFld("^", "kawa.standard.SchemeCompilation", "lambda");
+      // Kawa syntax
       defSntxStFld("lambda", "kawa.standard.SchemeCompilation", "lambda");
       defSntxStFld("$bracket-apply$", "gnu.kawa.lispexpr.BracketApply", "instance");
       defSntxStFld("$string$", "kawa.lib.syntax");
@@ -160,8 +162,9 @@ public class Bard extends LispLanguage
       defSntxStFld("case", "kawa.lib.case_syntax");
       defSntxStFld("and", "kawa.lib.std_syntax");
       defSntxStFld("or", "kawa.lib.std_syntax");
-      defSntxStFld("let", "kawa.lib.std_syntax");
-      defSntxStFld("let*", "kawa.lib.std_syntax");
+      // defSntxStFld("let", "kawa.lib.std_syntax");
+      // defSntxStFld("let*", "kawa.lib.std_syntax");
+      defSntxStFld("let", "net.bardcode.bard_syntax");
       defSntxStFld("letrec", "kawa.lib.prim_syntax");
       defSntxStFld("letrec*", "kawa.lib.prim_syntax", "letrec");
 
@@ -546,11 +549,9 @@ public class Bard extends LispLanguage
       defProcStFld("infinite?", "kawa.lib.numbers");
       defProcStFld("nan?", "kawa.lib.numbers");
       defProcStFld("exact-integer-sqrt", "kawa.lib.numbers");
-      // TODO Some of the bindings made below in kawaEnvironment
-      // should be moved here instead.
 
       r6Environment.setLocked();
-      environ = kawaEnvironment;
+      environ = bardEnvironment;
  
       defSntxStFld("define-private", "kawa.lib.prim_syntax");
       defSntxStFld("define-constant", "kawa.lib.prim_syntax");
@@ -938,12 +939,14 @@ public class Bard extends LispLanguage
 
       defProcStFld("annotation", "gnu.kawa.reflect.MakeAnnotation", "instance");
 
-      kawaEnvironment.setLocked();
+      // Bard-specific additions
+      
+      bardEnvironment.setLocked();
   }
 
   public Bard ()
   {
-    environ = kawaEnvironment;
+    environ = bardEnvironment;
     userEnv = getNewEnvironment();
   }
 

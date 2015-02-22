@@ -65,7 +65,7 @@
   <target name="default" depends="all"/>
 
   <target name="classes" 
-          depends="java-classes, lib-scm-classes
+          depends="java-classes, lib-scm-classes, net-bardcode-classes
           , slib-scm-classes, commonlisp-scm-classes, brl-classes
           , xml-classes, servlet-classes, jemacs-classes, android-classes
           , javafx-classes" />
@@ -607,6 +607,18 @@
     </kawac>
   </target>
 
+  <target name="net-bardcode-classes" 
+          depends="java-classes">
+    <kawac failonerror="true" destdir="${build.classes}"
+	   prefix="net.bardcode." modulestatic="run" language="scheme">
+      <arg line="--warn-undefined-variable --warn-unknown-member --warn-as-error"/>
+      <filelist dir="${src.dir}/net/bardcode">
+        <file name="bard_syntax.scm"/>
+      </filelist>
+    </kawac>
+  </target>
+
+  
   <target name="commonlisp-scm-classes"
           depends="java-classes">
     <kawac failonerror="true" destdir="${build.classes}"
