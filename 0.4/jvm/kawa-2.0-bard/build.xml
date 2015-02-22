@@ -525,6 +525,7 @@
       <include name="gnu/kawa/xml/"/>
       <include name="gnu/xml/"/>
       <include name="net/bardcode/"/>
+      <include name="org/pcollections/"/>
       <patternset refid="with-awt-${with-awt}"/>
       <include name="gnu/kawa/models/" if="${with-awt}"/>
       <include name="gnu/kawa/swingviews/" if="${with-swing}"/>
