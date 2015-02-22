@@ -125,6 +125,8 @@ public class Bard extends LispLanguage
       environ = nullEnvironment;
       // bard-specific syntax
       defSntxStFld("^", "kawa.standard.SchemeCompilation", "lambda");
+      defSntxStFld("let", "net.bardcode.bard_syntax");
+      defSntxStFld("def", "net.bardcode.bard_syntax");
       // Kawa syntax
       defSntxStFld("lambda", "kawa.standard.SchemeCompilation", "lambda");
       defSntxStFld("$bracket-apply$", "gnu.kawa.lispexpr.BracketApply", "instance");
@@ -164,7 +166,6 @@ public class Bard extends LispLanguage
       defSntxStFld("or", "kawa.lib.std_syntax");
       // defSntxStFld("let", "kawa.lib.std_syntax");
       // defSntxStFld("let*", "kawa.lib.std_syntax");
-      defSntxStFld("let", "net.bardcode.bard_syntax");
       defSntxStFld("letrec", "kawa.lib.prim_syntax");
       defSntxStFld("letrec*", "kawa.lib.prim_syntax", "letrec");
 
