@@ -1,0 +1,16 @@
+2013-11-26  Per Bothner  <per@bothner.com>
+
+	* indent1.q2: Update output.
+
+2011-03-18  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Changes to make use of RunTestScript.
+
+2010-11-14  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* binary1.q2: New testcase.
+	* comment1.q2: New testcase.
+	* function1.q2: New testcase.
+	* indent1.q2: New testcase.
+	* Makefile.am: New file.

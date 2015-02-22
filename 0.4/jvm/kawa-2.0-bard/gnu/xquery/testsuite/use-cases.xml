@@ -1,0 +1,1613 @@
+<testsuite>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q1</ident>
+<description>List books published by Addison-Wesley after 1991,
+  including their year and title.</description>
+<query><![CDATA[
+<bib>
+{
+  for $b in doc("bib.xml")/bib/book
+  where $b/publisher = "Addison-Wesley" and $b/@year > 1991
+  return
+    <book year="{ $b/@year }">
+{ $b/title }
+    </book>
+}
+</bib>
+]]>
+</query>
+<expect>
+  <bib>
+    <book year="1994">
+      <title>TCP/IP Illustrated</title>
+    </book>
+    <book year="1992">
+      <title>Advanced Programming in the Unix environment</title>
+    </book>
+  </bib>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q2</ident>
+<description>Create a flat list of all the title-author pairs, with
+  each pair enclosed in a "result" element.</description>
+<query>
+  <results>
+  {
+    for $b in doc("bib.xml")/bib/book,
+        $t in $b/title,
+        $a in $b/author
+    return
+        <result>
+            { $t }    
+            { $a }
+        </result>
+  }
+  </results>
+</query>
+<expect>
+  <results>
+    <result>
+      <title>TCP/IP Illustrated</title>
+       <author><last>Stevens</last><first>W.</first></author>
+    </result>
+    <result>
+       <title>Advanced Programming in the Unix environment</title>
+        <author><last>Stevens</last><first>W.</first></author>
+    </result>
+    <result>
+       <title>Data on the Web</title>
+       <author><last>Abiteboul</last><first>Serge</first></author>
+    </result>
+    <result>
+        <title>Data on the Web</title>
+        <author><last>Buneman</last><first>Peter</first></author>
+    </result>
+    <result>
+        <title>Data on the Web</title>
+        <author><last>Suciu</last><first>Dan</first></author>
+    </result>
+  </results>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q3</ident>
+<description>For each book in the bibliography, list the title and
+  authors, grouped inside a "result" element.</description>
+<query>
+<results>
+  {
+    for $b in doc("bib.xml")/bib/book
+    return
+        <result>
+            { $b/title }
+            {
+                for $a in $b/author
+                return $a
+            }
+        </result>
+  }
+</results>
+</query>
+<expect>
+  <results>
+    <result>
+      <title>TCP/IP Illustrated</title>
+      <author><last>Stevens</last><first>W.</first></author>
+    </result>
+    <result>
+      <title>Advanced Programming in the Unix environment</title>
+      <author><last>Stevens</last><first>W.</first></author>
+    </result>
+    <result>
+      <title>Data on the Web</title>
+      <author><last>Abiteboul</last><first>Serge</first></author>
+      <author><last>Buneman</last><first>Peter</first></author>
+      <author><last>Suciu</last><first>Dan</first></author>
+    </result>
+    <result>
+      <title>The Economics of Technology and Content for Digital TV</title>
+    </result>
+  </results>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q4</ident>
+<description>For each author in the bibliography, list the author's name and
+the titles of all books by that author, grouped inside a "result" element.
+</description>
+<query>
+<results>
+  {
+    let $a := doc("bib.xml")//author
+    for $last in distinct-values($a/last),
+        $first in distinct-values($a[last=$last]/first)
+    order by $last, $first
+    return
+        <result>
+            <author>
+               <last>{ $last }</last>
+               <first>{ $first }</first>
+            </author>
+            {
+                for $b in doc("bib.xml")/bib/book
+                where some $ba in $b/author 
+                      satisfies ($ba/last = $last and $ba/first=$first)
+                return $b/title
+            }
+        </result>
+  }
+</results> 
+</query>
+<expect>
+<results>
+    <result>
+        <author>
+            <last>Abiteboul</last>
+            <first>Serge</first>
+        </author>
+        <title>Data on the Web</title>
+    </result>
+    <result>
+        <author>
+            <last>Buneman</last>
+            <first>Peter</first>
+        </author>
+        <title>Data on the Web</title>
+    </result>
+    <result>
+        <author>
+            <last>Stevens</last>
+            <first>W.</first>
+        </author>
+        <title>TCP/IP Illustrated</title>
+        <title>Advanced Programming in the Unix environment</title>
+    </result>
+    <result>
+        <author>
+            <last>Suciu</last>
+            <first>Dan</first>
+        </author>
+        <title>Data on the Web</title>
+    </result>
+</results>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q5</ident>
+<description>For each book found at both bn.com and amazon.com, list
+the title of the book and its price from each source.</description>
+<query><![CDATA[
+<books-with-prices>
+{
+    for $b in doc("bib.xml")//book,
+        $a in doc("reviews.xml")//entry
+    where $b/title = $a/title
+    return
+        <book-with-prices>
+{ $b/title }
+            <price-amazon>{ $a/price/text() }</price-amazon>
+<price-bn>{ $b/price/text() }</price-bn>
+</book-with-prices>
+}
+</books-with-prices>
+]]>
+</query>
+<expect>
+<books-with-prices>
+<book-with-prices>
+<title>TCP/IP Illustrated</title>
+<price-amazon>65.95</price-amazon>
+<price-bn> 65.95</price-bn>
+</book-with-prices>
+<book-with-prices>
+<title>Advanced Programming in the Unix environment</title>
+<price-amazon>65.95</price-amazon>
+<price-bn>65.95</price-bn>
+</book-with-prices>
+<book-with-prices>
+<title>Data on the Web</title>
+<price-amazon>34.95</price-amazon>
+<price-bn> 39.95</price-bn>
+</book-with-prices>
+</books-with-prices> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q6</ident>
+<description>For each book that has at least one author, list the title
+and first two authors, and an empty "et-al" element if the book has
+additional authors.</description>
+<query>
+<bib>
+  {
+    for $b in doc("bib.xml")//book
+    where count($b/author) &gt; 0
+    return
+        <book>
+            { $b/title }
+            {
+                for $a in $b/author[position()&lt;=2]  
+                return $a
+            }
+            {
+                if (count($b/author) &gt; 2)
+                 then <et-al/>
+                 else ()
+            }
+        </book>
+  }
+</bib>
+</query>
+<expect>
+<bib>
+    <book>
+        <title>TCP/IP Illustrated</title>
+        <author>
+            <last>Stevens</last>
+            <first>W.</first>
+        </author>
+    </book>
+    <book>
+        <title>Advanced Programming in the Unix environment</title>
+        <author>
+            <last>Stevens</last>
+            <first>W.</first>
+        </author>
+    </book>
+    <book>
+        <title>Data on the Web</title>
+        <author>
+            <last>Abiteboul</last>
+            <first>Serge</first>
+        </author>
+        <author>
+            <last>Buneman</last>
+            <first>Peter</first>
+        </author>
+        <et-al/>
+    </book>
+</bib>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q7</ident>
+<description>List the titles and years of all books published by Addison-Wesley
+after 1991, in alphabetic order.</description>
+<query>
+<bib>
+  {
+    for $b in doc("bib.xml")//book
+    where $b/publisher = "Addison-Wesley" and $b/@year > 1991
+    order by $b/title
+    return
+        <book>
+            { $b/@year }
+            { $b/title }
+        </book>
+  }
+</bib> 
+</query>
+<expect>
+<bib>
+    <book year="1992">
+        <title>Advanced Programming in the Unix environment</title>
+    </book>
+    <book year="1994">
+        <title>TCP/IP Illustrated</title>
+    </book>
+</bib>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q9</ident>
+<description>In the document "books.xml", find all section or chapter titles
+that contain the word "XML", regardless of the level of nesting.</description>
+<NOTE>books.xml has been inlined to the $books variable.</NOTE>
+<query>
+let $books :=
+document {
+<chapter>
+    <title>Data Model</title>
+    <section>
+        <title>Syntax For Data Model</title>
+    </section>
+    <section>
+        <title>XML</title>
+        <section>
+            <title>Basic Syntax</title>
+        </section>
+        <section>
+            <title>XML and Semistructured Data</title>
+        </section>
+    </section>
+</chapter>
+}
+return
+<results>
+  {
+    for $t in $books//(chapter | section)/title
+    where contains($t/text(), "XML")
+    return $t
+  }
+</results>
+</query>
+<expect>
+<results>
+    <title>XML</title>
+    <title>XML and Semistructured Data</title>
+</results>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q10</ident>
+<description>In the document "prices.xml", find the minimum price for
+each book, in the form of a "minprice" element with the book title as
+its title attribute.</description>
+<NOTE>Instead of an external prices.xml file, use a local table.</NOTE>
+<query>
+<results>
+  {
+    let $doc :=
+    <prices>
+    <book>
+        <title>Advanced Programming in the Unix environment</title>
+        <source>bstore2.example.com</source>
+        <price>65.95</price>
+    </book>
+    <book>
+        <title>Advanced Programming in the Unix environment</title>
+        <source>bstore1.example.com</source>
+        <price>65.95</price>
+    </book>
+    <book>
+        <title>TCP/IP Illustrated</title>
+        <source>bstore2.example.com</source>
+        <price>65.95</price>
+    </book>
+    <book>
+        <title>TCP/IP Illustrated</title>
+        <source>bstore1.example.com</source>
+        <price>65.95</price>
+    </book>
+    <book>
+        <title>Data on the Web</title>
+        <source>bstore2.example.com</source>
+        <price>34.95</price>
+    </book>
+    <book>
+        <title>Data on the Web</title>
+        <source>bstore1.example.com</source>
+        <price>39.95</price>
+    </book>
+    </prices>
+    for $t in distinct-values($doc//book/title)
+    let $p := $doc//book[title = $t]/price
+    return
+      <minprice title="{ $t }">
+        <price>{ min($p) }</price>
+      </minprice>
+  }
+</results>
+</query>
+<expect>
+<results>
+    <minprice title="Advanced Programming in the Unix environment">
+        <price>65.95</price>
+    </minprice>
+    <minprice title="TCP/IP Illustrated">
+        <price>65.95</price>
+    </minprice>
+    <minprice title="Data on the Web">
+        <price>34.95</price>
+    </minprice>
+</results>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "XMP" (Experiences and Exemplars) Q11</ident>
+<description>For each book with an author, return the book with its
+title and authors. For each book with an editor, return a reference
+with the book title and the editor's affiliation.</description>
+<query>
+<bib>
+{
+        for $b in doc("bib.xml")//book[author]
+        return
+            <book>
+                { $b/title }
+                { $b/author }
+            </book>
+}
+{
+        for $b in doc("bib.xml")//book[editor]
+        return
+          <reference>
+            { $b/title }
+            {$b/editor/affiliation}
+          </reference>
+}
+</bib> 
+</query>
+<expect>
+<bib>
+    <book>
+        <title>TCP/IP Illustrated</title>
+        <author>
+            <last>Stevens</last>
+            <first>W.</first>
+        </author>
+    </book>
+    <book>
+        <title>Advanced Programming in the Unix environment</title>
+        <author>
+            <last>Stevens</last>
+            <first>W.</first>
+        </author>
+    </book>
+    <book>
+        <title>Data on the Web</title>
+        <author>
+            <last>Abiteboul</last>
+            <first>Serge</first>
+        </author>
+        <author>
+            <last>Buneman</last>
+            <first>Peter</first>
+        </author>
+        <author>
+            <last>Suciu</last>
+            <first>Dan</first>
+        </author>
+    </book>
+    <reference>
+        <title>The Economics of Technology and Content for Digital TV</title>
+        <affiliation>CITI</affiliation>
+    </reference>
+</bib>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE" (Queries that preserve hierarchy) Q1</ident>
+<description><![CDATA[Prepare a (nested) table of contents for Book1, listing
+all the sections and their titles. Preserve the original attributes of
+each <section> element, if any.]]></description>
+<query>
+declare function local:toc($book-or-section as element()) as element()*
+{
+    for $section in $book-or-section/section
+    return
+        <section>
+                { $section/@* , $section/title , local:toc($section) }            
+        </section>
+};
+
+<toc>
+   {
+     for $s in doc("book1.xml")/book return local:toc($s)
+   }
+</toc>
+</query>
+<expect>
+<toc>
+    <section id="intro" difficulty="easy">
+        <title>Introduction</title>
+        <section>
+            <title>Audience</title>
+        </section>
+        <section>
+            <title>Web Data and the Two Cultures</title>
+        </section>
+    </section>
+    <section id="syntax" difficulty="medium">
+        <title>A Syntax For Data</title>
+        <section>
+            <title>Base Types</title>
+        </section>
+        <section>
+            <title>Representing Relational Databases</title>
+        </section>
+        <section>
+            <title>Representing Object Databases</title>
+        </section>
+    </section>
+</toc>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE": Queries that preserve hierarchy: Q2</ident>
+<description><![CDATA[Prepare a (flat) figure list for Book1, listing all the
+figures and their titles. Preserve the original attributes of each
+<figure>; element, if any.]]></description>
+<query>
+let $res :=
+<figlist>
+{
+    for $f in doc("book1.xml")//figure
+    return
+        <figure>
+            { $f/@* }
+            { $f/title }
+        </figure>
+}
+</figlist>
+return $res
+</query>
+<expect>
+<figlist>
+<figure  height="400" width="400">
+<title>Traditional client/server architecture</title>
+</figure>
+<figure  height="200" width="500">
+<title>Graph representations of structures</title>
+</figure>
+<figure  height="250" width ="400">
+<title>Examples of Relations</title>
+</figure>
+</figlist> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE": Queries that preserve hierarchy: Q3</ident>
+<description>How many sections are in Book1,
+and how many figures?</description>
+<query>
+<section_count>{ count(doc("book1.xml")//section) }</section_count>, 
+<figure_count>{ count(doc("book1.xml")//figure) }</figure_count>
+</query>
+<expect>
+<section_count>7</section_count>
+<figure_count>3</figure_count> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE": Queries that preserve hierarchy: Q4</ident>
+<description>How many top-level sections are in Book1?</description>
+<query>
+<top_section_count>
+{ 
+   count(doc("book1.xml")/book/section) 
+ }
+</top_section_count>
+</query>
+<expect>
+<top_section_count>2</top_section_count> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE": Queries that preserve hierarchy: Q5</ident>
+<description>
+Make a flat list of the section elements in Book1. In place of its
+original attributes, each section element should have two attributes,
+containing the title of the section and the number of figures
+immediately contained in the section.</description>
+<query><![CDATA[
+<section_list>
+{
+    for $s in doc("book1.xml")//section
+    let $f := $s/figure 
+    return
+        <section title="{ $s/title/text() }" figcount="{ count($f) }"/>
+}
+</section_list> ]]>
+</query>
+<expect>
+<section_list>
+<section title="Introduction" figcount="0"/>
+<section title="Audience" figcount="0"/>
+<section title="Web Data and the Two Cultures" figcount="1"/>
+<section title="A Syntax For Data" figcount="1"/>
+<section title="Base Types" figcount="0"/>
+<section title="Representing Relational Databases" figcount="1"/>
+<section title="Representing Object Databases" figcount="0"/>
+</section_list>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "TREE": Queries that preserve hierarchy: Q6</ident>
+<description>Make a nested list of the section elements in Book1,
+preserving their original attributes and hierarchy. Inside each
+section element, include the title of the section and an element that
+includes the number of figures immediately contained in the section.
+</description>
+<NOTE>removed newline between 'section' and attribute constructor</NOTE>
+<NOTE>removed 'element' in parameter spec and 'returns element'</NOTE>
+<NOTE>quite different in current use-case</NOTE>
+<!-- This version causes a bus error on mac!
+<query><![CDATA[
+declare function local:section-summary($book-or-section)
+{
+  for $section in $book-or-section
+  return
+    <section>
+       { $section/@* }
+       { $section/title }
+       <figcount>
+         { count($section/figure) }
+       </figcount>
+       { local:section-summary($section) }
+    </section>
+};
+
+<toc>
+  {
+    for $s in doc("book1.xml")/book/section
+    return local:section-summary($s)
+  }
+</toc> ]]>
+</query>
+-->
+<query><![CDATA[
+declare function local:section_summary($s)
+{
+    <section>
+        { $s/@* }
+        { $s/title }
+       <figcount>
+         { count($s/figure) }
+       </figcount>
+{
+            for $ss in $s/section
+            return local:section_summary($ss)
+        }
+    </section>
+};
+
+<toc>
+{
+    for $s in doc("book1.xml")//section
+    return local:section_summary($s)
+}
+</toc> ]]>
+</query>
+<NOTE>the use-cases doc is missing the attributes</NOTE>
+<expect>
+  <toc>
+    <section id="intro" difficulty="easy">
+      <title>Introduction</title>
+      <figcount>0</figcount>
+      <section>
+        <title>Audience</title>
+        <figcount>0</figcount>
+      </section>
+      <section>
+        <title>Web Data and the Two Cultures</title>
+        <figcount>1</figcount>
+      </section>
+    </section>
+    <section>
+      <title>Audience</title>
+      <figcount>0</figcount>
+    </section>
+    <section>
+      <title>Web Data and the Two Cultures</title>
+      <figcount>1</figcount>
+    </section>
+    <section id="syntax" difficulty="medium">
+      <title>A Syntax For Data</title>
+      <figcount>1</figcount>
+      <section>
+        <title>Base Types</title>
+        <figcount>0</figcount>
+      </section>
+      <section>
+        <title>Representing Relational Databases</title>
+        <figcount>1</figcount>
+      </section>
+      <section>
+        <title>Representing Object Databases</title>
+        <figcount>0</figcount>
+      </section>
+    </section>
+    <section>
+      <title>Base Types</title>
+      <figcount>0</figcount>
+    </section>
+    <section>
+      <title>Representing Relational Databases</title>
+      <figcount>1</figcount>
+    </section>
+    <section>
+      <title>Representing Object Databases</title>
+      <figcount>0</figcount>
+    </section>
+  </toc>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q1</ident>
+<description>In the Procedure section of Report1, what Instruments were
+used in the second Incision?</description>
+<query>
+for $s in doc("report1.xml")//section[section.title = "Procedure"]
+return ($s//incision)[2]/instrument
+</query>
+<expect>
+<instrument>electrocautery</instrument>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q2</ident>
+<description>In the Procedure section of Report1, what are the
+first two Instruments to be used?</description>
+<query><![CDATA[
+for $s in doc("report1.xml")//section[section.title = "Procedure"]
+return ($s//instrument)[position()<=2]
+]]></query>
+<expect>
+<instrument>using electrocautery.</instrument>
+<instrument>electrocautery</instrument>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q3</ident>
+<description>In Report1, what Instruments were used in the first
+two Actions after the second Incision?</description>
+<query><![CDATA[
+let $i2 := (doc("report1.xml")//incision)[2]
+for $a in (doc("report1.xml")//action)[. >> $i2][position()<=2]
+return $a//instrument
+]]></query>
+<expect>
+<instrument>Hasson trocar</instrument>
+<instrument>trocar</instrument>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q4</ident>
+<description>In Report1, find "Procedure" sections where no Anesthesia
+element occurs before the first Incision</description>
+<query><![CDATA[
+for $p in doc("report1.xml")//section[section.title = "Procedure"]
+where not(some $a in $p//anesthesia satisfies
+        $a << ($p//incision)[1] )
+return $p
+]]></query>
+<expect>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q5a</ident>
+<description>In Report1, what happened between the first Incision
+and the second Incision? (1st solution)</description>
+<query><![CDATA[
+declare function local:precedes($a as node(), $b as node()) as xs:boolean 
+{
+    $a << $b
+      and
+    empty($a//node() intersect $b)
+};
+
+
+declare function local:follows($a as node(), $b as node()) as xs:boolean 
+{
+    $a >> $b
+      and
+    empty($b//node() intersect $a)
+};
+
+<critical_sequence>
+ {
+  let $proc := doc("report1.xml")//section[section.title="Procedure"][1]
+  for $n in $proc//node()
+  where local:follows($n, ($proc//incision)[1])
+    and local:precedes($n, ($proc//incision)[2])
+  return $n
+ }
+</critical_sequence>
+]]></query>
+<expect>
+<critical_sequence>
+      The fascia was identified and
+      <action>#2 0 Maxon stay sutures were placed on each side of the midline.
+      </action>#2 0 Maxon stay sutures were placed on each side of the midline.
+</critical_sequence>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q5b</ident>
+<description>In Report1, what happened between the first Incision
+and the second Incision? (2nd solution)</description>
+<query><![CDATA[
+<critical_sequence>
+ {  let $proc := doc("report1.xml")//section[section.title="Procedure"][1],
+      $i1 :=  ($proc//incision)[1],
+      $i2 :=  ($proc//incision)[2]
+  for $n in $proc//node() except $i1//node()
+  where $n >> $i1 and $n << $i2
+  return $n 
+ }
+</critical_sequence>
+]]></query>
+<expect>
+<critical_sequence>
+      The fascia was identified and
+      <action>#2 0 Maxon stay sutures were placed on each side of the midline.
+      </action>#2 0 Maxon stay sutures were placed on each side of the midline.
+</critical_sequence>
+</expect>
+</test>
+
+<test>
+<ident>Use case "SEQ" (Queries based on Sequence) Q5c</ident>
+<description>In Report1, what happened between the first Incision
+and the second Incision? (3rd solution)</description>
+<query><![CDATA[
+declare function local:between($seq as node()*, $start as node(), $end as node())
+ as item()*
+{
+  let $nodes :=
+    for $n in $seq except $start//node()
+    where $n >> $start and $n << $end
+    return $n
+  return $nodes except $nodes//node()
+};
+
+<critical_sequence>
+ {
+  let $proc := doc("report1.xml")//section[section.title="Procedure"][1],
+      $first :=  ($proc//incision)[1],
+      $second:=  ($proc//incision)[2]
+  return local:between($proc//node(), $first, $second)
+ }
+</critical_sequence>
+]]></query>
+<expect>
+<critical_sequence>
+      The fascia was identified and
+      <action>#2 0 Maxon stay sutures were placed on each side of the midline.
+      </action>
+</critical_sequence>
+</expect>
+</test>
+
+<!-- Despends of current-date().
+<test>
+<ident>Use Case "R" Q1 </ident>
+<description>List the item number and description of all bicycles that
+currently have an auction in progress, ordered by item number.</description>
+<query>
+<result>
+  {
+    for $i in doc("items.xml")//item_tuple
+    where $i/start_date <= current-date()
+      and $i/end_date >= current-date() 
+      and contains($i/description, "Bicycle")
+    order by $i/itemno
+    return
+        <item_tuple>
+            { $i/itemno }
+            { $i/description }
+        </item_tuple>
+  }
+</result>
+</query>
+<result>
+<result>
+    <item_tuple>
+        <itemno>1003</itemno>
+        <description>Old Bicycle</description>
+    </item_tuple>
+    <item_tuple>
+        <itemno>1007</itemno>
+        <description>Racing Bicycle</description>
+    </item_tuple>
+</result>
+</result>
+</test>
+-->
+
+<test>
+<ident>Use Case "R" Q2 </ident>
+<description>
+For all bicycles, list the item number, description, and highest bid (if any),
+ordered by item number.</description>
+<query>
+<result>
+  {
+    for $i in doc("items.xml")//item_tuple
+    let $b := doc("bids.xml")//bid_tuple[itemno = $i/itemno]
+    where contains($i/description, "Bicycle")
+    order by $i/itemno
+    return
+        <item_tuple>
+            { $i/itemno }
+            { $i/description }
+            <high_bid>{ max($b/bid) }</high_bid>
+        </item_tuple>
+  }
+</result> 
+</query>
+<expect>
+<result>
+  <item_tuple>
+    <itemno>1001</itemno>
+    <description>Red Bicycle</description>
+    <high_bid>55</high_bid>
+  </item_tuple>
+  <item_tuple>
+    <itemno>1003</itemno>
+    <description>Old Bicycle</description>
+    <high_bid>20</high_bid>
+  </item_tuple>
+  <item_tuple>
+    <itemno>1007</itemno>
+    <description>Racing Bicycle</description>
+    <high_bid>225</high_bid>
+  </item_tuple>
+  <item_tuple>
+    <itemno>1008</itemno>
+    <description>Broken Bicycle</description>
+    <high_bid></high_bid>
+  </item_tuple>
+</result> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" Q3 - Find cases where a user with a rating worse
+(alphabetically, greater) than "C" is offering an item with a reserve
+price of more than 1000.</ident>
+<query><![CDATA[
+<result>
+{
+    for $u in doc("users.xml")//user_tuple
+return
+    for $i in doc("items.xml")//item_tuple
+    where $u/rating > "C" 
+       and $i/reserve_price > 1000 
+       and $i/offered_by = $u/userid
+    return
+        <warning>
+{ $u/name }
+            { $u/rating }
+            { $i/description }
+            { $i/reserve_price }
+        </warning>
+}
+</result>
+]]>
+</query>
+<expect>
+  <result>
+    <warning>
+      <name>Dee Linquent</name>
+        <rating>D</rating>
+        <description>Helicopter</description>
+        <reserve_price>50000</reserve_price>
+    </warning>
+  </result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q4</ident>
+<description>List item numbers and descriptions of items that
+have no bids.</description>
+<query>
+<result>
+  {
+    for $i in doc("items.xml")//item_tuple
+    where empty(doc("bids.xml")//bid_tuple[itemno = $i/itemno])
+    return
+        <no_bid_item>
+            { $i/itemno }
+            { $i/description }
+        </no_bid_item>
+  }
+</result>
+</query>
+<expect>
+  <result>
+    <no_bid_item>
+        <itemno>1005</itemno>
+        <description>Tennis Racket</description>
+    </no_bid_item>
+    <no_bid_item>
+        <itemno>1006</itemno>
+        <description>Helicopter</description>
+    </no_bid_item>
+    <no_bid_item>
+        <itemno>1008</itemno>
+        <description>Broken Bicycle</description>
+    </no_bid_item>
+  </result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q5</ident>
+<description>For bicycle(s) offered by Tom Jones that have received a bid,
+list the item number, description, highest bid, and name of the highest bidder,
+ordered by item number.</description>
+<query>
+<result>
+  {
+    for $seller in doc("users.xml")//user_tuple,
+        $buyer in  doc("users.xml")//user_tuple,
+        $item in  doc("items.xml")//item_tuple,
+        $highbid in  doc("bids.xml")//bid_tuple
+    where $seller/name = "Tom Jones"
+      and $seller/userid  = $item/offered_by
+      and contains($item/description , "Bicycle")
+      and $item/itemno  = $highbid/itemno
+      and $highbid/userid  = $buyer/userid
+      and $highbid/bid = max(
+                              doc("bids.xml")//bid_tuple
+                                [itemno = $item/itemno]/bid
+                         )
+    order by ($item/itemno)
+    return
+        <jones_bike>
+            { $item/itemno }
+            { $item/description }
+            <high_bid>{ $highbid/bid }</high_bid>
+            <high_bidder>{ $buyer/name }</high_bidder>
+        </jones_bike>
+  }
+</result> 
+</query>
+<expect>
+<result>
+    <jones_bike>
+        <itemno>1001</itemno>
+        <description>Red Bicycle</description>
+        <high_bid>
+            <bid>55</bid>
+        </high_bid>
+        <high_bidder>
+            <name>Mary Doe</name>
+        </high_bidder>
+    </jones_bike>
+</result>
+</expect>
+</test>
+
+<!-- FAILS because max does a string compare
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q6</ident>
+<description>For each item whose highest bid is more than twice its
+reserve price, list the item number, description, reserve price,
+and highest bid.</description>
+<NOTE>may need explicit call to number added for the multiplication.</NOTE>
+<query><![CDATA[
+<result>
+  {
+    for $item in doc("items.xml")//item_tuple
+    let $b := doc("bids.xml")//bid_tuple[itemno = $item/itemno]
+    let $z := max($b/bid)
+    where $item/reserve_price * 2 < $z
+    return
+        <successful_item>
+            { $item/itemno }
+            { $item/description }
+            { $item/reserve_price }
+            <high_bid>{$z }</high_bid>
+         </successful_item>
+  }
+</result>
+]]></query>
+<expect>
+<result>
+    <successful_item>
+        <itemno>1002</itemno>
+        <description>Motorcycle</description>
+        <reserve_price>500</reserve_price>
+        <high_bid>1200.0</high_bid>
+    </successful_item>
+    <successful_item>
+        <itemno>1004</itemno>
+        <description>Tricycle</description>
+        <reserve_price>15</reserve_price>
+        <high_bid>40.0</high_bid>
+    </successful_item>
+</result>
+</expect>
+</test>
+-->
+
+<!--
+Needs order by
+<test>
+<ident>Use Case "R" Q9 - List the number of items auctioned each month in 1999 for which data is available, ordered by month.</item>
+<query>
+<result>
+  {
+    let $end_dates := doc("items.xml")//item_tuple/end_date
+    for $m in distinct-values(for $e in $end_dates 
+                              return month-from-date($e))
+    let $item := doc("items.xml")
+        //item_tuple[year-from-date(end_date) = 1999 
+                     and month-from-date(end_date) = $m]
+    order by $m
+    return
+        <monthly_result>
+            <month>{ $m }</month>
+            <item_count>{ count($item) }</item_count>
+        </monthly_result>
+  }
+</result>
+</query>
+<expect>
+<result>
+    <monthly_result>
+        <month>1</month>
+        <item_count>1</item_count>
+    </monthly_result>
+    <monthly_result>
+        <month>2</month>
+        <item_count>2</item_count>
+    </monthly_result>
+    <monthly_result>
+        <month>3</month>
+        <item_count>3</item_count>
+    </monthly_result>
+    <monthly_result>
+        <month>4</month>
+        <item_count>1</item_count>
+    </monthly_result>
+    <monthly_result>
+        <month>5</month>
+        <item_count>1</item_count>
+    </monthly_result>
+</result> </expect>
+</test>
+-->
+
+<test>
+<ident>Use Case "R" Q11 - List the item number and description of the
+item(s) that received the highest bid ever recorded, and the amount of
+that bid.</ident>
+<query><![CDATA[
+let $highbid := max(doc("bids.xml")//bid_tuple/bid)
+return
+    <result>
+      {
+        for $item in doc("items.xml")//item_tuple,
+            $b in doc("bids.xml")//bid_tuple[itemno = $item/itemno]
+        where $b/bid = $highbid
+        return
+            <expensive_item>
+                { $item/itemno }
+                { $item/description }
+                <high_bid>{ $highbid }</high_bid>
+            </expensive_item>
+        }
+    </result>
+]]>
+</query>
+<expect>
+  <result>
+    <expensive_item>
+      <itemno>1002</itemno>
+      <description>Motorcycle</description>
+      <high_bid>1200</high_bid>
+    </expensive_item>
+  </result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case Q12 - List the item number and description of the item(s)
+that received the largest number of bids, and the number of bids it (or they)
+received.</ident>
+<query>
+declare function local:bid_summary()
+  as element()*
+{
+    for $i in distinct-values(doc("bids.xml")//itemno)
+    let $b := doc("bids.xml")//bid_tuple[itemno = $i]
+    return
+        <bid_count>
+            <itemno>{ $i }</itemno>
+            <nbids>{ count($b) }</nbids>
+        </bid_count>
+};
+
+<result>
+ {
+    let $bid_counts := local:bid_summary(),
+        $maxbids := max($bid_counts/nbids),
+        $maxitemnos := $bid_counts[nbids = $maxbids]
+    for $item in doc("items.xml")//item_tuple,
+        $bc in $bid_counts
+    where $bc/nbids =  $maxbids and $item/itemno = $bc/itemno
+    return
+        <popular_item>
+            { $item/itemno }
+            { $item/description }
+            <bid_count>{ $bc/nbids/text() }</bid_count>
+        </popular_item>
+ }
+</result> 
+</query>
+<expect>
+<result>
+    <popular_item>
+        <itemno>1001</itemno>
+        <description>Red Bicycle</description>
+        <bid_count>5</bid_count>
+    </popular_item>
+    <popular_item>
+        <itemno>1002</itemno>
+        <description>Motorcycle</description>
+        <bid_count>5</bid_count>
+    </popular_item>
+</result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q13</ident>
+<description>For each user who has placed a bid, give the userid, name,
+number of bids, and average bid, in order by userid.</description>
+<query>
+<result>
+ {
+    for $uid in distinct-values(doc("bids.xml")//userid),
+        $u in doc("users.xml")//user_tuple[userid = $uid]
+    let $b := doc("bids.xml")//bid_tuple[userid = $uid]
+    order by $u/userid
+    return
+        <bidder>
+            { $u/userid }
+            { $u/name }
+            <bidcount>{ count($b) }</bidcount>
+            <avgbid>{ avg($b/bid) }</avgbid>
+        </bidder>
+  }
+</result> 
+</query>
+<expect>
+<result>
+    <bidder>
+        <userid>U01</userid>
+        <name>Tom Jones</name>
+        <bidcount>2</bidcount>
+        <avgbid>220</avgbid>
+    </bidder>
+    <bidder>
+        <userid>U02</userid>
+        <name>Mary Doe</name>
+        <bidcount>5</bidcount>
+        <avgbid>387</avgbid>
+    </bidder>
+    <bidder>
+        <userid>U03</userid>
+        <name>Dee Linquent</name>
+        <bidcount>2</bidcount>
+        <avgbid>487.5</avgbid>
+    </bidder>
+    <bidder>
+        <userid>U04</userid>
+        <name>Roger Smith</name>
+        <bidcount>5</bidcount>
+        <avgbid>266</avgbid>
+    </bidder>
+    <bidder>
+        <userid>U05</userid>
+        <name>Jack Sprat</name>
+        <bidcount>2</bidcount>
+        <avgbid>110</avgbid>
+    </bidder>
+</result> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q14</ident>
+<description>
+List item numbers and average bids for items that have received three or
+more bids, in descending order by average bid.</description>
+<query>
+<result>
+ {
+    for $i in distinct-values(doc("bids.xml")//itemno)
+    let $b := doc("bids.xml")//bid_tuple[itemno = $i]
+    let $avgbid := avg($b/bid)
+    where count($b) >= 3
+    order by $avgbid descending
+    return
+        <popular_item>
+            <itemno>{ $i }</itemno>
+            <avgbid>{ $avgbid }</avgbid>
+        </popular_item>
+  }
+</result> 
+</query>
+<expect>
+<result>
+    <popular_item>
+        <itemno>1002</itemno>
+        <avgbid>800</avgbid>
+    </popular_item>
+    <popular_item>
+        <itemno>1007</itemno>
+        <avgbid>200</avgbid>
+    </popular_item>
+    <popular_item>
+        <itemno>1001</itemno>
+        <avgbid>45</avgbid>
+    </popular_item>
+</result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q15</ident>
+<description>List names of users who have placed multiple bids of at
+least $100 each.</description>
+<query>
+<result>
+  {
+    for $u in doc("users.xml")//user_tuple
+    let $b := doc("bids.xml")//bid_tuple[userid=$u/userid and bid>=100]
+    where count($b) &gt; 1
+    return
+        <big_spender>{ $u/name/text() }</big_spender>
+  }
+</result>
+</query>
+<expect>
+<result>
+    <big_spender>Mary Doe</big_spender>
+    <big_spender>Dee Linquent</big_spender>
+    <big_spender>Roger Smith</big_spender>
+</result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q16</ident>
+<description>List all registered users in order by userid; for each user,
+include the userid, name, and an indication of whether the user is active (has
+at least one bid on record) or inactive (has no bid on record).</description>
+<query>
+<result>
+  {
+    for $u in doc("users.xml")//user_tuple
+    let $b := doc("bids.xml")//bid_tuple[userid=$u/userid and bid>=100]
+    where count($b) > 1
+    return
+        <big_spender>{ $u/name/text() }</big_spender>
+  }
+</result>
+</query>
+<expect>
+<result>
+    <big_spender>Mary Doe</big_spender>
+    <big_spender>Dee Linquent</big_spender>
+    <big_spender>Roger Smith</big_spender>
+</result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q17</ident>
+<description>List the names of users, if any, who have bid on every item.
+</description>
+<query>
+<frequent_bidder>
+  {
+    for $u in doc("users.xml")//user_tuple
+    where 
+      every $item in doc("items.xml")//item_tuple satisfies 
+        some $b in doc("bids.xml")//bid_tuple satisfies 
+          ($item/itemno = $b/itemno and $u/userid = $b/userid)
+    return
+        $u/name
+  }
+</frequent_bidder>
+</query>
+<expect>
+<frequent_bidder /> 
+</expect>
+</test>
+
+<test>
+<ident>Use Case "R" (Access to Relational Data) Q18</ident>
+<description>List all users in alphabetic order by name. For each user,
+include descriptions of all the items (if any) that were bid on by that user,
+in alphabetic order.</description>
+<query>
+<result>
+  {
+    for $u in doc("users.xml")//user_tuple
+    order by $u/name
+    return
+        <user>
+            { $u/name }
+            {
+                for $b in distinct-values(doc("bids.xml")//bid_tuple
+                                             [userid = $u/userid]/itemno)
+                for $i in doc("items.xml")//item_tuple[itemno = $b]
+                let $descr := $i/description/text()
+                order by $descr
+                return
+                    <bid_on_item>{ $descr }</bid_on_item>
+            }
+        </user>
+  }
+</result>
+</query>
+<expect>
+<result>
+    <user>
+        <name>Dee Linquent</name>
+        <bid_on_item>Motorcycle</bid_on_item>
+        <bid_on_item>Racing Bicycle</bid_on_item>
+    </user>
+    <user>
+        <name>Jack Sprat</name>
+        <bid_on_item>Old Bicycle</bid_on_item>
+        <bid_on_item>Racing Bicycle</bid_on_item>
+    </user>
+    <user>
+        <name>Mary Doe</name>
+        <bid_on_item>Motorcycle</bid_on_item>
+        <bid_on_item>Red Bicycle</bid_on_item>
+    </user>
+    <user>
+        <name>Rip Van Winkle</name>
+    </user>
+    <user>
+        <name>Roger Smith</name>
+        <bid_on_item>Motorcycle</bid_on_item>
+        <bid_on_item>Old Bicycle</bid_on_item>
+        <bid_on_item>Racing Bicycle</bid_on_item>
+        <bid_on_item>Red Bicycle</bid_on_item>
+    </user>
+    <user>
+        <name>Tom Jones</name>
+        <bid_on_item>Motorcycle</bid_on_item>
+        <bid_on_item>Tricycle</bid_on_item>
+    </user>
+</result>
+</expect>
+</test>
+
+<test>
+<ident>Use Case "NS" - Queries Using Namespaces:  Q1</ident>
+<description>List all unique namespaces used in the sample data.</description>
+<query>
+<Q1>
+  {
+    for $n in distinct-values(
+                  for $i in (doc("auction.xml")//* | doc("auction.xml")//@*)
+                  return namespace-uri($i)
+               )
+    return  <ns>{$n}</ns>
+  }
+</Q1>
+</query>
+<expect>
+<Q1>
+  <ns>http://www.example.com/AuctionWatch</ns>
+  <ns>http://www.example.com/auctioneers#anyzone</ns>
+  <ns>http://www.w3.org/1999/xlink</ns>
+  <ns>http://www.w3.org/2001/XMLSchema</ns>
+  <ns>http://www.example.com/auctioneers#eachbay</ns>
+  <ns>http://www.example.org/music/records</ns>
+  <ns>http://www.example.com/auctioneers#yabadoo</ns>
+  <ns>http://www.w3.org/XML/1998/namespace</ns>
+</Q1>
+</expect>
+</test>
+
+
+<test>
+<ident>Use Case "NS" - Queries Using Namespaces:  Q2</ident>
+<description>Select the title of each record that is for sale.</description>
+<query>
+declare namespace music = "http://www.example.org/music/records";
+
+<Q2>
+  {
+    doc("auction.xml")//music:title
+  }
+</Q2>
+</query>
+<expect><![CDATA[
+<Q2>
+  <title
+     xmlns="http://www.example.org/music/records"
+     xmlns:anyzone="http://www.example.com/auctioneers#anyzone"
+     xmlns:eachbay="http://www.example.com/auctioneers#eachbay"
+     xmlns:ma="http://www.example.com/AuctionWatch"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:yabadoo="http://www.example.com/auctioneers#yabadoo"
+  >In a Silent Way</title>
+  <title
+    xmlns="http://www.example.org/music/records"
+    xmlns:anyzone="http://www.example.com/auctioneers#anyzone"
+    xmlns:eachbay="http://www.example.com/auctioneers#eachbay"
+    xmlns:ma="http://www.example.com/AuctionWatch"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:yabadoo="http://www.example.com/auctioneers#yabadoo"
+  >Think of One ...</title>
+</Q2>
+]]></expect>
+</test>
+
+<test>
+<ident>Use Case "PARTS" - Recursive Parts Explosion: Q1 inline data</ident>
+<NOTE>Instead of using an external parts-data.xml file, define $parts-list
+inline</NOTE>
+<query><![CDATA[
+
+declare function local:one_level ($p as element(), $parts-data) as element()
+{
+    <part partid="{ $p/@partid }"
+          name="{ $p/@name }" >
+{
+            for $s in $parts-data//part
+            where $s/@partof = $p/@partid
+            return local:one_level($s, $parts-data)
+        }
+    </part>
+};
+
+let $parts-list :=
+<partlist>
+<part partid="0" name="car"/>
+<part partid="1" partof="0" name="engine"/>
+<part partid="2" partof="0" name="door"/>
+<part partid="3" partof="1" name="piston"/>
+<part partid="4" partof="2" name="window"/>
+<part partid="5" partof="2" name="lock"/>
+<part partid="10" name="skateboard"/>
+<part partid="11" partof="10" name="board"/>
+<part partid="12" partof="10" name="wheel"/>
+<part partid="20" name="canoe"/>
+</partlist>
+return
+<parttree>
+{
+    for $p in $parts-list//part[empty(@partof)]
+    return local:one_level($p, $parts-list)
+  }
+</parttree>]]>
+</query>
+<expect>
+<parttree>
+  <part partid="0" name="car">
+    <part partid="1" name="engine">
+      <part partid="3" name="piston" />
+    </part>
+    <part partid="2" name="door">
+      <part partid="4" name="window" />
+      <part partid="5" name="lock" />
+    </part>
+  </part>
+  <part partid="10" name="skateboard">
+    <part partid="11" name="board" />
+    <part partid="12" name="wheel" />
+  </part>
+  <part partid="20" name="canoe" />
+</parttree>
+</expect>
+</test>
+
+</testsuite>

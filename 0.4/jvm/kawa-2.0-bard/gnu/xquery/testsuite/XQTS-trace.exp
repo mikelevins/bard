@@ -1,0 +1,65 @@
+XQuery-trace: msg 1 2 3
+XQuery-trace: The Value of $var is:  123
+XQuery-trace: The Value of $var + 1 is:  2
+XQuery-trace: The Value of $var + 1 is:  3
+XQuery-trace: The Value of $var + 1 is:  4
+XQuery-trace: The Value of $var + 1 is:  5
+XQuery-trace: The Value of $var + 1 is:  6
+XQuery-trace: The Value of $var - 1 is:  1
+XQuery-trace: The Value of $var - 1 is:  2
+XQuery-trace: The Value of $var - 1 is:  3
+XQuery-trace: The Value of $var - 1 is:  4
+XQuery-trace: The Value of $var * 2 is:  4
+XQuery-trace: The Value of $var * 2 is:  6
+XQuery-trace: The Value of $var * 2 is:  8
+XQuery-trace: The Value of $var * 2 is:  10
+XQuery-trace: The Value of $var div 2 is:  1
+XQuery-trace: The Value of $var div 2 is:  2
+XQuery-trace: The Value of $var div 2 is:  3
+XQuery-trace: The Value of $var div 2 is:  4
+XQuery-trace: The Value of $var idiv 2 is:  1
+XQuery-trace: The Value of $var idiv 2 is:  2
+XQuery-trace: The Value of $var idiv 2 is:  3
+XQuery-trace: The Value of $var idiv 2 is:  4
+XQuery-trace: The Value of $var mod 2 is:  0
+XQuery-trace: The Value of $var mod 2 is:  0
+XQuery-trace: The Value of $var mod 2 is:  0
+XQuery-trace: The Value of $var mod 2 is:  0
+XQuery-trace: The Value of $var 1 + $var2 is:  -1
+XQuery-trace: The Value of $var 1 + $var2 is:  -5
+XQuery-trace: The Value of $var 1 + $var2 is:  -9
+XQuery-trace: The Value of $var 1 + $var2 is:  -13
+XQuery-trace: The Value of concat($var,$var) is:  aaaa
+XQuery-trace: The Value of concat($var,$var) is:  bbbb
+XQuery-trace: The Value of concat($var,$var) is:  cccc
+XQuery-trace: The Value of concat($var,$var) is:  dddd
+XQuery-trace: The Value of concat($var,$var) is:  eeee
+XQuery-trace: The Value of hours div/2 is:  20
+XQuery-trace: The Value of hours div/2 is:  35
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  40
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  20
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  15
+XQuery-trace: The Value of hours div/2 is:  6
+XQuery-trace: The Value of hours div/2 is:  20
+XQuery-trace: The Value of hours div/2 is:  40
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  10
+XQuery-trace: The Value of hours div/2 is:  20
+XQuery-trace: The Value of hours div/2 is:  40
+XQuery-trace: The Value of the given expression is:  80 140 40 160 40 80 40 60 24 80 160 40 40 40 80 160
+XQuery-trace: The Value of 'fn:avg((1,3,3,4,5)) * 2' is:  6.4
+XQuery-trace: The Value of 'for $var in (1.1,2.2,3.3,4.4,5.5) return xs:float($var)' is:  1 2 3 4 5
+XQuery-trace: The value of '2 + 2' is: 4
+XQuery-trace: The Value of 'fn:trace(2+2)' is:  4
+XQuery-trace: The Value of 'fn:count(1,2,-3,-4,5)) * 2' is:  10
+XQuery-trace: The value of 'for $var in (fn:true(),fn:false(),fn:true() return $var and fn:true()' is: true false true
+XQuery-trace: The value of 'for $var in (fn:true(),fn:false(),fn:true() return $var or fn:true()' is: true true true
+XQuery-trace: The value of the empty sequence is: 
+XQuery-trace: The value of the zero length string is: 
+XQuery-trace: The value of the complex expression on the other argument is: a A b B
+XQuery-trace: trace message a string
+XQuery-trace: trace message 

@@ -1,0 +1,49 @@
+2013-03-23  Per Bothner  <per@bothner.com>
+
+	* defs.scm (KawaJavafxApplication): Remove unused make-scape method.
+
+2012-11-21  Per Bothner  <per@bothner.com>
+
+	* defs.scm: Fix typo datum->object to datum->syntax/
+	Update datum->syntax-object -> datum->syntax two more places.
+
+2012-11-19  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST): Remove - not needed.
+	(GCJ_INPUTS): Update.
+
+2012-10-09  Per Bothner  <per@bothner.com>
+
+	* defs.scm: Update datum->syntax-object -> datum->object.
+
+2012-05-28  Per Bothner  <per@bothner.com>
+
+	* defs.scm: Fixes to avoid warnings about old unsyntax forms.
+
+2012-05-27  Per Bothner  <per@bothner.com>
+
+	* GroupObjectBuilder.scm (buildAddChild): Update since ApplyExp
+	constructor is now varargs,
+
+2011-08-17  Per Bothner  <per@bothner.com>
+
+	* defs.scm: Update to use Stage#show rather than old Stage#setVisible.
+	* MakeScene.scm: Update package containing SceneBuilder.
+
+2011-07-30  Per Bothner  <per@bothner.com>
+
+	* defs.scm: Remove some debugging print-outs.
+
+2011-07-28  Per Bothner  <per@bothner.com>
+
+	* defs.scm (MakeScene): Move MakeScene helper class to separate file.
+	* MakeScene.scm: New file.
+	* Makefile.am: Update accordingly.
+
+2011-07-27  Per Bothner  <per@bothner.com>
+
+	New directory.  Experimental support for using JavaFX 2.x.
+
+	* defs.scm: New file.  Various definitions.
+	* GroupObjectBuilder.scm: New file.
+	* Makefile.am: New file.

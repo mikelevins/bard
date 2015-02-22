@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head><title>Scribble applet</title></head>
+
+  <body>
+    <h1>Scribble applet</h1>
+You can scribble here:
+<br>
+<applet code="scribble.class" width=200 height=200>
+Sorry, Java is needed.
+</applet>
+
+    <hr>
+    <address><a href="mailto:per@bothner.com">Per Bothner</a></address>
+<!-- Created: Fri Feb  4 15:49:36 PST 2000 -->
+<!-- hhmts start -->
+Last modified: Mon Feb 11 14:53:01 PST 2002
+<!-- hhmts end -->
+  </body>
+</html>

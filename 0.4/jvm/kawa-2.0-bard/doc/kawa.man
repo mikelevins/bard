@@ -1,0 +1,92 @@
+.TH KAWA 1
+.\" NAME should be all caps, SECTION should be 1-8, maybe w/ subsection
+.\" other parms are allowed: see man(7), man(1)
+.SH NAME
+kawa \- Scheme language implemented using on a Java VM
+.SH SYNOPSIS
+.B kawa
+.I "[options]"
+.br
+.B java kawa.repl
+.I "[options]"
+.SH "DESCRIPTION"
+This manual page documents briefly the
+.BR kawa
+package, a Scheme dialect written completely in the Java language.
+Scheme forms are compiled into Java bytecodes for efficiency.
+
+Scheme is a high-level non-pure functional language in the Lisp family,
+with lexical scoping dynamically-types.
+The Kawa dialect of Scheme contains hooks to access and control Java objects.
+
+Using the
+.B kawa
+script is equivalent to invoking an interpreter of the Java language on the
+.B "kawa.repl"
+class.
+
+This manual page is just a quick synopsis.
+For more information, read the
+.BR kawa " manual - see below."
+
+.SH OPTIONS
+.TP
+.BI "-e " expression
+Evaluate the
+.IR expression .
+.TP
+.BI "-c " expression
+Evaluate the
+.IR expression ,
+but does not cause the start-up file
+.I ~/.kawarc.scm
+to be read.
+.TP
+.BI "-f " filename
+Read and evaluate Scheme commands from the
+.IR filename .
+.TP
+.B -s
+Enter an interactive read-evaluate-print command loop.
+.TP
+.B -w
+Enter an interactive read-evaluate-print in a new top-level window.
+.TP
+.BI "-C " filename
+Compile
+.IR filename
+to one or more Java class files.  See the Kawa manual for details.
+.P
+If no options are specified, it is equivalent to
+.BR "-s" "."
+.br
+GNU
+.BR "readline(3)" " can normally be used to edit commands."
+
+.SH FILES
+.TP
+.B /usr/bin/kawa
+The
+.B kawa
+executable, which starts a
+.BR java
+interpreter.
+.TP
+.B ~/.kawarc.scm
+Commands that are executed when
+.B kawa
+is started.
+.SH AUTHOR
+Per Bothner <per@bothner.com>.
+.SH "SEE ALSO"
+.BR "info kawa" " - the complete Kawa manual."
+.P
+.UR "http://www.gnu.org/software/kawa/" 
+.IR "http://www.gnu.org/software/kawa/"
+.UE
+- the
+.B kawa
+home page, based on the same Kawa manual.
+.P
+.B qexo(1)
+- an implementation of XQuery using the same engine.

@@ -1,0 +1,20 @@
+Source: kawa
+Section: interpreters
+Priority: extra
+Maintainer: Per Bothner <bothner@Cygnus.COM>
+Standards-Version: 2.1.2.2
+
+Package: kawa
+Architecture: all
+Recommends: jdk1.1-runtime
+Description: Implementation of Scheme on Java VM
+ Kawa (pronounced kava) is a Scheme interpreter written completely in Java.
+ Scheme procedures are compiled into Java bytecodes for efficiency.
+ .
+ Scheme is a high-level non-pure functional language in the Lisp family,
+ with lexical scoping dynamically-types.
+ The Kawa dialect of Scheme contains hooks to access and control Java objects.
+ .
+ The release includes a number of useful classes, including
+ a package that makes it easy to create .class files, and
+ powerful Number classes.

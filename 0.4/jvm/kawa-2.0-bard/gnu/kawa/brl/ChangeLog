@@ -1,0 +1,203 @@
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* BRL.java: Make sure Error is uncaught or re-thrown.
+
+2012-10-02  Per Bothner  <per@bothner.com>
+
+	* BRLRead.java (readCommand): New override, needed because of new
+	new "topLevel" behavior of inherited readObject.
+
+2011-07-11  Per Bothner  <per@bothner.com>
+
+	* BRLRead.java:  Use updated LispReader API.
+
+2011-04-17  Per Bothner  <per@bothner.com>
+
+	* BRL.java (<clinit>): Don't call setInitialColonIsKeyword here.
+	(createReadTable): Call it here instead.
+
+2011-01-19  Per Bothner  <per@bothner.com>
+
+	* BRL.java (makeBody): Remove method.
+	(appendBodyValues): New method.
+
+2010-08-19  Per Bothner  <per@bothner.com>
+
+	* BRL.java: Update to use new Environment-setting methods.
+
+2009-05-12  Per Bothner  <per@bothner.com>
+
+	* BRLReaderString.java: Top-level text now evaluates to an
+	UnescapedData instance in compatibility mode (as before in KRL mode).
+
+2009-03-10  Per Bothner  <per@bothner.com>
+
+	* BRLRead.java (init): Clearing initialColonIsKeyword is no
+	longer needed.
+	(setBrlCompatible): Can't set initialColonIsKeyword here.
+	* BRL.java (<clinit>): Instead, we set it here, on
+	brl_instance.defaultReadTable.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA1): Remove unneeded macro.
+
+2006-04-10  Per Bothner  <per@bothner.com>
+
+	* BRL.java (krl_instance, brl_instance): Make public.
+
+2006-02-06  Per Bothner  <per@bothner.com>
+
+	* BRLRead.java (readObject): Update for modified readValues method.
+
+2006-01-10  Per Bothner  <per@bothner.com>
+
+	* BRL.java (initBRL): HTTP module was moved to gnu.kawa.servlet.
+
+2005-07-21  Per Bothner  <per@bothner.com>
+
+	* BRL.java (brl_instance): Make final.
+	(<init>): Take Environment parameter.
+	(<clinit>): Initialize brl_instance.
+	(getBrlInstance): brl_instance is now guaranteed pre-allocated.
+
+2005-04-20  Per Bothner  <per@bothner.com>
+
+	* BRL.java: Initialize krl_instance and brlEnvironment in the
+	static initializer.
+
+2005-03-28  Per Bothner  <per@bothner.com>
+
+	* BRL.java: Update for recent changes to Scheme class.
+	(brlEnvironment): New static final field.
+
+2005-03-24  Per Bothner  <per@bothner.com>
+
+	* BRL.java (instance): Replace static field by ...
+	(krl_instance, brl_instance): ... two new fields.
+	(<init>): Don't set instance field.
+	(getKrlInstance, getBrlInstance): Set appropriate instance field.
+
+2005-03-17  Per Bothner  <per@bothner.com>
+
+	* BRL.java (createReadTable): New method.
+	* BRLRead.java (getReadTable): Remove method.
+	(brlReadTable): Remove field.
+	(set_string_start): Removed method - inlined in creatReadTable.
+	(brlReader): Move to ..
+	* BRL.java: ... and make static.
+
+2005-03-07  Per Bothner  <per@bothner.com>
+
+	* BRL.java: Update Interpreter -> Language.
+
+2005-02-24  Per Bothner  <per@bothner.com>
+
+	* BRL.java (registerEnvironment): Use new setDefaults method.
+
+2004-12-27  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: No longer need to force ../../../kawa to be made first.
+
+2004-10-26  Per Bothner  <per@bothner.com>
+
+	* BRLRead.java (brlReadTable): Set using new makeSchemeReadTable.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* BRL.java:  Remove unused import statements.
+	* BRLReaderString.java:  Likewise.
+
+2004-01-09  Per Bothner  <per@bothner.com>
+
+	* BRL.java (registerEnvironment):  Update setCurrent to setGlobal.
+
+2003-11-20  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parse):  Remove - use inherited method instead.
+	* BRLReaderString.java (read):  Return on '\n' if isInteractive().
+	Emit error if nested and eof seen.
+	Call saveExpressionStartPosition to note location of '['.
+	* BRLRead.java (saveExpressionStartPosition):  New helper method.
+	(readObject):  Defer literal text handling to BRLReaderString.
+	Emit "unmatched '['" error here.  Various other fixes.
+
+2003-11-06  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parse):  Update to take a Lexer rather than an InPort.
+
+2003-11-02  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parse, parseFile):  Combined to single parse method.
+
+2003-10-19  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parseFile):  Pass this to Translator constructor.
+
+2003-09-04  Per Bothner  <per@bothner.com>
+
+	* BRL.java (getLexer, parseFile):  Change defaultCallConvention
+	to new CALL_WITH_CONSUMER.
+
+2003-05-31  Per Bothner  <per@bothner.com>
+
+	* BRL.java (getOutputConsumer):  Update parameter type.
+
+2003-01-09  Per Bothner  <per@bothner.com>
+
+	* BRL.java (emptyForm):  New static.field.
+	(parseFile):  Use emptyForm instead of toString().length().
+	* BRLReaderString.java (read):  If empty, return emptyForm.
+
+2002-11-05  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parseFile): Take and use new 'immediate' parameter.
+
+2002-07-24  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parseFile):  Update to new Interpreter API.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* BRL.java (parseFile):  Now throws IOException and SyntaxException.
+
+	* BRL.java (<init>):  HTTP module moved to slib package.
+
+2002-02-14  Per Bothner  <per@bothner.com>
+
+	* BRL.java (<init>):  Update path to progfun in loadClass argument.
+
+2002-02-13  Per Bothner  <per@bothner.com>
+
+	* progfun.scm:  Moved from gnu.brl.
+	* Makefile.am: Update accordingly.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* BRL (<init>):  Also do loadClass of gnu.kawa.servlet.HTTP.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	Support two languages "krl" (experimental) and "brl" (BRL-compatible).
+	* BRL.java (getInstance):  Now take a 'compatible' flag.
+	(getKrlInstance, getBrlInstance):  New static methods.
+	(brlCompatible):  New field.
+	(isBrlCompatible, setBrlCompatible):  New methods.
+	(getLexer, parseFile):  Set lexer's compatible flag according to ours.
+	(getOutputConsumer):  If compatible emit standard Scheme output.
+	(makeBody):  If compatible, return standard BeginExp.
+	* BRLRead.java (brlCompatible):  New field.
+	(isBrlCompatible, setBrlCompatible):  New methods.
+	(readObject):  If compatible, ]string[ is read as a regular <string>.
+	* BRLReaderString.java (read):  Ditto.
+
+	* BRL.java (<init>):  Load stringfun and progfun standard modules.
+
+2002-01-23  Per Bothner  <per@bothner.com>
+
+	New package - an experimental re-implemntation of BRL.
+	* BRL.java:  New class, extends Scheme.
+	(Prompter):  New class, extends Procedure1.
+	* BRLRead.java:  New class, extends LispReader.
+	* BRLReaderString.java:  New class, extends ReadTableEntry.
+	* Makefile.am:  New file.

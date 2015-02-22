@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>JEmacs Implementation Status</title>
+  </head>
+
+  <body>
+    <h1>JEmacs Implementation Status</h1>
+
+This is very incomplete and in itself very a work-in-progress.
+Think of this as a very incomplete reminder list of what needs
+to be done, as well as noting what is working.
+
+<h2>ELisp Syntax</h2>
+<ul>
+<li><code>;;;###autoload</code>:  Works.
+<li><code>save-excursion</code> works.
+<li><code>save-current-buffer</code> works.
+<li><code>unwind-protect</code> works.
+</ul>
+
+<h2>ELisp core</h2>
+Various non-trivial Elisp files compile and load without complaint.
+However, that does not necessarily mean they work!
+
+<ul>
+<li><code>read</code>: Pasring of Emacs-style s-expressions mostly works.
+<li><code>print</code>:  Prints in Scheme format.
+<li>Dynamic name scoping (works).
+<li>Buffer-local variables (mostly works).
+<li><code>defmacro</code> doesn't work, for some undetermined reason.
+<li><code>purecopy</code> is just identity.  A possible improvement would
+force compile-tiem evaluation to a literal.
+</ul>
+
+<h2>Strings</h2>
+<ul>
+<li><code>format</code>:  Framework and most common cases work.
+</ul>
+
+<h2>Interaction</h2>
+<ul>
+<li>No mini-buffer.  (Uses pop-up dialog window where Emacs uses mini-buffer.)
+<li>No each area.  (Messages are written on console.)
+<li><code>interactive</code>:  Basic framework implemented.
+Only string argument implemented.  Most specifiers are ignored.
+<li>Selection sets point and mark, but otherwise not handled properly.
+<li><code>call-interactively</code> works.
+<li><code>interactive-p</code> is hardwired to <code>nil</code>.
+One possible implementation is to examine the output from
+<code>new Throwable().printStackTrace(...)</code>.
+A possibly-more efficient implementation is to make it a macro for
+<code>(eq? (%buffer-current-command) --this-function--)</code>.
+</ul>
+
+<h2>Common Lisp extensions</h2>
+
+<ul>
+<li>Default values for optional parameters (works).
+<li><code>typep</code>: Basic framework works; only (some) simple type
+names work.  Any Java fully-qualified Java classname be used as type specifier.
+Most type names cause <code>typep</code> to be inlined.
+<li>There is a almost-complete implementation of CL-style <code>format</code>
+which could be made available under the name <code>format*</code>
+</ul>
+
+    <hr>
+    <address><a href="mailto:per@bothner.com">Per Bothner</a></address>
+<!-- Created: Thu Jun 15 14:14:49 PDT 2000 -->
+<!-- hhmts start -->
+Last modified: Mon Jun 19 23:53:37 PDT 2000
+<!-- hhmts end -->
+  </body>
+</html>

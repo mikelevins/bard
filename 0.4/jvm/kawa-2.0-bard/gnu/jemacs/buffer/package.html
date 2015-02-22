@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>JEmacs and the gnu.jemacs.buffer Package</title>
+  </head>
+
+  <body>
+<p>
+Provides various building blocks for building an Emacs-like text editor.
+It also provides a number of Scheme procedures that have the same name
+and similar functionality as the Emacs Lisp functions.
+Somewhat out of date.
+Check the <a href="http://www.JEmacs.net/">JEmacs home page</a>
+for more information.
+<p>
+It uses the Swing tool-kit.
+
+<h2>Plan</h2>
+
+The plan is to use
+this together with the (unfinished) <code>gnu.jemacs.lang</code>
+package to provide a fully-functional re-implementation of
+Emacs Lisp which compiles to Java bytecodes.
+I'm hoping volunteers will help me make "JEmacs" into something
+useful.  I have fairly clear ideas about much of what need to be
+done.  Contact me if you are interested.
+
+<h2>Home page</h2>
+There is now a JEmacs <a href="http://JEmacs,SourceForge.net/">home page</a>.
+Also check out the
+<a href="http://www.gnu.org/software/kawa/">Kawa home page</a>.
+
+<h2>Screen snapshot</h2>
+There is a now a <a href="http://www.bothner.com/~per/papers/jemacs.png">
+teaser screen snapshot</a>.
+
+<h2>Status</h2>
+Very unfinished proof of concerpt.
+It is a functional but very minimal editor.
+Many of the core Emacs concepts (keymaps, windows, frames,
+buffers, markers) are implemented, and generally in such a way as
+to provide the standard Emacs semantics.  There are Scheme functions
+with the same name and similar behavior as the standard Emacs Lisp
+functions.  However, there is only a very limited set of core "editing"
+commands, and no searching commands.  And it is <em>not</em>
+robust or reliable.
+
+<h2>To-do</h2>
+A couple of things volunteers might start with
+(but let me know before you spend serious time on any of these):
+<ul>
+<li>Implement more of the editing commands:  Insert/delete/forward/backward
+word/line.
+<li>Display the modeline in inverse video, but extend it to the full
+window width.
+<li>Come up with a design for narrowing a buffer.  One possibility
+is to use some kind of invisible style for the text outside the narrowing.
+But I think a more flexible design would use an "IndirectDocument" class
+that refers to a sub-range of a buffer.  This would help with "Indirect
+Buffers", and might be flexible and elegant in general.
+<li>Perhaps Buffer should inherit from Document (or rather
+DefaultStyledDocument).  However, that might lose some flexibility.
+<li>Needs methods to control Window scrolling.
+<li>Think about how to map extents and faces to Swing attributes
+and styles.
+<li>Decide how to implement Emacs strings.
+Initially, we'll use kawa.lang.FString, but we do want to support strings
+with extents and text properties.
+</ul>
+
+<h2>Usage</h2>
+These classes depend on Swing, so make sure you have Swing available.
+Then make sure you have a version of the Kawa classes that contains
+the <code>gnu.jemacs.buffer</code> classes.  (In other words,
+Kawa needs to have been configure <code>--with-swing</code> support.)
+Then just start Kawa in the usual way:
+<pre>
+java kawa.repl
+</pre>
+Then evaluate:
+<pre>
+(emacs)
+</pre>
+That brings up a Emacs window.
+<p>
+You can do <code>(split-window)</code> to create new (sub-)windows
+in an existing frame; type <code>(make-frame)</code> to create
+a new frame (to-level window), or do <code>(get-buffer-create NAME)</code>
+to create a new buffer.
+Note also how <code>ctrl/B</code> and <code>ctrl/F</code> have been
+bound to the correct functions.  For other working key-bindings,
+look for the calls to <code>define-key</code> in <code>emacs.scm</code>.
+<p>
+The call <code>(scheme-swing-window)</code> creates a new Scheme
+interaction window.
+
+<h2>License</h2>
+Same as the package <code>gnu.expr</code>:  Modified Gnu Public License.
+See the file <a href="../../../COPYING">COPYING</a>.
+For now, the copyright holder is Per Bothner;  in the future it may
+make more sense to make the FSF the copyright owner, since the plan
+is to use a lot of the existing ELisp packages once ELisp support
+is complete.
+
+<h2>Author</h2>
+
+Per Bothner,
+<tt>&lt;<a href="mailto:bothner@gnu.org">bothner@gnu.org</a>&gt;</tt>
+  </body>
+</html>

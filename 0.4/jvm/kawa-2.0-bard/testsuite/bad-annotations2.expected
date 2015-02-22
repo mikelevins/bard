@@ -1,0 +1,5 @@
+bad-annotations2.scm:7:11: annotation value must be constant
+bad-annotations2.scm:8:13: warning - integer 234569898989 not in range of byte
+bad-annotations2.scm:9:5: no annotation element named 'nosuchname'
+bad-annotations2.scm:14:4: annotation java.lang.Override not allowed on fields
+bad-annotations2.scm:2:3: annotation java.lang.Override not allowed on classes

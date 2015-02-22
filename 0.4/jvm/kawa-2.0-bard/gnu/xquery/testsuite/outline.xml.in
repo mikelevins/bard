@@ -1,0 +1,21 @@
+<!-- -*-XML-*- -->
+<book id='b1'>
+  <part id='P1'>
+    <chapter id='c1'>
+      <section id='s1'>
+        <section id='s11'/>
+      </section>
+      <section id='s2'/>
+      <section id='s3'>
+        <para id='p31'/>
+      </section>
+    </chapter>
+    <chapter id='c2'>
+      <section id='s4'/>
+      <section id='s5'/>
+    </chapter>
+  </part>
+</book>
+
+
+

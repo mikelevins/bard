@@ -1,0 +1,22 @@
+(module-static #f)
+
+(module-export mod0-v1 mod0-v2 mod0-v3 mod0-f1 mod0-m1 set-v1)
+(define mod0-v1 :: <int> 10)
+(define mod0-v2 11)
+(define mod0-v3 12)
+(define (set-v1 x) (set! mod0-v1 x))
+(define (mod0-f1)
+  (+ mod0-v3 (mod0-pf1)))
+(define-variable mod0-v4 100)
+(define mod0-pv1 :: <int> 21)
+(define mod0-pv2 22)
+(define (mod0-pf1)
+  (+ mod0-v1 mod0-v2 mod0-pv1 mod0-pv2 mod0-v4))
+(define-syntax mod0-pm1
+  (syntax-rules ()
+    ((mod-pm1)
+     (+ mod0-v1 mod0-v2 mod0-pv1 mod0-pv2 mod0-v4 (mod0-pf1)))))
+(define-syntax mod0-m1
+  (syntax-rules ()
+    ((mod-m1)
+     (vector mod0-v1 (mod0-pm1) (mod0-pf1)))))

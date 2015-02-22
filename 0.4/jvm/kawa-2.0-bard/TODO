@@ -1,0 +1,303 @@
+A GRAB-BAG OF IDEAS AND THINGS TO DO, SOME QUITE OLD
+
+Optimize splicing of methods calls.
+Remove createVarargsArrayIfNeeded logic from PrimProcedure.
+
+Document:
+  in-http-server and in-servlet cond-expand options.
+
+Use Parboiled as parser library?  https://github.com/sirthias/parboiled/wiki
+
+Before Kawa 1.12:
+- Jemacs type ctrl-C --> TooLongAction
+- Go through Savannah bugs.
+- Evaluate reported JEmacs bugs.
+- Go through remaining "news" entries and update manual.
+- go through Evaluating-Scheme-expressions-from-Java.
+- gnu/bytecode:
+-- Document emitIf../emitThen else, at overview level.
+- Verify that Path is consistent with new javax.nio (JDR 203)
+  http://openjdk.java.net/projects/nio
+- internals: Update about procedures, inlining, tail-calls.
+
+HTTP/SERVLETS
+* Fix formatting: Language format -> HttpPrinter
+  #t should print correctly
+  BRL should by default not HTML-quote strings
+* Think about REST.
+* Support explicit and implicit require (BRL's sitedefs.scm).
+* Module should not be static - vars should be session variables.
+* Dynamic Environment should be per-session.
+* Get repl.xml working reliably.
+* Annotations ...
+- In ReplDocument don't use SwingContent.
+
+OPTIMIZATIONS
+* optimize fluid-let and fluid references:
+  - in fluid-let call getLocation before calling setWithSave so we don't
+  have to call it again in setRestore.
+  - In local references inside a fluid-let use the location from above.
+* Optimize (make T) where T is a known non-simple class.
+  This should not need to use reflection.
+* optimize zero? etc
+* other support for other single-element struct types, including unsigned int
+* warning about String conversions
+(See email from helmut Eller 2009/09/26)
+* warning about non-tail-calls
+(See email from helmut Eller 2009/09/26)
+
+HIGH PRIORITY:
+* Allow co-variant return types.
+* compile-file doesn't display warnings
+* When deferring imports (require) the 'run' actions shouldn't be deferred. FIXME
+* Optimize and/or in the case of ConditionalTarget or <boolean> target.
+* properties of symbols
+* Compilation: not implemented mustConvert restarg
+* XQuery distinguish qexo: kawa: fn: default function namespaces.
+* XQuery: Implement/document external functions.
+* Name mangling, document library modules.
+* Output formatting of empty arrays? (make-array (shape 0 0 0 3))
+* Format filter chain API?
+
+Localization support: gettext - see doc-resource.patch
+
+Remove pretty-print implementation in slib.
+
+Optimize NumberCompare further.
+
+BRL/KRL:
+* sitedefs.scm should be loaded
+* brl function should write to output, not be identity.
+The default output-pourt shold be re-directed.
+It should be the same as the ctx.consumer.
+
+* Resolve whether #!/FILENAME can be followed by embedded options (meta-arg).
+* CL reader interface
+* More define-class functionality?
+* Finish modules: define-module?  constructor arguments?
+* Handle defmacro definition and use in same source file.
+* load.loadSource if (true) should be if (false).
+* Implement Scheme API for serialization.
+* Document in internals.html how ModuleMethod/ModuleBody works.
+
+Optimize to avoid creating frame classes:
+If a local variable is captured, and all functions intermediate between
+the capture site and the definition are call-only functions, and the
+local variable is never written (except before all calls to these
+intermediate functions), then add the variable as an extra implicit
+parameter to thse intermediate functions, instead of storing the
+variable in a frame.
+
+Perhaps CallFrame should extend ModuleBody.
+
+Should inline when accessing a final static field (using static-field),
+for int (or shorter) types - but only for "compile-time constants".
+(Needs checking .class file that field is given ConstantValue.)
+
+Starting (emacs) has wrong keybindings unless --elisp is specified.
+
+Move kawa.lang.Lambda to gnu.kawa.lispexpr.Lambda.  Merge with Elisp version.
+Remove Scheme.getTypeValue.
+
+(define plus +) ... (plus ...) should not inline call to +.
+
+Implement IntRange class.
+Use it to replace Char's hashtable.
+
+Modules:
+* Infer parameter and return types when defaulted and otherwise match
+method in explicit module-extends or module-interface.
+
+compile-file should generate .jar, not .zip.
+Should perhaps take multiple file names.
+Update manual to removing .zip references.
+
+Binding for imported unknown names (idN$NAME) should not be static!
+
+(this) needs to be more general/robust.
+Start by forcing it to make the generated method non-static.
+What about 'super' ?
+
+Re-store code to check argument count when applyN is involved.
+(in Compilation and maybe ApplyExp).
+
+BindingInitializer.emit: global Environment should be cached
+
+TO BE DONE FOR 2.0:
+
+'object': being able to pass constructor arguments. eg., to simulate:
+   new javax.swing.JDialog(myFrame) {  public void foo() {} };
+Perhaps:  (object ((<javax.swing.JDialog> myFrame)) ...)
+
+Fix scheme-window in misc.scm.
+
+Generate better code for `(and test1 test2 test3)'.
+[See maybe-report-section in testing.scm]
+
+Module compilation:
+* Allocated selector indexes "densely" within each applyX method
+of a ModuleBody, so tableswitch gets used, rather than lookupswitch.
+
+define-syntax and friends are not properly hygienic when checking
+literals:  symbols listed among the literals lists are matched as
+raw symbols, rather that checking that the symbol has the same
+binding, if any, as at the defining site.
+
+Complain if syntax or macro is used in other than function-call position.
+
+Let LineBufferedReader pos, limit, buffer be private,
+but provide methods to get/set them.
+
+exact->inexact only implemented for RealNums, not other Complex.
+
+Fix scheme-window so #!eof closes window.
+
+Combine primitive field with record facility and define-class.
+
+Provide getopt-long (Guile, check scsh).
+
+Implement full call-cc by re-writing.
+This would be slower, so should be optional, probably not the default.
+
+Implement a pretty-printing AWT container.
+
+Complete R4RS procedures.
+  trig functions for complex numbers
+
+Complete R5RS number syntax.
+
+Implement system open-input-pipe open-output-pipe close-pipe.
+
+Add a way to specify a load-path (or maybe just use CLASSPATH?).
+First seach for loaded files in directory where current file was found.
+
+OTHER:
+
+Provide a way to compile a Scheme program into an Applet class (with
+init/start/stor/pain/etc methods).  Also provide a stripped down
+"kawa-run.zip", without eval, load, or compiler.
+
+Update to match kawa-tour:
+  Vector -> FVector
+  SyntaxRule.match should use Pattern.
+
+Should SyntaxRule inherit from Pattern?
+
+Move readSchemeObject readSchemeNumber etc from InPort
+to new class(es) Parser:
+	class Parser;
+	class SchemeReader extends Parser;  // Provides read
+	class SchemeParser extends SchemeReader;  // Provides read+rewrite
+Move Interpreter.syntaxError to Parser.
+Treat ReadError as SyntaxError.
+Support warning, error, fatal.
+Parser accumulates list of syntax errors.
+When done, if errors or warnings, throw SyntaxErrors.
+Printing SyntaxError prints error log.
+
+Should print warnings in interactive mode, before evaluation.
+Awkward, because ModuleExp.evalModule is used.
+
+Make closure representation consistent with inner classes wrt
+use of Attributes (for possible improved debugging).
+
+Optionally issue a warning if a symbol is rebound.
+
+Inline calls to simple methods, especially builtins.
+Ties in with module specifications (to determine which bindings are builtin).
+
+Load should take an optional environment argument.
+
+Quantities:
+Arithmetic involving Units should return Units.
+Printing a Unit should return something readable, maybe:
+  (quantity->unit 1cm) -> "1cm". while 1cm -> "1.0cm".
+
+EVENT CALLBACKS - Proposed design
+
+Syntax:  (listener (EXTRA-INTERFACE ...)
+           ((METHOD-NAME+ [EVENT-TYPE])+ ARG ACTIONS ...) ...)
+
+Example:  (invoke component 'addMouseListener
+	    (listener ((mousePressed mouseReleases) evt
+              (display (list "mouse pressed or released:" evt))))
+
+This creates a new "listener" instance.  The instance has one
+method for each METHOD-NAME; the method takes a single argument
+of the specified EVENT-TYPE.  The EVENT-TYPE can be left out
+in the case of standard java METHOD-NAMES;  for example
+if the METHOD-NAME is mousePressed, the implied EVENT-TYPE
+is <java.awt.event.MouseEvent>.  When the method is executed,
+the actual Event is bound to ARG, and the ACTIONS executed.
+(The type is ARG is the least common super-type of all
+the explicit or implicit EVENT-TYPES for corresponding METHOD-NAMES.)
+The allocated listener instance implements all the interfaces
+listed in the EXTRA-INTERFACE list;  if addition, if an EVENT-TYPE
+was implied, the corresponding Listener interface is also implied.
+(For example a METHOD-NAME of mousePressed implies an EVENT-TYPE
+of <java.awt.event.MouseEvent>, and hence an interface of
+<java.awt.event.MouseListener>.)
+New syntax:
+(listener [(EXTRA-INTERFACE ...)]
+  ((METHOD-NAME ... EVENT-ARG-NAME [:: EVENT-TYPE]) ...))
+
+Listeners on JComponent etc:
+(javax.swing.JButton text: "Click Me" item-state-changed: (lambda (e) ...))
+It KEYWORD does not match a setter:
+Make list of all 1-argument methods that match addXxxListener.
+Look at parameter type - assume an interface type Yyy or abstract class.
+See if there is a method named KEYWORD (after mangling) in type Yyy.
+If so add to "handler list".
+If "handler list" is non-empty, create an anonymous "handler" class.
+(If any Yyy is an abstract class, create separate handler classes for each.)
+Handler class implements all the Yyy interfaces.
+Add methods for each argument.  Add any other void non-implemented methods.
+For example:
+  (object (ItemListener)
+    ((itemStateChange $e::ItemEvent) ((lambda (e) ...) $e)))
+Then: call addItemListener.
+Issue: (set! foo:item-state-changed (lambda (e) ...new handler...))
+In that case we want to remove old handler before adding new one.
+Can use getItemListeners followed by removedItemListener.
+Problem is that this may remove other unrelated handlers,
+unless we have one handler only for each method.
+Or have the handler have a set of settable slots.
+
+SYMBOLS
+If we have pre-process environments, (define exit ...) should only re-define
+exit in the current environment, not all.
+
+JEMACS
+
+clean up function-binding hacks
+
+vertical-motion
+
+Make it so that JEmacs does not require Swing.  There is a start in
+that gnu.jemacs.buffer mostly contains toolkit-independentcode, and
+gnu.jemacs.swing contains Swing-specific implementations.  This
+separation shoudl be finished, and we should add one or more
+implementation on other toolskits:
+- using Gnome2 (http://developer.gnome.org/doc/API/2.0/gtk/textwidget.html)
+text widgets with Pango (http://developer.gnome.org/doc/API/2.0/pango/);
+- one that uses the SWT toolkit (http://www.eclipse.org/articles/) 
+that is part of the Eclipse project (http://www.eclipse.org);
+- one that uses plain AWT;
+- and one that works on plain terminals, perhaps using charva
+(http://www.pitman.co.za/projects/charva/).
+It is important that JEmacs be able to run well using Free Software only,
+and it cannot do hat as long it depends on Swing, until there is a
+free re-implementation of a suitable Swing subset.
+Note that the Buffer class should be a pure "model" which is toolkit
+independent:  we want to be able to display the same buffer in both
+a Swing Window and a telnet window at the same time.
+
+The JEmacs widgets should be integrated into the gnu/kawa/slib/gui.scm
+design.
+
+Should implement Common Lisp-style "type specifiers" and declarations.
+This would make it practical to write-lower level code that calls Java
+methods directly in ELisp (and Common Lisp), without having to use Scheme.
+
+BENCHMARKS
+http://www.ccs.neu.edu/home/will/Twobit/kvwbenchmarks.html

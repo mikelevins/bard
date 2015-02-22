@@ -1,0 +1,1167 @@
+2014-08-28  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java validateApplyValuesFilter): Fix two errors
+	in setting expression type.
+
+2014-07-02  Per Bothner  <per@bothner.com>
+
+	* CastAs.java: Update for changes to super-type.
+
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java: Make sure Error is uncaught or re-thrown.
+	* Debug.java: Likewise.
+	* NodeUtils.java: Likewise.
+	* NumberValue.java: Likewise.
+	* SequenceUtils.java: Likewise.
+
+2013-11-28  Matthieu Vachon <matthieu.o.vachon@gmail.com>
+
+	* DistinctValues.java, RelativeStepFilter.java: Don't use @Override
+	for a method implementing an interface - Java 5 doesn't like it.
+
+2013-11-03  Per Bothner  <per@bothner.com>
+
+	* CastAs.java (apply2): Update for new Values API.
+	* CompileMisc.java (validateApplyValuesFilter): Update size
+	method no longer in Nodes class.
+	* OrderedTuples.java (ignoring): New method.
+
+	* SequenceUtils.java (subList$C): Re-write to not depend on
+	TreeList internals.
+
+2013-11-02  Per Bothner  <per@bothner.com>
+
+	Reduce dependences on the implementation of the Values class.
+	* Average.java: Remove needlessly-precise downcast.
+	* MinMax.java: Likewise.
+	* Reduce.java: Likewise.
+	* BooleanValue.java: Use generic AbstractSequence position API.
+	* Compare.java: Likewise.
+
+2013-11-01  Per Bothner  <per@bothner.com>
+
+	* DistinctValues.java (consume): Rename to writePosition.
+	* RelativeStepFilter.java: Likewise.
+
+2012-07-15  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SCM_COMPILE_FLAGS): New macro.
+
+	* IntegerRange.java: No longer extend MethodProc.
+	(apply): Remove method.
+	(integerRange$X): New static method.
+	* Xutils.scm (integerRange): New function, uses integerRange$X.
+
+2012-07-14  Per Bothner  <per@bothner.com>
+
+	* SubList.java: Class removed.
+	(subList): Moved to SequenceUtils.
+	* SequenceUtils.java (subList$X, subList$C): New methods.
+	* Makefile.am: Update accordingly.
+	* Xutils.scm (sublist): New function.
+
+2012-07-10  Per Bothner  <per@bothner.com>
+
+	* Xutils.scm: Moved from gnu/kawa/slib.
+	* Makefile.am: Update accordingly.
+	* Xutils.scm (every-or-some-values, every, some): New functions.
+	* ValuesEvery.java: Removed class.
+
+2012-03-20  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java: Add needed setCanRead calls.
+
+2011-03-23  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java (validateApplyValuesFilter): Use letStart/letVariable
+	etc methods instead of creating LetExp directly.
+	(validateApplyRelativeStep): Likewise.
+
+2010-09-16  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java: Update validateApply methods, which no longer
+	take a 'boolean argsInlined' parameter.
+
+2010-08-27  Per Bothner  <per@bothner.com>
+
+	* CastableAs.java: Update to use Procedure.validateApplyKey,
+	and move inlineXxx method to CompileMisc.
+	* CastAs.java: Likewise.
+	* CompileMisc.java: New (Moved/renamed) validateXxx methods.
+
+	* ValuesFilter.java: Update to use Procedure.validateApplyKey,
+	and move inlineXxx method to CompileMisc.
+	* RelativeStep.java: Likewise.
+	* OrderedMap.java: Likewise.
+	Also move guts of compile method and typeTuples static to CompileMisc.
+	* CompileMisc.java: New (Moved/renamed) validateXxx methods.
+
+2010-08-26  Per Bothner  <per@bothner.com>
+
+	* ArithOp.java: Update to use Procedure.validateApplyKey.
+	* BooleanValue.java: Likewise.
+	* Compare.java: Likewise.
+	* CompileMisc.java: Rename inlineXxx methods to validateXxx
+	methods that take an extra require_type parameter.
+
+2010-04-10  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (normalizeUnicode): Add a try-catch for a better
+	error when java.text.Normalizer is missing, in JAVA6COMPAT5 mode.
+
+2009-11-22  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (stringJoin): Fix error in nextIndex/nextValue
+	handling.
+
+2009-08-15  Per Bothner  <per@bothner.com>
+
+	* CompileMisc.java: New class - compilation/optimization-related
+	methods for ArithOp, Compare, BooleanValue.
+	* Makefile.am: Update accordingly.
+	* ArithOp.java: Keep only runtime-specific parts.
+	* Compare.java: Likewise.
+	* BooleanValue.java: Likewise.
+
+2009-06-28  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java (inline): Update for new inlining framework.
+	* ValuesFilter.java (inline): Likewise.
+	Also re-order things so they're properly scoped.
+
+2008-10-24  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (makePattern): Fix comment so it doesn't
+	break PreProcess.
+
+	* StringUtils.java (matches, replace, tokenize$X): Use coerceToString
+	for string argumemts.
+
+2008-09-05  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java (compile): Remove special handling of SeriesTarget.
+
+2008-08-02  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (lookupPrefix): Don't stop searching if we find
+	null uri (for undeclare-namespace), unless prefix also matches.
+
+	* NodeUtils.java (prefixesFromNodetype): Skip bindings with null uri,
+	since those "undeclare" any outer matching prefixes.
+
+	* StringUtils.java (makePattern): Fix space-skipping logic.
+
+	* StringUtils.java (makePattern): Map "\p{IsXxxx}" to "\P{InXxxx}".
+
+	* StringUtils.java (replace): Check for invalid use of '\' in
+	replacement string.
+
+2008-07-25  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (encodeForUri, iriToUri, escapeHtmlUri): Use
+	coerceToString on parameter.
+	(encodeForUri(Object,char)): Remove no-longer-needed method.
+
+	* StringUtils.java (makePattern): With 'x' flag, don't strip spaces
+	with '[...]' brackets.
+
+2008-06-16  Per Bothner  <per@bothner.com>
+
+	* NumberValue.java (roundHalfToEven): If value is Double/Float
+	and non-finite or zero, return as-is.
+
+2008-01-16  Per Bothner  <per@bothner.com>
+
+	* CastableAs.java (inline): Handle new argsInlined parameter.
+	* ArithOp.java (inline): Likewise.
+	* CastAs.java (inline): Likewise.
+	* OrderedMap.java (inline): Likewise.
+	* Compare.java (inline): Likewise.
+	* ValuesFilter.java (inline): Likewise.
+	* RelativeStep.java (inline): Likewise.
+	* BooleanValue.java (inline): Likewise.
+
+2008-01-06  Per Bothner  <per@bothner.com>
+
+	* CastableAs.java: Clean up to remove warnings with some compilers.
+	* NodeUtils.java: Likewise.
+	* Reduce.java: Likewise.
+	* Average.java: Likewise.
+	* ValuesEvery.java: Likewise.
+	* Castas.java: Likewise.
+	* Orderedmap.java: Likewise.
+	* IntegerRange.java: Likewise.
+	* OrderedTuples.java: Likewise.
+	* SequenceUtils.java: Likewise.
+	* RelativeStep.java: Likewise. Also fix comment typo.
+
+2007-02-26  Per Bothner  <per@bothner.com>
+
+	* CastableAs.java (inline): Update for new CanInline api.
+	* ArithOp.java (inline): Likewise.
+	* CastAs.java (inline): Likewise.
+	* OrderedMap.java (inline): Likewise.
+	* Compare.java (inline): Likewise.
+	* ValuesFilter.java (inline): Likewise.
+	* RelativeStep.java (inline): Likewise.
+	* BooleanValue.java (inline): Likewise.
+
+2007-01-17  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (rootDocument): New static method.
+
+	* NodeUtils.java (nodeName): New method.
+	(name, localName, namespaceURI, inScopePrefixes$X): Use KNode's new
+	getNodeNameObject method.
+
+	* QNameUtils.java (localNameFromQName, prefixFromQName,
+	namespaceURIFromQName, namespaceURIForPrefix):
+	Fix throwing of WrongType.
+
+2007-01-16  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java (inline): Error if 1st arg incompatible with node.
+
+2007-01-15  Per Bothner  <per@bothner.com>
+
+	* SequenceUtils.java (deepEquals): Fix typo.
+
+	* StringUtils.java (coerceToString): Allow any CharSequence.
+	* QNameUtils.java (localNameFromQName, prefixFromQName): Change
+	result types to NCName.
+
+2007-01-14  Per Bothner  <per@bothner.com>
+
+	* SequenceUtils.java (isZeroOrOne, coerceToZeroOrOne): New methods.
+	(zeroOrOne): Use coerceToZeroOrOne.
+	* StringUtils.java (concat$V): Use coerceToZeroOrOne.
+
+	* TimeUtils.java (currentDateTimeLocal): New ThreadLocal static.
+	(currentDateTime, currentDate, currentTime, implicitTimezone):
+	New static methods.
+
+	* NamedCollator.java (codepointCompare): New method.
+	(compare): Use it.
+	* Compare.java (atomicCompare): Likewise.
+
+2007-01-04  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (baseUri): Change type of local 'uri' to Path.
+
+	* StringUtils.java (encodeForUri): Move guts of method to URIPath.java.
+
+2006-12-29  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (resolve): Use gnu.text.Path.
+	* StringUtils.java (coerceToString): Likewise.
+	* BooleanValue.java (booleanValue): Likewise.
+	* QNameUtils.java (resolveURI): Likewise.
+	(namespaceURIFromQName): Create URIPath.
+
+2006-12-17  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (resolveURI): Handle UntypeAtomic.
+
+2006-12-06  Per Bothner  <per@bothner.com>
+
+	* SequenceUtils.java: Update for renamed Consumer methods.
+
+`2006-12-01  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (normalizeUnicode): Add working implementation,
+	using java.text.Normalizer (Java 6 only).
+
+	* Debug.java (trace): Use XMLPrinter to format output.
+
+	* NodeUtils.java: Suppress unchecked warnings if JAVA5.
+
+	* NodeUtils.java (collection): Replace old methods.
+	(setSavedCollection, getSavedCollection): New static methods.
+	(collectionResolverSymbol): New constant.
+	(resolve): New method.
+	(docCached, availableCached, collection): Use it.
+
+2006-11-29  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (docAvailable): Moved from gnu.kawa.xml.Document.
+	(docCached): Moved and renamed from Document/parseCahched.
+	(docCached, docAvailable): Use StringUtils.coerceToString.
+
+2006-11-28  Per Bothner  <per@bothner.com>
+
+	* ArithOp.java (div(BigDecimal,BigDecimal)): New static method.
+	(apply2): Use new div method.
+	(apply2): Use BigDecimal division for Duration division.
+	* TimeUtils.java (secondsBigDecimalFromDuration): New static method.
+	(secondsFromDuration): Use secondsBigDecimalFromDuration.
+
+2006-11-26  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (collection): New skeletal methods.
+
+2006-11-25  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java: Update StringValue -> TextUtils.
+	* ArithOp.java: Likewise.
+	* NumberValue.java: Likewise.
+	* StringUtils.java: Likewise.
+	* MinMax.java: Likewise.
+	* TimeUtils.java: Likewise.
+	* QNameUtils.java: Update XDataType -> TextUtils.
+
+	* StringUtils.java (normalizeUnicode): New placeholder/dummy methods.
+
+2006-11-24  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (stringLength): Have to loop checking for surrogates.
+	(substring, substring): Likewise must check for surrogates.
+	(translate): Handle surrogates in all 3 arguments.
+	(stringToCodepoints$X, appendCodepoint): Handle surrogates.
+
+2006-11-23  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java: Implement inlineable.
+	(inline): Note that 2nd argument is inline-only.
+	Do some optimizations/rewriting.
+	(compile, getReturnType): New methods.
+	(maybeSortNodes$X): Remove method.
+	(extractStep): New static method.
+	* RelativeStepFilter.java: Make class public.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java: Also implement Inlineable.
+	(apply): Filter procedure can take 2 or 3 arguments.
+	(inline): If last() is not needed, just splice it out and return.
+	Otherwise rewrite to LetExp as before - but leave some work for compile.
+	(compile): New method.  Defer hard work to ValuesMap.compileInlined.
+	(getReturnType): New method.
+
+2006-11-20  Per Bothner  <per@bothner.com>
+
+	* Compare.java (inline): Partially inline in the value-comparson case.
+
+2006-11-18  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (baseUri): Remove throws clause.
+
+	* StringUtils.java (tokenize$X): Add missing thow for the PreProcess
+	case that we don't have java.util.regex.
+
+2006-11-09  Per Bothner  <per@bothner.com>
+
+	* XMLFormat.java: Remove unused class.
+	* Makefile.am: Update accordingly.
+
+2006-10-31  Per Bothner  <per@bothner.com>
+
+	* DistinctValues.java (writeBoolean): New method.
+	* Compare.java (inline): Set return type to boolean.
+	* BooleanValue: New implements CanInline.
+	(inline): Optimize constant case and when argument is already boolean.
+	(<init>): Takes name - needed for PrimProcedure.getMethodFor,
+
+2006-10-30  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (baseUri): Use new KNode baseURI convenience method.
+
+	* NodeUtils.java (getIDs, id$X, idScan, idref): New static methods,
+	implementing fn:id and a dummy fn.idref.
+
+2006-10-25  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (lookupPrefix): New method based on resolvePrefix,
+	but on failure return null rather than throwing exception 
+	(resolvePrefix): Now just a wrapper around lookupPrefix.
+
+	* NumberValue.java (round): Fix rounding of negative BigDecimals.
+
+2006-10-22  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (nilled): New method, implements fn:nilled.
+
+	* TimeUtils.java (adjustDateTimeToTimezone): Move body of method to ...
+	(adjustDateTimeToTimezoneRaw): ... new method.
+	(adjustDateToTimezone, adjustTimeToTimezone): New methods.
+
+	* NodeUtils.java (root): New method, replaces method in Nodes.
+	(baseUri): New method.
+
+2006-10-19  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (resolveURI): New static method.
+
+	* Reduce.java: Re-write to a 'static class'.
+	Try hard to follow the specification.
+
+	* ArithOp.java (apply3): Implement mod on float or double using
+	standard Java '%' operator.  This fixes a negative-zero issue.
+
+	* NamedCollator.java (getName): New method.
+
+2006-10-17  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (coerceToString): New static helper method to
+	correctly coerce to xs:string or xs:string?.
+	(lowerCase, upperCase, substring, stringLength, substringBefore,
+	substringAfter, translate, stringPad, contains, startsWith, endsWith,
+	stringJoin, stringToCodepoints$X, normalizeSpace, codepointEqual):
+	Use coerceToString.
+
+	* StringUtils.java (substring): Various fixes to (hopefully this time)
+	pedantically match the specification.
+
+	* QNameUtils.java (resolveQNameUsingElement): If no prefix, check
+	for a default namespace.  Convetr resturn to URI, rather than string.
+
+2006-10-16  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (appendCodepoint): Fix thinko.
+
+2006-10-13  Per Bothner  <per@bothner.com>
+
+	* HandleExtension.java: Remove no-longer needed file.
+	* Makefile.am: Update accordingly.
+
+2006-10-12  Per Bothner  <per@bothner.com>
+
+	* NumberValue.java (numberValue): Do atomization.
+	If argument is not coercible to double, return NaN.
+
+	* RelativeStepFilter.java: New class, extends FilterConsumer.
+	* Makefile.am: Update accordingly.
+	* RelativeStep.java (apply, inline): Make use of RelativeStepFilter.
+	This allows a relative step to return atoms rather just nodes.
+
+2006-10-11  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (resolveQNameUsingElement): Collapse white space.
+	Throw exception if unknown namespace for prefix.
+	Internalize prefix before calling lookupNamespaceURI.
+
+	* QNameUtils.java (validNCName): Implement using new XName.isName
+	method.
+
+	* StringUtils.java (concat$V): Add initial 2 parameters, so we can
+	catch calls with too few arguments.
+	Also, use StringBuilder if JAVA5.
+
+	* MinMax.java (minMax): Add a dummy compare for singleton case,
+	which is a easy way to check for an invalid value.
+
+	* SubList.java: Use double lower and upper boand, to match 
+	specification.  This fixes some corner cases.
+
+	* NumberValue.java (abs): Calculate abs by clearing sign bit.
+	This fixes handling of -0.
+
+	* SequenceUtils.java (deepEqualItems): Fix thinko: '||' -> '&&'.
+
+	* BooleanValue.java (booleanValue): Don't allow non-RealNum Numerics.
+	Specifically disallow Duration and DateTime values.
+
+	* TimeUtils.java (adjustDateTimeToTimezone): Check that zone offset
+	is within range and an integral number of minutes.
+
+2006-10-07  Per Bothner  <per@bothner.com>
+
+	* StringUtils.java (tokenize$X): New method.
+
+	* QNameUtils.java (resolveQNameUsingElement): New method.
+
+	* QNameUtils.java (resolveQName): "Inline" call to method resolve in
+	NamespaceBinding because resolve is wrong for "undeclare".
+
+	* QNameUtils.java (makeQName): Call validNCName - currently a dummy.
+
+	* QNameUtils.java (prefixFromQName): Fix return value for no match.
+
+	* QNameUtils.java (namespaceURIForPrefix): Handle empty sequence
+	or bad types for prefix.
+
+	* SequenceUtils.java (insertBefore$X): New method.
+
+2006-10-06  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (localName, namespaceURI): Add error-checking.
+
+	* NodeUtils.java (prefixesFromNodetype): Remove duplicates from result.
+
+	* ArithOp.java (apply2): Fix errors in handling invalid argument types.
+
+	* StringUtils.java (substring): Fixes to match specification.
+	(asDoubleRounded): Removed - no longer used.
+
+	* TimeUtils.java (coerceToDateTime, coerceToDate, coerceToTime):
+	Change to use new XTimeType.parseDateTime helper method.
+	* Compare.java (atomicCompare): Likewise.
+
+2006-10-04  Per Bothner  <per@bothner.com>
+
+	* NumberValue.java (isNaN): New static utility method.
+	* DistinctValues.java (hash): Change algorithm so equal real numbers
+	have the same hash value.
+	(matches): Return true if both values satisfy NumberValue.isNaN.
+	* Compare.java (LENIENT_COMPARISON, LENIENT_EQ): New flags.
+	(equalityComparison): New helper method.
+	(atomicCompare): Fix handling of UntypedAtomic and Boolean.
+	More compliant handling for DateTime and Duration.  Error on
+	mismatched types if not lenient and not an equality comparison.
+	($Ex$Eq, valNe): Should also be true if either argument is NaN.
+	* MinMax.java (minMax): Add hack for NaN.
+	* IntegerRange.java (apply): Do atomization and handle UntypedAtomic.
+	* SequenceUtils.java (indexOf$X): Comparison should be lenient.
+	(deepEqualItems): New helper, to check for NaN.
+	(deepEqual, deepEqualChildren): Use new helper method.
+
+	* NamedCollator.java (UNICODE_CODEPOINT_COLLATION): Match XQTS.
+
+2006-09-30  Per Bothner  <per@bothner.com>
+
+	* Compare.java (atomicCompare): Throw exception if not comparable.
+	* MinMax.java: Rewrite to not use Reduce and to better match spec.
+	(min, max, minMax, convert): New static methods.
+
+	* ArithOp.java (apply2): 'idiv' result must sometimes be cast to
+	integer.
+
+	* ValuesFilter.java (matches): Fix number case to match spec.
+
+	* QNameUtils.java (resolveQName): Catch errors.
+
+	* Reduce.java (sum): Use XQuery-specific ArithOp, rather than
+	Scheme-appropriate gnu.kawa.functions.AddOp instance.
+
+	* StringUtils.java (appendCodepoint): Check codepoints for validity.
+
+2006-09-28  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (name, getLang, lang, documentUri): New static
+	methods to implement new fn:xxx functions.
+	(localName): Change return type.  Inline QNameUtils.localNameFromQName.
+
+	* Compare.java (VALUE_COMPARISON): New mask bit.
+	(apply2): Check for VALUE_COMPARISON.
+	(valEq, valNe, Vallt, valNe, valGt, valGe): New static fields.
+
+	* XQException.java: New class, extends RuntimeException.
+	* Makefile.am: Update accordingly/
+
+	* ValuesFilter.java (matches): Simplify and fix to match specification.
+
+	* CastAs.java (apply2): Handle OccurrenceType.
+	(compile): Suppress inherited/incorrect inlining.
+
+	* NumberValue.java (abd): Fix so abd(-0) is 0.
+
+	* StringUtils.java (encodeForUri): Fixes to match updated
+	specification of fn-encode-for-uri.
+
+	* BooleanValue.java (not): New static method.
+
+	* SequenceUtils.java (remove$X): New static method.
+
+2006-09-26  Per Bothner  <per@bothner.com>
+
+	* TimeUtils.java (dateTime):  Handle empty sequence arguments.
+
+	* NumberValue.java (abs): Use numberCast, rather than numberValue.
+	The latter always returns a double, which is not always right.
+
+	* StringUtils.java (codepointEqual): New static method.
+
+	* TimeUtils.java (dateTime): New static method.
+
+	* SequenceUtils.java (seepEqual): Fix thinko.
+
+2006-09-19  Per Bothner  <per@bothner.com>
+
+	* HandleExtension.java: New class.
+	* Makefile.am: Update accordingly.
+
+	* BooleanValue.java (booleanValue): Throw WrongType exception
+	when appropriate.  Handle URI similar to String/UntypedAtomic.
+
+2006-09-17  Per Bothner  <per@bothner.com>
+
+	* Debug.java: Parameterize output file and options using static.
+	(tracePrefix, tracePort, traaceFilename, traceShouldFlush,
+	traceShouldAppend): New static fields.
+	(trace): Make synchronized.
+
+2006-09-14  Per Bothner  <per@bothner.com>
+
+	* SequenceUtils.java (deepEqualChaildren, deepEqual): New methods.
+	(deepEqual): Fix handling of nodes to use new methods.
+	(textOrElement): New constant.
+
+2006-09-13  Per Bothner  <per@bothner.com>
+
+	* XMLFormat.java (writeObject): Update for XMLPrinter changes.
+	(format): Likewise.
+
+2006-08-27  Per Bothner  <per@bothner.com>
+
+	* OrderedTuples.java (cmp): Update NumberCompare.compare call.
+	* Compare.java (apply): Move atomic value handle to ...
+	(atomicCompare): ... new static method.
+	Use new NumberCompare.applyWithPromotion method.
+	* SequenceUtils.java (deepEqual): New static method.
+
+2006-08-18  Per Bothner  <per@bothner.com>
+
+	* TimeUtils.java (now): New static method.
+
+2006-08-17  Per Bothner  <per@bothner.com>
+
+	* TimeUtils.java (coerceToDateTime, coerceToDate, coerceToTime):
+	Convert node and xs:untypedAtomic as needed.
+	Also throw more informative WrongType constructor.
+
+2006-06-28  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java: Update SName -> Symbol.
+	* Compare.java: Likewise.
+
+2006-06-10  Per Bothner  <per@bothner.com>
+
+	* TimeUtils.java: Fix typo in package statement.
+
+2006-06-04  Per Bothner  <per@bothner.com>
+
+	* CastableAs.java (inline): Fix thinko.
+
+2006-03-26  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java (localName, namespaceURI): Fix to match specification.
+
+	* NodeUtils.java (data$X): New static method.
+
+	* NumberValue.java (round): New static method.
+
+	* NumberValue.java (numberValue): Optimization.
+
+	* Compare.java (apply): Fix indentation so PreProcess will work.
+
+	* StringUtils.java (asDouble, asDoubleRounded): New static helpers.
+	(substring): Use asDoubleRounded.
+	* StringUtils.java (stringJoin): Remove redundant casts.
+	* StringUtils.java (encodeForUri, iriToUri, escapeHtmlUri,
+	encodeForUri, normalizeSpace): New static methods.
+	* StringUtils.java (makePattern, matches, repalce): New static methods.
+
+	* SequenceUtils.java (indexOf$X): New static method, implements
+	fn:index-of function.
+	* IndexOf.java: Remove no-longer-used class
+.	* LastIndexOf.java: Likewise.
+	* Makefile.am: Update accordingly.
+
+2006-03-25  Per Bothner  <per@bothner.com>
+
+	* OrderedTuples.java (cmp): Various fixes to match 'order by'
+	specification: empty sequence and NaN handling; UntypeAtomic support.
+
+	* QNameUtils.java (makeQName): Add expected intern call.
+
+2006-03-20  Per Bothner  <per@bothner.com>
+
+	* BooleanValue.java (booleanValue): Handle Number that are not Numeric
+	so we DTRT for xs:double and xs:float.
+
+2006-03-17  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java (resolvePrefix): New method.
+	(resolveQName): Make use of resolvePrefix.
+
+	* Compare.java (apply): Fix comparison of QNames (SName).
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* CastAs.java: New class, extends gnu.kawa.functions.Convert.
+	* CastableAs.java: New class, extends gnu.kawa.reflect.InstanceOf.
+	* Makefile.am: Update accordingly.
+
+	* TimeUtils.java: New class with static methods implementing
+	date/time/duration-related functions.
+	* Makefile.am: Update accordingly.
+
+	* StringValue.java: Remove file.  Contents partly moved to new file
+	StringUtils.java and partly moved to gnu/kawa/xml/StringValue.java.
+	(stringToCodepoints$X, appendCodepoint, codepointsToString): New.
+	* Makefile.am: Update accordingly.
+
+	* NodeUtils.java (atomicValue): Moved to gnu.kawa.xml.KNode.
+	(prefixesFromNodetype, inScopePrefixes$X): New methods.
+
+	* BooleanValue (booleanValue): Fix thinko.
+	Add correct handling for String and UntypedAtomic.
+
+	* RelativeStep.java (inline): Don't optimize unless mustCompile.
+	Also rename Compilation local from 'parser' to 'comp'.
+
+	* Compare.java (apply): Fixes to handle dates/times/durations, and
+	UntypedAtomic. Other fixes to follow specification more closely.
+	* OrderedTuples.java (cmp): Try numeric compare first.
+
+	* MinMax.java (cmobine): Use new NumverValue.numberCast method.
+
+	* IntegerRange.java (apply): DTRT when range end is empty sequence.
+
+	* Average.java: Use XQuery-specific ArithOp.add rather than AddOp.$pl.
+	Fix handling of empty and singleton sequences.
+	Use ArithOp.div for division.
+	(combine): Inline into caller.
+
+	* NumberValue.java (abs, floor, ceiling, roundHalfToEven): New methods.
+	(numberCast): New static helper method.
+	(numberValue): Use new classes/methods to better follow specification.
+	(apply1): Return NaN on failure, as per specification.
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* ArithOp.java: New class, extends Procedure1or2.
+	* Makefile.am: Update accordingly.
+
+2006-03-14  Per Bothner  <per@bothner.com>
+
+	* SequenceUtils.java (zeroOrOne, oneOrMore, exactlyOne): New
+	static methods that implement the corresponding standard functions.
+
+2005-11-29  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java (matches): Handle a String value.
+
+2005-11-22  Per Bothner  <per@bothner.com>
+
+	* OrderedMap.java (compile): Update compile->compileInvoke rename.
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* Average.java (combine): Coerce operands with NumberValue.
+
+	* OrderedTuples.java (listsort): Fix thinko.
+
+2005-09-25  Per Bothner  <per@bothner.com>
+
+	* OrderedMap.java: New class, extends MethodProc.
+	* OrderedTuples.java: New class, extends FilterConsumer.
+	* Makefile.am: Update accordingly.
+
+	* SequenceUtils.java (reverse$X): New methods, implements fn:revrese.
+
+2005-08-16  Per Bothner  <per@bothner.com>
+
+	* NodeUtils.java: New class.
+	(atomicValue, localName, namespaceURI): New static methods.
+	* DistinctValues.java: New class.
+	* Makefile.am: Update accordingly.
+	* Compare.java (apply): Add NamedCollator parameter.  Use it.
+	Get atomiValue of nodes.
+	(apply2): Update for modified apply.
+	* MinMax.java (combine): Extract numberValue from nodes.
+	* StringValue.java (compare): New method.
+
+	* NamedCollator.java (UNICODE_CODEPOINT_COLLATION): Update uri.
+	(find): New alias (for now) for make.
+	
+	* QNameUtils.java (prefixFromQName): New static method.
+
+	* Reduce.java (apply1): Fix bogus iteration.
+
+2005-06-09  Per Bothner  <per@bothner.com>
+
+	* StringValue.java (stringValue): null or #!void append nothing.
+	(lowerCase, upperCase, substring, stringLength, substringBefore,
+	substringAfter, translate, stringPad, contains, startsWith, endWith,
+	stringJoin): Don't return empty on empty input string; instead return
+	the empty string, usually taken care of by stringValue.
+	(substring, stringLength, substringBefore, substringAfter, translate,
+	startsWith, stringJoin): Convert to String using stringvalue, not
+	toString.
+	(contains, startsWith, endsWith, substringAfter): Remove redundant
+	comparisons.
+	(substringBefore): Fix off-by-one error.
+	(translate): Re-do StringBuffer construction to append each character,
+	rather than modify/delete characters.
+	(stringPad): Throw exception on error instead of printing.
+	Also, improve StringBuffer allocation.
+
+2005-06-04  Per Bothner  <per@bothner.com>
+
+	* XMLFormat.java: Update for AbstractFormat move to gnu.lists.
+
+2005-03-03  Per Bothner  <per@bothner.com>
+
+	* Children.java: Moved to gnu.kawa.xml, because it is also
+	used for Scheme.
+	* Makefile.am: Update accordingly.
+
+2005-01-02  Per Bothner  <per@bothner.com>
+
+	* NamedCollator.java: Change "select" (preprocessor) syntax.
+
+2004-12-22  Per Bothner  <per@bothner.com>
+
+	* MakeAttribute.java: Moved to gnu.kawa.xml.
+	* MakeElement.java: Likewise.
+	* Makefile.am: Update accordingly,
+	* QNameUtils.java (resolveQName): New helper method, used for xs:QName.
+	(makeQName): New implementation, for fn:QName.
+	(localNameFromQName, namespaceURIFromQName): Handle SName.
+
+2004-12-10  Per Bothner  <bothner@Per-Bothners-Computer.local>
+
+	* SequenceUtils.java: New class has sequence functions implementations.
+	* IsEmptySequence.java: Removed class - use SequenceUtils instead.
+	* NamedCollator.java: New class extends Collator.
+	* Makefile.am: Update accordingly.
+
+2004-11-06  Per Bothner  <per@bothner.com>
+
+	* QNameUtils.java: New class.
+	* Makefile.am: Update accordingly.
+
+2004-08-10  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java (inline): Add missing letEnter call.
+
+2004-08-08  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java (apply):  Update to use check3.
+	* ValuesEvery.java (apply):  Update to use check1.
+
+2004-08-03  Per Bothner  <per@bothner.com>
+
+	* Children.java:  Extend MethodProc instead of CpsProcedure
+	* RelativeStep.java:  Likewise.
+	* SubList.java:  Likewise.
+	* ValuesEvery.java:  Likewise.
+	* ValuesFilter.java:  Likewise.
+	* IntegerRange.java:  Likewise.  Also explicitly call setName
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* IntegerRange.java:  Remove unused import statements.
+	* MinMax.java:  Likewise.
+	* RelativeStep.java:  Likewise.
+	* XMLFormat.java:  Likewise.
+
+2004-01-04  Per Bothner  <per@bothner.com>
+
+	* StringValue.java (stringValue):  Require KNode, not SeqPosition.
+	* ValuesFilter.java (matches):  Check KNode, not SeqPosition.
+
+2003-11-21  Per Bothner  <per@bothner.com>
+
+	* IntegerRange.java (integerRange):  If M > N then M to N is now empty.
+
+2003-11-14  Per Bothner  <per@bothner.com>
+
+	* StringValue.java (concat$V):  New method.
+
+2003-10-19  Per Bothner  <per@bothner.com>
+
+	* ValuesEvery.java:  New class, extends CpsProcedure.
+	* Makefile.am:  Update accordingly.
+
+2003-10-07  Per Bothner  <per@bothner.com>
+
+	* BooleanValue.java (booleanValue):  Change to match spec better.
+
+	* IntegerRange.java (integerRange):  Fix bugs.  Make static.
+
+2003-09-24  Per Bothner  <per@bothner.com>
+
+	* MakeAttribute.java:  Now extends gnu.kawa.xml.NodeConstructor.
+	(apply):  Update.  (compileToNode):  New, replaces compile method.
+	* MakeElement.java:  Likewise.
+
+2003-09-11  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java:  Implement CanInline.
+	(inline):  New method.
+
+2003-09-09  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java:  Now implements CanInline.
+	(inline):  New method.
+	(apply):  Use Nodes class and simplify.
+
+2003-08-03  Per Bothner  <per@bothner.com>
+
+	* RelativeStep.java:  New class, extends CpsProcedure.
+	* ValuesFilter.java:  Re-write to correctly implement spec.
+	* Position.java:  Remove - no longer used.
+	* Makefile.in (java_sources):  Update accordingly.
+
+	* StringValue.java (contains, startsWith, endsWith):  Use stringValue
+	rather than toString to convert arguments.
+
+2003-07-23  Terje Pedersen  <terje@brassforum.com>
+
+	* StringValue.java (stringLength, substringBefore, substringAfter,
+	translate, stringPad, contains, startsWith, endsWith, stringJoin):
+	New standard functions.
+
+2003-07-16  Per Bothner  <per@bothner.com>
+
+	* Compare.java (inline):  Use new inlineIfConstant method overloading.
+
+2003-07-10  Per Bothner  <per@bothner.com>
+
+	* MakeElement.java (compile):  Use new
+	ElementConstructor.compileUsingNodeTree method.
+
+2003-05-08  Per Bothner  <per@bothner.com>
+
+	* Debug.java:  New class.
+	(trace):  New static method, implements the 'trace' function.
+	* Makefile.am (java_sources):  Update accordingly.
+
+2003-03-29  Per Bothner  <per@bothner.com>
+
+	* StringValue.java (lowerCase, upperCase, substring):  New methods.
+	Based on a patch from Jim Smith <jim@pagesmiths.com>.
+
+2003-03-15  Per Bothner  <per@bothner.com>
+
+	* XMLFormat.java (writeObject):  Check if toString returns null.
+
+2003-03-02  Per Bothner  <per@bothner.com>
+
+	* BaseUri.java:  Moved gnu.kawa.functions.
+	* Makefile.am (java_sources):  Remove BaseUri.java.
+
+2003-02-13  Per Bothner  <per@bothner.com>
+
+	* BaseUri.java:  New class, extends Procedure1.
+	* Makefile.am (java_sources):  Add BaseUri.java.
+
+2003-01-09  Per Bothner  <per@bothner.com>
+
+	* Average.java:  Update for gnu.lists changes.
+	* BooleanValue.java:  Likewise.
+	* Children.java:  Likewise.
+	* Compare.java:  Likewise.
+	* Reduce.java:  Likewise.
+	* StringValue.java:  Likewise.
+	* SubList.java:  Likewise.
+	* ValuesFilter.java:  Likewise.
+
+2002-11-16  Per Bothner  <per@bothner.com>
+
+	* MakeAttribute.java, MakeElement.java:  Use gnu.mapping.Symbol
+	instead of gnu.xml.QName.
+
+2002-08-18  Per Bothner  <per@bothner.com>
+
+	* MakeAttribute.java (beginAttribute):  Swap argument order, for
+	consistency with compile and also MakeElement's beginGroup.
+	(apply):  Fix beginAttribute call to match.
+
+2002-07-21  Per Bothner  <per@bothner.com>
+
+	* Compare.java, MakeElement.java (inline):  Update to take
+	extra ExpWalker parameter.
+
+2002-07-02  Per Bothner  <per@bothner.com>
+
+	* Compare.java (apply):  Mistaken assumption - String.compareTo does
+	not necessarily return -1, 0, or 1.
+
+	* IndexOf.java:  New class, extends Procedure2.
+	* LastIndexOf.java:  New class, extends Procedure2.
+	* Makefile.am (java_sources):  add new files.
+
+2002-05-06  Per Bothner  <per@bothner.com>
+
+	* Compare.java:  Implement CanInline.
+
+	* Focus.java.in:  Move to gnu.kawa.xml.
+	* Makefile.am:  Update accordingly.
+	* Position.java:  Now need to import Focus.
+	* ValuesFilter.java:  Likewise.
+
+2002-04-19  Per Bothner  <per@bothner.com>
+
+	* Average.java:  New class, extends Procedure1.
+	* Reduce.java:  New class, extends Procedure1.
+	* Makefile.am (java_sources):  Update accordingly.
+	* MinMax.java:  Change to inherit from Reduce.
+
+2002-04-18  Per Bothner  <per@bothner.com>
+
+	* BooleanValue.java:  New class, extends Procedure1.
+	* Makefile.am (java_sources):  Add BooleanValue.java.
+
+2002-04-08  Per Bothner  <per@bothner.com>
+
+	* Children.java (children):  Use nextNodeIndex.
+
+2002-03-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (java_sources):  Remove mistakenly added MapDescendents.
+
+2002-03-07  Per Bothner  <per@bothner.com>
+
+	* MinMax.java:  New class, extends Procedure1.
+	* Position.java:  New class, extends Procedure0.
+	* Makefile.am:  Update accordingly.
+	* Focus.java.in (compileGetCurrent):  New static helper method.
+
+	* Focus.java.in (position):  Change type from int to long.
+	* ValuesFilter.java (apply):  Update current Focus's position field.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* Focus.java.in:  New sed-processed class, extends SeqPosition.
+	* Makefile.am:  Update accordingly.
+
+2002-02-13  Per Bothner  <per@bothner.com>
+
+	* MakeAttribute.java (apply):  Do getNextArg inside loop.
+
+2002-02-05  Per Bothner  <per@bothner.com>
+
+	* ElementType.java:  Moved to gnu.kawa.xml.
+	* NamedChildren.java:  Moved to gnu.kawa.xml.
+	* NodeType.java:  Moved to gnu.kawa.xml.
+	* Makefile.am:  Update accordingly.
+
+2002-01-23  Per Bothner  <per@bothner.com>
+
+	* AppendValues.java:  Removed - moved to gnu.kawa.functions.
+	* Makefile.am:  Update accordingly.
+
+2002-01-21  Per Bothner  <per@bothner.com>
+
+	* Document.java:  Moved to gnu.kawa.xml.
+
+	* Document.java (document):  New static methods.
+	(apply):  Use one of the new methods.
+
+2002-01-07  Per Bothner  <per@bothner.com>
+
+	* Document.java (makeURL):  New helper method.
+	(apply(CallContext)):  New method, send directly to Consumer.
+
+	* NamedChildren.java (compile):  Optimize if ConsumeTarget.
+
+	* ValuesFilter.java (matches):  Handle a TreeList.
+
+	* XMLFormat.java (format):  New method.
+
+2002-01-02  Per Bothner  <per@bothner.com>
+
+	* NumberValue.java:  New class, extends Procedure1.
+	* Makefile.am (java_sources):  Add NumberValue.java.
+
+2001-12-24  Per Bothner  <per@bothner.com>
+
+	* ElementType.java:  New class, extends NodeType, implements TypeValue.
+	* ItemAt.java:  New class, extends Proecdure2.
+	* SubList.java:  New class, extends CpsProcedure.
+	* Makefile.am (java_sources):  Add new classes.
+
+	* Document.java (document):  Reverse incorrect isLetter test.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* MakeElement.java (beginGroup, endGroup):  Switch argument order.
+	(inline):  Use Expressions's setLine to set line number info.
+
+	* NamedChildren.java (compile):  Also optimize ConsumerTarget.
+	(getPropertyName, getNamedProperty):  New methods.
+	(namedChildren, getNamaedChild, gotoNext, gotoFirstChild):  Add
+	support for getting named properties from beans e.g. $request/method.
+	* NodeType.java (coerce):  Handle arbitrary value.
+
+2001-11-18  Per Bothner  <per@bothner.com>
+
+	* Document.java (document, apply1): Specific that it throws Throwable,
+	thus we no longer have to wrap exceptions.
+
+	* AppendValues.java (compile):  Use compileWithPosition.
+
+2001-11-12  Per Bothner  <per@bothner.com>
+
+	* Document.java (document):  Filter through NamespaceResolver.
+	
+	* NamedChildren.java (namedChildren):  Use getNamedChild method.
+
+	* MakeElement.java:  Also implement CanInline.
+	(inline):  New method.
+
+	* MakeElement.am (beginGroup, endGroup):  New helper methods.
+	(apply):  Use new methods.
+	(compile):  Call new methods.	
+	* MakeAttribute.java (beginAttribute):  New helper method.
+	(numArgs):  Now takes any number of arguments.
+	(apply):  Use new helper method; handle any number of arguments.
+	(compile):  Similarly.
+
+2001-11-06  Per Bothner  <per@bothner.com>
+
+	* StringValue.java:  Various fixes to actually make it work.
+	(string):  New static, to match function name "string".
+
+	* ValuesFilter.java (matches):  Handle multiple values better.
+	(apply):  Inceement count *before* calling matches.
+
+	* XMLFormat.java:  Update as XMLPrinter now takes a Consumer.
+
+	* Compare.java:  New class, extends Procedure2.
+	* Makefile.am (java_sources):  Add Compare.java.
+
+2001-11-01  Per Bothner  <per@bothner.com>
+
+	* ValuesFilter.java:  New class, extends CpsProcedure.
+	* Makefile.am (java_sources):  Added ValuesFilter.java.
+
+	* NamedChildren.java (compile):  If namespaceURI and localName are
+	constant, don't recompile them to a variable.
+
+	* NamedChildren.java (compile):  Remove pushScope/popScope ad it can
+	cause register clobbering due to use complex jsr-based control flow.
+
+2001-10-25  Per Bothner  <per@bothner.com>
+
+	* AppendValues.java (compile):  Optimize for SeriesTarget.
+	* NamedChildren.java:  Now implements Inlineable.
+	(getNamedChild, gotoNext, gotoFirstChild):  New static helper methods.
+	(compile, getReturnType):  New methods.
+	* NodeType.java:  New class, extends ClassType.
+	* Makefile.am (java_sources):  Added NodeType.java.
+
+2001-10-17  Per Bothner  <per@bothner.com>
+
+	* NamedChildren.java:  Turn into a 3-argument procedure.
+
+2001-10-02  Per Bothner  <per@bothner.com>
+
+	* IsEmptySequence.java:  New class; extends Procedure1.
+	* Makefile.am (java_sources):  Add IsEmptySequence.java.
+
+2001-09-24  Per Bothner  <per@bothner.com>
+
+	* IntegerRange.java:  New class; extends CpsProcedure.
+
+2001-08-16  Per Bothner  <per@bothner.com>
+
+	* Children.java:  New class, extends CpsProcedure.
+	* NamedChildren.java:  New class, extends CpsProcedure.
+	* StringValue.java:  New class, extends Procedure1.
+	* Makefile.am (java_sources):  Add new classes.
+
+	* Document.java (document):  Call TreeList's beginDocument method.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	New package gnu.xquery.util.
+	* XMLFormat.java:  New class, extends AbstractFormat.
+	* MakeElement.java:  New class; extends CpsProcedure.
+	* MakeAttribute.java:  New class; extends CpsProcedure.
+	* Document.java:  New class; extends Procedure1.
+	* AppendValues.java:  New class; extends CpsProcedure.
+

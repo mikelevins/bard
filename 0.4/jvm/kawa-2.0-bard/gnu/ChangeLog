@@ -1,0 +1,162 @@
+2014-08-31  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Merge Makefile.am fragments from
+	gnu/{mapping,expr,lists,text}/ChangeLog.
+
+2014-02-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Merged echo2 support from kawa/echo2/Makefile.am.
+
+2010-11-14  Per Bothner  <per@bothner.com>
+
+	* q2/testsuite: New directory.
+	* q2/Makefile.am (SUBDIRS): Add testsuite.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* brl/Makefile.am (KAWA1): Remove unneeded macro.
+
+2004-12-27  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Removed - SUBDIRS "folded into" toplevel Makefile.am.
+	* kawa/Makefile.am: Likewise.
+	* brl/Makefile.am: No longer need to force ../../kawa to be made first.
+
+2004-08-07  Per Bothner  <per@bothner.com>
+
+	* brl/random.java (apply1): Use new WrongType constructors.
+
+2003-07-21  Per Bothner  <per@bothner.com>
+
+	* kawa/Makefile.am (SUBDIRS):  Add models and swingviews.
+
+2002-11-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SUBDIRS):  Build mapping before xml, since
+	gnu.xml now uses gnu.mapping.Symbol.
+
+2002-06-11  Per Bothner  <per@bothner.com>
+
+	* kawa/Makefile.am (SUBDIRS):  Add xslt and sax, if enabled.
+
+	* Makefile.am (EXTRA_DIST):  Don't list PACKAGES.
+
+2002-05-14  Per Bothner  <per@bothner.com>
+
+	* PACKAGES:  Remove obsolete file - now use GNU Java site instead.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* kawa/Makefile.am:  Make $(SERVLET_SUBDIRS) before slib, since
+	we moved HTTP.scm from gnu.kawa.servlet to slib.
+
+2002-02-13  Per Bothner  <per@bothner.com>
+
+	* blr/progfun.scm:  Move to gnu.kawa.brl.
+	* brl/Makefile.am (java_SCM):  Update accordingly.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* brl:  New directory - modules imported from BRL.
+	* Makefile.am:  Update accordingly.
+
+2002-01-23  Per Bothner  <per@bothner.com>
+
+	* kawa/brl:  New directory.
+	* kawa/Makefile.am (XML_SUBDIR):  Add 'brl'.
+
+2001-11-18  Per Bothner  <per@bothner.com>
+
+	* kawa/ant:  New directory.
+	* kawa/Makefile.am (SUBDIRS):  Add ant.
+
+2001-10-17  Per Bothner  <per@bothner.com>
+
+	* kawa/Makefile.am:  Make kawa/xml, assuming --with-xml.
+
+	* Makefile.am (SUBDIRS):  Make xml subdir earlier.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	* gnu/xquery:  New directory.
+	* gnu/xquery/lang:  Likewise.
+	* gnu/xquery/util:  Likewise.
+	* gnu/xquery/testsuite:  Likewise.
+	* Makefile.am:  Buld xquery, but only if --enable-xml.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SUBDIRS):  Use automake conditionals for swing.
+	Always do commonlisp.
+
+2001-06-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SUBDIRS):  Use automake conditionals for xml.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* kawa/xml:  Sub-directory moved/renamed to ...
+	* xml:  ... new sub-direvtyory/package.
+	* Makefile.am (SUBDIRS):  Add xml, though only if --enable-xml.
+	* kawa/Makefile.am (SUBDIRS):  Removed xml entry.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SUBDIRS):  Only select commonlisp if Swing is used.
+	(This is needed because of broken dependency on jemacs.)
+
+2000-10-12  Per Bothner  <per@bothner.com>
+
+	* kawa/functions:  New package.
+	* kawa/Makefile.am (SUBDIRS):  Add functions.
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	* commonlisp:  New package.
+	* Makefile.am (SUBDIRS):  Add commonlisp.
+
+2000-05-28  Per Bothner  <per@bothner.com>
+
+	* kawa/lispexpr:  New package gnu.kawa.lispexpr.
+	* kawa/Makefile.am (SUBDIRS):  Added new directory lispexpr.
+	* Makefile.am (SUBDIRS):  Do text before mapping, now that text
+	no longer depends on mapping (but mapping still depends on text).
+
+1999-09-14  Per Bothner  <per@bothner.com>
+
+	* kawa, kawa.reflect:  New packages.
+
+1999-08-08  Per Bothner  <per@bothner.com>
+
+	* jemacs:  New package gnu.jemacs.
+	Move gnu.elisp to gnu.jemacs.text.
+	Move gnu.emacs to gnu.jemacs.buffer.
+	* Makefile.am, Makefile.in (SUBDIRS):  Update accordingly.
+
+1999-06-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SUBDIRS):  Add emacs.
+
+Sun Mar 21 11:03:23 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* elisp:  New package gnu.elisp.
+	* Makefile.am, makefile.in (SUBDIRS):  Add elisp.
+
+Thu Jul 23 08:45:29 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Makefile.am (SUBDIRS):  Added mapping and expr.
+	(install-html, install-subdir-html):  New rules.
+
+Mon Jun 29 18:59:08 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Makefile.am, Makefile.in (SUBDIRS):  Added text sub-package.
+
+Sat Apr  4 17:43:34 1998  Per Bothner  <bothner@cygnus.com>
+
+	* ecmascript:  New sub-directory.
+	* Makefile.am (SUBDIRS):  Added ecmascript.
+
+Mon Mar 31 16:44:57 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* PACKAGES:  New list of "gnu." Java packages.
+	* Makefile.{am, in}:  Contains bytecode and math sub-directories.

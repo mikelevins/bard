@@ -1,0 +1,141 @@
+2014-05-07  Per Bothner  <per@bothner.com>
+
+	* Q2Translator.java (applyFunction): New method.
+	(makeApply): Remove method.
+
+2013-11-26  Per Bothner  <per@bothner.com>
+
+	* Q2Apply.java (apply): Use Values.writeValues.  This makes
+	SRFI-108 and SRFI-109 literals work in Q2.
+
+2013-08-25  Per Bothner  <per@bothner.com>
+
+	* Q2.lang (createReadTable): Update ReaderDispatch.create call.
+
+2012-09-18  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java: Make a bit more robust for erroneous input.
+
+2011-07-11  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java (readIndentCommand): Use updated LispReader API.
+
+2011-04-03  Per Bothner  <per@bothner.com>
+
+	* Q2Translator.java (isApplyFunction): New method.
+
+	* Q2Translator.java (makeApply): Make return type more precise.
+
+2011-03-18  Per Bothner  <per@bothner.com>
+
+	* Q2.java (getName): New method.
+
+2011-01-19  Per Bothner  <per@bothner.com>
+
+	* Q2.java (makeBody): Remove method.
+	(appendBodyValues): New method.
+	* Q2Translator.java: Change to extend SchemeCompilation.
+
+2011-01-17  Per Bothner  <per@bothner.com>
+
+	* Q2.java (getCompilationClass): New method.
+	(getCompilation): Removed method.
+	(makeApply): Moved method ...
+	* Q2Translator.java (makeApply): ... to here.
+
+2010-11-14  Per Bothner  <per@bothner.com>
+
+	* Operator.java: New class, extends Syntax.
+	* Q2Translator.java: New class - extends kawa.lang.Translator.
+	* Makefile.am: Update accordingly.
+	* Q2.java: Various fixes.
+	* Q2Read.java: Major changes to support new intentation parsing.
+
+2010-10-21  Per Bothner  <per@bothner.com>
+
+	* Q2.java (compareIndentation): New static method.
+	* Q2Apply.java (apply): Handle Type or Class as construction function.
+	* Q2Read.java: Re-write indentation logic.
+	(curIndentation): New field.
+	(readIndentCommand): New method.
+	(readCommand): Change to call skipIndentation then readIndentCommand.
+
+2010-06-21  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java (readCommand): Now need to use backdoor to set
+	immutable cdr when constructing list.
+
+2009-03-10  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java (init): Clearing initialColonIsKeyword is no
+	longer needed.
+	* Q2.java (createReadTable): Do setFinalColonIsKeyword() here.
+
+2006-11-13  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java: Update getColumn -> getColumnNumber.
+
+2006-05-01  Per Bothner  <per@bothner.com>
+
+	* Q2.java (createReadTable): Update getInitial -> createInitial.
+
+2006-02-13  Per Bothner  <per@bothner.com>
+
+	* Q2.java (makeApply): Change return type to Expression.
+
+2005-08-03  Per Bothner  <per@bothner.com>
+
+	* Q2.java (makeApply): Fix return type to match super class.
+
+2005-05-18  Per Bothner  <per@bothner.com>
+
+	* Q2.java (<init>): Don't set current Environment from this.
+
+2005-04-03  Per Bothner  <per@bothner.com>
+
+	* package.html: New file, for javadoc.
+	* Q2.java: Add javadoc comment.
+
+2005-03-17  Per Bothner  <per@bothner.com>
+
+	* Q2.java (createReadTable): New method.
+	* Q2Read.java (getReadTable): Remove method.
+	(q2ReadTable): Remove field.
+
+2005-02-24  Per Bothner  <per@bothner.com>
+
+	* Q2.java (registerEnvironment): Use new setDefaults method.
+
+2004-12-22  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java: Update import for moved MakeAttribute.
+
+2004-08-03  Per Bothner  <per@bothner.com>
+
+	* Q2Apply.java:  Extend MethodProc instead of CpsProcedure.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* Q2.java:  Remove unused import statements.
+	* Q2Read.java:  Likewise.
+
+2004-06-22  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java:  Remove BRL/KRL model of starting out quoted.
+	(inLiteral):  Remove method.
+
+	* Q2Read.java (nesting):  Moved field to Lexer.
+	(skipIndentation, singleLine, readCommand):  New methods.
+	(Q2ReaderParens):  New class.
+
+2004-06-12  Per Bothner  <per@bothner.com>
+
+	* Q2Read.java (readObject()):   Remove method - use inherited version.
+
+2004-02-13  Per Bothner  <per@bothner.com>
+
+	New package for a new experimental "q2" language.
+	* Q2.java:  New class, extends Scheme.
+	* Q2Apply.java:  New class, extends CpsProcedure.
+	* Q2Read.java:  New class, extends LispReader.
+	* Makefile.am:  New file.

@@ -1,0 +1,15 @@
+#!/bin/sh
+case $0 in
+  */qexo)
+    kawa=`echo $0 | sed -e 's|qexo$|kawa|'`
+    if test -x $kawa.sh; then
+      kawa=$kawa.sh
+    elif test -x $kawa; then true
+    else
+      kawa="kawa"
+    fi
+  ;;
+  *)
+    kawa="kawa";
+esac
+exec $kawa --xquery "$@"

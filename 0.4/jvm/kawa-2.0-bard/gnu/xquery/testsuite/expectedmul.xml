@@ -1,0 +1,123 @@
+<table>
+  <caption>Multiplication table 10x10</caption>
+  <tr>
+    <td align="right" bgcolor="white"><b>1</b></td>
+    <td align="right" bgcolor="lightblue"><b>2</b></td>
+    <td align="right" bgcolor="white"><b>3</b></td>
+    <td align="right" bgcolor="lightblue"><b>4</b></td>
+    <td align="right" bgcolor="white"><b>5</b></td>
+    <td align="right" bgcolor="lightblue"><b>6</b></td>
+    <td align="right" bgcolor="white"><b>7</b></td>
+    <td align="right" bgcolor="lightblue"><b>8</b></td>
+    <td align="right" bgcolor="white"><b>9</b></td>
+    <td align="right" bgcolor="lightblue"><b>10</b></td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="yellow"><b>2</b></td>
+    <td align="right" bgcolor="lightgreen">4</td>
+    <td align="right" bgcolor="yellow">6</td>
+    <td align="right" bgcolor="lightgreen">8</td>
+    <td align="right" bgcolor="yellow">10</td>
+    <td align="right" bgcolor="lightgreen">12</td>
+    <td align="right" bgcolor="yellow">14</td>
+    <td align="right" bgcolor="lightgreen">16</td>
+    <td align="right" bgcolor="yellow">18</td>
+    <td align="right" bgcolor="lightgreen">20</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="white"><b>3</b></td>
+    <td align="right" bgcolor="lightblue">6</td>
+    <td align="right" bgcolor="white">9</td>
+    <td align="right" bgcolor="lightblue">12</td>
+    <td align="right" bgcolor="white">15</td>
+    <td align="right" bgcolor="lightblue">18</td>
+    <td align="right" bgcolor="white">21</td>
+    <td align="right" bgcolor="lightblue">24</td>
+    <td align="right" bgcolor="white">27</td>
+    <td align="right" bgcolor="lightblue">30</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="yellow"><b>4</b></td>
+    <td align="right" bgcolor="lightgreen">8</td>
+    <td align="right" bgcolor="yellow">12</td>
+    <td align="right" bgcolor="lightgreen">16</td>
+    <td align="right" bgcolor="yellow">20</td>
+    <td align="right" bgcolor="lightgreen">24</td>
+    <td align="right" bgcolor="yellow">28</td>
+    <td align="right" bgcolor="lightgreen">32</td>
+    <td align="right" bgcolor="yellow">36</td>
+    <td align="right" bgcolor="lightgreen">40</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="white"><b>5</b></td>
+    <td align="right" bgcolor="lightblue">10</td>
+    <td align="right" bgcolor="white">15</td>
+    <td align="right" bgcolor="lightblue">20</td>
+    <td align="right" bgcolor="white">25</td>
+    <td align="right" bgcolor="lightblue">30</td>
+    <td align="right" bgcolor="white">35</td>
+    <td align="right" bgcolor="lightblue">40</td>
+    <td align="right" bgcolor="white">45</td>
+    <td align="right" bgcolor="lightblue">50</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="yellow"><b>6</b></td>
+    <td align="right" bgcolor="lightgreen">12</td>
+    <td align="right" bgcolor="yellow">18</td>
+    <td align="right" bgcolor="lightgreen">24</td>
+    <td align="right" bgcolor="yellow">30</td>
+    <td align="right" bgcolor="lightgreen">36</td>
+    <td align="right" bgcolor="yellow">42</td>
+    <td align="right" bgcolor="lightgreen">48</td>
+    <td align="right" bgcolor="yellow">54</td>
+    <td align="right" bgcolor="lightgreen">60</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="white"><b>7</b></td>
+    <td align="right" bgcolor="lightblue">14</td>
+    <td align="right" bgcolor="white">21</td>
+    <td align="right" bgcolor="lightblue">28</td>
+    <td align="right" bgcolor="white">35</td>
+    <td align="right" bgcolor="lightblue">42</td>
+    <td align="right" bgcolor="white">49</td>
+    <td align="right" bgcolor="lightblue">56</td>
+    <td align="right" bgcolor="white">63</td>
+    <td align="right" bgcolor="lightblue">70</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="yellow"><b>8</b></td>
+    <td align="right" bgcolor="lightgreen">16</td>
+    <td align="right" bgcolor="yellow">24</td>
+    <td align="right" bgcolor="lightgreen">32</td>
+    <td align="right" bgcolor="yellow">40</td>
+    <td align="right" bgcolor="lightgreen">48</td>
+    <td align="right" bgcolor="yellow">56</td>
+    <td align="right" bgcolor="lightgreen">64</td>
+    <td align="right" bgcolor="yellow">72</td>
+    <td align="right" bgcolor="lightgreen">80</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="white"><b>9</b></td>
+    <td align="right" bgcolor="lightblue">18</td>
+    <td align="right" bgcolor="white">27</td>
+    <td align="right" bgcolor="lightblue">36</td>
+    <td align="right" bgcolor="white">45</td>
+    <td align="right" bgcolor="lightblue">54</td>
+    <td align="right" bgcolor="white">63</td>
+    <td align="right" bgcolor="lightblue">72</td>
+    <td align="right" bgcolor="white">81</td>
+    <td align="right" bgcolor="lightblue">90</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="yellow"><b>10</b></td>
+    <td align="right" bgcolor="lightgreen">20</td>
+    <td align="right" bgcolor="yellow">30</td>
+    <td align="right" bgcolor="lightgreen">40</td>
+    <td align="right" bgcolor="yellow">50</td>
+    <td align="right" bgcolor="lightgreen">60</td>
+    <td align="right" bgcolor="yellow">70</td>
+    <td align="right" bgcolor="lightgreen">80</td>
+    <td align="right" bgcolor="yellow">90</td>
+    <td align="right" bgcolor="lightgreen">100</td>
+  </tr>
+</table>

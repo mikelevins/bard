@@ -1,0 +1,10 @@
+kawa (1.6) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Per Bothner <bothner@Cygnus.COM>  Tue, 3 Feb 1998 21:02:58 -0800
+
+Local variables:
+mode: debian-changelog
+add-log-mailing-address: "bothner@Cygnus.COM"
+End:

@@ -1,0 +1,81 @@
+Reading .class from annotations1$MyClass.class.
+
+Access flags: public super
+This class: annotations1$MyClass super: java.lang.Object
+Interfaces (count: 0):
+
+Fields (count: 2):
+Field name: x public Signature: gnu.math.IntNum
+Attribute "RuntimeVisibleAnnotations", length:0, number of entries: 1
+  @MyAnnotType
+    svalue => 4324
+    name => "myName"
+    bvalue => 2
+    ivalue => 112
+    blvalue => false
+    chvalue => B
+    etype => enum[java.lang.annotation.ElementType PACKAGE]
+Field name: y public Signature: gnu.math.IntNum
+Attribute "RuntimeVisibleAnnotations", length:0, number of entries: 1
+  @javax.annotation.Resource
+    authenticationType => enum[javax.annotation.Resource$AuthenticationType CONTAINER]
+    type => java.util.ArrayList
+
+Methods (count: 2):
+
+Method name:"toString" public Signature: ()java.lang.String
+Attribute "Code", length:74, max_stack:5, max_locals:1, code_length:28
+  0: iconst_0
+  1: iconst_3
+  2: anewarray <Class java.lang.Object>
+  5: dup
+  6: iconst_0
+  7: ldc <String "MyClass[x:~s y:~s]">
+  9: aastore
+ 10: dup
+ 11: iconst_1
+ 12: aload_0
+ 13: getfield <Field annotations1$MyClass.x gnu.math.IntNum>
+ 16: aastore
+ 17: dup
+ 18: iconst_2
+ 19: aload_0
+ 20: getfield <Field annotations1$MyClass.y gnu.math.IntNum>
+ 23: aastore
+ 24: invokestatic <Method gnu.kawa.functions.Format.formatToString (int,java.lang.Object[])java.lang.String>
+ 27: areturn
+Attribute "LineNumberTable", length:10, count: 2
+  line: 30 at pc: 0
+  line: 35 at pc: 0
+Attribute "LocalVariableTable", length:12, count: 1
+  slot#0: name: this, type: annotations1$MyClass (pc: 0 length: 28)
+Attribute "RuntimeVisibleAnnotations", length:0, number of entries: 1
+  @MyAnnotType
+    names => array length:2
+      0: "x"
+      1: "y"
+    clvalue => java.io.InputStream
+
+Method name:"<init>" public Signature: ()void
+Attribute "Code", length:17, max_stack:1, max_locals:1, code_length:5
+  0: aload_0
+  1: invokespecial <Method java.lang.Object.<init> ()void>
+  4: return
+
+Attributes (count: 4):
+Attribute "InnerClasses", length:10, count: 1
+  public MyClass = annotations1$MyClass; member of annotations1
+Attribute "RuntimeVisibleAnnotations", length:0, number of entries: 1
+  @MyAnnotType
+    name => "MyClassName"
+Attribute "SourceFile", length:2, "annotations1.scm"
+Attribute "SourceDebugExtension", length:77
+SMAP
+annotations1.scm
+Scheme
+*S Scheme
+*F
+1 annotations1.scm
+*L
+30#1,6:30
+*E

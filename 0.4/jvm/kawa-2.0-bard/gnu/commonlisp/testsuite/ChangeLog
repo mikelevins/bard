@@ -1,0 +1,88 @@
+2014-02-25  Charles Turner  <chturne@gmail.com>
+
+	* lang-test.lisp: New tests for labels, multiple-value-bind, and
+	floor.
+
+2014-02-08  Charles Turner  <chturne@gmail.com>
+
+	* lang-test.lisp: New tests for member, apply, complement and eql.
+
+2014-02-08  Charles Turner  <chturne@gmail.com>
+
+	* lang-test.lisp: New test for acons, listp, numberp, zerop,
+	consp, and atom.
+
+2014-02-07  Charles Turner  <chturne@gmail.com>
+
+	* lang-test.lisp: New tests for car, cdr, first, rest, nth and
+	nthcdr.
+	* warnings.lisp: Fix TODO item by using the new 1+ procedure.
+
+2013-08-25  Per Bothner  <per@bothner.com>
+
+	* lang-test.lisp: Add test for '#' in token.
+
+2013-08-24  Per Bothner  <per@bothner.com>
+
+	* warnings.scm: Update.
+
+2013-06-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST): Add missing lambda.lisp.
+
+2013-03-04  Charles Turner  <chturne@gmail.com>
+
+	* lambda.lisp: New tests for lambda.
+
+2012-08-13  Charles Turner  <chturne@gmail.com>
+
+	* lang-test.lisp: New tests for funcall and flet.
+
+2012-06-08  Jamison Hope  <jrh@theptrgroup.com>
+
+	* Makefile.am (SCRIPTS_TO_RUN): New variable.
+	(check,check-lang-test,check-run-test-scripts): Move the
+	lang-test.lisp test to its own rule, and add rule for running
+	tests with RunTestScript.
+	* warnings.lisp: New file.
+
+2010-01-13  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (DOTEST): Use -f option.
+
+2007-01-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Use bin's kawa.sh directly.
+
+2007-01-10  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Simplify - always use ../../../bin/kawa-bin.
+	(DISABLE_GCJ_COMPILED_KAWA, ENABLE_GCJ_COMPILED_KAWA): Remove macros.
+
+2004-12-07  Per Bothner  <per@bothner.com>
+
+	* lang-test.lisp: Add some tests of function, #', and functionp.
+
+2003-04-18  Per Bothner  <per@bothner.com>
+
+	* lang-test.lisp:  Rename a duplicate test name.
+
+2003-01-01  Per Bothner  <per@bothner.com>
+
+	* lang-test.lisp:  Add a defmacro test.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA):  Update to use ../../../bin/kawa.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* lang-test.lisp:  New test for separate name spaces.
+
+	* Makefile.am (SOURCES):  New variable.
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* lang-test.lisp:  New test set.
+	* Makefile.am:  New.

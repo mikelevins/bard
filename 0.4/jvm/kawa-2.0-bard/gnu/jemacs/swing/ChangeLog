@@ -1,0 +1,147 @@
+2013-09-15  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (defaultStyle): Rename to "plain" - a style
+	named "default" is set by Swing current Look & Feel.
+	Don't depend on ancient java.version values.
+
+	* SwingWindow.java (getHeight): Fix copy-and-paste error.
+
+2011-05-02  Shad Gregory <captshadg@gmail.com>
+
+	* SwingFrame.java (showInfoMessage): New method.
+
+2011-04-15  Per Bothner  <per@bothner.com>
+
+	* SwingWindow.java (setSelected): Check if jtextpane is null.
+	It is possible to get a spurious (and transient) focusGained (which
+	call setSelected) on the deleted window after a deleteOtherWindows.
+
+2011-04-10  Shad Gregory <captshadg@gmail.com>
+
+	* SwingFrame.java (showAboutMessage): New method.
+
+2008-05-25  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (insert): Rename to insertChar and change char->int.
+
+2008-05-23  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (removeRegion): Catch exception.
+	(removeall): Remove - use inherited method.
+
+2008-02-04  Per Bothner  <per@bothner.com>
+
+	* SwingWindow.java (toInt): We want the modifiers (except for the
+	shift modifier) for KEY_TYPED as well as KEY_PRESSED, since
+	otherwise ctrl-X etc becoms just a plain 'x'.
+
+2008-01-16  Per Bothner  <per@bothner.com>
+
+	* SwingFrame.java (setMenu): Rename to setMenuBar, following EFrame.
+
+	* SwingMenu.java: Update FString -> CharSequence.
+
+	* SwingFrame.java (setMenuBar): Inline into setMenu.
+	Also insert to-level SwingMenus directly into menu-bar, without
+	creating a dummy top-level SwingMenu first.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (openReader): Update to use getPath.
+	* MarkerReader.java (<init>): Likewise.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* BufferReader.java: Moved to gnu.jemacs.buffer.
+	* Makefile.am: Update accordingly.
+
+	* BufferContent.java: Most of the functionality has now been moved
+	to gnu.kawa.swingviews.SwingContent, which we now extend.
+	* BufferReader.java: Now mostly Swing-independent.
+	* MarkerReader: Likewise.
+	* SwingBuffer.java: Various updates now that BufferContent doesn't
+	extend CharBuffer.
+	* SwingWindow.java: Likewise.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ALL): New macro, only if ENABLE_JEMACS and ENABLE_SWING.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (GCJ_INPUTS, all): Some GCJ-specific fixes.
+
+2005-01-07  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (getStringContent): New method implements Buffer.
+	(charAt, getChars, setCharAt, fill, writeTo, consume): Removed;
+	use methods inherited from Buffer.
+
+2004-08-04  Christian Surlykke <christian@surlykke.dk>
+        
+	* IgnoreAction.java: Moved here from gnu.jemacs.buffer
+	* Modeline.java: Moved here from gnu.jemacs.buffer
+	* SwingBuffer.java (invoke): New method, implements Buffer.invoke
+	* SwingFrame.java (setMenuBar): Take an EMenu rather than a Menu.
+	(setMenu): New method, implements EFrame.setMenu
+	* SwingMenu.java: Renamed/moved from gnu/jemacs/buffer/Menu.java.
+	* SwingToolkit.java (getMenu): New method, implements EToolkit.getMenu.
+	(getIgnoreAction): New method, implements EToolkit.getIgnoreaction.
+	* SwingWindow.java (modeline):  Moved field here from EWindow.java.
+	(setSelected): some not-swing-specific code moved to
+	EWindow.setSelected.
+	(flushPending):  New method.
+	(tooLong): New method, implements EWindow.tooLong
+	* TooLongAction.java: Moved here from gnu.jemacs.buffer 
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java:  Remove unused import statements.
+	* BufferReader.java:  Likewise.
+	* SwingWindow.java:  Use static syntax to access static fields/methods.
+
+2003-05-17  Per Bothner  <per@bothner.com>
+
+	* SwingFrame.java (toString):  Check that jframe isn't null.
+
+2003-01-09  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java:  Update for gnu.lists changes.
+	* SwingWindow.java:  Likewise.
+
+2002-11-05  Per Bothner  <per@bothner.com>
+
+	* SwingWindow.java (<init>):  Don't call setBuffer, since that
+	duplicates setDocument, which causes JDK 1.4 to freeze. Tracked down  
+	by Francisco Vides Fernández <pvides@dedalo.ws>.  A fix is to
+	set this.buffer directly.
+
+2002-04-18  Per Bothner  <per@bothner.com>
+
+	* SwingBuffer.java (makePosition):  Remove - use inherited default.
+	(createPosition):  New method.
+	* BufferContent.java (GapPosition.<init>):  New args.
+	(createPosition):  Use new GapPosition constructor.
+
+2002-03-24  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java:  Moved here from gnu.jemacs.buffer.
+	* BufferReader.java:  Moved here from gnu.jemacs.buffer.
+	* MarkerReader.java:  Moved here from gnu.jemacs.buffer.
+	* Makefile.am (java_sources);  Update accordingly.
+
+	* SwingBuffer.java (openReader):  New method, implements abstract.
+	* SwingToolkit.java (getFace, setUnderlone, setBold, setForeground,
+	setBackground):  New methods, implementing EToolkit abtract methods.
+
+	* SwingWindow.java (<init>):  Call addKeyListener here, instead of ...
+	(setBuffer):  ... here, which causes it to be called too many times.
+
+2002-03-19  Per Bothner  <per@bothner.com>
+
+	New package.
+	* SwingBuffer.java:  New class, extends Buffer.
+	* SwingFrame.java:  New class, extends EFrame.
+	* SwingToolkit.java:  New class, extends EToolkit.
+	* SwingWindow.java:  New class, extends EWindow.
+	* Makefile.am:  New file.

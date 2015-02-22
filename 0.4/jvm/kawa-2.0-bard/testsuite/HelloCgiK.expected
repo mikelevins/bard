@@ -1,0 +1,6 @@
+Status: 200
+Content-Type: text/xml
+Content-Length: 89
+
+<p>The request URL was: http://localhost/HelloCgiK</p>
+<p>There was no query string.</p>

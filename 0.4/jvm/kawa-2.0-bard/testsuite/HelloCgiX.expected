@@ -1,0 +1,9 @@
+Status: 200
+X-Count: 13
+Content-Type: text/html
+
+<?xml version='1.0'?>
+<body>
+  <p>The translated path was: ./HelloCgiX</p>,
+  <p>There was no query string.</p>
+</body>

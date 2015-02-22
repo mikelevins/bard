@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>The gnu.lists package</title>
+  </head>
+
+  <body>
+<p>Contains utility classes and interfaces for sequences (lists), arrays, and trees.</p>
+<p>Features:
+<ul>
+<li>
+The classes and interfaces are compatible with the Java2 Collections
+framework, but do not require them.  A configuration option allows you
+to specify whether Sequence extends java.util.List or not.</li>
+<li>
+Positions in a Sequence and iterators are the same kind of object,
+and are represented using magic cookies.  In most collections frameworks,
+when you define a new class that implements a sequence, you would
+typically define a new iterator class as well.  You never do that
+with <code>gnu.lists</code>; instead you implement suitable methods
+in the sequence class itself.  This approach may seem strange, but it has
+important performance advantages, especially in applications
+where you want to go up and down nested sequences (i.e. in trees, such
+as XML elements), or remember sets of positions (such as XML node-sets).</li>
+<li>
+The classes are designed for efficiency, especially concentrating on
+minimizing object allocation.</li>
+<li>
+The framework supports general multi-dimensional arrays.</li>
+<li>
+The package is self-contained; it does not depend on classes or
+features not in JDK 1.1.</li>
+<li>
+Various useful sequence implementations, including Lisp-style linked
+lists; arrays with various element types; adjustable arrays that use a
+"buffer-gap" to make insertions and deletions more efficient; and
+adjustable arrays that automatically update positions on insertions
+and deletions.</li>
+<li> The <a href="TreeList.html"><code>TreeList</code></a> class can compactly represent
+a nested heterogenous tree.  One intended usage is as a very efficient
+representation for XML data.</li>
+<li>
+The <a href="Consumer.html"><code>Consumer</code></a> interface is an abstraction of "data sinks" -
+objects that can receive data and do something with them.  It is
+similar to SAX's DocumentHandler but at a more abstract (and sometimes
+more efficient) level.
+</ul>
+
+<h2 id="iteration">The iteration and position framework</h2>
+<p>
+A <i>position</i> points <em>between</em> two elements in its "containing"
+sequence, or it points before the first element (if any), or after the last.
+Sometimes, we loosely say that the position refers to or points to
+an element of the sequence; in that case we mean the position is
+immediately before the element.
+<p>
+An <i>iterator</i> is an object that has a current position,
+but that can be moved so it gets a new position.
+ What needs to be emphasized is that <em>all</em>
+<a href="Sequence.html"><code>Sequence</code></a> implementations.
+use the <em>same</em> <a href="SeqPosition.html"><code>SeqPosition</code></a>
+class to implement positions and iteration.
+In other "collections frameworks" each sequence class has its corresponding
+iterator class, but in this framework you instead add the methods
+that handle iteration to the sequence class itself, extending
+the <a href="AbstractSequence.html"><code>AbstractSequence</code></a> class.
+A consequence of this is that if you have an unused
+<a href="SeqPosition.html"><code>SeqPosition</code></a> object, you can
+use it to iterate over <em>any</em> <code>Sequence</code> you choose.
+This potentially saves memory allocation, which gains you the most
+when iterating over a nested sequence structure, like a tree of XML data.
+<p>
+We do this by requiring that any position be representable using a pair
+of an <code>int</code> and an <code>Object</code>.
+In other words, the state of an iterator is
+restricted to be an (<code>int</code>, <code>Object</code>) pair.
+Of course that is all you <em>could</em> need, since if you need more
+state you can always create a helper object,
+and store the extra state there.  The assumption we make though is that for
+most <code>Sequence</code>s, an (<code>int</code>, <code>Object</code>)
+would be enough, without creating any new objects (beyond,
+sometimes, the <code>SeqPosition</code> itself).
+<p>
+The <code>int</code> part of a position-state is normally
+named <code>ipos</code>, and the <code>Object</code> part of a
+position-state is named <code>xpos</code>.
+Neither of these values have any meaning in themselves, they only have
+meaning as interpreted by the specific <code>Sequence</code>.
+For example, <code>ipos</code> might be the offset of the position in
+the sequence, but it might also some "magic cookie".
+If a <code>Sequence</code> supports insertions and deletions,
+and you want positions to be automatically adjusted, then a position
+<em>has</em> to be a magic cookie rather than an offset.
+(A typical implementation is for such a position to be an index
+into a table of positions managed by the <code>Sequence</code> itself.) 
+So a complete position is actually a (<code>int</code>, <code>Object</code>,
+<code>AbstractSequence</code>) triple, where the <code>AbstractSequence</code>
+component is the object that interprets the (<code>int</code>,
+<code>Object</code>) pair.
+Normally, the <code>AbstractSequence</code> part of a position triple is the
+<code>Sequence</code> "containing" the position, but it can be any
+<code>AbstractSequence</code>
+that implements the various methods that provide the semantics
+for the (<code>int</code>, <code>Object</code>) pair.
+<p>
+The  <a href="PositionContainer.html"><code>PositionContainer</code></a>
+interface is a more abstract version of <code>SeqPosition</code>, in
+that it can represents more than one position.
+For example, instead of an array of separately allocated
+<code>SeqPosition</code> objects, you might use some data structure
+that implements <code>PositionContainer</code>,
+which is abstractly a list of (<code>int</code>, <code>Object</code>,
+<code>Sequence</code>)-triples.
+
+<h2>The consumer protocol</h2>
+<p>
+You typically use an iteration framework it process the elements
+of a sequence in such a way that the data consumer is active
+and in control, while the sequence itself (the data producer) is a
+passive object. The <a href="Consumer.html"><code>Consumer</code></a>
+works the other way round:  The data producer is active and in control,
+while the data consumer is passive, consuming elements when requested
+by the data producer.  The <code>Consumer</code> is a more abstract
+variant of <a href="http://www.megginson.com/SAX/index.html">SAX</a>'s
+<code>ContentHandler</code> interface for processing "events";
+however <code>Consumer</code> is intended for general value sequences,
+and is less tied to XML.</p>
+
+<h2>Iteration</h2>
+<pre>
+int iter = 0; // standard start position
+for (;;)
+{
+  iter = list.nextPos(iter);
+  if (iter == 0)
+    break;
+  Object value = list.getPosPrevious(iter);
+  ... use value ...;
+}
+</pre>
+
+<h2>Position values for buffer-based sequences</h2>
+<p>
+The position encoding for sequences implemented using an array is simple.
+Assume the next index (as returned by <code>nextIndex</code>) is <var>i</var>.
+If the position is a before/backwards position, then position value
+is <code>(</code><var>i</var><code>&lt;&lt;1)</code>.
+If the position is an after/forwards position, then position value
+is <code>((</code><var>i</var><code>&lt;&lt;1))|1</code>.</p>
+<p>
+But what each each item in the buffer has variable size?
+One example is a UTF-8 string.  Another example is a buffer of text
+where each "item" is a line.
+Then we have the choice:  Should the position value encode the
+index (making <code>nextIndex</code> and <code>get</code> cheap), or
+should it encode the offset into the buffer (making sequential access cheap)?
+Since sequential access is preferred, we do the latter.
+Thus for a before/backwards position, if the buffer offset for
+item <var>i</var> is <var>p<sub>i</sub></var>, then the position value
+is <code>(</code><var>p<sub>i</sub></var><code> &lt;&lt; 1)</code>.
+However, there is a complication when moving forwards using
+a <code>ListIterator</code> since using <code>set</code> or <code>remove</code>
+affects the <em>previous</em> item.  It may be much more expensive to
+calculate the buffer position of the previous item than the next item.
+(Given <var>p<sub>i</sub></var> it may be cheap to
+calculate <var>p<sub>i+1</sub></var> but expensive to
+calculate <var>p<sub>i-1</sub></var>.)
+Therefore, we suggest using
+<code>(((</code><var>p<sub>i-1</sub></var>+1)<code>&lt;&lt;1))|1</code>,
+where <var>p<sub>-1</sub></var> is defined as -1.
+The addition of 1 allows us to handle the case of <var>i=0</var> without
+conflicting with the use of -1 to mean end-of-sequence.
+Plus it makes the previous case of a simple array a special case.
+  </body>
+</html>

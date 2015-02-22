@@ -1,0 +1,422 @@
+2014-02-25  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Added funcall, minusp, plusp, flet, labels,
+	multiple-value-bind, and floor.
+
+2014-02-08  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Added member, apply, complement and eql.
+
+2014-02-08  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Added the various c*r procedures, acons, listp,
+	numberp, zerop, consp and atom.
+
+2014-02-07  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Change NOT to be defined as in Scheme, so that
+	it gets picked up as a procedure. Also added first, cdr, rest,
+	second, third, nthcdr, nth, 1- and 1+.
+
+2014-02-06  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Proof-of-concept start to loading the CL
+	primitives from the new primitives.lisp file.
+
+2014-02-05  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Expose *package* variable to the CL language.
+
+2013-11-10  Per Bothner  <per@bothner.com>
+
+	* defun.java:  Update for new 'formStack' and scanDefinitions API.
+	* defvar.java: Likewise.
+	* Lisp2Compilation.java: Likewise.
+
+2013-07-05  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Added new keywords for CL: INHERITED, EXTERNAL
+	and INTERNAL for use in package lookups.
+
+2013-08-25  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (createReadTable): Specify that '#' is non-terminating.
+
+2013-03-04  Charles Turner <chturne@gmail.com>
+
+	* OrdinaryLambda.java: New class, extends kawa.lang.Lambda.
+	* Makefile.am: Update accordingly.
+	* CommonLisp.java (initLisp): Use OrdinaryLambda.
+	(isEq): New field.
+
+2012-12-31  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (initLisp): Update definitions of princ, prin1.
+	(writeFormat, displayFormat): Mak public since needed by new functions.
+
+2012-12-30  Charles Turner <chturne@gmail.com>
+	    Per Bothner <per@bothner.com>
+
+	* Lisp2.java: Added more documentation. Minor code cleanups.
+
+2012-10-20  Charles Turner <chturne@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	Re-factor type lookup to avoid Scheme dependencies.
+	* CommonLisp.java: Don't use static Scheme methods.
+	(getNamedType): New method.
+
+2012-08-18  Per Bothner  <per@bothner.com>
+
+	* Lisp2Compilation.java (rewriteBody): Use errorWithPosition.
+
+2012-08-14  Charles Turner  <chturne@gmail.com>
+
+	* Lisp2Compilation.java (rewriteBody): New method, process declare
+	form.
+
+2012-08-13  Charles Turner  <chturne@gmail.com>
+
+	* CommonLisp.java: Add defun for internal flet rewriter.
+
+2012-07-01  Charles Turner  <chturne@gmail.com>
+
+	* Symbols.java (isSymbol): Fix the incorrect definition whereby a
+	string was considered a symbol.
+
+2012-07-01  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (getNamespaceOf): Also check Declaration.IS_SYNTAX.
+
+2012-06-04  Jamison Hope  <jrh@theptrgroup.com>
+
+	Fixes for erroneous warnings and lookup failures.
+	* defun.java (scanForDefinitions): Fix declaration lookup to
+	specify function namespace.  Push newly created declaration to
+	lexical bindings map.
+	* defvar.java (scanForDefinitions): Likewise, but specifying value
+	namespace.
+	* function.java (rewriteForm): Look for an existing declaration
+	when creating ReferenceExp.
+
+2012-04-05  Per Bothner  <per@bothner.com>
+
+	* setq.java (rewriteForm): Don't incorrect set PREFER_BINDING2.
+
+2011-04-25  Per Bothner  <per@bothner.com>
+
+	* Lisp2Compilation.java: Fix package to gnu.commonlisp.lang.
+	* Lisp2.java (getCompilationClass): Update accordingly.
+
+2011-03-23  Per Bothner  <per@bothner.com>
+
+	* prog1.java (rewrite): Use letStart/letVariable/letDone methods.
+
+2011-01-19  Per Bothner  <per@bothner.com>
+
+	* Lisp2Compilation.java: New class.
+	(emitPushBoolean): New method, moved from Lisp2.java.
+	* Makefile.am: Update accordingly.
+	* Lisp2.java (emitPushBoolean): Removed method.
+	(getCompilationClass): New method.
+
+2010-08-19  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java: Update to use new Environment-setting methods.
+
+2009-03-10  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (createReadTable): Do setFinalColonIsKeyword()
+	here, rather than in getLexer, since former was moved to ReadTable.
+	(getLexer): Can now be removed.
+
+2009-03-07  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (getLexer): New method - call setInitialColonIsKeyword.
+
+2008-06-01  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (importLocation): Check for LangObjType - needed for
+	vector, string, list etc.
+
+2007-02-14  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java: Remove unneeded import.
+
+2006-11-19  Per Bothner  <per@bothner.com>
+
+	* defun.java: Remove redundant 'implements Printable'.
+	* setq.java: Likewise.
+
+2006-11-13  Per Bothner  <per@bothner.com>
+
+	* defun.java: Update for SourceLocation-related changes.
+
+2006-05-01  Per Bothner  <per@bothner.com>
+
+	* CLispReader.java: Removed class.
+	* Makefile.am: Update accordingly.
+	* Lisp2.java (class Lisp2ReadTable): New class, overrides makeSymbol.
+	(createReadTable): New method.
+	(getLexer): Removed - used super version.
+	* CommonLisp.java (createReadTable): Removed - use super version.
+
+2006-04-10  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (instance): Make public.
+
+2005-10-13  Per Bothner  <per@bothner.com>
+
+	* defun.java (rewriteForm): Update for changed Lambda.rewrite.
+
+2005-07-21  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (environ): Since it is again possible to have multiple
+	instances, set the environ field in the constructor, not statically.
+
+2005-06-29  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (numEqu, numGrt, numGEq, numLss, numLEq): New static
+	fields for the numeric compare functions.
+	(initLisp): Define functions for them.
+	Fixes Savannah bug #13573.
+
+	* Lisp2.java (TRUE): Make final, and initialize statically.
+
+	* Lisp2.java (selfEvaluatingSymbol):  Fix typo.
+	
+2005-06-04  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java:  Update for AbstractFormat move to gnu.lists.
+
+	* CommonLisp.java (writeFormat, displayFormat): Change type.
+
+2005-05-08  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java: Keep environ field set to clispEnvironment.
+	(getNewEnvironment): Remove method.
+
+2005-04-19  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (registerEnvironment): Use 'instance' field rather
+	than creating a new instance.
+
+2005-03-29  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java: Initalize various static fields,
+	including 'instance', in a static block, so they can be final.
+	Set/restore current environment, since needed for loadClass.
+	(initLisp): New method.
+	(lispCounter): Remove - use Language.env_counter.
+	(getNewEnvironment): New method.
+
+2005-03-23  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (importLocation): Remove kludge for GCJ/classpath.
+	Remove no-longer-needed try-catch.
+
+2005-03-17  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (importLocation): Add kludge to work around GCJ bug.
+
+	* Lisp2.java (importLocation): New method.
+	* CommonLisp.java (<init>): Use importLocation.
+
+2005-03-17  Per Bothner  <per@bothner.com>
+
+	*  CLispReader.java (getReadTable): Remove method.
+	(clispReadTable): Remove field.
+	* CommonLisp.java (createReadTable): New method.
+
+2005-02-25  Per Bothner  <per@bothner.com>
+
+	* defvar.java (scanForDefinitions): Mark new declaration IS_DYNAMIC.
+
+2005-02-24  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (registerEnvironment): Use new setDefaults method.
+	(<init>): Don't get Environment - might cause NullPointerException.
+
+2005-02-12  Per Bothner  <per@bothner.com>
+
+	* defun.java (rewriteForm): Use setSymbol(Object), since
+	setName(Object) has been removed from LambdaExp.
+
+	* defun.java: Use SetExp's setBinding method.
+
+	* defvar.java: Likewise.
+
+2005-01-29  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java: Extend LispLanguage rather than LispInterpreter.
+
+	* Lisp2.java (fromLangSymbol): New method.
+
+2004-12-20  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (selfEvaluatingSymbol): New method.
+
+2004-12-05  Per Bothner  <per@bothner.com>
+
+	Update for new Symbol/Location handling.
+	* Lisp2.java (defun, getEnvPropertyFor): New methods.
+	(defineFunction, getNewEnvironment): Removed.
+	(getSymbol): Rename to asSymbol - to avoid confusion.
+	* CommonLisp.java (defun): Remove methods - moved to Lisp2.
+	(<init>): Various updates.
+	(defineFormFieldValue): Remove - no longer need to override.
+	* CLispReader.java: Update getSymbol->asSymbol.
+	* SymbolTable.java: Remove class.
+	* Makefile.am: Update accordingly.
+	* Symbols.java: Update methods.
+	(plistGet, plistPut, plistRemove): Moved to
+	gnu.mapping.PropertyLocation.
+	(setValueBinding, getPrintName): Remove methods.
+	* function.java (rewriteForm): Not that we PREFER_BINDING2.
+
+2004-11-10  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (CommonLisp): Remove definitions of 'and' and 'or'.
+	Instead used definitions in kawa.lib.std_syntax.
+
+2004-11-06  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (<init>): Also load prim_syntax.
+	This defines if, so we don't need removed kawa.standard.ifp.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* CLispReader.java:  Remove unused import statements.
+	* defun.java:  Use static syntax to invoke static methods.
+	* defvar.java:  Likewise.
+
+2004-01-09  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (registerEnvironment):  Update setCurrent->setGlobal.
+
+2003-10-12  Per Bothner  <per@bothner.com>
+
+	* prog1.java:  New class, extends Syntax.
+	* function.java:  New class, extends Syntax.
+	* Makefile.am (java_sources):  Update accordingly.
+	* CommonLisp.java (<init>):  Define function, prog1, prog2.
+
+	* defun.java (rewriteForm):  Simplify.
+	* defvar.java (rewriteForm):  Handle Symbols properly.
+
+2003-10-08  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (<init>):  Minor simplification/optimization.
+
+2003-04-18  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (getNamespaceOf):  New method.
+
+2002-11-15  Per Bothner  <per@bothner.com>
+
+	* defun.java (scanForDefinitions):  Use name as is, even if Symbol.
+	(rewriteForm):  Is name is a Symbol, use it as is, not as String.
+	* defvar.java (scanForDefinitions):  Use name as is, even if Symbol.
+	* setq.java (rewriteForm):  Is name is a Symbol, use it as is.
+
+2002-10-28  Per Bothner  <per@bothner.com>
+
+	* Symbol.java:  Renamed to Symbols.java.
+	Removed inheritance, and make constructor private.
+
+2002-02-15  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java (defineFunction):  New method.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (loadClass, defineAll):  Now inherited.
+	(defineFromFieldValue):  New, called from inherited defineAll.
+
+2001-11-15  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (<init>):  Remove unwanted error message.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java:  Now extends new LispInterpreter class.
+
+	* CommonLisp.java (loadClass):  Remove debugging remnant.
+
+2001-06-19  Per Bothner  <per@bothner.com>
+
+	* SymbolTable.java (make):  If not registered, create.
+	(readResolve):  Inline old make definition.
+	* CommonLisp.java (<init>):  Use SymbolTable.make.
+
+	* Lisp2.java (TRUE):  Is now a Binding, not the String "t".
+	* CommonLisp.java (<init>):  Fix initialization of t and nil.
+
+	* Symbol.java (isBound. getBinding):  Handle Binding as symbol.
+
+	* Symbol.java (propertyLists):  Remove static fieldf.
+	(getPropertyList, setPropertyList):  Remove static methods.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* Lisp2.java:  New class, extends Interpreter.
+	Move some shared CommonLisp/ELisp stuff here.
+	Symbols are now instances of Binding, not String.
+	* CommonLisp.java:  New extends Lisp2.
+	Remove dependencies on gnu.jemacs (and thus Swing) code.
+	Use ../lisp/PrimOps rather than gnu.jemacs.lang.*Ops.
+	* Symbol.java:  Moved from gnu.jemacs.lang.
+	* SymbolTable.java:  Renamed from gnu.jemacs.lang.Package.
+	* Makefile.am (java_sources):  Renamed from java_JAVA and update.
+	* defun.java (scanForDefinitions):  Handle symbols as Bindings.
+	* defvar.java (scanForDefinitions):  Likewise.
+	* setq.java (rewriteForm):  Likewise.
+
+2001-06-03  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (writeFormat, displayFormat):  New fields.
+	(getFormat): New method.
+	(<init>):  Define procedures prin1 and princ.
+	(print):  Removed method.
+
+2001-05-16  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java:  Update to use LangPrimType.
+
+2001-05-01  Per Bothner  <per@bothner.com>
+
+	Steps to making jemacs depends on commonlisp rather than vice versa.
+	* UnwindProtect.java:  Moved from ../../../gnu/jemacs/lang.
+	* defun.java:  Moved from ../../../gnu/jemacs/lang.
+	* defvar.java:  Moved from ../../../gnu/jemacs/lang.
+	* setq.java:  Moved from ../../../gnu/jemacs/lang.
+	* Makefile.am (java_JAVA):  Update accordingly.
+	* CommonLisp.java:  Likewise update.
+	(getTypeFor):  Remove Emacs-specific types.
+
+2001-04-24  Per Bothner  <per@bothner.com>
+
+	* CLispReader.java:  New class, extends LispReader.
+	* CommonLisp.java:  Change ELispReader/ELisp to CLispReader/CommonLisp.
+	* Makefile.am (java_JAVA):  Add CommonLisp.java.
+	Inlcude Make-rules and support gcj-compilation.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java:  Update for new gnu.lists.
+	(asNumber):  Don't allow Position.
+	(getName):  Return "CommonLisp" (not "Emacs-Lisp"!).
+
+2000-10-14  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (getInstance): Restore current Environment when done.
+
+2000-10-12  Per Bothner  <per@bothner.com>
+
+	* CommonLisp.java (<init>):  Update classes used for eq and equal.
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	New package.
+	* CommonLisp.java:  New class, extends Interpreter.
+	* Makefile.am:  New.

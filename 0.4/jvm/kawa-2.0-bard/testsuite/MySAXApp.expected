@@ -1,0 +1,53 @@
+Start document
+1:9: Start element: reviews
+2:1: Characters:    "\n"
+2:7: Start element: entry
+3:1: Characters:    "\n"
+3:7: Start element: title
+3:23: Characters:    "Data on the Web"
+3:30: End element: title
+4:1: Characters:    "\n"
+4:7: Start element: price
+4:13: Characters:    "34.95"
+4:20: End element: price
+5:1: Characters:    "\n"
+5:8: Start element: review
+8:9: Characters:    "\nA very good discussion of semi-structured database\n               systems and XML.\n        "
+8:17: End element: review
+9:1: Characters:    "\n"
+9:8: End element: entry
+10:1: Characters:    "\n"
+10:7: Start element: entry
+11:1: Characters:    "\n"
+11:7: Start element: title
+11:52: Characters:    "Advanced Programming in the Unix environment"
+11:59: End element: title
+12:1: Characters:    "\n"
+12:7: Start element: price
+12:13: Characters:    "65.95"
+12:20: End element: price
+13:1: Characters:    "\n"
+13:8: Start element: review
+15:9: Characters:    "\nA clear and detailed discussion of UNIX programming.\n        "
+15:17: End element: review
+16:1: Characters:    "\n"
+16:8: End element: entry
+17:1: Characters:    "\n"
+17:7: Start element: entry
+18:1: Characters:    "\n"
+18:7: Start element: title
+18:26: Characters:    "TCP/IP Illustrated"
+18:33: End element: title
+19:1: Characters:    "\n"
+19:7: Start element: price
+19:13: Characters:    "65.95"
+19:20: End element: price
+20:1: Characters:    "\n"
+20:8: Start element: review
+22:9: Characters:    "\nOne of the best books on TCP/IP.\n        "
+22:17: End element: review
+23:1: Characters:    "\n"
+23:8: End element: entry
+24:1: Characters:    "\n"
+24:10: End element: reviews
+End document

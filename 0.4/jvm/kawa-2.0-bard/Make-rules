@@ -1,0 +1,41 @@
+SUFFIXES = .java .class .scm .el .lisp
+
+javadir=$(datadir)/java/$(subdir)
+CLASSPATH = $(JAVAROOT)$(CLASSPATH_SEPARATOR)$(srcdir)@filesep@$(JAVAROOT)$(CLASSPATH_SEPARATOR)@conf_classpath@$$CLASSPATH
+CLASSPATH_ENV = CLASSPATH="$(CLASSPATH)"
+JAVAROOT = $(top_builddir)
+JAR = fastjar
+OFILES_DIR = $(TO_TOPDIR)/bin
+TO_TOPDIR = $(top_builddir)
+if WITH_LIBTOOL
+LIBTOOL = libtool
+PACKAGE_OFILE = $(OFILES_DIR)/$(PACKAGE_FNAME).lo
+else
+PACKAGE_OFILE = $(OFILES_DIR)/$(PACKAGE_FNAME).o
+endif
+java_Java= $(java_BUILT) $(java_sources)
+DISTFILES = $(DIST_COMMON)  $(java_sources) $(java_SCM) $(TEXINFOS) $(EXTRA_DIST)
+CLEANFILES = $(java_BUILT) *.class *.stamp *.jar $(PACKAGE_OFILE) $(EXTRA_CLEAN)
+
+java-classes.stamp: $(java_Java)
+	$(JAVAC) -d $(JAVAROOT) -classpath "$(CLASSPATH)" $(JAVACFLAGS) $?
+	echo timestamp > java-classes.stamp
+	echo timestamp > $(TO_TOPDIR)/kawa-jar.stamp
+
+KAWA_COMPILER = $(JAVA) -classpath "$(CLASSPATH)" kawa.repl -d $(top_builddir) \
+  -P `echo $(PACKAGE_FNAME)|sed -e s/-/./g`.
+
+scm-classes.stamp: $(java_SCM)
+	$(KAWA_COMPILER) --module-static-run $(SCM_COMPILE_FLAGS) -C $?
+	echo timestamp > scm-classes.stamp
+	echo timestamp > $(TO_TOPDIR)/kawa-jar.stamp
+
+clisp-classes.stamp: $(java_CLISP)
+	$(KAWA_COMPILER) --clisp -C $?
+	echo timestamp > clisp-classes.stamp
+	echo timestamp > $(TO_TOPDIR)/kawa-jar.stamp
+
+elisp-classes.stamp: $(java_ELISP)
+	$(KAWA_COMPILER) --elisp -C $?
+	echo timestamp > elisp-classes.stamp
+	echo timestamp > $(TO_TOPDIR)/kawa-jar.stamp

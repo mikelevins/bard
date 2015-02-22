@@ -1,0 +1,836 @@
+2014-11-17  Jamison Hope  <jrh@theptrgroup.com>
+
+	Implemented quaternions.
+	* Quaternion.java, CQuaternion.java, DQuaternion.java: New files.
+	* Makefile.am: Update accordingly.
+	* Quantity.java: Change number() type to Quaternion, add accessors
+	for "j" and "k" parts.
+	* CQuantity.java (<init>, number, readExternal): Update
+	accordingly.
+	* DQuantity.java (number): Likewise.
+	* Complex.java: Change superclass from Quantity to Quaternion.
+	(complexPart, vectorPart, unitVector, unitQuaternion, conjugate,
+	colatitude, longitude, sin, cos, tan): New methods.
+	(doubleValue, doubleImagValue, doubleRealValue, longValue): Move
+	to Quaternion.java.
+	* DComplex.java (sin, cos, tan, unitQuaternion): New methods.
+	* RealNum.java (vectorPart, unitVector, unitQuaternion, cos, tan):
+	New methods.
+	(sin): Change return type from Complex to RealNum.
+
+2014-11-12  Jamison Hope  <jrh@theptrgroup.com>
+
+	* IntNum.java (compare): Cast argument to Numeric instead of
+	RealNum if using compareReversed.
+	This fixes (= an-IntNum a-Complex).
+	* Complex.java (equals): Fix bug in imaginary part check.
+
+2014-02-20  Jamison Hope  <jrh@theptrgroup.com>
+
+	* RealNum.java (angle): The angle of a negative real is pi.
+
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* RealNum.java (isReal): New static method.
+	* DFloNum.java: Use RealNum.isReal.
+	* RealNum.java (asRealNumOrNull): Don't throw Error.
+	* DateTime.java: Likewise.
+	* Duration.java: Likewise.
+	* ExponentialFormat.java: Likewise.
+	* FixedRealFormat.java: Likewise.
+	* IntNum.java: Likewise.
+
+2013-09-03  Per Bothner  <per@bothner.com>
+
+	* RealNum.java (angle): New method - return exact zero.
+
+2013-09-01  Per Bothner  <per@bothner.com>
+
+	* DFloNum.java (compare): Use compareReversed when needed.
+	This fixes (= a-DFloNum a-Complex).
+
+2013-08-30  Per Bothner  <per@bothner.com>
+
+	* Complex.java (classifyFinite): New method.
+	* RealNum.java (classifyFinite): New override.
+	* RatNum.java (classifyFinite): New override.
+
+2013-03-18  Per Bothner  <per@bothner.com>
+
+	* ExponentialFormat.java (style): New flag.
+	(format): Use it to control handling of '~g' format.
+	(format):  Allow general Number, not just RealNum.
+
+2012-11-09  Per Bothner  <per@bothner.com>
+
+	* RatNum.java (compare): Fix bug when comparing two infinites,
+	where both denominators are zero.  Bug reported by John Cowan.
+
+2011-09-24  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (shift(long,int)): Fix serious copy-and-paste errors.
+	This caused JEmacs's point-at-eol to break.
+
+2010-12-27  Per Bothner  <per@bothner.com>
+
+	* RealNum.java (sqrt): If the argument is negative, return a CComplex,
+	with exact real part and inexact imaginary part.  This also uses
+	a simpler and faster algorothm, but it does need an extra object.
+	* DFloNum.java (toString(String)): New static method.
+	* Complex.java (make): Return real part of only if imaginary part
+	is exact zero, not any zero.
+	Also only return a DComplex if both parts are inexact.
+	(toString): Don't add '+' before imaginary part if it starts with '='.
+	* DComplex.java (toString): General re-write.
+	Use new R6RS syntax for inexact non-finite reals.
+
+2010-10-04  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (inRange): New method.  Previously a static method
+	in gnu/kawa/functions/CompileArith.java.
+	(inIntRange, inLongRange): New convenience methods.
+
+2010-08-31  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (valueOf): Handle an initial '+'.
+	This is handled by Long.parseLong in JDK 7, but not JDK 6.
+
+2009-12-05  Per Bothner  <per@bothner.com>
+
+	* RatNum.java (rneg): New method.
+	* RealNum.java (rneg): Hence needs to be non-final.
+	* FixedRealFormat.java: Major re-write.  Minimal support for Complex.
+	If the precision is unspecified, then use Double.toString for
+	better rounding.  Little fixes based on test failures.
+
+2009-10-18  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (shift): Two new overloaded static methods, for
+	int and long general shift, useful for compiled code.
+
+2009-10-02  Per Bothner  <per@bothner.com>
+
+	* FixedRealFormat.java (format): Use asRealNumOrNull rather than a
+	plain case so we can handle non-Numeric Numbers.
+
+2009-09-30  Per Bothner  <per@bothner.com>
+
+	* DFloNum.java (asDFloNumOrNull): New static method.
+
+2009-09-20  Per Bothner  <per@bothner.com>
+
+	* Numeric.java (NONNEG_MOD): New rounding mode.
+	* IntNum.java (divide*2): Support NONNEG_MOD.
+	(remainder): New static method takes a rounding-mode parameter.
+
+	* Numeric.java (asNumericOrNull): New static method.
+
+	* Numeric.java (toExact, toInexact): New methods.
+	* RealNum.java (toInexact): New method.
+	* Complex.java (toExact, toInexact): New methods.
+	* DComplex.java (toExact, toInexact): New methods.
+
+2009-09-19  Per Bothner  <per@bothner.com>
+
+	* DFloNum.java (toString): Change to use R6RS syntax for NaN/inf.
+
+2009-09-11  Per Bothner  <per@bothner.com>
+
+	* RealNum.java (asRealNumOrNull): New static method.
+	* RatNum.java (asRatNumOrNull): New static method.
+	(valueOf): New method, with logic moved from
+	gnu.kawa.functions.Arithmetic.asRatNum.
+
+2008-07-17  Per Bothner  <per@bothner.com>
+
+	* BitOps.java: New primitive for R6RS bitwise- operations.
+	(dataBufferFor): New helper method.
+	(setButValue, lowestBitSet, reverseBits): New static methods.
+
+2008-01-26  Per Bothner  <per@bothner.com>
+
+	* IntNum.java: Performance improvements for formatting.
+	(format, format): Use StringBulder if JAVA5.
+	Use {StringBuffer,StringBuilder}.append({int,long}) if possible,
+	since JDK (at least current OpenJDK) optimizes those.
+	When we have to do bignum division, divide by 10**9 each time
+	rather than 10 (assuming radix==10).
+
+2007-11-05  Per Bothner  <per@bothner.com>
+
+	* RatNum.java (neg): New static method.
+
+2007-11-02  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (asIntNumOrNull): New static method.
+
+2007-06-20  Thomas Kirk  <tk@research.att.com>
+
+	* IntNum.java (readExternal): Fix logic error.
+	Fixes Sqavannah bug #20213: "fix for gnu.math.IntNum serialization".
+
+2007-06-10  Helge Dietert
+	    Per Bothner  <per@bothner.com>
+
+	* IntNum.java (gcd): If high-order bit is set, we need one more word.
+	Fixes Savannah bug# 20123 "Can't correctly divide
+	1307674368000/2874009600".
+
+2006-11-29  Per Bothner  <per@bothner.com>
+
+	* Duration.java (valueOf): Calculate seconds using long to
+	minimize risk over overflow.
+
+2006-10-25  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (quotient): Must strip off excess zeroe from remainder
+	before we check for a zero remainder for rounding up/down.  This fixes
+	Savannah bug #18089 "possible rounding bug in gnu.math.IntNum".
+	
+2006-10-19  Per Bothner  <per@bothner.com>
+
+	* DateTime.java (cast): Copy nameseconds.
+
+	* DateTime.java (compare): Semi-kludge to "normalize" date-less
+	time values, adjusting for timezone to asme date 0.
+
+	* DateTime.java (adjustTimezone): Don't set millis if original did not
+	have timezone.  If it did, and was a time-less date, clear time fields
+
+	* Duration.java (times): Check for overflow.
+
+2006-10-11  Per Bothner  <per@bothner.com>
+
+	* Duration.java (parse): Slightly improved error message.
+
+	* Duration.java (valueOf): Catch more errors.
+
+	* DateTime.java (parsedate): Before strict about syntax, and
+	range of days in month.
+	(parseZoneMinutes): The minutes part of the offset is not optional.
+	(parseTime): We don' allow leap seconds - i.e. second 60.
+	(parseTime): If the hour is 24, minutes and seconds must be 0.
+
+2006-10-06  Per Bothner  <per@bothner.com>
+
+	* DateTime.java (parseDate): Check that day and month are in range.
+	(parseZoneMinutes): Check that time zone offset is in range.
+	(add): Check that argument types are allowed.
+
+	* DateTime.java (add): Fix some logic errors.
+	If TIME_MASK is clear, truncate to 00:00:00.
+
+	* Duration.java (valueOf): Plain "P" is an error.
+
+	* Duration (add):  Handle Duration+DateTime as DateTime+Duration.
+	(div): Check for divide by 0.0 or NaN.
+	(add, times): More checking for invalid arguments.
+
+	* Numeric.java (compare): Tweak specification of return codes.
+	* Duration.java (compare): Return -2 if unequal.
+
+	* DateTime.java (minutesToTimeZone): New static method.
+	(setTimeZone): New method.
+
+2006-09-30  Per Bothner  <per@bothner.com>
+
+	* Duration.java (valueOf): Fix off-by-one error.
+
+2006-09-28  Per Bothner  <per@bothner.com>
+
+	* Duration.java (getMinutes, getSecondsOnly): Fix thinkos.
+
+2006-09-26  Per Bothner  <per@bothner.com>
+
+	* Duration.java (times) Throw ArithmeticException if y is NaN,
+	as required by XQuery Functions & Operators specification.
+
+2006-09-14  Per Bothner  <per@bothner.com>
+
+	* Duration.java (hashCode, equals, equals): New methods.
+
+2006-09-11  Per Bothner  <per@bothner.com>
+
+	* RealNum.java: Remove unused local variable.
+
+2006-09-06  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (format): Remove unused local 'buf_size'.
+
+2006-08-23  Per Bothner  <per@bothner.com>
+
+	* Duration.java (times): Do rounding as specified for XQuery F&O.
+
+	* DateTime.java (minDate): New field.
+	(<init>): Do setGregorianChange to minDate to disable Julian calendar.
+
+	* DateTime.java (parseDate): Fix handling of non-positive years.
+	(getYear): Fix off-by-one bug for BC years.
+	(add): Handle the case when we have a non-positive year.
+	(toStringDate): Fix printing of BC years.
+
+2006-06-23  Per Bothner  <per@bothner.com>
+
+	* DComplex.java (hypot): Make conditional on #ifndef JAVA5.
+	(power, log, sqrt): Use Math.hypot #ifdef JAVA5.
+	* Complex.java (abd): Likewise.
+
+2006-05-23  Per Bothner  <per@bothner.com>
+
+	* Duration.java (add): Remove unused local variable add.
+
+2006-04-05  Per Bothner  <per@bothner.com>
+
+	* Duration.java (toString): Remove incomplete JAVA5 optimization.
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* DateTime.java (add): Fix sign error.
+
+2006-03-14  Per Bothner  <per@bothner.com>
+
+	* DateTime.java: New class, extends Quantity.
+	* Makefile.am: Update accordingly.
+	* Unit.java (date): New unit.
+
+	* Duration.java (valueOf): Handle fractional seconds.
+	(appendNanoSeconds): New static helper method.
+	(toString): Use appendNanoSeconds.
+
+	* Duration.java (getTotalMinutes): New method.
+
+	* RealNum.java (toStringScientific, toStringDecimal): New methods.
+	* ExponentialFormat.java (format): Some new helper overloads.
+	(format): Major rewrite to use Double/Float.toString when precision
+	is unspecified, so we get the right rounding.
+	Also change output to never add right-padding for "~g".
+
+2006-03-07  Per Bothner  <per@bothner.com>
+
+	* Duration.java (seconds): Change from int to long.
+	Lots of consequential updates, including casts, added.
+
+	* Duration.java (getTotalMonths, getTotalSeconds): New methods,
+
+	* Duration.java (toString): Fix string for 0 yearMontDuration.
+
+	* Duration.java (div): New static method to divide Durations.
+	(div(Object)): Use new method.
+
+	* IntNum.java (asBigDecimal): Fix use of wrong method.
+
+2006-03-01  Per Bothner  <per@bothner.com>
+
+	* ExponentialFormat.java (exponentShowSign): New flag/option.
+	(fracDigits, exponentChar): Initialize to better defaults.
+
+	* Duration.java: New class, extends Quantity.
+	* Makefile.am: Update accordingly.
+	* Unit.java (NON_COMBINABLE): New constant.
+	(duration, months):: New units.
+	(second): Change to be based on duration.
+
+	* IntNum.java (asBigInteger, asBigDecimal): New methods.
+	* RealNum.java (asBigDecimal): New method.
+
+	* IntNum.java (valueOf): Throw exception if bad input format.
+
+2005-08-22  Per Bothner  <per@bothner.com>
+
+	* RealNum.java (angle): Remove bogus method - angle of a negative
+	real is pi, and hence result is inexact. Use inherited method instead.
+
+2005-07-13  Per Bothner  <per@bothner.com>
+
+	* IntFraction.java (toString(int)): Pass radix to toString for
+	denominator as well as numerator.
+
+2005-04-03  Per Bothner  <per@bothner.com>
+
+	* IntNum.java: Fix two javadoc problems.
+
+2005-01-19  Dominique Boucher <dominique.boucher@nuecho.com>
+	    Per Bothner  <per@bothner.com>
+
+	* ExponentialFormat.java (addOne): Fix fencepost error - test for
+	reaching the start of the substring *before* decrementing.
+
+2005-01-02  Per Bothner  <per@bothner.com>
+
+	* RealNum.java:	Change "select" (preprocessor) syntax.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* Unit.java:  Remove unused import statements.
+
+2004-02-21  Per Bothner  <per@bothner.com>
+
+	* RealNum.java:  Implement Comparable, if JAVA2.
+	(compareTo):  New methods, calls older compare method.
+	* DFloNum.java (compare):  Remove extra instanceof tests,
+	giving us correct exceptions required by Comparable interface.
+	(compareReversed):  Likewise.
+	* IntFraction.java (compare, compareReversed):  Likewise.
+	* IntNum.java (compare):  Likewise.
+
+2003-08-20  Per Bothner  <per@bothner.com>
+
+	* Complex.java:  Make more consistengt with IntNum.
+	(mul):  Rename static 2-operand method to times.
+	(div):  Rename static 2-operand method to divide.
+	* DComplex.java:  Likewise.
+	* DQuantity.java:  Likewise.
+	* MulUnit.java:  Likewise.
+	* Quantity.java:  Likewise.
+	* RealNum.java:  Likewise.
+	* Unit.java:  Likewise.
+
+	* IntNum.java (remainder, modulo):  Return x if y is zero.
+
+2003-08-14  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (sign):  If high-order word is zero, we need to
+	check that remaining words are zero.  Reported by Aubrey Jaffer.
+
+	* IntNum.java (valueOf):  Cheap and more general fits-in-long test.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (compare(IntNum,int)):  New static method.
+
+2001-12-24  Per Bothner  <per@bothner.com>
+
+	* package.html:  Remove "http:" from relative URLs.
+
+2001-08-16  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (setShiftRight):  Avoid undefined shift by 32.
+	Fixes bug found by Hans Boehm Hans <hans_boehm@hp.com> for libgcj.
+
+2001-04-22  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (add, sub):  New static convenience methods.
+
+	* IntFraction.java (doubleValue):  If denominator is zero,
+	return infinity or NaN.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (CLEANFILES):  Remove redundant macro.
+
+2001-02-26  Per Bothner  <per@bothner.com>
+
+	* IntNum.java:  Minor style tweaks.
+
+2000-09-21  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (divide):  Zero-extend results if high-order bit set.
+
+2000-06-09  Per Bothner  <per@bothner.com>
+
+	* NamedUnit.java:  New class, extends Unit.
+	* Makefile.am (java_JAVA):  Add NamedUnit.java.
+	* MulUnit.java:  Implement Externalizable.
+	(lookup, make): New static method.
+	(toString):  Emit '^' and '*' for cleaner output syntax.
+	* BaseUnit.java:  Inherit from NamedUnit. Implement Externalizable.
+	(getDimension):  New method.
+	(<init>):  Added default constructor.  Removed BaseUnit(String).
+	(init, lookup):  New helper methods.
+	(make, compare, getDimension):  New methods.
+	(hashCode):  Change to hashCode of name.
+	* Dimensions.java (endDummy):  Replace by Unit.Empty.
+	* Unit.java:  Make abstract.  No longer implement Externalizable.
+	(<init>)  Remove constructores except default constructor.
+	(define):  Removed some overloaded static methods.
+	(unitTable):  Removed field - replaced by table.
+	(table):  New field.
+	(name):  Removed field - now in NamedUnit.
+	(make, getName):  New methods.
+	(mul):  Use new MulUnit.make method.
+	(<unit>(String,Quantity)):  New constructor.
+
+	* IntNum.java (readResolve):  Fix return type to Object.
+
+	* Quantity.java:  Fix doc comments.
+
+2000-05-22  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (make(int[]):  New method.
+	
+	* DFloNum.java:  No longer implement Compilable.
+	* IntNum.java:  Likewise.
+
+	* IntFraction.java (<init>(IntNum, IntNum)):  Make public.
+
+	* Unit.java:  Implement Externalizable.
+	* CQuantity.java:  Likewise.
+	* DQuantity.java:  Likewise.
+
+2000-05-09  Per Bothner  <per@bothner.com>
+
+	* CComplex.java:  Make implement java.io.Externalizable.
+	(writeExternal, readExternal, default constructor):  Added new methods.
+	* DComplex.java:  Likewise.
+	* DFloNum.java:  Likewise.
+	* IntFraction.java:  Likewise.
+	* IntNum.java:  Likewise.  Also add readResolve method.
+
+2000-04-29  Per Bothner  <per@bothner.com>
+
+	* MPN.java (rshift0):  New method, handles zero shift count.
+	(gcd):  Use rshift0 rather than rshift.
+	* IntNum.java (setShiftRight):  Likewise.
+	(divide):  Simplify by using rshift0.
+	* BitOps.java (extract):  Likewise.
+
+	* MPN.java (rshift(int[],int[],int,int)):  Remove unused method.
+
+2000-02-27  Per Bothner  <per@bothner.com>
+
+	Various tweaks for better javadoc processing.
+	* overview.html:  Renamed to package.html.
+
+1999-12-10  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (makeU):  New static method.
+
+1999-09-05  Per Bothner  <per@bothner.com>
+
+	* Unit.java (<init>):  Constructor do not enter new Unit in unitTable.
+	(define):  New methods, for contructing + entering in unitBale.
+	(pre-defined units):  Use new `define' methods.
+
+	Change so that arithmetic on Units uses this Unit, not the BaseUnit.
+	(unit):  Just returns this.
+	(number)  Returns DFLoNum.one().
+	* DLoNum.java (one):  New static method (and private field).
+
+1999-06-30  Per Bothner  <per@bothner.com>
+
+	* IntNum.java (ten):  New static method.
+	(format(int,StringBuffer)):  New method.
+	(toString):  Uses new format method.
+	* RealNum.java (toScaledInt):  New methods.
+	* ExponentialFormat.java:  New Format class.
+	* FixedRealFormat.java:  New format class.
+	* Makefile.am, Makefile.in (java_JAVA):  Update for new classes.
+
+Tue Feb  2 15:12:38 1999  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (add):  Re-order operands in expression to work-around
+	a bug Visual J++ 6.  Reported by Heather Downs <heather@bungalow.com>.
+
+Wed Dec  2 18:54:30 1998  Dr Alexander Bunkenburg <bunkenba-www@dcs.gla.ac.uk>
+
+	* DComplex.java (log):  Fix x_im -> x_re bug.
+
+Mon Nov 23 14:32:35 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (make):  Don't alloc words array if len==1.
+	(valOf):  New overload, taking byte[] of digits,
+	Other overloads use this new method.  Fixes problem reported
+ 	by Edouard Parmelan <EP510777@exchange.FRANCE.NCR.com>.
+
+Tue Sep 15 11:00:56 1998  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* IntFraction.java (doubleValue): Fix thinko.
+
+Sat Aug 29 20:48:19 1998  Per Bothner  <bothner@cygnus.com>
+
+	* DFloNum.java,IntNum.java: Do ClassType.make instead of new ClassType.
+
+Thu Jul 23 07:54:54 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Dimensions.java (<init>):  Fix missing variable re-initialization.
+
+	* DFloNum.java, IntNum.java:  Update imports.
+	* IntFraction.java, RatNum.java, RealNum.java: Removed unneeded import.
+	* Makefile.am (install-html):  Subsumed by ../Makefile.am.
+
+Wed Jul 22 19:59:59 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Dimensions.java (<init>):  Fix bug (counters not re-initialized).
+
+Wed Jun 24 18:59:48 1998  Per Bothner  <bothner@cygnus.com>
+
+	* RealNum.java (toExactInt):  New methods.
+
+Tue Jun  2 18:54:18 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (divide):  Finish implementation of remainder.
+	(set(IntNum)):  Change to make a copy.
+
+Sun May 24 12:50:43 1998  Per Bothner  <bothner@cygnus.com>
+
+	* *.java:  Renamed xxx_reversed methods to xxxReversed.
+
+Thu May 21 10:21:33 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntFraction (doubleValue):  Minor optimization and extra comment.
+
+Fri May 15 21:41:06 1998  Per Bothner  <bothner@cygnus.com>
+
+	* DFloNum.java (compare(IntNum,IntNum,double)):  Exactly compare
+	ation to double.
+	(compare, compare_reversed):  Use new compare function.
+
+	* IntNum.java (times):  Extra overload, and better efficiency.
+
+Sat Apr  4 17:40:14 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Makefile.am:  Re-write to compile all out-of-date *.java at once.
+	* overview.html:  New file.
+
+Tue Mar 10 22:14:40 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Makefile.am (install-html):  New rule.
+
+Mon Feb 16 15:54:54 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (valueOf):  New overloaded method.
+
+Tue Feb  3 12:53:54 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java, DFlotNum.java:  Update calls to gnu.bytecode methods.
+
+Thu Jan 15 13:42:16 1998  Alcibiades Petrofsky <albatros@wco.com>
+
+	* Complex.java (imMinusOne):  New method.
+	(toString):  Minor fixes.
+	* DComplex.java (toString):  Print infinities and NaN using #i1/0 etc.
+	* DFloNum.java (constructor):  Make sure -0.0 is handled correctly.
+	(toString):  Print infinities and NaN using #i1/0 etc.
+
+	* IntNum.java (negate):  Change return value to boolean (for overflow).
+	(setNegative):  Fix so -2**63 works.
+
+Sat Jan 10 15:08:24 1998  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (getAbsolute):  Fix for negative numbers.
+
+Sat Jan 10 13:53:19 1998  Alcibiades Petrofsky <albatros@wco.com>
+
+	* IntNum.java (roundToDouble, checkBits):  New methods.
+	(doubleValue):  Use roundToDouble.
+	* IntFraction.java (doubleValue):  Use roundToDouble.
+
+Sun Dec 14 15:52:08 1997  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (setAdd);  Fix to handle negative int argument.
+
+Tue Dec  9 14:59:02 1997  James P. White <jim@pagesmiths.com>
+
+	* MPN.java (udiv_qrnnd):  Fix carry bug.
+
+Thu Nov 27 21:37:03 1997  Per Bothner  <bothner@cygnus.com>
+
+	* DFloNum.java, IntNum.java (emit):  Update for gnu.bytecode changes.
+
+Sat Nov  1 20:53:37 1997  Per Bothner  <bothner@cygnus.com>
+
+	* DFloNum.java (toExact):  Make simpler and more efficient.
+
+Wed Jul  2 21:55:53 1997  Per Bothner  <bothner@cygnus.com>
+
+	* RealNum.java (toInt):  Use Math.rint instead of Math.IEEEremainder
+	(buggy in some implementations) for Numeric.ROUND.
+	Suggested by Mike Kenney <mikek@apl.washington.edu>.
+	(toInt):  Provide overloading for unboxed double.
+
+Fri Jun 13 09:26:16 1997  Per Bothner  <bothner@cygnus.com>
+
+	* IntNum.java (initMakeMethods):  Fix typo for makeLogMethod.
+	Reported by Joseph Bowbeer <jozart@compuserve.com>.
+
+Thu May 29 15:04:35 1997  Per Bothner  <bothner@cygnus.com>
+
+	* DFloNum.java (isNegative):  Fix bad think-o.
+
+Fri May 23 17:29:47 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* IntNum.java (gcd):  Check that either arg is zero.
+	* Makefile.{am,in}:  Use CPASSPATH env variable, instead of -classpath.
+
+Tue May 20 22:07:14 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	Fix class initialization cicularities.
+	* Complex.java (imOne):  Chnage from field to method.
+	* RatNum.java (Infinity, NegInfinity):  Replace fields by ...
+	(infinity):  ... new method.
+	* DFloNum.java, IntNum.java:  Update accordingly.
+
+Wed May  7 12:28:35 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* IntNum.java (power):  Handle overflow into sign bit.
+	* IntNum.java (doubleValue):  Fix thinko for 2-word case.
+
+Mon Mar 31 16:29:01 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* LICENSE:  New file - and new license!
+	* *.java:  Added copyright notice.
+
+	* *.java:  Moved package from kawa.math to gnu.math.
+
+Tue Mar 25 15:22:30 1997  Per Bothner  <bothner@kalessin.cygnus.com>
+
+	Update for moved package codegen -> gnu.bytecode and new method names.
+
+	* Quantity.java (compare_reversed):  New method.
+
+Tue Mar 18 13:59:42 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* RealNum.java (compare, compare_reversed, equals, grt, geq): Moved to
+	* Quantity.java:  ... here
+	* Quantity.java, Complex.java:  Implement compare methods.
+
+Mon Mar 17 17:31:11 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* BitOps.java (setBitOp):  Rewrite to work around Microsoft bug.
+	* Unit.java (radian):  New static field, recommended by DSSSL.
+
+Sat Mar  8 08:29:33 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Unit.java (define):  New static method.
+	(cm, im):  Fix typos.
+	* Numeric.java (sub): Make final.
+
+Mon Feb  3 17:09:07 1997  Per Bothner  <bothner@kalessin.cygnus.com>
+
+	* DFloNum.java (makeMethod):  Make public.
+	* IntNum.java (makeIntMethod, makeLongMethod):  Make public.
+	* {DFloNum,IntNum}.java (initMakeMethods):  New methods,
+	* Makefile.{am,in} (CLEANFILES):  Delete *.class, not just $(OBJ).
+
+Tue Jan 21 18:25:50 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Complex.java (doubleRealValue):  Synonym for doubleValue();
+	(polar, power, abs, angle, div, div_reversed, exp, log, sqrt):  New.
+	* DComplex.java (div, power, log, sqrt, hypot):  New methods.
+	* RealNum.java (dov, angle, exp, log, sin, sqrt):  New methods.
+	* Unit.java (sqrt): New (placeholder) method.
+	(mul):  Add extra simplifications.
+	* MulUnit.java (sqrt):  New method.
+
+Mon Jan 20 15:58:50 1997  Per Bothner  <bothner@kalessin.cygnus.com>
+
+	* Numeric.java:  Inherit from java.lang.Number.
+	(intValue, longValue): New methods.
+	* Complex.java, DFloNum.java, IntFraction.java:  New longValue method.
+
+	* DQuantity.java (add):  Adjust for different units.
+	* IntNum.java (longValue):  Support non-normalized value.
+	(appendWord, increment_unsigned, increment): Remove useless code.
+	* Unit.java:  Added minute and hour.
+
+Fri Jan  3 14:44:53 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	Implemented units, quantities, and dimensions for measurements.
+	Implemented complex numbers.
+	* BaseUnit.java, CComplex.java, CQuantity.java, Complex.java,
+	DComplex.java, DFloNum.java, DQuantity.java, MulUnit.java,
+	Quantity.java, Unit.java:  New files.
+	* Makefile.am, Makefile.in:  Update accordingly.
+
+	* Numeric.java, RatNum.java, RatNum.java, IntFraction.java (add,
+	add_reversed):  Virtual and static methods changed to take extra
+	int parameter that second argument is multiplied by.
+	Likewise for static add/plus methods.
+	Rename generalized static plus functions to add.
+	(sub, sub_reversed):  Virtual methods removed.
+
+	* Numeric (div_inv, mul_ident, power):  New methods.
+	* IntNum.java (divide):  Implement ROUND mode for bignum.
+	* RatNum.java, IntNum.java (power):  Re-written.
+	* RealNum.java:  Now inherits from Complex.
+	(re, im, rneg):  New methods.
+	(equ):  Renamed to equals.
+
+Sun Dec 15 22:19:58 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* DFloNum.java (toExact):  New method.
+	* IntNum.java (toInt, toExactInt):  New methods.
+	(quotient):  Add more general overloaded variant.
+	* RatNum.java (power):  New overloaded variant.
+	(equals, to Exact, toInt, toExactInt, rationalize):  New methods.
+	* RealNum.java (toExact, toInt):  New methods.
+
+Fri Dec 13 15:10:38 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* BitOps.java:  New class, implementing "bit-wise integer functions".
+	* Makefile.am, Makefile.in (OBJ):  Add BitOps.class.
+	* IntNum.java (minusOne, make, isMinusOne, power):  New methods.
+	(isOdd, isZero, isOne):  Make final.
+	(wordsNeeded):  Handle the case that len==0.
+	(plus):  Fix various bugs.
+	(doubleValue):  Implement for bignums.
+	(div):  Return an exact rational, rather than an inexact DFloNum.
+	* MPN.java (add_n):  Remove bogus optimization.
+	(mul):  Fix thinko - carry did not add old value of dest.
+	(submul_1):  New function.
+	(divide):  Partial re-write.  Works better now.
+	(set_str):  Merge code for loop and final words.
+	(rshift_long):  New function.
+	(dprint):  Added debugging methods.
+	* RatNum.java (isZero, power):  New methods.
+	(Infinity, NegInfinity):  New static fields.
+
+Wed Nov 20 17:50:03 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* DFloNum.java:  Make arithmetic generic:  We now have
+	other kinds of RealNum besides DFloNum and IntNum.
+	* IntNum (isOne, intLength):  New methods.
+	(set):  Changed to not copy.
+	(divide):  Finish the implementation to support long division.
+	(quotient, remainder, modulo):  Canonicalize result.
+	(add, sub, mul):  Make more generic (don't just support DFloNum).
+	(setAbsolute):  Removed.
+	* MPN.java (add_n):  Minor optimizaton - can avoid masking.
+	(mul_1, mul):  Must use unsigned shift (>>>).
+	(divide):  New method, does long division.
+	(count_leading_zeros):  New method.
+	(cmp):  New method overloading handles differently-sized arguments.
+	(intLength):  New methods.
+	* Numeric.java (add_reversed, sub_reversed, mul_reversed,
+	div_reversed):  New methods.
+	* RatNum.java:  Implement arithmetic on rationals.
+	* RealNum.java (compare_reversed):  New method.
+	* IntFraction.java:  New class, for exact rationals.
+	* Makefile.am, Makefile.in (OBJ):  Add IntFraction.java.
+
+Mon Oct 21 12:59:50 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* IntNum.java (set):  Fix ival clash problem.
+	(valueOf):  Check for high-order bit set.
+
+Thu Oct 17 22:00:51 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* MPN.java (sub_n, udiv_qrnnd, divmod_1, rshift, lshift,
+	findLowestBit, gcd):  New functions.
+	* IntNum.java (realoc):  Don't reallocate if larger size is close.
+	(set):  Fix wrong comparison.
+	(divide for longs):  New function.
+	(divide general):  Use divide for long, or divmod_1.
+	(gcd):  Implement for bignums.
+	(setShiftLeft, setShiftRight, setShift, shift):  New functions.
+	(toString):  We can print bignums in any radix now.
+	(getAbsolute, negate):  New utility methods.
+
+Mon Sep 16 10:55:39 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* DFloNum.java (makeLiteral, emit):  Implement Compilable.
+	* Numeric.java (FLOOR, CEILING, TRUNCATE, ROUND):  New constants.
+	* RealNum.java (max, min):  New methods.
+	* IntNum.java (isOdd):  Check low-order word, not high-order word!
+	(setPlus, set):  New overload variants.
+	(setNeg):  Renamed to setNegative.
+	(divide, quotient, remiander, modulo, lcm):  New methods.
+	* Makefile.{am,in}: (javadir):  Use $(subdir)
+	{DEP_,}DISTFILES):  Do not include DATA (i.e. *.class).
+	Replace generated EXTRA_DIST with ditto SOURCES.
+
+Thu Sep 12 15:40:30 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Numeric.class, RealNum.class, DFloNum.class, RatNum.class,
+	MPN.class, IntNum.class:  New class for re-vamped numerics.
+	* Makefile.{am,in}:  New files.

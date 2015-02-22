@@ -1,0 +1,285 @@
+2014-11-26  Per Bothner  <per@bothner.com>
+
+	* kawa.sh.in: Fix array handling and make it more portable.
+
+2014-11-19  Per Bothner  <per@bothner.com>
+
+	* kawa.sh.in: Add support for -Dkawa.command.line.
+	Also shift any -D and -J options before the kawa.repl class name.
+
+2014-11-18  Per Bothner  <per@bothner.com>
+
+	* kawa.sh.in: New file - template for kawa.sh.
+
+2014-10-14  Per Bothner  <per@bothner.com>
+
+	* configure.in (AC_INIT): Set version to 1.90.
+
+2014-02-21  Per Bothner  <per@bothner.com>
+
+	* configure.ac: Add substitution for JAVA - needed by cgi-servlet.c.
+
+2014-02-20  Per Bothner  <per@bothner.com>
+
+	* configure.ac: New file, used for enable-kawa-frontend support.
+	* Makefile.am: Remove GCJ support. Only used for compiling executables.
+	Scripts like kawa.sh are generated from toplevel.
+	* qexo.in: New file - template for qexo script.
+
+2013-12-30  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Update for new automake convention.
+
+2013-09-23  Matthieu Vachon  <matthieu.o.vachon@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Regularize tmp file naming.
+
+2013-09-22  Per Bothner  <per@bothner.com>
+
+	* kawa.c: Pass -J and -D flags to java launcher.
+	Calculate and set kawa.command.line property..
+
+2012-05-25  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST): New rule, needed for CygWin builds.
+
+2011-08-01  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (kawa.sh): Add conf_classpath to classpath,
+	in the no-kawa-frontend case.
+
+2011-07-30  Per Bothner  <per@bothner.com>
+
+	* kawa.bat.in: New file - input template for kawa.bat, for Windows.
+	* Makefile.am: New rules to make kawa.bat.
+
+2011-07-29  Per Bothner  <per@bothner.com>
+
+	* kawapath.c: Add EXTRAPATH to runtime classpath.
+	* Makefile.am: Pass conf_classpath as EXTRAPATH.
+
+2011-07-21  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (kawa.sh): Fix so it works on Cygwin.
+
+2009-09-25  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: add explicit definitions of binPROGRAMS_INSTALL;
+	for some reason it is missing.
+	Fixes bug reported by François Pinard <pinard@iro.umontreal.ca>.
+
+2009-07-08  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (install-binPROGRAMS): Make install of cgi-servlet
+	conditional on ENABLE_SERVLET.
+
+2008-11-19  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Fix some buglets building with gcj.
+	Pass --rpath even when not using libtool.
+	Set libLTLIBRARIES_INSTALL - it doesn't seem to get defined any more.
+
+2008-11-10  Per Bothner  <per@bothner.com>
+
+	* kawa.c (main): Change "--no-prompt" option to "--no-console".
+
+2007-09-02  Per Bothner  <per@bothner.com>
+
+	* kawa.c (main): Skip readline-handling if stdout (or stdin)
+	isn't a tty, for example if re-directing output to a file.
+
+2007-03-11  Per Bothner  <per@bothner.com>
+
+	* kawa.c (sig_child): Exit with status from inferior.
+	(main): Don't handle SIGCHLD handler.
+	Call sig_child explicitly on inferior eof.
+
+	* kawa.c (set_edit_mode): New function.
+	(main): Call it.
+
+	* kawa.c: Incomplete merge from rlfe.c and remove some old crud
+	for non-working pty handling.  Maybe fix it later.
+	(get_master_pty): Remove function.
+
+2007-02-28  Per Bothner  <per@bothner.com>
+
+	* kawa.c (main): If input is not tty, invoke command immediately
+	wih telnet/pty processing (which do the wrong thing),
+	passing new --no-prompt option.
+
+2007-01-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: A number of changes to avoid using libtool - except
+	when WITH_LIBTOOL is selected.  Various 'install' fixes.
+	(LIBADD_BRL): Don't add brl.o files unless we --enable-brl.
+	(kawa.sh): Fix WITH_GCJ_NO_DBTOOL case.
+	(WITH_GCJ_LIBS, WITHOUT_GCJ_LIBS): Remove unused macros.
+
+2007-01-21  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  If WITH_LIBTOOL, call libtoll in path "by hand".
+	Otherwise, call gcc/gcj directly, without using libtool.
+
+2007-01-10  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (kawa.sh): Rename to plain 'kawa'.
+	Only build and install if !ENABLE_KAWA_FRONTEND.
+	Hence we use 'kawa' as the executable in all cases.
+	(CLEANFILES): Also remove gckawa.
+
+	* kawa.c (get_command): New helper function.
+	(main): Use it, twice.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Conditionalize on WITH_GCJ_DBTOOL.  If true, kawa binary
+	is built like the without-gcj case, with so found automagically.
+	Otherwise, do traditional compilatilon and link.
+	Pass appropriate flags when building kawa and gckawa.
+
+	* Makefile.am (LIBADD_SAX2): New macro - missing SAX2 classes.
+
+	* kawapath.c (get_classpath): Remove support for a kawa zip file.
+
+	* Makefile.am: Remove kawa1 hooks - we just use '$JAVA kawa.repl' now.
+	(AM_CFLAGS): Always compile with -fPIC.
+
+2006-05-07  Per Bothner  <per@bothner.com>
+
+	* kawapath.c (get_classpath): Include "." in default CLASSPATH.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Add conditionals for ENABLE_JEMACS as appropriate.
+
+2005-11-14  Dean Ferreyra <dferreyra@igc.org>
+
+	* kawapath.c (get_classpath): Move declaration so we can compile
+	with old (pre-C99) compilers
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (qexo): New rule, creates qexo wrapper script.
+
+	* kawapath.c (kawajar): New global, initialized from KAWAJAR macro.
+	(get_classpath): Take progname argument.  Use that to search for
+	../kawa-$version.jar when executing in-place.
+	* Makefile.am (WITHOUT_GCJ_DEFS): Define KAWAJAR cpp macro.
+	* cgi-servlet.c (main): Pass argv[0] to get_classpath.
+	* kawa.c (main): Likewise.
+
+	* kawa.c (main): Update rindex -> strrchr.
+
+	* kawa.c: Add a currently-unused hook to bold-face readline input.
+
+2005-04-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Fix/improve various GCJ-related issues.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* cgi-servlet.c: Do #include <string.h>, since strlen is used.
+
+2005-03-06  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Need new definition of LIBTOOL.
+
+2004-01-09  Per Bothner  <per@bothner.com>
+
+	We need extra GCJ libraries now that gnu.kawa.xml uses org.w3c.org.
+	* Makefile.am (EXTRA_LIB_XML):  New macro.
+	(kawa-bin$(EXEEXT)):  Use it.
+
+2003-06-03  Per Bothner  <per@bothner.com>
+
+	* kawa.c (main):  Don't set outgoing argv[0] to incoming argv[0]!
+
+2003-05-18  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (kawa.sh):  If --with-gcj, just exec kawa-bin.
+
+2003-05-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Various fixes.  bin_SCRIPTS is set to gckawa
+	whenever WITH_GCJ is set, regardless of ENABLE_KAWA_FRONTEND.
+	Likewise KAWAPROGS includes kawa-bin whenever WITH_GCJ is set.
+
+2003-02-01  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA2_XML_OFILES):  Add gnu-kawa-xslt.o.
+	(LIBADD_XML):  Add gnu-kawa-xslt.lo.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Various tweaks due to new automake.
+
+2002-02-11  Per Bothner  <per@bothner.com>
+
+	* kawa.c (get_classpath):  Add extern declaration to kill warning.
+
+2002-02-05  Per Bothner  <per@bothner.com>
+
+	* kawapath.c:  Get R_OK from unistd.h rather than fcntl.h.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* kawa.c:  Move some logic to kawapath.c
+	* kawapath.c: New file.
+	* cgi-servlet.c:  New program.
+	* Makefile.am:  Update accordingly.
+
+	* Makefile.am:  Also link in gnu-brl.lo and gnu-kawa-brl.lo.
+
+2001-10-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Update for gnu/kawa/xml.
+
+2001-09-13  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (bin_PROGRAMS, bin_SCRIPTS):  Use automake conditionals.
+	(kawa_bin_SOURCES):  New macro prevents automake expecting kawa-bin.c.
+	(all):  Removed dependency.
+
+2001-08-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (install-exec-bindir):  Conditionally install gckawa.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (gckawa):  New rule to build new script, when --with-gcj.
+
+	* Makefile.am:  If --enable-xml link gnu/xquery/*.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA1_OFILES):  Added gnu-commonlisp-lang.lo.
+	(KAWA2_OFILES):  Add gnu-commonlisp-lisp.o.
+	(XXX.lo):  New rules to control recursion.
+
+2001-06-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Only link gnu-xml.o/gnu-xml.lo if ENABLE_XML is true.
+
+2001-06-04  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (WITHOUT_GCJ_DEFS, kawa.sh):  Change KAWALIB to jar file.
+
+2001-05-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Many changes to support shared libraries using libtool.
+
+2001-04-24  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  $(READLINE_INCLUDE_PATH) should be part of INCLUDES.
+	(DEFS):  Get rid of junk -Dxxx. (Old testing, I believe.)
+
+2001-04-10  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA2_OFILES):  Update gnu-kawa-xml.o -> gnu-xml.o.
+
+2001-03-23  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* kawa.c:  Moved from ../kawa.
+	* Makefile.am:  New file.

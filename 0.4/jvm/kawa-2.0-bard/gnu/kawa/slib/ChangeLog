@@ -1,0 +1,754 @@
+2014-12-01  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi14.scm (char-set<=): Fix bug reported by Seth Alves.
+
+2014-11-27  Seth Alves <alves@hungry.com>
+
+	* srfi60.scm: Add more aliases.
+
+2014-11-26  Per Bothner  <per@bothner.com>
+
+	* srfi60.scm: Add define-alias for arithmetic-shift.
+
+2014-11-24  Per Bothner  <per@bothner.com>
+
+	* cut.scm: Import (scheme base) to avoid dangling references.
+
+2014-11-20  Per Bothner  <per@bothner.com>
+
+	* srfi13.scm (string-copy, string-copy!, string-fill!, string->list):
+	Replaced by aliases to implementations exported by kawa.lib.strings.
+
+2014-09-26  Per Bothner  <per@bothner.com>
+
+	* DefineRecordType.scm: Move to kawa/lib.
+	* Makefile.am: Update accordingly.
+
+2014-09-04  Per Bothner  <per@bothner.com>
+
+	* enums.scm: Update for syntax-error -> report-syntax-error renaming.
+	* srfi2.scm: Likewise.
+
+2014-08-04  Per Bothner  <per@bothner.com>
+
+	* srfi13.scm (string-for-each): Replace by alias for
+	srfi-13-string-for-each.
+
+2014-07-02  Per Bothner  <per@bothner.com>
+
+	* srfi14.scm (char-set): Update since character is now primitive.
+
+2014-05-31  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST): Add char-tables.iscm.
+	* srfi14.scm: Use include-relative rather than include.
+
+2014-05-05  Per Bothner  <per@bothner.com>
+
+	* syntaxutils.scm: Add quotation for @ symbol (i.e. |@|)
+	since @ is now used for $splice$ read syntax.
+
+2014-04-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: New rules to regenerate char-tables.iscm using
+	gnu/kawa/util/generate-charsets.scm.
+
+	* char-tables.iscm: New file - soon to be auto-generated.
+	* srfi14.scm: Move the actual character tables into separate file.
+
+2014-02-18  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi60.scm: New implementation of SRFI-60.
+	* Makefile.am: Update accordingly.
+
+2014-02-06  Seth Alves
+
+	* srfi13.scm (string-trim-right):  Import bug-fix from reference
+	implementation.
+
+2014-01-30   Mark H Weaver <mhw@netris.org>
+
+	* testing.scm (%test-evaluate-with-catch): Improved Guile's
+	implementation to record 'actual-error' if there's an error.
+
+	* testing.scm: Fix typo '%test-approximimate=' -> '%test-approximate='.
+
+	* testing.scm (test-error): In the default implementation
+	'%test-report-result' was being called twice: once by '%test-error',
+	and once by 'test-assert'.
+
+2014-01-29  Mark H Weaver <mhw@netris.org>
+
+	* testing.scm: Patches to better support Guile-2.
+
+2013-10-19  David Van Horn
+	    Per Bothner  <per@bothner.com>
+
+	* ralists.scm: Port of SRFI-101 "Purely Functional Random-Access
+	Pairs and Lists" reference implementation.  Low-level code
+	re-written in Java as gnu/lists/RAPair.java.
+	* Makefile.am: Update accordingly.
+
+2013-09-25  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm (make-list, list-copy): Commented out, since
+	now in lists.scm.
+
+2013-09-06  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Generalize test-approximimate to complex.
+	(%test-approximimate=): Handle non-real complex numbers.
+
+2013-06-02  Per Bothner  <per@bothner.com>
+
+	* conditions.scm: Minor tweaks.
+
+2013-02-23  Per Bothner  <per@bothner.com>
+
+	* printf.scm (formal-real): Add missing else for case.
+	* srfi14.scm (->char-set): Add missing else for case.
+
+2013-02-02  Per Bothner  <per@bothner.com>
+
+	* testing.scm (test-on-test-begin-simple): Fix thinko.
+
+2012-12-26  Álvaro Castro-Castilla
+
+	* testing.scm: Modified for Scheme Spheres.
+
+2012-12-23  Per Bothner  <per@bothner.com>
+
+	* srfi14.scm (%boundary-pairs-union): Fix for Savannah bug #37633
+	"char-set-union with same char-sets".  Fix by anonymous;
+	verified by Jamison Hope.
+
+2012-12-22  Per Bothner  <per@bothner.com>
+
+	* pregexp.scm (pregexp-error): Just define as error function.
+	(pregexp-match-positions-aux): Remove unreachable constant.
+
+2012-11-18  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Add test-group to list of exported names.
+
+2012-09-11  Helmut Eller  <eller.helmut@gmail.com>
+
+	Fix Savannah bug #15579.
+	Handle some complex arglists, in particular #!rest args.
+	* syntaxutils.scm (unrewrite-arglist): New function.
+	(unrewrite): Use it.
+
+2012-07-10  Per Bothner  <per@bothner.com>
+
+	* Xutils.scm: Moved to gnu/xquery/util.
+	* Makefile.am: Update accordingly.
+
+	* Xutils.scm: New file.
+	(count-values): New function.
+	* Makefile.am: Update accordingly.
+
+2012-07-03  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Conditionalize gui.scm on WITH_AWT.
+
+2012-03-11  Per Bothner  <per@bothner.com>
+
+	* srfi69.scm (symbol-hash, vector-hash): Remove non-exported
+	un-used functions.
+
+	* conditions.scm: Add some missing exports.
+
+	* StreamsPrimitive.scm (stream-force): Moved from here ...
+	* StreamsType.scm: ... here, because it is no part of the API
+	for streams.primitive.
+
+2012-02-07  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi13.scm (let-optionals*): Re-implement to better match reference
+	implementation.  This fixes a crash when calling string-contains.
+
+2012-02-05  Per Bothner  <per@bothner.com>
+
+	* enums.scm: Use #, and #,@ instead of , and ,@ in quasisyntax.
+
+2012-01-31  Per Bothner  <per@bothner.com>
+
+	* StreamsType.scm: Rewrite to build on top of
+	the new delay/lazy/force primitives.
+	* StreamsPrimitive.scm: Mostly re-write.
+
+2011-12-09  Per Bothner  <per@bothner.com>
+
+	* gui.scm (image-width, image-height): Fix typo.
+	* Makefile.am (SCM_COMPILE_FLAGS): New flags.
+
+2011-10-29  Per Bothner  <per@bothner.com>
+
+	* readtable.scm (define-reader-ctor): Improve type specifiers
+	to avoid compiler warning.
+
+2011-09-24  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi14.scm: Update character sets to match Unicode 6 and the
+	Java-7 java.lang.Character predicates.
+
+2011-05-02  Per Bothner  <per@bothner.com>
+
+	* syntaxutils.scm (unrewrite-let): Update for new LetExp representation.
+
+2011-02-25  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi13.scm: Fixes to allows compilation without warnings.
+	(check-arg, char-cased?): New procedures.
+	(:optional, let-optionals*): New syntax.
+
+2011-02-10  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi14.scm: Fix Java-6 dependency.
+
+2011-02-08  Jamison Hope  <jrh@theptrgroup.com>
+
+	* srfi14.scm: New implementation of SRFI-14.
+	* Makefile.am: Update accordingly.
+
+2011-01-17  Per Bothner  <per@bothner.com>
+
+	* syntaxutils.scm (rewrite-form): Call Language#getCompilation rather
+	than hard-wiring in call the Translator constructor.
+
+2011-01-03  Per Bothner  <per@bothner.com>
+
+	* enums.scm (%define-enum): Inline use of symbol-append.
+	Use string literal instead of quoted symbol for "[]".
+	(symbol-append): Remove function.
+
+2010-11-20  Philip L. Bewig
+            Jamison Hope <jrh@theptrgroup.com>
+            Per Bothner  <per@bothner.com>
+
+	Implementation of SRFI-41.
+	* StreamsPrimitive.scm: New file, implements (streams primitive).
+	* StreamsDerived.scm: New file, implements (streams derived).
+	* Streams.scm: New file, implements (streams).
+	* StreamsType.scm: New file, defines stream-type.
+	* Makefile.am (java_SCM): Update accordingly.
+
+2010-11-18  Per Bothner  <per@bothner.com>
+
+	* DefineRecordType.scm (define-record-type):  Instead of expanding to
+	define-simple-class, expand to define-class with an explicit
+	'interface: #f' argument.  This is to force a member class, rather
+	than a package-level class.
+
+2010-11-06  Per Bothner  <per@bothner.com>
+
+	* enums.scm (%define-enum): Add static valueOf method.
+
+2010-10-28  Jamison Hope  <jrh@theptrgroup.com>
+	    Per Bothner  <per@bothner.com>
+
+	* enums.scm: New module implements define-enum.
+	* Makefile.am: Update accordingly.
+
+2010-10-24  Per Bothner  <per@bothner.com>
+
+	* syntaxutils.scm (macroexpand): Rename to ...
+	(expand): ... new name.
+	* Makefile.am (java_SCM): Add syntaxutils.scm.
+
+	* syntaxutils.scm (unrewrite): Check for #!null else in IfExp.
+
+2010-10-24  Helmut Eller <eller.helmut@gmail.com>
+
+	* syntaxutils.scm: New file (contributed as macrosexpand.scm).
+
+2010-05-31  Per Bothner  <per@bothner.com>
+
+	* XML.scm (element-name, attribute-name): New functions.
+
+2009-12-25  root  <per@bothner.com>
+
+	* testing.scm (%test-source-line2, %test-comp2): Use plain define,
+	rather than define-for-syntax, since these need to be in .class file.
+
+2009-12-01  Per Bothner  <per@bothner.com>
+
+	* XML.scm: Minor tweaks.
+
+2009-08-30  Per Bothner  <per@bothner.com>
+
+	* srfi2.scm: New module, implements srfi-2.
+	* Makefile.am: Update accordingly.
+
+2009-08-14  Per Bothner  <per@bothner.com>
+
+	* srfi13.scm: Start adding type-specifiers and optimizing.
+
+2009-08-13  Per Bothner  <per@bothner.com>
+	    Olin Shivers
+
+	* srfi13.scm: Reference implementation of SRFI-13.  Will need work.
+	* Makefile.am: Update accordingly.
+
+2009-05-30  Per Bothner  <per@bothner.com>
+	    Dorai Sitaram
+
+	* pregexp.scm: Get complete version.
+	Also add commented-out version based on java.util.regex.
+	* Makefile.am: Build pregexp.scm.
+
+2009-03-15  Per Bothner  <per@bothner.com>
+
+	* srfi69.scm: Move some code into kawa/lib/kawa/hashtable.scm and
+	kawa/lib/rnrs/hashtables.scm.
+	Change to make use of that - and R6RS library support.
+
+2009-03-07  Per Bothner  <per@bothner.com>
+
+	* srfi69.scm: Various updates for changes in GeneralHashTable.
+
+2007-09-02  Per Bothner  <per@bothner.com>
+
+	* gui.scm (button-keyword, window-keyword):  The java.lang.String
+	parameter is now a String string, not a symbol.
+
+2007-02-27  Per Bothner  <per@bothner.com>
+
+	* testing.scm (%test-error): Need separate Kawa case for exception
+	type #t.
+
+2007-02-14  Per Bothner  <per@bothner.com>
+
+	* testing.scm (test-runner-reset): Initialize test-result-alist!.
+	This is needed in the case of zero tests.
+
+	* testing.scm (%test-record-define): Fix off-by-one error.
+
+2007-01-20  Per Bothner  <per@bothner.com>
+
+	* XML.scm (commmet, processing-instruction): New constants.
+
+2007-01-04  Per Bothner  <per@bothner.com>
+
+	* gui.scm (uri): Use Path's openInputStream method.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Simplify - we use '$JAVA kawa.repl' rather than $KAWA1.
+
+2006-12-05  Per Bothner  <per@bothner.com>
+
+	* printf.scm: Replace slib:error by error.
+	Relace stdio:fprintf by fprintf.
+	Replace slib:tab and slib:form-feed by appropriate character literals.
+
+	* swing.scm (polygon): Take doubleValue of real-part results so
+	JAVA6 doesn't complin about ambiguous method.  Add type specifiers.
+
+2006-08-11  Per Bothner  <per@bothner.com>
+
+	* testing.scm (%test-comp1body):  Remove incorrect setting of
+	expected-value property - to R5RS standard function exp.
+
+	* testing.scm (test-assert): Fix thinko expr -> test-expression.
+
+2006-06-06  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Rename non-exported names to consistently start with %.
+	Add list of exported names, which in Kawa becomes a module-export.
+	(%test-any-specifier-matches): Don't short-curcuit evaluation.
+	(test-runner-on-bad-end-name, test-runner-on-bad-end-name!): New
+	test-runner method.
+	(test-on-bad-end-name-simple): Default implementation.
+	(%test-format-line): New helper.
+	(%test-end): Various changes, including call new on-bad-end-name
+	call-back, and use %test-format-line.
+	(test-on-group-end-simple): Emit group name.
+
+2006-05-25  Per Bothner  <per@bothner.com>
+
+	* srfi37.scm: Add needed require.
+
+	* swing.scm (modle-export): Remove removed frame function.
+
+2006-05-11  Per Bothner  <per@bothner.com>
+
+	* genwrite.scm (generic-write): Remove special handling of atomic types.
+
+2006-05-02  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Rename internal names to consistently start with '%'.
+	(test-error%x): Remove macro.
+	(%test-error): Re-arrange cond-expand branches.
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm (append-map, append-map!):  Fix errors (in Kawa-specific
+	changes).
+	Fixes Savannah bug #15579 "append-map may destroy arguments".
+
+2006-02-21  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Lots of fixes and improvements.
+	(test-source-location-cons%): Remove syntax.
+	(test-name): Remove test-runner field.
+	(group-path): Renamed field to groups-stack.
+	(test-%should-execute-test): Now also sets preliminary result-kind.
+	(test-runner-group-path): Now implemented using test-runner-group-stack.
+	(test-match-any%, test-match-all%): Take variable number of arguments.
+	(test-make-predicate%): Remove - use test-asspecifier% instead.
+	(test-match-named): Renamed to test-match-name.
+	(test-end, test-end%): Reimplement for better error handling/checking.
+	(test-runner-result-alist): Renamed to test-result-alist.
+
+2006-01-11  Per Bothner  <per@bothner.com>
+
+	* gui.scm: Move Swing-specific functions to ...
+	* swing.scm: ... new file.
+	* Makefile.am: Update accordingly.
+
+	* Makefile.am (EXTRA_DIST): Belatedly remove HTTP.scm.
+
+2006-01-10  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm: Moved to gnu/kawa/servlet.
+	* Makefile.am: Update accordingly.  Also, do conditionalizing on
+	ENABLE_SERVLET consitioning here rather than at top-level.
+
+2006-01-04  Per Bothner  <per@bothner.com>
+
+	* gui.scm (image-read): Generalize to use URI_utils.
+
+2005-12-30  Per Bothner  <per@bothner.com>
+
+	* readtable.scm (define-reader-ctor): New function from SRFI-10.
+
+2005-11-29  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm (cons*): Reimplement using new gnu.lists.LList:consX.
+
+2005-10-24  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Add more Kawa tweaks.
+	Add non-basic support for mzscheme.
+	(test-source-location-cons%): Now deprecated - not used for Kawa.
+	(test-runner-get): New function.
+	Use it where appropriate.
+	(test-begin): For Kawa, actual definition is now pre-loaded.
+	(test-result-ref): Move earlier, as needed for mzscheme.
+	(test-source-line2): Now works for mzscheme as well as Kawa.
+	(test-assert%): Inline macro into test-assert.
+	(test-comp2%): mzscheme needs to define-for-syntax.
+	(test-error%): More test-comp1body% call, so we can skip
+	the test if we don't support catching errors.
+	(test-as-specifier%): New function to "coerce" test specifiers.
+	(test-skip, test-expect-fail): Use it.
+	(test-read-eval-string string): New function.
+
+	* conditions.scm: Add appropriate (provide 'FEATURE) macros.
+	* srfi1.scm: Likewise.
+	* srfi34.scm: Likewise.
+	* srfi69.scm: Likewise.
+
+2005-10-20  Per Bothner  <per@bothner.com>
+
+	* srfi34.scm: New implementation of SRFI-34 (Exception Handling for
+	Programs).
+	* conditions.scm: New implementation of SRFI-35 (Conditions).
+	* Makefile.am: Update accordingly.
+
+2005-10-16  Per Bothner  <per@bothner.com>
+
+	* srfi69.scm: Major re-write for Kawa.
+	* Makefile.am (java_SCM): Add srfi69.scm.
+
+2005-10-16  Panu Kalliokoski  <atehwa@sange.fi>
+
+	* srfi69.scm: The SRFI-69 (Basic bash tables) reference implementation.
+
+2005-10-16  Per Bothner  <per@bothner.com>
+
+	* testing.scm: Add module-compile-options if Kawa, to catch bugs.
+	This did catch some bugs; fixed those.
+
+2005-10-16  Alex Shinn <alexshinn@gmail.com>
+
+	* testing.scm (%test-record-define%): Add predicate and allocator as
+	macro parameters so they're added to teh correct namespace.
+
+2005-10-05  Per Bothner  <per@bothner.com>
+
+	* testing.scm: More and better-specified callbacks,
+	A full-featured test-runner-simple.
+	New functions for test-results.
+
+2005-08-15  Alex Shinn <alexshinn@gmail.com>
+
+	* testing.scm: Add "full" support for Chicken, Gauche, Guile and SISC.
+	Load/require needed modules/extensions.
+	(test-source-location-cons%): Implement for Chicken and Gauche.
+	(test-evaluate-with-catch%): Add Guile and Chicken support.
+	(test-evaluate-with-catch%): Fix typo in syntax-rules pattern.
+	(test-error%): Add Guile and Chicken support.
+	Fix srfi-35 / srfi-34 errors.
+	Evaluate expr in default case.
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* gui.scm (image-width, image-height): New procedures.
+	(read-image): Renamed to image-read for naming consistency.
+
+2005-06-06   Robert D. Skeels <athene@earthlink.net>
+
+	* gui.scm (color-red): Use 'red rather than 'RED, since former is
+	portable to older JDK versions.
+
+2005-04-11  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: gui.scm needs both --with-swing and --enable-xml.
+
+2005-04-02  Per Bothner  <per@bothner.com>
+
+	* testing.scm: New file - srfi-64 (draft) reference implementation.
+	* Makefile.am (java_SCM): Update accordingly.
+
+2005-02-07  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (java_SCM): Re-order so DefineRecordType.scm is
+	compiled before srfi-37, which uses define-record.type.
+
+	* srfi-37.scm (arg-fold): Use define-function syntax rather than
+	an explicit lambda, so Kawa generates a true function definition.
+
+2005-01-29  Per Bothner  <per@bothner.com>
+
+	* srfi37.scm:  Use module-export.
+
+2005-01-29  Anthony Carrico
+
+	* srfi37.scm: SRFI-37 reference implementation.
+
+2004-12-27  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: No longer need to force ../../../kawa to be made first.
+
+2004-12-08  Per Bothner  <per@bothner.com>
+
+	* gui.scm (process-keywords): New function.  Use where needed.
+
+2004-07-11  Chris Dean  <ctdean@sokitomi.com>
+
+	* srfi1.scm: Many functions written to be tail recursive.
+
+2004-06-12  Per Bothner  <per@bothner.com>
+
+	* gui.scm (frame):  Process args list "manually", since we want
+	to allow content to be multiple values in Q2.
+
+2004-05-17  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm (lset-xor!):  Fix argument order bug.
+
+2003-05-09  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* srfi1.scm (lset-xor):  Fix argument order bug.
+	Patch from Savannah bug #8852.
+
+2004-05-03  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm ((list-copy (lis :: <list>))):  Re-written to be iterative
+	rather than recursive - which can lead to stack overflow.
+
+2004-03-13  Per Bothner  <per@bothner.com>
+
+	* gui.scm (scroll):  New function.
+
+2004-02-13  Per Bothner  <per@bothner.com>
+
+	* gui.scm (fill, draw, with-paint, with-composite, composite-src-over,
+	composite-src, read-image, rotation, with-transform, color-red):
+	New functions and constants.
+	(panel):  Removed function - use SwingPaintable class instead.
+
+2003-10-19  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm (map-in-order):  Define as an alias for map.
+
+2003-09-04  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (response-status, error-response):  HTTP requires a space
+	after the response code, even if the message is empty,
+
+2003-07-21  Per Bothner  <per@bothner.com>
+
+	* gui.scm:  Rewrite to make use of gnu.kawa.models and
+	gnu.kawa.swingviews.
+
+2003-05-31  Chris Dean  <ctdean@mercedsystems.com>
+
+	* srfi1.scm (iota):   Fix default for optional step parameter.
+
+2003-05-07  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (request-parameter):  Add optional default parameter.
+
+2003-03-21  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* srfi1.scm (list-tabulate):  Fix thinko.
+
+2003-01-29  Per Bothner  <per@bothner.com>
+
+	* gui.scm: New file.
+
+2003-01-24  Per Bothner  <per@bothner.com>
+
+	* cut.scm:  New file.  Imported implementation of SRFI-26, written
+	by Al Petrofsky and Sebastian Egner.
+	Added moduile-export.
+	* Makefile.am (java_SCM):  Added cut.scm.
+
+2002-11-12  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm: Fix typo - comment start was written with colons.
+
+2002-09-28  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (request-parameter, (request-parameters):  New.
+	Suggested by Marco Vezzoli <marco.vezzoli@st.com>.
+
+2002-09-21  Per Bothner  <per@bothner.com>
+
+	* DefineRecordType.scm:  New macro, implements SRFI-9.
+	* Makefile.am (java_SCM):  Add DefineRecordType.scm.
+
+2002-07-30  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (get-response, response-status, error-response,
+	current-servlet, current-servlet-context, current-servlet-config,
+	servlet-context-realpath):  New procedures.
+
+2002-07-25  Per Bothner  <per@bothner.com>
+
+	* readtable.scm ((get-dispatch-macro-table):  Fix obvious bug.
+
+2002-07-24  Per Bothner  <per@bothner.com>
+
+	* printf.scm (stdio:hex-upper-case?):  Add type specification.
+
+2002-07-23  Per Bothner  <per@bothner.com>
+
+	* XML.scm (parse-xml-from-url):  Indate to invoke correct method.
+
+	* srfi1.scm (make-list):  Fix typo.
+
+2002-05-28  Per Bothner  <per@bothner.com>
+
+	* XStrings.scm (substring):  Fix off-by-one bug.
+
+2002-05-18  Per Bothner  <per@bothner.com>
+
+	* XStrings.scm:  New file, containing substring and string-length.
+	* Makefile.am (XML_SCM):  Add XStrings.scm.
+
+2002-05-06  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (request-servlet-path):  New function.
+
+2002-03-21  Per Bothner  <per@bothner.com>
+
+	* srfi1.scm:  New file.  SRFI-1 list-library reference implementation
+	written by Olin Shivers <shivers@ai.it.edu>.  Various Kawa tweaks
+	by Marco Vezzoli <marco.vezzoli@st.com> and myself.
+	* Makefile.am (java_SCM):  Add srfi1.scm.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm:  Moved from gnu/kawa/servlet.
+	* Makefile.am:  Compile HTTP.scm - but only if --enable-servlet.
+
+2002-01-21  Per Bothner  <per@bothner.com>
+
+	* XML.scm (parse-xml-from-url):  Document moved to gnu.kawa.xml.
+
+	* XML.scm (parse-xml-from-url):  Use Document.document.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* readtable.scm (get-macro-character):  Comment out for now.
+
+2001-11-06  Per Bothner  <per@bothner.com>
+
+	* XML.scm (as-xml):  New definition.
+
+	* readtable.scm:  Some more incomplete kludging.
+
+2001-10-19  Per Bothner  <per@bothner.com>
+
+	* printf.scm:  Merge new version from Slib.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	* XML.scm (print-as-xml):  Removed - now "builtin".
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (all):  Re-arrange dependencies so kawa1 is built.
+
+2001-05-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Various fixes for better gcj support.
+
+2001-04-23  Per Bothner  <per@bothner.com>
+
+	* readtable.scm:  New module.
+	* Makefile.am (java_SCM):  Add readtble.scm.
+
+2001-04-22  Per Bothner  <per@bothner.com>
+
+	* XML.scm:  Update gnu.kawa.xml -> gnu.xml.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (CLEANFILES):  Removed redundant macro.
+
+2001-03-22  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ENABLE_GCJ_COMPILED):  Remove scm-classes.stamp
+	(already required by all) as it requires kawa1 too early.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* XML.java (print-as-xml):  Update Consumable package to gnu.lists
+
+2001-02-28  Per Bothner  <per@bothner.com>
+
+	* SLib.java:  Removed; functionality moved to kawa.standard.require.
+
+	* printf.scm: (require 'generic-write) moved to top-level.  This is
+	a work-around for some bugs in require.
+
+2001-02-16  Per Bothner  <per@bothner.com>
+
+	* XML.scm:  New module.
+	* SLib.java (<clinit>):  New module tag 'xml.
+	* Makefile.am:  Update to (conditionally) compile XML.scm.
+
+2000-03-22  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (javadir):  New definition, needed for make install.
+	(EXTR_DIST):  New definition, adding $(SCMSOURCES).
+
+2000-03-06  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* genwrite.scm:  Lower-case some symbols.
+	Use format to print unknown types.
+	* pp.scm (pp):  Merge with pp:pretty-print. Use #!optional.
+	* ppfile.scm:  Comment out (for now) *load-pathname* handling.
+	(pprint-file):  Use #!optional.
+	* printf.scm:  Remove require of string-case - not needed.
+	(stdio:parse-float, stdio:round-string, stdio:iprintf, stdio:fprintf):
+	Define as private.
+	(stdio:printf):  Merge/inline into printf.
+	(stdio:sprintf):  Merge/inline into sprintf.
+	* SLib.java:  New class.

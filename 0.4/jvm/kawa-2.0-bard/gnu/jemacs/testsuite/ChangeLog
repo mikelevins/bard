@@ -1,0 +1,46 @@
+2011-03-16  Per Bothner  <per@bothner.com>
+
+	* lang-test.el: Add test for 'while'.
+
+2007-01-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Use bin's kawa.sh directly.
+
+2007-01-10  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Simplify - always use ../../../bin/kawa-bin.
+	(DISABLE_GCJ_COMPILED_KAWA, ENABLE_GCJ_COMPILED_KAWA): Remove macros.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Put check rule inside ENABLE_JEMACS conditional.
+	(CLEANFILES): Remove *.log file.
+
+2003-11-10  Per Bothner  <per@bothner.com>
+
+	* lang-test.el:  'format' tests are now working.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST):  Moved lang-test-el from SOURCES, since
+	new automake set-up overwrites SOURCES.
+
+2001-04-22  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Update to use kawa-bin or kawa.sh in bin directory.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SOURCES):  New variable.
+
+2000-06-19  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Fix so works both --with-swing and --without-swing.
+
+	* lang-test.el:  Add 19 tests of `format'.
+
+2000-06-09  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* Makefile.am:  New file.
+	* lang-test.el:  New testsuite - such as it is ...

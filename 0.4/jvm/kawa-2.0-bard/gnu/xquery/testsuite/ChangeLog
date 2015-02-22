@@ -1,0 +1,855 @@
+2014-02-23  Per Bothner  <per@bothner.com>
+
+	* latin1a.xql: New test for "ISO-8859-1" encoding declaration.
+	* latin1a.expected: New file for expected output.
+	* latin1b.xml: New XML test file with encoding declaration.
+	* TestMisc.java: Use it.
+	* Makefile.am: Update accordingly.
+
+2013-11-03  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update to new Values API.
+
+2012-10-06  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): We now check for circular definitions,
+	so 3 more tests work.
+
+2012-09-20  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (main): Use setWithSave/setRestore methods.
+
+2011-08-04  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (isSelected): Also skip K2-InternalVariablesWithout-9.
+
+2011-07-27  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Add quotes around classpath and use CLASSPATH_SEPARATOR.
+
+2011-04-03  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (XQTS_JAVA_FLAGS): Increase memory to 120m.
+
+2010-10-05  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (XQTS_JAVA_FLAGS): Increase a skosh more.
+
+2010-09-30  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (XQTS_JAVA_FLAGS): Increase memory requirement slightly.
+
+2010-06-30  Per Bothner  <per@bothner.com>
+
+	* TestSuite.java (<init>): Force canonicalizeCDATA.
+
+2010-02-24  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Remove unused local variable.
+
+2010-02-21  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update since ModuleInfo's className method
+	is now private.
+
+	* RunXQTS.java (handleStartTag): Call ModuleContext's clear
+	method to avoid a memory leak.
+	Also, never catch OutOfMemoryError.
+
+2009-07-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (clean-dirs): Move under mostlyclean-am, so removing
+	Mod1 and Mod2 directories is also done for mostlyclean - and more
+	importantly for distclean (which is needed for make distcheck).
+
+	* Makefile.am (check-xsltest1): Fix typo.
+	* xsltest1.expected: Fix to contain actual expected output.
+
+2009-03-13  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Some 'make clean' fixes.
+
+2009-03-01  Per Bothner  <per@bothner.com>
+
+	* xsltest1.xsl: New XSLT test.
+	* xsltest1.expected: Expected output from xsltest1.xsl.
+	* Makefile.am: Update accordingly.
+	* exp-format-users.html: Update for XSLT whitespace changes.
+
+2009-02-28  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (evalTest): Clear current NameLookup.
+	Explicitly catch OutOfMemoryError,
+	* Makefile.am (XQTS_JAVA_FLAGS): Reduce from 100MB to 90MB.
+
+2008-08-02  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+2008-07-26  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Remove some no-longer-expected-failues.
+
+2008-06-16  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endElement): When setting variable from <input-file>
+	or <contextItem> use define rather than put to avoid problems if
+	variable was previously set.
+
+	* RunXQTS.java (<init>): Note some more expected failures.
+
+2007-12-30  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (handleStartTag): Clear local document cache,
+	to avoid memory leak.
+
+	* RunXQTS.java (isSelected): Skip Constr-cont-document-3 until
+	we make indexing of large sequences more reasonable.
+
+2007-12-29  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (isSelected): New method.
+
+	* RunXQTS.java (endElement): Fix handling of </module> to match
+	current ModuleManager - which requires a class given a class-name.
+
+2007-12-26  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Add regression trest for
+	Red Hat Bugzilla #370851 "XQuery miss-search".
+
+2007-02-23  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endElement): Define instead of set input-query binding.
+
+2007-02-18  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endElement):  Ignore input-query if test not selected.
+
+2007-01-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Use bin's kawa.sh directly.
+	(various *.class): We need to set CLASSPATH explicitly now.
+
+2007-01-21  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+2007-01-17  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+2007-01-16  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (compare): Remove by stack field outputCompareAlts.
+
+	* RunXQTS.java (matches): Resolve character references.
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+2007-01-14  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (evalTest): Set 'strict' on XMLPrinter.
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+2007-01-11  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Constr-namespace-13 now passes.
+
+2007-01-10  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA): Simplify - always use ../../../bin/kawa-bin.
+	(DISABLE_GCJ_COMPILED_KAWA, ENABLE_GCJ_COMPILED_KAWA): Remove macros.
+
+2007-01-03  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (enElement): Use ModuleInfo's new
+	setSourceAbsPathname method.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (main): Update to use FilePath.
+
+2006-12-29  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endElement): Update to use Path.valueOf.
+
+	* RunXQTS.java (<init>): Remove explicit listing of trivial-* to fail.
+
+2006-12-06  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update for renamed Consumer methods.
+	* TestSuite.java: Likewise.
+
+2006-12-05  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (java_sources): Add RunXQTS.java, for the sake of dist.
+
+	* TestSuite.java: Add generic parameters if JAVA5.
+	* RunXQTS.java: Likewise.
+	(<init>): surrogates12..surrogates15 work for JAVA5 not just JAVA6.
+
+2006-12-04  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endGroup): Don't call ModuleManager.register.
+	Instead create ModuleInfo using findWithClassName.
+
+	* RunXQTS.java (<init>): Add preprocessing for expected failures.
+
+	* Makefile.am (EXTRA_DIST): Add a missing file.
+
+2006-12-01  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (matches): If floating-point literal seem in
+	otherwise non-matching output, compare values as float.
+	(<init>): Update accordingly.
+
+	* RunXQTS.java (<init>): Some tests pass if JAVA6 and
+	use:java.text.Normalizer, and add PreProcess conditionals for that.
+
+	* XQTS-trace.exp: Update for improved output formatting.
+
+	* RunXQTS.java: Add support for collection.  Various updates.
+	(getElementValue): New convenience method.
+
+2006-11-25  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update expected failures.
+
+2006-11-24  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (<init>): Update expected failures.
+
+	* RunXQTS.java (matches): Match character entities in expected result.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (matches): If isXML, match "/>" and "></ANYNAME>".
+
+	* RunXQTS.java (matches): Ignore spaces only if isXML.
+
+	* RunXQTS.java (externalVariablesSet): New field.
+	(endGroup): Use it to remove extenal variables bindings for this query.
+
+	* RunXQTS.java (<init>): Update expected failures.
+	(evalTest): Check for some unimplemented types and functions.
+
+	* Makefile.am (check-XQTS): Fix typo.
+
+	* RunXQTS.java: Rename Consumer methods append->write.
+
+	* RunXQTS.java (badFormatting): Remove unused method.
+	* TestSuite.java: Remove unused import.
+
+2006-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (XQTS_JAVA_FLAGS): New macro.
+	(check-XQTS): Use it.
+
+2006-11-18  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update writeChars -> append.
+
+2006-11-16  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Update expected result.
+
+2006-11-09  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Update for Consumer changes.
+	* TestSuite.java: Likewise.
+
+2006-10-26  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endGroup): Use Symbol.parse wher appropriate.
+
+2006-10-19  Per Bothner  <per@bothner.com>
+
+	* TestMisc..java: Applying fn:string to a sequence of two or more items
+	is invalid.  Use string() as a step instead.
+
+	* TestMisc..java: The type syntax 'element(X,*)' is invalid.
+
+	* RunXQTS.java (useComments): New flag.
+	(writeVerbose): New helper method, for extra information.
+	By default write them as comments.
+	(evalTest): Use writeVerbose.
+
+	* RunXQTS.java (contextItem): New field.
+	(endGroup): Handle <contextItem>.
+	(evalTest): Handle contextItem.
+
+	* RunXQTS.java (main): Set pedantic mode.
+
+	* RunXQTS.java (evalTest): Allow wildcards in expectedFailures.
+
+2006-10-16  Per Bothner  <per@bothner.com>
+
+	* expected-1.errs: Update for changed error message.
+
+2006-10-13  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (equalsXML): Rename to matches.  In XML mode, do
+	XML-aware comparison with soem canonicalization.  Specifically,
+	sort attributes and namespace declarations before comparing.
+	(evalTest): Use new matches function.
+
+	*  RunXQTS.java (selectedTest): New field.
+	(endGroup): Skip test if not matching selectedTest,
+
+2006-10-04  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (report): Write FAIL to stderr if unexpected failure.
+
+2006-09-30  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (handleStartTag): Only write date without timezone.
+
+2006-09-29  Per Bothner  <per@bothner.com>
+
+	* TestSuite.java: Simlify/fix so it works again after the recent
+	change to have XMLPrinter extend OutPort.  Now need to force flushing.
+	Use a CharArrayOutPort rather than a StringWriter.
+
+	* use-cases.xml: Revert order of expected namespace declarations,
+	to match canonical output.
+
+	* Makefile.am (TestSuite.class): Also depend on TestMisc.class.
+
+2006-09-28  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Remove invalid query.
+
+	* XQTS-trace.exp: Update for latest XQTS.
+
+	* RunXQTS.java: Handle Inspect results as "cannot-tell".
+	Make properly namespace-compatible.  Fix so XQTS.log validates.
+	(writeBeginGroup, writeBeginAttribute, writeAttribute,
+	writeQexoAttribute): New convenience methods.
+	(currentElementType, currentElementSymbol, elementTypeStack,
+	tagMatches): Use for proper namespace-compatible and nested matching.
+
+2006-09-26  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Various changes to approximate schema-defined format.
+	(XQTS_RESULT_NAMESPACE): New constant for namespace to use.
+
+	* TestMisc.java: Update now that namespace declarations are sorted.
+
+2006-09-19  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (main): Don't clear escapeNonAscii on xqlog after all.
+	(evalTest): Instead clear it for "actual" output.
+	Also canonicalizeCDATA to disable output of CDATA sections.
+	(<init>): Remove an expected failure, which now passes.
+
+	* RunXQTS.java (main): Remove bogus TestMisc.printSummary call.
+
+	* RunXQTS.java (expectedError): Replace single String by ...
+	(expectedErrorsBuf): ... buffer of sequence of error codes.
+	(evalTest): Update to handle set of possible expected error codes.
+	If both <output-file> and <expected-error> both seen, then it's ok
+	to not cause an error if an <output-file> matches.
+
+2006-09-18  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (check): Also run check-XQTS, if WITH_XQTS configured.
+	(check-without-XQTS): Check except for XQTS.
+
+	* Makefile.am (check-XQTS): Also check fn:trace output.
+	* XQTS-trace.exp: New file - expected fn:trace output.
+
+	* RunXQTS.java (main): Clear escapeNonAscii.
+
+2006-09-14  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (endGroup): Add handing of <input-URI>.
+	(<init>): Update expected failures.
+
+2006-09-13  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java (main): Update XMLPrinter construction.
+	We want to print XML decl, use 'XML' style, and pretty-print.
+
+	* TestMisc.java (toString): Do close on XMLPrinter.
+
+2006-09-12  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Fix some memory leaks.
+	(evalTest): Make sure to close in even on SyntaxException.
+	Close xout.  Close expectStream.
+	(endGroup): Move outer output operations outside try/catch.
+
+2006-09-02  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Use XMLPrinter for XQTS.log instead of
+	"hand-formatted" XML.
+	(log): Remove OutPort field.
+	(xqlog): Replace it bey XMLPrinter field.
+	(main): Initialize appropriately.
+	(handleStartTag, report, evalTest, endGroup): Update appropriately.
+	(report): Always emit <test-case> report regardless of verbose flag.
+
+2006-08-31  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: No point in using an XMLPrinter to filter the
+	catalog itself.  Instead, filter to a CharArrayOutPort.
+	(sout, sbuf, xout): Remove fields.  Replace by ...
+	(cout): New CharArrayOutPort field.
+	(elementStartIndex): Change to array indexed by nesting level.
+
+	* TestSuite.java: Remove unneeded import.
+
+2006-08-24  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Add support for modules.
+	Update for newer testsuite, and new fixes.
+
+	* mod2a.xql: New module, in same namespace as mod2.xql.
+	* usemod.xql: Also pull in a variable for mod2a.
+	* usemod.exp: Update expected output.
+	* Makefile.am: Update for extra class, plus that compiled library
+	modules are now compiled to a seprate package for each namespace.
+
+2006-08-17  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Update error column.
+
+2006-08-08  Per Bothner  <per@bothner.com>
+
+	* RunXQTS.java: Run application to run XQTS (XQuery Test Suite).
+	* Makefile.am (RunXQTS.class, check-XQTS): New files.
+
+2006-05-31  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (eval): Update ModuleExp.evalModule call.
+
+2006-05-21  Per Bothner  <per@bothner.com>
+
+	* expected-1.errs: Update for fixed typo in error message.
+
+2006-03-26  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): Replace call to removed 'string-value'
+	function by standard 'string'.
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* expected-1.errs: Update for changed error message.
+
+2006-03-14  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Remove ".0" fractional parts in expected output,
+	to match specification - and current implementation.
+	* use-cases.xml: Likewise - and now fewer divergences from original.
+
+2006-03-04  Per Bothner  <per@bothner.com>
+
+	* maketab1.xql: Update 'declare xmlpspace' -> 'boundary-space'.
+
+2006-03-01  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Update for various parser fixes.
+	* expected-1.errs: Likewise.
+
+2006-02-06  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Two minor cleanups to fix warnings from some compilers.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (eval): Update evalModule call.
+
+2005-11-14  thomas kirk  <tk@research.att.com>
+
+	* TestMisc.java (toString, eval): Close CharArrayOutPort.
+
+2005-10-06  Per Bothner  <per@bothner.com>
+
+	* expectedmul.xml: Remove no-longer-emitted incorrect spaces.
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* use-cases.xql: Add 8 more use-cases.
+
+2005-09-25  Per Bothner  <per@bothner.com>
+
+	* use-cases.xql: Add two use-cases for 'order by'.
+
+2005-08-18  Per Bothner  <per@bothner.com>
+
+	* use-cases.xml: Can remove some kludges since fn:doc now properly
+	caches the document.
+	Also add new new use-cases that depended on distinct-values.
+	(R/Q11): Since fn:max now atomizes can remove kludge.
+
+	* use-cases.xml: Update standard function document -> doc.
+	* maketab1.xql: Likewise.
+
+2005-08-16  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): Add test for prefix-from-QName.
+
+2005-07-27  Per Bothner  <per@bothner.com>
+
+	* multab.xql ($max, $caption): New external variables in prologue.
+	* Makefile.am (check-multab): Pass extra parameters.
+	* expectedmul.xml: Update for modified output.
+
+2005-07-21  Per Bothner  <per@bothner.com>
+
+	* TestSuite.java (main): Do XQuery.registerEnvironment first.
+
+	* Makefile.am (check-multab): Specify pretty-printing.
+	* multab.xql>: Remove strings with explicit enwlines.
+	* expectedmul.xml: New expected pretty output.
+
+2004-12-22  Per Bothner  <per@bothner.com>
+
+	* use-cases.xml: Update syntax for enclosed expression in atrtribute.
+	* TestMisc.java: Update serialization for QName.
+
+2004-12-12  Per Bothner  <per@bothner.com>
+
+	* bad-1.xql: New bad-syntax test.
+	* expected-1.errs: Expected error output.
+	* Makefile.am: Update accordingly.
+	(bad-1.log, check-bad-1): New rules.
+
+	* TestMisc.java: Update for improved error locations.
+
+2004-12-11  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Update 'instanceof' instance of'.
+	* mod1.xql: Update declaration syntax.
+	* mod2.xql: Likewise.
+	* usemod.xql: Likewise.
+
+2004-12-07  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java: Add missing "local:" prefixes.
+	* descend.xql: Likewise.
+	* use-cases.xml: Likewise.
+	* tab.html: Fix expected output.
+
+2004-11-08  Per Bothner  <per@bothner.com>
+
+	* maketab1.xql: Use child:: axis, not non-standard children function.
+	* tab.html: Whitespace-tweak expected output.
+
+2004-11-06  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): Add tests for node-name, local-name-from-QName,
+	namespace-uri-from-QName, namespace-uri-for-prefix.
+
+2004-05-29  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Some extra tests for ingnorable space,
+	comments, pi-data, CDATA in element constructors.
+
+2004-05-28  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (toString):  New static method.
+	(main):  Use it.
+
+2004-05-05  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Expected output now includes CDATA.
+
+2004-04-18  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Include comment in expected output.
+	* tab.html:  Likewise.
+
+2004-03-08  Per Bothner  <per@bothner.com>
+
+	* exp-format-users.html:  Don't expect XML declaration.
+
+2004-01-12  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): New testcase for navigating from attribute
+	to parent based on bug reported 2003-11-29 by sascha_opletal@web.de.
+
+	* exp-format-users.html:  Update to include XML declaration.
+
+2003-12-26  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Added a new test.
+
+2003-12-25  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Add test for namespace declaration attribute.
+	Fix output from another test.
+
+2003-12-21  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (usemod.class):  Specify CLASSPATH explicitly.
+	Otherwith we don't find Mod1 when configured --with-gcj.
+
+2003-11-25  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST):  Add new files.
+
+2003-11-21  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  If M > N then M to N is now empty.
+
+2003-11-09  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (matchTest): New method
+	(evalTest):  Use matchTest.
+	(main):  Added 4 tests for evalWithFocus.
+
+2003-11-02  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (eval): Replace 'parseFile' call by call to new
+	'parse' method.
+
+2003-10-30  Per Bothner  <per@bothner.com>
+
+	* auction.xml.in:  New test data.
+	* use-cases.xml:  Add 5 new testcases, and clean up an old one.
+
+2003-10-29  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Update for output of namespace declaration.
+
+2003-10-19  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): 3 new tests for 'some/every ... satsifies'.
+	9 new tests for 'union/intersect/except'.
+	(evalNodeNames):  New convenience method.
+
+2003-10-12  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (eval):  Re-write to use parseFile rather than parse.
+
+	* mod1.xql, mod2.xql, usemod.xql:  Sources for library module test.
+	* usemod.exp:  Expected output for new test.
+	* Makefile.am:  Rules for new test.
+
+2003-10-08  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add 4 new tests.
+
+	* descend.xql:  Update for revised XQuery syntax.
+	* maketab1.xql:  Likewise.
+
+2003-09-18  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Two tests for absolute path expressions.
+
+2003-09-14  Per Bothner  <per@bothner.com>
+
+	* outline.xml.in:  New data file.
+	* TestMisc.java:  New tests for new axes.
+
+	* TestMisc,java:  Use doc instead of document.
+
+2003-09-11  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add semi-colons after declarations.
+	Update xmlspace declarations.
+	* use-cases.xml:  Various updates.
+
+2003-09-10  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  New test for 'at' clause in FLWOR.
+	Update 'define function' to 'declare function'.
+
+2003-08-03  Per Bothner  <per@bothner.com>
+
+	* report1.xml.in:  New data file.
+	* Makefile.am (EXTRA_DIST):  Add report1.xml.in.
+	* use-cases.xml:  Add 3 more use cases: SEQ Q1, Q2; R Q4.
+
+	* TestMisc.java (main):  Fix/update some tests.
+	Add 4 tests for boundary whitespace and	declare xmlspace.
+	* maketab1.xql:  Add a now-needed xmlspace declaration.
+	* use-cases.xml:  Add 4 more use cases.
+	Update older test cases to match official uses cases.
+
+2003-07-26  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add test for distinct-nodes.
+
+2003-07-23  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Add 3 more tests.
+
+2003-07-10  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  New tests based on bugs reported by Francois Leygues
+	<vizawalou@wanadoo.fr> 6/17 and 7/5.
+
+2003-06-27  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  New test based on report from vizawalou@wanadoo.fr.
+
+2003-05-21  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Test case.
+	Bug reported 05-18 by Seshukumar_Adiraju@infosys.com.
+
+2003-05-13  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Update and add new tests for new type syntax.
+
+2003-05-10  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add new test for string literal
+	with quoted apostrofe and character references.
+	Fix one test as '&' in string literals no longer stand for themselves.
+
+2003-03-29  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add parameter type specification, since
+	otherwise 'new File(x)' is ambiguous in JDK 1.4.
+
+	* TestMisc.java (main):  Add two tests for substring.
+
+	* TestMisc.java (evalTest):  Guard against null base exception.
+
+2003-03-04  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Add a test for computed constructors.
+
+2003-01-24  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Update expected error message.
+
+2002-11-20  Per Bothner  <bothner@bothner.com>
+
+	* TestMisc.java:  Add 3 tests for QNames for method invocation.
+
+2002-10-22  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Update 'namespace' to 'declare namespace'.
+
+2002-07-28  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main):  Add 4 for tests for type testing.
+
+2002-07-24  Per Bothner  <per@bothner.com>
+
+	* TesMisc.java (eval):  Update for gnu.expr changes.
+
+2002-06-24  Per Bothner  <per@bothner.com>
+
+	* TestSuite.java (main):  Document.document method is renamed to parse.
+
+2002-06-12  Per Bothner  <per@bothner.com>
+
+	* exp-format-users.html:  First test for XSLT implementation.
+	* format-users.xsl:  Expected output for latter.
+	* Makefile.am (check-format-users):  New rule.
+
+2002-06-11  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  New tests for descendant:: and descendant-or-self::.
+
+2002-04-08  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Added tests for node(), text() and children().
+
+	* use-cases.xml:  We can now use text() as in the original use-cases.
+
+2002-03-19  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Add two tests of position().
+
+2002-03-07  Per Bothner  <per@bothner.com>
+
+	* bids.xml.in, items.xml.in, users.xml.in:  New test data files.
+	* Makefile.am (EXTRA_DIST):  Add new files.
+	* use-cases.xml:  Import 2 more test cases from W3C Use Cases.
+
+2002-02-12  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (eval):  Call CallContext.getInstance.
+
+2002-02-05  Per Bothner  <per@bothner.com>
+
+	* book1.xml.in:  New datafile for W3C use-cases.
+	* reviews.xml.in:  New datafile for W3C use-cases.
+	* Makefile.am (EXTRA_DIST)):  Update accordingly.
+	* use-cases.xml:  Add 7 new tests from W3C use-cases.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (printSummary):  New method.
+	(main):  Call printSummary.
+
+	* TestMisc.java (matches):  New method.
+	(evalTest):  Use matches rather than equals.
+	* TestSuite.java:  New class, inherits from TestMisc.
+	* bib.xml.in:  New data file, referenced from uses-cases.xml.
+	* use-cases.xml:  New collection of tests, from W3C use-cases.
+	* Makefile.am:  Upadte for new test.
+
+2002-01-21  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java (main): Add test for 'for'-'where'.
+	Add test for 'unescaped-data'.
+
+2002-01-07  Per Bothner  <per@bothner.com>
+
+	* tab.xml.in:  Add some CDATA and a comment to verify they work.
+
+2001-11-18  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  Change 3.4 and 4.4.to 3.5 and 4.5 to avoid
+	risk of round-off error.
+
+	* TestMisc.java:  Specify package as gnu.xquery.testsuite.
+	* Makefile.am (TestMisc.class, check-misc):  Change accordingly.
+
+2001-11-12  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  More new tests.
+
+2001-11-06  Per Bothner  <per@bothner.com>
+
+	* TestMisc.java:  A bunch of new tests, plus removed expected failure.
+
+2001-11-01  Per Bothner  <per@bothner.com>
+
+	* tab.xml.in:  Add some attributes so we can test for that.
+	* TestMisc.java:  New class with many small tests.
+	* test1.xql, expected1.xml:  Removed - subsumed by TestMisc.java.
+	* Makefile.am: Update accordingly.
+
+2001-10-02  Per Bothner  <per@bothner.com>
+
+	* descend.xql:  New test program.
+	* expdescend.xml:  New expected output.
+	* Makefile.am (check-descend, descend):  New rules.
+
+2001-09-25  Per Bothner  <per@bothner.com>
+
+	* multab.xql: Remove no-longer-needed outermost parens.
+	* Makefile.am (check-test1, check-maketab1):  Better output.
+
+2001-09-24  Per Bothner  <per@bothner.com>
+
+	* multab.xql:  New test - generate multiplication table.
+	* expectedmul.xml:  New file - expected output of multab.xql.
+	* Makefile.am:  Update for new test.
+
+2001-08-23  Per Bothner  <per@bothner.com>
+
+	* tab.xml.in. maketab1.xql, tab.html:  New files - new testcase.
+	* Makefile.am:  Rules for new testcase.
+
+2001-08-17  Per Bothner  <per@bothner.com>
+
+	* test1.xql:  Remove no-longer needed parens.
+	* Makefile.am (SOURCES):  Add expected.xml.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	New directory.
+	* test1.xql:  New simple test case for XQuery language.
+	* expected1.xml:  Expected output from test1.xql.
+

@@ -1,0 +1,22 @@
+
+Access flags: public
+This class: HelloWorld super: java.lang.Object
+Interfaces (count: 0):
+
+Fields (count: 0):
+
+Methods (count: 1):
+
+Method name:"add" public static Signature: (int,int)int
+Attribute "Code", length:36, max_stack:2, max_locals:3, code_length:6
+  0: iload_0
+  1: iload_1
+  2: iadd
+  3: dup
+  4: istore_2
+  5: ireturn
+Attribute "LocalVariableTable", length:12, count: 1
+  slot#2: name: result, type: int (pc: 0 length: 6)
+
+Attributes (count: 0):
+Result of HelloWorld.add(1,2) is 3

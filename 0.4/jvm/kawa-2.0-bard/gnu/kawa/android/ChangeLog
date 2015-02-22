@@ -1,0 +1,32 @@
+2014-08-21  Per Bothner  <per@bothner.com>
+
+	* defs.scm (current-activity): Separate out run-time variable
+	from compile-time definitions.
+	* utils.scm: New module.
+	* Makefile.am: Update accordingly.
+
+2012-11-19  Per Bothner  <per@bothner.com>
+
+	* defs.scm (current-activity): New parameter.
+	* ViewBuilder.java (useBuilder): Allow initial (this) to be
+	skipped in View constructors.
+
+	* defs.scm (activity): Update to use quasi-unsyntax.
+
+2012-11-07  Per Bothner  <per@bothner.com>
+
+	* ViewBuilder.scm (ViewBuilder): New class, extends CompileBuildObject.
+	* Makefile.am: Update accordingly.
+	* defs.scm: Add ObjectBuilder binding for View types.
+
+	* defs.scm: Add some aliases (preliminary).
+
+2012-11-06  Julien Rousseau <julien.rousseau@gmail.com>
+
+	* custom_rules.xml: New build file for Android.
+
+2009-01-14  Per Bothner  <per@bothner.com>
+
+	New package for Android support.
+	* defs.scm: New file - definition of the activity macro.
+

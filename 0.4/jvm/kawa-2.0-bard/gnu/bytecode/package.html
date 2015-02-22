@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>The gnu.bytecode package</title>
+  </head>
+
+  <body><p>
+Contains classes to generate, read,
+write, and print Java bytecode in the form of <code>.class</code> files.
+<p>
+It is used by
+<a href="../kawa/">Kawa</a>
+to compile Scheme into bytecodes;  it should be useful
+for other languages that need to be compiled into Java bytecodes.
+(An interesting exercise would be an interactive Java expression evaluator.)
+The classes here are relatively low-level.  If you want to use them
+to generate bytecode from a high-level language, it would be easier to
+use the <a href="../../gnu/expr/package-summary.html">gnu.expr</a> package, which works
+at the expression level, and handles all the code-generation for you.
+<p>
+The most important class is <code>ClassType</code>.
+This contains information
+about a single class.  Note that the difference between <code>ClassType</code>
+and <code>java.lang.Class</code> is that the latter can only represent existing
+classes that have been loaded into the Java VM;  in contrast,
+<code>ClassType</code> can be used to build new classes
+incrementally and on the fly.  A <code>ClassType</code> can also
+<q>wrap</q> a <code>java.lang.Class</code>, or data read in
+from a <code>.class</code> file.
+Use <code>ClassType.make</code> to refer to
+existing classes and <code>new ClassType</code> to refer to classes you're
+generating.
+<p>
+A <code>ClassType</code> has a list of <code>Field</code> objects;
+new ones can be added using
+the various <code>addField</code> methods.  A <code>ClassType</code>
+manages a <code>ConstantPool</code>.
+A <code>ClassType</code> also has a list of <code>Method</code> objects;
+new ones can be created by the various <code>addMethod</code> objects.
+<p>
+Calling <code>Method.startCode</code> gives you a <code>CodeAttr</code> object
+you can use to emit bytecodes for that method.
+<p>
+Once you have finished generating a <code>ClassType</code>, you
+can write it to a <code>.class</code> file with
+the <code>writeToFile</code> method.  You can also make a
+byte array suitable for <code>ClassLoader.defineClass</code> using the
+<code>writeToArray</code>
+method.  This is useful if you want to compile and immediately load a class,
+without going via disk.
+<p>
+You can print out the contents of a <code>ClassType</code> in
+human-readable
+form using the class <code>ClassTypeWriter</code>.  This prints a fair bit of
+information of the generated class, including
+dis-assembling the code of the methods.
+<p>
+You can also build a <code>ClassType</code> by reading it from an
+existing <code>.class</code>
+file by using a <code>ClassFileInput</code> class.  This reads the constant
+pool, the fields, methods, superclass, and interfaces.
+The <code>gnu.bytecode.dump</code> class has a <code>main</code> method
+that prints out the information in a named class file, which you can use as
+a replacement for <code>javap(1)</code>.
+
+<h2>A Simple Example</h2>
+<p>Here's a complete example showing the basics. If this was really all you
+wanted to do, the code could be shorter, but you get to see more of what's
+available this way.
+<blockquote><pre>
+import gnu.bytecode.*;
+
+public class MetaHelloWorld {
+	public static void main(String[] args) throws Exception {
+<font color="green">		// &quot;public class HelloWorld extends java.lang.Object&quot;.</font>
+		ClassType c = new ClassType(&quot;HelloWorld&quot;);
+		c.setSuper(&quot;java.lang.Object&quot;);
+		c.setModifiers(Access.PUBLIC);
+
+<font color="green">		// &quot;public static int add(int, int)&quot;.</font>
+		Method m = c.addMethod(&quot;add&quot;, &quot;(II)I&quot;, Access.PUBLIC | Access.STATIC);
+		CodeAttr code = m.startCode();
+		code.pushScope();
+		code.emitLoad(code.getArg(0));
+		code.emitLoad(code.getArg(1));
+		code.emitAdd(Type.intType);
+		Variable resultVar = code.addLocal(Type.intType, &quot;result&quot;);
+		code.emitDup();
+		code.emitStore(resultVar);
+		code.emitReturn();
+		code.popScope();
+
+<font color="green">		// Get a byte[] representing the class file.
+		// We could write this to disk if we wanted.</font>
+		byte[] classFile = c.writeToArray();
+
+<font color="green">		// Disassemble this class.
+		// The output is similar to javap(1).</font>
+		ClassTypeWriter.print(c, System.out, 0);
+
+<font color="green">		// Load the generated class into this JVM.
+		// gnu.bytecode provides ArrayClassLoader, or you can use your own.</font>
+		ArrayClassLoader cl = new ArrayClassLoader();
+		cl.addClass(&quot;HelloWorld&quot;, classFile);
+		
+<font color="green">		// Actual invocation is just the usual reflection code.</font>
+		Class&lt;?&gt; helloWorldClass = cl.loadClass(&quot;HelloWorld&quot;, true);
+		Class[] argTypes = new Class[] { int.class, int.class };
+		int result = (Integer) helloWorldClass.getMethod(&quot;add&quot;, argTypes).invoke(null, 1, 2);
+		System.err.println(result);
+	}
+}
+</pre></blockquote>
+
+<h2>License</h2>
+
+See the file <a href="../../COPYING">COPYING</a>.
+
+<h2>Author</h2>
+
+<a href="http://www.bothner.com/~per">Per Bothner</a>
+<tt>&lt;<a href="mailto:per@bothner.com">per@bothner.com</a>&gt;</tt>
+
+<h2>How to get it</h2>
+The <code>gnu.bytecode</code> package is currently distributed as part of
+<a href="../kawa/">Kawa</a>, though it can be used independently
+of the rest of Kawa.
+
+<h2>Bugs and patches</h2>
+Send them to <a href="mailto:per@bothner.com">per@bothner.com</a>,
+or to the <a href="mailto:kawa@sourceware.cygnus.com">Kawa mailing list</a>.
+</body>
+</html>

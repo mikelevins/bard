@@ -1,0 +1,218 @@
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* SwtHelper.java: Make sure Error is uncaught or re-thrown.
+
+2012-12-09  Per Bothner  <per@bothner.com>
+
+	Remove some useless javadoc comments.  These cause warnings when
+	running javadoc without Eclipse installed.
+
+2011-05-01  Shad Gregory <captshadg@gmail.com>
+	  Per Bothner  <per@bothner.com>
+
+	* SwtBuffer.java (insertChar): Use Marker#repeatChar.
+	* SwtCharBuffer.java (gapReserve): Fix to override correct method.
+	These fix Savannah bug#33140 "ant task jemacs-swt-classes does
+	not build successfully".
+
+2011-04-26  Shad Gregory <captshadg@gmail.com>
+
+	* SwtFrame.java (setMenuHelper): Fix bit-rot - use getCar/getCdr
+	methods.  Partial fix for Savannah buf #33140 (ant task
+	jemacs-swt-classes does not build successfully)
+
+2011-04-10  Shad Gregory <captshadg@gmail.com>
+
+	* SwtFrame.java (showAboutMessage): New method. 
+
+2008-05-25  Per Bothner  <per@bothner.com>
+
+	* SwtBuffer.java (insert): Rename to insertChar and change char->int.
+	(insert(char,int)): Remove - use inherited method.
+
+2008-05-23  Per Bothner  <per@bothner.com>
+
+	* SwtBuffer.java (removeRegion): New method.
+
+2008-01-16  Per Bothner  <per@bothner.com>
+
+	* SwtFrame.java (setMenu): Rename to setMenuBar, following EFrame.
+
+	* SwtFrame.java: Update FString -> CharSequence.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ALL): New macro, only if ENABLE_JEMACS and ENABLE_SWT.
+
+2005-05-25 Christian Surlykke <christian@surlykke.dk>
+
+	* SwtKeyMapper.java: (swtKey2EKey): If unicode then remove shift 
+	modifier not only if isLetter but whenever swtEvent.character <>
+	swtEvent.keyCode.
+
+2005-05-25 Christian Surlykke <christian@surlykke.dk>
+
+	* SwtBuffer.java: (makeTextChangingEvent): Set start field of 
+	TextChangingEvent.
+	* SwtWindow.java: (handleCommand): Don't redraw StyledText widget.
+	(getReadyToShow): Set StyledText widget caret offset to dot of 
+	buffer.
+	
+2005-05-21 Christian Surlykke <christian@surlykke.dk>
+
+	* SwtWindowWidget.java: New class, a composite widget combining two
+	styledtext widgets, one for editing and one for the modeline.
+	* SwtBuffer.java: (modeline): New field. (getModeline): new method.
+	(redrawModeline): Sets the value of modeline. 
+	(SwtBuffer(String, BufferContent)): Calls redrawModeline.
+	* SwtWindow.java: (swtWindowWidget): New field replacing styledText. 
+	References to styledText replaced with swtWindowWidget.getStyledText()
+	throughout. (updateModeline): New method sets buffers modeline as text
+	in modeline field of swtWindowWidget. (SwtWindow(Buffer, boolean)): 
+	Call updateModeline. (setBuffer): Call updateModeline. 
+	(getReadyToShow): Set this SwtWindow as listener for various events on 
+	styledText field of swtWindowWidget. Call updateModeline. Call 
+	forceFocus on swtWindowWidgets styledText. Some old debug statements 
+	removed.  
+	(handleCommand): Call updateModeline.
+	 
+2005-05-18 Christian Surlykke <christian@surlykke.dk>
+
+	* SwtKeymapper.java: (swtKey2EKey): No PRESSED flag on characters in
+	range 0x1A..0x20
+	
+2005-05-18  Christian Surlykke <christian@surlykke.dk>
+
+	* SwtHelper.java: Gui-loop in getDisplay now catches Throwable
+	rather than Exception so that java.lang.Error won't terminate it.
+	* SwtKeyMapper.java: New utility class for converting swt key events
+	to awt key events.
+	* SwtWindow: (verifyKey): Doesn't do anything more. (keyPressed): 
+	Sends keyEvent to handleKey. (show): Now uses EKeymap.show.
+	
+2005-04-18  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java: Use use:java.lang.CharSequence PreProcess name.
+	* SwtCharBuffer.java: Likewise.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (GCJ_INPUTS, all): Some GCJ-specific fixes.
+
+2005-04-03  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java: Remove useful or incorrect javadoc comments.
+	* LineOffsets.java: Likewise.
+	* SwtBuffer.java: Likewise.
+	* SwtCharBuffer.java: Likewise.
+	* SwtFrame.java: Likewise.
+	* SwtHelper.java: Likewise.
+	* SwtMenu.java: Likewise.
+	* SwtToolkit.java: Likewise.
+
+2005-01-07  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java: Implement CharSeq.
+	(fill, setCharAt, subSequence, writeTo): New methods.
+	* SwtBuffer.java (getStringContent): New method implements Buffer.
+	(charAt, getChars, setCharAt, fill, writeTo, consume): Removed;
+	use methods inherited from Buffer.
+
+	* SwtCharBuffer.java: Translate Danish comment into English.
+	Javac complained about non-UTF-8 characters.
+
+2004-10-03  Christian Surlykke <christian@surlykke.dk>
+
+	Implementation of SwtWindow.split(buffer, lines, horizontal)
+	Corrected a number of accesses to SWT to go through SwtHelper for
+	proper thread handling.
+	* SwtFrame.java (SwtFrame): Added firstVisibleLine parameter to call
+	to swtWindow.getReadyToShow.
+	* SwtHelper.java (newStyledText): Added parameter firstVisibleLine to
+	determine the line at the top of the visible area.
+	(getTopIndex): New method. Returns index of first visible line in a 
+	StyledText.
+	(getCaretOffset): New method. Returns offset of caret in a StyledText.
+	(getParent): New method. Returns parent of a Control.
+	(getArea): New method. Returns area (in pixels x pixels) of the inside
+	of a StyledText widget (i.e. excluding borders, menus, scrollbars).
+	(getLineHeight): New method. Returns the height (in pixels) of the 
+	currently used font for a StyledText.
+	(setCaretOffset): New method. Sets the offset of the caret for a 
+	StyledText.
+	(setContent): New method. Sets the content of a StyledText.
+	(showSelection): New method. Scrolls the selection of a StyledText
+	into view.
+	(redraw): New method. Marks the area belonging to a Control as needing
+	to be redrawn.
+	(newSashForm): New method. Creates a new SashForm instance.
+	(setParent): New method. Sets the parent of a Control.
+	(injectSashFormAsParent): New method. Given a contol makes a new 
+	SashForm as new parent of control and control's old parent as its 
+	parent.
+	(setWeights): New method. Sets the weights of a SashForm to determine 
+	the relative heights/widths of it's children.
+	(layout): New method. Calls layout on a Composite.
+	* SwtWindow.java (getReadyToShow): Added firstVisibleLine to call to 
+	SwtHelper.newStyledText.
+	(setBuffer): Changed call to StyledText.setContent to call to 
+	SwtHelper.setContent.
+	(handleCommand): Changed call to StyledText.redraw to call to 
+	SwtHelper.redraw.
+	(getPoint): Changed call to StyledText.getCaretOffset to call to 
+	SwtHelper.getCaretOffset.
+	(setDot): Changed call to StyledText.setCaretOffset to call to 
+	SwtHelper.setCaretOffset.
+	(split): Added implementation.
+	(getWidth): Changed call to StyledText.getSize() to call to 
+	SwtHelper.getArea.
+	(getHeight): Changed call to StyledText.getSize() to call to 
+	SwtHelper.getArea.
+	(verifyKey): Changed call to StyledText.setCaretOffset to call to
+	SwtHelper.setCaretOffset.
+	(mouseDown): Changed call to StyledText.getCaretOffset to call to
+	SwtHelper.getCaretOffset and call to StyledText.showSelection to call
+	to SwtHelper.showSelection. 
+	  
+2004-08-28  Christian Surlykke <christian@surlykke.dk>
+
+	Added menus to the SwtFrontend.
+	Removed meaningless copyright statements.
+	* BufferContent.java: Removed copyright statement.
+	* CommandDialog.java: Removed copyright statement.
+	* SwtBuffer.java: Removed copyright statement.
+	Removed a debug statement
+	* SwtFrame.java: Removed copyright statement.
+	Removed creation of Swt-GUI-thread from constructor.
+	Changed all calls to SWT to go through new class SwtHelper
+	Added implementation of SetMenu.
+	* SwtMenu.java: Removed copyright statement.
+	Removed meaningless comment.
+	* SwtToolkit.java: Removed copyright statement
+	* SwtWindow.java: Removed copyright statement.
+	Changed all calls to SWT to go through new class SwtHelper
+	Added override of EWindow.handleCommand to call 
+	StyledText.redraw and StyledText.showSelection after processing.
+	Added call of StyledText.showSelection to setSelected()
+	* SwtHelper.java: New class to act as layer between SWT and SwtJemacs.
+	     
+2004-08-04  Christian Surlykke <christian@surlykke.dk>
+
+	New preliminary GUI implementation, using SWT instead of Swing.
+	* BufferContent.java: New file, holds actual content of a Buffer.
+	   Extends SwtCharBuffer to implement 
+	   org.eclipse.swt.custom.StyledTextContent.
+	* BufferContentReader.java: New file, extends java.io.Reader.
+	* CommandDialog.java: New file, for entering command input.
+	   Extends org.eclipse.swt.widgets.Dialog.
+	* LineOffsets.java: New file. Maintains line offsets for a 
+	   SwtCharBuffer. 
+	* Makefile.am: New file. Copied from gnu/jemacs/swing and adapted.
+	* Makefile.in: New file. Copied from gnu/jemacs/swing and adapted.
+	* SwtBuffer.java: New file. Extends gnu.jemacs.buffer.Buffer.
+	* SwtCharBuffer.java: New file. Extends GapVector. Models 'text with
+	   line offsets' with the aid of the LineOffsets class.
+	* SwtFrame.java: New file. Extends EFrame.
+	* SwtMenu.java: New file. Extends EMenu.
+	* SwtToolkit.java: New file. Extends EToolkit.
+	* SwtWindow.java: New file. Extends EWindow.

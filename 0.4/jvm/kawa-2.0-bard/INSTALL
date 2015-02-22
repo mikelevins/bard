@@ -1,0 +1,12 @@
+The Kawa manual includes Kawa specific instructions for building
+and install Kawa and its sub-packages.  You can read the manual
+online at http://www.gnu.org/software/kawa/Installation.html .
+
+If you prefer to, you can download kawa-doc-N.M.tar.gz from
+ftp://ftp.gnu.org/pub/gnu/kawa/ and read the HTML files for
+version N.M off-line.  The file kawa/Installation.html has the
+installation instructions.
+
+The texinfo source for the manual is the file doc/kawa.texi of
+the Kawa source distribution.
+

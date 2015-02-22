@@ -1,0 +1,1807 @@
+2014-12-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Tutorial): New chapter merged from tutorial.xml.
+	* tutorial.xml: Remove.
+
+	* kawa.texi (Bodies): Add note about encoding specifiers.
+
+	* kawa.texi (@sub): When generating DocBook - which is used for the
+	online version of Kawa documentation - use the builtin version of @sub
+	which is only in the development version of texinfo.
+	(@xsup, @msup): Likewise, but instead of defining @sup use @xsup
+	and @msup to work around a conflicting \sup macro in older versions
+	of texinfo.tex.
+	(Quaternions): Use @msup.
+	(module classes): More on define-library.
+
+	* kawa.texi (Importing): New section.
+
+	* kawa.texi (Syntax and conditional compilation): Update for 'include'.
+
+2014-11-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Processes): Major additions.
+
+	* kawa.texi: Various updates.
+	(Module classes): Flesh out define-libray and module-name.
+
+2014-11-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Reading and writing whole files): New section.
+
+2014-11-23  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top, Features): Various changes.
+	(Reference Document): Create a new @part to help web-site organization.
+	(Implemented SRFIs):  Note that srfo-10 is deprecated.
+
+2014-11-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Comment out or update mentions of GCJ.
+
+2014-11-22  Alex Mitchell <lexaay@gmail.com>
+
+	* kawa.texi (Projects): Mention HypeDyn.
+
+2014-11-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Android view construction): Document (current-activity).
+	(Colon notation): Move around some.
+	* kawa.texi (Community): Move earlier in the file.
+
+2014-11-17  Jamison Hope  <jrh@theptrgroup>
+
+	* kawa.texi (Quaternions): New section.
+	(Ideas and tasks): Remove subsection Quaternions.
+
+2014-11-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Paths): Note use of current-path as setter,
+	(Resources): Move to end of containing chapter.
+
+2014-10-30  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Features): Move earlier.
+	(FAQs): Move before Framework.
+
+2014-10-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Scripts): Fix example problem.
+
+	* kawa.texi (Ports): Fix thinko for read-bytevector!.
+	Note that default ports may be hybrid textual/binary.
+
+2014-10-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various minor updates.
+	(Numerical input and output): New section.
+
+2014-10-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Eval and Environments): Various updates,
+	including documenting the r7rs environment function.
+
+2014-10-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Lazy evaluation): Document make-promise and delay-force.
+	(Syntax and conditional compilation):  Update cond-expand.
+
+2014-10-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various modest improvements.
+
+2014-09-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Multiple values): Document 'define-values'.
+
+2014-09-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Macros): Updated and merged in documentation form r7rs.
+
+2014-08-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Strings): Document string-replace!.
+	Update string-copy!.
+
+2014-08-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Strings): Various updates.
+	(String literals): New node.
+
+2014-08-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (PerformanceNote): New macro.
+	* kawa.texi (Characters): Various tweaks, including defining
+	character litrerals.
+	(String): Various updates.
+	(String Cursor API): New subsection.
+
+2014-07-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Arithmetic operations): Document more R7RS functions.
+
+2014-07-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Characters): Various updates for character type.
+
+2014-06-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Named quasi-literals): New section.
+	(Macros):  Merge subsection Macros info section Macros and remove
+	the former.
+
+2014-06-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Module classes): Document 'export' with 'rename' spec.
+	(sub) New macro.
+
+	* kawa.texi (Local binding constructs): New section.
+	(Declaring Types of Variables): Removed section.
+
+2014-06-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Exceptions): Rr-written.
+	* kawa.texi (Ideas and tasks): New subsection 'Better dynamic reload'.
+
+2014-06-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various updates.
+
+2014-03-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Update package of gnu.text.*Path to gnu.kawa.io.
+
+2014-03-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): New idea for multi-langauge compilation.
+
+	* kawa.texi (Paths): Fix error.
+
+2014-02-22  Jamison Hope  <jrh@theptrgroup.com>
+
+	* kawa.texi (Logical Number Operations): New subsection 'SRFI-60
+	Logical Number Operations' documenting the non-R6RS functions in
+	the SRFI.  Many of the functions are moved here from the
+	subsection 'Deprecated Logical Number Operations'.
+
+2014-02-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): Various updates.
+
+2014-02-20  Jamison Hope  <jrh@theptrgroup.com>
+
+	* kawa.texi (Implemented SRFIs): SRFI-60 is now fully supported.
+
+2014-02-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): Update.
+
+2014-02-17  Jamison Hope  <jrh@theptrgroup.com>
+
+	* kawa.texi (Implemented SRFIs): Fix typo.
+
+2014-02-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Processes): Update exit and add emergency-exit.
+
+2013-11-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Implemented SRFIs): Update.
+
+	* kawa.texi (Bytevectors): Document utf8->string and string->utf8.
+
+2013-09-29  Per Bothner  <per@bothner.com>
+
+	* texinfo.tex: Update to texinfo-5.2.
+
+2013-09-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Lexical syntax): Document R7RS symbol-element syntax.
+
+	* kawa.texi (Program structure): Re-arrange - moove earlier.
+	(Boolean values): New section.
+
+	* kawa.texi (Strings): Document both simple string literals
+	and SRFI-109 squasi-literals.
+
+	* kawa.texi: Clean up use of macros.  Specifically use
+	new texinfo commands like @lbracechar so we can use @stxlit
+	where appropriate without kludges or hand-expanding it.
+
+2013-09-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texti (String): Document string literal syntax.
+	(Lists): Merge documentation from R7RS.
+
+2013-09-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Strings): Merge documentation from R7RS.
+
+2013-09-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax and conditional compilation): Add 'features'.
+	(Characters):  Add 'digit-value',
+	(System inquiry): New section node.
+
+	* kawa.texi (Datum syntax): New subsection on Datum labels.
+	(Ports): Update write to note use of datum-levels.
+
+	* kawa.texi (Conditionals): Update documentation of 'case'
+	to mentioned '=>' forms.
+
+	* kawa.texi: Fix some sectioning and node name errors.
+	(Arithmetic operations): Document finite?, infinite?, and nan?
+	according to R7RS - which generalizes to complex numbers.
+
+2013-09-23  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Time-related functions): New node, documents
+	current-second, current-jiffy, and jiffies-per-second.
+	Also move sleep here.
+	(Miscellaneous, Special topic): Merge into single chapter
+	Miscellaneous topics.
+
+	* kawa.texi (Options, Module classes): Document --warn-void-used,
+	plus some minor tweaks.
+
+	* Makefile.am (../kawa-doc-$(VERSION).tar.gz): Update.
+
+2013-09-23  Matthieu Vachon  <matthieu.o.vachon@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Regularize tmp file naming.
+
+2013-09-23  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Numerous updates and additions.
+	(Scripts): Major re-write.
+	(Compatibility): Update note on tailcalls.
+	(Options):  Document -D and -J olptions to kawa front-end
+	(Strings): Update string-fill! for R7RS semantics.
+	(Arithmetic operations): Likewise for finite?, infinite?, and nan?.
+	(Processes): More details on command-name procedure.
+
+2013-09-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Numbers); Document proceure. square.
+	(String): Document string-copy and string-copy!.
+	(Lists): Document make-list.
+
+	* kawa.texi (Strings): Some re-organization.
+
+2013-09-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Strings): Update string->list for R7RS
+	(end,end) arguments. Minor update.
+
+2013-08-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Type tests and conversions): Document (->TYPE VAL) syntax.
+
+	* kawa.texi (Lexical syntax): Document exponent-marker variants.
+
+	* kawa.texi (stxlit macro): Use @code for better info output.
+
+2013-08-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): Various updates.
+	(Macros): Fix thinko.
+
+2013-07-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Locations): Document define-private-alias.
+
+2013-02-17  Matthieu Vachon  <matthieu.o.vachon@gmail.com>
+
+	* kawa.texi (Running): Added documentation about some missing
+	--warn compilation options.
+	* kawa.texi (Running): Added documentation about
+	main: #t module-compile-options.
+	* kawa.texi (Modules classes) : Added documentation on valid keys for
+	module-compile-options.
+
+2013-02-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Macros): Note optional 3rd parameter to datum->syntax.
+
+	* kawa.texi (Acknowledgements):  Add more names.
+
+2012-12-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Features): Link to new JavaFX section.
+	* kawa.texi (Building JavaFX applications): New section.
+
+	* kawa.texi (Top): Link to tutorial.
+	(Features): Add some features worth mentioning.
+	(Self-configuring page scripts): Some extra information.
+
+2012-12-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some tweaks to avoid problems with texi2pdf.
+
+2012-12-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Special topics): Fix syntax error.
+	(Features): List lazy evaluation.
+
+2012-12-07  Per Bothner  <per@bothner.com>
+
+	* tutorial.xml: Added text.
+
+2012-12-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Quantities): Add soem more information, including
+	documenting syntax.
+
+	* kawa.texi (Android view construction): New section.
+
+2012-11-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ports): Document write-simple, write-shared.
+
+	* kawa.texi (Vectors, Bytevectors): More R7RS documentation.
+
+2012-11-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ports): Document some more R7TS port functions,
+	including discussion of textual vs binary ports.
+
+2012-11-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ports): Add documentation of input procedures,
+	mostly from R7RS draft 7.
+
+2012-11-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ports): Add documentation, mostly from R7RS.
+	(Output): New subsection.
+
+	* Makefile.am: When generating html, specify --no-node-files.
+
+	* kawa.texi (Top): Re-phrase initial paragraph.
+
+	* kawa.texi (Vectors): Mention function call syntax.
+
+2012-11-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (stxlitrbrace): New macro.  Needed in tex mode.
+
+	* kawa.texi (Sequences): New section.
+	(Data structures): Re-order some sections.
+	(Vectors): Document begin-end bounds as appropriate plus other tweaks.
+
+2012-11-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Restrictions): Renamed node to ...
+	(Compatibility): new node name.
+	* kawa.texi (Bytevectors): New section node.
+	* kawa.texi: Some minor fixes.
+
+2012-11-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Building for Android): New node, based on
+	blog article from 2010.
+
+2012-11-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Special topics): New chapter-level node.
+	(Processes): Move under Special topics.
+	(Deprecated low-level functions): Likewise.
+
+2012-11-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Arithmetic operations): Reverted previous change.
+	Implemented 2-argument log instead.
+
+2012-11-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Arithmetic operations): Remove documentation (copied
+	from R6RS) of unimplemented (and non-R7RS) 2-argument log function.
+	This fixes Savannah bug #37610 "Logarithm's description".
+
+2012-10-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various small fixes.
+
+2012-07-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Simplify home page to emphasize Scheme,
+	(Framework): Move discussion of internals and other languages here.
+
+	* kawa.texi: Fix some sectioning problems.
+
+2012-05-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Remove bad "next" reference.
+
+2012-04-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Macros):  Document syntax->datum and datum->syntax.
+	Document with-syntax and quasisyntax.
+	(Datum syntax): Update quasisyntax Abbreviations.
+	(Hash-prefixed forms): Add quasisyntax forms,
+
+2012-04-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Acknowledgements): New section.
+
+2012-03-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Macros): New section.
+
+2012-03-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): Update and add ideas.
+
+2012-03-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): Various updates.
+
+2012-02-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Fix some formatting bugs.
+
+2012-02-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Lots of stuff moved around, mostly relating to
+	command-line options.
+
+	* kawa.texi (FAQs): New FAQ about why the REPL uses display.
+
+2012-02-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some re-arranging.
+	(Conditionals): New section.
+	(Lazy evaluation): New section.
+
+2012-01-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Source distribution): Update that you can use
+	configure+make on Windows by using Cygwin.
+
+	* kawa.texi (Parameterized Types): New section.
+
+2012-01-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Vectors): Document [xxx] constructor syntax,
+	and discuss immutability.
+
+2012-01-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Document access: abstract.
+
+2012-01-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some tweaks relating to load.
+
+2012-01-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: (Options): Document --r5rs, --r6rs, --r7rs flags.
+	(Ports): Note symbol-read-case is only checked when reader is created.
+
+	* kawa.texi: Improve documentation of identifiers and literals.
+	Document #!fold-case and #!no-fold-case.
+
+	* kawa.texi (Record types): Update since define-record-type now
+	generates a nested class.
+
+	* kawa.texi (Unicode): Document string-for-each.
+
+	* kawa.texi (Arithmetic operations): Document real-valued?,
+	rational-valued?, integer-valued?, finite?, infinite?, nan?,
+	and exact-integer-sqrt.
+
+	* kawa.texi (Vectors): New section.
+	(Miscellaneous): Move vector-append to Vectors section.
+
+	* kawa.texi (Streams): New stub section, about SRFI-41.
+	(Implemented SRFIs): Link to new section.
+
+	* kawa.texi: Small updates.
+
+2011-12-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Field operations): Major re-write.
+
+2011-12-05  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Method operations): Major re-write to match current
+	features and recommendations.
+	(Colon notation): More details and examples.
+
+2011-10-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new methods): New method-body non-terminal.
+	Document #!native.
+
+2011-08-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Datum syntax/Abbreviations): Add Kawa abbreviations.
+
+	* kawa.texi (Colon-notation): New section.
+
+	* kawa.texi (Bodies): Clarification.
+
+2011-08-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Source distribution): Note need for make variables
+	READLINE_INCLUDE_PATH and READLINE_LIB_PATH on OS/X.
+
+	* kawa.texi (Source distribution): Update to note you can use
+	configure+make on Cygwin.
+
+2011-07-21  Per Bothner  <per@bothner.com>
+
+	* kawa.1: Don't pipe nroff output through col.  It produces bad output.
+	It also adds a needless dependency, which is a hassle for cygwin.
+
+2011-04-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various minor tweaks, fixes, and updates.
+
+	* kawa.texi (FAQs): New question about inner class.
+
+2011-04-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ideas and tasks): New section.
+
+2011-04-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax and conditional compilation): Document the
+	new 'class-exists:ClassName' feature test.
+
+2011-02-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Character sets): New section.
+
+2011-02-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various tweaks.
+	(Uniform vectors): Use type names without angle brackets.
+
+	* kawa.texi (Bodies): New section.
+	(Multiple values): Some improvements.
+	(Format): Add index references.
+
+2011-02-23  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some minor syntax-definition fixes.
+
+2011-02-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Change some macros so the result looks less confusing
+	in info output.
+
+2011-01-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various minor fixes and improvements suggested by
+	Savannah bug #32224: "Doc Typos/Clarifications".
+
+2011-01-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Fix various errors.
+	(Annotations): Add link to blog article about JAXP example.
+
+2011-01-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Primitive expression syntax): New node.
+	Various updates to improve syntax definitions and cross-references.
+
+	* kawa.texi (Annotations): New node.
+
+2011-01-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (stxdef): Add @anchor.
+	(stxref): New macro.
+	(...): Use stxref macro for syntax cross-references.
+
+	* kawa.texi (Top): Tweak my personal URL.
+
+2010-12-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Ports): New variable *print-xml-indent*.
+	(Paths): Fix typos.
+
+	* kawa.texi (Module classes): Update documentation of require.
+	Add documentation for import.
+
+2010-11-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Compiling using Ant): New subsection.
+
+2010-11-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Enumerations): New section.
+	* kawa.texi: Also some minor tweaks.
+
+2010-11-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Compilation options): Document --warn-unknown-member.
+
+2010-11-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Anonymous classes): Talk about SAM-conversion.
+	(Allocating objects): Lots of stuff about recent improvements.
+
+	* kawa.texi (Extended Number Operations): Remove node. merging
+	content into Arithmetic operations.
+	(Performance of numeric operations): New node.
+
+2010-10-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax and conditional compilation): Document
+	new 'expand' function.
+
+2010-10-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Wrap @stxlit around more literals.
+	Modernize syntax used in example.  Fix some minor errors.
+
+2010-10-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Update sources.redhat.com -> sourceware.org.
+
+2010-07-23  Per Bothner  <per@bothner.com>
+
+	* kawa.text (Top): Remove dead link to commercial Kawa IDE.
+
+	* kawa.texi: Various small improvements.
+
+2010-07-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (HTTP requests): Document request-input-stream.
+	request-input-port, and request-body-string.
+
+2010-07-19  Per Bothner  <per@bothner.com>
+
+	* kawa.text (stxlitat): New macro - @stxlit{@} hangs
+	when making kawa.dvi.
+
+	* kawa.texi: More on web page scripts.
+
+2010-07-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Self-configuring page scripts): New section.
+	(Options): New subsection "Options for web servers".
+
+2010-07-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various updates.
+
+2010-07-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options): Document --target.
+
+	* kawa.texi (Projects): Mention Google's App Inventor for Android.
+
+2010-06-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Fix some minor mistakes.
+
+2010-06-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (XML literals): Add a subsection about QNames and namespaces.
+
+2010-06-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (XML literals): Various improvements.
+
+2010-06-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax): A bunch of new stuff, partly based on R6RS.
+
+2010-06-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Update and add details about compound symbols and
+	namespaces.
+
+2010-05-31  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Creating XML nodes): Document new functions element-name
+	and attribute-name.
+
+2010-05-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (XML literals): New section.
+
+2010-05-13  Per Bothner  <per@bothner.com>
+
+	* Kawa.texi (stxdef, stxlit): New macros.
+	Use thse to regularize the form of syntax definitions.
+	* Makefile.am (.texi.pdf): Pass -E flag to texi2pdf, telling it to
+	use makeinfo for macro-expansion.
+
+2010-04-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (HTTP requests): Add lots more documentation for
+	new and old functions in HTTP.scm.
+	(Servlets): Add some more documentation for functions in servlets.scm.
+
+	* kawa.texi (Extended formals): Use boldface for literal syntax.
+
+2010-04-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Binary distribution, Source distribution): Update
+	since sources now default to Java 6.
+
+	* kawa.texi (Hash tables): Note that Kawa hashtables implement
+	java.util.Map.
+
+	* kawa.texi (Paths): Add some examples.
+
+2010-04-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Hash tables): Also document R6RS hash tables.
+	Mostly merged in text from the R6RS specification.
+
+2009-12-22  Per Bothner  <per@bothner.com>
+
+	* tutorial.xml:  Start of a tutorial.
+
+2009-12-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (FAQs): New chapter node for Frequenlt Asked Questions.
+	Start by discussing define-alias used like Java import.
+
+2009-11-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Module classes, Compilation options): Update since
+	--module-static is now the default.
+	* kawa.text (Defining new classes): Update that the access: specifier
+	now supports 'volatile, 'transient, or a list.
+	Also fix think for interface:.
+
+2009-09-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Debugging): Document 'disassemble' function.
+
+2009-09-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Application compilation): Note that the default
+	when --main is specified is that no bindings are exported.
+
+2009-09-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Change @defun (and @deffn Function) to @deffn Procedure,
+	to match R6RS terminology.
+
+	* kawa.texi (Arithmetic operations): New (unfinished) node,
+	mostly based on R6RS.
+
+2009-09-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Implemented SRFIs): Update list.
+
+2009-09-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Miscellaneous): Move command-line-arguments, exit ...
+	(Processes):  ... here.
+	Also document command-line and new process-command-line-assignments.
+
+2009-08-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Software-License):  Update last year to 2009.
+
+2009-08-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Debugging): Note inline issue and solutions for trace.
+
+2009-08-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Procedures): Create sub-notes for contained @sections.
+
+	* kawa.texi (Reporting bugs): Update Savannah bug-submission URL.
+
+2009-08-02  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Extensions): Remove this node, and bring children up
+	a level.  The intent is for the web version that each (new) section
+	gets its own page - and we can if needed subdivide each page into
+	subsubsections - i.e. two levels of page-internal hierarchy.
+
+2009-07-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax and conditional compilation): Moved @anchor
+	commands outside of @deffn, since that seems to confuse texi2dvi.
+
+2009-06-05  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Characters and text): New node.
+	Incorporate text from R6RS about characters, strings, and Unicode.
+	Document regular expressions.  Some text and examples derived from
+	Dorai Sitaram's pregexp.
+	(String): Old node updated and moved under Characters and text.
+	* kawa.texi (manual-license): Various updates and additions.
+
+2009-05-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Minor tweaks.
+
+2009-03-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Document class-name: specifier.
+
+2009-03-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Implemented SRFIs): Update list.
+
+2009-03-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Keywords): We no longer support :IDENTIFIER syntax
+	for keywords in Scheme, only in Common Lisp and ELisp.
+
+2009-02-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Paths): Document URL type and resolve-uri function.
+	(Resources): New section for resource-url and module-uri.
+
+2008-11-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Field operations): Remove <angles> around type names
+	in define-alias example.
+
+2008-07-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Logical Number Operations): Document all the
+	now-implemented R6RS functions.  Move some of the now-redundant
+	fuctions to a new subsubsection 'Deprecated Logical Number Operations'.
+
+2008-06-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some improvements here and there.
+
+	* kawa.texi (Standard Types): The preferred spelling of standard
+	types is now without the angle brackets.
+
+2008-04-30  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Applet compilation): Update scribble example to use
+	new syntax etc.
+
+	* kawa.texi (Paths): Fix documentation of path-file.
+	Bug reported by Ethan Herdrick <info@reatlas.com>. 
+
+2008-03-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Source distribution): Update from "Java 2" as the
+	default to "Java 5".
+
+	* kawa.texi (Source distribution): Note that parallel make doesn't work.
+
+2008-02-15  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Some fixes in where the html files generated from
+	kawa.texi are put. Renamed directory to kawa-html.
+
+	* kawa-tour.texi, kawa-tour.tex: Remove old document.
+	This has been replaced by the "internals" manual.
+	* Makefile.am: Update accordingly.
+
+2008-01-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Note the binary jar now requires Java 5.
+
+	* kawa.texi (Syntax and conditional compilation): Document somewhat
+	define-syntax-case and deprecated define-macro.
+
+2008-01-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Add note on simulating synchronized methods.
+
+2008-01-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various updates and fixes.
+	(Type tests and conversions): New node.
+	(Miscellaneous): Move 'as' and 'instance?' to new node.
+
+2007-06-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Syntax and conditional compilation): Document include
+	and include-relative.
+	(Eval and Environments): Dis-recommend load and load-relative.
+
+2007-04-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Document abstract methods,
+	and the interface: and access: class-level specifiers.
+	Divide into sub-sub-sections.
+
+2007-03-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Re-order some sections.
+
+2007-01-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Getting Kawa): Remove reference to kawa-VERSION-src.zip.
+	Add suggestion to use 7-zip to unpack on Windows.
+
+2007-01-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Remove subsection on using Jikes.
+	Some updates on using gcj, mentioning --with-gcj-dbtool.
+
+	* kawa.texi (Symbols and namespaces): New section.
+	(Special named constants, Keywords): Move under new section.
+	(Namespaces): New node.
+	(XML tools): Add introduction.
+	(Formatting XML, Creating HTML nodes, Creating XML nodes): New nodes.
+
+2007-01-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Applet compilation): Tweak example to use two archives.
+	Note problem with large Kawa.jar and discuss some solutions.
+
+2007-01-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Some re-arranging to move some deprecated functions to
+	a 'Low-level functions' node, now at section level.
+
+2007-01-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Paths): Document more path functions.
+
+	* kawa.texi (Software-License): Some extra details, updates,
+	and clarifications.
+
+2007-01-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Running Java): Update - mention JDK 1.6. etc.
+
+	* kawa.texi (Extracting Path components): New section,
+	documenting path-authority, path-host, path-user-info,
+	path-port, path-query, and path-fragment.
+
+2007-01-05  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Use @result{} where appropriate.
+
+	* kawa.texi (Paths): New subsection.
+
+2006-06-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Getting Kawa): Improve sectioning.
+	Discuss how to handle proxies - thanks to david.ocallaghan@cs.tcd.ie.
+
+2006-06-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Getting Kawa): Update to discuss Subversion rather than
+	CVS.
+
+2006-04-10  Dean Ferreyra <dferreyra@igc.org>
+
+	* kawa.texi (Options): Document mew
+	--debug-{error,warning}-prints-stack-trace options.
+
+2006-03-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Running Java): Extend notes about tested Java versions.
+
+	* kawa.texi (Compilation options): Mention --module-static-run.
+	(Module classes): Update to mention 'init-run.
+
+2006-02-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Methods are now in scope.
+
+2006-02-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Software-License): Update to reflect new X11/MIT license.
+
+2006-02-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Running Java): Update link to Robert D. Skeels's
+	Kawa-on-Mac page.
+
+2006-02-07  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Array operations): Document new compact Java array
+	notation.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options, Scipts): Document new --script option.
+
+2005-11-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Module classes): Document provide macro.
+
+2005-11-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Implemented SRFIs): Remove no-longer-needed caveat.
+
+	* kawa.texi (Projects): Update JEmacs link.
+
+2005-10-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes): Discuss *init* methods.
+
+	* kawa.texi (Parameter objects): New node.
+	(Location): Move under the Eval and Environments section.
+	* kawa.texi (Implemented-SRFIs): Update for SRFI-16 and SRFI-39.
+	Add more links.
+
+	* kawa.texi (Hash tables): New mode, documents SRFI-69.
+	(Implemented SRFIs, Manual-License): Update accordingly, 
+	
+	* kawa.texi (Compilation options): Add some index entries.
+
+2005-10-07  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (CLEANFILES): Move kawa.txt *.info to ...
+	(MAINTAINERCLEANFILES): new rule.
+	(EXTRA_DIST): Remove kawa.txt.
+
+2005-10-05  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Projects): Add paragraph about Merced Systems.
+
+	* kawa.texi: Comment out @ifnotdocbook/@end ifnotdocbook since only
+	recent makeinfo has it.  Instead, the web-site-builder filters it out.
+
+2005-10-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Features): Add link to Restrictions node.
+
+2005-09-28  Per Bothner  <per@bothner.com>
+
+	* qexo.man: New man page.
+	* Makefile.am: Update accordingly.
+	* kawa.man: Lots of little changes.
+
+2005-09-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Minor updates.
+	(Threads): Document new 'runnable' function.
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* texinfo.tex: Update to new version.
+
+2005-08-22  Dominique Boucher  <dominique.boucher@nuecho.com>
+
+	* kawa.texi (Projects): Mention Nu Echo and Schemeway.
+
+2005-08-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Don't specify @bullet when its the default for @itemize.
+	This lets use emit the default in the generated docbook.
+
+2005-08-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Change top-level titles.
+	Merge a bunch up top-level chapters together.
+
+2005-08-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: Various terser chapter/section titles.
+	(Top): Some front page improvements and reorganization.
+	(KRL): Merged into the XML/HTML node.
+	(Allocating objects): Move after Method operations.
+	Mentioned prefix:new syntax.
+	(Field operations): Document prefix:.class syntax,
+
+2005-08-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (node): Subdivide into subsections.
+	New material on setting variables.
+	Document out:base, out:radix, out:doctype-systemm, out:doctype-public,
+	out:xml-indent, out:line-length, out:right-margin options.
+	(Record types): define-record-type constructors are now optimized.
+	(Method operations): Document namespace-colon syntax extensions.
+	(Field operations): Likewise.
+
+2005-07-31  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Restrictions): Merged node into Features chapter.
+	(Features): Rename and move to where Restrictions used to be.
+
+	* kawa.texi: Remove references to JavaSoft.
+
+2005-07-30  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top): Thank Merced in addition to Brainfood.
+
+	* kawa.texi (Procedures): Replace $* (line-break) commands by new 
+	paragraphs, since DocBook doesn't handle internals line-breaks.
+
+	* kawa.texi (Ports): Document *print-base*, *print-radix*,
+	*print-right-margin*, *print-miser-width*.
+
+	* kawa.texi (License): Add sub-node structure.
+
+	* kawa.texi: Update copyrights.
+
+2005-05-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Features): Add listing of srf-37, args-fold.
+
+2005-05-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: We don't need both @top and @unnumbered at the start.
+
+	* kawa.texi (@top): Update URL for internals manual.
+
+	* kawa.texi (Arrays): Avoid non-Ascii character.
+
+	* kawa.texi: Add two missing @section commands.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* kawa.texi: The NEWS web page is now news.html.
+
+2005-02-06  Per Bothner  <per@bothner.com>
+
+	* internals.xml: Moved to Kawa web site, and assocated cvs repository,
+	so removed from here.
+	* Makefile.am: Update accordingly.
+
+2005-02-01  Per Bothner  <per@bothner.com>
+
+	* internals.xml (Module initialization): New section.
+
+2004-12-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Projects): Update Nice description and
+	Daniel Bonniot's email address.
+
+2004-12-07  Per Bothner  <per@bothner.com>
+
+	* internals.xml: New short section about the new tail-call convention.
+
+2004-10-07  Chris Dean  <ctdean@sokitomi.com>
+
+	* kawa.texi (Multiple values): Add missing "(".
+
+2004-08-05  Chris Dean  <ctdean@sokitomi.com>
+
+	* kawa.texi (Field operations):  Document "isName" fields.
+
+2004-07-27  Chris Dean  <ctdean@sokitomi.com>
+
+	* kawa.texi (Compilation options):  Add --warn-as-error.
+
+2004-07-27  Per Bothner  <per@bothner.com>
+
+	* internals.xml (Procedures):  Major re-working - still unfinished.
+	(Compiling functions to methods):  New section.
+	(First-class functions):  New section.
+
+2004-07-19  Per Bothner  <per@bothner.com>
+
+	* internals.xml:  Many small updates/fixes.
+	Fix links to bibliography entties, and use ulink for URLs.
+
+2004-06-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes):  Document new throws: specifier.
+
+2004-05-18  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (DOCBOOK_XSLT):  New macro.
+	(internals.html, internals/index.html):  Use it.
+
+2004-04-17  Per Bothner  <per@bothner.com>
+
+	* internals.xml:  Add missing <para> tags in <listitem>.
+
+	* kawa.texi, internals.xml:  Fix typos reported by Adam Warner
+	(bug report #8578).
+
+2004-02-16  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options):  Document --no-inline.
+
+	* kawa.texi (Method operations, Field operations):  Update since
+	we can access non-public fields and methods.
+
+2004-02-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes):  Document access: options
+	and method allocation: option.
+
+2003-12-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes):  Document new features for
+	field initialization.
+
+2003-11-22  Per Bothner  <per@bothner.com>
+
+	* internals.xml (Numbers):  Fix typo 'is' -> 'id' in attribute name.
+	(bibliography):  Add 'id' attribute.
+
+	* Makefile.am (internals/index.html):  New rule.
+
+2003-11-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (KRL):  Note unescaped-data.
+
+2003-11-05  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (../kawa-doc-$(VERSION).tar.gz):  Add kawa.pdf.
+
+	* kawa.texi (Module classes):  Deocument define-variable.
+	(Compilation options):  Mention define-variable.
+
+2003-10-31  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Procedures): Warn about limitations of generic methods.
+
+	* kawa.texi (Mailing lists}  Note Qexo-general list.
+	Add Bugzilla links.  Miscellaneous re-organization.
+
+2003-10-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Compilation options):  New node.
+
+	* kawa.texi (Uniform vectors):  New subsection: Relationship with
+	Java arrays.
+
+2003-09-05  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (version.texi):  Add dependency so make info works even
+	if using CVS version without maintainer mode.
+
+2003-08-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Quantities):  Document extended definition of
+	quotient, remainder, and modulo.
+
+	* kawa.texi (Standard Types):  Note that <rational> and <integer>
+	are exact.
+
+2003-08-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Standard Types):  Add note about #f and #t representation.
+
+2003-07-15  Chris Dean  <Chris.Dean@mercedsystems.com>
+
+	* kawa.texi (Method operations):  Document new invoke-special function.
+
+2003-06-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Scheme types in Java): Update ancient class names.
+
+2003-06-03  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Update URL for Ant.
+
+2003-06-01  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Update build instructions.  Mention select-java1.
+
+2003-05-31  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Index): Name renamed to 'Overall Index', to avoid
+	a name clash with 'index.html' on case-insensitive filesystems.
+
+	* kawa.texi (Options):  Note that -f can take a URL.
+	(Eval and Environments):  Document base-uri, load and load-relative.
+	
+2003-05-17  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* kawa.texi (Multiple values, Procedures):  Fix two more typos.
+
+2003-04-05  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* kawa.texi:  Fix two typos.
+
+2003-01-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top):  Update Alexander Milowski's email address.
+
+2003-01-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Procedures):  Document cut and cute from SRFI-26.
+
+2002-11-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Procedures):  Document define-procedure.
+	(Locations):  Document setter.
+
+	* kawa.texi (Module classes):  Document define-namespace.
+	* kawa.texi (Method operations):  Document new define-namespace-based
+	method invocation syntax.
+
+2002-11-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Features):  List implemented SRFIs.
+	(Files compilation):  Fix typo.
+	(Procedure):  The 'setter property *is* implemented.
+	(Locations):  Update argument order for setter.
+	
+2002-09-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top):  Reference internals.html instead of old
+	conference papers.
+
+	* kawa.texi (Archive compilation):  Use @defun for compile-file.
+
+2002-09-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Record types):  New node, describes SRFI-9.
+	(Dynamic records):  Renamed from Record, and deprecated.
+	
+	* kawa.texi (Array):  Add example.
+
+2002-08-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes):  Remove implementation restriction.
+
+2002-07-30  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Servlets, HTTP response):  Document new functions.
+
+2002-07-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Logical Number Operations): Fix typo bittest -> logtest.
+
+	* kawa.texi (Calling Java methods from Scheme):  Add example.
+
+2002-06-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (XML tools):  Document as-xml.  Mention XSLT support.
+	(Options):  Mention --xslt.
+
+	* kawa.texi (License):  Include AT&T fdlib license.
+
+2002-06-10  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Arrays): New node.  Based on the SRFI-25 specification
+	by Jussi Piitulainen <jpiitula@ling.helsinki.fi>.
+
+	* kawa.texi (Anonymous classes):  Fix thinko.
+
+2002-05-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Use new qexo url.
+
+	* kawa.texi (Eval and Environments):  null-environment takes version.
+
+	* kawa.texi (Writing web-server-side Kawa scripts):  Add paragraph.
+
+2002-03-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Lists):  New node.
+
+	* Makefile.am (AUTOMAKE_OPTIONS):  Remove cygnus options - it
+	does work wellto have just this directory be 'cygnus' style, even
+	though I consider it a mistake to leave the *.info files in $srcdir.
+
+	* kawa.texi (Syntax and conditional compilation):  New mode.
+	Document srfi-0's cond-expand and move defmacro+gentemp here.
+	(Multiple values):  Document srfi-8's receive macro.
+
+2002-02-16  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST):  Remove html.
+	(CLEANFILES):  Replace kawa_toc.html->kawa/*.html.  Add internals.html.
+	(kawa.html):  Remove obsolete rule.
+	* kawa.man:  Update documentation directory to /usr/share/doc.
+
+	* kawa.texi (Scripts):  New node.
+
+	* kawa.texi (Format):  Return value of format changed.
+
+2002-02-15  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Fix various typos and minor errors.
+	(Loading a ModuleBody):  Renamed to ...
+	(Loading Java functions into Scheme):  Re-written and expanded.
+
+	* Makefile.am (internals.html):  Use xsltproc.
+	(EXTRA_DIST):  DOn't include generated html or postscript.
+	(../kawa-doc-$(VERSION).tar.gz):  New rules, for latter files.
+
+2002-02-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Update kawa*-compiled.jar to kawa*.jar.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Multiple values): Document values-append.
+
+	* kawa.texi (Server-side scripts, Servlets, CGI scripts,
+	HTTP requests, HTTP response):  New sections.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options):  Document --krl and --brl.
+	(KRL):  New chapter.
+
+	* Makefile.am ($(KAWA_HTMLS)):  Use makeinfo --html, not texi2html.
+
+2002-01-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Move some nodes into new Input-Output chapter.
+	Document --output-format switch; new Named output formats node.
+
+2001-11-27  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Note environment problem and fix from Jim White
+	when running Ant under MS-Windows.
+
+	* kawa.texi:  Mentioned new kawa-VERSION-src.zip.
+
+2001-11-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Binary distribution):  Remove note about windows console.
+
+	* kawa.texi:  Merge in Ant instructions from Jim White.
+
+	* kawa.texi (Standard Types):  Update note on <String>.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Document using Ant.  Remove makekawa.bat documentation.
+
+2001-11-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Document let-values, let*-values, and current-error-port.
+
+2001-10-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Getting Kawa):  Mention mirrors, and other changes.
+
+2001-10-11  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Use @email where appropriate.
+	Update URL for Kawa commercial Java IDE.
+	Document --servlet flag.
+	(XML tools):  Add example for make-element, and building servlets.
+
+2001-09-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options):  Document new --help option.
+
+2001-09-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (set-input-port-line-number!):  Fix typo.
+
+2001-08-24  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Defining new classes):  New node.
+	(Anonymous classes):  Update.
+
+2001-08-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (XML tools):  New chapter.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Compiling to executable):  Simplify, use gckawa script.
+
+2001-06-18  Daniel Bonniot <d.bonniot@@mail.dotcom.fr>
+
+	* kawa.texi (Projects):  "Bossa" renamed to "Nice"; update.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top):  Update URLs for Javadoc APIs.
+	Note gnu.lists and gnu.xml.
+
+	* kawa.texi (Getting Kawa):  Remove more ifhtml conditionals.
+
+2001-06-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top):  Use @uref and remove @ifhtml conditionals
+	which are not recognized by makeinfo --html.
+
+2001-06-04  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Document building Kawa with GCJ.
+	Update installation instructions to refer to JDK 1.3 rather than 1.1.
+	Document compiling Scheme to native with GCJ.
+	(Features):  List some more features.
+	(Options):  Document --debug-dump-zip, --debug-print-expr, and
+	--debug-print-final-expr.
+
+	* internals.doc:  Add id attributes to sectioning elements.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Change Cygnus -> Red Hat as appropriate.
+
+2001-03-22  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (kawa.1):  Allow kawa.man in $(srcdir).
+	(EXTRA_DIST):  Add kawa.man.
+	(kawa.man):  Update Kawa URL and my email address.
+
+2000-12-13  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Change sourceware.cygnus.com to sources.redhat.com.
+	Added new subsection on using IBM's Jikes compiler.
+	(Miscellaneous):  Document new function reverse!.
+	(Procedures):  Fix typo in name of make-procedure.
+
+2000-08-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Update url for Kawa on Mac.
+	Note --with-swing flag.
+	Note invoke warning if unknown method.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Note sponsorship from Brainfood.
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options):  Added --commonlisp (and variants).
+
+2000-06-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Standard Types):  Use <procedure> instead of <function>.
+
+2000-06-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Reporting Bugs):  Node renamed to Mailing lists.
+	(Procedures):  New node.  Move "Formals" node here, as well apply
+	and constant-file.  Document procedure properties and make-procedure.
+	(Quantities):  Document define-base-unit. Minor updates.
+	(Modules classes):  Add new Definitions subsection.  Document
+	define-private and define-constant.
+	
+	* internals.xml:  Lower-case all element tags.
+	Change title.  Update URL.
+	Re-write documentation on how literals are compiled.
+
+2000-05-28  Per Bothner  <per@bothner.com>
+
+	* doc/kawa.texi (Files compilation):  Document --module-static.
+	(Module classes):  Document module-export, module-static.
+	(Scheme.registerEnvironment):  Add documentation.
+	
+	* internals.xml:  New internals manual.  (For now, essentially
+	the "KawaLisp98" paper, with little or no changes.)
+	* Makefile.am:  Added some rules to process internals.xml.
+
+2000-04-18  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Projects):  New section on projects using Kawa.
+	(Top):  Updated link to my home page.
+	(Mangling):  Updated mangling for '->'.
+	(Field operations):  Note that '(field array 'length)' works.
+	(Array operation):  Fix typo.
+
+2000-03-21  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Top):  Add link to JEmacs home page.
+	(Uniform vectors):  Document srfi-4-related extension.
+	(Mangling): Note how `<' is mangled to `$Ls' etc.
+	(Module classes):  Documents how modules work.
+
+2000-02-28  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Change .zip to .jar in some (not all) places.
+
+2000-02-12  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Options):  Note -f is like load now.
+	(Applet compilation):  New section.
+	(Objects and Classes):  Docuemnt new `this' macro.
+
+2000-01-23  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Some minor fixes.
+	* Makefile.am:  Add rule to generate pdf files using texi2pdf.
+
+1999-12-06  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Scheme types in Java):  Fix kawa.math -> gnu.math.
+	(Formals):  Document NAME :: TYPE syntax (barely).
+
+1999-11-18  Per Bothner  <per@bothner.com>
+
+	* license.terms:  Remove.  Replaced by by ../COPYING.
+	* Makefile.am (EXTRA_DIST):  Remove license.terms.
+
+	* kawa.texi:  Some minor cleanups for texinfo-4.0.  Now always
+	generate an index.
+	(Ports):  Document new SRFI-6 functions (open-input-string,
+	open-output-string, get-output-string ).
+	(Types):  New chapter.
+	(Standard Types):  Move section to new Types chapter.
+	(Mangling):  New section.
+	(Method operations):  Various changes.  Some text moved around.
+	(License):  Updated and added explication.
+
+1999-09-14  Per Bothner  <per@bothner.com>
+
+	* kawa.texi (Objects and Classes):  New chapter.
+	Move some old sections to the new chapter.
+	Document `make' function.
+	Generate index if html.  (makeinfo crashes.)
+
+1999-09-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Describe invoke-static and class-methods.
+	Remove no-longer valid disclaimer about let-syntax and letrec-syntax.
+
+1999-09-05  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Document read-line.
+	Note that define-alias (now) works both top-level and in functions.
+
+1999-08-22  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Change Kawa mail address to sourceware.cygnus.com.
+
+1999-08-08  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Add two links to Scheme tutorials.
+
+1999-07-20  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Update my email address.
+	Better Windows build instructions, using makekawa.bat.
+
+1999-07-19  Per Bothner  <per@bothner.com>
+
+	* kawa.texi:  Fix ftp addresses.
+  	Change sourceware.cygnus.com to anoncvs.cygnus.com for cvs access.
+	Mention where to get Cygwin.
+	Move Quanties section before Logical Number Operations.
+	Add some documentation (from SLib manual) on format directives.
+	Document trace, untrace, system-tmpdir, make-temporary-file.
+	Document --scheme and --elisp options.
+
+1999-05-13  Per Bothner  <bothner@magnus.cygnus.com>
+
+	* kawa.texi:  Update to use ftp.gnu.org site.
+
+	* kawa.texi:  Fix syntax errors in @deffn specs.
+
+1999-04-25  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* kawa.texi (Getting Kawa):  Mention both stable version and snapshots.
+	(Options):  Document --full-tail-calls and --no-full-tail-calls.
+	(Standard Types):  Docuemnt more types.
+ 	(Declaring Types of Variables):  New section.
+	
+1999-04-11  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi (Running Java):   Point to Mac-related web page.
+ 	(Array operations):  Typo primitive-array-set->primitive-array-get.
+
+Tue Mar 23 11:30:23 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* kawa.texi (Options):  Document --[no-]full-tailcalls options.
+	(Locations):  New node, documenting location and define-alias.
+
+Mon Feb  8 22:39:52 1999  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Update various URLs etc.
+	Mention that Kawa is available by anonymous cvs.
+
+Sat Jan  2 22:37:40 1999  Per Bothner  <bothner@cygnus.com>
+
+	* mdate-sh:  Update to newer version.
+	* Makefile.am (EXTRA_DIST):  Add mdate-sh.
+
+Sat Jan  2 12:47:22 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* kawa.texi:  Document --server and --client flags, as well
+	as --enable-kawa-frontend configure flag.
+
+Wed Dec 23 16:01:01 1998  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* kawa.texi (Anonymous classes):  Updated, more information.
+
+Thu Nov 26 11:51:37 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi (Formals):  Describe parameter and return type specs.
+	(Field operations):  Describe field and static-field functions.
+	(Anonymous classes):  New node - describe object syntax.
+
+Sun Nov 15 21:34:01 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  In Windows example, use back-slashes.
+
+Sat Oct 17 14:34:03 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi: Document new synchronized syntax.
+
+Tue Jul 28 08:33:26 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Document that :KEYWORD is now the same as KEYWORD:.
+
+Mon Jun 29 21:23:02 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Document string-upcase, string-downcase!, etc.
+	Start docuemnting format and parse-format.
+	Add reference to Freenix paper.
+
+Sun May 24 13:54:55 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Add some notes on building from source.
+	Add notes on using Kawa from Java.
+
+Sun May 24 12:31:07 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Fix/update some URLs.
+	Update description of record feature.  (A RTD is now a Class.)
+
+Tue Apr 28 21:55:07 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi (port-column, port-line, set-port-line!):  New.
+	Deprecated RScheme-style functions they subsume.
+
+Wed Mar 11 13:09:07 1998  Per Bothner  <bothner@cygnus.com>
+
+	* texinfo.tex:  Update to current version.
+	* kawa.texi:  Replace R4RS by R5RS where appropriate.
+	Mention ftp site and Debian package.
+
+Tue Mar 10 22:25:38 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Makefile.am (install-html):  New rule to install html.
+	* kawa.texi:  Document system and related process stuff in new section.
+	Add various urls.  Docuemnt eof issues.  Various other tweaks.
+
+Tue Mar  3 19:23:23 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Document --main and --version flags.
+	(Primitive functions):  Renamed to Low-level functions, and improved.
+	Document new macros for accessing fields and arrays.
+	* license.terms:  Add my name to copyright.
+
+Thu Feb 19 19:36:14 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Simplify CLASSPATH description, and mention Windows95.
+	Update for new installation directory.  Note future email archive.
+
+Mon Feb 16 17:47:02 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi (Miscellaneous):  Document instance? and as.
+
+Sun Feb  8 18:28:08 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.man:  New (minimal) manual page.
+	* Makefile.am:  Add rules to deal with man page.
+	(KAWA_HTMLS):  Need explicit list of files generated by texi2html.
+
+Fri Feb  6 17:39:12 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Fix various minor mistakes.
+  	Fix URLs to name kawa-current instead of kawa-1.5,
+	and kawa-1.2beta (in comments) to kawa-newest.
+	(Running):  Split into multiple sections.
+	Document new -w flag, and creating a new window.
+	Document new scheme-window procedure.
+	Change every @section to @chapter, and @subsection to @section.
+	* Makefile.am (kawa.html):  Invoke texi2html with -split_chapter.
+
+Tue Jan 27 12:03:59 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Document catch, thow, primitive-throw, try-catch,
+	and extended error.
+	* kawa.texi:  Document (minimally) GuiConsole.
+
+Mon Jan 19 16:49:46 1998  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Document copy-file, input-port-read-state, and
+	port-char-encoding.  Update default-prompter.
+	
+Sun Dec 14 22:55:44 1997  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Macros are now "Syntax".
+	Document symbol-read-case, try-finally, dynamic-wind, and fluid-let.
+
+Sun Nov  2 16:51:32 1997  Per Bothner  <bothner@cygnus.com>
+
+	* kawa.texi:  Various minor updates.
+
+Wed May  7 08:46:46 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* kawa.texi:  Various minor fixes and updates (including URLs).
+
+Tue Mar 18 14:13:49 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* kawa.texi:  Docuemnt DSSSL expression language compliance;
+	special named constants; keyword; optional and keyword parameters;
+	records;  and a few new functions.
+	* Makefile.{am,in} (EXTRA_DIST):  Add Compliance.html.
+
+Mon Feb  3 23:09:39 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* kawa.texi:  Document threads (future, sleep).  Fix two typos.

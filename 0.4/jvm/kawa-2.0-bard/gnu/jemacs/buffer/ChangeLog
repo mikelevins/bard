@@ -1,0 +1,866 @@
+2014-08-06  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (setCharacterAt): New method.
+
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* EWindow.java: Make sure Error is uncaught or re-thrown.
+	* Marker.java: Likewise.
+
+2014-01-06  Per Bothner  <per@bothner.com>
+
+	* BufferReader.java (reset): Update for new LineBufferedReader API.
+
+2013-09-15  Per Bothner  <per@bothner.com>
+
+	* EWindow.java (handleCommand): Handle 'emacs-interactive' property
+	that is a Procedure, not just a string.
+
+2012-06-26  Per Bothner  <per@bothner.com>
+
+	* BufferLocal.java: Update for Location being made generic.
+
+2011-10-21  Shad Gregory <captshadg@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	* emacs.scm (load-init-file): New function.
+	(emacs): Call load-init-file.
+
+2011-05-02  Shad Gregory <captshadg@gmail.com>
+
+	* EFrame.java (showInfoMessage): New method.
+	* Marker.java (evalLastSexp): New method.
+	* emacs.scm (message, eval-last-sexp): New methods.
+	(global-map): Map "\C-x\C-e" to eval-last-sexp.
+
+2011-05-01  Shad Gregory <captshadg@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	* Marker.java (repeatChar): New static method.
+	(insertChar): Make use of repeatChar.
+
+2011-04-15  Per Bothner  <per@bothner.com>
+	    Shad Gregory <captshadg@gmail.com>
+
+	* EWindow.java (linkSibling): Fix thinko.
+	(deleteOtherWindows): Fix logic error.
+	This fixes Savannah bug#33019 (C-x1 produces a nullpointer exception).
+
+2011-04-10  Shad Gregory <captshadg@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	* emacs.scm (about-jemacs): New function.
+	* EFrame.java (aboutMessage): New method.
+	(showAboutMessage): New abstract method.
+	This fixes Savannah bug#16307 (Failure on "Help").
+
+2011-04-10  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (read-dialog): Simplify.
+
+	* emacs.scm (erase-buffer): Add missing parentheses.
+
+	* emacs.scm (process?): Fix thinko.
+
+2010-08-19  Per Bothner  <per@bothner.com>
+
+	* ReplMode.java: Use new Future.make factory method.
+
+2009-01-14  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (scheme-interaction-window, elisp-interaction-window):
+	Update to use string literal rather than symbol.
+
+2008-10-29  Per Bothner  <per@bothner.com>
+
+	* Marker.java (insertChar): Return immediately on zero count.
+
+2008-05-26  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (readOnly): New field.
+	(getReadOnly, setReadOnly): New accessors.
+	* BufferLocal.java (readOnlyVar): New static field.
+	(make): Change return type from void.
+	(set(Buffer,Object)), (get(Buffer,Object), isBound(Buffer)):
+	If buffer is null, set default.
+	Add special handling for readOnlyVar.
+	* emacs.scm (default-value, default-boundp, set-default): New functions.
+
+2008-05-25  Per Bothner  <per@bothner.com>
+
+	Generalize char-insert methods to take 32-bit (or 20-bit) Unicode ints.
+	* Buffer.java (insert): Rename to insertChar and change char->int.
+	* Marker.java (insert): Rename to insertChar and change char->int.
+	Handle char values above 0x10000.
+	Optimize to use char array rather than StringBuffer.
+	* emacs.scm (insert-char): Use renamed insertChar method.
+	Convert value to Uncode value using ELisp.asChar.
+
+2008-05-23  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (removeRegion): New abstract method.
+	(removeall): Make non-abstract by defining in terms of removeRegion.
+
+2008-04-26  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (buffer-file-name): No longer use symbol->string, since
+	java.lang.String is now a <string> rather than a <symbol>
+	Reported by Yaroslav Kavenchuk <kavenchuk@gmail.com>.
+
+2008-02-04  Per Bothner  <per@bothner.com>
+
+	* EKeymap.java (ignorable): A KEY_TYPED event with modifiers
+	(except for shift) should also be ignored - use the PRESSED event.
+
+2008-02-02  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (read-dialog): Update as simple Scheme symbol is no longer
+	a java.lang.String.
+	* Buffer.java (getFileName, setFileName): Update to semi-recent
+	use of Path.
+	(findFile): Extend to handle arbitrary Paths.
+	Fixes bug reported by Yaroslav Kavenchuk <kavenchuk@gmail.com>.
+
+2008-01-16  Per Bothner  <per@bothner.com>
+
+	* EFrame.java (setMenu): Rename to setMenuBar.
+	* emacs.scm (set-menubar-dirty-flag): Update accordingly.
+
+2007-02-18  Per Bothner  <per@bothner.com>
+
+	* EKeymap.java (defineKey): Change since strings are now CharSequence.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (filename): Rename and change type of field ...
+	 (path): ... to Path.
+	(getPath, setPath): New methods.
+	(getFileName, setFileName): Update to get/set path field.
+	(save): Update to use path. 
+	* BufferReader.java (<init>): Update to use path.
+	* ReplMode.java (<init>): Likewise. 
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Simplify - we use '$JAVA kawa.repl' rather than $KAWA1.
+
+2006-09-06  Per Bothner  <per@bothner.com>
+
+	* BufferReader.java: Remove redundant import 'gnu.jemacs.buffer.*'.
+
+2006-06-16  Per Bothner  <per@bothner.com>
+
+	* BufferLocal.java (make): Fix some bit-rot.
+
+	* BufferLocal.java (set): Fix off-by-one error.
+
+	* EKeymap.java (ignorable): Can ignore metaKey press but not typed.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* BufferReader.java: Moved from gnu.jemacs.swing.
+	Removed a Swing-specific constructor.
+	* Makefile.am: Update accordingly.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ALL): New macro, only if ENABLE_JEMACS.
+	(list-sources): Remove no-longer-used rule.
+
+2005-11-16  Per Bothner  <per@bothner.com>
+
+	* ReplMode.java (make): Combine two methods.
+	This makes it easier to select method at compiletime in editfns.el.
+
+2005-09-25  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (interaction-window): Add parameter type declaration
+	to avoid ambiguity warning.
+
+2005-07-28  Per Bothner  <per@bothner.com>
+
+	* BufferLocal.java: Extend IndirectableLocation, not NamedLocation.
+	(<init.): Modify appropriately.
+	(name): New field.
+	(getKeySymbol): New method.
+	(make): Need to explicitly pass name to addLocation.
+
+2005-07-23  Per Bothner  <per@bothner.com>
+
+	* ReplMode.java (make): Inherit from global, not current, environment.
+
+	* emacs.scm (interaction-window): New function.
+	(scheme-window): Rename to scheme-interaction-window.
+	(elisp-interaction-window): New function.
+	(define-menubar): Add entry for elisp interaction, as well as Scheme.
+
+2005-06-04  Per Bothner  <per@bothner.com>
+
+	* ProcessMode.java (<clinit>):  Also map 'enter key to enterAction.
+
+2005-05-18  Christian Surlykke <christian@surlykke.dk> 
+
+	* EKeymap.java: (getKeyForName): Map "return" to '\r' rather than '\n'.
+
+2005-05-18  Christian Surlykke <christian@surlykke.dk>
+
+	* EKeymap.java: (CTRL_MASK, SHIFT_MASK, META_MASK, ALT_MASK) now 
+	public. (show) New method for debugging. Prints integer as binary 
+	string leftpadded with zeros.
+	
+2005-04-18  Per Bothner  <per@bothner.com>
+
+	* Buffer.java: Use use:java.lang.CharSequence PreProcess name.
+
+2005-04-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Always compile all files, regardless of --with-swing.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (call-interactively, make-variable-buffer-local,
+	make-local-variable): Move buffer-dependent functions from MiscOps.scm.
+	This removes one dependency of gnu.jemacs.lang on gnu.jemacs.buffer.
+
+2005-03-04  Per Bothner  <per@bothner.com>
+
+	* ReplMode.java: Update Interpreter->Lanuguage various places.
+
+2005-02-25  Per Bothner  <per@bothner.com>
+
+	* emacs.scm (global-map, esc-map): Define using define-variable.
+
+2005-01-07  Per Bothner  <per@bothner.com>
+
+	* Buffer. java (getStringContent): New abstract (uncommented) method.
+	(charAt, setCharAt, fill, writeTo, consume): New CharSeq methods,
+	implemented using getStringContent.
+
+2004-12-29  Per Bothner  <per@bothner.com>
+
+	* BufferLocal.java (make): Set base field.
+	(isBound, get, set): Make robust in case there is no current Buffer.
+
+2004-12-05  Per Bothner  <per@bothner.com>
+
+	* BufferLocalConstraint.java: Remove class, replaced by:
+	* BufferLocal.java: New class, extends IndirectableLocation.
+	* Makefile.am: Update accordingly.
+	* Buffer.java (localBindings): New field.
+	(makeBufferLocal): Update to use new BufferLocal class.
+	* Command.java (resolveSymbol): Update for new Environment handling.
+	* EKeymap.java (keySymbol): New access method, required because
+	it was added to the Named interface.
+
+2004-08-23  Per Bothner  <per@bothner.com>
+
+	* EToolkit.java	(swingToolkit, swtToolkit):  New constants.
+	(getInstance):  Get gnu.jemacs.toolkit property to select toolkit.
+
+2004-08-04  Christian Surlykke <christian@surlykke.dk>
+
+	* Buffer.java (invoke): New abstract method 
+	* EFrame.java (setMenuBar): Removed. Use setMenu instead
+	(setMenu): New abstract method
+	* EToolkit.java (getIgnoreAction): New abstract method. 
+	(getMenu): New abstract method.
+	(getIgnoreAction): New abstract method.
+	
+	* emacs.scm (set-menubar-dirty-flag): changed to use EFrame.setMenu
+	rather than EFrame.setMenuBar
+	(scheme-swing-window): Renamed to (scheme-window)
+	* EMenu.java: New abstract class
+	* EWindow.java (setSelected): Changed to concrete, moved some
+	non-swing-specific code from SwingWindow.setSelected to here.
+	(tooLong): New abstract method.
+	(lookupKey): Uses that rather than explicitly creating TooLongAction.
+	(modeline):  Moved field to gnu.jemacs.swing.SwingWindow.java
+	* IgnoreAction.java: Class moved to gnu.jemacs.swing package.
+	* InputStreamHandler.java (run): calls ProcessMode.invoke rather than
+	SwingUtilities.invokeAndWait.
+	* Menu.java: Moved to gnu.jemacs.swing and renamed to SwingMenu.java
+	* Modeline.java: Moved to gnu.jemacs.swing 
+	* ProcessMode.java (invoke): New method.
+	* TooLongAction.java: Moved to gnu.jemacs.swing package.
+	* Makefile.am:  Updated accordingly.
+
+2004-08-03  Per Bothner  <per@bothner.com>
+
+	* Mode.java:  Extend ModuleBody instead of implementing to-be-removed
+	ApplyMethodContainer.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* Buffer.java:  Remove unused import statements.
+	* EWindow.java:  Likewise.
+	* Menu.java:  Likewise.
+	* Modeline.java:  Likewise.
+	* TooLongAction.java:  Likewise.
+	* Signal.java (checkQuit):  Use static syntax to invoke static method.
+
+2003-05-17  Per Bothner  <per@bothner.com>
+
+	* EWindow.java (setFrame):  New method.
+	(unlink):  If unlinking last windows, set frame's firstWindow to null.
+	(delete):  Don't call unlink here.
+	(deleteNoValidate):  Call it here instead.
+	* EFrame.java (delete):  Fix loop over windows.
+
+2003-01-09  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (insert):  Remove xpos parameters.
+	* Marker.java:  Update for gnu.lists changes.
+
+2002-11-15  Per Bothner  <per@bothner.com>
+
+	* EKeyMap.java: Print-name of Symbol may require getName, not toString.
+
+2002-03-24  Per Bothner  <per@bothner.com>
+
+	* BufferWriter.java:  Factor out Swing dependencies.
+	* EToolkit.java (getFace, setUnderlone, setBold, setForeground,
+	setBackground):  New abstract methods. 
+	* InputStreamHandler.java:  Remove unneeded import.
+	* Buffer.java (openReader):  New abstract method.
+	(currentColumn):  Use openReader method.
+	* Marker.java (moveToColumn):  Likewise.
+
+	* BufferContent.java:  Moved to gnu.buffer.swing.
+	* BufferReader.java:  Moved to gnu.buffer.swing.
+	* MarkerReader.java:  Moved to gnu.buffer.swing.
+
+	* ProcessMode.java (<clinit>):  Don't use setDefaultBinding.
+	Define enterAction for "\r" and "return".  
+
+	+ ReplBuffer.java:  Removed - use ReplMode instead.
+	* ReplMode.java:  New class - extends ProcessMode.
+	* emacs.scm:  Remove ReplBuffer stuff to use ReplMode instead.
+	* Makefile.am: Update accordingly.
+
+	* emacs.scm (window-pixel-height, window-pixel-widt):  Fix.
+
+	* BufferWriter.java (write1):  Handle '\t', and ignore (for now) '\r'.
+
+2002-03-19  Per Bothner  <per@bothner.com>
+
+	Move some Swing-specific code into gnu.jemacs.swing.
+	* Buffer.java:  Make abstract.  Move Swing code to SwingBuffer.
+	Make some methods abstract.
+	* BufferKeymap.java:  Removed class - partly replaced by EKeymap.
+	* EKeymap.java: New class, extends RangeTable.
+	Move some keymap searching and command handling here, for now.
+	* Window.java:  Removed class, replaced by EWindow.
+	* EWindow.java:  New abstract class.
+	* EToolkit.java:  New abstract class.
+	* Frame.java:  Renamed to EFrame.java.
+	* EFrame.java:  Move Swing-specific code to SwingBuffer.
+	* InsertAction.java:  Removed, replaced by SelfInsertCommand.
+	* SelfInsertCommand.java:  New class, extends Procedure0or1.
+	* Command.java: Remove non-static fields and methods.
+	* Marker.java:  No longer implements javax.swing.text.swing.Position.
+	Move Swing-specific code out to other classes.
+	* MarkerReader.java:  Add kludgy cast to SwingBuffer.
+	* Modeline.java:  Update Window -> EWindow.
+	* ProcessMode.java:  Remove Swing-specific code.
+	(class ProcessDefaultAction):  Removed class.
+	(class ProcessInsertCommand):  New class, extends Procedure0.
+	* ReplBuffer.java:  Kludge update.
+	* TelnetMode.java:  Remove unneeded import.
+	* TooLongAction.java:  Kludge update.
+	* BufferWriter.java:  Kludge update.
+	* FinalAction.java:  Remove class.
+	* Makefile.am:  Update appropriately.
+	* emacs.scm:  Various updates.
+
+2001-11-26  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java (dump):  Minor improvement in positions printing.
+
+	* ReplBuffer.java (<init>): The processMarker is no longer isAfter().
+	(enter):  Move processMark before sending data to QueueReader.
+
+	* BufferKeymap.java (ignorable):  Make more consistent.
+	(asKeyStroke):  Handle some more key names.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* emacs.scm:  Use invoke instead of primitive-virtual-method.
+	Add parameter type declarations.
+
+2001-10-19  Per Bothner  <per@bothner.com>
+
+	* BufferLocalConstraint.java (get):  Now takes defaultValue argument.
+
+	* Command.java (perform):  Catch Throwable.
+
+2001-10-05  Per Bothner  <per@bothner.com>
+
+	* Buffer.java:  Update for CharSequence -> CharSeq renaming.
+	* ProcessMode.java:  Likewise.
+
+2001-06-19  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (PACKAGE_CFNAME):  Rename to PACKAGE_FNAME.
+
+	* BufferKeymap.java:  Handle symbol implemented using Binding.
+	* Marker.java (insert):  Remove bogus debug print.
+
+	* emacs.scm (pop-to-buffer, display-window, split-window,
+	move-to-column):  Add more parameter type declaration.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (makeBufferLocal):  Moved here from Symbol.
+	* Command.java:  Handle Symbol moved and removal of Binding2.
+
+2001-06-03  Per Bothner  <per@bothner.com>
+
+	* ReplBuffer.java (<init>): Use new OutPort contructors, and
+	specify pretty-printing.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (CLEANFILES):  Remove redundant definition.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* Buffer.java, BufferContent.java, BufferKeymap.java,
+	BufferReader.java, Command.java, Marker.java, MarkerReader.java,
+	Menu.java,ProcessMode.java, Window.java,emacs.scm}:
+	Update gnu.kawa.util->gnu.lists, AbstractString->CharSequence,
+	marker-kind to isAfter boolean, array->getArray(), length->size.
+	* Marker.java (isPoint):  New method
+	Inherit from gnu.lists.SeqPosition.
+	* IgnoreAction.java:  New class, extends javax.swing.text.TextAction.
+	* Makefile.am:  Update acordingly.
+	* BufferContent.java (getChars):  Shift gap to minimize copying.
+
+2000-11-21  Per Bothner  <per@bothner.com>
+
+	* Makefile.am, Makefile.in (EXTRA_DIST):  Include $(EXTRA_JAVA).
+
+2000-10-15  Per Bothner  <per@bothner.com>
+
+	* emacs.scm:  Tweaking of return types, default handling.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* BufferKeymap.java (toString(KeyStroke)):  New static method.
+
+2000-06-19  Per Bothner  <per@bothner.com>
+
+	* package.html:  Point to www.JEmacs.net.
+
+	* BufferKeymap.java (ignorable):  Don't ignore '\n' or '\t'.
+
+	* Command.java (processInteractionString):  Accept 'F'.
+
+	* ReplBuffer.java (<init>):  Use redStyle for inputStyle.
+	* Buffer.java (<init>):  Default inputStyle to defaultStyle.
+
+2000-06-18  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (markMarker):  New field.
+	(checkMark, getMarkMarker):  New methods.
+	* Window.java:  Now also implements ChangeListener.
+	(activateRegion):  New method.
+	(select(Caret)):  New method.
+
+	* Buffer.java (charHeight, charWidth):  Moved to Window.
+	* Window.java (charHeight, charWidth):  New fields, moved from Buffer.
+	(getCharSize):  New method.
+	(getHeightInLines, getWidthInColumns):  Update accordingly.
+
+	* BufferKeymap.java (lookupKey):  Changes to handle escape and meta.
+	(defineKey):  Likewise.
+	(metaKey, metaKeymap):  New static fields.
+	(CTRL_MASK, SHIFT_MASK, ALT_MASK, META_MASK):  New constants.
+	(asNonAction, asAction):  Update accordingly.
+	(ignorable, asKeyStroke, definePrefix, stripMeta):  New methods.
+	(getDefaultAction):  Always return null.
+	* InsertAction.java (actionPerformed):  Don't clear
+	buffer.keymap.pendingLength unless we actually insert something.
+
+	* Marker.java (isBeginningOfLine, isEndOfLine):  New predicates.
+	(set):  Oops.  Need to set buffer.
+	
+	* BufferLocalConstraint.java:  New class, extends Constraint.
+	* Command.java (key):  New field (needed for prefix keys).
+	(resolveSymbol):  New method.
+	(perform):  Check for "intercative" methods.
+	(processInteractionString, toString):  New methods.
+	(getCommand):  Call resolveSymbol.
+	* PrefixAction.java:  Removed - now subsumed by Coommand.
+	* Makefile.am:  Update accordingly.
+
+	* ReplBuffer.java (scheme):  Removed method.
+	(make):  New static methods that specify Interpreter or language name.
+
+	* emacs.scm (set-keymap-name):  Takes optional name.
+	(set-keymap-name):  New method - for now does nothing.
+	(global-map): Change to new Keymap - not DEFAULT_KEYMAP.
+	Also comment out calls to define-key - use keydefs.el instead.
+	(esc-map):  New variable.
+	(forward-char, backward-char, next-line, previous-line):  Comment out.
+	Instead use persions in simple.el.
+	(move-line):  Rename to line-move.
+	(copy-merker):  More correct implementation.
+	(decode-buffer):  New procedure.
+
+2000-05-22  Per Bothner  <per@bothner.com>
+
+	* Buffer.java:  Now extends DefaultStyledDocument.
+	(document):  Removed field.
+	(getContent):  Removed method, replaced by following method.
+	(getStringContent):  New method.
+	(remove):  Removed, since now inherited.
+	various:  Replated 'document' by 'this' (usually implicit).
+	* BufferWriter.java:  Likewise.
+	* Marker.java:  Likewise.
+	* ProcessMode.java:  Likewise.
+	* ReplBuffer.java:  Likewise.
+	* Window.java:  Likewise.
+
+	* Buffer.java (<clinit>):  Default style depends on java.version.
+
+2000-04-23  Per Bothner  <per@bothner.com>
+
+	* Marker.java (Marker(Marker)):  Fix it.
+	* emacs.scm (force-mode-line-update):  Define as explicit function,
+	so elisp can find it in the function name space.
+	(point-at-bol):  Fix off-by-one error.
+	(save-excursion):  Remove  (now handled by elisp SaveExcursion class).
+
+2000-04-17  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java:  No extends gnu.kawa.util.CharBuffer.
+	Much of the logic was moved to CharBuffer.
+	(class GpaPosition):  Now extends gnu.kawa.util.Position.
+	New constructors.
+	* Marker.java:  Some re-writing because BufferContent re-written.
+	* Buffer.java:  Likewise.
+	* Window.java:  Likewise.
+
+	* Mode.java (getBuffer):  New method.
+	* ProcessMode.java (writeToInferior, getProcessMark):  New methods.
+	* emacs.scm (process?, process-send-string, process-buffer,
+	process-mark, get-buffer-process):  New procedures.
+
+2000-04-14  Per Bothner  <per@bothner.com>
+
+	* BufferWriter.java:  Handle escape sequences.
+	(resetAttributes, updateStyle, getColor, handleSetCharacterRendition,
+	handleOperatingSystemCommand, handleCSICommand, handleEscapeBracket,
+	deleteChars, moveColumns, write1):  New methods.
+	(write):  Re-write to handle escapes state.
+	* InputStreamHandler.java:  New class, extends Thread.
+
+	* BufferKeymap.java (asNonAction):  New method.
+	(lookupKey):  Use asNonAction.
+	(asAction):  New method.
+	(defineKey):  Use asAction.
+	(lookupKey):  Only accept default action if getKeyChar() non-zero.
+	
+	* Marker.java (<init>):  New constructor.
+	(forwardChar, backwardChar, currentColumn, moveToColumn, forwardLine):
+	New methods, based on code in Buffer.java.
+	* Buffer.java (modes):  New field.
+	(forwardChar, backwardChar, moveToColumn):  Call BufferMarker method.
+	(forwardLine):  New method.
+	* emacs.scm (set-keymap-parent, set-keymap-parents, keymap-parent,
+	keymap-parents, set-keymap-default-binding, keymap-default-binding,
+	marker?):  New procedures.
+	(point-at-bol, forward-line):  Re-write to use Buffers's forwardLine.
+
+	* Mode.java:  New class.
+	* ProcessMode.java:  New class - extends Mode.
+	* TelnetMode.java:  New class - extends ProcessMode.
+	* InfProcessMode.java:  New class - extends ProcessMode.
+	* Makefile.am (java_WITH_SWING):  Update with new classes.
+	* emacs.scm (shell, telnet):  New procedures.
+
+	* emacs.scm (<marker>, <process>, <buffer>, <window>, <frame>,
+	<keymap>):  Define as type aliases using define-alias.
+	Use these aliases in rest of file.
+
+2000-03-21  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (charHeight, charWidth):  New fields.
+	(<init>):  Set charHeight, charWidth.
+	* Window.java (getHeightInLines, getWidthInColumns):  New method.
+	* emacs.scm (window-height, window-width, window-pixel-height,
+	window-pixel-width, window-text-area-pixel-height,
+	window-text-area-pixel-width):  New procedures.
+	
+	* Buffer.java (insert):  Rename to insertString.
+	(insert):  New method generalizes old insert.
+	(insertAll):  New method.
+	* emacs.scm (redraw-modeline, force-mode-line-update):  New.
+	(insert):  Genealize to inserting character and varargs.
+
+2000-03-17  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (encoding):  New field.
+	(defaultStyle):  New static field.  Use Lucida Sans Typewriter.
+	(findFile, save, inserFile):  Set and/or use encoding.
+	(<init>):  Set "18n" property to true, for correct bidi handling.
+	* Marker.java (insert):  If null style, use Buffer.defaultStyle.
+
+2000-02-27  Per Bothner  <per@bothner.com>
+
+	Various tweaks for better javadoc processing.
+	* overview.html:  Renamed to package.html.
+
+	* Window.java (setSelected):  DOn't crash if null frame.
+
+2000-02-26  Per Bothner  <per@bothner.com>
+
+	* ProcAction.java:  Removed, replaced by/renamed to Command.java.
+	* Command.java:  New class.
+	(command):  New field, replaces proc field.
+	(perform):  New static method.
+	* Makefile.am, Makefile.in:  Update accordingly.
+	* BufferKeymap.java:  Likewise.
+
+	* Buffer.java (display):  New method.
+	* Menu.java:  No longer implements ActionListener.
+	(menuEntried):  Removed Hashtable field.
+	(setMenu):  Use enumerator.  Don't create extra initial separator.
+	Add a JComponent as is.
+	Create a MenuItem (new class) instead of JMenuItem.
+	(actionPerformed):  Moved to MenuItem.
+	(class MenuItem):  New non-public class, extends JMenuItem.
+	* emacs.scm (find-file-other-window, find-file-other-frame,
+	pop-to-buffer, display-window, switch-to-buffer-other-window,
+	switch-to-buffer-other-frame):  New procedures.
+	(default-menubar):  Do't use literal, so we can use
+	function references, rather than function names.
+
+
+2000-02-26  Simon Josefsson <jas@pdc.kth.se>
+
+	* Menu.java:  New file.
+	* Makefile.am, Makefile.in (java_WITH_SWING):  Added Menu.java.
+	* Frame.java (menuBar):  New field.
+	(setMenuBar):  New method.
+	(<init>):  Do setJMenuBar.
+	* emacs.scm (current-menybar, default-menubar):  New variables.
+	(set-menubar-dirty-flag, set-menubar):  New variables.
+	(make-frame):  Call set-menubar.
+
+2000-02-25  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java (class GapUndoableEdit):  Replace field
+	startIndex field by an on offset (startOffset).  (This creates
+	fewer unneeded positin indexes).
+
+	* BufferKeymap.java (defaultInsertAction):  New static field.
+	* InsertAction.java (actionPerformed):  Don't insert backspace.
+
+	* BufferKeymap.java (asKeyStroke):  Handle modifier keys.
+	* emacs.scm (emacs-help):  New command, bound ot (control h).
+	Add some type declarations.
+
+	* Emacs.java:  Removed.
+	* Signal.java (checkQuit):  New method.
+	* Makefile.am:  Emacs.java no longer used;  Signal.java is now
+	always compiled (even without Swing);  re-orginanize so it all
+	works whether or not --with-swing is configured.
+
+	* Marker.java (deleteChar):  Signal if count is out of range.
+	Call setDot to (partially) work around what appears to be a Swing bug.
+
+	* Window.java (setBuffer):  Only update position if window is selected.
+	(setSelected):  Make the buffer current *before* updatings its point.
+
+2000-02-19  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (point):  Removed - use pointMarker.getOffset() instead.
+	(<init>):  Initialize pointMarker here, to a regular marker.
+	(getDot):  Just call pointMarker.getOffset.
+	(setDot):  Just call pointMarker.set.
+	(forwardChar, backwardChar):  Don't use/set curPosition or point.
+	* Window.java (setDot):  New method.
+	(setSelected, unselect):  Update buffer's curPosition and pointMarker.
+	* Marker.java (getOffset):  Call buffer.curPosition.getDot directly.
+	(set):  Call buffer.curPosition.setDot directly.
+	
+	* Buffer.java (remove, removeRegion, removeAll):  New edit methods.
+
+	* Buffer.java (positionToOffset):  New convenience function.
+
+	* BufferReader.java:  New class, extends InPort.
+	* MarkerReader.java:  New class, extends InPort.
+	* Buffer.java (tabWidth):  New field.
+	(charWidth, countColumns, currentColumn, moveToColumn,
+	lineStartOffset):  New methods.
+
+	* BufferContent.java (freePositionIndex):  Fix math error.
+	(array, gapStart, gapEnd):  Make default protection.
+	(scan):  Fix off-by-one error.
+
+	* BufferKeymap.java (asKeyStroke):  Handle named keys.
+
+	* Makefile.am:  New Swing configuration scheme uses @SWING_SELECTED@.
+	(java_SWING):  Renamed to java_WITH_SWING. Add new classes.
+	(scmclasses.stamp):  New rules to compile emacs.scm.
+
+	* Signal.java (toString):  New method.
+
+	* emacs.scm (goto-line, next-line, previous-line, move-line, insert,
+	erase-buffer, delete-region, delete-char, delete-backward-char,
+	current-column, move-to-column):  New procedures.
+
+2000-02-11  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java (gapContent):  Fix some small but critical bugs.
+
+	* emacs.scm (lookup-key):  Update as Sequence was to gnu.kawa.util.
+
+2000-02-01  Per Bothner  <per@bothner.com>
+
+	* ReplBuffer.java:  Now need to import gnu.expr.Interpreter.
+
+2000-01-24  Per Bothner  <per@bothner.com>
+
+	* ReplBuffer.java:  Fix kawa.lang.QueueReader ->gnu.text.QueueReader.
+
+2000-01-23  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (EXTRA_DIST):  Added, with emacs.scm overview.html.
+
+1999-12-06  Per Bothner  <per@bothner.com>
+
+	* BufferContent.java (scan):  Add missing int->long cast.
+	* emacs.java (point-at-eol):  Use buffer,getDot directly.
+
+	* Buffer.java (getContent, minDot, maxDot, deleteChar, scan):  New.
+	* BufferContent.java:  No longer extends GapContent;  now just
+	implements AbstractDocument.Content.
+	(BEFORE_MARK_KIND, EMACS_MARK_KIND, AFTER_MARK_KIND):  New "enums".
+	(array, gapStart, gapEnd):  New fields for buffer-gap implementation.
+	(<init>):  New constructors.
+	(allocatePositionIndex):  Fix off-by-one-errors.
+	Also, we need to adjust indexes array if a new position was inserted.
+	(shiftGap, length, charAt, getChars, getString, gapReserve,
+	createPosition, dump):  New methods.
+	(indexOf, lastIndexOf):  New static helper methods.
+	(scan):  New method, converted from XEmacs.
+	(GapPosition):  New class.
+	(GapUndoableEdit):  New class.
+	* Emacs.java (checkQuit):  New method.
+	* Marker.java:  Now implements java.swing.text.Position.
+	(getDot):  Renamed to getOffset, for compatibility with Position.
+	(EMACS_MARK_KIND):  New "enum".  Use it various places.
+	(deleteChar):  New method.
+	* BufferWriter.java, ReplBuffer.java:  Update getDot -> getOffset.
+	* emacs.scm:  Use new <buffer> type specifier.
+	(point-min, point-max, buffer-end, buffer-size, point-at-bol,
+ 	point-at-eol, beginning-of-line, end-of-line, forward-line,
+	delete-char):  New procedures.
+
+1999-11-18  Per Bothner  <per@bothner.com>
+
+	* emacs.scm:  In various places, fix <gnu.jemacs.text.Marker>
+ 	to <gnu.jemacs.buffer.Marker>.
+	Partly convert to using newer invoke, make etc functions, instead of
+	old primitive-virtual-method etc macros.
+
+1999-09-13  Per Bothner  <per@bothner.com>
+
+	* Buffer.java (current):  New static field.
+	(getCurrent, setCurrent):  New static methods.
+
+	* Buffer.java (redStyle, blueStyle):  New styles.
+	(redrawModeline):  Make it a little fancier.
+	* Modeline.java (<init>):  Take explicit Buffer argument.
+	Set background to light gray.
+	
+	* Buffer.java (insertFile):  Don't set point at end; leave it as was.
+	
+	* BufferKeymap.java (defaultKeymap):  New static field.
+	(globalKeymap):  Make this a new Keymap.
+
+	* Window.java (next, previous):  Remove fields.  Instead use
+	awt Component hierarchy.
+	(getNextWindow, getOtherWindow, getContainedWindow, getFirstWindow,
+ 	getLastWindow, getNextWindowInFrame):  New methods.
+	(deleteNoValidate, deleteOtherWindows):  New methods.
+	(split):  Moved in code from Frame.addWindow.
+	* Frame.java (getFirstWindow, getLastWindow, getSelectedFrame,
+	getSelectedWindow, otherWindow):  New methods.
+	(first):  Remove field.
+	(addWindow):  Remove.
+	(delete, isLive):  New methods.
+	
+	* Window.java (selected):  Remove static field.
+	(getSelected):  New method - gets window selected in selected Frame.
+	(setSelected):  Also make buffer current.
+	(warp):  Remove one overloaded method.
+
+	* emacs.scm (read-dialog):  New, creates popup window.
+	(read-from-minibuffer):  Redefine as read-dialog.
+	(*current-buffer*):  Removed variable.
+	(new-window, other-window, delete-frame, frame-selected-window,
+	frame-live?, selected-frame):  New procedures.
+
+1999-09-05  Per Bothner  <per@bothner.com>
+
+	Following item from the To-do section of overview.html are now done:
+	* Implemented commands to read and save files.
+	* We ask for file and buffer names using a dialog pop-up window.
+	* Split windows correctly, so that the windows that are not split
+	keep their sizes, the windows being split gets split as specified,
+	and the frame does not change size.  Now also handles horizonal splits.
+	* Fairly good support for  buffer-local keymaps and Emacs-style keymap
+	search order.  A new class BufferKeymap manages the active keymaps of
+	a buffer.  Multi-key key-sequences are handled.  Pending prefix keys
+	are remembered on a per-buffer basis (whereas Emacs does it globally).
+
+	* Frame.java (addWindow):  Support horizontal splitting.
+	(ask, toString):  New methods.
+	* Window.java:  Now inherits from JTextPane.
+	(wrap, getPanel, getWindow, delete, deleteOtherWindows):  New methods.
+	* Modeline.java (redraw):  Removed method.  (Not much left ...)
+
+	* Buffer.java (getFileName, setFileName, fileFile, redrawModeline,
+	makePointMarkerm getPointMarker, save, insertFile):  New methods.
+	* BufferContent.java:  New class; extends GapContent.
+	* Marker.java:  Partially re-write to use BufferContent features.
+	(hashCode, equals, toString):  New methods.
+	(insert):  New methods, moved from Buffer.java.
+
+	* BufferKeymap.java:  New class; implements javax.swing.text.Keymap.
+	* Keymap.java:  Removed;  defineKey methods moved to BufferKeymap.
+	* InsertAction.java:  New class; extends javax.swing.text.TextAction.
+	* FinalAction.java:  New class; extends javax.swing.text.TextAction.
+	* PrefixAction.java:  New class; extends javax.swing.text.TextAction.
+	* ProcAction.java:  New class;  replaced ProcCommand.
+	* ProcCommand.java:  Renamed to ProcAction.java.
+	* TooLongAction.java:  New class; extends javax.swing.AbstractAction.
+	* CancelledException.java:  New class; extends RuntimeException.
+
+	* BufferWriter.java:  New class; extends java.io.Writer.
+	* ReplBuffer.java:  New class; extends Buffer.
+	* Signal.java (message):  New static method.
+	* Makefile.am, Makefile.in (java_JAVA):  Update for new classes.
+	* emacs.scm (open-output-buffer, open-output-marker, make-keymap,
+ 	keymap-name, current-local-map, use-local-map, lookup-key, find-file,
+ 	find-file-noselect, save-buffer, write-file, insert-file, make-marker,
+ 	point-marker, copy-marker, marker-position, marker-buffer, set-marker,
+ 	buffer-file-name, set-visited-file-name, read-from-minibuffer,
+	delete-window, delete-other-windows, switch-to-buffer):
+ 	New (more-or-less-standard Emacs) procedures.
+	(term-send-input, scheme-swing-window):  New non-standard procedures.
+
+1999-08-07  Per Bothner  <per@bothner.com>
+
+	Move from gnu.emacs to gnu.jemacs.buffer.
+
+1999-06-30  Per Bothner  <per@bothner.com>
+
+	* overview.html:  Add "to-do" section.
+
+1999-06-20  Per Bothner  <per@bothner.com>
+
+	* New package.

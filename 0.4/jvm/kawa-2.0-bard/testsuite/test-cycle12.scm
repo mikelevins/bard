@@ -1,0 +1,6 @@
+(require <cycle1>)
+(require <cycle2>)
+(double-c1x)
+(double-c2x)
+(define (c1x-c2x)
+  (list c1x c2x))

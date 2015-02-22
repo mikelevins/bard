@@ -1,0 +1,635 @@
+2014-09-04  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (if): Update renamed syntax-error -> report-syntax-error.
+
+2013-11-10  Per Bothner  <per@bothner.com>
+
+	* defgroup.java: Update for new 'formStack' and scanDefinitions API.
+	* defcustom.java: Likewise.
+
+2013-09-15  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (prefix-numeric-value): New function stub.
+
+	* lambda.java (rewriteBody): Set NO_FIELD on interactive lambda
+	property - we don't need a field, and this avoids an ordering problem.
+
+	* ELisp.java (asNumber): Use Arithmetic.asNumeric.
+
+2012-12-31  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (princ, prin1): New functions.
+	* ELisp.java (initELisp): Update definitions of princ, prin1.
+	(writeFormat, displayFormat): Mak public since needed by new functions.
+
+2012-12-22  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (condition-case): New syntax.
+
+2012-10-20  Charles Turner <chturne@gmail.com>
+
+	Re-factor type lookup to avoid Scheme dependencies.
+	* ELisp.java: Don't depend on static Scheme methods.
+
+2011-10-24  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody): Update for new default argument handling.
+
+2011-05-02  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody): Update for new LetExp/FluidLetExp api.
+
+2011-03-23  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody): Use letStart/letVariable
+	etc methods instead of creating LetExp directly.
+	* SaveExcursion.java (rewrite): Likewise.
+
+2011-03-16  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Update fluid_let constructor calls.
+	* lambda.java (rewriteBody): Set IS_DYNAMIC on fluid variable,
+	to suppress warning.
+
+2011-02-05  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (if): Update to use define-rewrite-syntax.
+
+2010-10-23  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (format): Update to call formatToFString.
+
+2010-08-19  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Update to use new Environment-setting methods.
+
+2008-05-25  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (asChar): Generalize to use 20-bit ints.
+
+2008-01-16  Per Bothner  <per@bothner.com>
+
+	* lambda.java: Update FString -> CharSequence.
+
+2007-02-27  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody): Invoke Declaration.setCanWrite here.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (KAWA1): Remove unneeded macro.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* Print.java: Rename Consumer methods append->write.
+
+2006-11-20  Per Bothner  <per@bothner.com>
+
+	* While.java: Remove redundant 'implements Printable'.
+
+2006-11-17  Per Bothner  <per@bothner.com>
+
+	* Print.java: Update writeChar -> append.
+
+2006-11-13  Per Bothner  <per@bothner.com>
+
+	* lambda.java: Update for SourceLocation-related changes.
+
+2006-05-01  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (getLexer): Remove method - use super version.
+	(read): Remove unused method.
+	(class ELispReadTableEntry): Moved from ELispReader.java.
+	(createReadTable): Moved from ELispReader.  Use new super method.
+	* ELispReader.java: Remove no-longer-needed file.
+	* Makefile.am: Upadte accordingly.
+	* MiscOps.scm (emacs:read): Use new syntax and update to use
+	LispReader rather than removed ELispReader.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ALL): New macro, only if ENABLE_JEMACS.
+	(list-sources): Remove no-longer-used rule.
+
+2005-10-13  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody): Update for changed Lambda.rewrite.
+
+2005-07-21  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (environ): Since it is again possible to have multiple
+	instances, set the environ field in the constructor, not statically.
+
+2005-06-29  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  No longer need to initialize TRUE here.
+
+2005-06-04  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  Update for AbstractFormat move to gnu.lists.
+
+	* ELisp.java (writeFormat, displayFormat): Change type.
+	(getFormat): Change return type.
+
+2005-05-08  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Keep environ field set to elispEnvironment.
+	(getNewEnvironment): Remove method.
+
+2005-04-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Always compile all files, regardless of --with-swing.
+
+2005-04-16  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (call-interactively, make-variable-buffer-local,
+	make-local-variable): Move buffer-dependent functions to emacs.scm.
+	This removes one dependency of gnu.jemacs.lang on gnu.jemacs.buffer.
+
+2005-03-29  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Initalize various static fields,
+	including 'instance', in a static block, so they can be final.
+	Set/restore current environment, since needed for loadClass.
+	(initLisp): New method.
+	(elispCounter): Remove - use Language.env_counter.
+	(getNewEnvironment): New method.
+
+2005-03-20  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>): Declare 'emacs' function.
+	(main): Don't count on registerEnvironment, since that doesn't set
+	kawa.repl's previousLanguage.  Instead pass "--elisp" to kawa.repl's
+	processArgs to initialize ELisp more convolutedly.
+
+2005-03-17  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>): Use importLocation.
+
+	* ELisp.java (createReadTable): New method.
+	* ELispReader.java (getReadTable): Remove method.
+	(createReadTable): New static method.
+
+2005-02-24  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (registerEnvironment): Use new setDefaults method.
+	(getInstance): Simplify - so we avoid a NulPointerException.
+
+2005-02-12  Per Bothner  <per@bothner.com>
+
+	* defcustom.java: Use SetExp's setBinding method.
+
+2005-01-29  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Update LispInterpreter -> LispLanguage.
+
+2004-12-20  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Update 'quote' to use Quote.plainQuote.
+
+2004-12-05  Per Bothner  <per@bothner.com>
+
+	* ELisp.java: Update for new Symbol/Location handling.
+	(defun): Remove method - use new methods in Lisp2 instead,
+	(defineFormFieldValue): Remove - no longer need to override.
+	* lambda.java (rewriteBody): Do setIndirectBinding.
+
+2004-11-16  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (ELisp): Add defun for '%let'.  Use defProcStFld.
+
+2004-11-10  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (ELisp): Remove definitions of 'and' and 'or'.
+	Instead used definitions in kawa.lib.std_syntax.
+
+2004-11-06  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (if): Define elisp-specific macro.
+	* ELisp.java (<init>): Remove old definition of 'if'.
+
+2004-09-12  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>): ELisp 'if' syntax allows multiple-statement
+	else part.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  Use static syntax to access static fields/methods.
+	* defcustom.java:  Likewise.
+	* SaveExcursion.java:  Remove unused import statements.
+
+2004-02-15  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody):  Now need to rewrite default args here.
+
+2004-01-09  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (registerEnvironment):  Update setCurrent to setGlobal.
+
+2003-11-09  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* ELisp.java (<init>):  Use new string-append implementation.
+
+2003-10-12  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Define function, prog1, prog2 syntax forms.
+	* defcustom.java (scanForDefinitions):  Handle Symbols properly.
+	* lambda.java (rewruiteBody):  Likewise.
+
+2003-10-08  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Minor simplification/optimization.
+
+	* ELisp.java (getTypeFor):  Fix typo.
+
+2003-05-17  Per Bothner  <per@bothner.com>
+
+	* lambda.java (rewriteBody):  Use getName to test for 'interactive.
+	* defcustom.java (scanForDefinitions):  Use getName for Symbols.
+
+2003-02-08  Per Bothner  <per@bothner.com>
+
+	* SaveExcursion.java (<init>):  Fix typo.
+	Reported by Knut Wannheden <d96knut@dtek.chalmers.se>.
+
+2002-07-28  Per Bothner  <per@bothner.com>
+
+	* CatchableException.java: New class, extends RuntimeException.
+	* Makefile.am (java_sources):  Add CatchableException.java.
+	* MiscOps.scm (catch, throw):  New definitions.
+
+2002-03-19  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Define self-insert-command.
+	* SaveExcursion.java (savePointMark, restoreBufferPointMark):
+	Indirect to new Buffer methods.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (loadClass, defineAll):  Now inherited.
+	(defineFromFieldValue):  New, called from inherited defineAll.
+
+2001-10-05  Per Bothner  <per@bothner.com>
+
+	* SaveExcursion.java:  Update for CharSequence -> CharSeq renaming.
+
+2001-06-19  Per Bothner  <per@bothner.com>
+
+	* MiscOps.scm (message):  Allow and ignore extra arguments.
+
+	* ELisp.java (<init>):  Use SymbolTable.make.
+	* ELisp.java (<init>):  Fix initialization of t and nil.
+	* lambda.java (rewriteBody): "interactive" symbol can be Binding.
+
+2001-06-17  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  Change to extend Lisp2.
+	Adjust for Symbol and ObArray->SymbolTable moved.
+	(<init>):  Load new gnu.commonlisp.lisp.PrimOps instead.
+	* Symbol.java:  Moved to gnu.commonlisp.lang.
+	* ObArray.java:  Moved to gnu.commonlisp.lang.SymbolTable.
+	* SymbolOps.scm, StringOps.scm, ArrayOps.scm, ListOps.scm:  Removed,
+	with code moved to gnu.commonlisp.lang.PrimOps.
+	* MiscOps.scm (make-local-variable, emacs:read):  Moved here
+	* Makefile.am:  Updated.
+	* defcustom.java:  Updated to handle symbol is Binding.
+	
+2001-06-03  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java (static):  Remove ']' from elispReadTable.
+	Needed ot make sure ']' is not treated as a constituent.
+
+	* Print.java:  New class, extends DisplayFormat.
+	* Makefile.am (java_WITH_SWING):  Add Print.java.
+	* ELisp.java (writeFormat, displayFormat):  New fields.
+	(getFormat): New method.
+	(<init>):  Define procedures prin1 and princ.
+	(print):  Removed method.
+
+2001-05-16  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  Update to use LangPrimType.
+
+	* ELisp.java (nilExpr):  Use CommonLisp.nilExpr.
+
+2001-05-01  Per Bothner  <per@bothner.com>
+
+	Steps to making jemacs depends on commonlisp rather than vice versa.
+	* UnwindProtect.java:  Moved to ../../../gnu/commonlisp/lang.
+	* defun.java:  Moved to ../../../gnu/commonlisp/lang.
+	* defvar.java:  Moved to ../../../gnu/commonlisp/lang.
+	* setq.java:  Moved to ../../../gnu/commonlisp/lang.
+	* Makefile.am:  Update accordingly.
+	* ELisp.java:  Likewise.
+
+2001-04-24  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java:  Extend CLispreader rather than LispReader.
+	(readObject):  Fix thinko - create ELispReader rather than ScmRead.
+	(isDelimiter, readAtom0, readAtom, readInteger):  Remove - not used.
+	(makeNil, makePair, setCdr):  Remove - use inherited version.
+
+2001-04-22  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java:  Re-write to use new readtable-based LispReader.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* ArrayOps.scm, ELisp.java, ELispReader.java, ObArray.java,
+	SaveExcursion.java, Symbol.java, UnwindProtect.java, While.java,
+	defcustom.java, defgroup.java, defun.java, defvar.java, lambda.java,
+	setq.java:  Update gnu.kawa.util->gnu.lists, elementAt->get,
+	length->size, UniformVector->SimpleVector,  setAll->fill,
+	marker-kind to isAfter boolean.
+
+2000-12-09  Per Bothner  <per@bothner.com>
+
+	* ObArray.java (getBinding):  New method.
+
+2000-11-21    <per@bothner.com>
+
+	* Makefile.am, Makefile.in (EXTRA_DIST):  Include $(EXTRA_JAVA).
+
+2000-10-15  Per Bothner  <per@bothner.com>
+
+	* SymbolOps.scm (emacs:read, boundp):  Moved from kawa/lib/emacs.scm.
+	(symbolp):  Add result type specification.
+	(plist-member):  Use eq?, not eq.
+	* ELisp.java (getInstance):  Save and restore current Environment.
+
+2000-10-12  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Update classes used for eq and equal.
+	Use NumberCompare static fields.
+	* NumberCompare.java (makeGrt, makeGEq, MakeLss, makeLEq):  Removed
+	static methods.
+	($Eq, $Gr, $Gr$Eq, $Ls, $Ls$Eq):  New static fields.
+	* MiscOps.scm (format):  Update format -> Format class path.
+	* SymbolOps.scm (apply):  Update apply -> Apply class path.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Make some classes unconditionally (even if no swing).
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	Moved some functions around, for the same of CommonLisp support.
+	* ListOps.scm (car, cdr):  New functions; moved from MiscOps.scm.
+	* SymbolOps.scm	(apply, prog1):  New functions; moved from MiscOps.scm.
+	* MiscOps.scm (car, cdr, apply, prog1):  Removed.
+
+	* lambda.java:  Nor inherits from kawa.lang.Lambda.
+	(rewrite(Object,Translator)):  No longer needed.
+	(rewrite(LambdaExp,Object,Object,Translator)):  Replaced by non-static
+	rewriteBody method.
+	* defun.java (lambdaSyntax):  New field.
+	(rewriteFrom):  Use lambdaSyntax, instead of static lambda call.
+	* ELisp.java:  Update appropriately.
+
+2000-06-19  Per Bothner  <per@bothner.com>
+
+	* AddOp.java:   Remove unneeded imports.
+	* DivideOp.java:  Likewise.
+
+	* ELisp.java (main):  New static method.
+
+2000-06-18  Per Bothner  <per@bothner.com>
+
+	* AddOp.java ($Mn):  New static method, implements unary minus.
+	(applyN):  Call $Mn if unary minus.
+
+	* MiscOps.scm (purecopy, minibuffer-depth):  New dummy definitions.
+	(call-interactively, push):  New procedures.
+	(car, cdr):  New procedures - handle nil as input.
+	(format):  New procedure.
+	(apply):  New procedure - handle symbol as function.
+	(prog1):  New syntax.
+	(quit-char):  New variable.
+	
+	* StringOps.scm (substring, char-to-string):  New procedures.
+
+	* NumberOps.scm (1-, 1+, %):  Hardwire invoke-static calls.
+	* NumberCompare.java (apply2):  Call ELisp.asNumber on operands.
+	* ELisp.java (asNumber):  Handle javax.swing.text.Position.
+
+	* ELisp.java (<init>):  Do some autoloads first, and then some
+	after we have initialized variables symbols.
+	Add definitions for new procedures and syntax.
+	(getTypeFor):  New procedure.
+	
+	* ELisp.java (readableChar, readableString):  New helper functions.
+	
+	* UnwindProtect.java:  New class, extends Syntax.
+	* defcustom.java:  New class, extends Syntax.
+	* defgroup.java:  New class, extends Syntax.
+	* Makefile.am:  Update accordingly.
+	* lambda.java (rewrite):  Implement support for default arguments.
+	Implement support for (interactive ...).
+
+	* Symbol.java:(properties):  New static Environment.
+	(getPropertyList, setPropertyList, plistGet, plistPut, plistRemove):
+	New static methods to handle property lists.
+	* SymbolOps.scm (symbol-plist, setplist, plist-remprop, plist-member,
+	plist-get, plist-put, get, put):  New procedures for property lists.
+
+	* Symbol.java (makeBufferLocal):  New static method.
+	* SymbolOps.scm(symbol-value, set):  New procedures.
+	(make-local-variable, make-variable-buffer-local):  New procedures.
+	
+2000-06-17  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java (readString):  Fix so line number get updated
+	correctly on line-continuation escape.
+
+	* ELispReader.java (readObject):  Handle #' syntax.
+	
+2000-06-09  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Load new gnu.jemacs.lisp.autoloads.
+
+	* AddOp.java ($Mn):  Fix "slip-of-the-fingers": -11 should be -1.
+
+2000-05-28  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Only compile MiscOps.scm unless Swing is enabled.
+
+	* ELispReader.java:  LispReader and ScmRead moved to gnu.kawa.lispexpr.
+
+2000-05-22  Per Bothner  <per@bothner.com>
+
+	* SaveExcursion.java (savePointMark, restoreBufferPointMark):  Use
+	new getStringContent in Buffer.
+
+	* ELisp.java (getTypeFor):  New method.
+
+2000-05-09  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Create an ObArray rather than an Environment.
+	* Makefile.am:  Only build While.java unless --with-swing configured.
+
+	* ObArray.java (getFunction, putFunction, define):  New methods.
+
+	* ELisp.java (booleanType):  New field.
+	(getTypeFor):  Use booleanType if "boolean" is requested.
+
+2000-04-22  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (emitPushBoolean):  New method.
+	(asNumber, asChar):  New static methods.
+
+	* AddOp.java:  New class (extends ProcedureN) implements '+' and '-'.
+	* DivideOp.java:  New class (extends ProcedureN) implements '/'.
+	* ArrayOps.scm (length):  New procedure.
+	(arrayp):  Declare to return <elisp:boolean>.
+	* ListOps.scm:  New file, implements setcar and setcdr.
+	* MiscOps.scm:  New file, provides various unimplemented stubs.
+	* StringOps.scm:  New file, implements stringp and make-string.
+	* defvar.java:  New class, extends Syntax.
+	* SaveExcursion.java:  New class, extends Syntax.
+	* Makefile.am (java_JAVA, SCMSOURCES):  Add new files.
+	* ELisp.java (<init>):  Register some new methods and classes.
+	* ELisp.java (getTypeFor):  Handle< elisp:boolean>.
+
+	* ELisp.java (loadClass):  Do not catch ClassNotFoundException.
+	(<init>):  Catch and ignore ClassNotFoundException.
+
+	* lambda.java:  Recognize and ignore documentation string.
+	Recognize and ignore '(interactive ...)' declaration.
+	Make parameter be bound fluidly.
+
+	* NumberOps.scm (%):  New procedure.
+
+	* While.java:  Use new Expression.makeWhile method overload.
+	
+2000-03-21  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (<init>):  Force kawa.lib.std_syntax to be loaded now.
+	Add definition of `progn' (using kawa.standard.begin).
+
+2000-03-17  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  Inherit from Interpreter directly, not via Scheme.
+	(charIsInt):  Moved here from ELispReader.
+	(getCharacter):  New /moved ???
+	(defun):  If value is Named, set its name, if it doesn't have one.
+	(elispCounter):  New static int field.
+	(<init>):  Set name using elispCounter.
+	Copy over bindings from Scheme.getInstance().
+	Add definitions fro ArrayOps.
+	Add if, while, let, let*.
+	(getNewEnvironment, read, print, getTypeFor):  Copied over from Scheme.
+	* ELispReader.java (charIsInt):  Moved to ELisp.
+	(readCharacter):  Call ELisp.getCharacter.
+	Check for `#\ ' case before calling (new variant of) readEscape.
+
+	* ArrayOps.scm:  New file; defines arrayp, aref, aset, fillarray.
+	* While.java:  new class;  extends Syntax.
+	* Makefile.am, Makefile.in:  Update for new files.
+
+	* setq.java (rewriteForm):  Set PREFER_BINDING2 flag on SetExp.
+
+2000-02-27  Per Bothner  <per@bothner.com>
+
+	Various tweaks for better javadoc processing.
+	* package.html:  New file.
+
+2000-02-11  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java (isDelimiter):  Add '\'' and '#' as delimiters.
+	(readSymbol):   Removed, replaced by readAtom.
+	(readAtom0, readAtom):  New methods.
+	(getReadCase, readNumber, readComplex, numError, readReal):  Remove.
+	(readInteger):  New method - just call readAtom0.
+	(readObject):  Use readInteger and readAtom as appropriate.
+	Handle `:SYMBOL' syntax for uninterned symbols.
+
+	* NumberCompare.java:  New class, extends ProcedureN.
+	* NumberOps.scm:  New file.
+	* Symbol.java:  Change to inherit from Symbol2.
+	(getBinding):  Return Binding2 rather than plain Binding.
+	(getFunctionBinding, setFunctionBinding):  New static methods.
+	* SymbolOps.scm (set):  Remove duplicate definition.
+	(symbol-function, fset):  Update SymbolConstraint -> Symbol.
+	* lambda.java (rewrite):  Using a Pattern is overkill.
+	* defun.java:  New class;  extends Syntax.
+	* Makefile.am (java_JAVA, SCMSOURCES):  Update for new files.
+
+	* ELisp.java (hasSeparateFunctionNamespace, defineAll, defun,
+	(registerEnvironment):  New method.
+	(<init>):  Define `t', `nil', `<', `<=', `>', `>=', `defun'.
+
+	* FunctionSymbolConstraint.java:  Removed.  No longer needed thanks
+	to "Binding2" support in gnu.mapping and gnu.expr.
+	* GeneralSymbolConstraint.java:  Likewise.
+	* SymbolConstraint.java:  Likewise.
+	* UnboundSymbolConstraint.java:  Likewise.
+	* ValueSymbolConstraint.java:  Likewise.
+	* ObArray.java (valueConstraint, functionConstraint):  Removed fields.
+
+2000-01-31  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (nilExpr):  New constant.
+ 	(isTrue, booleanObject):  New methods (overriding Interpreter).
+	(loadClass):  New method.
+	(ELisp):  New constructor.
+
+	* ELispReader.java (isDelimiter):  New overriding method -
+	the chars '[' and ']' also need to be treated as delimiters.
+	(readVector):  Fix to use '[' and ']' as delimiters.
+	(readObject):  Call readVector after seeing '['.
+	No longer recognize #(...) or #f #t #eNUM. or #iNUM.
+	
+	* lambda.java:  New file, extends Syntax.
+	* setq.java:  New file, extends Syntax.
+	* SymbolOps.scm:  New file.
+	* Makefile.am (java_JAVA):  Add lambda.java, setq.java.
+	Add rules to build SymbolOps.class from SymbolOps.scm.
+
+	* Symbol.java (isBound):  Avoid creating unneeded binding.
+	(getBinding, setValueBinding, getPrintName):  New methods.
+	* SymbolConstraint.java (defineAll):  New method.
+	(getFunctionBinding, setFunctionBinding):  New methods.
+	* FunctionSymbolConstraint.java (environment):  Change type.
+
+1999-09-08  Per Bothner  <per@bothner.com>
+
+	* ELisp.java (getName):  New method - set the "language name".
+
+1999-09-05  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java (readEscape):  Moved to SourceMessages.
+
+1999-08-07  Per Bothner  <per@bothner.com>
+
+	Move from gnu.elisp to gnu.jemacs.lang.
+
+1999-07-15  Per Bothner  <per@bothner.com>
+
+	* Elisp.java:  Now extends kawa.standard.Scheme (for now).
+	(getSymbol):  Change return type to Object.
+	Return a String (instead of Binding), except 'nil is List.Empty.
+	(getString):  Return an FString, rather than a String.
+ 	(getLexer, getInstance):  New methods.
+	* ELispReader.java (<init>(InPort, SourceMessages)):  New constructor.
+
+1999-06-23  Per Bothner  <per@bothner.com>
+
+	* ELisp.java:  New class.
+	* Makefile.am, Makefile.in (java_JAVA):  Add ELisp.java.
+
+1999-06-20  Per Bothner  <per@bothner.com>
+
+	* ELispReader.java (readSymbol):  Don't recognize keywords.
+
+Sun Mar 21 18:17:43 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* streams.sc:  Removed (merged into kawa/lib/emacs.scm).
+	* Makefile.am:  Update accordingly.
+
+Sun Mar 21 11:04:19 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	New directory.
+	* ELispReader.java:  New LispReader sub-class.
+	* Makefile.am, Makefile.in  New.
+	* streams.scm:  New file.

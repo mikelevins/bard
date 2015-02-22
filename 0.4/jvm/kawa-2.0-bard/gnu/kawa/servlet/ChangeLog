@@ -1,0 +1,445 @@
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java: Make sure Error is uncaught or re-thrown.
+	* CGIServletWrapper.java: Likewise.
+	* HttpRequestContext.java: Likewise.
+	* KawaHttpHandler.java: Likewise.
+	* ReplSession.java: Likewise.
+
+2013-09-23  Per Bothner  <per@bothner.com>
+
+	* CGIServletWrapper.java: Update to servlet API 3.0.
+	(CGIRequest, CGIResponse, CGIContext): New member classes.
+	Move methods to appropriate member classes.
+
+2013-08-07  Per Bothner  <per@bothner.com>
+
+	* KawaAutoHandler.java (getModule): Call new Path#probeContentType.
+
+2012-12-10  Per Bothner  <per@bothner.com>
+
+	* KawaAutoHandler.java (getModule): Don't include initial slash in
+	path value.  This sort-of works if context-path doens't end in slash.
+	Fix some problems if path is a directory.
+
+	* KawaHttpHandler.java (addAutoHandler): Add initial "/" to
+	uriRoot if needed.
+
+2010-08-19  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Use new Future.make factory method.
+
+2010-08-01  Per Bothner  <per@bothner.com>
+
+	* KawaAutoHandler.java: Update Language.setDefaultLanguage
+	to Language.setCurrentLanguage.
+
+2010-07-20  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (request-input-stream, request-input-port,
+	request-body-string): New functions.
+	* HttpRequestContext.java (getRequestStream): New abstract method.
+	(getRquestPort, getRequestBodyChars): New methods.
+	* KawaHttpHandler.java (getRequestStream): New concrete method.
+	* KawaServlet.java (getRequestStream): New concerete method.
+
+	* servlets.scm (servlet-context-realpath): Syntax tweaks.
+	Change default value from symbol to string.
+
+2010-07-17  Per Bothner  <per@bothner.com>
+
+	* ServletPrinter.java (reset): New method.
+	(HttpOutputStream.reset): New method.
+	* HttpRequestContext.java (reset): New abstract method.
+	(getConsumer): New method.
+	(log(String,Throwable)): New method.
+	* KawaHttpHandler.java (reset, log): New implementation methods.
+	(handle): Working catching of exception.
+	* KawaServlet.java (doGet): Minor tweaks.
+	(reset, log): New implementation methods.
+
+	* HttpRequestContext.java (class HttpOutputStream): Move class ...
+	* ServletPrinter.java: ... to here.
+
+2010-07-15  Per Bothner  <per@bothner.com>
+
+	* Kaw0paHttpHandler.java: Move to outer class the setting of
+	HttpRequestContext.importServletDefinitions.
+	* KawaServlet.java: Likewise.  This is needed for standalone
+	manually-compiled servlets, which use KawaServlet only.
+
+2010-07-08  Per Bothner  <per@bothner.com>
+
+	* KawaAutoHandler.java (getModule): If we have a syntax error,
+	write diagnostics to consumer, rather than directly to response stream.
+	Using the latter caused problems with the diagnostics getting lost.
+
+2010-07-07  Per Bothner  <per@bothner.com>
+
+	A mechanism to auto-import the HTTP/servlet definition into Scheme
+	when running in the appropriate context.
+	* HttpRequestContext.java (importServletDefinitions): New static field.
+	* KawaHttpHandler.java: Set importServletDefinitions to 1.
+	* KawaServlet.java: Set importServletDefinitions to 2.
+
+	* HTTP.scm: Add explicit export list.
+	* servets.scm: Import and re-export HTTP module.
+
+2010-06-28  Per Bothner  <per@bothner.com>
+
+	* KawaAutoHandler.java (getModule): Force resourceStream to be
+	buffered - needed for Language detection.
+
+2010-06-27  Per Bothner  <per@bothner.com>
+
+	* HttpRequestContext.java (STATUS_SENT): New constant.
+	(maybeSendResponseHeaders): New method.
+	(close): Use maybeSendResponseHeaders rather than sendResponseHeaders.
+	* KawaServlet.java (sendResponseHeaders): Set statusCode to STATUS_SENT.
+	* KawaHttpHandler.java (sendResponseHeaders): Likewise.
+
+2010-04-18  Per Bothner  <per@bothner.com>
+
+	Add support for using the com.sun.net.httpserver web server,
+	as an alternative to using servlets.
+	* HttpRequestContext.java: New abstract class.
+	* KawaAutoHandler.java: New class, based on KawaPageServlet,
+	but making use of HttpRequestContext rather than requiring servlets.
+	* KawaHttpHandler.java: New class implements the JDK 6interface
+	com.sun.net.httpserver.HttpHandler.
+	(class Context): Member class that extends HttpRequestContext.
+	* KawaPageServlet.java: Now just a skeleton class, mainly for
+	compatibility.
+	* KawaServlet.java: Add glue layer forwarding to KawaAutoHandler.
+	(class Context): Member class that extends HttpRequestContext.
+	* ServletPrinter.java: Tweak to work with HttpRequestContext rather
+	than ServletCallContext.
+	* ServletCallContext.java: Removed - effectively replaced
+	by KawaServlet.Context.
+	* GetRequest.java: Remove class.
+	* GetResponse.java: Remove class.
+	* HTTP.scm: Re-implement using HttpRequestContext.
+	* servlets.scm: Move servlet-specific functions here.
+	* Makefile.am: Add appropriate configuration magic.
+
+2010-04-04  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Change call to QueueReader.append so it also works
+	for version compiled when java.lang.CharSequence is unavailable.
+
+2009-06-08  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Use ModuleExp.evalModule1,
+	rather than (more basic) evalToClass.
+	* KawaPageServlet.java (getModule): Set immediate mode.
+
+2008-05-20  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Don't resolve the module - let
+	that be handled by evalToClass.
+
+	* KawaPageServlet.java (getModule): Log when compiling a module.
+
+2008-05-11  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Make better use new-ish module
+	framework.  Especially, use checkCurrent to also check dependencies.
+
+2007-09-08  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Override new emitPrompt, rather than lineStart.
+
+2007-04-25  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Update to use ModuleInfo's
+	setModuleClass.
+
+2007-01-22  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: (class OutBufferWriter): Extend XMLPrinter,
+	now that XMLPrinter extends OutPort.
+
+2007-01-13  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): If path match to a directory,
+	keep looking for a file match or +default+.
+	Check if module is current even if it was a +default+.
+	Set InPort's path using ModuleInfo's absolute Path.
+
+2007-01-03  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Use ModuleInfo's new
+	getSourceAbsPathname method.
+
+	* KawaServlet.java (doGet): Set currentPath to relative to requestURL.
+	* ServletCallContext.java (getBaseUri): Remove method.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java: Update to use URIPath.
+	* ReplSession.java: Update to use Paths.
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+ 	* Makefile.am (KAWA1): Remove unneeded macro.
+
+2006-12-06  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Update for renamed Consumer methods.
+	* KawaServlet.java: Likewise.
+
+2006-12-04  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java: Update to use ModuleInfo.sourceAbsPath.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Partially revert changes from 11-17 and 11-18.
+
+2006-11-17  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Update writeChar -> append.
+
+2006-11-09  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Update for Consumer changes.
+
+2006-08-08  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (LAST_MODIFIED_CACHE_TIME): Moved field
+	to ModuleManager.
+	(getModule): Use ModuleManager's lastModifiedCacheTime instead.
+
+	* KawaPageServlet.java (getModule): Initialize module state to WALKED.
+
+2006-02-09  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): ModuleExp.evalToClass now does a
+	little less, so we must do a little more.
+
+2006-01-10  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm: Moved to gnu/kawa/slib.
+	* Makefile.am: Update accordingly. 
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Better error catching.
+	Update evalToClass call to also pass in URL.
+
+2005-11-16  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java (println): It suffices to just write a newline.
+	(appendInput): New method - like appendInputLine without newline.
+	* ReplServlet.java (doPost): Handle new action command.
+
+2005-11-08  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Put ModuleInfo in hashtable.  Ooops.
+
+2005-11-03  Per Bothner  <per@bothner.com>
+
+	* ReplSession.java: Major changes, mainly to support emitting
+	html/xml into output.  Don't encode to XML character entities here.
+	(class OutBufferWriter): Extend OutPort.
+	Interject XMLPrinter between this and PrettyWriter.
+	(write methods): Write to PrettyWriter's buffer.
+	(beginGroup, endGroup, beginAttribute, endAttribute): New methods
+	to allows us to emit element tags without extra encoding.
+	(flush, flushhToSessionBuffer): 
+
+2005-10-31  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java: Partial re-write replace the procedureCach
+	and instead use gnu.expr.ModuleContext.
+	(class CacheEntry): Remove class.
+	* KawaPageServlet.java: Use gnu.expr.Language to detect the source
+	language, rather than depending on file extension.
+	Also, support a default handler module.
+
+2005-10-27  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Call Language's resolve method.
+
+2005-10-17  Per Bothner  <per@bothner.com>
+
+	* ReplServlet.java: New class, extends HttpServlet.
+	* ReplSession.java: New class.
+
+2005-05-18  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getModule): Don't set current Environment
+	using current Language.
+
+2005-03-14  Christian Surlykke <christian@surlykke.dk>
+
+	* KawaPageServlet.java:  Missed Interpreter -> Language fix.
+
+2005-03-07  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java: Update Interpreter -> Language.
+
+2005-03-04  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java: Update Interpreter -> Language.
+
+2004-08-11  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java (run): New abstract method, replaces ...
+	(apply):   Removed abstract method.
+	* KawaPageServlet.java (apply):  Rename to run.
+
+2004-08-10  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getProcedure): Rename to getModule and
+	change return type to Module.
+	(apply):  Call run method of module, not apply method.
+	(class CacheEnty):  Change proc field to ModuleBody.
+	* KawaServlet.java (run)  Add abstract method, overriden by compiler.
+	(doGet):  Call run method, rather than apply method.
+
+2004-08-08  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java (doGet): Change for new Procedure API.
+
+2004-08-03  Per Bothner  <per@bothner.com>
+
+	* GetRequest.java:  Extend MethodProc instead of CpsProcedure.
+	* GetResponse.java:  Likewise.
+
+2003-11-16  Per Bothner  <per@bothner.com>
+
+	* CGIServletWrapper.java (getLocalPort, getLocalName, getRemotePort):
+	New methods required by Servlets 2.4.
+	(setCharacterEncoding):  Remove throws clause, for 2.4 compatibility.
+
+	* CGIServletWrapper.java (isSecure):  More real implementation.
+
+2003-10-29  Gerardo Jorvilleur <magoghm@Prodigy.net.mx>
+
+	* KawaServlet.java (doPost):   New method.
+
+2003-11-02  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getProcedure):  Replace 'parseFile' call
+	by call to new 'parse' method.
+
+2003-06-05  Per Bothner  <per@bothner.com>
+
+	* ServletCallContext.java (getBaseUri):  Use entire request url,
+	not just scheme+directory prefix.
+
+2003-05-08  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java (doGet):  Unwrap WrappedException.
+
+	* KawaPageServlet.java (getProcedure):  Set file name of InPort.
+
+	* KawaPageServlet.java (getProcedure):  Catch SyntaxException.
+
+2003-03-02  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java (getProcedure):  Use getOutputStream instead
+	of getWriter.to avoid a possible IllegalStateException.
+
+	* ServletCallContext.java (getBaseUri):  New method.
+
+2003-02-20  Per Bothner  <per@bothner.com>
+
+	* KawaPageServlet.java:  New class.  Contributed by Ivelin Ivanov
+	<ivelin@apache.org> and Tom Reilly <treilly@macromedia.com>.
+	* KawaServlet.java (doGet):  Catch exceptions.
+	(apply(CallContext)):  Add throws specification.
+	* Makefile.am (java_sources):  Added KawaPageServlet.java.
+
+2002-07-29  Per Bothner  <per@bothner.com>
+
+	* ServletCallContext.java:  Make class public.
+	(getServletCallContext, getRequest, getResponse, getServlet,
+	getServletConfig, getServletContext):  New static methods.
+	* GetResponse.java:  Implement Inlineable.
+	(compile, getReturnType):  New methods.
+	(getReponse):  New static method.
+
+	* ServletPrinter.java (addHeader):  Handle "Status", calling sendError.
+	* CGIServletWrapper.java (statusCode, statusString):  New fields.
+	(sendError, setStatus):  Provide implementations.
+	(printHeaders):  Handle non-null statusCode.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm:  Moved to gnu/kawa/slib.
+	* Makefile.am:  Simplify accordingly.
+
+2002-02-14  Per Bothner  <per@bothner.com>
+
+	* CGIServletWrapper.java:  Implement ServletContext.
+	Add necessary methods.
+	(getServletContext):  Return this.
+	(getRequestURL):  Emit '/' between server-name and request-uri.
+	* KawaServlet.java (doGet):  Call CallContext.setInstance if need be.
+	* Makefile.am (SCM_COMPILE_FLAGS):  Specify --full-tailcalls.
+	* ServletPrinter.java (addHeader):  Maybe set super.sawContentType,
+	but don't call super's addHeader.
+	(PrintHeaders):  New, empty method.
+	(printHeader):  Removed - no longer needed.
+
+2002-02-13  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java )doGet):  Don't call CallContext.setInstance.
+
+2002-02-05  Per Bothner  <per@bothner.com>
+
+	* CGIServletWrapper.java:  Also implement ServletConfig.
+	(getInitParameter, getInitParameterNames, getServletContext,
+	getServletName):  New methods, needed to implement ServletConfig.
+	(main):  Call init on servlet, passing in the CGIServletWrapper.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* HTTP.scm (response-header, response-content-type, request-path-info,
+	request-path-translated, request-query-string):  New procedures.
+
+	* Makefile.am (EXTRA_DIST):  Add scm files.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* CGIServletWrapper.java:  New class, to wrap servlets as CGI scripts.
+	* HTTP.scm:  New helper functions, to access http parameters.
+	* Makefile.am:  Update accordingly.  Thsi incldues adding rules
+	for compiling the new HTTP.scm module.
+
+2002-01-19  Per Bothner  <per@bothner.com>
+
+	* KawaServlet.java (doGet):  Use CallContext.setInstance.
+
+2002-01-13  Per Bothner  <per@bothner.com>
+
+	* ServletPrinter.java:  New class, extends HttpPrinter.
+	* Makefile.am (java_sources):  Added ServletPrinter.java.
+	* KawaServlet.java (doGet):  Use new ServletPrinter.
+	Let latter do setContentType, so odn't do it here.
+	Likewise. don't emit <html> and </html>.
+	On the other hand, do emit beginDocument and endDocument.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* GetRequest.java:  Now implements Inlineable.
+
+	* KawaServlet.java (apply):  No longer final.  Needs to be overridden
+	if servlet contains a function definition.  Make body empty - not used.
+
+2001-11-18  Per Bothner  <per@bothner.com>
+
+	* ServletCallContext.java:  New file, old class moved
+	from KawaServlet.java into its own file.
+
+	* GetRequest.java:  New class, extends CpsProcedure.
+	* GetResponse.java:  New class, extends CpsProcedure.
+	* Makefile.am (java_sources):  Update accordingly.
+
+2001-10-11  Per Bothner  <per@bothner.com>
+
+	New package.
+	* KawaServlet.java:  New class.
+	* Makefile.am:  New.

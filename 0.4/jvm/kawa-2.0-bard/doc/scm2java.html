@@ -1,0 +1,344 @@
+<html> <head>
+<title>Byte-compilation of Scheme using Java byte-codes</title>
+</head>
+<body>
+<h1>Byte-compilation of Scheme using Java byte-codes</h1>
+<address>
+<a href="http://www.cygnus.com/~bothner">Per Bothner</a>
+<a href="mailto:bothner@cygnus.com"> bothner@cygnus.com</a>
+</address>
+May 1996
+<p>
+<em>(This design document discusses the issues of implementing
+Java in Scheme.  It predates the implementation, and does not
+necessarily match the current Kawa implementation.)</em>
+<p>
+Our biggest outstanding deliverable for Guile is a byte-compiler
+and -interpreter.  Using Java has been suggested, and there is
+wide-spread interest in using Java byte codes for other languages.
+For example, <a href=http://www.inmet.com"">InterMetrics</a> is
+porting their <a HREF="http://www.inmet.com/~stt/adajava_paper/">
+Ada95 compiler to emit Java byte-codes</a>.
+See <a href="http://www.cs.tu-berlin.de/~tolk/vmlanguages.html">here</a>
+for more languages that use Java.
+<p>
+There is already an implementation
+of Scheme on top of Java.  This is "Kawa", written by
+<a href="mailto:sgml@winternet.com"> R. Alexander Milowski</a>.
+There are some major problems with Kawa 0.1, and it needs a lot
+of re-writing, but it may be a useful starting point.
+<p>
+There are some different possible targets for Scheme-in-Java:
+<ul>
+<li>A Scheme byte-code compiler with support libraries that will run on
+any Java implementation.  The support libraries will implement
+the Scheme primitives.  For maximum portability, it should be
+written in Java, but it is also possible to use "native" methods
+(i.e. written in C).
+<li>The same, but we target a specific Java implementation that has
+some extensions to support Scheme better.
+<li>A byte-code compiler that targets a Java interpreter that is
+implemented on top of a Scheme system.  For example, we could target
+the (very incomplete) "Latte" sub-system of Guile.
+<li>A hybrid system:  Depending on compiler switches, it could emit either
+portable bytecodes or Scheme-enhanced bytecodes.  The latter might
+be either more efficient or provide features not available in the
+portable Scheme-in-Java implementation.
+</ul>
+<p>
+Related design issues include:
+<ul>
+<li>Execution efficiency.
+<li>Class file size and loading speed.
+<li>Need for general <a href="#Tail-calls">tail-call-elimination</a>.
+If general tail-call-elimination is required, then it is not possible
+to produce portable bytecodes with a direct translation, though it is
+possible to use Henry Baker's trick (a function returns its continuation
+to its caller), which is also used in RScheme.
+<li>Need for full or restricted <a href="#Continuations">continuations</a>.
+It is not possible to implement general <code>call/cc</code> using
+direct translation to portable bytecodes.  It is possible if you re-write to
+continuation-passing style.
+Restricted call/cc that only returns to a caller is possible.
+</ul>
+<p>
+
+<h2>Data types</h2>
+One issue how to represent Scheme values using Java types.
+Because of Scheme's dynamic typing, we represent Scheme values
+using Java object references.  Scheme objects inherit from
+the <code>Object</code> class, like all Java objects.
+One might add an intermediate class <code>Scheme_Object</code>,
+and have all Scheme types be derived from it.  That is possible, but I
+don't think it is a good idea.  I think it is better to re-use existing
+Java classes.  For example the Scheme values <code>#f</code> and
+<code>#t</code> should be the Java objects <code>Boolean.FALSE</code>
+and <code>Boolean.True</code>.  This does imply
+that one cannot use that standard Java print functions (since they
+would print in Java syntax, rather than Scheme syntax).
+<p>
+Traditionally, Scheme (and Lisp) implementations represent objects
+using a short union, with special bit "tags" to distinguish heap
+objects and immediate values (such as fixnums).  This allows
+some operations (including fixnum arithmetic) to be more efficient.
+Unfortunately, there is no way to do this with Java bytecodes.
+<a href="mailto:shivers@ai.mit.edu">Olin Shivers</a> proposes a Java
+<a href="http://www.ai.mit.edu/people/shivers/javaScheme.html">
+extension to allow tagged types</a>.
+I don't think this has much chance of being standardized,
+and I think pre-allocation of common values (characters and
+small ints) can give some of the benefits without changing the VM.
+<p>
+Here are my suggestions for representing the various Scheme types:
+<dl>
+<dt><code>#f</code> and <code>#t</code>
+<dd>Use the standard Java class <code>Boolean</code>.
+
+<dt>characters <dd> Use standard Java class <code>Character</code>.
+Two minor problems:
+<ul>
+<li>Java only supports 16-bit Unicode characters.  It is probably possible
+to make a Java system that can support more characters, while still
+supporting standard Java bytecode files.
+<li>Character values would not compare <code>eq?</code>, unless we provide a
+system-wide "obarray" table for characters.  Luckily, Scheme
+does not require characters that are <code>equal?</code>
+to be <code>eq?</code>.
+</ul>
+
+<dt>numbers <dd> Use the various standard Java classes.
+It may be reasonable to statically allocate say the integers -1 ... 100.
+Alternatively, one could use a global (weak-?) hash-table to ensure
+<code>equal?</code> integers compare <code>eq?</code>.
+
+<dt> pairs <dd> Add a new <code>Pair</code> class.
+
+<dt> () <dd> We could use the Java NIL value, or some dummy object.
+
+<dt> symbols <dd> Use the Java <code>String</code> class.
+Use <code>String.intern()</code> to make symbols unique.
+
+<dt> strings <dd> Use the standard Java <code>StringBuffer</code> class.
+
+<dt> vectors <dd> Use a Java array of <code>Object</code>.
+
+<dt> procedures/closures <dd> We have to use special objects.
+This merits further discussion (below).
+</dl>
+
+<h2>Procedures</h2>
+
+Most Scheme functions are fairly straight-forward to compile to
+Java byte-codes.  However, there are some complications:
+<ul>
+<li>Scheme functions are first class <a href="#function-values">values</a>,
+that can be passed around as objects.
+<li>Nested functions may require <a href="#closures">closures</a>
+to be created.
+<li><a href="#Tail-calls">Tail-calls</a> are required to not cause stack
+growth.
+<li>First-class <a href="#Continuations">continuations</a> may
+require the stack state to copied.
+</ul>
+<p>
+Java does not have <a name="function-values">function values</a>.
+They can be simulated with a new
+<code>Procedure</code> class with a (virtual) <code>apply</code> method.
+Each function gets implemented as a separate sub-class of
+<code>Procedure</code>, and the Scheme code of the function is
+compiled into an <code>apply</code> method for that
+<code>Procedure</code> sub-class.
+<p>
+In some cases, a number of functions can use the same <code>Procedure</code>
+sub-class. For example, the <code>c[ad]*r</code> functions could be
+implemented with a single <code>Procedure</code> sub-class, with
+a field containing an encoding of the <code>[ad]*</code>.
+The <code>apply</code> method uses that field to do the right thing.
+<p>
+A <a name="closures">closure</a> requires a <code>Procedure</code>
+sub-class with a field that contains the static context.
+The static context can be an array,
+though it can also be an <code>Object</code> of some suitable class.
+Evaluating the nested lambda expression will allocate a context object,
+and then "new" the <code>Procedure</code> sub-class, passing it the
+context object.  The <code>apply</code> method well get non-local
+bindings using the context object.
+
+<h2><A NAME="Tail-calls">Tail call elimination<a/></h2>
+The most important use of tail-calls is probably tail-recursion, where
+a procedure calls itself (by name).  This is easily compiled using
+a Java GOTO byte-operation.  (This is more difficult if translating
+to Java source code, since Java does not have a goto statement, though
+Java byte-codes do.)
+<p>
+Mutual tail-calls among multiple functions compiled together can be
+handled by compiling all the functions in one big procedure, and
+and starting it with a switch operation to jump to the code for the
+desired function.  In that case, a tail-call to one of the other
+functions can easily be compiled as a GOTO.  It is not clear whether
+this is worthwhile, given that it still does not get you general
+tail-call elimination.
+<p>
+General tail-call elimination can be implemented using Baker's
+trick (a function returns the address of the next function to call),
+but this constrains you calling convention strongly, and for various
+reasons is messy and undesirable in a Java context.
+<p>
+The ideal way to support general tail-call elimination is to just
+do it in the Java interpreter (either for all tail-calls or using
+a new operation).  The more optimized and tuned the interpreter
+is, the more likely is that that this will be tricky and
+machine-dependent, since it may involve messy adjustments
+to the C stack.  It has been proposed that gcc be enhanced to
+support a new (extra) calling convention such that the <em>called</em>
+function be responsible for popping the arguments of the stack (rather
+than the caller).  C programs could specify an <code>__attribute__</code> to
+indicate that a function should use the new calling convention (thus
+regular functions can call functions using the new convention, and
+vice versa).  If the Java interpreter is carefully written to use
+the new calling convention where appropriate, then it should be fairly
+easy to implement general tail-call elimination.  If Scheme code is
+compiled to native (C or assembler), it can also use the new calling
+convention, thus getting full tail-call elimination.  The FSF
+(i.e. Stallman) is favorable to this approach, which would be
+quite a bit of work, but would be generally useful to anyone who
+needs general tail-call elimination.
+
+<h2><a name="Continuations">Continuations</a></h2>
+
+Implementating continuations (specifically the <code>call/cc</code>
+function) may be straight-forward in some environments.  However, it
+cannot be implemented in Java, nor can it be implemented in portable
+C code.
+<p>
+One option is to not worry about fully implementation continuations.
+Most uses for continuations are to implement exception handling,
+threads, and back-tracking.  Exception handling and threads are
+already provided by Java.  Continuations used to implement
+(non-resuming) exception handling are a special case of continuations
+that only return to stack frames in the current call chain;  these
+can be implemented using a combination of <code>Continuation</code> objects and
+exception handling.  Guile already supports threads (not implemented
+using continuations), as does Java; using continuations to switch
+threads in such an environment is probably a bad idea.  We do not
+have a ready interface for back-tracking, except by using continuations,
+but I don't think many Scheme applications use back-tracking.
+<p>
+If our Java-byte-code interpreter is embedded in a Scheme system that
+already supports continuations, then it is trivial to implement
+<code>call/cc</code>.
+<p>
+An alternative is to have the compiler transform a Scheme program
+to a form which does not need explicit continuations.  One option
+is to translate to continuation-passing-style.  I don't understand
+this will enough to comment on the implications.
+<p>
+<a name="Stalin" href="http://tochna.technion.ac.il/~qobi"> Jeffrey Mark Siskind</a>
+is working on a highly optimizing compiler to translate Scheme to C.  
+It could possibly be re-targeted to emit Java byte-codes.  However, it is
+written for for a "closed-world assumption" with global analysis of the whole
+program.  There is as yet no support for separate compilation of independent
+modules, though that is supposedly planned.  In any case, if highly-optimized
+Scheme code is important, there are probably ideas (and code)
+we can use in Stalin.
+Also, <a href="http://www.ccs.neu.edu/home/will"> William Clinger</a>
+has expressed plans to re-target his
+<a href="http://www.ccs.neu.edu/home/will/Twobit"> Twobit</a>
+optimizing compiler to
+emit Java byte-codes, and he believes it should be easy to do.
+
+<h2>File format</h2>
+A Java .class file contains more than just code.
+It also includes symbol-table information, constants, and other meta-data.
+We need to consider how this works for Scheme.
+
+One point to note is that a Java .class file contains the compilation
+of only a single class.  I believe it is possible to compile a
+Scheme source file (or module) and only write a single .class file.
+However, that would restrict your implementation choices a bit,
+and otherwise warp the resulting structure, so it may be
+prefereable to generate multiple classes.  This will require the
+use of multiple "helper" .class files, which is clumsy.  It may
+be reasonable to extend the .class format to allow nested classes.
+
+<h3>Constants</h3>
+Scheme code includes constants of two kinds:  Simple literals,
+and compound quoted S-expressions.
+
+Simple literals occurr in
+other languages (including Java), and are handled similarly:
+<ul>
+<li>Standard constants (such as <code>#f</code> are compiled into
+references to static members of standard classes
+(such as <code>Boolean.FALSE</code>).
+<li>Quoted Symbols can be compiled the same way the Java compiler
+handles string literals.
+<li>Strings and vectors be be compiled into references to static fields
+that get initialized at class-loading-time.
+<li>Character and integer literals can also be handled using
+references to static fields initialized at load time.
+Unboxed numbers (if used) can be compiled in
+the same way the Java compiler handles number literals.
+An extended Java interpreter can use other methods.
+</ul>
+
+Quoted S-expressions can be evaluated at class-loading-time,
+and a reference to the result stored in a class-static field.
+
+<h3>Symbol table information</h3>
+
+Loading a compiled Scheme program requires that definitions
+get elaborated, and inserted into the Scheme global symbol table.
+This can be done by the class's static initializer method,
+which gets evaluated at class-loading time.  No special
+magic is needed in the .class file to declare the various
+functions and variables.  However, if one has a system that
+does separate compilation with a module system, it may be
+desirable to extract type and symbol information from a
+previously-compiled module.  This requires at least some conventions
+for how to access symbol information.
+
+<h2>Eval</h2>
+Implementing <code>eval</code>, <code>load</code>, and a
+<code>read</code>-<code>eval</code>-<code>print</code> loop
+can be done in various ways.
+<p>
+If the bytecode interpreter is inside a Scheme interpreter, then
+the latter presumably already has <code>eval</code>.  We can use that.
+We would need gateways between the different interpreters, so
+different kinds of functions can call each other.  To do that,
+the calling convention for Java methods should be based on the
+already existing Scheme calling convention.  Even if we do
+a Scheme-in-Java system from scratch, it is not very difficult
+to write a simple interpreter for <code>eval</code>.
+<p>
+Alternatively, we can use bytecode for interpreted code too:
+Code that needs to be evaluated is compiled to bytecodes,
+and then immediately loaded and executed.  Java provides a
+methods to load a class from a bytearray in memory, so it is
+not necessary to write out a temporary file.  One problem is that
+Sun's current Java release does not garbage collect classes,
+so code that results from <code>eval</code> is never freed.
+This should seldom be a problem,
+except possibly in a long-running interactive session,
+since well-written Scheme code seldom uses <code>eval</code>.
+The problem can be reduced if we only byte-compile function
+definitions, but immediately evaluate other top-level expressions.
+And of course one can use a Java interpreter that <em>does</em>
+garbage collect classes.
+<p>
+The bytecode-based
+<a href="http://www.tkg.com/people/donovan/proj/rs/rscheme.html">RScheme</a>
+system implements <code>eval</code> by compiling and immediately executing
+bytecodes.  It has support for multiple bytecode interpreters, and has
+immediate ("raw" or "unboxed") numbers, so it would probably be a strong
+candidate for a combined Scheme/Java system.
+<p>
+Finally, it does not take much code to write a simple Scheme interpreter,
+This can be byte compiled, and linked in
+with the rest of the system.  This makes most sense in
+a Scheme system that emphasises large applications, and uses
+a compiler that does global optimization,
+such as <a href="#Stalin">Stalin</a>.
+
+</body></html>

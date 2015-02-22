@@ -1,0 +1,121 @@
+2013-09-15  Per Bothner  <per@bothner.com>
+
+	* editfns.el (current-prefix-arg): New variable
+	* simple.el (goto-line): Comment out - using version in emacs.scm.
+
+2012-10-20  Charles Turner <chturne@gmail.com>
+
+	* PrimOps.scm (functionp): Remove brackets from type specifier.
+
+2008-05-26  Per Bothner  <per@bothner.com>
+
+	* simple.el (kill-region): Incomplete uncommenting of non-working code.
+
+2007-09-28  Per Bothner  <per@bothner.com>
+
+	* primitives.el (boundp): Remove method, since it duplicates
+	one defined in gnu/commonlisp/lisp/PrimOps.scm
+
+2006-12-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Simplify - we use '$JAVA kawa.repl' rather than $KAWA1
+
+2006-06-16  Per Bothner  <per@bothner.com>
+
+	*  editfns.el (pos-visible-in-window-p): New stub/placeholder function.
+
+2005-11-20  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (ALL): New macro, only if ENABLE_JEMACS.
+
+2005-11-16  Per Bothner  <per@bothner.com>
+
+	* editfns.el (lisp-interaction): Update belatedly ReplBuffer->ReplMode.
+
+2005-05-18  Christian Surlykke <christian@surlykke.dk>
+
+	* keydefs.el: Added binding for 'enter.
+	
+2005-04-17  Per Bothner  <per@bothner.com>
+
+	* Makefile.am: Always compile all files, regardless of --with-swing.
+
+2004-09-23  Christian Surlykke <christian@surlykke.dk>
+
+	* editfns.el (barf-if-buffer-read-only): Changed '$optional' to 
+	'&optional' in parameter list.
+	* primitives.el (add-hook): Added two optional parameters so it
+	conforms with what subr.el expects (and how FSF defines it).
+  
+2002-03-19  Per Bothner  <per@bothner.com>
+
+	* simple.el (newline):  New more restricted implementation.
+	* keydefs.el:  Define self-insert-command on appropriate keys.
+
+2001-11-26  Per Bothner  <per@bothner.com>
+
+	* simple.el (delete-forward-p):  Simplify so it works for us.
+	* lisp/keydefs.el:  Add kp-left, kp-right, kp-up, kp-down, and delete.
+
+2001-06-19  Per Bothner  <per@bothner.com>
+
+	* primitives.el (boundp):  Update fully-qualified-name of Symbol.
+
+2001-05-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (PACKAGE_CFNAME):  Replace by plain PACKAGE_FNAME.
+	(java-classes.stamp):  Remove no-longer-appropriate rule.
+
+2001-04-09  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (CLEANFILES):  Remove redundant macro.
+
+2001-03-22  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (classjava.stamp): New rule, depend on elisp-classes.scm.
+	(java_JAVA):  New macro, to force automake to add Java rules.
+	(EXTRA_DIST):  Add the elisp files.
+
+2000-06-26  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Rename targets, to match *.stamp convention.
+
+2000-06-25  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (SOURCES):  New variable.
+	(elclasses.WITH_SWING, elclasses.WITHOUT_SWING):  Set proper timestamp.
+
+2000-06-19  Per Bothner  <per@bothner.com>
+
+	* Makefile.am:  Fix so works both --with-swing and --without-swing.
+
+	* primitives.el (listp):  New predicate.
+
+2000-06-17  Per Bothner  <per@bothner.com>
+
+	* primitives.el:  New file.
+	* editfns.el:  New file.
+	* Makefile.am (ELISPSOURCES): Update for new files.
+
+	* subr.el (lambda, with-output-to-string, putf, check-argument-type):
+	Comment out not-yet-working macros.
+	* keydefs.el:  Comment out some things.
+	* keymap.el:  Likewise.
+	* simple.el:  Likewise.
+
+	* simple.el:  Imported from xemacs-21.2.32.
+	* keydefs.el:  Likewise.
+	* keymap.el:  Likewise.
+	* subr.el:  Likewise.
+
+2000-06-09  Per Bothner  <per@bothner.com>
+
+	* alist.el:  Imported from xemacs-21.2.32.  (Not working yet.)
+	* autoloads.el:  New file.
+	* Makefile.am (ELISPSOURCES):  Add accordingly.
+
+2000-04-23  Per Bothner  <per@bothner.com>
+
+	New package.
+	* hanoi.el:  Imported for xemacs.  Now works as is!
+	* rect.el: Imported from xemacs-21.2.32.  (Not working yet.)

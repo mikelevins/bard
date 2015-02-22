@@ -1,0 +1,10 @@
+bad-1.xql:1:23: warning - obsolete '{' in variable declaration
+bad-1.xql:1:29: warning - missing ';' after declaration
+bad-1.xql:2:1: warning - replace 'define function' by 'declare function'
+bad-1.xql:2:17: warning - cannot declare function in empty namespace [XQST0060]
+bad-1.xql:3:11: missing ':=' in 'let' clause [XPST0003]
+bad-1.xql:4:7: node test when context item is undefined [XPDY0002]
+bad-1.xql:5:5: missing 'then' [XPST0003]
+bad-1.xql:6:3: missing '}' or ',' [XPST0003]
+bad-1.xql:7:2: warning - missing ';' after declaration
+bad-1.xql:9:1: non-terminated comment starting here [XPST0003]

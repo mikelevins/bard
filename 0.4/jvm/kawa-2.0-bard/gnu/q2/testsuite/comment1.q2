@@ -1,0 +1,11 @@
+2 3 4 # 5 6
+"\n-+-\n"
+# This is a comment.
+10 * 3 # more comment.
+
+"\n-+-\n"
+
+# Output: 2 3 4
+# Output: -+-
+# Output: 30
+# Output: -+-

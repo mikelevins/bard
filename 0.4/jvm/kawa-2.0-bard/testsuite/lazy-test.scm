@@ -1,0 +1,27 @@
+(test-begin "lazy")
+
+(test-equal 123 (+ (delay 100) (delay 23)))
+(test-equal 23 ((delay +) (delay 20) (delay 3)))
+(test-equal 23 ((future +) (future 20) (future 3)))
+(test-equal 33 (vector-ref #(11 22 33) (delay 2)))
+(test-equal 33 (vector-ref (delay #(11 22 33)) 2))
+(test-equal 33 (vector-ref (delay #(11 22 33)) (delay 2)))
+(test-equal 33 ((delay vector-ref) (delay #(11 22 33)) (delay 2)))
+(test-equal 33 ((delay #(11 22 33)) (delay 2)))
+(test-equal 33 ((delay #(11 22 33)) 2))
+(test-equal 33 (#(11 22 33) (delay 2)))
+(test-equal #\B (string-ref (delay "ABC") 1))
+(test-equal #\B (string-ref "ABC" (delay 1)))
+(test-equal #\B (string-ref (delay "ABC") (delay 1)))
+
+(let* ((v1 (delay (vector 3 4 5)))
+       (v2 ::vector v1))
+  (test-equal 4 (v2 1)))
+
+(define v3 ::promise (future (cons 3 4)))
+(test-equal 4 (cdr v3))
+(define v4 ::promise[pair] (delay (cons 4 5)))
+(test-equal 5 (cdr v4))
+;; error: (define v5 ::promise[integer] (delay (cons 4 5)))
+
+(test-end)

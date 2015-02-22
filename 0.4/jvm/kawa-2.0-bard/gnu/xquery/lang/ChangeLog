@@ -1,0 +1,2277 @@
+2014-11-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Test for duplicate import.
+
+2014-07-02  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (treatAs): Update for new Convert handling.
+
+2014-05-21  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent): Literal direct attribute or element
+	content is now presented by a quoted FString, to fix some corner cases.
+
+2014-05-03  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (visitReference): Update to use KawaServlet.
+	Belated fix needed because of 2010 servlet changes.
+
+2014-02-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Handle encoding declaration.
+
+2014-02-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Make sure Error is uncaught or re-thrown.
+
+2013-11-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update for new FormStack APIs.
+
+2013-11-02  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java: Mark docCached method as side-effect free.
+	This avoids a long timeout in XQTS's K2-SeqDocFunc-13 test.
+
+2012-10-20  Charles Turner <chturne@gmail.com>
+	    Per Bothner  <per@bothner.com>
+
+	Re-factor type lookup to avoid Scheme dependencies.
+	* XQuery.java (getStandardType): Make non-static.
+	* XQResolveNames.java: Access current langauge rather than Scheme.
+	Use getTypeFor rather than string2Type.
+
+2012-10-06  Per Bothner  <per@bothner.com>
+
+	Implement check for a cycle in variale initialization.
+	* XQResolveNames.java (CycleDetector): New helper member class.
+	(resolveModule): Check for cycle.
+
+2012-07-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (makeBinary): Update OP_RANGE_TO.
+
+2012-07-14  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Update sublist and subsequence.
+
+2012-07-10  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Update implementation of 'count'.
+	* XQParser.java (parseQuantifiedExpr): Update some/every implementation.
+
+	* XQuery.java (initXQuery): Implementation of "count" method changed.
+
+2011-03-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRInner): If !isFor, use the Compilation
+	helper methods letStart, letVariable, letEnter, and letDone.
+
+	* XQResolveNames.java (visitApplyExp): Remove setting of
+	incorrect return type for COLLECTION_BUILTIN.
+
+2011-01-27  Per Bothner  <per@bothner.com>
+
+	* XQuery.java: Update to use new Declaration#noteValueUnknown.
+	* XQParser.java: Likewise.
+
+2010-11-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update, since Symbol constructor is now protected.
+
+2010-05-24  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (getDelimited): Use new Lexer.getDelimited.
+
+2010-05-19  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update Namespace.getInstance -> valueOf.
+	* XQuery: Likewise.
+
+2010-04-18  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkReferenceExp): Change to match changes
+	in gnu.kawa.servlet.
+
+2010-02-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRExpression): Do pushNesting/popNesting
+	in 'order by' clause, to fix parsing in REPL.
+	Fixes bug reported by Karl Krukow.
+
+2010-02-21  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update since ModuleInfo's className method
+	is now private.
+
+2009-09-15  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (registerEnvironment): Set flag so
+	ApplicationMainSupport.processSetProperties will get called.
+	This fixes check-multab in ../testsuite.
+
+2009-08-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update for Convert.makeCoercion moved to Compilation,
+	and Convert.setCoercedReturnValue moved to LambdaExp.
+
+2009-08-13  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java: Update GetNamedPart -> CompileNamedPart.
+
+2009-07-14  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseMaybePrimaryExpr): Call maybeSetLine on new
+	ReferenceExp created from $VARREF.
+
+	* XQParser.java (maybeSetLine): Don't set if QuoteExp.
+
+2009-05-17  Per Bothner  <per@bothner.com>
+
+	* XQueryScriptEngineFactory.java: New class.
+	* Makefile.am: Update accordingly.
+
+2009-03-13  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Update calls to require.importDefinitions.
+
+2009-03-01  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (getStaticBaseUri): Tolerate getPort() being null.
+	(makeText): Make public, for XsltTranslator.
+	* XQResolveNames.java (parse): Make public, for XsltTranslator.
+
+2009-02-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (lexical): Remove field.
+	(<init>): Don't allocate NameLookup.
+	Instead, get it from the Compilation where needed.
+	* XQResolveNames.java (resolveModule): Remove subsumed Declarations.
+	* XQuery.java (getCompilation): Update to pass NameLookup.
+
+2008-09-05  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeMap): Map "untyped" to XDataType.untypedType.
+
+	* XQParser.java (parse): Error if query expression in a library module.
+
+	* XQResolveNames.java (walkApplyExp): Error if trying to 'cast as' or
+	'castable as' on XDataType.untypedType.
+
+2008-08-02  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent): Handle "{{" in content directly,
+	so it doesn't split up the quoted text.  This fixes a bug in
+	namespace-declarations.
+
+	* XQParser.java (parse): Error if default namespace declaration
+	followed variable/function declaration.
+
+2008-07-26  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeMap): Add anySimpleType.
+	* XQResolveNames.java: (walkApplyExp): anySimpleType is also
+	dis-allowed for 'cast as or 'castable as'.
+
+2008-07-25  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseItemType): Don't resolve QNames yet;
+	instead defer to QXResolveNames.
+	(parseNamedNodeType): Don't just ignore type name, but pass it to ....
+	(makeNamedNodeType): Handle type-name, so we can catch now-deferred
+	errors.
+	* XQResolveNames.java (walkReferenceExp): Special handling for
+	TYPE_NAME - map resolved name to quoted type.
+	(walkApplyExp): Handle deferred errors for 'cast as' and 'castable as'.
+	* XQParser.java: Some improvements in line/column handling.
+
+2008-06-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNamedNodeType): Use parseDataType.
+
+	* XQResolveNames.java (XS_QNAME_IGNORE_DEFAULT_BUILTIN): New constant.
+	(xsQNameIgnoreDefaultDecl): New static Declaration.
+	(walkApplyExp case CAST_AS_BUILTIN): Update castQName call.
+	(case XS_QNAME_IGNORE_DEFAULT_BUILTIN): Like XS_QNAME_BUILTIN,
+	but force binding from null prefix to empty namespace.
+	(maybeAddNamespace) : Take extra isAttribute parameter - if true,
+	ignore default element namespace.
+	(walkApplyExp): In a direct attribute constructor, call
+	maybeAddNamespace with isAttribute parameter set.
+	* XQParser.java (castQName): Extra parameter to indicate if we
+	should consider or ignore the default element namespace.
+
+	* XQParser.java (peekOperand): Only recognize "empty-sequence"
+	if followed by '('.
+
+	* XQParser.java (parseElementConstructor): Whitespace is required
+	before direct attribute constructors.
+
+	* XQuery.java (typeMap): Add "anyType" and "untyped".
+
+2008-01-14  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRInner): Don't call setTypeExp with a null
+	type - that causes problems later.
+
+2008-01-06  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java: Clean up to remove warnings with some compilers.
+
+2007-04-23  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkApplyExp): Fix copy/paste error for return
+	type of COLLECTION_BUILTIN.
+
+	* XQParser.java (parse): Use new method of iterating through
+	ModuleManager modules.
+
+2007-02-17  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkReferenceExp): Call NameLookup.lookup
+	with correct namespace code.
+
+2007-02-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Add missing intern for default namespace uri.
+
+2007-01-19  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkStatements, resolveModule): Remove
+	pointless no-longer-erv-true isNamespaceDecl invocations.
+
+2007-01-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseTypeSwitch): Fix parsing of default case
+	with variable declaration.
+
+	* XQParser.java (parsePathExpr): Use new rootDocument node for '/'
+	non-infix operator to coerce to document-node.
+
+	* XQParser.java (baseURI): Change type to Path.
+	(setStaticBaseUri, fixupStaticBaseUri): New methods.
+	(getStaticBaseUri): Try Environment, then LineBufferedReader,
+	then currentPath.  Then coerce to an absolute URI.
+	(resolveAgainstBaseUri): Making absolute is no longer done here.
+
+	* XQuery.java (typeMap): use new XDataType.anyAtomicType.
+	* XQParser.java (parseItemType): Explicitly test
+	for XDataType.anyAtomicType, which is now different from item().
+	Use SingletonType.getInstance(); for item().
+
+	* XQuery.java (initXQuery): Change implementation class of node-name.
+
+	* XQParser.java (resolveAgainstBaseUri): New method.
+	(parse): Use it to resolve 'default collation'.
+	(parseFLWRExpression): Use it to resolve 'order by' collation.
+
+	* XQParser.java (parseStepExpr): IF step is 'attribute(....)'
+	then default axis is AXIS_ATTRIBUTE.
+
+2007-01-16  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getTypeFor): Map java.lang.String to stringStringType.
+
+	* XQuery.java (formatType): New method.
+
+	* XQParser.java (parseRelativePathExpr): Type dot type to node.
+
+2007-01-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent): Make sure we don't skip boundary-space
+	before a CDATA section.  Which requires some re-organizing.
+
+	* XQuery.java (typeMap): Add mappings for normalizedString, token,
+	language, NMTOKEN, Name, NCName, ID, IDREF, and ENTITY.
+
+2007-01-14  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java: No longer need special handling of
+	current-dateTime etc, since we now use a ThreadLocal.
+	(CURRENT_DATETIME_BUILTIN, CURRENT_DATE_BUILTIN, CURRENT_TIME_BUILTIN,
+	IMPLICIT_TIMEZONE_BUILTIN): Remove constants.
+	(<init>): No longer pushBuiltin on corresponding functions.
+	(walkApplyExp): No longer handle those builtins.
+	(currentDateTimeDecl, currentDateDecl, currentTimeDecl,
+	currentTimezoneDecl): Remove fields.
+	(resolveModule): Remove special hndling of currentDateTimeDecl etc.
+	* XQuery.java (initXQuery): Declarations of current-dateTime,
+	current-date, current-time, implicit-timezone moved to here.
+
+	* XQParser.java (checkAllowedNamespaceDeclaration): New inConstructor
+	parameter.  If true, allow binding xml prefix to its standard value.
+
+	* XQParser.java (getAxis): Error if AXIS_NAMESPACE.
+	Include error code on error.
+
+	* XQParser.java (parseContent): Ignore if empty CDATA section.
+	This fixes K2-ComputeConAttr-35.xq and K2-ComputeConAttr-36.xq in XQTS.
+
+2007-01-03  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse):  Use Path's resolve rather than deprecated
+	URI_utils for collation.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (maybeSetLine): New methods.  Set Expression/Declaration
+	file and line - but only if file is non-null.
+	(various places): Use new methods.
+
+2006-12-29  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getTypeFor): Update to map Path to URI.
+
+	* XQuery.java: Update for move of uriSchemeSpecified
+	from InPort to Path.
+
+2006-12-17  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (registerEnvironment): Don't allocate new XQuery.
+
+2006-12-06  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java: Update for renamed Consumer methods.
+
+2006-12-04  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Get ModuleInfo for this compilation.
+	Update require.importDefinitions calls.
+
+2006-12-01  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (COLLECTION_BUILTIN): New constant.
+	(<init>): Declare fn:collection.
+	(walkApplyExp): Handle COLLECTION_BUILTIN.
+	* XQuery.java (initXQuery): Remove declaration of fn:collection.
+
+2006-11-29  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkApplyExp): Update for moved methods
+	implementing fn:doc and fn:doc-available.
+
+2006-11-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Some extra check for library module namespaces.
+	(libraryModuleNamespace): New field.
+	(parse): Set libraryModuleNamespace.
+	Error if duplicate module declaration
+	(parseFunctionDefinition): Error if function namespace differs
+	from library module namespace.
+	(parse): Likewise for 'declare variable'.
+
+2006-11-27  Per Bothner  <per@bothner.com>
+
+	Handle multiple functions with the same name and different arity.
+	* XQuery.java (namespaceForFunctions): New static method.
+	(VARIADIC_FUNCTION_NAMESPACE): New constant,
+	(getNamespaceOf): Rewrite - now also encodes argument count.
+	(hasNamespace): New method.
+	* XQParser.java )parseFunctionDefinition): Set OVERLOADABLE_FIELD flag.
+	(parsePathExpr, parseNodeTest, parseStepExpr): Change to match
+	new namespace int convention,
+	* XQResolveNames.java (walkReferenceExp(ReferenceExp,ApplyExp)):
+	New method. If a called function, encode arg count in namespace.
+	(walkApplyExp): Call walkReferenceExp on caller if appropriate.
+	(withContext): Update for new namespace encoding.
+
+	* XQParser.java (parseFunctionDefinition): Try to recover from
+	syntax error in parameter list.
+
+2006-11-26  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Declare fn:collection.
+
+2006-11-25  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update XDataType -> TextUtils.
+	* XQResolveNames.java: Upadte StringValue -> TextUtils.
+
+	* XQuery.java: Add declaration of fn:normalize-unicode.
+
+2006-11-24  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseDataType): Re-organize so we get error message
+	if we see empty-sequence for 'cast as'/'castable as'.
+
+	* XQResolveNames.java (CAST_AS_BUILTIN,
+	CASTABLE_AS_BUILTIN): New constants.
+	(castAsDecl, castableAsDecl): New static fields.
+	(walkApplyExp): Support new builtins.  Specifically, inline literals
+	in the QName case as required.
+	* XQParser.java (parseBinaryExpr): Use new decls for OP_CASTABLE_AS
+	and OP_CAST_AS.
+	(castQName): Make static and chaneg return type - for walkApplyExp.
+
+	* XQParser.java (parseTypeSwitch): Error if pedantic and no default.
+
+2006-11-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseRelativePathExpr): Set dot's type.
+	(parseStepQualifiers): Likewise.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkApplyExp): On position() and last()
+	set can-read flag on corresponding Declaration.
+
+	* XQParser.java (parseContent): Don't "optimize" simple text to
+	avoid use of MakeText, since the latter is now optimized.
+	(parseElementConstructor): Now needs to unwrap MakeText.
+
+2006-11-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (stringValue): Remove static method.
+	(stringValueMethod): Remove static field.
+	(parseContent): Don't need to take sprintValue here - now handled
+	by XMLFilter.
+
+	* XQParser.java (orderingModeSeen): New field.
+	(parse): Error if duplicate ordering declaration.
+
+2006-11-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseURILiteral): Normalize whitespace.
+
+2006-11-14  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update for functionality moved NodeTree -> XMLFilter.
+	* XQResolveNames.java: Likewise.
+
+2006-11-13  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update.
+	* XQResolveNames.java: Likewise.
+
+2006-11-09  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getFormat): Remogve unused method.
+	(writeFormat): Remove unused class.
+
+2006-10-31  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (trueExp, falseExp): New static fields.
+	(booleanType): Remove field - use XDataType.booleanType instead.
+	(getTypeFor): Update accordingly.
+	* XQParser.java (parseBinaryExpr): Use now type-correct constants.
+	This simplifies optimizations at inlining time.
+
+	* XQParser.java: Use QuoteExps that directly use RelativeStep
+	and ValuesFilter instances.
+	(funcForwardFilter, funcReverseFilter, funcExprFilter): Removed.
+
+	* XQResolveNames.java:  Set type for doc and doc-available calls.
+
+	* XQParser.java (documentNodeTest, textNodeTest, commentNodeTest,
+	anyNodeTest): Removed fields, now in NodeType.
+	Update various references.
+	(parseRelativePathExpr): Use new DescendantOrSelfAxis.anyNode field.
+
+2006-10-30  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getExternal): Fall back to general coerceFromObject.
+
+	* XQParser.java (getStaticBaseUri): New method.  If baseURI hasn't
+	been set yet, try 'base-uri' in the environment (from command-line).
+	(wrapWithBaseUri, parse): Use getStaticBaseUri.
+	* XQResolveNames.java (getBaseUriExpr): Likewise.
+
+	* XQResolveNames.java (ID_BUILTIN, IDREF_BUILTIN): New constants.
+	(<init>): Push fn:id and fn:idref.
+	(walkApplyExp): Handle ID_BUILTIN and IDREF_BUILTIN.
+
+2006-10-29  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeName): Map 'NOTATION' to NotationType.
+	* XQParser.java (parseItemType): Error if 'cast as' or 'castable as'
+	NOTATION.  Better error message for other bad type.
+
+	* XQResolveNames.java (walkApplyExp): Use NamespaceBinding.nconc
+	instead of reversing bindings, since the chain should be in
+	inverse "document order".
+
+2006-10-26  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkStatements): New recursive helper method.
+	(resolveModule): Use it, to properly handle module-level variables.
+
+	* XQParser.java (copyNamespacesDeclarationSeen, copyNamespacesMode):
+	New fields, whihc replace the old ...
+	(copyNamespacesNoInherit, copyNamespacesNoPreserve): .. removed fields.
+	(parseElementConstructor, parse): Copy copyNamespacesMode to
+	MakeElement instance.
+	(parse): Update handling of DECLARE_COPY_NAMESPACES_TOKEN.
+
+	* XQuery.java (getExternal): Make use of new makeWithUnknownNamespace
+	method in Symbol to look for definitions with prefix-only.
+
+	* XQParser.java (makeChildAxisStep, makeDescendantAxisStep):
+	New constant static fields.
+	(parseNodeTest): Make use of above constants.
+	Use relatively-new PrimProcedure convenience constructor.
+	(parseFLWRInner): Likewise new PrimProcedure convenience constructor.
+	(parseRelativePathExpr): Optimize 'E1//child::TEST' to
+	'E1/descendant::TEST'.
+
+2006-10-25  Per Bothner  <per@bothner.com>
+
+	No longer create Declarations for namespaces.
+	Do create Symbols with prefixes for variable and functions.
+	* XQuery.java (DEFAULT_ELEMENT_PREFIX): Use null, for consistency
+	with NamespaceBinding.
+	(DEFAULT_FUNCTION_PREFIX): Also change this constant for good measure.
+	(parse): Set state to BODY_PARSED so we don't resolve twice.
+	* XQParser.java (pushNamespace): Don't makeNamespaceDecl.
+	But we now need to push DEFAULT_FUNCTION_PREFIX.
+	(<init>): Don't need to push Declarations for builtin namespaces.
+	(makeNamespaceDecl): Remove method.
+	(parseElementConstructor): Don't need to create a lexical scope for
+	namespace bindings.  Make list of NamespaceBindings for local namespace
+	attributes. but not inherited ones.
+	(parse): Likewise defer setting namespace bindinsg for computer
+	element constructors.
+	(constructorNamespaces): New field, moved from XQResolveNames.
+	(namespaceResolve): To map prefix to uri search NamespaceBinding lists
+	with QNameUtils.lookupPrefix, not using NameLookup and Declarationss.
+	And we no longer need to use an exception handler for the error case.
+	(parse): Do namespaceResolve at parse time for 'declare variable'
+	and 'declare function'.  Don't push Declaration yet, though.
+	Update searching for duplicate namespace declaration.
+	Error if duplicate default namespace declarations seen.
+	* XQResolveNames.java (makeBuiltin): Set 'fn' prefix.
+	(push(Declaration)): New method.
+	(push(ScopeExp)): Use previous new function.
+	Simplify, since we don't have to handle namaspace declarations first.
+	(walkReferenceExp): When searching in functionNamespacePath we can't
+	just check if the Namespace has a matching symbol, since a different
+	Namespace can have the same uri but different prefix.
+	(constructorNamespaces): Field moved to XQParser.
+	(walkApplyExp): Update accordingly.
+	(walkApplyExp): Have to merge in namespace nodes from inherited
+	constructors now, rather than in parseElementConstructor.
+	(walkApplyExp): Use QNameUtils.lookupPrefix rather than resolvePrefix.
+
+	* XQResolveNames.java (walkApplyExp): Use new StringValue.asString
+	method for fn:string.
+
+	* XQParser.java (parseDataType):  For OP_EMPTY_SEQUENCE use new
+	OccurrenceType.emptySequenceType field.  Error if repeat indicator.
+	(parseItemType): No longer allow OP_EMPTY_SEQUENCE here.
+	Move check for invalid type fir 'cast as' or 'castable as'.
+
+2006-10-22  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initQuery): Declare fn:nilled.
+
+	* XQuery.java (adjust-date-to-timezone, adjust-time-to-timezone):
+	These are now implemented using separate methods.
+
+	* XQParser.java (wrapWithBaseUri): New method.
+	(parseXMLConstructor, parseMaybePrimaryExpr): Use it to set
+	base-uri property of constructed elements and documents.
+	* XQResolveNames.java (staticBaseUriDecl): New static field.
+	(apply): Updates for moved methods.
+	Use getBaseUriExpr for STATIC_BASE_URI_BUILTIN.
+
+	* XQParser.java (parseXMLConstructor): Take extra inElementContent
+	parameter.  Complain if CDATA section seen and !inElementContent.
+	(parseContent, parseMaybePrimaryExpr): Update callers.
+	(parseElementConstructor): Don't take string value of attribute.
+
+2006-10-19  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): fn:sum is now defined using define_method.
+	Undeclare string-pad.
+
+	* XQResolveNames.java (walkApplyExp): Use new XQuery-specific function
+	for RESOLVE_URI_BUILTIN.
+
+	* XQParser.java (parseQName): Remove misleading-named method.
+	(parseNamedNodeType): Inline parseQName, with fixes.
+
+	* XQParser.java (parseNameTest): Also pass prefix to Symbol.make.
+	Default element namespace must be resolved a resolve-time.
+	Inline Symbol.make if constant - but later.
+	(makeNamespaceDecl): Don't need to intern already-intered prefix.
+	(namespaceResolve): Minor optimization.
+	Handle the DEFAULT_ELEMENT_PREFIX case.
+	* XQResolveNames.java (walkApplyExp): If if prefix for resolvePrefix
+	is null, which it is for the default namespace.
+
+	* XQParser.java (parse): Fix various problems with 'default collation'.
+	Error if duplicate seen.  Resolve relative collation against base-uri.
+	Don't return early on error, since that causes needless parse errors.
+	Include error codes in messages.
+
+	* XQResolveNames.java (DEFAULT_COLLATION_BUILTIN): New constant,
+	(<init>): Push fn:default-collation.
+	(walkApplyExp): Handle DEFAULT_COLLATION_BUILTIN.
+
+2006-10-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (seenDeclaration): New flag to catch errors where
+	namespace declaration etc follow var/function/option decl.
+
+	* XQParser.java (DECLARE_OPTION_TOKEN): New constant.
+	(peekOperand): Recognize 'declare option'.
+	(parse): Handle DECLARE_OPTION_TOKEN.
+	(handleOption): New method.
+	
+	* XQParser.java (parse): Complain about duplicate namespace prefix.
+	(pushNamespace): Remove now-redundant intern.
+	(builtinNamespaces): New static field.  Initialize by clinit.
+	Remove support for 'xdt' prefix.
+	(pushStandardNamespaces): Simplify - now just iterate over
+	builtinNamespaces and makeNamespaceDecl+push for each.
+	Imline now-simplified function init <init>.
+
+	* XQResolveNames.java (namespaceResolve): Move to ...
+	* XQParser.java (namespaceResolve): ... here.
+	* XQResolveNames.java: Update callers of namespaceResolve.
+	* XQResolveNames.java (push): Move check for bad namespace uri for
+	function to ...
+	* XQParser.java (parseFunctionDefinition): ... here so we can catch
+	the error at parse-time.
+
+	* XQParser.java (makeFunctionExp): Simplify using new method
+	getDeclarationValueFromStatic in Declaration.
+
+2006-10-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (warnOldVersion): New convenience method.
+	Call it lots of places we used to check for warnOldVersion.
+
+	* XQParser.java (parseContext): New field, to catch some
+	context-dependent errors.
+	(parseDataType): Error if disallowed types in cast context.
+	(parseBinaryExpr): Set parseContext so we can catch above error.
+
+	* XQParser.java (errorIfComment): New field.
+	(skipComment): Emit error if errorIfComment is non-null.
+	(parseEnclosedExpr): Save/clear/restore errorIfComment.
+	(parseElementConstructor): Disallow comments in direct constructor.
+	Error if QName does not immeditately follow '</'.
+
+	* XQParser.java (parseElementConstructor): Error if there are
+	duplicate namespace declaration attributes.
+
+	* XQParser.java (parseContent): Normalize attribute whitespace.
+	Complain if literal '<' in attribute value.
+	
+	* XQParser.java (getRawToken): Check there is a separator after number.
+
+	* XQParser.java (makeCDATA): New static field.
+	(parseXMLConstructor): Use makeCDATA field to parse CDATA.
+	(parseContent): Boundary-space not skippable before/after CDATA.
+
+	* XQParser.java (parseIfExpr): Don't use parseParenExpr, because that
+	allows an missing expression, which is not allowed here.
+
+	* XQParser.java (parse): Fix bad parse of 'at' in 'import module'.
+
+2006-10-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRExpression): Coerce let value to its type.
+	(parse): Coerce 'declare variable' value to its type.
+
+	* XQParser.java (getExternalFunction): New static field.
+	(parse): Use new field.
+	* XQResolveNames.java (walkSetExp): Don't make declaration private
+	for 'local' namespace if variabel is external.
+
+	* XQResolveNames.java (push): Check for disallowed uri of function.
+	Print error if duplicate variable declaration in same scope.
+	* XQParser.java (parseFLWRExpression): Pass error code to new error
+	variant.
+
+	* XQuery.java (isNameStart, isNamePart): Removed, since now in
+	gnu.xml.XPath.  Update callers.
+	(checkSeparator): Nwe convenience method.
+	(parseXMLConstructor): Check that tag name immediately follows '<'.
+
+	* XQuery.java (SCHEMA_INSTANCE_NAMESPACE): New URI, for xsi.
+	(XQUERY_FUNCTION_NAMESPACE, LOCAL_NAMESPACE): Update URIs.
+	* XQParser.java (pushStandardNamespaces): Bind "xsi" prefix
+	to SCHEMA_INSTANCE_NAMESPACE.
+
+2006-10-13  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (HANDLE_EXTENSION_BUILTIN): New constant.
+	(handleExtensionDecl): New static.
+	(walkApplyExp): Handle HANDLE_EXTENSION_BUILTIN.
+	(checkPragma): New method.
+	* XQParser.java (parseMaybePrimaryExpr): Re-do handling of
+	PRAGMA_START_TOKEN.  Use handleExtensionDecl.  Check errors.
+
+2006-10-12  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkApplyExp): Fix typo.
+
+	* XQResolveNames.java (NUMBER_BUILTIN): New constant.
+	(<init>): Push number function.
+	(walkApplyExp): Handle fn:number.
+	* XQuery.java (initXQuery): No number declare fn:number here.
+
+2006-10-07  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Declare fn:insert-before, fn:tokenize,
+	and fn:resolve-QName.
+
+2006-09-30  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (MIN_BUILTIN, MAX_BUILTIN): New constants.
+	(<init>): Declare new builtins.
+	(walkApplyExp): Handle new builtins.
+	* XQuery.java (initXQuery): No longer declare fn:min and fn:max here.
+
+	* XQParser.java (parseNameSpec): Use parseNameTest so we get correct
+	namespace-resolution.  And then inline into single caller,
+	parseMaybePrimaryExpr.
+
+	* XQParser.java (parseXMLConstructor): Check for correct syntax,
+	specifically whitespace, of direct processing-instruction constructor.
+
+	* XQParser.java (parseCount, commentCount): New fields.
+	(skipComment): Increment commentCount.
+	(parse): Increment parseCount.
+	Warn/error if stuff before XQUERY_VERSION_TOKEN.
+	* XQuery.java (parse): Error if we saw an empty module.
+
+	* XQuery.java (parse): Don't PARSE_ONE_LINE if reading from a file.
+
+	* XQParser.java (parse): Fix thinko in logic for checking encoding
+	specification 'xquery version' declaration.
+
+	* XQParser.java (parseExprSequence): New parameter 'optional'.
+	Error if empty body and optional is false.
+	(parseStepQualifiers, parseParenExpr,
+	parseMaybePrimaryExpr): Update callers.
+	(parseStepQualifiers): Error if unexpected EOF_TOKEN.
+
+	* XQParser.java (parseXMLConstructor): Improved error message.
+
+2006-09-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (warnHidePreviousDeclaration): New flag	field,
+	currently off.
+	* XQResolveNames.java (push): Only warn about hidden previous
+	declaration of warnHidePreviousDeclaration.
+
+2006-09-28  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (IMPLICIT_TIMEZONE_BUILTIN, LANG_BUILTIN,
+	NAME_BUILTIN): New constants.
+	(<init>): Declare new builtins.
+	(walkApplyExp): Handle new builtins.
+	(currentTimezoneDecl): New field.
+	(resolveModule): Initialzie currentTimezoneDecl if needed.
+
+	* XQResolveNames.java (withContext): Add code to error message.
+	
+	* XQuery.java (initXQuery): Declare fn:document-uri.
+
+	* XQParser.java (OP_EQ, OP_NE, OP_LT, OP_LE, OP_GT, OP_NE): New token
+	constants for 'eq' etc, distinct from OP_EQU for '=' etc.
+	(peekOperator): Fix to return new tokens.
+	(prioty): Update for new tokens.
+	(makeBinary): Update for new token.
+
+	* XQuery.java (initXQuery): Declare fn:error.
+
+	* XQuery.java (initXQuery): Declare fn:remove function.
+
+	* XQuery.java (initXQuery): Fix fn:not function to use new
+	BooleanValue.not method.
+
+2006-09-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (enclosedExpressionsSeen): New field.
+	(parseContent): Increment enclosedExpressionsSeen.
+	(parseElementConstructor): Use enclosedExpressionsSeen to detect
+	non-literal namespace declaration.
+
+	* XQResolveNames.java (walkApplyExp): Check for duplicate attributes
+	in MakeElement call.  Remove excess increment of loop counter.
+
+	* XQuery.java (initXQuery): Declare fn:codepoint-equal and fn:dateTime.
+
+2006-09-19  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Add support for Extenssion Expressions and pragmas.
+	(PRAGMA_START_TOKEN): New token constant.
+	(getRawToken): Recognize PRAGMA_START_TOKEN.
+	(parseMaybePrimaryExpr): Handle PRAGMA_START_TOKEN and parse
+	an Extension Expression.
+
+2006-09-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (baseURIDeclarationSeen): New field.
+	(parse): Complain if duplicate base-uri declaration.
+	(parseEntityOrCharRef): Check that char ref is valid XML character.
+	(parseXMLConstructor): Check for invalid comment contents.
+	(parse): Fix error code for duplicate copy-namespaces declaration.
+	(parse): Invalid version number should be error, not warning.
+	(parse): Check that encoding has valid form.
+
+2006-08-27  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (DEEP_EQUAL_BUILTIN): New constant.
+	(<init>): Define fn:deep-equal.
+	(walkApplyExp): Map deep-equal to SequenceUtils.deepEqual.
+
+2006-08-23  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (makeClassName): New static method.
+	* XQParser.java (parse): Change handling of module declaration.
+	Generated class name now depends on URI *and& makeClassName.
+	Fix handling of module import to handle multiple modules, and handle
+	'at' location "hint".
+
+2006-08-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Set file/line on initializer
+	of external variables.
+
+	* XQParser.java (parse): Complain about zero-length namespace
+	in module import.
+
+2006-08-22  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getCompilation): New method.
+	(parse): Change interface, with passed-in Compilation.
+	Merge existing and new expressions in passed-in ModuleExp.
+
+2006-08-18  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (CURRENT_DATETIME_BUILTIN, CURRENT_DATE_BUILTIN,
+	CURRENT_TIME_BUILTIN): New constants.
+	(currentDateTimeDecl; currentDateDecl, currentTimeDecl): New fields.
+	(resolveModule): New method generates code to initialize the above
+	declarations.
+	(walkApplyExp): Handle fn:current-dataTime, fn:current-date, and
+	fn:current-time standard functions.
+
+2006-08-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseItemType): The sementics of empty-sequence()
+	don't really match those of Type.void_type.
+
+	* XQParser.java (parseItemType): Emit error if unknown type.
+
+	* XQParser.java (parseFLWRExpression): Also reset flworDeclsCount
+	when done.
+
+	* XQParser.java (parseUnaryExpr): Fix precedence by recursively
+	calling parseUnaryExpr instead of parseUnionExpr.
+
+2006-06-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update to use Symbol.makeUninterned.
+	(parseNamedNodeType, parseQName): Use new ElementType.MATCH_ANY_QNAME.
+	(parseNameTest): Cleaner handling of the any-namespace case.
+	Remove redundant intern call.
+	* XQResolveNames.java: Update SName -> Symbol.
+	* XQuery.java (typeMap, getExternal):  Likewise.
+
+2006-06-10  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Fix packages names for functions in
+	TimeUtils class.
+
+2006-05-31  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (evalToFocusProc): Update ModuleExp.evalModule call.
+
+2006-05-25  Per Bothner  <per@bothner.com>
+
+	Handle module dependencies and cycles.	
+	* XQParser.java (parse): Pass ModuleInfo to require.importDefinitions.
+	* XQuery.java (parse): Use new Compilation.pushNewModule method.
+	
+2006-05-21  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Fix typo in error message.
+
+2006-04-11  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (instance): Make public.
+
+2006-03-27  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeMap): Added newly-implemented base64Binary.
+	Added anyAtomicType as an alias for Object.
+
+2006-03-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (treatAs): New static constant.
+	(emptyOrderDeclarationSeen, boundarySpaceDeclarationSeen,
+	copyNamespacesNoInherit, copyNamespacesNoPreserve,
+	copyNamespacesDeclarationSeen, constructionModeStrip,
+	constructionModeDeclarationSeen): New fields for static context
+	and prolog state.
+	(preserveBoundarySpace): Rename to boundarySpacePreserve.
+	(DEFAULT_ORDER_TOKEN, DECLARE_CONSTRUCTION_TOKEN,
+	DECLARE_COPY_NAMESPACES_TOKEN): New tokens.
+	(peekOperand): Recognize new tokens.
+	(parse):  Handle new tokens.
+	Also improve DECLARE_BOUNDARY_SPACE_TOKEN handling.
+
+	* XQuery.java (initXQuery): Declare fn:data and fn:round.
+
+	* XQResolveNames.java (NORMALIZE_SPACE_BUILTIN, UNORDERED_BUILTIN):
+	New constants.
+	(<init>): Declare fn:normalize-space and fn:unordered.
+	(walkApplyExp): Handle NORMALIZE_SPACE_BUILTIN and UNORDERED_BUILTIN.
+
+	* XQuery.java (initXQuery): Declare fn:encode-for-uri, fn:iri-to-uri,
+	fn:escape-html-uri, fn:matches, and fn:replace.
+
+	* XQParser.java (stringValueMethod): New static final field.
+	(stringValue): Use stringValueMethod, rather than removed field.
+	* XQResolveNames.java (INDEX_OF_BUILTIN,STRING_BUILTIN): New constants.
+	(<init>): Declare 'fn:index-of' and 'fn:string'.
+	(walkApplyExp): Handle INDEX_OF_BUILTIN and STRING_BUILTIN.
+	* XQuery.java (initXQuery): Remove inccorectly implemented
+	index and string functions, now handled in XQResolveNames.
+	Remove bogus last-index-of and string-value functions.
+
+	* XQParser.java (pushStandardNamespaces): Use new XML_NAMESPACE.
+
+	* XQParser.java (checkAllowedNamespaceDeclaration): New method.
+	(parseElementConstructor): Call checkAllowedNamespaceDeclaration.
+	(parse): Likewise.
+
+	* XQParser.java (parseElementConstructor):  Rename local variable typo
+	defininingNamespace to definingNamespace.
+
+2006-03-25  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (STATIC_BASE_URI_BUILTIN): New constant.
+	(<init>): Declare 'fn:static-base-uri'.
+	(walkApplyExp): Handle STATIC_BASE_URI_BUILTIN.
+
+	* XQResolveNames.java (checkArgCount): New private convenience method.
+	(walkApplyExp): Use it various places to check number of arguments.
+
+	* XQResolveNames.java (maybeAddNamespace): Map prefix=="" to null.
+
+2006-03-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseMaybePrimaryExpr): Re-write to use a switch
+	rather than a big 'if/else if/.../else' statement.
+
+2006-03-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseQName): No longer erroneously try to resolve
+	namespace prefixes here.  Instead use logic from parseNameTest.
+	(OP_ATTRIBUTE): Fix bug where it was same as OP_ELEMENT.
+	(parseElementType): Rename to parseNamedNodeType. generalize to also
+	attribute types, and return Expression.
+	(makeNamedNodeType): New helper method.
+	(parseItemType): Change to return Expression rather than Type.
+	(parseMaybeKindTest): Likewise. Also handle OP_ATTRIBUTE.
+	(parseNodeTest): Update accordingly.
+	(parsedataType): Likewise.
+	Create ApplyExp to call OccurrenceType.getInstance();
+	(setType): Remove method.  Replace calls by Declarations's
+	new setTypeExp method.
+	(resolver): Remove no-longer-needed field.
+	* XQResolveNames.java (RESOLVE_PREFIX_BUILTIN): New constant.
+	(resolvePrefixDecl): New field.
+	(walkApplyExp): Implement RESOLVE_PREFIX_BUILTIN.
+	* XQuery.java (parse): Some simplication/cleanup since XQParser
+	no longer needs XQResolveNames.
+
+2006-03-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (castableAs): New field, used for 'cast as'.
+	* XQResolveNames.java (namespaceResolve): Tweak error message.
+	(walkReferenceExp): Look for cast "functions" as in xs:decimal.
+	(walkApplyExp): If "function" is a Type, do a cast instead.
+	* XQuery.java (typeMap): Rewrite to use XDataType members.
+	(getStandardTYpe): New static function.
+	(getTypeFor): Map various classes to standard XQuery types.
+
+	* XQParser.java (peekOperand): Fix typo.
+	(parseMaybeKindTest): Generalize OP_PI parsing to full syntax.
+	Use new gnu.kawa.xml.ProcessingInstructionType.
+	(parseMaybePrimaryExpr): Handle PI_TOKEN.
+	(piNodeTest): No longer needed.
+
+	* XQuery.java (initXQuery): Add a slew of date/time/duration-related
+	functions.
+
+	* XQParser.java (XQUERY_VERSION_TOKEN): New constant.
+	(peekOperand): Map <"xquery" "version"> to XQUERY_VERSION_TOKEN.
+	(parse): Handle XQUERY_VERSION_TOKEN.
+
+	* XQParser.java (parseBinaryExpr): Coerce 'and' and 'or' results
+	to boolean values.
+
+	* XQParser.java (parsePathExpr, parseNodeTest, parseStepExpr): Tweaked
+	error messages when context item is undefined.
+
+	* XQParser.java (parseMaybePrimaryExpr): Handle - by ignoring - the
+	'ordered' and 'unordered' expressions.
+
+	* XQParser.java (parseVariable): Inline Symbol.make call.
+
+	* XQParser.java (parse): Pass Symbol, not String, to getExternal.
+
+	* XQParser.java (syntaxError): Another overload.
+
+	* XQParser.java (stringValue): Update for moved StringValue class.
+	* XQResolveNames.java (walkApplyExp): Likewise.
+	* XQuery.java (intXQuery): Likewise.
+	Also add fn:string-to-codepoints and fn:codepoints-to-string.
+
+	* XQuery.java (inXQuery): Declare fn:boolean and fn:in-scope-prefixes.
+
+	* XQuery.java (initXQuery): Declare fn:abs, fn:floor, fn:ceiling, and
+	fn:round-half-to-even.
+
+	* XQParser.java (makeBinary): Use XQuery-specific ArithOp operators.
+	(parseUnaryOp): Proper implementation of unary operators.
+
+2006-03-14  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Declare fn:zero-or-one, fn:one-or-more,
+	and fn:exactly-one.
+
+2006-03-04  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest): Defer getRawToken until after a
+	possible missing context error message.
+
+2006-03-01  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (FLOAT_TOKEN): Replace by DECIMAL_TOKEN, DOUBLE_TOKEN.
+	(getRawToken): Fix recognition of numbers to distinguish
+	xs:decimal literals from xs:double literals - which have exponent.
+	(parseMaybePrimaryExpr): Handle double/decimal literals correctly.
+
+	* XQParser.java: Pass XQuery error code various places.
+	(error, fatal): New methods take error code.
+
+	* XQParser.java (OP_TREAT_AS, OP_CASTABLE_AS, OP_CAST_AS): New tokens.
+	(priority): Handle new tokens.
+	(match(String,String,boolean)): New method.
+	(peekOperator): Recognize 'cast as', 'treat as', castable as'.
+	(parseBinaryExpr): Handle new operations.
+
+	(DECLARE_XMLSPACE_TOKEN): Rename to DECLARE_BOUNDARY_SPACE_TOKEN.
+	(DECLARE_ORDERING_TOKEN): New token.
+	(orderingModeUnordered): New field.
+	(parseMaybePrimaryExpr): Recognize 'declare orderering'.
+
+	* XQParser.java (OP_ELEMENT, OP_ATTRIBUTE, OP_ITEM, OP_EMPTY_SEQUENCE,
+	OP_SCHEMA_ATTRIBUTE, OP_SCHEMA_ELEMENT, IF_LPAREN_TOKEN,
+	TYPESWITCH_LPAREN_TOKEN, FOR_DOLLAR_TOKEN, LET_DOLLAR_TOKEN,
+	SOME_DOLLAR_TOKEN, EVERY_DOLLAR_TOKEN, CASE_DOLLAR_TOKEN,
+	VALIDATE_LBRACE_TOKEN, ORDERED_LBRACE_TOKEN, UNORDERED_LBRACE_TOKEN,
+	ELEMENT_TOKEN, ATTRIBUTE_TOKEN, TEXT_TOKEN, COMMENT_TOKEN, PI_TOKEN,
+	DOCUMENT_TOKEN): New token representing keyword followed by specific
+	characters, so we can distinguish from a NameTest reliably.
+	(peekOperand): Rewrite to use switch statement.  Recognize tokens
+	such 'element' depending on following characters.
+	(parseSimpleKindType): Don't check for '(' - handled in peekOperand.
+	(parseElementType): Likewise.
+	(parseItemType, parseNodeTest, parseStepExpr): Update accordingly.
+	(parseMaybeKindTest): New method.
+	(parseExprSingle): Now matches specifications' grammar.
+	(parseOtherStepExpr): Inline into caller.
+	(matchConstructorKeyword): Remove no-longer-needed method.
+	(parseMaybePrimaryExpr): Changes to use switch and new tokenization.
+
+	* XQParser.java (makeNamespaceDecl): Handle empty (default) prefix.
+
+2006-03-01  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Use new SetExp.makeDefinition factory method.
+
+	* XQParser.java (pushStandardNamespaces): Define 'xdt' prefix,
+	but as a synonym for 'xs'.
+
+2006-02-19  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (define_method): Update for changed ClassMethods.apply.
+
+2006-02-09  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse): Use new Compilation.pushNewModule method.
+
+2006-02-07  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (walkReferenceExp): Create GetNamedPart
+	application rather than removed ClassMethodProc.
+	* XQuery.java (define_method): Don't use removed ClassMethodProc.
+
+	* XQParser.java (parseNameTest): NAMESPACE_PREFIX is now gone.
+	(makeNamespaceDecl): Likewise.
+	* XQResolvenames.java (namespaceResolve): Likewise.
+
+2006-02-05  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): Define write-to-if-changed function.
+	Define subsequence - as alias for old sublist.
+
+2006-01-10  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (initXQuery): HTTP module was moved to gnu.kawa.servlet.
+
+2006-01-07  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (RESOLVE_URI_BUILTIN): New constant.
+	(<init>): Declare "resolve-uri" function.
+	(walkApplyExp): Handle RESOLVE_URI_BUILTIN.
+	(getBaseUriExpr): New helper method.
+
+2006-01-05  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeMap): Add binding for anyURI.
+
+2005-12-13  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (BASE_URI_BUILTIN): New constant.
+	(<init>): Define fn:base-uri as builtin using BASE_URI_BUILTIN.
+	(walkApplyExp): Handle BASE_URI_BUILTIN.
+	* XQuery.java (initXQuery): Remove old defnition of fn:base-uri.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (evalToFocusProc): Update evalModule call.
+
+2005-11-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse):  Set class name from module namespace.
+
+2005-11-03  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (XHTML_NAMESPACE): New constant.
+	* XQParser.java (pushStandardNamespaces): Bind html to XHTML_NAMESPACE.
+
+2005-10-27  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (tokenString): Handle STRING_TOKEN.
+
+2005-10-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseMaybePrimaryExpr): Catch DFloNum
+	parsing exception.
+
+2005-10-06  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseMaybePrimaryExpr): For text and comment
+	parse an ExprSequence, yielding a single argument.
+	* XQParser.java (parseContent): Various tweaks to fix/improve
+	handing of text content, including fixing whitespace insertion.
+
+	* XQParser.java (parse): Set line number for 'external' variable.
+
+	* XQParser.java (parseFLWRInner): Fix thinko in growing array.
+
+	* XQParser.java (parseTypeSwitch): Number of parameters to LambdaExp
+	for a case is 1, not 0.
+
+	* XQResolveNames.java (push): If namespaceResolve returned null,
+	skip this Declaration.
+
+2005-09-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRExpression): Get next token after comma
+	separating 'order by' specifiers.
+
+2005-09-25  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Re-do FLWOR parsing to handle 'order by'.
+	(parseFLWRInner): New method.
+	(parseFLWRExpression): Use parseFLWRInner.
+
+	* XQParser.java (parseSortExpr): Remove obsolete method.
+	(parseExp): Call parseExprSingle instead of parseSortExpr.
+
+	* XQParser.java (parse): Move error for duplicate declare collation.
+
+	* XQuery.java (initXQuery): Define 'reverse' function.
+
+	* XQParser.java (parse): Fix 'declare variable' parse bug.
+
+2005-08-22  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest): Return ErrorExp if focus is
+	undefined, to prevent confusion later, in XQResolveNames.
+
+	* XQParser.java: Fix various places where we only accepted an
+	ExprSingle rather than a (comma-separated) Expr.
+	(parseStepQualifiers): Use parseExprSequence rather than parseExpr.
+	(parseParenExpr): New method.
+	(parseTypeSwitch, parseMaybePrimaryExpr, parseIfExpr):
+	Use parseParenExpr.
+	(parse): Handle DECLARE_BASE_URI_TOKEN - i.e 'declare base-uri'.
+
+2005-08-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Implement 'declare base-uri' statement.
+	(vaseURI): New field.
+	(parseURILiteral): New method.
+	(parse): Use new method for both 'declare base-uri' and for
+	'declare default collation' statements.
+	* XQResolveNames.java (DOC_BUILTIN, DOC_AVAILABLE_BUILTIN): New values.
+	(walkApplyExp): Handle new macros.
+	* XQuery.java (initXQuery): Remove declarations for fn:doc and
+	deprecated fn:document since now handled by XQResolveNames constructor.
+
+2005-08-16  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (NAMESPACE_URI_BUILTIN, DISTINCT_VALUES_BUILTIN,
+	LOCAL_NAME_BUILTIN, ROOT_BUILTIN, COMPARE_BUILTIN): New constants.
+	(positionDecl): Remove unneded static field.
+	(pushBuiltin): New convenience method.
+	(<init>): Push various builtin functions.
+	(getCollator, withCollator, withContext): New methods.
+	(walkApplyExp): Implement support for various xxx_BUILTIN functions.
+	* XQuery.java (initXQuery): Remove declaration for fn:root, since
+	it is now handled by XQResolveNames constructor.
+
+	* XQuery.java (initXQuery): Declare prefix-from-QName.
+
+2005-08-03  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (flookup): Change to take single argument.
+	(lookup): Merge/inline into walkReferenceExp.
+	(walkReferenceExp): Call ClassMethodProc's makeExp rather than make.
+
+	* XQuery.java (instance): Make final.
+	(xqEnvironment): New final field.
+	(initXQuery): New private method, called from static constructor.
+	(<init>): Just set two fields.
+
+2005-07-27  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse): Pass external variable's type to getExternal.
+	Don't set IS_UNKNOWN.
+	* XQuery.java (getExternal): Cast external value if type is specified
+	as a number.
+
+2005-07-21  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>): Comment out unused variable.
+
+	* XQuery.java (getExternal): New method.
+
+	* XQParser.java (parse): Implement external variables.
+
+2005-06-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (priority): Use a switch statement instead of a shift.
+	Also fix some errors in the precedence hierarchy, compared to the
+	current draft.
+	(OP_OR...OP_INSTANCEOF): Re-order to be plain sequential.
+	(OP_IDIV): New operator.
+	(peekOperator): Use switch statement for presuambly better performance.
+	Map 'idiv' to OP_IDIV.
+	(makeBinary): Handle OP_IDIV.
+	(parseBinaryExpr): Remove now-bogus test.
+
+2005-06-04  Per Bothner  <per@bothner.com>
+
+	* XQuery.java: Update for AbstractFormat move to gnu.lists.
+
+	* XQuery.java (getFormat): Change return type.
+
+2005-05-27  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (evalToFocusProc): Also set PARSE_IMMEDIATE flag.
+
+2005-05-18  Per Bothner  <per@bothner.com>
+
+	* XQResolveNames.java (lookup): Use new getLangEnvironment method.
+
+2005-05-17  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (evalToFocusProc): Pass current Environment, rather than
+	language Environment, to evalModule.
+
+2005-03-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Now extends Lexer rather than LispReader.
+	(getReadTable): Remove unused method.
+	(xqlReadTable): Remove unused field.
+
+2005-03-07  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Update Interpreter -> Language:
+	* XQResolveNames.java: Likewise.
+
+2005-03-03  Per Bothner  <per@bothner.com>
+
+	* XQuery.java: Function 'children' has been moved.
+
+2005-02-12  Per Bothner  <per@bothner.com>
+
+	* XQuery.java: Use different SetExp constructor,
+	to avoid setting the 'binding' field, which will become private.
+	* XQResolveNames.java: Use SetExp's setBinding method.
+
+2005-01-25  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (registerEnvironment): Update Interpreter -> Language.
+
+	* XQuery.java: Put gnu.kawa.slib.HTTP function in qexo namespace.
+
+2005-01-22  Per Bothner  <per@bothner.com>
+
+	* XQuery.java: Inherit from Language instead of Interpreter.
+
+	* XQuery.java (<init>): Declare functions from gnu.kawa.slib.HTTP.
+
+	* XQParser.java (parseMaybePrimaryExpr): Fix column number handling.
+
+2004-12-27  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFunctionDefinition): Use new isStatic method.
+
+2004-12-22  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (prologNamespaces): New field.
+	(pushNamespace): Add to prologNamespaces.
+	(parseNameSpec): Simplify, thanks to use of new SName type.
+	(castQName): New helper method.
+	(parseElementConstructor): Use MakeElement and MakeAttribute classes
+	rather than ElementConstructor and AttributeConstructor.
+	(parseMaybePrimaryExpr): Handle in-scope namespace nodes.
+	* XQuery.java: Define fn:QName function and xs:QName type/cast.
+
+	* XQResolveNames.java (walkApplyExp): Implement xs:Name cast.
+	Update for changes to use MakeElement and MakeAttribute classes
+	rather than ElementConstructor and AttributeConstructor.
+
+	* XQParser.java (parsePrimaryExpr): If missing expression, call
+	getRawToken to avoid the risk of an infinite loop.
+
+	* XQParser.java (parser); Field renamed to comp.
+	* XQuery.java (parse): Set resolver's parser field.
+
+	* XQuery.java (SCHEMA_NAMESPACE): New constant.
+
+2004-12-21  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (define_method): Set name of Procedure, for better
+	error messages.
+
+	* XQResolveNames (flookup): New helper method.
+	(lookup): Use it.  Fix bug where 'fn:true()' wasn't found.
+
+2004-12-12  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Implement line/column and error handling.
+	(curLine, curColumn): New fields.
+	(getrawToken): Set curLine and curColumn.
+	(skipOldComment, oldComment, getRawToken): Set position before error.
+	(COLON_COLON_TOKEN): Change spelling.  Have getRawToken return it.
+	(getAxis): New helper method.  Use it in peekOperand.
+	(parseMaybePrimaryExpr):  Set startLine from curLine etc.
+	(parseSeparator): Change so error refers to end of declaration.
+	(error, syntaxError, tokenWidth): Remove and simplify.
+
+2004-12-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java: Implement 'declare default collation'.
+	(warnOldVersion): Change to true. Add soem extra tests/warnings.
+	(defaultCollator): New field.
+	(skipToSemicolon, error, declError): New helper methods.
+	(parseEnclosedExpr): Handle missing comma errors better.
+	* XQuery.java(<init>): Declare fn:exists.  Update fn:empty.
+
+2004-12-07  Per Bothner  <per@bothner.com>
+
+	Update for new Symbol/Namespace handling.
+	* XQParser.java (lookupNamespace, resolveQName): Removed methods.
+	(parseName): Renamed to parseQName and noted as deprecated.
+	(parseNameTest): Change return type.
+	(parseNodeTest): Rewrite to use parseNameTest.
+	* XQResolveNames.java (LASTBUILTIN, POSITION_BUILTIN): New constants.
+	(lastDecl, positionDecl, functionNamespacePath): New static fields.
+	(makeBuiltin, walkSetExp, procToDecl): New methods.
+	(<init>): Push lastDecl and positionDecl.
+	(namespaceResolve): Map classname prefix to a "class:" namespace.
+	(push): Search NCName  in functionNamespacePath.
+	(walkSetExp): New method.
+	(walkApplyExp): Special handling of lastDecl and positionDecl.
+	* XQuery.java (parse): Stash resolver in XQParser.
+	(getSymbol): New method.
+	(define, define_method): Update.
+	(<init>): Update.  Use defProcStFld.
+	For now, don't import most Kawa functions.
+
+2004-11-16  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (XQuery): Use defProcStFld instead of define_field.
+
+2004-11-06  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>): Add definitions for local-name-from-QName,
+	namespace-uri-from-QName, namespace-uri-for-prefix.
+
+2004-08-11  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (DOT_VARNAME, POSITION_VARNAME, LAST_VARNAME):
+	Change to uninterned Symbols.
+	* XQResolveNames.java (push):  Warn about shadowing declarations.
+
+2004-08-08  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (applyWithFocus, applyWithFocus$X, eval_with_focus$X):
+	Use new check3 method.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Remove unused import statements.
+
+2004-06-12  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (nesting, pushNesting, popNesting):  Moved to Lexer.
+
+2004-05-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (getDelimited):  Reset tokenBufferLength.
+
+	* XQParser.java (parseXMLConstructor):  Unread before PI content.
+
+2004-05-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent):  Changes to fix space handling.
+	* XQParser.java (parseXMLConstructor):  Use MakeCData for CDATA.
+	Handle direct processing instruction constructor.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Update for TextConstructor
+	being renamed to MakeText.
+
+2004-05-08  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (OP_COMMENT, OP_PI, OP_DOCUMENT):  New token codes.
+	(peekOperand):  Recognize these new token kinds.
+	(getDelimited):  New method.
+	(parseItemType):  Recognize comment and processing-instruction.
+	(parseXMLConstructor):  New method.
+	(parseContent, parseMaybePrimaryExpr):  Use parseXMLConstructor.
+	(matchConstructorKeyword):  Recognize 'comment {'.
+	(parseMaybePrimaryExpr):  Use CommentConstructor for 'comment {'.
+	(commentNodeTest, piNodeTest):  New static NodeType fields.
+
+2004-05-08  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (mangle):  Two new static methods - currently unused.
+
+2004-03-09  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseItemTime):  Handle 'document-node()'.
+	(documentNodeTest):  New constant.
+
+	* XQParser.java (peekOperator):  Handle 'instance' like 'instanceof'.
+	(parseBinaryExp):  Recognize 'instance' followed by 'of'.
+	If warnOldVersion compain about 'instanceof'.
+
+2004-01-09  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (registerEnvironment):  Update setCurrent to setGlobal.
+
+2003-12-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseElementConstructor):  Set line/column for
+	attribute.
+	* XQResolveNames.java (maybeAddNamespace):  Avoid NullPointerException.
+	(walkApplyExp):  Adjust column number if ElementConstructor.
+
+	* XQResolveNames.java (walkReferenceExp):  Fix $request/$response
+	handling.
+
+2003-12-25  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseRelativePathExpr, parseFLWRExpression):  last(),
+	position() and and 'for' 'at' index should be LangPrimType.intType,
+	so arithmetic works as it should.
+
+2003-12-25  Per Bothner  <per@bothner.com>
+
+	Handle namespace declaration attributes.
+	* XQResolveNames.java:  New class, extends gnu.expr.ResolveNames.
+	* Makefile.am (java_sources):  Add XQResolveNames.java.
+	* XQParser.java (lexical):  New field.
+	(<init>):  New XQuery pamameter.  Allocate and set lexical field.
+	(pushNamespace, lookupNamespace, makeNamespaceDecl):  New methods.
+	(pushStandardNamespaces):  Use pushNamespace.
+	(parseElementConstructor):  Recognize namespace declaration
+	attributes.  Defer namespace resolution until XQResolveNames.
+	Remove support here for calculated element/attribute names.
+	(parseVariableDeclaration):  New method.
+	(parseTypeSwitch, parseFLWRExpression, parseQuantifiedExpr,
+	parseFunctionDefinition, parse):  Use parseVariableDeclaration.
+	(namespaces):  Remove field.
+	(namespaceBindings):  New field.
+	(parse):  Don't checks for "$request" or $reply" (for servlets) here.
+	Instead use ne XQResolveNames's new walkReferenceExp method.
+	* XQuery.java (getLexer):  Use new XQParser constructor.
+	(DEFAULT_ELEMENT_PREFIX, DEFAULT_FUNCTION_PREFIX):  New constants.
+	(parse):  Use new Compilation constructor, passing it lexer's lexical.
+	Do mustCompileHere after pushing ModuleExp, or it has no effect.
+	Use new XQResolveNames constructor and new resolveModule method.
+	(getNamespaceOf):  Also check if decl isNamespaceDecl.
+
+	* XQuery.java (read):  Remove unused method.
+	* XQParser.java (readObject):  Likewise.
+
+2003-11-14  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  New use StringValue.concat$V.
+
+2003-11-09  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (PARSE_WITH_FOCUS):  New flag.
+	(parse):  Check for PARSE_WITH_FOCUS.
+	(applyWithFocus, applyWithFocus$X, evalToFocusProc, evalWithFocus,
+	eval_with_focus$X):  New methods.
+
+2003-11-08  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse):  Update to take a Lexer rather than an InPort.
+
+2003-11-02  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (peekOperator):  Return if EOL_TOKEN and 0 nesting.
+	This fixes parseUnionExpr and parseIntersectExceptExpr.
+	(parseBinaryExpr):  Trivial tweak.
+
+	* XQuery.java (parse, parseFile):  Combined to single 'parse' method.
+
+2003-10-30  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (typeMap):  New static field.
+	(getTypeFor):  Use typeMap for standard Schema types.
+
+	* XQParser.java (IMPORT_SCHEMA_TOKEN):  New constant.
+	(parse):  Report that 'import schema' is unimplemented.
+
+2003-10-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse):  Use BeginExp.canonicalize(Expression[])).
+
+2003-10-19  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse, parseFile):  Pass this to Compilation.
+
+2003-10-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (peekOperator):  Recognize 'except' and 'intersect'.
+	(makeBinary):  Handle OP_EXCEPT and OP_INTERSECT.
+	(parseUnionExpr, parseIntersectExceptExpr):  Call peekOperator.
+
+	* XQParser.java (parseExprSingle):  New method.
+	Use it where appropriate.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Handle 'every' and 'some'.
+	(parseQuantifiedExpr):  New method.
+
+	* XQParser.java (setType):  New helper method
+	(parseFLWRExpression):  Call parseOptionalTypeDeclaration and setType.
+	(parseFLWRExpression):  Handle subsequence 'for/let' clauses.
+	(parseFLWRExpression):  Detect 'order' and print "not implemented".
+
+	* XQParser.java (tokenString):  New debug helper method.
+
+2003-10-12  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse):  Use Compilation.mangleURI for namespaces
+	of library module declaration and import.
+
+2003-10-11  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (resolveQName, parserVariable):  New methods.
+	(parseMaybePrimaryExpr):  Use parseVariable for '$' VarName.
+	Set curToken before parseFLWRExpression.
+	(parseFLWRExpression):  Use parseVariable.
+	(parseFLWRExpression):  Use resolveQName and parseVariable.
+	(parse):  For 'declare variable' use parseVariable.
+	Check if 'local:' prefix and set privacy flag appropriately.
+	(parseTypeSwitch):  Update typeswitch syntax - handling of 'as'.
+
+2003-10-09  Per Bothner  <per@bothner.com>
+
+	* XQParser.java	(parseFLWRExpression/3):  Inline into single caller.
+	(parseFunctionDefinition):  make function static only if module is.
+	* XQuery.java (parse, parseFile):  Revert change making modules static.
+
+2003-10-08  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (peekOperator):  Handle ValueComp operators 'eq' ...
+	by mapping them to GeneralComp operators '=' ... .
+
+	* XQParser.java (parseUnaryExpr):  Provide implementation.
+
+	* XQParser.java:  Initial support for modules.
+	(IMPORT_MODULE_TOKEN, MODULE_NAMESPACE_TOKEN):  New constant.
+	(peekOperand):  Recognize new compound tokens.
+	(pushStandardNamespaces):  Define kawa and qexo prefixes.
+	(parseMaybePrimaryExpr):  Better handling of function names.
+	(parseFunctionDefinition):  Likewise.  Make functions static.
+	'local' prefix sets private flag.
+	(parse):  Recognize module declaration and module import.
+	'declare function namespace' is now supported.
+	(getRawToken):  Recognize ';'.
+	* XQuery.java (KAWA_FUNCTION_NAMESPACE):  New constant.
+	(parse):  XQuery modules are now static.
+	(define, define_method):  New method overrides.
+	(<init>):  Initialize qexo namespace.
+	Don't define 'define'.
+
+2003-09-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (getRawToken):  Add missing tokenBufferAppend.
+	Fixes bug reported 09-28 by Weiqi Gao <weiqigao@networkusa.net>.
+
+2003-09-18  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Add root function.
+	* XQParser.java (parsePathExpr):  Handle non-relative path expressions.
+	(parseRelativePathExpr):  Caller now does the parseStepExpr.
+	* XQParser.java:  Add import of ClassType.
+
+2003-09-14  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest):  Support other axes.
+
+	* XQParser.java (funcNamedChildren, funcNamedDescendants,
+	funcNamedDescendantsOrSelf):  Remove no-longer-used static fields.
+
+2003-09-11  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (skipSpaceOrComment):  Rename to skipSpace, taking
+	an extra argument to indicate skipping past new line.
+	(parseFLWRExpression):  Use renamed skipSpace.
+	(skipSpace):  Use new skipSpace(true).
+	(skipHSpace):  Replaced by skipSpace(false).
+	(peekNonSpace, peekOperand, parseMaybePrimaryExpr, parse):
+	Use new unary skipSpace.
+	(parseSeparator):  Provide implementation.
+	(parse):  Add missing parseSeparator calls.
+	(parse):  Update to new xmlspace syntax.
+
+2003-09-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (warnOldVersion):  New static variable.
+	(DEFINE_FUNCTION_TOKEN):  Rename to DEFINE_VARIABLE_TOKEN.
+	(DECLARE_FUNCTION_TOKEN):  Rename to DECLARE_VARIABLE_TOKEN.
+	(peekOperand):  Recognize <declare function> amd <declare variable>.
+	Also recognize (and if warnOldVersion warn) the <define ...> syntax.
+	(parse):  Update to handle new syntax as well as old syntax.
+
+	* XQParser.java (DOT_VARNAME, POSITION_VARNAME, LAST_VARNAME):  Change
+	values to names don't need to be mangled.
+
+	* XQParser.java (pushStandardNamespaces):  Define 'local' prefix.
+
+	* XQParser.java (parseNodeTest, parseRelativePathExpr):  Simplify
+	using ApplyExp constructor that takes a method or Procedure..
+
+	* XQParser.java (parseMaybePrimaryExpr):  Do syntaxError instead of
+	throw on syntax confusion.
+
+	* XQParser.java (parseFLWRExpression):  Re-organize methods so we
+	can parse and handle 'at' clause.
+
+2003-09-04  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse, parseFile):  Change defaultCallConvention
+	to new CALL_WITH_CONSUMER.
+
+2003-08-03  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest):  Handle self:: and parent:: axies.
+	(parseNodeTest):  Handle '.' and '..' abbreviated steps.
+
+	* XQParser.java (focusDefined):  Remove field.  Instead, just check
+	whether DOT_VARNAME is in scope.
+	(parseRelativePathExpr, parseStepQualifiers,
+	parseFunctionDefinition):  Don't set/unset focusDefined.
+	(DOT_VARNAME, POSITION_VARNAME, LAST_VARNAME):  New constants.
+	(parseNodeTest):  Look for DOT_VARNAME to see if context is defined.
+	(parseCheckNodeTest):  Remove - just use parseNodeTest directly.
+	(parseMaybePrimaryExpr):  Re-write position() and last() to
+	RerefenceExps using POSITION_VARNAME and LAST_VARNAME.
+	(parseNodeTest):  Use new xxxAxis classes.
+	(parseRelativePathExpr):  Second expression is now a 3-argument
+	LambdaExp.  Pass it DOT_VARNAME, POSITION_VARNAME, and LAST_VARNAME.
+	Handle '//' now exactly as specified in standard.
+	Comment out some optimizations for now.
+	Use new RelativeStep class instead of ValuesMap.
+	(parseStepQualifiers):  Pass axis parameter, since handling of
+	qualifiers depends on type of axis (forward, reverse, or none).
+	Second expression is also now a 3-argument LambdaExp.
+	Pass it DOT_VARNAME, POSITION_VARNAME, and LAST_VARNAME.
+
+	* XQuery.java (<init>):  Don't define position() - it is now
+	re-written at parse time to POSITION_VARNAME.
+
+2003-08-01  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (XQUERY_FUNCTION_NAMESPACE):  Update URL.
+
+	* XQParser.java (peekOperator):  Map 'union' to OP_UNION.
+	(makeBinary):  Implement OP_UNION using UnionNodes class.
+
+	* XQParserjava (makeBinary):  Return syntaxError if unimplemented op.
+	Updates throws specifier to allow this.
+
+	* XQParser.java (preserveBoundarySpace):  New field.
+	(DECLARE_XMLSPACE_TOKEN):  New constant.
+	(peekOperand):  Map 'declare' 'xmlspace' to DECLARE_XMLSPACE_TOKEN.
+	(parseContent):  Skip boundary whitespace if appropriate.
+	(parse):  Parse xmlspace declaration.
+
+	* XQParser.java (parseFunctionDefinition):  Handle optional return
+	type declaration using Convert.setCoercedReturnValue.
+
+2003-07-26  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Add distinct-nodes function.
+
+2003-07-23  Terje Pedersen  <terje@brassforum.com>
+
+	* XQuery.java (<init>):  Define string-length, substring-before,
+	substring-after, translate, string-pad, contains, starts-with,
+	ends-with, string-join):  New standard functions.
+
+2003-07-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (OP_IS, OP_ISNOT, OP_GRTGRT, OP_LSSLSS):  New tokens.
+	(OP_xxx):  Renumber, at least for now.
+	(getRawToken):  Recognize '>>' as OP_GRTGRT and '<<' as OP_LSSLSS.
+	(peekOperator):  Recognis 'is' and 'isnot'.
+	(makeBinary):  Handle new tokens.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Intern string literal.
+
+2003-07-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (matchConstructorKeyword):  Fix bug reported
+	07-17 by Craig.Munday@ecard.com.au.
+
+2003-07-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (matchConstructorKeyword):  Add extra unread/read
+	pair, in case 'next' is the only character of a name.
+
+2003-06-27  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (XQParser):  Error handling improvements:  Better
+	messages, plus special case for 'define QName ('.
+
+2003-06-05  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (Prompter.apply1):  Prettier prompt format.
+
+2003-05-31  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getOutputConsumer):  Update return type.
+
+2003-05-30  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (DEFINE_VARIABLE_TOKEN): New token constant.
+	(peekOperand):  Recognize 'define variable'.
+	(parse):  Handle DEFINE_VARIABLE_TOKEN.
+
+2003-05-13  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Handle new KindType syntax of May '03 draft.
+	(parseSimpleKindType, warnOldStyleKindTest. parseItemtype):  New.
+	(parseElementType):  Handle new syntax.
+	(parseDataType):  Handle new syntax.  Use OccurrenceType.
+
+2003-05-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (checkNext):  Moved to Lexer, and made public.
+
+	* XQParser.java (getrawToken):  In string literals, handle
+	character and entity references, and doubled delimters.
+	(appendNamedEntity):  Removed StringBuffer parameter; write to
+	tokenBuffer instead.
+	(parseEntityOrCharRef):  New method.
+	(parseContent):  Use tokenBuffer instead of a new StringBuffer.
+	Handle double-quated attributes delimiters.  Use parseEntityOrCharRef.
+
+2003-05-08  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (skipComment):  Now handles (:new-style:) comments.
+	(skipOldComment):  New method to handle {--old-style--} comments.
+	(skipSpaceOrComment, getRawToken):  Handle either style of comment.
+	(peekOperand): A NAME '(' followed by ':' is not an FNAME.
+	* XQuery.java (Prompter.apply1):  Use new-style comment syntax.
+
+	* XQParser.java (COLON_EQUAL_TOKEN):  New constant.
+	(getRawToken):  If ':' is followed by '=' return COLON_EQUAL_TOKEN.
+	If NCNAME ':' is followed by '=' return NCNAME_TOKEN, and back up.
+	(parseFLWRExpression):  No need to check for NCNAME_COLON_TOKEN.
+
+	* XQParser.java (parseEnclosedExpr):  More error-tolerant parsing.
+	(parseIfExp):  Recover from missing 'then' or 'else'.
+	(parseFLWRExpression):  Recover from ':=' / 'in' confusion.
+
+	* XQuery.java (<init>):  Allow 'doc' as synonym for 'document'.
+	New 'trace' method.
+
+2003-04-21  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse, parseFile):  Do ResolveNames.
+	* XQParser.java (parseMaybePrimaryExpr):  Remove now-redundant
+	function-name lookup; the rewriteToInvocation call appears redundant
+	given following Inlinecalls.
+
+2003-04-19  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Update to use NameLookup.
+	(parseStepQualifiers):  Defer NameLookup's push after addDeclaration.
+	(parseFunctionDefinition):  Explicitly push declarations.
+
+2003-04-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (mark, reset):  New methods.
+	(matchConstructorKeyword):  Now handles context dependency correctly,
+	parsing ahead using mark and reset if needed.
+	(parseMaybePrimaryExpr):  Let matchConstructorKeyword check context.
+
+2003-03-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (interpreter):  New field.
+	* XQuery.java (getLexer):  Set XQParser's interpreter field.
+
+	* XQuery.java (<init>):  Define lower-case, upper-case, substring.
+
+	* XQuery.java (getTypeFor):  Handle type "string".
+	* XQParser.java (parseDataType):  Use getTypeFor.
+
+2003-03-15  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseElementConstructor):  The default namespace
+	for an attribute is "", not null.
+
+	* XQParser.java (parseNameSpec):  Don't bother passing the
+	defaultNamespaceUri to parseNameTest as it isn't used.
+
+2003-03-04  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (<init>):  New function node-name.
+
+	* XQParser.java (matchConstructorKeyword):  New helper method.
+	(parseMaybePrimaryExpr):  Implement computed constructors.
+
+2003-03-02  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  BaseUri moved to gnu.kawa.functions.
+
+2003-02-26  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Explicitly specify field names for
+	iterator-items and list-items.
+
+2003-02-20  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseMaybePrimaryExpr):  Servlet handling of $request
+	and $response even if Compilation.generateServletDefault isn't set.
+
+2003-02-13  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Define base-uri function.
+
+2003-02-11  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (getInstance): Move save/restore of current Environment
+	from here ...
+	(<init>):  .. to here.
+	(registerEnvironment):  Add call to Environment.setCurrent.
+
+2003-01-12  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (Prompter.apply1): Always emit readState character.
+	* XQParser.java (pushNesting, popNesting):  New methods.
+	(getRawRoken):  Push/pop nesting around string literal.
+	(parseBinaryExpr):  Push/pop nesting around binary operator.
+	(parseEnclosedExpr, parseTypeSwitch, parseMaybePrimaryExpr,
+	parseIfExpr, parseFLWRExpression, parse):  Call pushNesting/popNesting.
+	(parseElementConstructor):  Remove increment/decrement of nesting here.
+	(syntaxError):  Read port's readState.
+
+	* XQParser.java (syntaxError):  New overload takes paramter indicating
+	number of columns to subtract from current position.
+	(tokenWidth):  Return number of chars taken by curToken,
+	(syntaxError):  Call tokenWidth.
+
+	* XQParser.java (getRawRoken): Use syntaxError rather than error
+	on seeing unrecognized character.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Do setProcedureName
+	on function name in call.
+
+	* XQParser,java (parseExprSequence):  Take new rightToken parameter
+	so we can emit error on un-matched ')'.
+
+	* XQParser.java (pushStandardNamespaces):  New method.
+	(<init>(InPort)):  Call <init>(InPort,SourceMessages).
+	(<init>(InPort,SourceMessage):  Call pushStandardNamespaces.
+
+	* XQParser.java (parseOptionalTypeDeclaration):  New method.
+	(parseDataType):  Make ClassType if unrecognized type name.
+	(parseFunctionDefinition):  Call parseOptionalTypeDeclaration.
+
+	* XQParser.java (parseFLWRExpression):  Remove unused sc local.
+
+2002-11-23  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Declare iterator-items and list-items.
+
+2002-11-20  Per Bothner  <bothner@bothner.com>
+
+	* XQparser.java (parseMaybePrimaryExpr):  Check if function names
+	a method invocation.
+
+	* XQuery.java (<init>):  Recover from missing servlet classes.
+
+2002-11-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFunctionDefinition):  Parse QName function name.
+
+	* XQParser.java, XQuery.java:  Use gnu.mapping.Symbol instead of
+	gnu.xml.QName.
+
+	* XQuery.java (XQUERY_FUNCTION_NAMESPACE):  New constant.
+	* XQParser.java (defaultFunctionNamespace):  New field.
+	(defaultNamespace):  Rename field to defaultElementNamespace.
+
+2002-11-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (focusDefined):  New field.
+	(parseCheckNodeTest):  New method, checks focusDefined.
+	(parseStepExpr, parseMaybePrimaryExpr):  Call parseCheckNodeTest.
+	(parseFunctionDefinition):  Clear and restore focusDefined.
+	(parseRelativePathExpr, parseStepQualifiers):  Set focusDefined.
+
+2002-11-05  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parseFile): Take and use new 'immediate' parameter.
+
+2002-10-22  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (DEFINE_TOKEN):  Remove constant.
+	(DECLARE_NAMESPACE_TOKEN, DEFAULT_ELEMENT_TOKEN,
+	DEFAULT_FUNCTION_TOKEN, DEFINE_FUNCTION_TOKEN):  New constants.
+	(lookingAt):  New helper method to handle double-lexeme tokens.
+	(peekOperand):  Use lookingAt.
+	(parse):  Handle new tokens - and updated syntax.
+	Warn about old syntax.
+
+2002-07-28  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseDataType):  Handle 'text' and 'node'.
+	(anyNodeTest, textNodeTest):  New static fields.
+	(parseNodeTest):  Use anyNodeTest and textNodeTest.
+
+2002-07-24  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parse, parseFile0:  Update for Interpreter changed API.
+	* XQParser.java (parser, parser):  Update Parser -> Compilation.
+
+2002-07-02  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Define "index-of" and "last-index-of".
+
+2002-06-26  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseFLWRExpression):  Add missing parser.pop.
+
+2002-06-10  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest):  Support descdendant-or-self axis.
+
+2002-05-28  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (Prompter.appl1):  State-dependent comment syntax.
+	* XQParser.java (parseMaybePrimaryExpr):  Change state around call to
+	parseElementConstructor, so we get appropriate prompt syntax.
+
+	* XQParser.java (parseFLWRExpression):  Increment/decrement nesting,
+	around where expression, to force reading past eol.
+
+2002-05-18  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Also load XStrings.
+
+	* XQParser.java (skipSpaceOrComment):  New method.
+	(peekNonSpace):  Call skipSpaceOrComment instead of skipSpace.
+	(parseFLWRExpression):  Likewise.
+
+2002-05-06  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parseFile):  Remove unused variable.
+
+	* XQParser.java (stringValue, booleanValue):  Make public.
+
+	* XQParser.java (parseFLWRExpression):  Fix typo "let" -> "for".
+
+2002-04-19  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Define "avg" and "sum".
+
+2002-04-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (booleanValue):  New method.
+	(parseBinaryExpr, parseIfExpr, parseFLWRExpression):
+	Call booleanValue.
+
+	* XQuery.java (isTrue):  New method.
+
+2002-04-08  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (OP_NODE, OP_TEXT):  New constants.
+	(peekOperand):  Check for "node(" and "text(".
+
+	* XQParser.java (parseBinaryExpr):  Handle OP_OR.
+
+	* XQParser.java (parseNodeTest):  Merge overloaded methods.
+	Process OP_NODE and OP_TEXT.
+	(parseMaybePrimaryExpr):  Process OP_NODE and OP_TEXT.
+
+2002-03-07  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest):  NamedChildren and NamedDescendant
+	now take a single ElementType, not a namespace+localname pair.
+	(parseRelativePathExpr):  Handle // followed by name and predicates.
+
+	* XQuery.java (<init>):  Declare min, max, and position.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parseFile):  Now throws IOException and SyntaxException.
+
+	* XQuery.java (<init>):  HTTP module moved to slib package.
+
+2002-02-16  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Don't print error if library class not found.
+
+2002-02-05  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseNodeTest):  Take axis parameter.
+	Handle child::, attribute::NAME, and descendant::NAME; else error.
+	(parseRelativePathExpr):  Handle EXPR//NAME.
+	(parseStepExpr):  Pass axis to parseNodeTest.
+
+	* XQParser.java (parseFLWRExpression):  Allow ellding of 'return'
+	if body is another 'let' or 'for'.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* XQuery (<init>):  Also do loadClass of gnu.kawa.servlet.HTTP.
+
+2002-01-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (stringValue):  New method.
+	(parseContent, parseElementConstructor):  Coerce attributes to string.
+
+	* XQuery.java (defineAll, loadClass):  Moved to Interpreter, and
+	make non-static.
+	(<init>):  Update to no longer explicitly pass environ to loadClass.
+
+2002-01-24  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseElementConstructor):  Handle ATTR={EXPR} syntax.
+
+2002-01-23  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (interactive): Moved to super-class Lexer.
+	(<init>):  Don't aet interactive - let Shell do it instead.
+
+	* XQParser.java (makeExprSequence):  AppendValues has moved.
+
+2002-01-21  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Update for moved of class Document.
+	Add definition for "unescaped-data".
+
+2002-01-19  Per Bothner  <per@bothner.com>
+
+	* XQuery.java:  Update for move of WriteTo class.
+
+2002-01-13  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parse):  Skip initial Unix script header #!/PROGRAM.
+
+2002-01-07  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent):  Handle '{{' and '}}'.
+
+2002-01-02  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Define 'number' and 'concat'.
+
+2001-12-24  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (<init>):  Add new pre-defined functions.
+
+	* XQParser.java: Add support for XQuery comments.
+	(skipComment):  New method.
+	(getRawToken):  Check for and skip comments.
+
+	* XQParser.java (parseDataType):  Parse 'element' type.
+	(parseElementType):  New method.
+
+	* XQParser.java (parseTypeSwitch):  New method handle 'typeswitch'.
+	(parseMaybePrimaryExpr):  Call it.
+
+	* XQParser.java:  Fix parsing for 'where' in FLWR-expression.
+	(OP_WHERE):  New constant.
+	(peekOperator):  Recognize 'where'.
+	(parseFLWRExpression):  Fix handling of 'where'.
+
+	* XQParser.java (parseContent):  Handle char references.
+	(appendNamedEntity):  New method to resolve char references.
+
+	& XQParser.java (parseElementConstructor):  Handle abbreviated element.
+
+	* XQParser.java:  Use case-sentive matching for keywords etc.
+	* XQParser.java:  Use LambdaExp constructor taking a parameter count.
+
+2001-11-24  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Set line number information various places.
+
+	* XQParser.java (parseStepQualifiers, parseRelativePathExpr,
+	parseFLWRExpression):  Add various optimizations.
+
+2001-11-18  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Many changes to add line-and-column to expressions.
+	(peekNonSpace):  New method.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Special handling for
+	$request and $response.
+
+	* XQuery.java (<init>):  Force Compilation.usingTailCalls to true.
+
+2001-11-12  Per Bothner  <per@bothner.com>
+
+	* XQParser.java:  Handle namespaces better.
+	(NCNAME_COLON_TOKEN):  New token kind - NCNAME followed by ':'.
+	(getrawtoken):  Improve parsing - can return NCNAME_COLON_TOKEN.
+	(peekOperand):  Handle NCNAME_COLON_TOKEN.
+	(parseNameTest):  New method.
+	(parse):  Handle namespace declarations.
+
+2001-11-06  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (interactive):  New flag.
+	(syntaxError):  If interactive, skip to eol and throw SYnatxException
+
+	* XQParser.java (makeBinary):  Redefine comparisons to use
+	gnu.xquery.util.Compare, with new support for '=' and '!='.
+
+	* XQuery.java:  Implement XQuery string using String, not FString.
+
+	* XQPsrser.java (parseElementConstructor):  Better parsing of end tags.
+	Handle end tag immediately followed by '=', not reading it as '>='.
+	Complain if end tag name doesn't match start tag.
+	(parseExprSequence):  Return syntaxError instead of throing Error.
+
+	* XQuery.java (<init>):  Define "string" function.
+
+2001-11-01  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (peekOperand):  Don't unread after EOF.
+
+	* XQParser.java (parseNodeTest):  New method.
+	(parseRelativePathExpr):  Don't check node-tests here.
+	(parseStepQualifiers):  New method.
+	(parseMaybePrimaryExpr):  Now handles node tests.
+
+	* XQParser.java (parseMaybePrimaryExpr):  Fix indexes when checking
+	for "let" or "for".
+
+	* XQuery.java (<init>):  Define "true" and "false".
+
+2001-10-17  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseRelativePathExpr):  Handle PATH/*, PATH/@ATTR,
+	PATH/ATTR.  Update for changed/moved implementation.
+	(parseNameSpec):  Intern name.
+
+2001-10-02  Per Bothner  <per@bothner.com>
+
+	* XQuery.java (parseFile):  Handle multiple top-level "statements".
+
+	* XQuery.java (getNamespaceOf):  New method.
+
+	* XQuery.java (<init>):  Define function "empty".
+
+	* XQuery.java (registerEnvironment):  Explicitly setting current
+	Environment is redundant, so don't.
+
+	* XQParser.java (DEFINE_TOKEN):  New constant.
+	(peekOperand):  Recognize 'define'.
+	(parseMaybePrimaryExpr):  Search for matching function Declaration.
+	(parseFunctionDefinition):  New method.
+	(parse):  Handle 'define function'.
+
+2001-09-29  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseContent):  Use Vector's 'addElement' method
+	instead of 'add', for JDK 1.1.x compatibility.
+
+2001-09-25  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (parseExprSequence):  New method.
+	(parseMaybePrimaryExpr):  Call parseExprSequence after '('.
+	(parse):  Call parseExprSequence.
+
+2001-09-24  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (OP_INSTANCEOF, OP_RANGE_TO):  New constants.
+	(instanceOf):  New static field.
+	(peekOperator):  Map 'to', 'mul' and 'instanceof'.
+	(peekOperand):  Special case for 'if' followed by '('.
+	(makeFunctionExp):  Add overloads.
+	(makeBinary):  Add implementations for OP_MUL, OP_DIV, OP_MOD,
+	OP_LSS. OP_LEQ, OP_GRT, OP_GEQ and OP_RANGE_TO.
+	(parseDataType):  New method.
+	(parseBinarOp):  Special case for OP_INSTANCEOF and OP_AND.
+	(parseMaybePrimaryExpr):  Handle 'if' expressions.
+	(parseIfExpr):  New method.
+	(parseFLWRExpression):  Call parseExpr instead of parsePrimaryExpr.
+
+2001-08-16  Per Bothner  <per@bothner.com>
+
+	* XQParser.java (FNAME_TOKEN):  New constant.
+	(peekOperand):  Check for FuncName here.
+	(parseMaybePrimaryExpr):  This we no longer check for FuncName here.
+	Instead, we recognize FNAME_TOKEN.
+
+	* XQParser.java (makeBinary):  Make static.
+	(makeExprSequence):  New static helper method.
+	(parseBinaryExpr):  Return on unexpected '</'.
+	(parseRelativePathExpr):  Handle EXP/name.
+	(parseContent):  Add missing getRawToken.
+	(parseEnclosedExpr):  Handle an ExprSequence.
+	(parseMaybePrimaryExpr):  Use makeExprSequence.
+	Add explicit check for eof.
+	Emit error message if we saw '</'.
+
+	* XQParser.java (parseFLWRExpression):  Re-write to make 'for' work.
+	* XQuery.java (parse):  Lexer's parse methods return null on eof.
+	(<init>): Define new function string-value.
+
+	* XQuery.java (<init>):  Set flag so module body will print values.
+	(registerEnvironment): No longer need to do so here.
+
+2001-07-18  Per Bothner  <per@bothner.com>
+
+	New package gnu.xquery.lang.
+	* XQuery.java:  New class, extends Interpreter.
+	* XQParser.java:  New class, extends LispReader (for now).
+
