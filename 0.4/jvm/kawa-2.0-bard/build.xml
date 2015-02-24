@@ -10,6 +10,7 @@
   <property name="version.release" value="2.0"/>
   <property name="version.local" value=""/>
   <property name="version" value="${version.release}${version.local}"/>
+  <property name="bard.version" value="0.4.1"/>
 
   <property name="debug"        value="true" />
   <property name="deprecation"  value="false" />
@@ -47,7 +48,11 @@
   <property name="build.preprocessed" value="${build.dir}"/>
   <property name="build.classes"      value="${build.dir}"/>
   
+  <!-- commented out in Bard builds; replaced by Bard jar name and version
   <property name="dist.kawa.jar"    value="${dist.dir}/kawa-${version}.jar"/>
+  -->
+  
+  <property name="dist.kawa.jar"    value="${dist.dir}/bard-${bard.version}.jar"/>
 
   <condition property="kawa.shell" value="/bin/bash" else="/bin/sh">
     <available file="/bin/bash"/>

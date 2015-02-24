@@ -40,7 +40,7 @@ public abstract class Language
     return lang != null ? lang : global;
   }
 
-  static { Environment.setGlobal(BuiltinEnvironment.getInstance()); }
+  static { Environment.setGlobal(BuiltinEnvironment.getInstance());  }
 
   public static void setCurrentLanguage (Language language)
   {

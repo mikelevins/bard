@@ -224,7 +224,7 @@
    init-form: (primitive-structure "vector" gnu.lists.FVector
                                    (lambda (#!rest args)(apply vector args))))
 
-  ;; BardLanguage methods
+  ;; Bard methods
   ;; ----------------------------------
   ((keywordsAreSelfEvaluating)(@java.lang.Override) ::boolean
    (begin #t))

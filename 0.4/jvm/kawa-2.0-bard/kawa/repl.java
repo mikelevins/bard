@@ -211,7 +211,8 @@ public class repl extends Procedure0or1
   {
     if (previousLanguage == null)
       {
-	previousLanguage = Language.getInstance(null);
+          //	previousLanguage = Language.getInstance(null);
+	previousLanguage = Language.getInstance("bard");
 	Language.setDefaults(previousLanguage);
       }
   }
