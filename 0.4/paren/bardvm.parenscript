@@ -1,0 +1,57 @@
+
+;;; ---------------------------------------------------------------------
+;;; type utils
+;;; ---------------------------------------------------------------------
+
+(defun k_type-of (thing)
+  (getprop thing :type))
+
+;;; ---------------------------------------------------------------------
+;;; literals
+;;; ---------------------------------------------------------------------
+
+(defvar nothing '())
+;;; true is built in
+;;; false is built in
+;;; undefined is built in
+(defvar end (create :type :end))
+
+;;; ---------------------------------------------------------------------
+;;; cons
+;;; ---------------------------------------------------------------------
+
+(defun k_cons (left right)
+  (create :type "cons" :car left :cdr right))
+
+(defun k_car (thing)
+  (getprop thing :car))
+
+(defun k_cdr (thing)
+  (getprop thing :cdr))
+
+;;; ---------------------------------------------------------------------
+;;; map
+;;; ---------------------------------------------------------------------
+
+(defun k_keys (m)
+  (let ((entries (getprop m :entries)))
+    (chain |Object| (keys entries))))
+
+(defun k_empty_map ()
+  (create :type "map" :entries (create)))
+
+(defun k_contains_key (m k)
+  (let* ((entries (getprop m :entries))
+         (entry-keys (chain |Object| (keys entries))))
+    (chain entry-keys (includes k))))
+
+(defun k_get_key(m k &optional default-val)
+  (if (k_contains_key m k)
+      (let ((entries (getprop m :entries)))
+        (getprop entries k))
+      default-val))
+
+(defun k_set_key(m k val)
+  (let ((entries (getprop m :entries)))
+    (setf (getprop entries k) val)
+    m))
