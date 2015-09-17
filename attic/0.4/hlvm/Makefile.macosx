@@ -1,0 +1,29 @@
+default: vm
+
+vm:
+	gsc -exe src/utils.scm \
+		src/version.scm \
+		src/error.scm \
+		src/classes.scm \
+		src/globals.scm \
+		src/env.scm \
+		src/values.scm \
+		src/methods.scm \
+		src/functions.scm \
+		src/reader.scm \
+		src/printer.scm \
+		src/kernel.scm \
+		src/shell.scm \
+		src/quasiquote.scm \
+		src/compiler-let.scm \
+		src/compiler-loop.scm \
+		src/compiler-set!.scm \
+		src/compiler-define.scm \
+		src/compiler-function.scm \
+		src/compiler.scm \
+		src/macros.scm \
+		src/repl.scm \
+		src/bardvm.scm
+
+clean:
+	rm -f src/bardvm
