@@ -12,6 +12,7 @@
 (require 'srfi-95) ; sorting
 
 (require language)
+(require mop)
 (require repl)
 
 ;;; (bard-repl)
