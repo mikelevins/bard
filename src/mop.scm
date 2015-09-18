@@ -11,29 +11,44 @@
 
 (module-export
  BardClass
- BuiltInClass
  GenericFunction
- signature
+ MethodTable
  SingletonClass
  StandardClass
  TypeSignature
+ absent?
+ add-slot!
  all-supertypes-of
+ allocate-instance
+ bard-class-object?
+ class-object?
  class-of
  direct-supertypes-of
+ instance-of?
+ java-class-object?
  make-generic
  no-applicable-method
+ present?
+ signature
+ signature=?
+ signature-more-specific?
+ singleton
+ singleton-value
  subtype-of?
+ type-object?
  )
 
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; ABOUT
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; bard 0.4 uses an object system based loosely on tiny-clos, with
 ;;; a built-in metaobject protocol (MOP) that is used to integrate the
 ;;; underlying Java type system
 
 (require 'list-lib)
 (require language)
+(import (rnrs hashtables))
+
 
 ;;; ---------------------------------------------------------------------
 ;;; Java imports
@@ -42,38 +57,9 @@
 (define-private-alias ProcedureN gnu.mapping.ProcedureN)
 (define-private-alias Type java.lang.reflect.Type)
 
-;;; ---------------------------------------------------------------------
-;;; API
-;;; ---------------------------------------------------------------------
-;;; 
-;;; (add-method! a-generic a-method)
-;;; (allocate-instance a-class . initargs)
-;;; (class-precedence-list a-class)
-;;; (class-direct-slots a-class)
-;;; (class-direct-supers a-class)
-;;; (class-of thing)
-;;; (class-slots a-class)
-;;; (compute-apply-generic a-generic)
-;;; (compute-apply-methods a-generic)
-;;; (compute-class-precedence-list a-class)
-;;; (compute-getter-and-setter a-class a-slot-name an-allocator)
-;;; (compute-method-more-specific? a-generic)
-;;; (compute-methods a-generic)
-;;; (compute-slots a-class)
-;;; (generic-methods a-generic)
-;;; (initialize-instance an-instance &rest initargs &key)
-;;; (make-instance class &rest initargs &key)
-;;; (make-class list-of-superclasses list-of-slot-names)
-;;; (make-generic)
-;;; (make-method list-of-specializers procedure)
-;;; (method-procedure a-method)
-;;; (method-specializers a-method)
-;;; (slot-ref an-object a-slot-name)
-;;; (slot-set! an-object a-slot-name a-new-value)
-
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 ;;; utils
-;;; ---------------------------------------------------------------------
+;;; =====================================================================
 
 (define (array->list arr::Object[])
   (let loop ((i 0)
@@ -94,36 +80,205 @@
                   (cons (car elts)
                         result))))))
 
+;;; =====================================================================
+;;; classes
+;;; =====================================================================
+
+;;; ---------------------------------------------------------------------
+;;; bard slot descriptions
+;;; ---------------------------------------------------------------------
+
+(define-simple-class SlotDescription (Object)
+  (slot-name init: #!null type: gnu.mapping.Symbol)
+  (slot-default-value init: #!null)
+  ((*init* nm default)(begin (set! slot-name nm)
+                             (set! slot-default-value default))))
+
 ;;; ---------------------------------------------------------------------
 ;;; bard classes
 ;;; ---------------------------------------------------------------------
 
 (define-simple-class BardClass (Type))
 
-;;; built-in-class
-;;; ---------------------------------------------------------------------
-;;; aliases for Kawa and Java types
-
-(define-simple-class BuiltInClass (BardClass))
-
 ;;; standard-class
 ;;; ---------------------------------------------------------------------
 ;;; native bard classes that can be defined by users
 
-(define-simple-class StandardClass (BardClass))
+(define-simple-class StandardClass (BardClass)
+  (direct-superclasses init: '())
+  (slot-descriptions init: (make-eqv-hashtable))
+  ((*init*) #!void))
 
 ;;; singleton-class
 ;;; ---------------------------------------------------------------------
 ;;; represents individual constant values as types for dispatch
 ;;; purposes
 
-(define-simple-class SingletonClass (BardClass))
+(define singletons (make-parameter (make-eqv-hashtable)))
+(define %singleton-absent-sentinel (make-parameter (cons '() '())))
+
+(define-simple-class SingletonClass (BardClass)
+  (value init: #!void)
+  ((*init* val)(set! value val)))
+
+(define (%assert-singleton! val)
+  (hashtable-set! (singletons)
+                  val (SingletonClass val)))
+
+(define (%find-singleton val)
+  (hashtable-ref (singletons) val (%singleton-absent-sentinel)))
+
+;;; =====================================================================
+;;; generic functions
+;;; =====================================================================
+
+;;; (%apply-gf-to-args gf args default-method)
+;;; ---------------------------------------------------------------------
+;;; FORWARD REFERENCE
+
+(define %apply-gf-to-args #f)
 
 ;;; ---------------------------------------------------------------------
-;;; bard class utilities
+;;; TypeSignature
+;;; ---------------------------------------------------------------------
+
+(define-simple-class TypeSignature (Object)
+  (types init: '())
+  ((*init* typeList)(set! types (map (lambda (x) x) typeList))))
+
+(define (signature . types)
+  (TypeSignature types))
+
+(define (signature=? s1::TypeSignature s2::TypeSignature)
+  (equal? s1:types s2:types))
+
+(define (signature-more-specific? s1::TypeSignature s2::TypeSignature)
+  (if (eqv? s1 s2)
+      #t
+      (every subtype? s1:types s2:types)))
+
+;;; ---------------------------------------------------------------------
+;;; MethodTable
+;;; ---------------------------------------------------------------------
+
+(define-simple-class MethodTable (Object)
+  (entries init: '()))
+
+;;; ---------------------------------------------------------------------
+;;; GenericFunction
+;;; ---------------------------------------------------------------------
+
+(define-simple-class GenericFunction (ProcedureN)
+  (default-method::ProcedureN init-form: no-applicable-method)
+  (methods init-form: #f)
+  ((applyN args::Object[]) (%apply-gf-to-args (this) (array->list args) default-method)))
+
+;;; =====================================================================
+;;; the MOP API
+;;; =====================================================================
+
+;;; (absent? thing)
+;;; ---------------------------------------------------------------------
+;;; returns true is thing is #!void
+
+(define (absent? x)(eq? x #!void))
+
+;;; (add-method! a-generic a-method)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (add-slot! a-class slot-name #!key (default-value #f))
+;;; ---------------------------------------------------------------------
+
+(define (add-slot! a-class::StandardClass name
+                   #!key (default-value #f))
+  (hashtable-set! a-class:slot-descriptions name (SlotDescription name default-value)))
+
+
+;;; (all-supertypes-of a-type::java.lang.reflect.Type)
+;;; ---------------------------------------------------------------------
+
+(define (all-supertypes-of a-type::java.lang.reflect.Type)
+  (cond
+   ((BardClass? a-type) (error "all-supertypes-of not yet implemented for BardClass"))
+   ((java.lang.Class? a-type)
+    (let ((supers (direct-supertypes-of a-type)))
+      (if (null? supers)
+          '()
+          (remove-duplicates (append supers (apply append (map all-supertypes-of supers)))))))
+   (else '())))
+
+
+;;; (allocate-instance a-class #!rest initargs)
+;;; ---------------------------------------------------------------------
+
+(define (allocate-instance a-class . initargs)
+  (apply a-class initargs))
+
+;;; (bard-class-object? thing)
+;;; ---------------------------------------------------------------------
+
+(define (bard-class-object? thing)
+  (BardClass? thing))
+
+;;; (class-object? thing)
+;;; ---------------------------------------------------------------------
+
+(define (class-object? thing)
+  (or (BardClass? thing)
+      (java.lang.Class? thing)))
+
+;;; (class-of thing)
 ;;; ---------------------------------------------------------------------
 
 (define (class-of thing)(*:getClass  thing))
+
+;;; (class-precedence-list a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (class-direct-slots a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (class-direct-supers a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (class-slots a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-apply-generic a-generic)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-apply-methods a-generic)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-class-precedence-list a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-getter-and-setter a-class a-slot-name an-allocator)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-method-more-specific? a-generic)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-methods a-generic)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (compute-slots a-class)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (direct-supertypes-of a-type::java.lang.reflect.Type)
+;;; ---------------------------------------------------------------------
 
 (define (direct-supertypes-of a-type::java.lang.reflect.Type)
   (cond
@@ -139,56 +294,50 @@
               (cons super interfaces)))))
    (else '())))
 
-(define (all-supertypes-of a-type::java.lang.reflect.Type)
-  (cond
-   ((BardClass? a-type) (error "all-supertypes-of not yet implemented for BardClass"))
-   ((java.lang.Class? a-type)
-    (let ((supers (direct-supertypes-of a-type)))
-      (if (null? supers)
-          '()
-          (remove-duplicates (append supers (apply append (map all-supertypes-of supers)))))))
-   (else '())))
-
-(define (subtype-of? type1::java.lang.reflect.Type type2::java.lang.reflect.Type)
-  (cond
-   ((eqv? type1 type2) #t)
-   ((BardClass? type1) (error "subtype-of? not yet implemented for BardClass"))
-   ((BardClass? type2) (error "subtype-of? not yet implemented for BardClass"))
-   ((and (java.lang.Class? type1)
-         (java.lang.Class? type2))
-    (let ((class1 (as java.lang.Class type1))
-          (class2 (as java.lang.Class type2)))
-      (*:isAssignableFrom class2 class1)))
-   (else (error (format #f "subtype-of? Unrecognized types in (~s ~s)"
-                        type1 type2)))))
-
-
+;;; (generic-methods a-generic)
 ;;; ---------------------------------------------------------------------
-;;; c3
-;;; ---------------------------------------------------------------------
-;;; the algorithm used to deterministically compute the linearization
-;;; of the superclasses of a BardClass. c3 is not used for Java classes,
-;;; because Java inheritance works differently.
+;;; ***
 
+;;; (initialize-instance an-instance &rest initargs &key)
 ;;; ---------------------------------------------------------------------
-;;; bard generic functions
+;;; ***
+
+;;; (instance-of? thing type-object::java.lang.reflect.Type)
 ;;; ---------------------------------------------------------------------
 
-;;; (%apply-gf-to-args gf args default-method)
-;;; ---------------------------------------------------------------------
-;;; FORWARD REFERENCE
+(define (instance-of? thing type-object::java.lang.reflect.Type)
+  (subtype-of? (class-of thing) type-object))
 
-(define %apply-gf-to-args #f)
-
-;;; TypeSignature
+;;; (java-class-object? thing)
 ;;; ---------------------------------------------------------------------
 
-(define-simple-class TypeSignature (Object)
-  (types init: '())
-  ((*init* typeList)(set! types (map (lambda (x) x) typeList))))
+(define (java-class-object? thing)
+  (java.lang.Class? thing))
 
-(define (signature . types)
-  (TypeSignature types))
+;;; (make-class list-of-superclasses list-of-slot-names)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (make-generic)
+;;; ---------------------------------------------------------------------
+
+(define (make-generic)(GenericFunction))
+
+;;; (make-instance class &rest initargs &key)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (make-method list-of-specializers procedure)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (method-procedure a-method)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (method-specializers a-method)
+;;; ---------------------------------------------------------------------
+;;; ***
 
 ;;; (no-applicable-method . args)
 ;;; ---------------------------------------------------------------------
@@ -202,17 +351,60 @@
                  args (map (lambda (a)(a:getClass))
                            args))))
 
-;;; CLASS generic-function
+;;; (present? thing)
 ;;; ---------------------------------------------------------------------
-;;; the class of generic functions. generic functions are procedures
-;;; that select a method to run by examining the types of arguments
-;;; passed to them.
+;;; returns true is thing is not #!void
 
-(define-simple-class GenericFunction (ProcedureN)
-  (default-method::ProcedureN init-form: no-applicable-method)
-  (methods init-form: #f)
-  ((applyN args::Object[]) (%apply-gf-to-args (this) (array->list args) default-method)))
+(define (present? x)(not (eq? x #!void)))
 
-(define (make-generic)(GenericFunction))
+;;; (singleton thing)
+;;; ---------------------------------------------------------------------
+;;; returns a singleton class representing thing
 
+(define (singleton val)
+  (let ((already (%find-singleton val)))
+    (if (eq? already (%singleton-absent-sentinel))
+        (begin (%assert-singleton! val)
+               (singleton val))
+        already)))
 
+;;; (singleton-value s)
+;;; ---------------------------------------------------------------------
+;;; returns the value represented by the singleton
+
+(define (singleton-value s::SingletonClass) s:value)
+
+;;; (slot-ref an-object a-slot-name)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (slot-set! an-object a-slot-name a-new-value)
+;;; ---------------------------------------------------------------------
+;;; ***
+
+;;; (subtype-of? type1::java.lang.reflect.Type type2::java.lang.reflect.Type)
+;;; ---------------------------------------------------------------------
+;;; returns a singleton class representing thing
+
+(define (subtype-of? type1::java.lang.reflect.Type type2::java.lang.reflect.Type)
+  (cond
+   ((eqv? type1 type2) #t)
+   ((SingletonClass? type1)(if (SingletonClass? type2)
+                               #f
+                               (subtype-of? (class-of (singleton-value type1))
+                                            type2)))
+   ((SingletonClass? type2) #f)
+   ((BardClass? type1) (error "subtype-of? not yet implemented for BardClass"))
+   ((BardClass? type2) (error "subtype-of? not yet implemented for BardClass"))
+   ((and (java.lang.Class? type1)
+         (java.lang.Class? type2))
+    (let ((class1 (as java.lang.Class type1))
+          (class2 (as java.lang.Class type2)))
+      (*:isAssignableFrom class2 class1)))
+   (else (error (format #f "subtype-of? Unrecognized types in (~s ~s)"
+                        type1 type2)))))
+
+;;; (type-object? thing)
+;;; ---------------------------------------------------------------------
+
+(define (type-object? thing)(java.lang.reflect.Type? thing))
