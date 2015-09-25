@@ -23,6 +23,9 @@
  bard-class-object?
  class-object?
  class-of
+ class-direct-slots
+ class-direct-supers
+ class-precedence-list
  direct-supertypes-of
  instance-of?
  java-class-object?
@@ -47,15 +50,18 @@
 
 (require 'list-lib)
 (require language)
+
+
+;;; ---------------------------------------------------------------------
+;;; imports
+;;; ---------------------------------------------------------------------
+
 (import (rnrs hashtables))
 
-
-;;; ---------------------------------------------------------------------
-;;; Java imports
-;;; ---------------------------------------------------------------------
-
-(define-private-alias ProcedureN gnu.mapping.ProcedureN)
-(define-private-alias Type java.lang.reflect.Type)
+(import (class gnu.lists LList))
+(import (class gnu.mapping ProcedureN Symbol))
+(import (class java.lang Class))
+(import (class java.lang.reflect Type))
 
 ;;; =====================================================================
 ;;; utils
@@ -107,6 +113,7 @@
 (define-simple-class StandardClass (BardClass)
   (direct-superclasses init: '())
   (slot-descriptions init: (make-eqv-hashtable))
+  (debug-name::Symbol init: #!null)
   ((*init*) #!void))
 
 ;;; singleton-class
@@ -171,6 +178,7 @@
 (define-simple-class GenericFunction (ProcedureN)
   (default-method::ProcedureN init-form: no-applicable-method)
   (methods init-form: #f)
+  (debug-name::Symbol init: #!null)
   ((applyN args::Object[]) (%apply-gf-to-args (this) (array->list args) default-method)))
 
 ;;; =====================================================================
@@ -237,13 +245,28 @@
 ;;; ---------------------------------------------------------------------
 ;;; ***
 
+(define (class-precedence-list a-class)(all-supertypes-of a-class))
+
 ;;; (class-direct-slots a-class)
 ;;; ---------------------------------------------------------------------
-;;; ***
+
+(define (class-direct-slots a-class::Type)
+  (cond
+   ((StandardClass? a-class)
+    (let* ((a-standard-class::StandardClass (as StandardClass a-class))
+           (slots a-standard-class:slot-descriptions))
+      (vector->list (hashtable-keys slots))))
+   ((java.lang.Class? a-class)
+    (let* ((a-java-class::Class (as Class a-class))
+           (field-array (*:getFields a-java-class)))
+      (LList:makeList field-array 0)))
+   (else (error "not a class " a-class))))
 
 ;;; (class-direct-supers a-class)
 ;;; ---------------------------------------------------------------------
-;;; ***
+
+(define (class-direct-supers a-class)
+  (direct-supertypes-of a-class))
 
 ;;; (class-slots a-class)
 ;;; ---------------------------------------------------------------------
