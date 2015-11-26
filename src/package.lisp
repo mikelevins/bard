@@ -11,7 +11,5 @@
 (in-package :cl-user)
 
 (defpackage :bard.core
-  (:use :cl))
-
-
+  (:use :cl :cl-singleton-mixin))
 

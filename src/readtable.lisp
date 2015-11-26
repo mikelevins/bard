@@ -1,8 +1,8 @@
 ;;;; ***********************************************************************
 ;;;;
-;;;; Name:          version.lisp
+;;;; Name:          package.lisp
 ;;;; Project:       the Bard language
-;;;; Purpose:       Bard version
+;;;; Purpose:       package definitions
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2015 by mikel evins
 ;;;;
@@ -10,5 +10,7 @@
 
 (in-package :bard.core)
 
-(cl:defparameter |+bard-version+| "0.4.2 (build 70)")
-
+(defparameter *bard-readtable*
+  (let ((tbl (copy-readtable)))
+    (setf (readtable-case tbl) :preserve)
+    tbl))

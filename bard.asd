@@ -21,11 +21,14 @@
     :description "A Lisp"
     :author "mikel evins <mevins@me.com>"
     :license "Apache 2.0"
-    :depends-on ()
+    :depends-on (:cl-singleton-mixin)
     :components ((:module "src"
                           :serial t
                           :components ((:file "package")
+                                       (:file "readtable")
                                        (:file "version")
+                                       (:file "singleton-values")
+                                       (:file "special")
                                        ))))
 
 ;;; (asdf:load-system :bard)
