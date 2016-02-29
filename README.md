@@ -1,10 +1,14 @@
 # bard
 
-FIXME: Write a one-line description of your library/project.
+A new lisp
 
 ## Overview
 
-FIXME: Write a paragraph about the library/project and highlight its goals.
+Bard is a new Lisp that has evolved over the course of twenty
+years. It is a labor of love whose primary purpose is to be a language
+that its author loves to work with. This version of Bard is an
+experiment in implementing a portable Bard virtual machine that can
+run in a wbe browser or on NodeJS.
 
 ## Setup
 
