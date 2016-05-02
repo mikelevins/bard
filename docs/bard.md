@@ -1,64 +1,172 @@
-# bard 1.0
+# bard 0.4
 
-## special forms
+## Lexical syntax
 
-###`^`
-###`->`
-###`begin`
-###`case`
-###`cond`
-###`define`
+#### numbers
+    0
+    1
+    2/3
+    1.2
+    1e6
+    1e-6
+    #b1011
+    #xFACE
 
--`define class`
+#### names
 
--`define constant`
+##### named constants
 
--`define macro`
+    nothing
+    anything
+    true
+    false
+    end
 
--`define method`
+##### symbols
 
--`define protocol`
+    red
+    blue
+    Fred
+    Barney
+    *standard-output*
 
--`define record`
+##### keywords
 
--`define type` (for enumerations and unions)
+    :foo
+    :Bar
 
--`define variable`
 
-###`if`
-###`let`
-###`loop`
-###`match`
-###`quasiquote`
-###`quote`
-###`set!`
-###`unquote`
-###`unquote-splicing`
-###`values`
-###`with-exit`
+##### URIs
 
-## structures
+    #<uri> "http://bardcode.net"
 
-###`bignum`
-###`character-stream`
-###`cons`
-###`fixnum`
-###`flonum`
-###`function`
-###`hashtable`
-###`method`
-###`octet-stream`
-###`ratio`
-###`string`
-###`symbol`
-###`vector`
+#### text strings
 
-## protocols
+    "A sample text string"
 
-###`<equivalence>`
-###`<list>`
-###`<map>`
-###`<math>`
-###`<ordered>`
-###`<stream>`
-###`<system>`
+#### lists
+
+    '()
+    '(1 2 3)
+    '(:red :blue :green)
+    []
+    [1 2 3]
+    [:red :blue :green]
+
+#### maps
+
+    {}
+    {:left 1 :right 2}
+
+#### methods
+
+    (^ (x) x)
+    (^ (x y) (+ x y))
+
+#### functions
+
+    (-> ->)
+    (-> Number ->)
+    (-> Number -> Number)
+    (-> Number Number -> Boolean)
+    (-> List Number -> anything)
+    (-> Function Function List -> Number Boolean)
+    (-> ... -> ...) ; any number of inputs, any number of outputs
+    (->  -> Anything ...) ; no inputs, one or more outputs
+
+#### reader type constraints
+
+    #<small-integer> 12
+    #<big-integer> 12
+    #<cons> [1 2 3]
+    #<vector> [1 2 3]
+
+## Special forms
+
+**`^`**
+
+**`->`**
+
+**`begin`**
+
+**`bound?`**
+
+**`cond`**
+
+**`def`**
+
+**`define macro`**
+
+**`define method`**
+
+**`define protocol`**
+
+**`define record`**
+
+**`define vector`**
+
+**`ensure`**
+
+**`generate`**
+
+**`if`**
+
+**`let`**
+
+**`loop`**
+
+**`match`**
+
+**`not`**
+
+**`quasiquote`**
+
+**`quote`**
+
+**`receive`**
+
+**`repeat`**
+
+**`send`**
+
+**`set!`**
+
+**`time`**
+
+**`unbind!`**
+
+**`undefine`**
+
+**`unless`**
+
+**`values`**
+
+**`when`**
+
+**`with-exit`**
+
+**`with-open`**
+
+## Protocols
+
+### **`Conditions`**
+### **`Construction`**
+### **`Control`**
+### **`Conversion`**
+### **`Copying`**
+### **`Equality`**
+### **`Functions`**
+### **`Iteration`**
+### **`Lists`**
+### **`Macros`**
+### **`Maps`**
+### **`Messages`**
+### **`Names`**
+### **`Ordering`**
+### **`Packages`**
+### **`Pairs`**
+### **`Streams`**
+### **`System`**
+### **`Text`**
+### **`Types`**
+
