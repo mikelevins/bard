@@ -1,5 +1,0 @@
-define x (3 + 5 * 2); x := x + 2
-- x
-x > 3 + 1
-"\n"
-# Output: -15 #t
