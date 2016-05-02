@@ -2,171 +2,148 @@
 
 ## Lexical syntax
 
-#### numbers
-    0
-    1
-    2/3
-    1.2
-    1e6
-    1e-6
-    #b1011
-    #xFACE
+## Named constants
+### **`nothing`**
+### **`anything`**
+### **`true`**
+### **`false`**
+### **`end`**
 
-#### names
+## Built-in structures
 
-##### named constants
+### Names
+#### **`symbol`**
+#### **`keyword`**
+#### **`uri`**
 
-    nothing
-    anything
-    true
-    false
-    end
+### Numbers
+#### **`small-integer`**
+#### **`big-integer`**
+#### **`single-float`**
+#### **`double-float`**
+#### **`s8ratio`**
+#### **`u8ratio`**
+#### **`s16ratio`**
+#### **`u16ratio`**
+#### **`s32ratio`**
+#### **`u32ratio`**
+#### **`s64ratio`**
+#### **`u64ratio`**
 
-##### symbols
+### Text characters
+#### **`character`**
 
-    red
-    blue
-    Fred
-    Barney
-    *standard-output*
+### Sequences
+#### **`vector`**
+#### **`string`**
+#### **`s8vector`**
+#### **`u8vector`**
+#### **`s16vector`**
+#### **`u16vector`**
+#### **`s32vector`**
+#### **`u32vector`**
+#### **`s64vector`**
+#### **`u64vector`**
 
-##### keywords
+### Maps
+#### **`alist-map`**
+#### **`hashtable`**
+#### **`treemap`**
 
-    :foo
-    :Bar
+### Pairs
+#### **`cons`**
 
+### Procedures
+#### **`method`**
+#### **`function`**
 
-##### URIs
+### IO streams
+#### **`character-input-stream`**
+#### **`character-output-stream`**
+#### **`octet-input-stream`**
+#### **`octet-output-stream`**
+#### **`object-input-stream`**
+#### **`object-output-stream`**
 
-    #<uri> "http://bardcode.net"
-
-#### text strings
-
-    "A sample text string"
-
-#### lists
-
-    '()
-    '(1 2 3)
-    '(:red :blue :green)
-    []
-    [1 2 3]
-    [:red :blue :green]
-
-#### maps
-
-    {}
-    {:left 1 :right 2}
-
-#### methods
-
-    (^ (x) x)
-    (^ (x y) (+ x y))
-
-#### functions
-
-    (-> ->)
-    (-> Number ->)
-    (-> Number -> Number)
-    (-> Number Number -> Boolean)
-    (-> List Number -> anything)
-    (-> Function Function List -> Number Boolean)
-    (-> ... -> ...) ; any number of inputs, any number of outputs
-    (->  -> Anything ...) ; no inputs, one or more outputs
-
-#### reader type constraints
-
-    #<small-integer> 12
-    #<big-integer> 12
-    #<cons> [1 2 3]
-    #<vector> [1 2 3]
-
-## Special forms
-
-**`^`**
-
-**`->`**
-
-**`begin`**
-
-**`bound?`**
-
-**`cond`**
-
-**`def`**
-
-**`define macro`**
-
-**`define method`**
-
-**`define protocol`**
-
-**`define record`**
-
-**`define vector`**
-
-**`ensure`**
-
-**`generate`**
-
-**`if`**
-
-**`let`**
-
-**`loop`**
-
-**`match`**
-
-**`not`**
-
-**`quasiquote`**
-
-**`quote`**
-
-**`receive`**
-
-**`repeat`**
-
-**`send`**
-
-**`set!`**
-
-**`time`**
-
-**`unbind!`**
-
-**`undefine`**
-
-**`unless`**
-
-**`values`**
-
-**`when`**
-
-**`with-exit`**
-
-**`with-open`**
-
-## Protocols
+## Built-in protocols
 
 ### **`Conditions`**
+
 ### **`Construction`**
-### **`Control`**
+#### Functions
+##### **`initialize`**
+
 ### **`Conversion`**
-### **`Copying`**
+#### Functions
+##### **`as`**
+
+### **`Definition`**
+#### Special forms
+##### **`define constant`**
+`(-> Name Anything -> Anything)`
+##### **`define macro`**
+`(-> Name Parameters Form ... -> Name)`
+##### **`define method`**
+`(-> Name Parameters Form ... -> Name)`
+##### **`define protocol`**
+`(-> Name &key variables special-forms functions -> Name)`
+##### **`define record`**
+`(-> Name SlotSpec ... -> Name)`
+##### **`define variable`**
+`(-> Name Anything -> Name)`
+##### **`define vector`**
+`(-> Name &key count minimum-count maximum-count element-type initial-element initial-contents -> Name)`
+#### Functions
+##### **`defined?`**
+`(-> Name -> Boolean)`
+##### **`undefine!`**
+`(-> Name ->)`
+
 ### **`Equality`**
+#### Functions
+##### **`equivalent?`**
+##### **`equal?`**
+##### **`identical?`**
+
+### **`Evaluation`**
+#### Special forms
+##### **`eval`**
+#### Functions
+##### **`apply?`**
+
 ### **`Functions`**
-### **`Iteration`**
 ### **`Lists`**
 ### **`Macros`**
 ### **`Maps`**
-### **`Messages`**
-### **`Names`**
+### **`Math`**
 ### **`Ordering`**
 ### **`Packages`**
 ### **`Pairs`**
+### **`Printing`**
+### **`Processes`**
+
+### **`ProgramStructure`**
+#### Special forms
+##### **`begin`**
+##### **`case`**
+##### **`cond`**
+##### **`if`**
+##### **`let`**
+##### **`loop`**
+##### **`match`**
+##### **`quasiquote`**
+##### **`quote`**
+##### **`repeat`**
+##### **`unless`**
+##### **`when`**
+##### **`with-exit`**
+#### Functions
+##### **`bound?`**
+
+### **`Reading`**
+### **`Resources`**
 ### **`Streams`**
 ### **`System`**
 ### **`Text`**
-### **`Types`**
 
+### **`Types`**
