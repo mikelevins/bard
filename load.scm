@@ -24,6 +24,8 @@
 (define $bard-files
   (paths $bard-root 
          "/src/version.scm"
+         "/src/globals.scm"
+         "/src/vm.scm"
          "/src/bard.scm"
          ))
 

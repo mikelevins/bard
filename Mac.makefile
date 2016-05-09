@@ -32,10 +32,14 @@ LDFLAGS_MAIN=-arch ${ARCH} -isysroot ${SYSROOT} -mmacosx-version-min=10.11 -fram
 # ----------------------------------------
 
 SCHEME_SOURCES= \
-         src/version.scm
+         src/version.scm \
+         src/globals.scm \
+         src/vm.scm
 
 C_SOURCES= \
-         src/version.c
+         src/version.c \
+         src/globals.c \
+         src/vm.c
 
 OBJECTS= \
          version.o
