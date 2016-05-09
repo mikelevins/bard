@@ -1,10 +1,11 @@
 ;;;; ***********************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          version.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       the Bard interpreter version string
 ;;;; Author:        mikel evins
-;;;; Copyright:     2016 by mikel evins
+;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
