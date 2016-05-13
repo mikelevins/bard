@@ -72,4 +72,23 @@
 
 ;;; (define $vm (make-vm #f #f 0 '(3 2 1) '() (make-globals) (make-prims)))
 
+;;; ---------------------------------------------------------------------
+;;; instruction execution
+;;; ---------------------------------------------------------------------
+
+(define (exec-gref vm varname) #f)
+(define (exec-gset vm varname val) #f)
+(define (exec-lref vm varname) #f)
+(define (exec-lset vm varname val) #f)
+(define (exec-const vm val) #f)
+(define (exec-jump vm dest) #f)
+(define (exec-tjump vm dest) #f)
+(define (exec-fjump vm dest) #f)
+(define (exec-prim vm pname) #f)
+(define (exec-cc vm pname) #f)
+(define (exec-setcc vm pname) #f)
+(define (exec-call vm pname) #f)
+(define (exec-return vm pname) #f)
+(define (exec-args vm pname) #f)
+(define (exec-args. vm pname) #f)
 
