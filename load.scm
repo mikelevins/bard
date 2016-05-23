@@ -25,8 +25,8 @@
   (paths $bard-root 
          "/src/version.scm"
          "/src/globals.scm"
-         "/src/prims.scm"
-         "/src/vm.scm"
+         "/src/env.scm"
+         "/src/read.scm"
          "/src/bard.scm"
          ))
 
