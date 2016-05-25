@@ -10,6 +10,9 @@
 
 (declare (extended-bindings))
 
+(define (%defined? val)
+  (not (eqv? val #!unbound)))
+
 (define (%eval-function-application expr env)
   (let* ((op (%eval (car expr) env))
          (args (map (lambda (x)(%eval x env))
@@ -33,7 +36,7 @@
                   global-val
                   #!unbound))))))
 
-(define (%eval expr #!optional (env '()))
+(define (bard:eval expr #!optional (env '()))
   (cond
    ((symbol? expr) (%eval-variable expr env))
    ((pair? expr) (%eval-application expr env))

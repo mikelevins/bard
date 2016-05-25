@@ -22,6 +22,9 @@
                      (cdr arg)))
        initargs))
 
+(define (%init-standard-globals)
+  (apply %init-globals '((PI . 3.1415926))))
+
 (define (%defglobal var val)
   (table-set! $bard-global-variables var val)
   var)
@@ -33,10 +36,12 @@
 (define (%global-value var)
   (table-ref $bard-global-variables var #!unbound))
 
-
 (define (%globally-bound? varname)
   (let* ((not-found (gensym))
          (val (table-ref $bard-global-variables varname not-found)))
     (if (eq? not-found val)
         #f
         #t)))
+
+;;; (%init-standard-globals)
+;;; (%global-value 'PI)
