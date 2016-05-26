@@ -75,7 +75,7 @@
       ((undefine)(%not-yet-implemented 'undefine))     ; ***
       ((unless)(%not-yet-implemented 'unless))         ; ***
       ((values)(%not-yet-implemented 'values))         ; ***
-      ((when)(%not-yet-implemented 'when))             ; ***
+      ((when)(%eval-when expr env))
       ((with-exit)(%not-yet-implemented 'with-exit))   ; ***
       (else (error "unrecognized special form: " expr)))))
 
@@ -151,3 +151,15 @@
                           (bard:eval thenform env)
                           (bard:eval elseform env))))
      (else (error "too many arguments to if: " expr)))))
+
+(define (%eval-when expr env)
+  (let* ((argforms (cdr expr))
+         (argcount (length argforms)))
+    (cond
+     ((< argcount 1)(error "not enough arguments to if: " expr))
+     (else (let* ((testform (car argforms))
+                  (more-forms (cdr argforms))
+                  (testval (bard:eval testform env)))
+             (if (bard:true? testval)
+                 (%eval-sequence more-forms env)
+                 (bard:nothing)))))))
