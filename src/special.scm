@@ -73,7 +73,7 @@
       ((setter)(%not-yet-implemented 'setter))         ; ***
       ((spawn)(%not-yet-implemented 'spawn))           ; ***
       ((undefine)(%not-yet-implemented 'undefine))     ; ***
-      ((unless)(%not-yet-implemented 'unless))         ; ***
+      ((unless)(%eval-unless expr env))
       ((values)(%not-yet-implemented 'values))         ; ***
       ((when)(%eval-when expr env))
       ((with-exit)(%not-yet-implemented 'with-exit))   ; ***
@@ -152,11 +152,23 @@
                           (bard:eval elseform env))))
      (else (error "too many arguments to if: " expr)))))
 
+(define (%eval-unless expr env)
+  (let* ((argforms (cdr expr))
+         (argcount (length argforms)))
+    (cond
+     ((< argcount 1)(error "not enough arguments to unless: " expr))
+     (else (let* ((testform (car argforms))
+                  (more-forms (cdr argforms))
+                  (testval (bard:eval testform env)))
+             (if (bard:false? testval)
+                 (%eval-sequence more-forms env)
+                 (bard:nothing)))))))
+
 (define (%eval-when expr env)
   (let* ((argforms (cdr expr))
          (argcount (length argforms)))
     (cond
-     ((< argcount 1)(error "not enough arguments to if: " expr))
+     ((< argcount 1)(error "not enough arguments to when: " expr))
      (else (let* ((testform (car argforms))
                   (more-forms (cdr argforms))
                   (testval (bard:eval testform env)))
