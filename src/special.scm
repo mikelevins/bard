@@ -47,36 +47,36 @@
   (let* ((op (car expr))
          (args (cdr expr)))
     (case op
-      ((^)(%not-yet-implemented '^))
-      ((->)(%not-yet-implemented '->))
+      ((^)(%not-yet-implemented '^))                   ; ***           
+      ((->)(%not-yet-implemented '->))                 ; ***
       ((begin)(%eval-sequence (cdr expr) env))
-      ((case)(%not-yet-implemented 'case))
+      ((case)(%not-yet-implemented 'case))             ; ***
       ((cond)(%eval-cond-body (cdr expr) env))
       ((def)(%eval-def expr env))
-      ((define)(%not-yet-implemented 'define))
-      ((defined?)(%not-yet-implemented 'defined?))
-      ((ensure)(%not-yet-implemented 'ensure))
-      ((function)(%not-yet-implemented 'function))
-      ((generate)(%not-yet-implemented 'generate))
+      ((define)(%not-yet-implemented 'define))         ; ***
+      ((defined?)(%eval-defined? expr env))
+      ((ensure)(%not-yet-implemented 'ensure))         ; ***
+      ((function)(%not-yet-implemented 'function))     ; ***
+      ((generate)(%not-yet-implemented 'generate))     ; ***
       ((if)(%eval-if expr env))
-      ((let)(%not-yet-implemented 'let))
-      ((loop)(%not-yet-implemented 'loop))
-      ((match)(%not-yet-implemented 'match))
-      ((method)(%not-yet-implemented 'method))
-      ((not)(%not-yet-implemented 'not))
-      ((quasiquote)(%not-yet-implemented 'quasiquote))
+      ((let)(%not-yet-implemented 'let))               ; ***
+      ((loop)(%not-yet-implemented 'loop))             ; ***
+      ((match)(%not-yet-implemented 'match))           ; ***
+      ((method)(%not-yet-implemented 'method))         ; ***
+      ((not)(%not-yet-implemented 'not))               ; ***
+      ((quasiquote)(%not-yet-implemented 'quasiquote)) ; ***
       ((quote)(cadr expr))
-      ((receive)(%not-yet-implemented 'receive))
-      ((repeat)(%not-yet-implemented 'repeat))
-      ((send)(%not-yet-implemented 'send))
-      ((set!)(%not-yet-implemented 'set!))
-      ((setter)(%not-yet-implemented 'setter))
-      ((spawn)(%not-yet-implemented 'spawn))
-      ((undefine)(%not-yet-implemented 'undefine))
-      ((unless)(%not-yet-implemented 'unless))
-      ((values)(%not-yet-implemented 'values))
-      ((when)(%not-yet-implemented 'when))
-      ((with-exit)(%not-yet-implemented 'with-exit))
+      ((receive)(%not-yet-implemented 'receive))       ; ***
+      ((repeat)(%not-yet-implemented 'repeat))         ; ***
+      ((send)(%not-yet-implemented 'send))             ; ***
+      ((set!)(%not-yet-implemented 'set!))             ; ***
+      ((setter)(%not-yet-implemented 'setter))         ; ***
+      ((spawn)(%not-yet-implemented 'spawn))           ; ***
+      ((undefine)(%not-yet-implemented 'undefine))     ; ***
+      ((unless)(%not-yet-implemented 'unless))         ; ***
+      ((values)(%not-yet-implemented 'values))         ; ***
+      ((when)(%not-yet-implemented 'when))             ; ***
+      ((with-exit)(%not-yet-implemented 'with-exit))   ; ***
       (else (error "unrecognized special form: " expr)))))
 
 ;;; ---------------------------------------------------------------------
@@ -116,6 +116,21 @@
                           (%defglobal varform (bard:eval valform env))
                           (error "the first argument to def must by a symbol, but found " varform))))
      (else (error "too many arguments to def: " argforms)))))
+
+(define (%eval-defined? expr env)
+  (let* ((argforms (cdr expr))
+         (argcount (length argforms)))
+    (cond
+     ((< argcount 1)(error "not enough arguments to defined? " expr))
+     ((= argcount 1)(let* ((var (car argforms))
+                           (val (%lookup-variable-value env var)))
+                      (if (%defined? val)
+                          (bard:true)
+                          (let ((global-val (%global-value var)))
+                            (if (%defined? global-val)
+                                (bard:true)
+                                (bard:false))))))
+     (else (error "too many arguments to defined? " expr)))))
 
 (define (%eval-if expr env)
   (let* ((argforms (cdr expr))
