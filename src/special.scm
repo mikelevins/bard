@@ -49,6 +49,7 @@
     (case op
       ((^)(%not-yet-implemented '^))                   ; ***           
       ((->)(%not-yet-implemented '->))                 ; ***
+      ((and)(%not-yet-implemented 'and))               ; ***
       ((begin)(%eval-sequence (cdr expr) env))
       ((case)(%not-yet-implemented 'case))             ; ***
       ((cond)(%eval-cond-body (cdr expr) env))
@@ -56,14 +57,13 @@
       ((define)(%not-yet-implemented 'define))         ; ***
       ((defined?)(%eval-defined? expr env))
       ((ensure)(%not-yet-implemented 'ensure))         ; ***
-      ((function)(%not-yet-implemented 'function))     ; ***
       ((generate)(%not-yet-implemented 'generate))     ; ***
       ((if)(%eval-if expr env))
       ((let)(%not-yet-implemented 'let))               ; ***
       ((loop)(%not-yet-implemented 'loop))             ; ***
       ((match)(%not-yet-implemented 'match))           ; ***
-      ((method)(%not-yet-implemented 'method))         ; ***
       ((not)(%not-yet-implemented 'not))               ; ***
+      ((or)(%not-yet-implemented 'or))                 ; ***
       ((quasiquote)(%not-yet-implemented 'quasiquote)) ; ***
       ((quote)(cadr expr))
       ((receive)(%not-yet-implemented 'receive))       ; ***
