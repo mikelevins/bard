@@ -8,12 +8,6 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; TODO: special-form efficiency
-;;;       this evaluator for special forms is conceptually
-;;;       convenient, but could be made more efficient;
-;;;       for instance, there's really no need for 
-;;;       special forms to be looked up at run time
-
 (declare (standard-bindings))
 
 (define (%special-form? expr)
@@ -55,9 +49,9 @@
     (case op
       ((^)(%not-yet-implemented '^))
       ((->)(%not-yet-implemented '->))
-      ((begin)(%not-yet-implemented 'begin))
+      ((begin)(%eval-sequence (cdr expr) env))
       ((case)(%not-yet-implemented 'case))
-      ((cond)(%not-yet-implemented 'cond))
+      ((cond)(%eval-cond-body (cdr expr) env))
       ((def)(%not-yet-implemented 'def))
       ((define)(%not-yet-implemented 'define))
       ((defined?)(%not-yet-implemented 'defined?))
@@ -86,8 +80,29 @@
       (else (error "unrecognized special form: " expr)))))
 
 ;;; ---------------------------------------------------------------------
+;;; helper functions
+;;; ---------------------------------------------------------------------
+
+(define (%eval-sequence forms env)
+  (if (null? forms)
+      (bard:nothing)
+      (if (null? (cdr forms))
+          (bard:eval (car forms) env)
+          (begin (bard:eval (car forms) env)
+                 (%eval-sequence (cdr forms) env)))))
+
+;;; ---------------------------------------------------------------------
 ;;; special-form evaluators
 ;;; ---------------------------------------------------------------------
+
+(define (%eval-cond-body clauses env)
+  (if (null? clauses)
+      (bard:nothing)
+      (let* ((clause (car clauses))
+             (more-clauses (cdr clauses)))
+        (if (bard:true? (bard:eval (car clause) env))
+            (%eval-sequence (cdr clause) env)
+            (%eval-cond-body more-clauses env)))))
 
 (define (%eval-if expr env)
   (let* ((argforms (cdr expr))
