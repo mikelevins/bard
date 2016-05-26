@@ -52,7 +52,7 @@
       ((begin)(%eval-sequence (cdr expr) env))
       ((case)(%not-yet-implemented 'case))
       ((cond)(%eval-cond-body (cdr expr) env))
-      ((def)(%not-yet-implemented 'def))
+      ((def)(%eval-def expr env))
       ((define)(%not-yet-implemented 'define))
       ((defined?)(%not-yet-implemented 'defined?))
       ((ensure)(%not-yet-implemented 'ensure))
@@ -103,6 +103,19 @@
         (if (bard:true? (bard:eval (car clause) env))
             (%eval-sequence (cdr clause) env)
             (%eval-cond-body more-clauses env)))))
+
+
+(define (%eval-def expr env)
+  (let* ((argforms (cdr expr))
+         (argcount (length argforms)))
+    (cond
+     ((< argcount 2)(error "too few arguments to def: " argforms))
+     ((= argcount 2)(let* ((varform (car argforms))
+                           (valform (cadr argforms)))
+                      (if (symbol? varform)
+                          (%defglobal varform (bard:eval valform env))
+                          (error "the first argument to def must by a symbol, but found " varform))))
+     (else (error "too many arguments to def: " argforms)))))
 
 (define (%eval-if expr env)
   (let* ((argforms (cdr expr))
