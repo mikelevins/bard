@@ -53,7 +53,7 @@
       ((->)(%not-yet-implemented '->))                 ; ***
       ((and)(%eval-and (cdr expr) env))
       ((begin)(%eval-sequence (cdr expr) env))
-      ((case)(%not-yet-implemented 'case))             ; ***
+      ((case)(%not-yet-implemented 'case))             ; *** let's do pattern-matching in case
       ((cond)(%eval-cond-body (cdr expr) env))
       ((def)(%eval-def expr env))
       ((define)(%not-yet-implemented 'define))         ; ***
@@ -63,7 +63,6 @@
       ((if)(%eval-if expr env))
       ((let)(%not-yet-implemented 'let))               ; ***
       ((loop)(%not-yet-implemented 'loop))             ; ***
-      ((match)(%not-yet-implemented 'match))           ; ***
       ((not)(%eval-not (cadr expr) env))
       ((or)(%eval-or (cdr expr) env))
       ((quasiquote)(%not-yet-implemented 'quasiquote)) ; ***

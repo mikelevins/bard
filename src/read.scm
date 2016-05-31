@@ -96,8 +96,9 @@
 (define (%read-value->bard-value val)
   (cond
    ((null? val) '())
-   ((eq? 'undefined val) #!unbound)
    ((eq? 'nothing val) '())
+   ((eq? 'undefined val) #!unbound)
+   ((eq? 'end val) #!eof)
    ((eq? 'true val) #t)
    ((eq? 'false val) #f)
    ((pair? val)(%read-cons val))
