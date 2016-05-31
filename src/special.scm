@@ -63,7 +63,7 @@
       ((let)(%not-yet-implemented 'let))               ; ***
       ((loop)(%not-yet-implemented 'loop))             ; ***
       ((match)(%not-yet-implemented 'match))           ; ***
-      ((not)(%not-yet-implemented 'not))               ; ***
+      ((not)(%eval-not (cadr expr) env))
       ((or)(%not-yet-implemented 'or))                 ; ***
       ((quasiquote)(%not-yet-implemented 'quasiquote)) ; ***
       ((quote)(cadr expr))
@@ -160,6 +160,11 @@
                           (bard:eval thenform env)
                           (bard:eval elseform env))))
      (else (error "too many arguments to if: " expr)))))
+
+(define (%eval-not form env)
+  (if (bard:true? (bard:eval form env))
+      (bard:false)
+      (bard:true)))
 
 (define (%eval-unless expr env)
   (let* ((argforms (cdr expr))
