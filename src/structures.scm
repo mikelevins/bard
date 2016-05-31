@@ -8,7 +8,87 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(declare (standard-bindings))
+
+(declare (extended-bindings))
+
+;;;---------------------------------------------------------------------
+;;; ABOUT
+;;;---------------------------------------------------------------------
+;;; the basic bard datatypes are called 'structures'. They are distinct
+;;; from bard 'classes', which are named open collections of structures
+;;; defined by protocols.
+;;;
+;;; This file defines the Scheme data structures that we use to represent
+;;; bard structures and classes.
+;;;
+;;; There is a distinct representation for each individual structure,
+;;; but they fall into six kinds of representation:
+;;;
+;;; 1. named-literals are a small number of unique named literal
+;;;    values: true, false, nothing, end, and undefined
+;;;
+;;; 2. atomic structures represent basic built-in datatypes
+;;;    without significant internal structure, such as
+;;;    integers, booleans, and characters. Built-in Scheme
+;;;    datatypes are exposed through bard as atomic types.
+;;;
+;;; 3. record structures represent datatypes made up of named slots.
+;;;
+;;; 4. tuple structures represent datatypes made up of slots
+;;;    addressed by index.
+;;;
+;;; 5. synonyms represent names for other existing datatypes.
+;;;
+;;; 6. singletons represent specific values presented as types
+;;;    for dispatch purposes. 
+
+;;; ---------------------------------------------------------------------
+;;; named-literal-structure
+;;; ---------------------------------------------------------------------
+;;; distinctive, primitive, named, built-in atoms
+
+;;; nothing
+;;; ---------------------------------------------------------------------
+
+(define (bard:nothing) '())
+
+(define (bard:nothing? thing)
+  (null? thing))
+
+(define (bard:something? thing)
+  (not (nothing? thing)))
+
+;;; true and false
+;;; ---------------------------------------------------------------------
+
+(define (bard:false) #f)
+(define (bard:true) #t)
+
+(define (bard:false? thing)
+  (or (eqv? thing (bard:false))
+      (eqv? thing (bard:nothing))))
+
+(define (bard:true? thing)
+  (not (bard:false? thing)))
+
+;;; end
+;;; ---------------------------------------------------------------------
+
+(define (bard:end) #!eof)
+
+(define (bard:end? thing)
+  (eqv? thing #!eof))
+
+;;; undefined
+;;; ---------------------------------------------------------------------
+
+(define (bard:undefined) #!unbound)
+
+(define (bard:undefined? thing)
+  (eqv? thing #!unbound))
+
+(define (bard:defined? thing)
+  (not (bard:undefined? thing)))
 
 ;;; ---------------------------------------------------------------------
 ;;; atomic-structure
@@ -18,13 +98,11 @@
 ;;; rutnime or implemented as Scheme records that are not accessible
 ;;; for redefinition in bard. Examples of datatypes that bard
 ;;; sees as atomic-structure types are pair, fixnum, and character.
-;;; TODO: define constructors, type predicates, and accessors
-;;;       for the defined set of bard atomic-structures.
 
 ;;; the defined atomic structures
 ;;; for each of these bard needs:
-;;; - a constructor
 ;;; - a type predicate
+;;; - a constructor
 ;;; - a method on structure-of
 ;;; - accessors
 ;;; - a method on print
@@ -42,6 +120,7 @@
 ;;; big-integer
 ;;; single-float
 ;;; double-float
+
 ;;; s8ratio
 ;;; u8ratio
 ;;; s16ratio
@@ -54,7 +133,6 @@
 ;;; Text characters
 ;;;
 ;;; character
-
 ;;; Sequences
 ;;;
 ;;; vector
@@ -124,5 +202,16 @@
 ;;; - indexed accesors
 ;;; - a method on print
 
+;;; ---------------------------------------------------------------------
+;;; synonym-structure
+;;; ---------------------------------------------------------------------
+;;; synonyms are representations of user-defined named aliases for
+;;; other existing types
+
+;;; ---------------------------------------------------------------------
+;;; singleton-structure
+;;; ---------------------------------------------------------------------
+;;; singletons are representations of individual values viewed as types
+;;; for dispatch purposes
 
 

@@ -25,7 +25,7 @@
   (paths $bard-root 
          "/src/version.scm"
          "/src/error.scm"
-         "/src/values.scm"
+         "/src/structures.scm"
          "/src/globals.scm"
          "/src/env.scm"
          "/src/macro.scm"
