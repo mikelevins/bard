@@ -44,8 +44,4 @@
             $bard-files))
 
 ;;; (load-bard)
-;;; (%init-bard)
-;;; (bard:repl)
-
-
-
+;;; (%init-standard-globals)

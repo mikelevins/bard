@@ -14,7 +14,7 @@
   (not (eqv? val #!unbound)))
 
 (define (%eval-function-application expr env)
-  (let* ((op (%eval (car expr) env))
+  (let* ((op (bard:eval (car expr) env))
          (args (map (lambda (x)(%eval x env))
                     (cdr expr))))
     (%apply op args)))

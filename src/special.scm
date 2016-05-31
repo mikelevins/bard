@@ -14,6 +14,7 @@
   (memq (car expr) 
         '(^
           ->
+          and
           begin
           case
           cond
@@ -49,7 +50,7 @@
     (case op
       ((^)(%not-yet-implemented '^))                   ; ***           
       ((->)(%not-yet-implemented '->))                 ; ***
-      ((and)(%not-yet-implemented 'and))               ; ***
+      ((and)(%eval-and (cdr expr) env))
       ((begin)(%eval-sequence (cdr expr) env))
       ((case)(%not-yet-implemented 'case))             ; ***
       ((cond)(%eval-cond-body (cdr expr) env))
@@ -94,6 +95,14 @@
 ;;; ---------------------------------------------------------------------
 ;;; special-form evaluators
 ;;; ---------------------------------------------------------------------
+
+(define (%eval-and forms env #!optional (last-val (bard:true)))
+  (if (null? forms)
+      last-val
+      (let ((val (bard:eval (car forms) env)))
+        (if (bard:true? val)
+            (%eval-and (cdr forms) env val)
+            (bard:false)))))
 
 (define (%eval-cond-body clauses env)
   (if (null? clauses)
