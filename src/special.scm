@@ -30,6 +30,7 @@
           match
           method
           not
+          or
           quasiquote
           quote
           receive
@@ -64,7 +65,7 @@
       ((loop)(%not-yet-implemented 'loop))             ; ***
       ((match)(%not-yet-implemented 'match))           ; ***
       ((not)(%eval-not (cadr expr) env))
-      ((or)(%not-yet-implemented 'or))                 ; ***
+      ((or)(%eval-or (cdr expr) env))
       ((quasiquote)(%not-yet-implemented 'quasiquote)) ; ***
       ((quote)(cadr expr))
       ((receive)(%not-yet-implemented 'receive))       ; ***
@@ -165,6 +166,14 @@
   (if (bard:true? (bard:eval form env))
       (bard:false)
       (bard:true)))
+
+(define (%eval-or forms env)
+  (if (null? forms)
+      (bard:false)
+      (let ((val (bard:eval (car forms) env)))
+        (if (bard:true? val)
+            val
+            (%eval-or (cdr forms) env)))))
 
 (define (%eval-unless expr env)
   (let* ((argforms (cdr expr))
