@@ -116,8 +116,8 @@ There are six types of operators in bard:
 ## Modules
 
 Bard operators, types, and variables are named by **symbols**. Symbols
-inhabit **modules**. A module is a finite map from a text name to a
-symbol object. Every bard expression exists in exactly one module. If
+inhabit **modules**. A module is a finite map from text names to
+symbol objects. Every bard expression exists in exactly one module. If
 no module declaration establishes the current module in a piece of
 code then the current module is `bard.user`.
 
