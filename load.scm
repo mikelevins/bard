@@ -10,7 +10,7 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Workshop/src/bard") ; osx
+(define $bard-root  "/home/mikel/Workshop/src/bard") ; osx
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
@@ -35,8 +35,4 @@
             $bard-files))
 
 ;;; (load-bard)
-;;; (%init-bard)
-;;; (bard:repl)
-
-
-
+;;; (%init-standard-globals)
