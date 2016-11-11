@@ -1,11 +1,10 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          load.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       bard system loader
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
+;;;; Copyright:     2012-2016 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
@@ -24,9 +23,6 @@
 (define $bard-files
   (paths $bard-root 
          "/src/version.scm"
-         "/src/globals.scm"
-         "/src/env.scm"
-         "/src/read.scm"
          "/src/bard.scm"
          ))
 
