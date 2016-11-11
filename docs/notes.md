@@ -29,7 +29,7 @@ re-wraps it with an "untrusted message" condition, and sends it in a
 message to itself. The default handler for untrusted messages logs
 information about them and then discards them.
 
-A vm can pause esecution of all of its actors, serialize their state
+A vm can pause execution of all of its actors, serialize their state
 to a stream, and resume execution. The serialized state data can be
 stored in a bard **image** file. When bard starts up, it accepts an
 image file as an argument or, if none is provided, looks for its
@@ -38,7 +38,7 @@ contained in the image file and starts them running.
 
 A bard image file, or a bardo object file, can be read and executed by
 any bard vm, provided that the vm is configured to accept the
-cryptgraphic identity recorded in the file. bardo and image files are
+cryptographic identity recorded in the file. bardo and image files are
 architecture independent. They can even be sent in messages from one
 bard vm to another, either locally or over the network. They can be
 stored on servers and downloaded for execution.
@@ -159,8 +159,8 @@ using a double colon:
 
     example1::quux ; returns "oops"
 
-As a matter of style, code that contains double slashes should be
-treated as a bug. You can use a double slash when you must, but
+As a matter of style, code that contains double colons should be
+treated as a bug. You can use a double colon when you must, but
 production code should never contain them.
 
 ### Built-in modules
