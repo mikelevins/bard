@@ -74,7 +74,7 @@ and its associated advantages.
 ## Operators: functions, methods, accessors, macros, types, and special forms
 
 bard is an **expression-oriented** language; every valid piece of a
-bard program is an expression that returns zero of more values. Except
+bard program is an expression that returns zero or more values. Except
 for variable references and literal constants, bard expressions are
 always applications of operators to arguments.
 
