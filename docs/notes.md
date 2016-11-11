@@ -149,15 +149,15 @@ symbols can be referred to or imported from other modules.
 
     foo ; returns 101
     bar ; signals an error because we didn't import bar
-    example1/bar ; returns 1001
-    example1/quux ; signals an error because quux is not exported
+    example1:bar ; returns 1001
+    example1:quux ; signals an error because quux is not exported
 
 bard is a Lisp. It does not provide absolute encapsulation of anything
 because that would prevent useful interactive programming. There is
 therefore a way to refer to a private symbol from another module,
-using a double slash:
+using a double colon:
 
-    example1//quux ; returns "oops"
+    example1::quux ; returns "oops"
 
 As a matter of style, code that contains double slashes should be
 treated as a bug. You can use a double slash when you must, but
