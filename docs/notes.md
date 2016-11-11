@@ -104,8 +104,8 @@ There are six types of operators in bard:
     values.
 
 - **types**, in addition to representing bard datatypes, are also
-    operators that can construct instances of them. Both clases and
-    structures are also **constructors** that can create instances of
+    operators that can construct instances of them. Both classes and
+    structures are **constructors** that can create instances of
     themselves when applied to appropriate arguments.
 
 - **macros** are operators that transform expressions before
