@@ -225,3 +225,13 @@ bard provides a small but rich set of built-in classes and structures, including
 
 - `map`: the class of finite maps
 
+## Stores
+
+bard 0.4 introduces the concept of **stores**. A **store** is a
+serialized finite map from names to values. The `store` class defines
+operations that enable you to construct stores, add mappings to them,
+write them to and read them from files, and query them using a
+prolog-style query language.
+
+Instances of `store` are also instances of `map`.
+
