@@ -17,13 +17,10 @@
 ;;; an autonomous thread of control with its own stack and registers,
 ;;; its own code to execute, and its own mailbox.
 
-(define *bardvm*
-  )
-
 (define (bardvm)
   #f)
 
-(bardvm)
+;;;(bardvm)
 
 
 
