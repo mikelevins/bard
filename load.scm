@@ -10,7 +10,8 @@
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/home/mikel/Workshop/src/bard") ; osx
+;;(define $bard-root  "/home/mikel/Workshop/src/bard") ; linux
+(define $bard-root  "/Users/mikel/Workshop/src/bard") ; macos
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
@@ -23,9 +24,9 @@
 (define $bard-files
   (paths $bard-root 
          "/src/version.scm"
+         "/src/globals.scm"
          "/src/actor.scm"
          "/src/vm.scm"
-         "/src/bard.scm"
          ))
 
 ;;; load sources
