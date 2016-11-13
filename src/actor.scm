@@ -8,3 +8,27 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
+(define-structure actor
+  id
+  vm
+  procedure
+  halted?
+  env
+  stack
+  code
+  pc)
+
+(define (new-actor #!key
+                   (id (make-uuid))
+                   (vm (default-vm))
+                   (procedure #f)
+                   (halted? #t)
+                   (env '())
+                   (stack '())
+                   (code #f)
+                   (pc 0))
+  (make-actor id (or vm (default-vm)) procedure halted? env stack code pc))
+
+

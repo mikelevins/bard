@@ -8,6 +8,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(declare (extended-bindings))
+
 ;;; ----------------------------------------------------------------------
 ;;; API
 ;;; ----------------------------------------------------------------------
@@ -31,7 +33,10 @@
 
 (define (vm:init-globals globals)
   ;; TODO: add code to set up the default global variables
-  #f)
+  globals)
+
+(define (vm:default-globals)
+  (vm:init-globals (vm:make-globals)))
 
 (define (vm:global-bound? globals gname)
   (and (table-search (lambda (key value)

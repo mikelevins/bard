@@ -23,8 +23,20 @@
 ;;; running more than one actor per vm.
 
 (define-structure vm
+  id
   globals
   actors)
+
+(define default-vm #f)
+(let ((_the-vm #f))
+  (set! default-vm
+        (lambda ()
+          (or _the-vm
+              (begin (set! _the-vm
+                           (make-vm (make-uuid)
+                                    (vm:default-globals)
+                                    '()))
+                     _the-vm)))))
 
 (define (bardvm)
   (let* ((args (cdr (command-line)))

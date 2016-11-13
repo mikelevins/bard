@@ -23,8 +23,10 @@
 
 (define $bard-files
   (paths $bard-root 
+         "/lib/uuid.scm"
          "/src/version.scm"
          "/src/globals.scm"
+         "/src/instruction-set.scm"
          "/src/actor.scm"
          "/src/vm.scm"
          ))
