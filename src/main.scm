@@ -1,14 +1,12 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.scm
+;;;; Name:          main.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard interpreter version string
+;;;; Purpose:       toplevel entry point for the Bard interpreter
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-
-(define $bard-version-string "Bard version 0.3.9")
-
+(bard:repl)

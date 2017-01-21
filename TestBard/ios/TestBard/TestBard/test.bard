@@ -1,0 +1,7 @@
+(newline)
+(print "This is a test file, testing launch-time loading of Bard code")
+(newline)
+(print "If you see this text in the XCode console, then Bard successfully loaded this file.")
+(newline)
+(print "The source code for this file is in test.bard, in the TestBard project.")
+(newline)

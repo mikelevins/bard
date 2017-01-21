@@ -1,0 +1,216 @@
+0.3.9
+
+- added <vector> schema
+
+0.3.8
+
+- evaluating an undefined variable returns undefined
+- added keyword? pair? class? protocol? undefined?
+
+0.3.7
+
+- fixed a bug (a cut-paste error) in types the broke singleton definition
+- added a method (as <string> Anything) to enable conversion of arbitrary values to strings
+
+0.3.6
+
+- fixed a bug in dispatch that caused Anything dispatch to fail
+
+0.3.5 
+
+- all protocol functions implemented
+
+0.3.4 
+
+- added <url>
+- implemented multiple-value let
+
+0.3.3 
+
+- new define method syntax implemented, using with: clauses for type
+  constraints. for now they support only type references and
+  singletons (the "exactly" construct), but can also support more
+  general predicate dispatch
+
+0.3.2
+- added warn
+
+- Linux build working again
+
+- define protocol added
+
+0.3.1
+
+- generate implemented; a few generator-based protocol functions added
+
+- function literals implemented; functions know their input and output types
+
+0.3.0
+
+- overhauled type system and method dispatch. the low-level type
+  system is simpler and method dispatch is around 3x faster
+
+- protocol objects added
+
+- class objects and definitions added
+
+- schema implementation simplified
+
+- simplified and sped up apply
+
+0.2.10
+
+- began implementation of compiler in Bard; changes in types to support the compiler; 
+  name of <frame> changed to <table>; updated "define-foo" to be "define foo";
+  implemented ^, ensure, loop, repeat, unless, and when
+
+0.2.9
+
+- many small changes, none user-visible; added bard emacs mode
+
+0.2.8
+
+- enable schemas to use strings and keywords as keys
+
+0.2.7
+
+- define-schema implemented, providing user-defined types
+
+0.2.6
+
+- define-macro implemented, exposing macros in the surface language
+
+0.2.5
+
+- macros implemented
+- quasiquote implemented
+
+0.2.4
+
+- added a To-Do list
+- added generators
+- nelson subsystem: fixed several bugs in data-conversion to
+  Objective-C
+- nelson: added special form for actions
+- nelson: expanded the nelson build, adding a special
+  nelson version of the standalone interpreter
+- changed representation of frames for speed
+- added as_integer to C API
+- fixed a bug in the <string> method of any
+- corrected the debug name of the uuid function
+- added <frame> method to map
+- added error APIs to the C API
+
+0.2.3
+
+- much faster implementation of read-lines
+
+0.2.2
+
+- modified frames to support equal? keys
+
+- added read-text, read-file, and eval to the language
+
+0.2.1
+
+- fixed a bug that prevented rest args from working.
+
+0.2.0
+
+- experimented some with representation of types, in order to support
+  user-defined types; this feature is not yet in, but will be in the
+  near future
+
+- protocol implementation is ndergoing changes. in 0.2.0 the protocols
+  (except for Anything and Type) are not first-class objects, and many
+  protocol functions are unimplemented while I tinker with the representations
+
+- experimented with generators and series (possibly-infinite data
+  structures that encapsulate generators); not ready for prime time,
+  but a future Bard release may expose generators and series as a tool
+  for iteration
+
+- <output-stream> and <input-stream> are replaced by <iostream>
+
+- lists are now represented by an abstract interal protocol (%cons,
+  %car, %cdr, etc.) to make it easy to switch representations
+
+- experimented with lists represented by binary trees, but the Van
+  Horn implementation of random-access-lists does not perform as
+  advertised in Gambit. Operations advertised as Olog(N) were measured
+  linear, and constant factors are higher than for native cons
+  implementation, so rolled back to conses until I can find or write a
+  suitable implmentation of functional sequences.
+
+- frames are now represented by weight-balanced binary trees
+
+- added repeat and with-exit; this is a very general solution to
+  looping, but should be regarded as a temporary placeholder to be
+  replaced at some point with a better functional alternative. exits
+  bound by with-exit are in fact full continuations, and it's probably
+  not a good idea to expose them in this way
+
+- experimented with an pgrade to Gambit 4.6.6, but rolled back after
+  segfaults in iOS builds; the toolchain currently is still based
+  on Gambit 4.6.1
+
+- Bard project now includes Cocoa test harnesses for iOS and Mac OSX
+
+- Makefiles now build iOS and MacOSX libraries with exposed C entry
+  points and data-marshaling support
+
+- function dispatch and application cons much less and are faster
+
+0.1.3
+
+- updated the namer example to use new primitives.
+
+- made a few small changes and additions to protocols; updated the reference
+
+- fixed a bug in error reporting
+
+- added basic combinators as primitives
+
+- added comprehensive tests for all protocol functions
+
+- fixed a bug in get
+
+- fixed some inconsistencies in frame merging
+
+- improved performance of many protocol functions
+
+- updated makefile to build iOS libraries
+
+- reorganized the project directory, removing obsolete legacy code
+
+0.1.2
+
+- adjusted repl output to be a little more readable
+
+- added Bard versions of Nelson puzzle descriptions
+
+- added Puzzle protocol for Nelson
+
+- improved frame implementation a little
+
+- changed function application to cons less
+
+- added the 'time' special form for crude timing measurements
+
+- added an (embryonic) C API for the library
+
+- added an XCode project for testing the static library build
+
+- rewrote the Makefile to support builing as either an executable or a
+  static library
+
+0.1.1
+
+- fixed the initial prompt at repl startup
+
+- changed the repl to print the version string instead of an arbitrary
+  banner
+
+- edited, corrected, and expanded bard.rtf, the interpreter reference
+
+- changed open to accept a frame argument for settings

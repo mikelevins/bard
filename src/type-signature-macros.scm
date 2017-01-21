@@ -1,14 +1,13 @@
 ;;;; ***********************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          version.scm
+;;;; Name:          type-signature-macros.scm
 ;;;; Project:       Bard
-;;;; Purpose:       the Bard interpreter version string
+;;;; Purpose:       
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
+;;;; Copyright:     2013 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-
-(define $bard-version-string "Bard version 0.3.9")
-
+(define-macro (signature input-types restarg output-types)
+  `(make-signature (list ,@input-types) ,restarg (list ,@output-types)))
