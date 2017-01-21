@@ -12,8 +12,8 @@ Documents what's working in the 0.3 version of the bard interpreter.
 `false`  
 
 ### Characters
-`#\c` literal character
-`#\space` named literal character
+`#\c` literal character  
+`#\space` named literal character  
 
 ### List forms
 
