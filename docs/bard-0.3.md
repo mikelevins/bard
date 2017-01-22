@@ -13,7 +13,7 @@ Documents what's working in the 0.3 version of the bard interpreter.
 
 ### Characters
 
-Characters are atomic elements that appear in text strings. FOllowing
+Characters are atomic elements that appear in text strings. Following
 are a few examples of literal character syntax:
 
 `#\c` - literal character  
@@ -107,36 +107,38 @@ protocol functions.
 
 ## Protocols
 
-### Addressing  
-  `url`  
-  `url-domain`  
-  `url-path`  
-  `url-port`  
-  `url-query`  
-  `url-scheme`    
+### Addressing
+  Classes: `Name`, `URL`
+
+  `url scheme: Name domain: Name port: Name path: Name query: Name -> URL`  
+  `url-domain url-domain URL -> Name`  
+  `url-path url-path URL -> Name`  
+  `url-port url-port URL -> Name`  
+  `url-query url-query URL -> Name`  
+  `url-scheme url-scheme URL -> Name`    
   
 ### Applying  
-  `applicable?`  
-  `apply`  
-  `complement`  
-  `compose`  
-  `constantly`  
-  `eval`  
-  `flip`  
-  `identity`  
-  `partial`  
+  `applicable? Anything -> Boolean`  
+  `apply Applicable & -> Anything`  
+  `complement Applicable -> Applicable`  
+  `compose & -> Applicable`  
+  `constantly Anything -> Applicable`  
+  `eval Anything -> Anything`  
+  `flip Applicable -> Applicable`  
+  `identity Anything -> Anything`  
+  `partial Applicable & -> Applicable`  
   
 ### Calculating  
-  `*`  
-  `+`  
-  `-`  
-  `/`  
-  `even?`  
-  `max`  
-  `min`  
-  `odd?`  
-  `random`  
-  `remainder`  
+  `* & -> Number`  
+  `+ & -> Number`  
+  `- & -> Number`  
+  `/ & -> Number`  
+  `even? Integer -> Boolean`  
+  `max & -> Number`  
+  `min & -> Number`  
+  `odd? Integer -> Boolean`  
+  `random Integer -> Integer`  
+  `remainder Integer Integer -> Integer`  
   
 ### Comparing  
   `=`  
@@ -280,7 +282,7 @@ protocol functions.
 `cond`  
 `def`  
 `define class`  
-`define macro`  
+`define macro`  <
 `define method`  
 `define protocol`  
 `define record`  
