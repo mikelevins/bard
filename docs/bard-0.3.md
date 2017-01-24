@@ -141,90 +141,88 @@ protocol functions.
   `remainder Integer Integer -> Integer`  
   
 ### Comparing  
-  `=`  
-  `prim:=`  
+  `= & -> Boolean`  
+  `prim:= Anything Anything -> Boolean`  
   
 ### Converting  
-  `as`  
+  `as Type Anything -> Type`  
   
 ### Creating  
-  `make`  
+  `make Type & -> Type`  
   
 ### Generating  
-  `cycle`  
-  `generated-count`  
-  `generated-values`  
-  `iterate`  
-  `next`  
-  `next-n`  
-  `range-from`  
+  `cycle List -> Generator`  
+  `generated-count Generator -> Integer`  
+  `generated-values Generator -> List`  
+  `iterate Procedure -> Geneartor`  
+  `next Generator -> Anything`  
+  `next-n Generator -> List`  
+  `range-from Integer -> Generator`  
   
 ### Listing  
-  `add-first`  
-  `add-last`  
-  `any`  
-  `append`  
-  `by`  
-  `drop`  
-  `element`  
-  `empty?`  
-  `filter`  
-  `first`  
-  `join-text`  
-  `last`  
-  `length`  
-  `list`  
-  `map`  
-  `member?`  
-  `next-last`  
-  `partition`  
-  `position`  
-  `position-if`  
-  `range`  
-  `reduce`  
-  `rest`  
-  `reverse`  
-  `second`  
-  `some?`  
-  `split-text`  
-  `take`  
-  `take-by`  
-  `vector`  
+  `add-first Anything List -> List`  
+  `add-last List Anything -> List`  
+  `any List -> Anything`  
+  `append & -> List`  
+  `by Integer List -> List`  
+  `drop Integer List -> List`  
+  `element List Integer -> Anything`  
+  `empty? List -> Boolean`  
+  `filter Procedure List -> List`  
+  `first List -> Anything`  
+  `join-text List -> Text`  
+  `last List -> Anything`  
+  `length List -> Integer`  
+  `list & -> List`  
+  `map Procedure List -> List`  
+  `member? Anything List -> Boolean`  
+  `next-last List -> Anything`  
+  `partition & -> &`  
+  `position Anything List -> Integer`  
+  `position-if Procedure List -> Integer`  
+  `range Integer Integer -> List`  
+  `reduce Procedure Anything &optional List -> Anything`  
+  `rest List -> List`  
+  `reverse List -> List`  
+  `second List -> Anything`  
+  `some? Procedure List -> Anything`  
+  `split-text Text Character -> List`  
+  `take Integer List -> List`  
+  `take-by Integer Integer List -> List`  
+  `vector & -> List`  
   
 ### Mapping  
-  `get`  
-  `get-key`  
-  `keys`  
-  `merge`  
-  `put`  
-  `put-key`  
-  `vals`  
-  `table`  
+  `get-key Map Anything -> Anything`  
+  `keys Map -> List`  
+  `merge Map Map -> Map`  
+  `put-key Map Anything Anything -> Map`  
+  `vals Map -> List`  
+  `table & -> Map`  
   
 ### Ordering  
-  `<`  
-  `<=`  
-  `>`  
-  `>=`  
+  `< & -> Boolean`  
+  `<= & -> Boolean`  
+  `> & -> Boolean`  
+  `>= & -> Boolean`  
   
 ### Pairing  
-  `left`  
-  `pair`  
-  `right`  
+  `left Pair -> Anything`  
+  `pair Anything Anything -> Pair`  
+  `right Pair -> Anything`  
   
 ### Reading  
-  `current-input`  
-  `load`  
-  `read`  
-  `read-file`  
-  `read-line`  
-  `read-lines`  
-  `read-text`  
+  `current-input -> Stream`  
+  `load URL -> Boolean`  
+  `read Stream -> Anything`  
+  `read-file URL -> List`  
+  `read-line Stream -> List`  
+  `read-lines Stream -> List`  
+  `read-text Stream -> Text`  
   
 ### Streaming  
-  `contents`  
-  `lines`  
-  `stream-direction`  
+  `contents Stream -> List`  
+  `lines Stream -> List`  
+  `stream-direction Stream -> Name`  
   
 ### System  
   `error`  
