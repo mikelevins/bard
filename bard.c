@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include "bard.h"
 #include "cell.h"
 
 // ======================================================================
@@ -26,8 +27,14 @@ int main (int argc, char*argv[]) {
 
   start_time = clock();
 
+  struct cell heap[HEAP_SIZE];
+  struct cell* free_pointer = 0;
+  
   printf("\n\n========================================================================");
   printf("\nBard 0.4 VM");
+  printf("\n  cell size = %ld bytes",(sizeof (struct cell)));
+  printf("\n  heap size = %ld bytes",(sizeof heap));
+  printf("\n  free_pointer = %p", free_pointer);
   printf("\n========================================================================\n");
 
   printf("\nStarting execution...\n");
