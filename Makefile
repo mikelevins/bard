@@ -21,5 +21,6 @@ clean:
 	rm -f *.o $(PROGRAM)
 	rm -f *.html
 	rm -f *.js
+	rm -f *.html.mem
 	rm -f *.js.mem
 	rm -f *.wasm
