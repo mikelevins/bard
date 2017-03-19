@@ -1,6 +1,6 @@
 PROGRAM = bard
 
-OBJECTS = $(PROGRAM).o
+OBJECTS = cell.o bard.o
 
 all: $(PROGRAM)
 
