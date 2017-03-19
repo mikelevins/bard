@@ -9,10 +9,10 @@ $(PROGRAM): $(OBJECTS)
 	gcc -O2 -o $(PROGRAM) $(OBJECTS)
 
 js:
-	emcc -o $(PROGRAM).js $(SOURCES)
+	emcc -O2 -o $(PROGRAM).js $(SOURCES)
 
 html:
-	emcc -o $(PROGRAM).html $(SOURCES)
+	emcc -O2 -o $(PROGRAM).html $(SOURCES)
 
 clean:
 	rm -f *.o $(PROGRAM)
