@@ -11,3 +11,9 @@
 // resulting value and replaces its low-order byte with the
 // proper tag.
 
+#ifndef TAG_H
+#define TAG_H
+
+
+
+#endif

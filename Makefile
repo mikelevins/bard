@@ -1,7 +1,7 @@
 PROGRAM = bard
 
-SOURCES = cell.c bard.c
-OBJECTS = cell.o bard.o
+SOURCES = cell.c heap.c tag.c bard.c
+OBJECTS = cell.o heap.o tag.o bard.o
 
 all: $(PROGRAM)
 

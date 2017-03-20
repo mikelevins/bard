@@ -1,3 +1,6 @@
+#ifndef CELL_H
+#define CELL_H
+
 #include <inttypes.h>
 
 typedef struct cell {
@@ -6,3 +9,5 @@ typedef struct cell {
 } cell;
 
 struct cell* make_cell();
+
+#endif
