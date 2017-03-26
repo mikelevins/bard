@@ -14,8 +14,6 @@
 #define HEAP_SIZE 262144 // number of available cells in a heap
 
 struct cell heap[HEAP_SIZE];
-struct cell* free_pointer;
-
-struct cell* get_cell(int index);
+int free_pointer;
 
 #endif

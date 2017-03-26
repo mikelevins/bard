@@ -32,7 +32,7 @@ int main (int argc, char*argv[]) {
   printf("\nBard 0.4 VM");
   printf("\n  cell size = %ld bytes",(unsigned long)(sizeof (struct cell)));
   printf("\n  heap size = %ld bytes",(unsigned long)(sizeof heap));
-  printf("\n  free_pointer = %p", free_pointer);
+  printf("\n  free_pointer = %d", free_pointer);
   printf("\n========================================================================\n");
 
   printf("\nStarting execution...\n");
