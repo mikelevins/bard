@@ -1,18 +1,16 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          load.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       bard system loader
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
+;;;; Copyright:     2018 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 ;;; modify if the bard sources are at another pathname
 
-(define $bard-root  "/Users/mikel/Workshop/bard/0.3/interpreter/") ; osx
-;;;(define $bard-root  "/home/mikel/Projects/bard/interpreter/") ; Linux
+(define $bard-root  "/Users/mikel/Workshop/src/bard/") ; osx
 
 ;;; ----------------------------------------------------------------------
 ;;; Scheme files to load for interactive development
