@@ -22,11 +22,11 @@ CC=${TOOLS_ROOT}/usr/bin/clang
 
 LIBTOOL=${TOOLS_ROOT}/usr/bin/libtool
 
-CFLAGS_LIB=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.11 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include -D___LIBRARY
+CFLAGS_LIB=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.13 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include -D___LIBRARY
 LDFLAGS_LIB=-static -arch_only ${ARCH} -syslibroot ${SYSLIBROOT} -framework Cocoa -o ${BUILD_DIR}/${LIBRARY}
 
-CFLAGS_MAIN=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.11 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include
-LDFLAGS_MAIN=-arch ${ARCH} -isysroot ${SYSROOT} -mmacosx-version-min=10.11 -framework Cocoa -o ${BUILD_DIR}/${EXECUTABLE} -L${GAMBIT_HOME}/lib -lgambit
+CFLAGS_MAIN=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.13 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include
+LDFLAGS_MAIN=-arch ${ARCH} -isysroot ${SYSROOT} -mmacosx-version-min=10.13 -framework Cocoa -o ${BUILD_DIR}/${EXECUTABLE} -L${GAMBIT_HOME}/lib -lgambit
 
 # ----------------------------------------
 # Bard Common files
@@ -221,6 +221,11 @@ clean:
 	rm -f ${MAIN_C_SOURCES}
 	rm -f ${LIB_C_SOURCES}
 	rm -rf ${BUILD_DIR}
+
+tidy:
+	rm -f ${C_SOURCES}
+	rm -f ${MAIN_C_SOURCES}
+	rm -f ${LIB_C_SOURCES}
 
 # -------------------
 # Bard Library
