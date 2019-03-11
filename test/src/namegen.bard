@@ -1,0 +1,75 @@
+;;; namegen in bard
+
+(def $data-path "/Users/mikel/Workshop/src/bard/test/data/")
+
+(def $dickens-path (append $data-path "dickens.names"))
+(def $gnome-path (append $data-path "gnome.names"))
+(def $goblin-path (append $data-path "goblin.names"))
+(def $us-path (append $data-path "us.names"))
+
+(define method (sample-names samples)
+  with: ((samples <string>))
+  (with-open-file (in samples direction: 'input)
+    (let ((long-enough? (partial < 2)))
+      (filter (compose long-enough? length)
+              (lines in)))))
+
+;;; (sample-names $goblin-path)
+
+(define method (triples tx)
+  with: ((tx <string>))
+  (let ((long-enough? (partial < 2)))
+    (filter (compose long-enough? length)
+     (take-by 3 1 tx))))
+
+(define method (joinable? left-string right-string)
+  (= (drop 1 left-string)
+     (take 2 right-string)))
+
+(def $starts [])
+(def $tails [])
+(def $ends [])
+
+(define method (init-generator-data samples)
+  (let ((chunks (map triples samples)))
+    (set! $starts (map first chunks))
+    (set! $tails (reduce append (map rest chunks)))
+    (set! $ends (map last chunks))
+    true))
+
+
+(define method (pick-next start)
+  (let ((candidates (filter (partial joinable? start)
+                            $tails)))
+    (if (empty? candidates)
+        nothing
+        (any candidates))))
+
+(define method (build-name seed)
+  (let ((next (pick-next (last seed))))
+    (if next
+        (if (member? next $ends)
+            ;; half the time we continue building, even if we found an
+            ;; end. that way we get more long names.
+            (if (any [true false])
+                (append seed [next])
+                (build-name (append seed [next])))
+            (build-name (append seed [next])))
+        seed)))
+
+(define method (merge-parts left-part right-part)
+  (append (take (- (length left-part) 1) left-part)
+          (drop 1 right-part)))
+
+(define method (gen-name)
+  (reduce merge-parts (build-name [(any $starts)])))
+
+(define method (gen-names n)
+  (map (^ (ignore) (gen-name))
+       (range 0 n)))
+
+;;; (init-generator-data (sample-names $dickens-path))
+;;; (init-generator-data (sample-names $us-path))
+;;; (init-generator-data (sample-names $gnome-path))
+;;; (init-generator-data (sample-names $goblin-path))
+;;; (gen-names 5)
