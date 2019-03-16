@@ -14,13 +14,15 @@
       (filter (compose long-enough? length)
               (lines in)))))
 
-;;; (sample-names $goblin-path)
+;;; (time (length (sample-names $us-path)))
 
 (define method (triples tx)
   with: ((tx <string>))
   (let ((long-enough? (partial < 2)))
     (filter (compose long-enough? length)
      (take-by 3 1 tx))))
+
+;;; (time (length (map triples (sample-names $us-path))))
 
 (define method (joinable? left-string right-string)
   (= (drop 1 left-string)
@@ -37,6 +39,7 @@
     (set! $ends (map last chunks))
     true))
 
+;;; (time (init-generator-data (sample-names $us-path)))
 
 (define method (pick-next start)
   (let ((candidates (filter (partial joinable? start)
@@ -64,6 +67,8 @@
 (define method (gen-name)
   (reduce merge-parts (build-name [(any $starts)])))
 
+;;; (time (gen-name))
+
 (define method (gen-names n)
   (map (^ (ignore) (gen-name))
        (range 0 n)))
@@ -72,4 +77,4 @@
 ;;; (init-generator-data (sample-names $us-path))
 ;;; (init-generator-data (sample-names $gnome-path))
 ;;; (init-generator-data (sample-names $goblin-path))
-;;; (gen-names 5)
+;;; (time (gen-names 10))

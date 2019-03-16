@@ -111,6 +111,8 @@ protocol functions.
   Classes: `Name`, `URL`
 
   `url scheme: Name domain: Name port: Name path: Name query: Name -> URL`  
+  _Note: To be added:_ `fragment: Name`  
+  
   `url-domain url-domain URL -> Name`  
   `url-path url-path URL -> Name`  
   `url-port url-port URL -> Name`  
@@ -119,7 +121,7 @@ protocol functions.
   
 ### Applying  
   `applicable? Anything -> Boolean`  
-  `apply Applicable & -> Anything`  
+  `apply Applicable [Anything*] -> Anything`  
   `complement Applicable -> Applicable`  
   `compose & -> Applicable`  
   `constantly Anything -> Applicable`  
