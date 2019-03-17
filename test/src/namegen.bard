@@ -78,3 +78,12 @@
 ;;; (init-generator-data (sample-names $gnome-path))
 ;;; (init-generator-data (sample-names $goblin-path))
 ;;; (time (gen-names 10))
+
+
+(define method (generate-names)
+  (generate ((result (gen-name)))
+    (yield result)
+    (resume (gen-name))))
+
+;;; (def $ngen (generate-names))
+;;; (next $ngen)

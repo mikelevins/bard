@@ -277,10 +277,34 @@ protocol functions.
   
 ## Special forms  
   
-`add-method!`  
-`begin`  
-`cond`  
-`def`  
+`add-method!` _`fn method-signature method`_  
+
+Adds _`method`_ to the function _`fn`_, matching the types given in
+_`method-signature`_. When `fn` is subsequently applied to values of
+the specified types, the supplied `method` is called.
+
+Example:
+```
+(add-method! glom (<fixnum> <fixnum>) (^ (x y) [x y]))
+(add-method! glom (<string> <string>) (^ (x y) (append x y)))
+
+(glom 1 2) => (1 2)
+(glom "foo" "bar") => "foobar"
+```
+
+`begin` _`expr`_* `=> Anything`  
+
+`begin` evaluates any number of expressions from left to right,
+returning the value returned by the rightmost expression. `begin` is
+most often useful for executing expressions that have side-effects,
+such as updating a mutable variable or printing some output.
+
+Evaluating an empty `begin` form returns `nothing`.
+
+`cond` _`clause`_* `=> Anything`  
+
+`def` _`variable value`_ `=> Anything`  
+
 `define class`  
 `define macro`  <
 `define method`  
@@ -290,7 +314,39 @@ protocol functions.
 `define variable`  
 `ensure`  
 `function`  
-`generate`  
+
+`generate` _`inits`_ _`body -> Generator`   
+
+Returns a Generator. Calling `next` on the generator returns the
+next-computed return value.
+
+Example:
+```
+(define method (generate-names)
+  (generate ((result []))
+    (yield result)
+    (resume (gen-name))))
+```
+
+Given a function `gen-name` that constructs an arbitrary name, the
+example function creates a generator that returns a new name each time
+`next` is applied to it.
+
+The `generate` special form accepts a list of bindings, like a `let`
+form. The bindings supply initial values to each named variable.
+
+`yield` returns a value when `next` is applied to the gnerator. In the
+example, it returns the current value of `result`.
+
+`resume` rebinds the values of the named variables. It accepts one
+argument for each of the namede bindings. For example, in the example
+above, there is just one binding, named `result`; `resume` therefore
+accepts exactly one argument, which then becomes the new value of
+`result`.
+
+A generator can be called an unlimited number of times, yielding a new
+value for each call.
+
 `if`  
 `let`  
 `loop`  
