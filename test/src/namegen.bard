@@ -1,32 +1,34 @@
 ;;; namegen in bard
 
 (def $data-path "/Users/mikel/Workshop/src/bard/test/data/")
-
 (def $dickens-path (append $data-path "dickens.names"))
 (def $gnome-path (append $data-path "gnome.names"))
 (def $goblin-path (append $data-path "goblin.names"))
 (def $us-path (append $data-path "us.names"))
 
+(def enough? (partial < 2))
+
 (define method (sample-names samples)
   with: ((samples <string>))
   (with-open-file (in samples direction: 'input)
-    (let ((long-enough? (partial < 2)))
-      (filter (compose long-enough? length)
-              (lines in)))))
+    (filter (compose enough? length)
+            (lines in))))
 
 ;;; (time (length (sample-names $us-path)))
 
 (define method (triples tx)
   with: ((tx <string>))
-  (let ((long-enough? (partial < 2)))
-    (filter (compose long-enough? length)
-     (take-by 3 1 tx))))
+  (filter (compose enough? length)
+          (take-by 3 1 tx)))
 
 ;;; (time (length (map triples (sample-names $us-path))))
 
 (define method (joinable? left-string right-string)
-  (= (drop 1 left-string)
-     (take 2 right-string)))
+  (let ((left-length (length left-string)))
+    (and (= (element right-string 0)
+            (element left-string (- left-length 2)))
+         (= (element right-string 1)
+            (element left-string (- left-length 1))))))
 
 (def $starts [])
 (def $tails [])

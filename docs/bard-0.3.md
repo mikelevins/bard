@@ -374,7 +374,7 @@ defines a function named _`fname`_ that accepts parameters
 _`cname1*`_, where each _`cname1`_ is a Bard class. Each function
 returns a value of type _`cname2`_, a Bard class.
 
-Protocol functions are preuly abstract and cannot be applied to
+Protocol functions are purely abstract and cannot be applied to
 arguments until **`define method`** is used to associate methods with
 concrete argument types.
 
@@ -493,19 +493,78 @@ bard> (loop next ((x 0))
 
 ```
 
-**`method`** (aka **`^`**)  
-**`not`**  
-**`protocol`**  
-**`quasiquote`**  
-**`quote`**  
-**`remove-method!`**  
-**`repeat`**  
-**`set!`**  
-**`time`**  
-**`undefine`**  
-**`unless`**  
+**`method`** `(` _`parameter*`_ `)` _`body`_ `=> Anything`  
+
+Creates and returns a new method that accepts one argument for each
+parameter in _`parameter*`_. When applied to values, the method binds
+them to the parameters and evaluates _`body`_ in the resulting
+environment, returning the value of the last expression in _`body`_.
+
+**`not`** _`val`_ `=> Boolean`  
+
+If _`val`_ is truthy, `not` returns `false`. Otherwise, it returns
+`true`.
+
+**`protocol`**  `(` _`fname cname1`_ `->` _`cname2`_ `)*`  
+
+Creates and returns a protocol. Each clause 
+
+`(`_`fname cname1*`_ `->` _`cname2`_ `)*` 
+
+defines a function named _`fname`_ that accepts parameters
+_`cname1*`_, where each _`cname1`_ is a Bard class. Each function
+returns a value of type _`cname2`_, a Bard class.
+
+Protocol functions are purely abstract and cannot be applied to
+arguments until **`define method`** is used to associate methods with
+concrete argument types.
+
+**`quasiquote`** _`expr`_ `=> Anything`  
+
+Returns _`expr`_ unevaluated. Within _`expr`_, the operators `,`
+(unquote) and `,@` (unquote-splicing) can be used to selectively
+evaluate subexpressions in the enclosing environment.
+
+**`quote`** _`expr`_ `=> Anything`  
+
+Returns _`expr`_ unevaluated.
+
+**`remove-method!`** _`fn`_  `(` _`type*`_ `)` `=>` _`fn`_  
+
+Given a function _`fn`_, evaluates the expressions in _`type`_ to
+obtain a **type signature**. It then matches the type signature
+against all the methods defined on _`fn`_ and, if a match is found,
+removes that method from _`fn`_.
+
+**`repeat`** _`expr`_  
+
+Evaluates _`expr`_ repeatedly in an infinite loop. Normally used with
+the special-form **`with-exit`**, which provides a way to return from
+the loop.
+
+**`set!`** _`name expr`_  
+
+Evaluates _`expr`_ and binds it globally to the variable
+_`name`_. Raises an error if the variable does not exist. New global
+variables canbe created with **`define variable`** or **`def`**.
+
+**`time`** _`expr`_  
+
+Evaluates _`expr`_ and returns the resulting value, then prints a
+report summarizing the time taken for the evaluation.
+
+**`undefine`** _`name`_  
+
+Returns _`name`_. If _`name`_ in bound in the global environment,
+`undefine` removes the definition, rendering the variable undefined.
+
+**`unless`** _`test body`_   
+
+
+
 **`values`**  
 **`when`**  
+**`with-exit`**  
 **`with-open-file`**  
   
 ## Macros  
