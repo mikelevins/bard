@@ -452,9 +452,47 @@ A generator can be called an unlimited number of times, yielding a new
 value for each call. A generator maybe written to eventually reach a
 steady state, after which each call always returns the same value.
 
-**`if`**  
-**`let`**  
-**`loop`**  
+**`if`**  _`test`_ _`consequence`_ _`alternate`_ `=>` `Anything`  
+
+Evaluates the expression _`test`_. If the returned value is true (or
+truthy), evaluates and returns the expression
+_`consequence`_. Otherwise, evaluates and returns _`alternate`_.
+
+**`let`** `( (` _`name val`_ `)* )` _`body`_ `=> Anything`  
+
+Binds zero or more names in `(` _`name val`_ `)*` to the values of the
+corresponding _`val`_ expressions, then evaluates _`body`_ in the
+resulting environment, returning the value of the last expression in
+_`body`_. Each binding expression in `(` _`name val`_ `)*` can see all
+of the preceding bindings in the `let` expression.
+
+**`loop`** _`name`_ `( (` _`var`_ _`val`_ `)* )` _`body`_ `=> Anything`
+
+A variation on `let` that can evaluate its _`body`_ more than once.
+
+Binds zero or more names in `(` _`name val`_ `)*` to the values of the
+corresponding _`val`_ expressions, then evaluates _`body`_ in the
+resulting environment, returning the value of the last expression in
+_`body`_. Each binding expression in `(` _`name val`_ `)*` can see all
+of the preceding bindings in the `loop` expression.
+
+In _`body`_, _`name`_ is bound to a procedure that accepts the same
+number of arguments as the number of variables _`var`_. Calling
+_`name`_ re-enters the `loop` body with the variables bound to the
+values passed to _`name`_.
+
+For example:
+
+```
+
+bard> (loop next ((x 0))
+        (if (>= x 10)
+          x 
+          (next (+ x 1))))
+10
+
+```
+
 **`method`** (aka **`^`**)  
 **`not`**  
 **`protocol`**  
