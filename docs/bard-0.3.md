@@ -458,13 +458,18 @@ Evaluates the expression _`test`_. If the returned value is true (or
 truthy), evaluates and returns the expression
 _`consequence`_. Otherwise, evaluates and returns _`alternate`_.
 
-**`let`** `( (` _`name val`_ `)* )` _`body`_ `=> Anything`  
+**`let`** `( (` _`name* val`_ `)* )` _`body`_ `=> Anything`  
 
 Binds zero or more names in `(` _`name val`_ `)*` to the values of the
 corresponding _`val`_ expressions, then evaluates _`body`_ in the
 resulting environment, returning the value of the last expression in
 _`body`_. Each binding expression in `(` _`name val`_ `)*` can see all
 of the preceding bindings in the `let` expression.
+
+If there is more than one _`name`_ in a binding expression then each
+name is bound to a separate value returned from the corresponding
+_`val`_. If _`val`_ returns fewer values that there are names, then
+the unmatched names are bound to `nothing`.
 
 **`loop`** _`name`_ `( (` _`var`_ _`val`_ `)* )` _`body`_ `=> Anything`
 
@@ -558,17 +563,84 @@ report summarizing the time taken for the evaluation.
 Returns _`name`_. If _`name`_ in bound in the global environment,
 `undefine` removes the definition, rendering the variable undefined.
 
-**`unless`** _`test body`_   
+**`unless`** _`test body`_ `=> Anything`   
 
+Evaluates _`test`_. If the value returned is truthy then `unless`
+immediately returns `nothing`; otherwise it evaluates the
+subexpressions in _`body`_, returning the value of the last
+expression.
 
+**`values`** _`val*`_  
 
-**`values`**  
-**`when`**  
-**`with-exit`**  
-**`with-open-file`**  
-  
+Evaluates the values in _`val*`_, returning all of them as mnultiple
+values. Multiple values may be captured in variables using `let`.
+
+**`when`** _`test body`_ `=> Anything`   
+
+Evaluates _`test`_. If the value returned is truthy then `when`
+evaluates the subexpressions in _`body`_, returning the value of the
+last expression. Otherwise, it immediately returns `nothing`.
+
+**`with-exit`** `(` _`name`_ `)` _`body`_  
+
+Creates an exit procedure, then evaluates the forms in _`body`_ in an
+environment in which _`name`_ _`name`_ is bound to that exit
+procedure. Applying the exit procedure returns its arguments to the
+context in which the `with-exit` form was evaluating.
+
+For example, we can implement a simple counting loop with `repeat` and
+`with-exit` like so:
+
+```
+    bard> (def counter 0)
+    bard> (with-exit (exit) 
+            (repeat
+              (display counter)
+              (newline)
+              (set! counter (+ counter 1))
+              (if (>= counter 10)
+                (exit counter))))
+    0
+    1
+    2
+    3
+    4
+    5
+    6
+    7
+    8
+    9
+    10
+    
+```
+
+**`with-open-file`** `(` _`var`_ _`path`_ `direction:` _`dir`_ `)` _`body`_ `=> Anything`  
+
+Opens the file at the pathname _`path`_, binding an `<input-stream>`,
+`<output-stream>`, or `<io-stream>` to thevariable _`var`_, depending
+on whether _`dir`_ is `input`, `output`, or `io`. Evaluates _`body`_
+in an environment in which _`var`_ is bound to the
+stream. `with-open-file` returns the value of the last expression in
+_`body`_.
+
 ## Macros  
   
-**`and`**  
-**`or`**  
+**`and`** _`expr*`_ `=> Boolean`  
+
+Evaluates the expressions in _`expr*`_ from left to right. If all
+expressions return truthy values then `and` returns the value of the
+last expression; otherwise, it returns `false`.
+
+If any expression returns a falsy value then `and` immediately returns
+it, evaluating no further expressions.
+
+**`or`** _`expr*`_ `=> Boolean`  
   
+Evaluates the expressions in _`expr*`_ from left to right. If any
+expression returns a truthy value then `or` returns it. Otherwise it
+returns `false`.
+
+If any expression returns a truthy value then `or` immediately returns
+it, evaluating no further expressions.
+
+
