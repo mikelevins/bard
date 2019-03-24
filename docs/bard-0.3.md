@@ -331,9 +331,21 @@ Evaluating an empty `begin` form returns `nothing`.
 `define protocol`  
 `define record`  
 `define tuple`  
-`define variable`  
-`ensure`  
-`function`  **
+`define variable`**  
+
+**`ensure`** _`preparation body cleanup`_ `->` _`Anything`_   
+
+Evaluates the form _`preparation`_, followed by the form _`body`_ and
+the form _`cleanup`_. Ensures that _`cleanup`_ is evaluated even if
+_`body`_ terminates abnormally&mdash;for example, even if it raises an
+error.
+
+**`function`** _`Class*`_ `->` _`Type`_ `->` _`Function`_  
+
+Creates and returns a `Function` instance that accepts parameters of
+the types given in _`Class*`_ and returns a value of the type given by
+_`Type`_. The new function cannot be called or applied until at least
+one method is added to it using `define method`.
 
 **`generate`** _`inits`_ _`body -> Generator`   
 
