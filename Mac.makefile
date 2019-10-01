@@ -2,8 +2,8 @@
 # Gambit
 # ----------------------------------------
 
-GSC=/usr/local/bin/gsc
-GAMBIT_HOME=/usr/local
+GAMBIT_HOME=/usr/local/Gambit
+GSC=${GAMBIT_HOME}/bin/gsc
 
 # ----------------------------------------
 # Mac

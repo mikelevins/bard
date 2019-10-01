@@ -572,7 +572,7 @@ expression.
 
 **`values`** _`val*`_  
 
-Evaluates the values in _`val*`_, returning all of them as mnultiple
+Evaluates the values in _`val*`_, returning all of them as multiple
 values. Multiple values may be captured in variables using `let`.
 
 **`when`** _`test body`_ `=> Anything`   

@@ -18,53 +18,56 @@
 
 ;;; Representation of readtables.
 
-(define-type readtable
-  id: bebee95d-0da2-401d-a33a-c1afc75b9e43
-  type-exhibitor: macro-type-readtable
-  constructor: macro-make-readtable
-  implementer: implement-type-readtable
-  macros:
-  prefix: macro-
-  opaque:
+(include "~~lib/_gambit#.scm")
 
-  (case-conversion?               unprintable: read-write:)
-  (keywords-allowed?              unprintable: read-write:)
-  (escaped-char-table             unprintable: read-write:)
-  (named-char-table               unprintable: read-write:)
-  (sharp-bang-table               unprintable: read-write:)
-  (char-delimiter?-table          unprintable: read-write:)
-  (char-handler-table             unprintable: read-write:)
-  (char-sharp-handler-table       unprintable: read-write:)
-  (max-unescaped-char             unprintable: read-write:)
-  (escape-ctrl-chars?             unprintable: read-write:)
-  (sharing-allowed?               unprintable: read-write:)
-  (eval-allowed?                  unprintable: read-write:)
-  (write-extended-read-macros?    unprintable: read-write:)
-  (write-cdr-read-macros?         unprintable: read-write:)
-  (max-write-level                unprintable: read-write:)
-  (max-write-length               unprintable: read-write:)
-  (pretty-print-formats           unprintable: read-write:)
-  (quote-keyword                  unprintable: read-write:)
-  (quasiquote-keyword             unprintable: read-write:)
-  (unquote-keyword                unprintable: read-write:)
-  (unquote-splicing-keyword       unprintable: read-write:)
-  (sharp-quote-keyword            unprintable: read-write:)
-  (sharp-quasiquote-keyword       unprintable: read-write:)
-  (sharp-unquote-keyword          unprintable: read-write:)
-  (sharp-unquote-splicing-keyword unprintable: read-write:)
-  (sharp-num-keyword              unprintable: read-write:)
-  (sharp-seq-keyword              unprintable: read-write:)
-  (paren-keyword                  unprintable: read-write:)
-  (bracket-keyword                unprintable: read-write:)
-  (brace-keyword                  unprintable: read-write:)
-  (angle-keyword                  unprintable: read-write:)
-  (start-syntax                   unprintable: read-write:)
-  (six-type?                      unprintable: read-write:)
-  (r6rs-compatible-read?          unprintable: read-write:)
-  (r6rs-compatible-write?         unprintable: read-write:)
-  (here-strings-allowed?          unprintable: read-write:)
-  (comment-handler                unprintable: read-write:) ; new field in latest gambit sources
-)
+;; (define-type readtable
+;;   id: bebee95d-0da2-401d-a33a-c1afc75b9e43
+;;   type-exhibitor: macro-type-readtable
+;;   constructor: macro-make-readtable
+;;   implementer: implement-type-readtable
+;;   macros:
+;;   prefix: macro-
+;;   opaque:
+
+;;   (case-conversion?               unprintable: read-write:)
+;;   (keywords-allowed?              unprintable: read-write:)
+;;   (escaped-char-table             unprintable: read-write:)
+;;   (named-char-table               unprintable: read-write:)
+;;   (sharp-bang-table               unprintable: read-write:)
+;;   (char-delimiter?-table          unprintable: read-write:)
+;;   (char-handler-table             unprintable: read-write:)
+;;   (char-sharp-handler-table       unprintable: read-write:)
+;;   (max-unescaped-char             unprintable: read-write:)
+;;   (escape-ctrl-chars?             unprintable: read-write:)
+;;   (sharing-allowed?               unprintable: read-write:)
+;;   (eval-allowed?                  unprintable: read-write:)
+;;   (write-extended-read-macros?    unprintable: read-write:)
+;;   (write-cdr-read-macros?         unprintable: read-write:)
+;;   (max-write-level                unprintable: read-write:)
+;;   (max-write-length               unprintable: read-write:)
+;;   (pretty-print-formats           unprintable: read-write:)
+;;   (quote-keyword                  unprintable: read-write:)
+;;   (quasiquote-keyword             unprintable: read-write:)
+;;   (unquote-keyword                unprintable: read-write:)
+;;   (unquote-splicing-keyword       unprintable: read-write:)
+;;   (sharp-quote-keyword            unprintable: read-write:)
+;;   (sharp-quasiquote-keyword       unprintable: read-write:)
+;;   (sharp-unquote-keyword          unprintable: read-write:)
+;;   (sharp-unquote-splicing-keyword unprintable: read-write:)
+;;   (sharp-num-keyword              unprintable: read-write:)
+;;   (sharp-seq-keyword              unprintable: read-write:)
+;;   (paren-keyword                  unprintable: read-write:)
+;;   (bracket-keyword                unprintable: read-write:)
+;;   (brace-keyword                  unprintable: read-write:)
+;;   (angle-keyword                  unprintable: read-write:)
+;;   (start-syntax                   unprintable: read-write:)
+;;   (six-type?                      unprintable: read-write:)
+;;   (r6rs-compatible-read?          unprintable: read-write:)
+;;   (r6rs-compatible-write?         unprintable: read-write:)
+;;   (here-strings-allowed?          unprintable: read-write:)
+;;   (comment-handler                unprintable: read-write:) ; new field in latest gambit sources
+;; )
+
 ;;;---------------------------------------------------------------------
 ;;; the Bard readtable
 ;;;---------------------------------------------------------------------
