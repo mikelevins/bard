@@ -1,0 +1,83 @@
+;;; another bard namegen
+
+(def enough? (partial < 2))
+
+(define method (search sub tx)
+  with: ((sub <string>)
+         (tx <string>))
+  (let ((len (length tx)))
+    (loop searching ((i 0))
+          (if (>= i len)
+              false
+              (if (and (< (+ i 1)
+                          len)
+                       (= (element tx i)
+                          (element sub 0))
+                       (= (element tx (+ i 1))
+                          (element sub 1)))
+                  i
+                  (searching (+ i 1)))))))
+
+(define method (triples tx)
+  with: ((tx <string>))
+  (filter (compose enough? length)
+          (take-by 3 1 tx)))
+
+(define method (get-samples pathname)
+  (with-open-file (in pathname direction: 'input)
+    (filter (compose enough? length)
+            (lines in))))
+
+;;; useful for names inthe input with not enough alternatives
+(define method (candidates model names)
+  (let ((start (take 3 model))
+        (startlen (length start)))
+    (if (< startlen 3)
+        start
+        (let ((quarry (drop (- startlen 2) start)))
+          (filter (^ (nm)(search quarry nm))
+                  names)))))
+
+;;; (candidates "Beppi" (get-samples "/Users/mikel/Workshop/src/nym/data/gnome.names"))
+
+(define method (poor-candidates limit pathname)
+  (let ((names (get-samples pathname))
+        (candidate-lists (map (^ (nm)(candidates nm names))
+                              names)))
+    (filter (^ (cl)(< (length cl) limit))
+            candidate-lists)))
+
+;;; (time (poor-candidates 2 "/Users/mikel/Workshop/src/nym/data/gnome.names"))
+
+(define method (build-name start names)
+  (let ((startlen (length start)))
+    (if (< startlen 3)
+        start
+        (let ((quarry (drop (- startlen 2) start))
+              (candidates (filter (^ (nm)(search quarry nm))
+                                  names)))
+          (if (empty? candidates)
+              start
+              (let ((pick (any candidates))
+                    (picklen (length pick))
+                    (qpos (search quarry pick)))
+                (if (>= (+ qpos 2) picklen)
+                    ;; we're at the end of pick, so no characters to add to start
+                    start
+                    ;; we're not at the end of pick
+                    (let ((next (take 1 (drop (+ qpos 2) pick))))
+                      (build-name (append start next)
+                                  names)))))))))
+
+(define method (gen-name names)
+  (build-name (take 3 (any names)) names))
+
+(define method (gen-names n pathname)
+  (let ((names (get-samples pathname)))
+    (map (^ (ignore)(gen-name names))
+         (range 0 n))))
+
+
+;;; (time (gen-names 10 "/Users/mikel/Workshop/src/nym/data/gnome.names"))
+;;; (time (gen-names 10 "/Users/mikel/Workshop/src/nym/data/dickens.names"))
+
