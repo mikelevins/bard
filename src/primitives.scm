@@ -204,8 +204,7 @@
 (define (bard:cycle ls)
   (let* ((items (%->list ls))
          (len (length items)))
-    (%eval `(generate cache: ,#f
-                      ((i 0))
+    (%eval `(generate ((i 0))
                       (yield (element (list ,@items) i))
                       (resume (remainder (+ i 1) ,len)))
            '())))

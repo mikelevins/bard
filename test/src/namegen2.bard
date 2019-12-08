@@ -28,7 +28,7 @@
     (filter (compose enough? length)
             (lines in))))
 
-;;; useful for names inthe input with not enough alternatives
+;;; useful for finding names in the input with not enough alternatives
 (define method (candidates model names)
   (let ((start (take 3 model))
         (startlen (length start)))
