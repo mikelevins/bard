@@ -1,0 +1,5 @@
+(module-name Hello)
+(module-compile-options main: #t)
+
+(display "Hello, world!")
+(newline)

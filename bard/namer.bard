@@ -1,0 +1,90 @@
+;;; kawa bard version of namer
+
+(define (empty? thing)
+  (let ((lengthfn (cond ((string?  thing) string-length)
+                      ((list?  thing) length)
+                      ((vector?  thing) vector-length)
+                      (true (error "Not a sequence: " thing)))))
+    (< (lengthfn thing) 1)))
+
+(define (empty-name? nm)
+  (empty? nm))
+
+(define (filter fn ls)
+  (if (null? ls)
+      nothing
+      (if (fn (car ls))
+          (cons (car ls)
+                (filter fn (cdr ls)))
+          (filter fn (cdr ls)))))
+
+(define (read-names path)
+  (call-with-input-file path
+    (^ (in)
+       (let loop ((names nothing))
+            (let ((line (read-line in)))
+              (if (eof-object? line)
+                  (reverse (filter (^ (nm)(> (length nm) 2))
+                                   names))
+                  (loop (cons line names))))))))
+
+;;; (load "bard/namer.bard")
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/gnome.names"))
+
+(define $rng (java.util.Random))
+
+(define (any ls)
+  (list-ref ls (*:nextInt $rng (length ls))))
+
+(define (choose-start names)
+  (string-take (any names) 3))
+
+(define (character-after quarry str)
+  (let ((index (string-contains str quarry)))
+    (if index
+        (let ((strlen (string-length str))
+              (qlen (string-length quarry)))
+          (if (>= index (- strlen qlen))
+              #f
+              (string (string-ref str (+ index qlen)))))
+        false)))
+
+(define (extend start names)
+  (let* ((quarry (string-take-right start 2))
+         (candidates (filter (^ (nm)(character-after quarry nm))
+                             names)))
+        (if (empty? candidates)
+            start
+            (let ((extension (character-after quarry (any candidates))))
+              (if extension
+                  (extend (string-append start extension)
+                          names)
+                  start)))))
+
+(define (gen-name names)
+  (extend (string-take (any names) 3)
+          names))
+
+(define (gen-names names n max-length)
+  (let loop ((result nothing))
+       (if (>= (length result) n)
+           result
+           (let ((next (gen-name names)))
+             (if max-length
+                 (if (< (string-length next) max-length)
+                     (loop (cons next result))
+                     (loop result))
+                 (loop (cons next result)))))))
+
+
+
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/arthurian.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/dickens.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/dwarf.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/elf.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/forsaken.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/gnome.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/goblin.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/troll.names"))
+;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/us.names"))
+;;; (gen-names $samples 10)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="jar" name="bard">
+
+  <path id="library.class.path">
+    <pathelement location="/usr/local/share/kawa/lib/kawa.jar"/>
+    <pathelement location="./src"/>
+    <pathelement location="."/>
+  </path>
+
+  <!--bard jar-->
+
+  <target depends="compile" name="jar">
+    <jar basedir="./src" destfile="bard.jar" includes="**/*.class" manifest="MANIFEST.MF">
+      <zipfileset src="/usr/local/share/kawa/lib/kawa.jar"/>
+    </jar>
+  </target>
+
+  <!--compile bard -->
+  
+  <target name="compile">
+    <javac srcdir="./src"
+           destdir="./src"
+	   includeantruntime="true">
+      <include name="**/*.java"/>
+      <classpath refid="library.class.path"/>
+    </javac>
+  </target>
+
+  <!-- clean -->
+
+  <target description="Clean all (both build artifacts and the built jarfile)" name="clean">
+    <delete verbose="true">
+      <fileset dir="." includes="**/*.class"/>
+      <fileset dir="." includes="bard.jar"/>
+    </delete>
+  </target>
+
+  <target description="Clean build artifacts" name="clean-cruft">
+    <delete verbose="true">
+      <fileset dir="." includes="**/*.class"/>
+    </delete>
+  </target>
+
+</project>
