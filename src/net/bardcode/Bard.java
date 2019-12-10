@@ -94,6 +94,8 @@ public class Bard extends Scheme {
         tab.set('@', new ReaderQuote(LispLanguage.splice_sym,
                                      ':', LispLanguage.splice_colon_sym,
                                      ReadTable.NON_TERMINATING_MACRO));
+        tab.set('[',  ReaderParens.getInstance('[', ']', ReadTable.TERMINATING_MACRO,
+                                               Namespace.EmptyNamespace.getSymbol("list")));
         return tab;
     }
 
