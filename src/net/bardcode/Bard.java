@@ -68,7 +68,7 @@ public class Bard extends Scheme {
     {
         Language.setDefaults(getInstance());
     }
-
+ 
     @Override
     public boolean keywordsAreSelfEvaluating() { return true; }
 
