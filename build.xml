@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jar" name="bard">
 
-  <path id="library.class.path">
-    <pathelement location="/usr/local/share/kawa/lib/kawa.jar"/>
-    <pathelement location="./src"/>
-    <pathelement location="."/>
-  </path>
-
   <!--bard jar-->
 
   <target depends="compile" name="jar">
@@ -25,7 +19,7 @@
       <classpath refid="library.class.path"/>
     </javac>
   </target>
-
+  
   <!-- clean -->
 
   <target description="Clean all (both build artifacts and the built jarfile)" name="clean">

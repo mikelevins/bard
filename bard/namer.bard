@@ -1,5 +1,6 @@
 ;;; kawa bard version of namer
 
+
 (define (empty? thing)
   (let ((lengthfn (cond ((string?  thing) string-length)
                       ((list?  thing) length)
@@ -87,4 +88,15 @@
 ;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/goblin.names"))
 ;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/troll.names"))
 ;;; (define $samples (read-names "/Users/mikel/Workshop/src/nym/data/us.names"))
-;;; (gen-names $samples 10)
+;;; (gen-names $samples 10 16)
+
+;; time computation of %%result
+(let ((%%before #f)
+       (%%result #f)
+       (%%after #f))
+   (set! %%before (current-jiffy))
+   (set! %%result (gen-names $samples 10 12))
+   (set! %%after (current-jiffy))
+   (let ((%%elapsed-jiffies (- %%after %%before)))
+     (format #t "~%Elapsed time: ~As~%" (/ %%elapsed-jiffies (* 1.0 (jiffies-per-second))))
+     %%result))
