@@ -111,6 +111,11 @@ public class Bard extends Scheme {
         ReadTable.setCurrent(bard.createReadTable());
         repl theRepl = new repl(bard);
         Class[] emptyClasses = {};
+        String[][] langs = getLanguages();
+        for (int i=0; i<langs.length; i++) {
+            System.out.println(langs[i][0].toString());
+        }
+        System.out.println(Language.current);
         theRepl.main(args);
     }
 
