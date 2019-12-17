@@ -1,9 +1,8 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          types-primitive.scm
+;;;; Name:          types-generator.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <primitive>
+;;;; Purpose:       struct <primitive>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
@@ -12,14 +11,14 @@
 (declare (standard-bindings))
 
 ;;; =====================================================================
-;;; base schemas
+;;; base structs
 ;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <generator>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-generator (%next-bard-type-number))
-(define <generator> (make-base-schema '<generator> tags:$bard-generator))
+(define <generator> (make-base-struct '<generator> tags:$bard-generator))
 
 ;;; accessors
 

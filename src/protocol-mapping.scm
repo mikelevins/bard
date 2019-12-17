@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocol-mapping.scm
 ;;;; Project:       Bard
@@ -24,11 +23,11 @@
 ;;; treated as a Table. Several types are represented as concrete
 ;;; associations between explicit keys and values, and supporting the
 ;;; Mapping protocol for these values is simple and straightforward.
-;;; Besides schemas like <alist-table> that are specifically designed 
+;;; Besides structs like <alist-table> that are specifically designed 
 ;;; as representations of tables, records can also be straightforwardly
 ;;; treated as tables.
 ;;;
-;;; The schemas that are represented as ordered sequences are only
+;;; The structs that are represented as ordered sequences are only
 ;;; slightly more complicated: their implementations of Mapping
 ;;; functions treat indexes into the sequence as if they were keys in
 ;;; a table. This treatment also extends to tuples. It also extends

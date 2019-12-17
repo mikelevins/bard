@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          special.scm
 ;;;; Project:       Bard
@@ -215,13 +214,13 @@
                 (else: (error (str "Conflicting function definition for " fname
                                    "; you must undefine the function before you can add this definition"))))))))
 
-;;; class
+;;; role
 
-(define (%eval-define-class expr env)
+(define (%eval-define-role expr env)
   (let* ((cname (list-ref expr 2))
-         (class (%make-class cname)))
-    (%defglobal cname class)
-    class))
+         (role (%make-role cname)))
+    (%defglobal cname role)
+    role))
 
 ;;; protocol
 
@@ -321,18 +320,18 @@
 (define (%eval-define-record expr env)
   (let* ((record-name (list-ref expr 2))
          (slot-specs (drop 3 expr))
-         (schema (make-record record-name slot-specs)))
-    (%defglobal record-name schema)
-    schema))
+         (struct (make-record record-name slot-specs)))
+    (%defglobal record-name struct)
+    struct))
 
 ;;; tuple
 
 (define (%eval-define-tuple expr env)
   (let* ((tuple-name (list-ref expr 2))
          (slot-specs (drop 3 expr))
-         (schema (make-tuple tuple-name slot-specs)))
-    (%defglobal tuple-name schema)
-    schema))
+         (struct (make-tuple tuple-name slot-specs)))
+    (%defglobal tuple-name struct)
+    struct))
 
 ;;; define
 
@@ -340,7 +339,7 @@
              (lambda (expr env)
                (let ((kind (list-ref expr 1)))
                  (cond
-                  ((eq? 'class kind)(%eval-define-class expr env))
+                  ((eq? 'role kind)(%eval-define-role expr env))
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))

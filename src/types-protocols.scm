@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-base.scm
 ;;;; Project:       Bard
@@ -10,14 +9,14 @@
 ;;;; ***********************************************************************
 
 ;;; =====================================================================
-;;; base schemas
+;;; base structs
 ;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <protocol>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-protocol (%next-bard-type-number))
-(define <protocol> (make-base-schema '<protocol> tags:$bard-protocol))
+(define <protocol> (make-base-struct '<protocol> tags:$bard-protocol))
 
 ;;; constructor
 
@@ -39,7 +38,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; protocol registry
 ;;; ----------------------------------------------------------------------
-;;; used to enable us to tell which schemas belong to which classes,
+;;; used to enable us to tell which structs belong to which roles,
 ;;; and also for documentation purposes
 
 (define +protocols+ (make-table test: eq?))
@@ -50,16 +49,16 @@
 (define (get-protocol pname)
   (table-ref +protocols+ pname #f))
 
-(define (protocol-classes p)
+(define (protocol-roles p)
   (let ((functions (protocol-instance-functions p))
-        (class-list '()))
+        (role-list '()))
     (table-for-each (lambda (fname fn)
                       (let* ((sigs (function-signatures fn))
                              (input-types (apply append (map signature-input-types sigs)))
-                             (classes (filter class-instance? input-types)))
-                        (set! class-list (append class-list classes))))
+                             (roles (filter role-instance? input-types)))
+                        (set! role-list (append role-list roles))))
                     functions)
-    (nub class-list)))
+    (nub role-list)))
 
 
 

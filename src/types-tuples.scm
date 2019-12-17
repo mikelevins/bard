@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-tuples.scm
 ;;;; Project:       Bard
@@ -10,7 +9,7 @@
 ;;;; ***********************************************************************
 
 ;;; =====================================================================
-;;; tuple schemas
+;;; tuple structs
 ;;; =====================================================================
 
 (define tags:$bard-tuple (%next-bard-type-number))
@@ -20,7 +19,7 @@
   (let* ((tag tags:$bard-tuple)
          (slot-count (getf slot-count: slot-specs default: 0))
          (slot-type (getf slot-type: slot-specs default: Anything)))
-    (make-tuple-schema name tag slot-count slot-type)))
+    (make-tuple-struct name tag slot-count slot-type)))
 
 ;;; instance constructor
 
@@ -44,11 +43,11 @@
 ;;;       currently it's not used, but later
 ;;;       we can enforce it
 
-(define (instantiate-tuple schema initargs)
-  (let* ((slot-count (tuple-schema-slot-count schema))
+(define (instantiate-tuple struct initargs)
+  (let* ((slot-count (tuple-struct-slot-count struct))
          (default (getf default: initargs default: '()))
          (slots (make-vector slot-count default))
-         (instance (make-tuple-instance schema slots)))
+         (instance (make-tuple-instance struct slots)))
     (apply initialize-tuple instance initargs)))
 
 ;;; instance accessors
@@ -67,7 +66,7 @@
       ;;; can make a new instsance of the tuple
       (let ((new-slots (vector-copy (tuple-instance-slots tuple-instance))))
         (vector-set! new-slots index val)
-        (make-tuple-instance (instance-schema tuple-instance) new-slots))
+        (make-tuple-instance (instance-struct tuple-instance) new-slots))
       ;;; the index is outside the range of this tuple type's indexes;
       ;;; we can't represent the result with the same tuple type so we
       ;;; make a table instead

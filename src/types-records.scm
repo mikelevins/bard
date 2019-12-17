@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-records.scm
 ;;;; Project:       Bard
@@ -10,7 +9,7 @@
 ;;;; ***********************************************************************
 
 ;;; =====================================================================
-;;; record schemas
+;;; record structs
 ;;; =====================================================================
 
 (define tags:$bard-record (%next-bard-type-number))
@@ -34,7 +33,7 @@
 (define (make-record name slot-specs)
   (let* ((tag tags:$bard-record)
          (slot-templates (%parse-record-slot-specs slot-specs)))
-    (make-record-schema name tag slot-templates)))
+    (make-record-struct name tag slot-templates)))
 
 ;;; instance constructor
 
@@ -66,10 +65,10 @@
          (val (getf default: attrs default: '())))
     (cons sname val)))
 
-(define (instantiate-record schema initargs)
-  (let* ((slot-templates (record-schema-slots schema))
+(define (instantiate-record struct initargs)
+  (let* ((slot-templates (record-struct-slots struct))
          (slots (map %make-record-slot slot-templates))
-         (instance (make-record-instance schema slots)))
+         (instance (make-record-instance struct slots)))
     (apply initialize-record instance initargs)))
 
 ;;; instance accessors
@@ -87,7 +86,7 @@
          (new-slots (alist-put (record-instance-slots record-instance) slot-name val test: eq?)))
     (if (member slot-name snames)
         ;; we're putting an existing slot, so the result can be of the same record type
-        (make-record-instance (instance-schema record-instance) new-slots)
+        (make-record-instance (instance-struct record-instance) new-slots)
         ;; we're putting a new slot, so the result cannot be the same record tpye; we return a table instead
         (%make-alist-table new-slots))))
 

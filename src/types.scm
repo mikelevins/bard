@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types.scm
 ;;;; Project:       Bard
@@ -25,28 +24,28 @@
         (loop (* i i)))))
 
 ;;; ---------------------------------------------------------------------
-;;; built-in schema types
+;;; built-in struct types
 ;;; ---------------------------------------------------------------------
 
-(define-type schema extender: define-schema name tag)
-(define-type schema-instance extender: define-instance (schema instance-schema))
+(define-type struct extender: define-struct name tag)
+(define-type struct-instance extender: define-instance (struct instance-struct))
 
-(define-schema primitive-schema)
-(define-schema structure-schema prototype)
-(define-schema base-schema)
-(define-schema record-schema slots)
+(define-struct primitive-struct)
+(define-struct structure-struct prototype)
+(define-struct base-struct)
+(define-struct record-struct slots)
 (define-instance record-instance slots)
-(define-schema tuple-schema slot-count slot-type)
+(define-struct tuple-struct slot-count slot-type)
 (define-instance tuple-instance slots)
-(define-schema union-schema)
+(define-struct union-struct)
 (define-instance union-instance variants)
 
-(define-schema foreign-schema type-name)
+(define-struct foreign-struct type-name)
 
 ;;; representation of instances of Bard types
 
 (define-instance alist-table-instance constructor: make-alist-table-instance slots)
-(define-instance class-instance constructor: make-class-instance (name class-name))
+(define-instance role-instance constructor: make-role-instance (name role-name))
 
 (define-instance function-instance
   constructor: make-function-instance
@@ -135,7 +134,7 @@
 
 ;;; bard type numbers
 ;;; ---------------------------------------------------------------------
-;;; a bard type number is a number assigned to a schema to distinguish
+;;; a bard type number is a number assigned to a struct to distinguish
 ;;; it from other. since gambit type and subtype together occupy only
 ;;; 7 bits, the tag scheme permits us to store bard type numbers in
 ;;; tags.  reserve bits 0-9 for gambit type and subtype, and bits
@@ -160,13 +159,13 @@
 (define (tag->bard-type n)(bard-type->integer (bitwise-and n $bard-type-mask)))
 
 (define (%tag val)
-  (if (schema-instance? val)
-      (schema-tag (instance-schema val))
+  (if (struct-instance? val)
+      (struct-tag (instance-struct val))
       (if (##structure? val)
           (let* ((struct (##structure-type val))
-                 (schema (%structure->schema struct)))
-            (if schema
-                (schema-tag schema)
+                 (struct (%structure->struct struct)))
+            (if struct
+                (struct-tag struct)
                 #f))
           (if (%gambit-special? val)
               (%make-tag (%gambit-type val) 0 (%bard-special-number val))
@@ -193,47 +192,47 @@
 (define tags:$box (%tag (box 1)))
 
 ;;; =====================================================================
-;;; the schema registry
+;;; the struct registry
 ;;; =====================================================================
-;;; the data structures and functions here enable us to recover a schema
+;;; the data structures and functions here enable us to recover a struct
 ;;; given one of its instances.
 
-;;; handling primitive schemas
+;;; handling primitive structs
 ;;; ---------------------------------------------------------------------
 
-(define +tag->schema-registry+ (make-table test: eqv?))
+(define +tag->struct-registry+ (make-table test: eqv?))
 
 ;;; we recover the tag from the value itself, using gambit's
 ;;; tag operations (##type and ##subtype), then look up the
-;;; schema in the registry.
+;;; struct in the registry.
 
-(define (%register-primitive-schema! sc tag)
-  (table-set! +tag->schema-registry+ tag sc))
+(define (%register-primitive-struct! sc tag)
+  (table-set! +tag->struct-registry+ tag sc))
 
-(define (%tag->schema tag)
-  (table-ref +tag->schema-registry+ tag #f))
+(define (%tag->struct tag)
+  (table-ref +tag->struct-registry+ tag #f))
 
-;;; handling structure schemas
+;;; handling structure structs
 ;;; ---------------------------------------------------------------------
 ;;; recover the structure used to create the instance using
-;;; ##structure-type, then recover the schema from the structure
+;;; ##structure-type, then recover the struct from the structure
 ;;; registry
 
-(define +structure->schema-registry+ (make-table test: eqv?))
+(define +structure->struct-registry+ (make-table test: eqv?))
 
-(define (%register-structure-schema! structure-type schema)
-  (table-set! +structure->schema-registry+ structure-type schema))
+(define (%register-structure-struct! structure-type struct)
+  (table-set! +structure->struct-registry+ structure-type struct))
 
-(define (%structure->schema struct)
-  (table-ref +structure->schema-registry+ struct #f))
+(define (%structure->struct struct)
+  (table-ref +structure->struct-registry+ struct #f))
 
-;;; handling foreign schemas
+;;; handling foreign structs
 ;;; ---------------------------------------------------------------------
-;;; registry for foreign schemas
-(define +foreign-name->schema-registry+ (make-table test: eqv?))
+;;; registry for foreign structs
+(define +foreign-name->struct-registry+ (make-table test: eqv?))
 
-;;; base schemas
+;;; base structs
 ;;; ---------------------------------------------------------------------
-;;; we recover the schema from the instance, using instance-schema; no
+;;; we recover the struct from the instance, using instance-struct; no
 ;;; registry is necessary
 

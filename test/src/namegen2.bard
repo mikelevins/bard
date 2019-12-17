@@ -3,7 +3,7 @@
 (def enough? (partial < 2))
 
 (define method (search sub tx)
-  with: ((sub <string>)
+  :with ((sub <string>)
          (tx <string>))
   (let ((len (length tx)))
     (loop searching ((i 0))
@@ -19,12 +19,12 @@
                   (searching (+ i 1)))))))
 
 (define method (triples tx)
-  with: ((tx <string>))
+  :with ((tx <string>))
   (filter (compose enough? length)
           (take-by 3 1 tx)))
 
 (define method (get-samples pathname)
-  (with-open-file (in pathname direction: 'input)
+  (with-open-file (in pathname :direction 'input)
     (filter (compose enough? length)
             (lines in))))
 

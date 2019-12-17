@@ -25,7 +25,7 @@ SCHEME_SOURCES= \
          src/singleton-tree.scm \
          src/types.scm \
          src/types-primitive-types.scm \
-         src/types-classes.scm \
+         src/types-roles.scm \
          src/types-protocols.scm \
          src/types-alist-table.scm \
          src/type-signatures.scm \
@@ -34,11 +34,11 @@ SCHEME_SOURCES= \
          src/types-primitive.scm \
          src/types-singleton.scm \
          src/types-generator.scm \
-         src/types-structure-schemas.scm \
+         src/types-structure-structs.scm \
          src/types-records.scm \
          src/types-tuples.scm \
          src/types-url.scm \
-         src/value-to-schema.scm \
+         src/value-to-struct.scm \
          src/env.scm \
          src/primitives.scm \
          src/read.scm \
@@ -70,7 +70,7 @@ C_SOURCES= \
          src/singleton-tree.c \
          src/types.c \
          src/types-primitive-types.c \
-         src/types-classes.c \
+         src/types-roles.c \
          src/types-protocols.c \
          src/types-alist-table.c \
          src/type-signatures.c \
@@ -79,11 +79,11 @@ C_SOURCES= \
          src/types-primitive.c \
          src/types-singleton.c \
          src/types-generator.c \
-         src/types-structure-schemas.c \
+         src/types-structure-structs.c \
          src/types-records.c \
          src/types-tuples.c \
          src/types-url.c \
-         src/value-to-schema.c \
+         src/value-to-struct.c \
          src/env.c \
          src/primitives.c \
          src/read.c \
@@ -116,7 +116,7 @@ OBJECTS= \
          singleton-tree.o \
          types.o \
          types-primitive-types.o \
-         types-classes.o \
+         types-roles.o \
          types-protocols.o \
          types-alist-table.o \
          type-signatures.o \
@@ -125,11 +125,11 @@ OBJECTS= \
          types-primitive.o \
          types-singleton.o \
          types-generator.o \
-         types-structure-schemas.o \
+         types-structure-structs.o \
          types-records.o \
          types-tuples.o \
          types-url.o \
-         value-to-schema.o \
+         value-to-struct.o \
          env.o \
          primitives.o \
          read.o \

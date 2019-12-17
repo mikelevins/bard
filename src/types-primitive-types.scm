@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-primitive-types.scm
 ;;;; Project:       Bard
@@ -10,76 +9,76 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; built-in schema types
+;;; built-in struct types
 ;;; ---------------------------------------------------------------------
-;;; runtime values that represent the types of built-in schemas.
-;;; these are not the types of schema-instaces; these are the types of
+;;; runtime values that represent the types of built-in structs.
+;;; these are not the types of struct-instaces; these are the types of
 ;;; their types. For example, a point may be an instance of
 ;;; <point>. What is <point> an instance of? The answer is <record>
-;;; (or some other of the primitive schemas defined below).
-;;; What about these types? For example, what is <primitive-schema>
+;;; (or some other of the primitive structs defined below).
+;;; What about these types? For example, what is <primitive-struct>
 ;;; an instance of? It is an instance of itself: it is itself a
-;;; primitive schema.
+;;; primitive struct.
 
-(define tags:$primitive-schema (%next-bard-type-number))
-(define tags:$structure-schema (%next-bard-type-number))
-(define tags:$base-schema (%next-bard-type-number))
-(define tags:$record-schema (%next-bard-type-number))
-(define tags:$tuple-schema (%next-bard-type-number))
-(define tags:$union-schema (%next-bard-type-number))
-(define tags:$foreign-schema (%next-bard-type-number))
+(define tags:$primitive-struct (%next-bard-type-number))
+(define tags:$structure-struct (%next-bard-type-number))
+(define tags:$base-struct (%next-bard-type-number))
+(define tags:$record-struct (%next-bard-type-number))
+(define tags:$tuple-struct (%next-bard-type-number))
+(define tags:$union-struct (%next-bard-type-number))
+(define tags:$foreign-struct (%next-bard-type-number))
 
-(define <primitive-schema> (make-primitive-schema '<primitive-schema> tags:$primitive-schema))
-(%register-primitive-schema! <primitive-schema> tags:$primitive-schema)
-(define <structure-schema> (make-primitive-schema '<structure-schema> tags:$structure-schema))
-(%register-primitive-schema! <structure-schema> tags:$structure-schema)
-(define <base-schema> (make-primitive-schema '<base-schema> tags:$base-schema))
-(%register-primitive-schema! <base-schema> tags:$base-schema)
-(define <record> (make-primitive-schema '<record> tags:$record-schema))
-(%register-primitive-schema! <record> tags:$record-schema)
-(define <tuple> (make-primitive-schema '<tuple> tags:$tuple-schema))
-(%register-primitive-schema! <tuple> tags:$tuple-schema)
-(define <union> (make-primitive-schema '<union> tags:$union-schema))
-(%register-primitive-schema! <union> tags:$union-schema)
-(define <foreign-schema> (make-primitive-schema '<foreign-schema> tags:$foreign-schema))
-(%register-primitive-schema! <foreign-schema> tags:$foreign-schema)
+(define <primitive-struct> (make-primitive-struct '<primitive-struct> tags:$primitive-struct))
+(%register-primitive-struct! <primitive-struct> tags:$primitive-struct)
+(define <structure-struct> (make-primitive-struct '<structure-struct> tags:$structure-struct))
+(%register-primitive-struct! <structure-struct> tags:$structure-struct)
+(define <base-struct> (make-primitive-struct '<base-struct> tags:$base-struct))
+(%register-primitive-struct! <base-struct> tags:$base-struct)
+(define <record> (make-primitive-struct '<record> tags:$record-struct))
+(%register-primitive-struct! <record> tags:$record-struct)
+(define <tuple> (make-primitive-struct '<tuple> tags:$tuple-struct))
+(%register-primitive-struct! <tuple> tags:$tuple-struct)
+(define <union> (make-primitive-struct '<union> tags:$union-struct))
+(%register-primitive-struct! <union> tags:$union-struct)
+(define <foreign-struct> (make-primitive-struct '<foreign-struct> tags:$foreign-struct))
+(%register-primitive-struct! <foreign-struct> tags:$foreign-struct)
 
 ;;; =====================================================================
-;;; schema definitions
+;;; struct definitions
 ;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
-;;; primitive schemas
+;;; primitive structs
 ;;; ---------------------------------------------------------------------
 
-(define <undefined> (make-primitive-schema '<undefined> tags:$undefined))
-(%register-primitive-schema! <undefined> tags:$undefined)
-(define <null> (make-primitive-schema '<null> tags:$null))
-(%register-primitive-schema! <null> tags:$null)
-(define <character> (make-primitive-schema '<character> tags:$character))
-(%register-primitive-schema! <character> tags:$character)
-(define <boolean> (make-primitive-schema '<boolean> tags:$boolean))
-(%register-primitive-schema! <boolean> tags:$boolean)
-(define <symbol> (make-primitive-schema '<symbol> tags:$symbol))
-(%register-primitive-schema! <symbol> tags:$symbol)
-(define <keyword> (make-primitive-schema '<keyword> tags:$keyword))
-(%register-primitive-schema! <keyword> tags:$keyword)
-(define <flonum> (make-primitive-schema '<flonum> tags:$flonum))
-(%register-primitive-schema! <flonum> tags:$flonum)
-(define <ratnum> (make-primitive-schema '<ratnum> tags:$ratnum))
-(%register-primitive-schema! <ratnum> tags:$ratnum)
-(define <fixnum> (make-primitive-schema '<fixnum> tags:$fixnum))
-(%register-primitive-schema! <fixnum> tags:$fixnum)
-(define <bignum> (make-primitive-schema '<bignum> tags:$bignum))
-(%register-primitive-schema! <bignum> tags:$bignum)
-(define <primitive-procedure> (make-primitive-schema '<primitive-procedure> tags:$procedure))
-(%register-primitive-schema! <primitive-procedure> tags:$procedure)
-(define <string> (make-primitive-schema '<string> tags:$string))
-(%register-primitive-schema! <string> tags:$string)
-(define <vector> (make-primitive-schema '<vector> tags:$vector))
-(%register-primitive-schema! <vector> tags:$vector)
-(define <pair> (make-primitive-schema '<pair> tags:$pair))
-(%register-primitive-schema! <pair> tags:$pair)
+(define <undefined> (make-primitive-struct '<undefined> tags:$undefined))
+(%register-primitive-struct! <undefined> tags:$undefined)
+(define <null> (make-primitive-struct '<null> tags:$null))
+(%register-primitive-struct! <null> tags:$null)
+(define <character> (make-primitive-struct '<character> tags:$character))
+(%register-primitive-struct! <character> tags:$character)
+(define <boolean> (make-primitive-struct '<boolean> tags:$boolean))
+(%register-primitive-struct! <boolean> tags:$boolean)
+(define <symbol> (make-primitive-struct '<symbol> tags:$symbol))
+(%register-primitive-struct! <symbol> tags:$symbol)
+(define <keyword> (make-primitive-struct '<keyword> tags:$keyword))
+(%register-primitive-struct! <keyword> tags:$keyword)
+(define <flonum> (make-primitive-struct '<flonum> tags:$flonum))
+(%register-primitive-struct! <flonum> tags:$flonum)
+(define <ratnum> (make-primitive-struct '<ratnum> tags:$ratnum))
+(%register-primitive-struct! <ratnum> tags:$ratnum)
+(define <fixnum> (make-primitive-struct '<fixnum> tags:$fixnum))
+(%register-primitive-struct! <fixnum> tags:$fixnum)
+(define <bignum> (make-primitive-struct '<bignum> tags:$bignum))
+(%register-primitive-struct! <bignum> tags:$bignum)
+(define <primitive-procedure> (make-primitive-struct '<primitive-procedure> tags:$procedure))
+(%register-primitive-struct! <primitive-procedure> tags:$procedure)
+(define <string> (make-primitive-struct '<string> tags:$string))
+(%register-primitive-struct! <string> tags:$string)
+(define <vector> (make-primitive-struct '<vector> tags:$vector))
+(%register-primitive-struct! <vector> tags:$vector)
+(define <pair> (make-primitive-struct '<pair> tags:$pair))
+(%register-primitive-struct! <pair> tags:$pair)
 
 (define (%undefined? x)(eqv? x #!unbound))
 (define (%defined? x)(not (%undefined? x)))

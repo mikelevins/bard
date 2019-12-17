@@ -1,9 +1,8 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-alist-table.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <alist-table>
+;;;; Purpose:       struct <alist-table>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
@@ -12,14 +11,14 @@
 (declare (standard-bindings))
 
 ;;; =====================================================================
-;;; base schemas
+;;; base structs
 ;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <alist-table>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-alist-table (%next-bard-type-number))
-(define <alist-table> (make-base-schema '<alist-table> tags:$bard-alist-table))
+(define <alist-table> (make-base-struct '<alist-table> tags:$bard-alist-table))
 
 
 ;;; constructor

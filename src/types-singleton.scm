@@ -1,23 +1,22 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-primitive.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <primitive>
+;;;; Purpose:       struct <primitive>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 ;;; =====================================================================
-;;; base schemas
+;;; base structs
 ;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <singleton>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-singleton (%next-bard-type-number))
-(define <singleton> (make-base-schema '<singleton> tags:$bard-singleton))
+(define <singleton> (make-base-struct '<singleton> tags:$bard-singleton))
 
 ;;; singleton registry
 

@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          toplevel.scm
 ;;;; Project:       Bard
@@ -27,17 +26,17 @@
   ;;; types
   ;;; =====================================================================
   
-  ;;; schemas
+  ;;; structs
 
   (%defglobal '<alist-table>         <alist-table>)
-  (%defglobal '<base-schema>         <base-schema>)
+  (%defglobal '<base-struct>         <base-struct>)
   (%defglobal '<bignum>              <bignum>)
   (%defglobal '<boolean>             <boolean>)
   (%defglobal '<character>           <character>)
-  (%defglobal '<class>               <class>)
+  (%defglobal '<role>               <role>)
   (%defglobal '<fixnum>              <fixnum>)
   (%defglobal '<flonum>              <flonum>)
-  (%defglobal '<foreign-schema>      <foreign-schema>)
+  (%defglobal '<foreign-struct>      <foreign-struct>)
   (%defglobal '<function>            <function>)
   (%defglobal '<generator>           <generator>)
   (%defglobal '<interpreted-method>  <interpreted-method>)
@@ -46,13 +45,13 @@
   (%defglobal '<null>                <null>)
   (%defglobal '<pair>                <pair>)
   (%defglobal '<primitive-procedure> <primitive-procedure>)
-  (%defglobal '<primitive-schema>    <primitive-schema>)
+  (%defglobal '<primitive-struct>    <primitive-struct>)
   (%defglobal '<primitive>           <primitive>)
   (%defglobal '<protocol>            <protocol>)
   (%defglobal '<ratnum>              <ratnum>)
   (%defglobal '<record>              <record>)
   (%defglobal '<string>              <string>)
-  (%defglobal '<structure-schema>    <structure-schema>)
+  (%defglobal '<structure-struct>    <structure-struct>)
   (%defglobal '<symbol>              <symbol>)
   (%defglobal '<tuple>               <tuple>)
   (%defglobal '<undefined>           <undefined>)
@@ -60,14 +59,14 @@
   (%defglobal '<url>                 <url>)
   (%defglobal '<vector>              <vector>)
 
-  ;;; classes
+  ;;; roles
 
   (%defglobal '&            &) 
   (%defglobal 'Anything     Anything) 
   (%defglobal 'Applicable   Applicable) 
   (%defglobal 'Boolean      Boolean)
   (%defglobal 'Character    Character)
-  (%defglobal 'Class        Class)
+  (%defglobal 'Role        Role)
   (%defglobal 'File         File)
   (%defglobal 'Float        Float)
   (%defglobal 'Fraction     Fraction)
@@ -87,7 +86,7 @@
   (%defglobal 'Pair         Pair)
   (%defglobal 'Protocol     Protocol)
   (%defglobal 'Ratio        Ratio)
-  (%defglobal 'Schema       Schema)
+  (%defglobal 'Struct       Struct)
   (%defglobal 'Stream       Stream)
   (%defglobal 'Symbol       Symbol)
   (%defglobal 'Table        Table)
@@ -293,7 +292,7 @@
 
   (%defglobal 'boolean? prim:boolean?)
   (%defglobal 'character? prim:char?)
-  (%defglobal 'class? bard:class?)
+  (%defglobal 'role? bard:role?)
   (%defglobal 'false? prim:false?)
   (%defglobal 'float? prim:float?)
   (%defglobal 'foreign-value? prim:foreign-value?)

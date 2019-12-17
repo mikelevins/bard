@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocol-typing.scm
 ;;;; Project:       Bard
@@ -13,15 +12,15 @@
 (##include "type-signature-macros.scm")
 (##include "protocol-macros.scm")
 
-;;; class?
+;;; role?
 
-(define-protocol-function Typing class?
+(define-protocol-function Typing role?
   signatures: (list (signature (Anything) #f (Boolean))))
 
-(define-primitive-method class? (Anything)
+(define-primitive-method role? (Anything)
   (constantly #f))
 
-(define-primitive-method class? (<class>)
+(define-primitive-method role? (<role>)
   (constantly #t))
 
 ;;; keyword?
@@ -162,5 +161,5 @@
   signatures: (list (signature (Anything) #f (Type))))
 
 (define-primitive-method type (Anything) 
-  (lambda (x)(%value->schema x)))
+  (lambda (x)(%value->struct x)))
 

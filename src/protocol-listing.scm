@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocol-listing.scm
 ;;;; Project:       Bard
@@ -471,7 +470,7 @@
 (define-protocol-function Listing member?
   signatures: (list (signature (Anything List) #f (Boolean))
                     (signature (Function Protocol) #f (Boolean))
-                    (signature (Schema Class) #f (Boolean))))
+                    (signature (Struct Role) #f (Boolean))))
 
 (define-primitive-method member? (Anything <null>)
   (constantly #f))

@@ -1,7 +1,6 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          types-structure-schemas.scm
+;;;; Name:          types-structure-structs.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       representing built-in Gambit structure types
 ;;;; Author:        mikel evins
@@ -10,9 +9,9 @@
 ;;;; ***********************************************************************
 
 ;;; =====================================================================
-;;; structure schemas
+;;; structure structs
 ;;; =====================================================================
 
-(define <iostream> (make-structure-schema '<iostream> (%next-bard-type-number) (##structure-type (current-input-port))))
-(%register-structure-schema! (structure-schema-prototype <iostream>) <iostream>)
+(define <iostream> (make-structure-struct '<iostream> (%next-bard-type-number) (##structure-type (current-input-port))))
+(%register-structure-struct! (structure-struct-prototype <iostream>) <iostream>)
 
