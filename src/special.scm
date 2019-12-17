@@ -131,7 +131,7 @@
 ;;; processing type constraints
 ;;;
 ;;; (define method (foo x y z)
-;;;   with: ((y <fixnum>)(z (exactly 1)))
+;;;   :where ((y <fixnum>)(z (exactly 1)))
 ;;;   ...)
 ;;;
 ;;; there are three kinds of constrant, represented here by x, y, and
@@ -172,17 +172,18 @@
 
 (define (%eval-define-method expr #!optional (env (%null-environment)))
   (let* ((prototype (list-ref expr 2))
-         (with-arg? (let ((tl (drop 3 expr)))
+         (where-arg? (let ((tl (drop 3 expr)))
                       (if (null? tl)
                           #f
-                          (if (eq? with: (car tl))
+                          (if (eq? (car tl)
+                                   (string->keyword "where"))
                               (cadr tl)
                               #f))))
-         (constraints (if with-arg?
+         (constraints (if where-arg?
                           (list-ref expr 4)
                           '()))
          (body (cons 'begin
-                     (if with-arg?
+                     (if where-arg?
                          (drop 5 expr)
                          (drop 3 expr)))))
     (receive (fname formals restarg)

@@ -9,15 +9,15 @@
 (def enough? (partial < 2))
 
 (define method (sample-names samples)
-  with: ((samples <string>))
-  (with-open-file (in samples direction: 'input)
+  :where ((samples <string>))
+  (with-open-file (in samples :direction 'input)
     (filter (compose enough? length)
             (lines in))))
 
 ;;; (time (length (sample-names $us-path)))
 
 (define method (triples tx)
-  with: ((tx <string>))
+  :where ((tx <string>))
   (filter (compose enough? length)
           (take-by 3 1 tx)))
 
@@ -87,4 +87,4 @@
     (resume (gen-name))))
 
 ;;; (def $ngen (generate-names))
-;;; (next $ngen)
+;;; (time (next $ngen))
