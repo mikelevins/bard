@@ -225,7 +225,7 @@
 (define prim:generated-count
   (make-primitive
    procedure: (lambda (g)(length (generator-instance-results g)))
-   debug-name: 'generated-
+   debug-name: 'generated-count
    required-count: 1
    restarg: #f))
 

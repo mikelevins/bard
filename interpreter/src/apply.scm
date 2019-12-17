@@ -1,11 +1,10 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          apply.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       the apply function
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
+;;;; Copyright:     2012-2019 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
