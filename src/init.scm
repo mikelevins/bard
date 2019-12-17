@@ -12,7 +12,6 @@
 (declare (extended-bindings))
 
 (define (%init-bard)
-
   (set! $bard-global-variables (%global-variables))
 
   ;;; =====================================================================

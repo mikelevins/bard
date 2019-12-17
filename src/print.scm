@@ -112,7 +112,7 @@
 (define-printer-function (schema-tag <ratnum>) object->string)
 (define-printer-function (schema-tag <string>) object->string)
 (define-printer-function (schema-tag <symbol>) object->string)
-(define-printer-function (schema-tag <keyword>) object->string)
+(define-printer-function (schema-tag <keyword>) (lambda (k) (string-append ":" (keyword->string k))))
 (define-printer-function (schema-tag <vector>) object->string)
 
 

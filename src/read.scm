@@ -73,13 +73,16 @@
 ;;;---------------------------------------------------------------------
 
 (define (bard:make-readtable)
-  (let ((rt (##make-standard-readtable)))
-    (readtable-keywords-allowed?-set rt #t)
+  (let* ((rt0 (##make-standard-readtable))
+         (rt (readtable-keywords-allowed?-set rt0 'prefix)))
     (macro-readtable-bracket-keyword-set! rt 'list)
     (macro-readtable-brace-keyword-set! rt 'table)
     rt))
 
 (define +bard-readtable+ (bard:make-readtable))
+
+;;; (readtable-keywords-allowed? +bard-readtable+)
+;;; (readtable-keywords-allowed?-set! +bard-readtable+ 'prefix)
 
 ;;; ----------------------------------------------------------------------
 ;;; the reader
@@ -110,8 +113,9 @@
   (let* ((port (or port (current-input-port)))
          (original-readtable (input-port-readtable port)))
     (dynamic-wind
-        (lambda ()(input-port-readtable-set! port +bard-readtable+))
+        (lambda () #f)
         (lambda ()(let ((port (or port (current-input-port))))
+                    (input-port-readtable-set! port +bard-readtable+)
                     (%read-value->bard-value (read port))))
         (lambda ()(input-port-readtable-set! port original-readtable)))))
 

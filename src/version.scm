@@ -9,5 +9,5 @@
 ;;;; ***********************************************************************
 
 
-(define $bard-version-string "Bard version 0.4.0d2")
+(define $bard-version-string "Bard version 0.5.0d1")
 
