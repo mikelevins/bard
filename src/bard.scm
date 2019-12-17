@@ -27,8 +27,7 @@
     (display *bard-prompt*)
     (let ((rep (lambda ()
                  (let* ((expr (bard:read)))
-                   (if (or (eq? expr quit:)
-                           (eq? expr q:))
+                   (if (equal? expr '(quit))
                        (begin
                          (newline)
                          (display "Bard terminated")
