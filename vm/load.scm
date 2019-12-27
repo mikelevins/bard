@@ -7,3 +7,31 @@
 ;;;; Copyright:     2019 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
+
+
+;;; macos
+(define $bardvm-root  "/Users/mikel/Workshop/src/bard/vm/")
+
+;;; ----------------------------------------------------------------------
+;;; Scheme files to load for interactive development
+;;; ----------------------------------------------------------------------
+
+(define (vm-paths prefix . suffixes)
+  (map (lambda (suffix)(string-append prefix suffix))
+       suffixes))
+
+(define $bardvm-files
+  (vm-paths $bardvm-root 
+         "src/version.scm"
+         "src/bardvm.scm"
+         ))
+
+;;; load sources
+;;; ----------------------------------------------------------------------
+
+(define (load-bardvm)
+  (gc-report-set! #t)
+  (for-each (lambda (f)(load f))
+            $bardvm-files))
+
+;;; (load-bardvm)
