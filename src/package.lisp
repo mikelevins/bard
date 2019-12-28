@@ -1,7 +1,6 @@
 ;;;; package.lisp
 
 (defpackage :bard.internal
-  (:use :cl)
-  (:shadow #:read #:read-from-string))
+  (:use :cl :named-readtables))
 
 (defpackage :bard)

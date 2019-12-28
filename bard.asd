@@ -6,10 +6,12 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:eclector)
+  :depends-on (:fset :named-readtables)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "data")
+                                     (:file "readtable")
                                      (:file "reader")
                                      (:file "bard")))))
 
