@@ -1,19 +1,26 @@
 (in-package :bard.internal)
 (in-readtable :standard)
 
+(defun gen-begin (body)
+  `(SEQ ,@body))
+
 (defun gen-constant (c)
-  `(constant ',c))
+  `(CONST ',c))
+
+(defun gen-funcall (fn args)
+  `(AP ,fn (list ,@args)))
 
 (defun gen-method (params body env)
-  `(method ',params ',body ,env))
+  `(METH ',params ',body ,env))
 
 (defun gen-variable-ref (v env)
-  `(variable ',v ,env))
+  `(VAR ',v ,env))
 
 (defun gen-variable-set! (var val env)
-  `(variable-set! ',var ,val ,env))
+  `(SET! ',var ,val ,env))
 
 (defun bard-macro? (x) nil)
+(defun bard-macro-expand (x) nil)
 
 (defun ensure-arg-count (form min &optional (max min))
   (let ((n-args (length (rest form))))
@@ -24,7 +31,7 @@
 
 (defun compile-begin (xs env)
   (let ((val-exprs (mapcar (lambda (x)(compile x env)) xs)))
-    `(begin ,@val-exprs)))
+    (gen-begin val-exprs)))
 
 (defun compile-constant (val)
   (case val
@@ -42,8 +49,9 @@
 ;;; (compile-constant "Foobar")
 
 (defun compile-funcall (fn args env)
-  `(apply ,(compile fn env)
-          ,(mapcar (lambda (arg)(compile arg env)) args)))
+  (gen-funcall (compile fn env)
+               (mapcar (lambda (arg)(compile arg env))
+                       args)))
 
 (defun compile-if (test then else env)
   `(if (true? ,(compile test env))

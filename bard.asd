@@ -13,6 +13,7 @@
                                      (:file "data")
                                      (:file "readtable")
                                      (:file "reader")
+                                     (:file "env")
                                      (:file "kernel")
                                      (:file "compiler")
                                      (:file "bard")))))
