@@ -29,6 +29,9 @@
 (defun compile-constant (val)
   (case val
     (|nothing| (gen-constant nil))
+    (|true| (gen-constant (|true|)))
+    (|false| (gen-constant (|false|)))
+    (|undefined| (gen-constant (|undefined|)))
     (t (gen-constant val))))
 
 ;;; (compile-constant '|true|)
@@ -43,7 +46,7 @@
           ,(mapcar (lambda (arg)(compile arg env)) args)))
 
 (defun compile-if (test then else env)
-  `(if ,(compile test env)
+  `(if (true? ,(compile test env))
        ,(compile then env)
        ,(compile else env)))
 

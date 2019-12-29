@@ -6,7 +6,7 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (:fset :named-readtables)
+  :depends-on (:fset :named-readtables :singleton-classes)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
