@@ -41,10 +41,10 @@
 (defmethod true? (thing) t)
 (defmethod true? ((thing null)) nil)
 (defmethod true? ((thing |false|)) nil)
-(defmethod true? ((thing |undefined|)) nil)
+(defmethod true? ((thing |undefined|)) (error "undefined is neither true nor false"))
 
 (defmethod false? (thing) (not (true? thing)))
-(defmethod false? ((thing |undefined|)) nil)
+(defmethod false? ((thing |undefined|)) (error "undefined is neither true nor false"))
 
 ;;; (true? nil)
 ;;; (true? t)
@@ -52,6 +52,7 @@
 ;;; (true? (|undefined|))
 ;;; (true? (|true|))
 ;;; (true? (|false|))
+;;; (false? nil)
 ;;; (false? (|false|))
 ;;; (false? (|undefined|))
 
