@@ -5,10 +5,10 @@
   `(constant ',c))
 
 (defun gen-method (params body env)
-  `(make-method ',params ',body ,env))
+  `(method ',params ',body ,env))
 
 (defun gen-variable-ref (v env)
-  `(variable-reference ',v ,env))
+  `(variable ',v ,env))
 
 (defun gen-variable-set! (var val env)
   `(variable-set! ',var ,val ,env))
