@@ -7,12 +7,7 @@
   (:merge :standard)
   (:syntax-from :standard #\) #\])
   (:syntax-from :standard #\) #\})
-  (:macro-char #\[ #'(lambda (stream char)(read-delimited-list #\] stream)))
-  (:macro-char #\{ #'(lambda (stream char)
-                       (fset:convert 'fset:map
-                                     (loop for tail on (read-delimited-list #\} stream) by #'cddr
-                                        collect (cons (first tail)(second tail))))))
+  (:macro-char #\[ #'(lambda (stream char)(cons '|list| (read-delimited-list #\] stream))))
+  (:macro-char #\{ #'(lambda (stream char) (cons '|map| (read-delimited-list #\} stream))))
   (:macro-char #\# :dispatch)
-  (:dispatch-macro-char #\# #\t t)
-  (:dispatch-macro-char #\# #\f nil)
   (:case :preserve))
