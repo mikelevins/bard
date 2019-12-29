@@ -13,6 +13,7 @@
                                      (:file "data")
                                      (:file "readtable")
                                      (:file "reader")
+                                     (:file "compiler")
                                      (:file "bard")))))
 
 ;;; (asdf:load-system '#:bard)
