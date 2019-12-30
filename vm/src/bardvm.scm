@@ -12,6 +12,7 @@
 
 (define (fetch-next-instr! vm) )
 (define (inc-pc! vm) )
+(define (set-pc! vm newpc) )
 (define (current-opcode vm) )
 (define (stack-push! vm val) )
 (define (stack-pop! vm) )
@@ -21,6 +22,8 @@
 (define (arg3 vm) )
 (define (global-ref vm var) )
 (define (global-set! vm var val) )
+(define (true? val) )
+(define (false? val) )
 
 (define (runvm vm)
   (let loop ()
@@ -53,28 +56,21 @@
        ((= opc CONST) (begin (stack-push! vm (arg1 vm))
                              (loop)))
 
-       ;; *** here's where rewriting the instruction execution last stopped
        ;; branches
-       ((= opc JUMP) (begin (set! pc (instr-arg1 instr))(loop)))
-       ((= opc FJUMP) (let ((testval #f))
-                        (if (null? stack)
-                            (error "Stack underflow")
-                            (begin
-                              (set! testval (vm:top stack))
-                              (set! stack (cdr stack))
-                              (when (not testval)
-                                (set! pc (instr-arg1 instr)))))
+       ((= opc JUMP) (begin (set-pc! vm (arg1 vm))
+                            (loop)))
+
+       ((= opc FJUMP) (begin
+                        (when (false? (stack-pop! vm))
+                          (set-pc! vm (arg1 vm)))
                         (loop)))
-       ((= opc TJUMP) (let ((testval #f))
-                        (if (null? stack)
-                            (error "Stack underflow")
-                            (begin
-                              (set! testval (vm:top stack))
-                              (set! stack (cdr stack))
-                              (when testval
-                                (set! pc (instr-arg1 instr)))))
+       
+       ((= opc TJUMP) (begin
+                        (when (true? (stack-pop! vm))
+                          (set-pc! vm (arg1 vm)))
                         (loop)))
 
+       ;; *** here's where rewriting the instruction execution last stopped
        ;; function calling
        ((= opc SAVE) (begin (loop)))
        ((= opc RETURN) (begin (loop)))
