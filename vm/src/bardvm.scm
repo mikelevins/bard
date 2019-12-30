@@ -8,7 +8,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define-structure vm fn code pc env stack n-args instr)
+(define-structure vm fn code pc env stack nargs instr)
 
 (define (fetch-next-instr! vm) )
 (define (inc-pc! vm) )
@@ -16,7 +16,11 @@
 (define (current-opcode vm) )
 (define (stack-push! vm val) )
 (define (stack-pop! vm) )
+(define (stack-npop! vm count) )
 (define (stack-top vm) )
+(define (env-pop! vm) )
+(define (env-push! vm frame) )
+(define (make-env-frame vals) )
 (define (arg1 vm) )
 (define (arg2 vm) )
 (define (arg3 vm) )
@@ -24,6 +28,9 @@
 (define (global-set! vm var val) )
 (define (true? val) )
 (define (false? val) )
+(define (ensure-argcount found-count expected-count) )
+(define (ensure-argcount>= found-count expected-count) )
+(define (add-last seq element) )
 
 (define (runvm vm)
   (let loop ()
@@ -70,13 +77,48 @@
                           (set-pc! vm (arg1 vm)))
                         (loop)))
 
-       ;; *** here's where rewriting the instruction execution last stopped
        ;; function calling
-       ((= opc SAVE) (begin (loop)))
-       ((= opc RETURN) (begin (loop)))
-       ((= opc CALLJ) (begin (loop)))
-       ((= opc ARGS) (begin (loop)))
-       ((= opc ARGS&REST) (begin (loop)))
+       ((= opc SAVE) (begin (stack-push! vm (make-return (arg1 vm) (vm-fn vm) (vm-env vm)))
+                            (loop)))
+
+       ;; top of stack is the return value
+       ;; second on stack is the return record
+       ((= opc RETURN) (let* ((val #f)
+                              (return #f))
+                         (set! val (stack-pop! vm))
+                         (set! return (stack-pop! vm))
+                         (vm-push! vm val)
+                         (vm-fn-set! vm (return-fn return))
+                         (vm-code-set! vm (fn-code (return-fn return)))
+                         (vm-env-set! vm (return-env return))
+                         (vm-pc-set! vm (return-pc return))
+                         (loop)))
+
+       ((= opc CALLJ) (begin (env-pop! (vm-env vm))
+                             (let ((f (stack-pop! vm)))
+                               (vm-code-set! vm (fn-code f))
+                               (vm-env-set! vm (fn-env f))
+                               (vm-pc-set! vm 0)
+                               (vm-nargs-set! vm (arg1 vm)))
+                             (loop)))
+
+       ((= opc ARGS) (let ((found-argcount (vm-nargs vm))
+                           (expected-argcount (arg1 vm)))
+                       (ensure-argcount found-argcount expected-argcount)
+                       (let ((frame (make-env-frame (stack-npop! vm expected-argcount))))
+                         (env-push! vm frame))
+                       (loop)))
+
+       ((= opc ARGS&REST) (let ((found-argcount (vm-nargs vm))
+                                (expected-argcount (arg1 vm)))
+                            (ensure-argcount>= found-argcount expected-argcount)
+                            (let* ((required-args (stack-npop! vm expected-argcount))
+                                   (rest-args (stack-npop! vm (- found-argcount expected-argcount)))
+                                   (frame (make-env-frame (add-last required-args rest-args))))
+                              (env-push! vm frame))
+                            (loop)))
+
+       ;; *** here's where rewriting the instruction execution last stopped
        ((= opc FN) (begin (loop)))
        ((= opc PRIM) (begin (loop)))
 
