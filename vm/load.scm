@@ -27,6 +27,7 @@
          "src/global.scm"
          "src/env.scm"
          "src/instr.scm"
+         "src/return.scm"
          "src/fn.scm"
          "src/bardvm.scm"
          ))
