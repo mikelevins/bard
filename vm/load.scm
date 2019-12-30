@@ -23,6 +23,11 @@
 (define $bardvm-files
   (vm-paths $bardvm-root 
          "src/version.scm"
+         "src/opcodes.scm"
+         "src/global.scm"
+         "src/env.scm"
+         "src/instr.scm"
+         "src/fn.scm"
          "src/bardvm.scm"
          ))
 
