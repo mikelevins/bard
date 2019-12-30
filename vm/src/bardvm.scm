@@ -78,3 +78,5 @@
 ;;; (fetch-next-instr! $vm)
 ;;; (inc-pc! $vm)
 ;;; (stepvm $vm)
+;;; (runvm $vm)
+
