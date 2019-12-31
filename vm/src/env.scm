@@ -8,7 +8,8 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(define-structure env frames)
+(define-structure env vars)
+
 
 ;;; (define $env (make-env '()))
 

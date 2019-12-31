@@ -21,16 +21,40 @@
 
 (define (current-opcode vm) (instr-opcode (vm-instr vm)))
 
-(define (stack-push! vm val) #f)
-(define (stack-pop! vm) #f)
+(define (stack-push! vm val)
+  (vm-stack-set! vm (cons val (vm-stack vm))))
+
+(define (stack-top vm) (car (vm-stack vm)))
+
+(define (stack-pop! vm)
+  (let ((val (car (vm-stack vm))))
+    (vm-stack-set! vm (cdr (vm-stack vm)))
+    val))
+
 (define (stack-npop! vm count) #f)
-(define (stack-top vm) #f)
 (define (env-pop! vm) #f)
 (define (env-push! vm frame) #f)
+
+(define (env-ref vm var)
+  (let* ((env (vm-env vm))
+         (entry (assq var (env-vars env))))
+    (if entry
+        (cdr entry)
+        (error "Undefined variable: " var))))
+
+(define (env-set! vm var val)
+  (let* ((env (vm-env vm))
+         (entry (assq var (env-vars env))))
+    (if entry
+        (set-cdr! entry val)
+        (env-vars-set! (vm-env vm)
+                       (cons (cons var val)
+                             (vm-env vm))))
+    val))
+
 (define (make-env-frame vals) #f)
-(define (arg1 vm) #f)
-(define (arg2 vm) #f)
-(define (arg3 vm) #f)
+(define (arg1 vm)(instr-arg1 (vm-instr vm)))
+(define (arg2 vm)(instr-arg2 (vm-instr vm)))
 (define (global-ref vm var) #f)
 (define (global-set! vm var val) #f)
 (define (true? val) #f)
@@ -44,11 +68,17 @@
   (inc-pc! vm)
   (let ((opc (current-opcode vm)))
     (cond 
-     
+     ;; stack and variables
+     ((= opc LVAR) (stack-push! vm (env-ref vm (arg1 vm))))
+     ((= opc LSET) (env-set! vm (arg1 vm) (stack-top vm)))
+     ((= opc CONST) (stack-push! vm (arg1 vm)))
+     ((= opc POP) (stack-pop! vm))
+
      ;; machine control
      ((= opc HALT) (vm-halt-set! vm #t))
-     (else (error (string-append "Unknown opcode: "
-                                 (object->string instr)))))))
+
+     ;; unrecognized opcode
+     (else (error (string-append "Unknown opcode: " (object->string (vm-instr vm))))))))
 
 (define (display-vm-status vm)
   (newline)
@@ -56,27 +86,42 @@
   (display "  pc: ")(display (vm-pc vm))(newline)
   (display "  nargs: ")(display (vm-nargs vm))(newline)
   (display "  instr: ")(display (vm-instr vm))(newline)
+  (display "  stack: ")(display (vm-stack vm))(newline)
   (display "  halt: ")(display (vm-halt vm))(newline)
   (display "  env: ")(display (vm-env vm))(newline)
   (display "  code: ")(display (vm-code vm))(newline)(newline)
-  (display "Bard VM finished.")(newline))
+  (newline))
 
 (define (runvm vm)
   (let loop ()
     (if (vm-halt vm)
         (begin (display-vm-status vm)
-               (stack-top vm))
+               (stack-top vm)
+               (display "Bard VM finished."))
         (begin (stepvm vm)
                (loop)))))
 
 
-;;; (define $code (vector (make-instr HALT #f #f)))
+(define $code0 (vector (make-instr HALT #f #f)))
+(define $code1 (vector (make-instr CONST 5 #f)
+                       (make-instr LSET 'x #f)
+                       (make-instr POP #f #f)
+                       (make-instr LVAR 'x #f)
+                       (make-instr HALT #f #f)))
+
+;;; $code0
 ;;; (define $env (make-env '()))
-;;; (define $fn (make-fn 'testfn $code $env))
-;;; (define $vm (make-vm $fn $code 0 $env '() 0 #f #f))
+;;; (define $fn (make-fn 'testfn $code0 $env))
+;;; (define $vm (make-vm $fn $code0 0 $env '() 0 #f #f))
+
+;;; $code1
+;;; (define $env (make-env '()))
+;;; (define $fn (make-fn 'testfn $code1 $env))
+;;; (define $vm (make-vm $fn $code1 0 $env '() 0 #f #f))
+
+
 ;;; (display-vm-status $vm)
-;;; (fetch-next-instr! $vm)
-;;; (inc-pc! $vm)
 ;;; (stepvm $vm)
 ;;; (runvm $vm)
+
 
