@@ -8,7 +8,15 @@
 ;;;;
 ;;;; ***********************************************************************
 
+;;; ---------------------------------------------------------------------
+;;; the vm structure
+;;; ---------------------------------------------------------------------
+
 (define-structure vm fn code pc env stack nargs instr halt)
+
+;;; ---------------------------------------------------------------------
+;;; support functions
+;;; ---------------------------------------------------------------------
 
 (define (fetch-next-instr! vm)
   (vm-instr-set! vm
@@ -63,6 +71,10 @@
 (define (ensure-argcount>= found-count expected-count) #f)
 (define (add-last seq element) #f)
 
+;;; ---------------------------------------------------------------------
+;;; running the vm
+;;; ---------------------------------------------------------------------
+
 (define (stepvm vm)
   (fetch-next-instr! vm)
   (inc-pc! vm)
@@ -96,11 +108,14 @@
   (let loop ()
     (if (vm-halt vm)
         (begin (display-vm-status vm)
-               (stack-top vm)
-               (display "Bard VM finished."))
+               (display "Bard VM finished.")
+               (stack-top vm))
         (begin (stepvm vm)
                (loop)))))
 
+;;; ---------------------------------------------------------------------
+;;; test code
+;;; ---------------------------------------------------------------------
 
 (define $code0 (vector (make-instr HALT #f #f)))
 (define $code1 (vector (make-instr CONST 5 #f)
@@ -122,6 +137,6 @@
 
 ;;; (display-vm-status $vm)
 ;;; (stepvm $vm)
-;;; (runvm $vm)
+;;; (time (runvm $vm))
 
 
