@@ -39,10 +39,6 @@
     (vm-stack-set! vm (cdr (vm-stack vm)))
     val))
 
-(define (stack-npop! vm count) #f)
-(define (env-pop! vm) #f)
-(define (env-push! vm frame) #f)
-
 (define (env-ref vm var)
   (let* ((env (vm-env vm))
          (entry (assq var (env-vars env))))
@@ -77,15 +73,8 @@
                                (vm-globals vm))))
     val))
 
-(define (make-env-frame vals) #f)
 (define (arg1 vm)(instr-arg1 (vm-instr vm)))
 (define (arg2 vm)(instr-arg2 (vm-instr vm)))
-(define (true? val) #f)
-(define (false? val) #f)
-(define (ensure-argcount found-count expected-count) #f)
-(define (ensure-argcount>= found-count expected-count) #f)
-(define (add-last seq element) #f)
-
 
 (define (display-vm-status vm)
   (newline)
