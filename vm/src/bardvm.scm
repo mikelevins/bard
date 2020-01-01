@@ -9,13 +9,13 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; the vm structure
+;;; the vm data structure
 ;;; ---------------------------------------------------------------------
 
 (define-structure vm globals fn code pc env stack nargs instr halt)
 
 ;;; ---------------------------------------------------------------------
-;;; support functions
+;;; vm support functions
 ;;; ---------------------------------------------------------------------
 
 (define (fetch-next-instr! vm)
@@ -86,10 +86,25 @@
 (define (ensure-argcount>= found-count expected-count) #f)
 (define (add-last seq element) #f)
 
+
+(define (display-vm-status vm)
+  (newline)
+  (display "Bard VM state:")(newline)
+  (display "  pc: ")(display (vm-pc vm))(newline)
+  (display "  nargs: ")(display (vm-nargs vm))(newline)
+  (display "  instr: ")(display (vm-instr vm))(newline)
+  (display "  stack: ")(display (vm-stack vm))(newline)
+  (display "  halt: ")(display (vm-halt vm))(newline)
+  (display "  globals: ")(display (vm-globals vm))(newline)
+  (display "  env: ")(display (vm-env vm))(newline)
+  (display "  code: ")(display (vm-code vm))(newline)(newline)
+  (newline))
+
 ;;; ---------------------------------------------------------------------
 ;;; running the vm
 ;;; ---------------------------------------------------------------------
 
+;;; execute a single instriction
 (define (stepvm vm)
   (fetch-next-instr! vm)
   (inc-pc! vm)
@@ -111,19 +126,7 @@
      ;; unrecognized opcode
      (else (error (string-append "Unknown opcode: " (object->string (vm-instr vm))))))))
 
-(define (display-vm-status vm)
-  (newline)
-  (display "Bard VM state:")(newline)
-  (display "  pc: ")(display (vm-pc vm))(newline)
-  (display "  nargs: ")(display (vm-nargs vm))(newline)
-  (display "  instr: ")(display (vm-instr vm))(newline)
-  (display "  stack: ")(display (vm-stack vm))(newline)
-  (display "  halt: ")(display (vm-halt vm))(newline)
-  (display "  globals: ")(display (vm-globals vm))(newline)
-  (display "  env: ")(display (vm-env vm))(newline)
-  (display "  code: ")(display (vm-code vm))(newline)(newline)
-  (newline))
-
+;;; run the vm
 (define (runvm vm)
   (let loop ()
     (if (vm-halt vm)
@@ -139,25 +142,50 @@
 
 (define $code0 (vector (make-instr HALT #f #f)))
 
+;;; $code0
+;;; just halt the vm
+;;;
+;;; (define $env (make-env '()))
+;;; (define $fn (make-fn 'testfn $code0 $env))
+;;; (define $vm (make-vm '() $fn $code0 0 $env '() 0 #f #f))
+
+;;; (display-vm-status $vm)
+;;; (stepvm $vm)
+;;; (time (runvm $vm))
+
 (define $code1 (vector (make-instr CONST 5 #f)
                        (make-instr LSET 'x #f)
                        (make-instr POP #f #f)
                        (make-instr LVAR 'x #f)
                        (make-instr HALT #f #f)))
 
-;;; $code0
-;;; (define $env (make-env '()))
-;;; (define $fn (make-fn 'testfn $code0 $env))
-;;; (define $vm (make-vm '() $fn $code0 0 $env '() 0 #f #f))
-
 ;;; $code1
+;;; set and reference a lexical variable
+;;;
 ;;; (define $env (make-env '()))
 ;;; (define $fn (make-fn 'testfn $code1 $env))
 ;;; (define $vm (make-vm '() $fn $code1 0 $env '() 0 #f #f))
 
+;;; (display-vm-status $vm)
+;;; (stepvm $vm)
+;;; (time (runvm $vm))
+
+(define $code2 (vector (make-instr CONST 5 #f)
+                       (make-instr GSET 'x #f)
+                       (make-instr POP #f #f)
+                       (make-instr GVAR 'x #f)
+                       (make-instr HALT #f #f)))
+
+;;; $code2
+;;; set and reference a global variable
+;;;
+;;; (define $env (make-env '()))
+;;; (define $fn (make-fn 'testfn $code2 $env))
+;;; (define $vm (make-vm '() $fn $code2 0 $env '() 0 #f #f))
 
 ;;; (display-vm-status $vm)
 ;;; (stepvm $vm)
 ;;; (time (runvm $vm))
+
 
 
