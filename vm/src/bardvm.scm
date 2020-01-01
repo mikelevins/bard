@@ -12,7 +12,7 @@
 ;;; the vm structure
 ;;; ---------------------------------------------------------------------
 
-(define-structure vm fn code pc env stack nargs instr halt)
+(define-structure vm globals fn code pc env stack nargs instr halt)
 
 ;;; ---------------------------------------------------------------------
 ;;; support functions
@@ -60,11 +60,26 @@
                              (vm-env vm))))
     val))
 
+(define (global-ref vm var)
+  (let* ((globals (vm-globals vm))
+         (entry (assq var globals)))
+    (if entry
+        (cdr entry)
+        (error "Undefined variable: " var))))
+
+(define (global-set! vm var val)
+  (let* ((globals (vm-globals vm))
+         (entry (assq var globals)))
+    (if entry
+        (set-cdr! entry val)
+        (vm-globals-set! vm
+                         (cons (cons var val)
+                               (vm-globals vm))))
+    val))
+
 (define (make-env-frame vals) #f)
 (define (arg1 vm)(instr-arg1 (vm-instr vm)))
 (define (arg2 vm)(instr-arg2 (vm-instr vm)))
-(define (global-ref vm var) #f)
-(define (global-set! vm var val) #f)
 (define (true? val) #f)
 (define (false? val) #f)
 (define (ensure-argcount found-count expected-count) #f)
@@ -83,8 +98,12 @@
      ;; stack and variables
      ((= opc LVAR) (stack-push! vm (env-ref vm (arg1 vm))))
      ((= opc LSET) (env-set! vm (arg1 vm) (stack-top vm)))
-     ((= opc CONST) (stack-push! vm (arg1 vm)))
+     ((= opc GVAR) (stack-push! vm (global-ref vm (arg1 vm))))
+     ((= opc GSET) (global-set! vm (arg1 vm) (stack-top vm)))
      ((= opc POP) (stack-pop! vm))
+     ((= opc CONST) (stack-push! vm (arg1 vm)))
+
+     ;; branching
 
      ;; machine control
      ((= opc HALT) (vm-halt-set! vm #t))
@@ -100,6 +119,7 @@
   (display "  instr: ")(display (vm-instr vm))(newline)
   (display "  stack: ")(display (vm-stack vm))(newline)
   (display "  halt: ")(display (vm-halt vm))(newline)
+  (display "  globals: ")(display (vm-globals vm))(newline)
   (display "  env: ")(display (vm-env vm))(newline)
   (display "  code: ")(display (vm-code vm))(newline)(newline)
   (newline))
@@ -118,6 +138,7 @@
 ;;; ---------------------------------------------------------------------
 
 (define $code0 (vector (make-instr HALT #f #f)))
+
 (define $code1 (vector (make-instr CONST 5 #f)
                        (make-instr LSET 'x #f)
                        (make-instr POP #f #f)
@@ -127,12 +148,12 @@
 ;;; $code0
 ;;; (define $env (make-env '()))
 ;;; (define $fn (make-fn 'testfn $code0 $env))
-;;; (define $vm (make-vm $fn $code0 0 $env '() 0 #f #f))
+;;; (define $vm (make-vm '() $fn $code0 0 $env '() 0 #f #f))
 
 ;;; $code1
 ;;; (define $env (make-env '()))
 ;;; (define $fn (make-fn 'testfn $code1 $env))
-;;; (define $vm (make-vm $fn $code1 0 $env '() 0 #f #f))
+;;; (define $vm (make-vm '() $fn $code1 0 $env '() 0 #f #f))
 
 
 ;;; (display-vm-status $vm)
