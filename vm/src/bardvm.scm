@@ -76,6 +76,10 @@
 (define (arg1 vm)(instr-arg1 (vm-instr vm)))
 (define (arg2 vm)(instr-arg2 (vm-instr vm)))
 
+;;; TODO: make true? and false? work with all the relevant bard datatypes
+(define (true? val)(if val #t #f))
+(define (false? val)(if val #f #t))
+
 (define (display-vm-status vm)
   (newline)
   (display "Bard VM state:")(newline)
@@ -108,6 +112,9 @@
      ((= opc CONST) (stack-push! vm (arg1 vm)))
 
      ;; branching
+     ((= opc JUMP) (vm-pc-set! vm (arg1 vm)))
+     ((= opc FJUMP) (when (false? (stack-pop! vm)) (vm-pc-set! vm (arg1 vm))))
+     ((= opc TJUMP) (when (true? (stack-pop! vm)) (vm-pc-set! vm (arg1 vm))))
 
      ;; machine control
      ((= opc HALT) (vm-halt-set! vm #t))
