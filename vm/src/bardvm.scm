@@ -116,6 +116,23 @@
      ((= opc FJUMP) (when (false? (stack-pop! vm)) (vm-pc-set! vm (arg1 vm))))
      ((= opc TJUMP) (when (true? (stack-pop! vm)) (vm-pc-set! vm (arg1 vm))))
 
+     ;; binary operations
+     ((= opc ADD) (let ((p2 (stack-pop! vm))
+                        (p1 (stack-pop! vm)))
+                    (stack-push! vm (+ p1 p2))))
+
+     ((= opc SUB) (let ((p2 (stack-pop! vm))
+                        (p1 (stack-pop! vm)))
+                    (stack-push! vm (- p1 p2))))
+
+     ((= opc LT) (let ((p2 (stack-pop! vm))
+                       (p1 (stack-pop! vm)))
+                   (stack-push! vm (< p1 p2))))
+
+     ((= opc LTE) (let ((p2 (stack-pop! vm))
+                        (p1 (stack-pop! vm)))
+                    (stack-push! vm (<= p1 p2))))
+
      ;; machine control
      ((= opc HALT) (vm-halt-set! vm #t))
 
@@ -127,8 +144,7 @@
   (let loop ()
     (if (vm-halt vm)
         (begin (display-vm-status vm)
-               (display "Bard VM finished.")
-               (stack-top vm))
+               (display "Bard VM finished."))
         (begin (stepvm vm)
                (loop)))))
 
@@ -178,6 +194,39 @@
 ;;; (define $env (make-env '()))
 ;;; (define $fn (make-fn 'testfn $code2 $env))
 ;;; (define $vm (make-vm '() $fn $code2 0 $env '() 0 #f #f))
+
+;;; (display-vm-status $vm)
+;;; (stepvm $vm)
+;;; (time (runvm $vm))
+
+
+(define $code3 (vector
+                (make-instr CONST 10000 #f)  ; 0
+                (make-instr GSET 'limit #f) ; 1
+                (make-instr POP #f #f)      ; 2
+                (make-instr CONST 0 #f)     ; 3
+                (make-instr GSET 'i #f)     ; 4
+                (make-instr POP #f #f)      ; 5
+                (make-instr GVAR 'i #f)     ; 6
+                (make-instr GVAR 'limit #f) ; 7
+                (make-instr LT #f #f)       ; 8
+                (make-instr FJUMP 16 #f)     ; 9
+                (make-instr GVAR 'i #f)     ; 10
+                (make-instr CONST 1 #f)     ; 11
+                (make-instr ADD #f #f)      ; 12
+                (make-instr GSET 'i #f)     ; 13
+                (make-instr POP #f #f)      ; 14
+                (make-instr JUMP 6 #f)      ; 15
+                
+                (make-instr HALT #f #f)     ; 16
+                ))
+
+;;; $code3
+;;; count up to 10000 and stop
+;;;
+;;; (define $env (make-env '()))
+;;; (define $fn (make-fn 'testfn $code3 $env))
+;;; (define $vm (make-vm '() $fn $code3 0 $env '() 0 #f #f))
 
 ;;; (display-vm-status $vm)
 ;;; (stepvm $vm)
