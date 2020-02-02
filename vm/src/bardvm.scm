@@ -217,7 +217,6 @@
                 (make-instr GSET 'i #f)     ; 13
                 (make-instr POP #f #f)      ; 14
                 (make-instr JUMP 6 #f)      ; 15
-                
                 (make-instr HALT #f #f)     ; 16
                 ))
 
