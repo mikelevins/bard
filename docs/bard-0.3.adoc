@@ -1,0 +1,407 @@
+= bard 0.3
+
+mikel evins <mikel@evins.net>
+
+Documents what's working in the 0.3 version of the bard interpreter.
+
+:toc:
+
+== Lexical syntax
+
+=== Named constants
+
+[cols="1,5"]
+|===
+|`*undefined*` | The absence of a meaningful value
+|`*nothing*` | An empty collection of values
+|`*true*` | The Boolean true value
+|`*false*` | The Boolean false value
+|===
+
+=== Characters
+
+Characters are atomic elements that appear in text strings. Following
+are a few examples of literal character syntax:
+
+[cols="1,5"]
+|===
+|`*#\c*` | literal character
+|`*#\space*` | named literal character
+|===
+
+=== List forms
+
+Lists are ordered sequences of values. List syntaxes include:
+
+[cols="1,5"]
+|===
+|`*(...)*` | procedure application
+|`*[...]*` | literal list
+|`*{...}*` | literal table
+|`*"..."*` | literal string
+|===
+
+== Schemas
+
+A **schema** is an object that formally describes the representation
+of a set of values. A schema is a concrete data layout. Schemas may be defined by user code. The following
+built-in schemas are defined by bard 0.3:
+
+[cols="1,5"]
+|===
+|`*<alist-table>*` | Tables as represented by association lists (key/value pairs in a list made of cons cells)
+|`*<base-schema>*` | the representation of basic, built-in schemas
+|`*<bignum>*` | unlimited-precision integers
+|`*<boolean>*` | true and false
+|`*<character>*` | the elements of text strings
+|`*<class>*` | abstract types consisting of sets of other classes and schemas
+|`*<fixnum>*` | a compact representation of integers
+|`*<flonum>*` | a compact representation of floating-point numbers
+|`*<foreign-schema>*` | a representation of foreign data (for example, of C structs)
+|`*<function>*` | polymorphic user-definable procedures
+|`*<generator>*` | procedures that may be called repeatedly to produce a new value on each call
+|`*<interpreted-method>*` | monomorphic user-definable procedures represented as interpreted code
+|`*<iostream>*` | sources and sinks for bytes and other values
+|`*<keyword>*` | names that evaluate to themselves
+|`*<null>*` | the representation of `nothing`
+|`*<pair>*` | the representation of primitive pairs (cons cells in 0.3)
+|`*<primitive-procedure>*` | representation of procedures provided by the host runtime
+|`*<primitive-schema>*` | representation of data structures provided by the host runtime
+|`*<primitive>*` | representation of built-in primitive operations such as print, newline, etc.
+|`*<protocol>*` | representation of bard protocols
+|`*<ratnum>*` | representation of ratios
+|`*<record>*` | representation of record instances
+|`*<singleton>*` | representation of singleton types
+|`*<string>*` | representation of text strings
+|`*<structure-schema>*` | representation of templates for structure instances
+|`*<symbol>*` | representations of names
+|`*<tuple>*` | representations of structures that consist of ordered sequences of values
+|`*<undefined>*` | representation of absent values
+|`*<union>*` | representations of types consisting of more than one data layout
+|`*<url>*` | representations of URLs
+|`*<vector>*` | representations of ordered sequences of values
+|===
+
+## Classes
+
+
+Type variables that name roles defined by bard protocols. A schema becomes a member of a class when protocol functions that define the class are specialized for the schema.
+
+=== Built-in classes in bard 0.3
+
+|===
+|`*Anything*`
+|`*Applicable*`
+|`*Boolean*`
+|`*Character*`
+|`*Class*`
+|`*File*`
+|`*Float*`
+|`*Fraction*`
+|`*Function*`
+|`*InputStream*`
+|`*Integer*`
+|`*IODirection*`
+|`*IOMode*`
+|`*IOType*`
+|`*Keyword*`
+|`*List*`
+|`*Method*`
+|`*Null*`
+|`*Number*`
+|`*Orderable*`
+|`*OutputStream*`
+|`*Pair*`
+|`*Protocol*`
+|`*Ratio*`
+|`*Schema*`
+|`*Stream*`
+|`*Symbol*`
+|`*Table*`
+|`*Text*`
+|`*Type*`
+|`*Undefined*`
+|`*URL*`
+|===
+
+== Protocols
+
+A protocol is a named collection of variable, operator, and class definitions.
+
+Each protocol is described using the following typographical conventions:
+
+==== Protocol name
+Classes: `Classname1`, `Classname2`, ...
+
+|===
+|`*operator-name* _positional-parameter-type_ keyword-parameter-name: _keyword-parameter-type_  &  -> _return-type_`
+|===
+
+The symbol `*&*` indicates a *rest parameter*--that is, a parameter that is bound to any number of input arguments. Any number of arguments may follow the `*&*`.
+
+If keyword parameters are present, then the operator accepts those named keyword parameters with the types given by the arguments shown.
+
+The `*->*` symbol means that the operator returns the type or types to its right. bard operators may return any number of values.
+
+If `*&*` appears in both the input and output parameters, it means that the operator returns a number of outputs equal to the number of rest arguments. For example:
+
+`*partition* `_List_` & -> &`  
+
+The `partition` function accepts a `List` input and any number of `_Function_` arguments. It returns a number of values equal to the number of `_Function_` arguments.
+
+=== Built-in protocols in bard 0.3
+
+=== Addressing
+Classes: `Name`, `URL`
+
+|===
+|`*url* scheme: _Name_ domain: _Name_ port: _Name_ path: _Name_ query: _Name_ -> _URL_`
+|`*url-domain* _URL_ -> _Name_`
+|`*url-path* _URL_ -> _Name_`
+|`*url-port* _URL_ -> _Name_`
+|`*url-query* _URL_ -> _Name_`
+|`*url-scheme* _URL_ -> _Name_`
+|===
+
+=== Applying
+
+|===
+|`*applicable?* _Anything_ -> _Boolean_`
+|`*apply* _Applicable_ & -> _Anything_`
+|`*complement* Applicable -> Applicable`  
+|`*compose* & -> _Applicable_`  
+|`*constantly* _Anything_ -> _Applicable_`  
+|`*eval* _Anything_ -> _Anything_`  
+|`*flip* _Applicable_ -> _Applicable_`  
+|`*identity* _Anything_ -> _Anything_`  
+|`*partial* _Applicable_ & -> _Applicable_`  
+|===
+
+=== Calculating  
+
+|===
+|`*** & -> _Number_`  
+|`*+* & -> _Number_`  
+|`*-* & -> _Number_`  
+|`*/* & -> _Number_`  
+|`*even?* _Integer_ -> _Boolean_`  
+|`*max* & -> _Number_`  
+|`*min* & -> _Number_`  
+|`*odd?* _Integer_ -> _Boolean_`  
+|`*random* _Integer_ -> _Integer_`  
+|`*remainder* _Integer_ _Integer_ -> _Integer_`  
+|===
+
+=== Comparing  
+
+|===
+|`*=* & -> _Boolean_`  
+|`*prim:=* _Anything_ _Anything_ -> _Boolean_`  
+|===
+  
+=== Converting  
+
+|===
+|`*as* _Type_ _Anything_ -> _Type_`  
+|===
+  
+=== Creating  
+
+|===
+|`*make* _Type_ & -> _Type_`  
+|===
+  
+=== Generating  
+
+|===
+|`*cycle* _List_ -> _Generator_`  
+|`*generated-count* _Generator_ -> _Integer_`  
+|`*generated-values* _Generator_ -> _List_`  
+|`*iterate* _Procedure_ -> _Generator_`  
+|`*next* _Generator_ -> _Anything_`  
+|`*next-n* _Generator_ -> _List_`  
+|`*range-from* _Integer_ -> _Generator_`  
+|===
+  
+=== Listing  
+
+|===
+|`*add-first* _Anything_ _List_ -> _List_`  
+|`*add-last* _List_ _Anything_ -> _List_`  
+|`*any* _List_ -> _Anything_`  
+|`*append* & -> _List_`  
+|`*by* _Integer_ _List_ -> _List_`  
+|`*drop* _Integer_ _List_ -> _List_`  
+|`*element* _List_ _Integer_ -> _Anything_`  
+|`*empty*? _List_ -> _Boolean_`  
+|`*filter* _Procedure_ _List_ -> _List_`  
+|`*first* _List_ -> _Anything_`  
+|`*join-text* _List_ -> _Text_`  
+|`*last* _List_ -> _Anything_`  
+|`*length* _List_ -> _Integer_`  
+|`*list* & -> _List_`  
+|`*map* _Procedure_ _List_ -> _List_`  
+|`*member*? _Anything_ _List_ -> _Boolean_`  
+|`*next-last* _List_ -> _Anything_`  
+|`*partition* & -> &`  
+|`*position* _Anything_ _List_ -> _Integer_`  
+|`*position-if* _Procedure_ _List_ -> _Integer_`  
+|`*range* _Integer_ _Integer_ -> _List_`  
+|`*reduce* _Procedure_ _Anything_ & -> _Anything_`  
+|`*rest* _List_ -> _List_`  
+|`*reverse* _List_ -> _List_`  
+|`*second* _List_ -> _Anything_`  
+|`*some?* _Procedure_ _List_ -> _Anything_`  
+|`*split-text* _Text_ _Character_ -> _List_`  
+|`*take* _Integer_ _List_ -> _List_`  
+|`*take-by* _Integer_ _Integer_ _List_ -> _List_`  
+|`*vector* & -> _List_`  
+|===
+  
+=== Mapping  
+
+|===
+|`*get-key* _Map_ _Anything_ -> _Anything_`  
+|`*keys* _Map_ -> _List_`  
+|`*merge* _Map_ _Map_ -> _Map_`  
+|`*put-key* _Map_ _Anything_ _Anything_ -> _Map_`  
+|`*vals* _Map_ -> _List_`  
+|`*table* & -> _Map_`  
+|===
+  
+=== Ordering  
+
+|===
+|`*<* & -> _Boolean_`  
+|`*&lt;=* & -> _Boolean_`  
+|`*>* & -> _Boolean_`  
+|`*>=* & -> _Boolean_`  
+|===
+  
+=== Pairing  
+
+|===
+|`*left* _Pair_ -> _Anything_`  
+|`*pair* _Anything_ _Anything_ -> _Pair_`  
+|`*right* _Pair_ -> _Anything_`  
+|===
+  
+=== Reading  
+
+|===
+|`*current-input* -> _Stream_`  
+|`*load* _URL_ -> _Boolean_`  
+|`*read* _Stream_ -> _Anything_`  
+|`*read-file* _URL_ -> _List_`  
+|`*read-line* _Stream_ -> _List_`  
+|`*read-lines* _Stream_ -> _List_`  
+|`*read-text* _Stream_ -> _Text_`  
+|===
+  
+=== Streaming  
+
+|===
+|`*contents* _Stream_ -> _List_`  
+|`*lines* _Stream_ -> _List_`  
+|`*stream-direction* _Stream_ -> _Name_`  
+|===
+  
+=== System  
+
+|===
+|`*error*`  
+|`*exit*`  
+|`*gc*`  
+|`*gensym*`  
+|`*quit*`  
+|`*room*`  
+|`*uuid*`  
+|`*version*`  
+|===
+  
+=== Typing  
+
+|===
+|`*boolean?*`  
+|`*character?*`  
+|`*class?*`  
+|`*false?*`  
+|`*float?*`  
+|`*foreign-value?*`  
+|`*function?*`  
+|`*input-stream?*`  
+|`*integer?*`  
+|`*iostream?*`  
+|`*keyword?*`  
+|`*nothing?*`  
+|`*output-stream?*`  
+|`*protocols*`  
+|`*list?*`  
+|`*list-protocols*`  
+|`*method?*`  
+|`*pair?*`  
+|`*protocol?*`  
+|`*singleton*`  
+|`*something?*`  
+|`*symbol?*`  
+|`*table?*`  
+|`*text?*`  
+|`*true?*`  
+|`*type*`  
+|`*undefined?*`  
+|===
+  
+=== Writing  
+
+|===
+|`*current-output*`  
+|`*display*`  
+|`*newline*`  
+|`*print*`  
+|`*show*`  
+|`*write*`  
+|===
+  
+== Special forms  
+  
+|===
+|`*add-method!*`  
+|`*begin*`  
+|`*cond*`  
+|`*def*`  
+|`*define class*`  
+|`*define macro*`
+|`*define method*`  
+|`*define protocol*`  
+|`*define record*`  
+|`*define tuple*`  
+|`*define variable*`  
+|`*ensure*`  
+|`*function*`  
+|`*generate*`  
+|`*if*`  
+|`*let*`  
+|`*loop*`  
+|`*method*` (aka `^`)  
+|`*not*`  
+|`*protocol*`  
+|`*quasiquote*`  
+|`*quote*`  
+|`*remove-method!*`  
+|`*repeat*`  
+|`*set!*`  
+|`*time*`  
+|`*undefine*`  
+|`*unless*`  
+|`*values*`  
+|`*when*`  
+|`*with-exit*`  
+|`*with-open-file*`  
+|===
+  
+== Macros  
+  
+|===
+|`*and*`  
+|`*or*`  
+|===
