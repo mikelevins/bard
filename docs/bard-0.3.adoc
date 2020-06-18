@@ -137,6 +137,14 @@ Classes: `Classname1`, `Classname2`, ...
 |`*operator-name* _positional-parameter-type_ keyword-parameter-name: _keyword-parameter-type_  &  -> _return-type_`
 |===
 
+The classes line lists the classes defined by the protocol.
+
+The `*operator-name*` gives the name of a function, method, macro, or special form defined by the protocol.
+
+The _positional-parameter-type_ expressions give the types of positional parameters that the operator accepts.
+
+The keyword-parameter-name: and _keyword-parameter-type_ expressions give the names and expected types of keyword parameters the operator accepts.
+
 The symbol `*&*` indicates a *rest parameter*--that is, a parameter that is bound to any number of input arguments. Any number of arguments may follow the `*&*`.
 
 If keyword parameters are present, then the operator accepts those named keyword parameters with the types given by the arguments shown.
