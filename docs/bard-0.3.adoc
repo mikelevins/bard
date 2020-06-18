@@ -1,10 +1,10 @@
 = bard 0.3
+:toc:
 
 mikel evins <mikel@evins.net>
 
 Documents what's working in the 0.3 version of the bard interpreter.
 
-:toc:
 
 == Lexical syntax
 
@@ -89,39 +89,39 @@ Type variables that name roles defined by bard protocols. A schema becomes a mem
 
 === Built-in classes in bard 0.3
 
+[cols="1,5"]
 |===
-|`*Anything*`
-|`*Applicable*`
-|`*Boolean*`
-|`*Character*`
-|`*Class*`
-|`*File*`
-|`*Float*`
-|`*Fraction*`
-|`*Function*`
-|`*InputStream*`
-|`*Integer*`
-|`*IODirection*`
-|`*IOMode*`
-|`*IOType*`
-|`*Keyword*`
-|`*List*`
-|`*Method*`
-|`*Null*`
-|`*Number*`
-|`*Orderable*`
-|`*OutputStream*`
-|`*Pair*`
-|`*Protocol*`
-|`*Ratio*`
-|`*Schema*`
-|`*Stream*`
-|`*Symbol*`
-|`*Table*`
-|`*Text*`
-|`*Type*`
-|`*Undefined*`
-|`*URL*`
+|`*Anything*` | Any bard value
+|`*Applicable*` | A value, such as a function or method, that can be applied to arguments to perform a computation
+|`*Boolean*` | `true` or `false`
+|`*Character*` | An element of a `Text` string
+|`*Class*` | A type variable; a name for a set of values that play a defined role in a protocol
+|`*File*` | A persistent store of bytes or other data elements
+|`*Float*` | A floating-point number
+|`*Function*` | A polymorphic procedure that can be applied to arguments to perform a computation
+|`*InputStream*` | A readable source of data elements
+|`*Integer*` | A whole number
+|`*IODirection*` | `input:` or `output:`
+|`*IOMode*` | `read:` or `write:`
+|`*IOType*` | A class identifying the types of elements that can be read from or written to a stream
+|`*Keyword*` | A symbol that always evaluates to itself
+|`*List*` | A finite, ordered sequence of values
+|`*Method*` | A monomorphic procedure that can be applied to arguments to perform a computation
+|`*Null*` | `nothing`
+|`*Number*` | Numeric values
+|`*Orderable*` | Values that may be stably sorted
+|`*OutputStream*` | A writable sink for data elements
+|`*Pair*` | A container with exactly two elements
+|`*Protocol*` | A named collection of procedures and variables defining a set of classes
+|`*Ratio*` | A number expressed as a ratio between integers
+|`*Schema*` | A specification for how to lay out a concrete representation of a family of values
+|`*Stream*` | A readable or writable source or sink for data elements
+|`*Symbol*` | A name used to identify variables, functions, classes, and other bard objects
+|`*Table*` | A finite map from keys to values
+|`*Text*` | A sequence of text characters; a string
+|`*Type*` | A class or schema; a named collection of datatypes
+|`*Undefined*` | An absent, meaningless, or unavailable value
+|`*URL*` | A resource identifier that conforms to standard URL syntax
 |===
 
 == Protocols
@@ -145,7 +145,7 @@ The `*->*` symbol means that the operator returns the type or types to its right
 
 If `*&*` appears in both the input and output parameters, it means that the operator returns a number of outputs equal to the number of rest arguments. For example:
 
-`*partition* `_List_` & -> &`  
+`*partition* `_List_` & -> &`
 
 The `partition` function accepts a `List` input and any number of `_Function_` arguments. It returns a number of values equal to the number of `_Function_` arguments.
 
@@ -168,240 +168,240 @@ Classes: `Name`, `URL`
 |===
 |`*applicable?* _Anything_ -> _Boolean_`
 |`*apply* _Applicable_ & -> _Anything_`
-|`*complement* Applicable -> Applicable`  
-|`*compose* & -> _Applicable_`  
-|`*constantly* _Anything_ -> _Applicable_`  
-|`*eval* _Anything_ -> _Anything_`  
-|`*flip* _Applicable_ -> _Applicable_`  
-|`*identity* _Anything_ -> _Anything_`  
-|`*partial* _Applicable_ & -> _Applicable_`  
+|`*complement* Applicable -> Applicable`
+|`*compose* & -> _Applicable_`
+|`*constantly* _Anything_ -> _Applicable_`
+|`*eval* _Anything_ -> _Anything_`
+|`*flip* _Applicable_ -> _Applicable_`
+|`*identity* _Anything_ -> _Anything_`
+|`*partial* _Applicable_ & -> _Applicable_`
 |===
 
-=== Calculating  
+=== Calculating
 
 |===
-|`*** & -> _Number_`  
-|`*+* & -> _Number_`  
-|`*-* & -> _Number_`  
-|`*/* & -> _Number_`  
-|`*even?* _Integer_ -> _Boolean_`  
-|`*max* & -> _Number_`  
-|`*min* & -> _Number_`  
-|`*odd?* _Integer_ -> _Boolean_`  
-|`*random* _Integer_ -> _Integer_`  
-|`*remainder* _Integer_ _Integer_ -> _Integer_`  
+|`*** & -> _Number_`
+|`*+* & -> _Number_`
+|`*-* & -> _Number_`
+|`*/* & -> _Number_`
+|`*even?* _Integer_ -> _Boolean_`
+|`*max* & -> _Number_`
+|`*min* & -> _Number_`
+|`*odd?* _Integer_ -> _Boolean_`
+|`*random* _Integer_ -> _Integer_`
+|`*remainder* _Integer_ _Integer_ -> _Integer_`
 |===
 
-=== Comparing  
+=== Comparing
 
 |===
-|`*=* & -> _Boolean_`  
-|`*prim:=* _Anything_ _Anything_ -> _Boolean_`  
+|`*=* & -> _Boolean_`
+|`*prim:=* _Anything_ _Anything_ -> _Boolean_`
 |===
-  
-=== Converting  
+
+=== Converting
 
 |===
-|`*as* _Type_ _Anything_ -> _Type_`  
+|`*as* _Type_ _Anything_ -> _Type_`
 |===
-  
-=== Creating  
+
+=== Creating
 
 |===
-|`*make* _Type_ & -> _Type_`  
+|`*make* _Type_ & -> _Type_`
 |===
-  
-=== Generating  
+
+=== Generating
 
 |===
-|`*cycle* _List_ -> _Generator_`  
-|`*generated-count* _Generator_ -> _Integer_`  
-|`*generated-values* _Generator_ -> _List_`  
-|`*iterate* _Procedure_ -> _Generator_`  
-|`*next* _Generator_ -> _Anything_`  
-|`*next-n* _Generator_ -> _List_`  
-|`*range-from* _Integer_ -> _Generator_`  
+|`*cycle* _List_ -> _Generator_`
+|`*generated-count* _Generator_ -> _Integer_`
+|`*generated-values* _Generator_ -> _List_`
+|`*iterate* _Procedure_ -> _Generator_`
+|`*next* _Generator_ -> _Anything_`
+|`*next-n* _Generator_ -> _List_`
+|`*range-from* _Integer_ -> _Generator_`
 |===
-  
-=== Listing  
+
+=== Listing
 
 |===
-|`*add-first* _Anything_ _List_ -> _List_`  
-|`*add-last* _List_ _Anything_ -> _List_`  
-|`*any* _List_ -> _Anything_`  
-|`*append* & -> _List_`  
-|`*by* _Integer_ _List_ -> _List_`  
-|`*drop* _Integer_ _List_ -> _List_`  
-|`*element* _List_ _Integer_ -> _Anything_`  
-|`*empty*? _List_ -> _Boolean_`  
-|`*filter* _Procedure_ _List_ -> _List_`  
-|`*first* _List_ -> _Anything_`  
-|`*join-text* _List_ -> _Text_`  
-|`*last* _List_ -> _Anything_`  
-|`*length* _List_ -> _Integer_`  
-|`*list* & -> _List_`  
-|`*map* _Procedure_ _List_ -> _List_`  
-|`*member*? _Anything_ _List_ -> _Boolean_`  
-|`*next-last* _List_ -> _Anything_`  
-|`*partition* & -> &`  
-|`*position* _Anything_ _List_ -> _Integer_`  
-|`*position-if* _Procedure_ _List_ -> _Integer_`  
-|`*range* _Integer_ _Integer_ -> _List_`  
-|`*reduce* _Procedure_ _Anything_ & -> _Anything_`  
-|`*rest* _List_ -> _List_`  
-|`*reverse* _List_ -> _List_`  
-|`*second* _List_ -> _Anything_`  
-|`*some?* _Procedure_ _List_ -> _Anything_`  
-|`*split-text* _Text_ _Character_ -> _List_`  
-|`*take* _Integer_ _List_ -> _List_`  
-|`*take-by* _Integer_ _Integer_ _List_ -> _List_`  
-|`*vector* & -> _List_`  
+|`*add-first* _Anything_ _List_ -> _List_`
+|`*add-last* _List_ _Anything_ -> _List_`
+|`*any* _List_ -> _Anything_`
+|`*append* & -> _List_`
+|`*by* _Integer_ _List_ -> _List_`
+|`*drop* _Integer_ _List_ -> _List_`
+|`*element* _List_ _Integer_ -> _Anything_`
+|`*empty*? _List_ -> _Boolean_`
+|`*filter* _Procedure_ _List_ -> _List_`
+|`*first* _List_ -> _Anything_`
+|`*join-text* _List_ -> _Text_`
+|`*last* _List_ -> _Anything_`
+|`*length* _List_ -> _Integer_`
+|`*list* & -> _List_`
+|`*map* _Procedure_ _List_ -> _List_`
+|`*member*? _Anything_ _List_ -> _Boolean_`
+|`*next-last* _List_ -> _Anything_`
+|`*partition* & -> &`
+|`*position* _Anything_ _List_ -> _Integer_`
+|`*position-if* _Procedure_ _List_ -> _Integer_`
+|`*range* _Integer_ _Integer_ -> _List_`
+|`*reduce* _Procedure_ _Anything_ & -> _Anything_`
+|`*rest* _List_ -> _List_`
+|`*reverse* _List_ -> _List_`
+|`*second* _List_ -> _Anything_`
+|`*some?* _Procedure_ _List_ -> _Anything_`
+|`*split-text* _Text_ _Character_ -> _List_`
+|`*take* _Integer_ _List_ -> _List_`
+|`*take-by* _Integer_ _Integer_ _List_ -> _List_`
+|`*vector* & -> _List_`
 |===
-  
-=== Mapping  
+
+=== Mapping
 
 |===
-|`*get-key* _Map_ _Anything_ -> _Anything_`  
-|`*keys* _Map_ -> _List_`  
-|`*merge* _Map_ _Map_ -> _Map_`  
-|`*put-key* _Map_ _Anything_ _Anything_ -> _Map_`  
-|`*vals* _Map_ -> _List_`  
-|`*table* & -> _Map_`  
+|`*get-key* _Map_ _Anything_ -> _Anything_`
+|`*keys* _Map_ -> _List_`
+|`*merge* _Map_ _Map_ -> _Map_`
+|`*put-key* _Map_ _Anything_ _Anything_ -> _Map_`
+|`*vals* _Map_ -> _List_`
+|`*table* & -> _Map_`
 |===
-  
-=== Ordering  
+
+=== Ordering
 
 |===
-|`*<* & -> _Boolean_`  
-|`*&lt;=* & -> _Boolean_`  
-|`*>* & -> _Boolean_`  
-|`*>=* & -> _Boolean_`  
+|`*<* & -> _Boolean_`
+|`*&lt;=* & -> _Boolean_`
+|`*>* & -> _Boolean_`
+|`*>=* & -> _Boolean_`
 |===
-  
-=== Pairing  
+
+=== Pairing
 
 |===
-|`*left* _Pair_ -> _Anything_`  
-|`*pair* _Anything_ _Anything_ -> _Pair_`  
-|`*right* _Pair_ -> _Anything_`  
+|`*left* _Pair_ -> _Anything_`
+|`*pair* _Anything_ _Anything_ -> _Pair_`
+|`*right* _Pair_ -> _Anything_`
 |===
-  
-=== Reading  
+
+=== Reading
 
 |===
-|`*current-input* -> _Stream_`  
-|`*load* _URL_ -> _Boolean_`  
-|`*read* _Stream_ -> _Anything_`  
-|`*read-file* _URL_ -> _List_`  
-|`*read-line* _Stream_ -> _List_`  
-|`*read-lines* _Stream_ -> _List_`  
-|`*read-text* _Stream_ -> _Text_`  
+|`*current-input* -> _Stream_`
+|`*load* _URL_ -> _Boolean_`
+|`*read* _Stream_ -> _Anything_`
+|`*read-file* _URL_ -> _List_`
+|`*read-line* _Stream_ -> _List_`
+|`*read-lines* _Stream_ -> _List_`
+|`*read-text* _Stream_ -> _Text_`
 |===
-  
-=== Streaming  
+
+=== Streaming
 
 |===
-|`*contents* _Stream_ -> _List_`  
-|`*lines* _Stream_ -> _List_`  
-|`*stream-direction* _Stream_ -> _Name_`  
+|`*contents* _Stream_ -> _List_`
+|`*lines* _Stream_ -> _List_`
+|`*stream-direction* _Stream_ -> _Name_`
 |===
-  
-=== System  
+
+=== System
 
 |===
-|`*error*`  
-|`*exit*`  
-|`*gc*`  
-|`*gensym*`  
-|`*quit*`  
-|`*room*`  
-|`*uuid*`  
-|`*version*`  
+|`*error*`
+|`*exit*`
+|`*gc*`
+|`*gensym*`
+|`*quit*`
+|`*room*`
+|`*uuid*`
+|`*version*`
 |===
-  
-=== Typing  
+
+=== Typing
 
 |===
-|`*boolean?*`  
-|`*character?*`  
-|`*class?*`  
-|`*false?*`  
-|`*float?*`  
-|`*foreign-value?*`  
-|`*function?*`  
-|`*input-stream?*`  
-|`*integer?*`  
-|`*iostream?*`  
-|`*keyword?*`  
-|`*nothing?*`  
-|`*output-stream?*`  
-|`*protocols*`  
-|`*list?*`  
-|`*list-protocols*`  
-|`*method?*`  
-|`*pair?*`  
-|`*protocol?*`  
-|`*singleton*`  
-|`*something?*`  
-|`*symbol?*`  
-|`*table?*`  
-|`*text?*`  
-|`*true?*`  
-|`*type*`  
-|`*undefined?*`  
+|`*boolean?*`
+|`*character?*`
+|`*class?*`
+|`*false?*`
+|`*float?*`
+|`*foreign-value?*`
+|`*function?*`
+|`*input-stream?*`
+|`*integer?*`
+|`*iostream?*`
+|`*keyword?*`
+|`*nothing?*`
+|`*output-stream?*`
+|`*protocols*`
+|`*list?*`
+|`*list-protocols*`
+|`*method?*`
+|`*pair?*`
+|`*protocol?*`
+|`*singleton*`
+|`*something?*`
+|`*symbol?*`
+|`*table?*`
+|`*text?*`
+|`*true?*`
+|`*type*`
+|`*undefined?*`
 |===
-  
-=== Writing  
+
+=== Writing
 
 |===
-|`*current-output*`  
-|`*display*`  
-|`*newline*`  
-|`*print*`  
-|`*show*`  
-|`*write*`  
+|`*current-output*`
+|`*display*`
+|`*newline*`
+|`*print*`
+|`*show*`
+|`*write*`
 |===
-  
-== Special forms  
-  
+
+== Special forms
+
 |===
-|`*add-method!*`  
-|`*begin*`  
-|`*cond*`  
-|`*def*`  
-|`*define class*`  
+|`*add-method!*`
+|`*begin*`
+|`*cond*`
+|`*def*`
+|`*define class*`
 |`*define macro*`
-|`*define method*`  
-|`*define protocol*`  
-|`*define record*`  
-|`*define tuple*`  
-|`*define variable*`  
-|`*ensure*`  
-|`*function*`  
-|`*generate*`  
-|`*if*`  
-|`*let*`  
-|`*loop*`  
-|`*method*` (aka `^`)  
-|`*not*`  
-|`*protocol*`  
-|`*quasiquote*`  
-|`*quote*`  
-|`*remove-method!*`  
-|`*repeat*`  
-|`*set!*`  
-|`*time*`  
-|`*undefine*`  
-|`*unless*`  
-|`*values*`  
-|`*when*`  
-|`*with-exit*`  
-|`*with-open-file*`  
+|`*define method*`
+|`*define protocol*`
+|`*define record*`
+|`*define tuple*`
+|`*define variable*`
+|`*ensure*`
+|`*function*`
+|`*generate*`
+|`*if*`
+|`*let*`
+|`*loop*`
+|`*method*` (aka `^`)
+|`*not*`
+|`*protocol*`
+|`*quasiquote*`
+|`*quote*`
+|`*remove-method!*`
+|`*repeat*`
+|`*set!*`
+|`*time*`
+|`*undefine*`
+|`*unless*`
+|`*values*`
+|`*when*`
+|`*with-exit*`
+|`*with-open-file*`
 |===
-  
-== Macros  
-  
+
+== Macros
+
 |===
-|`*and*`  
-|`*or*`  
+|`*and*`
+|`*or*`
 |===
