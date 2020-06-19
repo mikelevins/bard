@@ -1,10 +1,8 @@
 = bard 0.3
+(C) mikel evins <mikel@evins.net>
 :toc:
 
-mikel evins <mikel@evins.net>
-
 Documents what's working in the 0.3 version of the bard interpreter.
-
 
 == Lexical syntax
 
@@ -35,10 +33,10 @@ Lists are ordered sequences of values. List syntaxes include:
 
 [cols="1,5"]
 |===
-|`*(...)*` | procedure application
-|`*[...]*` | literal list
-|`*{...}*` | literal table
-|`*"..."*` | literal string
+|`*(...)*` | a procedure-application expression
+|`*[...]*` | a literal list
+|`*{...}*` | a literal table
+|`*"..."*` | a literal string
 |===
 
 == Schemas
@@ -47,7 +45,7 @@ A **schema** is an object that formally describes the representation
 of a set of values. A schema is a concrete data layout. Schemas may be defined by user code. The following
 built-in schemas are defined by bard 0.3:
 
-[cols="1,5"]
+[cols="2,5"]
 |===
 |`*<alist-table>*` | Tables as represented by association lists (key/value pairs in a list made of cons cells)
 |`*<base-schema>*` | the representation of basic, built-in schemas
@@ -72,20 +70,41 @@ built-in schemas are defined by bard 0.3:
 |`*<ratnum>*` | representation of ratios
 |`*<record>*` | representation of record instances
 |`*<singleton>*` | representation of singleton types
-|`*<string>*` | representation of text strings
+|`*<string>*` | default representation of text strings
 |`*<structure-schema>*` | representation of templates for structure instances
 |`*<symbol>*` | representations of names
 |`*<tuple>*` | representations of structures that consist of ordered sequences of values
-|`*<undefined>*` | representation of absent values
+|`*<undefined>*` | representation of absent or meaningless values
 |`*<union>*` | representations of types consisting of more than one data layout
 |`*<url>*` | representations of URLs
-|`*<vector>*` | representations of ordered sequences of values
+|`*<vector>*` | representations of bounded, ordered sequences of values
 |===
 
 ## Classes
 
 
-Type variables that name roles defined by bard protocols. A schema becomes a member of a class when protocol functions that define the class are specialized for the schema.
+A *class* is a *type variable*. It names a set of *types*. A *type* is either a *schema*, another class, or a *singleton*.
+
+Classes are introduced by function definitions in protocols. For example, let's suppose that the protocol `Foo` defines some function `bar`:
+
+`(function bar Doohickey Grommet -> Widget)`
+
+This function definition declares that the function `bar` accepts an argument of class `Doohickey` and a second argument of class `Grommet`, and it returns a value of class `Widget`. In this expression, `Doohickey`, `Grommet`, and `Widget` are all classes introduced by the definition of the function `bar`.
+
+It's also possible to declare a class directly:
+
+`(class Widget)`
+
+These examples declare that these classes exist, but they don't say anything about what schemas or other classes are members of them. To make a type a member of a class you must write a *method* for a function that introduces the class, specializing the class on some type.
+
+For example, we can make `<fixnum>` a member of `Doohickey` and make `<string>` a member of `Grommet` with a definition like this:
+
+----
+(define method (bar n s)
+  with: ((n <fixnum>)
+         (s <string>)) 
+  ...)
+----
 
 === Built-in classes in bard 0.3
 
