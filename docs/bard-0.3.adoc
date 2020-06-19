@@ -153,24 +153,24 @@ Each protocol is described using the following typographical conventions:
 Classes: `Classname1`, `Classname2`, ...
 
 |===
-|`*operator-name* _positional-parameter-type_ keyword-parameter-name: _keyword-parameter-type_  &  -> _return-type_`
+|`*operator-name* _positional-parameter-type*_ _keyword-parameter-name:*_ _keyword-parameter-type*_  &  -> _return-type_`
 |===
 
-The classes line lists the classes defined by the protocol.
+The "Classes" line lists the classes defined by the protocol.
 
-The `*operator-name*` gives the name of a function, method, macro, or special form defined by the protocol.
+`*operator-name*` gives the name of a function, method, macro, or special form defined by the protocol.
 
 The _positional-parameter-type_ expressions give the types of positional parameters that the operator accepts.
 
-The keyword-parameter-name: and _keyword-parameter-type_ expressions give the names and expected types of keyword parameters the operator accepts.
+The _keyword-parameter-name:_ and _keyword-parameter-type_ expressions give the names and expected types of keyword parameters that the operator accepts.
 
-The symbol `*&*` indicates a *rest parameter*--that is, a parameter that is bound to any number of input arguments. Any number of arguments may follow the `*&*`.
+The symbol `&` indicates a *rest parameter*--that is, a parameter that is bound to any number of input arguments. Any number of arguments may follow the `&`.
 
 If keyword parameters are present, then the operator accepts those named keyword parameters with the types given by the arguments shown.
 
-The `*->*` symbol means that the operator returns the type or types to its right. bard operators may return any number of values.
+The `->` symbol means that the operator returns the type or types to its right. bard operators may return any number of values.
 
-If `*&*` appears in both the input and output parameters, it means that the operator returns a number of outputs equal to the number of rest arguments. For example:
+If `&` appears in both the input and output parameters, it means that the operator returns a number of outputs equal to the number of rest arguments. For example:
 
 `*partition* `_List_` & -> &`
 
@@ -336,70 +336,69 @@ Classes: `Name`, `URL`
 === System
 
 |===
-|`*error*`
-|`*exit*`
-|`*gc*`
-|`*gensym*`
-|`*quit*`
-|`*room*`
-|`*uuid*`
-|`*version*`
+|`*error* _datum_ -> nothing`
+|`*exit* -> nothing`
+|`*gc* -> nothing`
+|`*gensym* -> nothing`
+|`*quit* -> nothing`
+|`*room* -> nothing`
+|`*uuid* -> _UUID_`
+|`*version* -> _Text_`
 |===
 
 === Typing
 
 |===
-|`*boolean?*`
-|`*character?*`
-|`*class?*`
-|`*false?*`
-|`*float?*`
-|`*foreign-value?*`
-|`*function?*`
-|`*input-stream?*`
-|`*integer?*`
-|`*iostream?*`
-|`*keyword?*`
-|`*nothing?*`
-|`*output-stream?*`
-|`*protocols*`
-|`*list?*`
-|`*list-protocols*`
-|`*method?*`
-|`*pair?*`
-|`*protocol?*`
-|`*singleton*`
-|`*something?*`
-|`*symbol?*`
-|`*table?*`
-|`*text?*`
-|`*true?*`
-|`*type*`
-|`*undefined?*`
+|`*boolean?* _Anything_ -> _Boolean_`
+|`*character?* _Anything_ -> _Boolean_`
+|`*class?* _Anything_ -> _Boolean_`
+|`*false?* _Anything_ -> _Boolean_`
+|`*float?* _Anything_ -> _Boolean_`
+|`*foreign-value?* _Anything_ -> _Boolean_`
+|`*function?* _Anything_ -> _Boolean_`
+|`*input-stream?* _Anything_ -> _Boolean_`
+|`*integer?* _Anything_ -> _Boolean_`
+|`*iostream?* _Anything_ -> _Boolean_`
+|`*keyword?* _Anything_ -> _Boolean_`
+|`*nothing?* _Anything_ -> _Boolean_`
+|`*output-stream?* _Anything_ -> _Boolean_`
+|`*protocols* -> _List_`
+|`*list?* _Anything_ -> _Boolean_`
+|`*method?* _Anything_ -> _Boolean_`
+|`*pair?* _Anything_ -> _Boolean_`
+|`*protocol?* _Anything_ -> _Boolean_`
+|`*singleton* _Anything_ -> _Singleton_`
+|`*something?* _Anything_ -> _Boolean_`
+|`*symbol?* _Anything_ -> _Boolean_`
+|`*table?* _Anything_ -> _Boolean_`
+|`*text?* _Anything_ -> _Boolean_`
+|`*true?* _Anything_ -> _Boolean_`
+|`*type* _Anything_ -> _Type_`
+|`*undefined?* _Anything_ -> _Boolean_`
 |===
 
 === Writing
 
 |===
-|`*current-output*`
-|`*display*`
-|`*newline*`
-|`*print*`
-|`*show*`
-|`*write*`
+|`*current-output* -> _OutputStream_`
+|`*display* _Anything_ -> nothing`
+|`*newline* -> nothing`
+|`*print* _Anything_ &optional _OutputStream_ -> nothing`
+|`*show* _Anything_ -> nothing`
+|`*write* _Anything_ &optional _OutputStream_ -> nothing`
 |===
 
 == Special forms
 
 |===
-|`*add-method!*`
-|`*begin*`
-|`*cond*`
-|`*def*`
-|`*define class*`
-|`*define macro*`
-|`*define method*`
-|`*define protocol*`
+|`*add-method!* _function_ _type-signature-list_ _method_ -> _function_`
+|`*begin* & -> _Anything_`
+|`*cond* (_test-expression_ _value-expression_)* ... (else: _value-expression_)`
+|`*def* _name_ _value-expression_ -> _name_`
+|`*define class* _class-name_ -> _Class_`
+|`*define macro* _macro-name_ _lambda-list_ & _body_ -> _macro-name_`
+|`*define method* _function_ _type-signature-list_ & _body_ -> _function_`
+|`*define protocol* _protocol-name_ (_function-name_ _class*_ -> _class_)`
 |`*define record*`
 |`*define tuple*`
 |`*define variable*`
@@ -429,6 +428,6 @@ Classes: `Name`, `URL`
 == Macros
 
 |===
-|`*and*`
-|`*or*`
+|`*and* & -> _Anything_`
+|`*or* & -> _Anything_`
 |===
