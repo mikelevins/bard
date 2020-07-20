@@ -9,7 +9,7 @@
 
 ;;; File macros.lisp
 
-(in-package :paip)
+(in-package :bardvm)
 
 (defun set-global-var! (var val)
   (setf (get var 'global-val) val))

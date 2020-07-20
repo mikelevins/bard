@@ -9,7 +9,7 @@
 ;;;; from paip compile1.lisp
 ;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
 
-(in-package :paip)
+(in-package :bardvm)
 
 ;;;; ---------------------------------------------------------------------
 ;;;; globals

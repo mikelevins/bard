@@ -11,7 +11,8 @@
 ;;; Load this file before running any other programs.
 
 ;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
-(in-package :paip)
+
+(in-package :bardvm)
 
 ;;;; ---------------------------------------------------------------------
 ;;;; Implementation-Specific Details

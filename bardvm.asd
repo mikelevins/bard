@@ -6,19 +6,13 @@
   :license  "Specify license here"
   :version "0.5.1"
   :serial t
-  :components ((:module "lib"
-                        :serial t
-                        :components ((:module "paip"
-                                              :serial t
-                                              :components ((:file "package")
-                                                           (:file "auxfns")
-                                                           (:file "macros")
-                                                           (:file "compiler")
-                                                           (:file "optimizers")))))
-               (:module "src"
+  :components ((:module "src"
                         :serial t
                         :components ((:file "package")
-                                     (:file "bardvm")))))
+                                     (:file "auxfns")
+                                     (:file "macros")
+                                     (:file "compiler")
+                                     (:file "optimizers")))))
 
 
 ;;; (asdf:load-system :bardvm)
