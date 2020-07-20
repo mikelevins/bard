@@ -16,7 +16,8 @@
                                      (:file "prims")
                                      (:file "gen")
                                      (:file "compiler")
-                                     (:file "optimizers")))))
+                                     (:file "optimizers")
+                                     (:file "vm")))))
 
 
 ;;; (asdf:load-system :bardvm)
