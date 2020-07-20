@@ -17,7 +17,8 @@
                                      (:file "gen")
                                      (:file "compiler")
                                      (:file "optimizers")
-                                     (:file "vm")))))
+                                     (:file "vm")
+                                     (:file "toplevel")))))
 
 
 ;;; (asdf:load-system :bardvm)
