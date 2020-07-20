@@ -13,6 +13,7 @@
                                      (:file "auxfns")
                                      (:file "macros")
                                      (:file "fn")
+                                     (:file "prims")
                                      (:file "compiler")
                                      (:file "optimizers")))))
 
