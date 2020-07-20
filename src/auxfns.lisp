@@ -2,15 +2,12 @@
 ;;;; ---------------------------------------------------------------------
 ;;;; bardvm
 ;;;; A VM implementation based on Norvig's Scheme compiler from PAIP
+;;;; auxfns.lisp
+;;;; helper functions used by the other sources
 ;;;; ---------------------------------------------------------------------
-
-;;; Code from Paradigms of AI Programming
-;;; Copyright (c) 1991 Peter Norvig
-
-;;; File auxfns.lisp: Auxiliary functions used by all other programs
-;;; Load this file before running any other programs.
-
-;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
+;;;; Code from Paradigms of AI Programming
+;;;; Copyright (c) 1991 Peter Norvig
+;;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
 
 (in-package :bardvm)
 

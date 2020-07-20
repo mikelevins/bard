@@ -2,12 +2,11 @@
 ;;;; ---------------------------------------------------------------------
 ;;;; bardvm
 ;;;; A VM implementation based on Norvig's Scheme compiler from PAIP
+;;;; macros.lisp
+;;;; defining bard macros
 ;;;; ---------------------------------------------------------------------
-
-;;; Code from Paradigms of Artificial Intelligence Programming
-;;; Copyright (c) 1991 Peter Norvig
-
-;;; File macros.lisp
+;;;; Code from Paradigms of Artificial Intelligence Programming
+;;;; Copyright (c) 1991 Peter Norvig
 
 (in-package :bardvm)
 

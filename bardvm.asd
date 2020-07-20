@@ -9,8 +9,10 @@
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
+                                     (:file "globals")
                                      (:file "auxfns")
                                      (:file "macros")
+                                     (:file "fn")
                                      (:file "compiler")
                                      (:file "optimizers")))))
 

@@ -2,38 +2,14 @@
 ;;;; ---------------------------------------------------------------------
 ;;;; bardvm
 ;;;; A VM implementation based on Norvig's Scheme compiler from PAIP
+;;;; compiler.lisp
+;;;; the bard compiler
 ;;;; ---------------------------------------------------------------------
-
-;;; Code from Paradigms of Artificial Intelligence Programming
-;;; Copyright (c) 1991 Peter Norvig
-;;;; from paip compile1.lisp
-;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
+;;;; Code from Paradigms of Artificial Intelligence Programming
+;;;; Copyright (c) 1991 Peter Norvig
+;;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
 
 (in-package :bardvm)
-
-;;;; ---------------------------------------------------------------------
-;;;; globals
-;;;; ---------------------------------------------------------------------
-
-(defvar *label-num* 0)
-(defvar *bard-readtable* (copy-readtable))
-
-;;;; ---------------------------------------------------------------------
-;;;; fn structure
-;;;; ---------------------------------------------------------------------
-
-(defstruct (fn (:print-function print-fn))
-  code (env nil) (name nil) (args nil))
-
-(defun print-fn (fn &optional (stream *standard-output*) depth)
-  (declare (ignore depth))
-  (format stream "{~a}" (or (fn-name fn) '??)))
-
-(defun name! (fn name)
-  "Set the name field of fn, if it is an un-named fn."
-  (when (and (fn-p fn) (null (fn-name fn)))
-    (setf (fn-name fn) name))
-  name)
 
 ;;;; ---------------------------------------------------------------------
 ;;;; primitive functions
