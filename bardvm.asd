@@ -14,6 +14,7 @@
                                      (:file "macros")
                                      (:file "fn")
                                      (:file "prims")
+                                     (:file "gen")
                                      (:file "compiler")
                                      (:file "optimizers")))))
 
