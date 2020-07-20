@@ -18,6 +18,7 @@
                                      (:file "compiler")
                                      (:file "optimizers")
                                      (:file "vm")
+                                     (:file "reader")
                                      (:file "toplevel")))))
 
 
