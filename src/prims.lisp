@@ -24,6 +24,8 @@
 (defun display (x) (princ x))
 (defun newline () (terpri))
 
+(defmethod bard-write (thing) (write thing))
+
 (defparameter *primitive-fns*
   '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
     (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)(/= 2 /= nil nil) (= 2 = nil nil)
@@ -32,7 +34,7 @@
     (car 1 car nil nil) (cdr 1 cdr nil nil) (cadr 1 cadr nil nil) 
     (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)
     (read 0 bard-read nil t) (eof-object? 1 eof-object? nil) ;***
-    (write 1 write nil t) (display 1 display nil t)
+    (write 1 bard-write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t nil)
     (name! 2 name! true t) (random 1 random true nil)))
 

@@ -104,7 +104,7 @@
           (push (funcall (opcode instr)) stack))
 
          ;; Unary operations:
-         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
+         ((CAR CDR CADR NOT LIST1 COMPILER DISPLAY BARD-WRITE RANDOM)
           (push (funcall (opcode instr) (pop stack)) stack))
 
          ;; Binary operations:
