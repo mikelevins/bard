@@ -5,8 +5,6 @@
 ;;;; macros.lisp
 ;;;; defining bard macros
 ;;;; ---------------------------------------------------------------------
-;;;; Code from Paradigms of Artificial Intelligence Programming
-;;;; Copyright (c) 1991 Peter Norvig
 
 (in-package :bardvm)
 

@@ -1,9 +1,12 @@
 ;;;; bardvm.asd
+;;;; Code from Paradigms of Artificial Intelligence Programming
+;;;; Copyright (c) 1991 Peter Norvig
+;;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
 
 (asdf:defsystem #:bardvm
-  :description "Describe bardvm here"
-  :author "Your Name <your.name@example.com>"
-  :license  "Specify license here"
+  :description "bardvm"
+  :author "mikel evins <mikel@evins.net>"
+  :license  "Apache 2.0"
   :version "0.5.1"
   :serial t
   :depends-on (:fset)

@@ -5,9 +5,6 @@
 ;;;; auxfns.lisp
 ;;;; helper functions used by the other sources
 ;;;; ---------------------------------------------------------------------
-;;;; Code from Paradigms of AI Programming
-;;;; Copyright (c) 1991 Peter Norvig
-;;;; integrated into bardvm by mikel evins, mikel@evins.net, July 2020
 
 (in-package :bardvm)
 
