@@ -142,3 +142,21 @@
 
 (set-macro-character #\] (get-macro-character #\)) t *bard-readtable*)
 (set-syntax-from-char #\] #\) *bard-readtable* *readtable*)
+
+;;; maps
+;;; ---------------------------------------------------------------------
+
+(set-macro-character #\{
+                     (lambda (stream char)
+                       (declare (ignore char))
+                       (let* ((elts (read-delimited-list #\} stream t))
+                              (pairs (loop for tail on elts by #'cddr
+                                        collect (cons (car tail)
+                                                      (cadr tail)))))
+                         (fset::convert 'fset:seq pairs)))
+                     nil
+                     *bard-readtable*)
+
+
+(set-macro-character #\} (get-macro-character #\)) t *bard-readtable*)
+(set-syntax-from-char #\} #\) *bard-readtable* *readtable*)
