@@ -24,20 +24,6 @@
 (defun display (x) (princ x))
 (defun newline () (terpri))
 
-(defmethod bard-write (thing &key (stream *standard-output*))
-  (write thing :stream stream))
-
-(defmethod bard-write ((thing fset:seq) &key (stream *standard-output*))
-  (format stream "[")
-  (let ((count (fset:size thing)))
-    (when (> count 0)
-      (bard-write (fset:@ thing 0) :stream stream)
-      (when (> count 1)
-        (loop for i from 1 below count
-           do (progn (format stream " ")
-                     (bard-write (fset:@ thing i) :stream stream))))))
-  (format stream "]"))
-
 (defparameter *primitive-fns*
   '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
     (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)(/= 2 /= nil nil) (= 2 = nil nil)

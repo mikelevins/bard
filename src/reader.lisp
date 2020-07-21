@@ -153,7 +153,7 @@
                               (pairs (loop for tail on elts by #'cddr
                                         collect (cons (car tail)
                                                       (cadr tail)))))
-                         (fset::convert 'fset:seq pairs)))
+                         (fset::convert 'fset:map pairs)))
                      nil
                      *bard-readtable*)
 

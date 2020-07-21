@@ -14,6 +14,7 @@
                                      (:file "auxfns")
                                      (:file "macros")
                                      (:file "fn")
+                                     (:file "printer")
                                      (:file "prims")
                                      (:file "gen")
                                      (:file "compiler")
