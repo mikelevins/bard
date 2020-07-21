@@ -45,7 +45,12 @@
 
 (defun sign-p (char) (find char "+-"))
 
-;;; ==============================
+;;; ---------------------------------------------------------------------
+;;; built-in reader macros
+;;; ---------------------------------------------------------------------
+
+;;; true and false
+;;; ---------------------------------------------------------------------
 
 (set-dispatch-macro-character #\# #\t
   #'(lambda (&rest ignore)(declare (ignore ignore)) t)
@@ -55,31 +60,9 @@
   #'(lambda (&rest ignore)(declare (ignore ignore)) nil)
   *bard-readtable*)
 
-(set-dispatch-macro-character #\# #\d
-                              ;; In both Common Lisp and Bard,
-                              ;; #x, #o and #b are hexidecimal, octal, and binary,
-                              ;; e.g. #xff = #o377 = #b11111111 = 255
-                              ;; In Bard only, #d255 is decimal 255.
-                              #'(lambda (stream &rest ignore)
-                                  (declare (ignore ignore))
-                                  (let ((*read-base* 10)) (bard-read stream)))
-                              *bard-readtable*)
 
-(set-macro-character #\`
-  #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s)))
-  nil *bard-readtable*)
-
-(set-macro-character #\,
-                     #'(lambda (stream ignore)
-                         (declare (ignore ignore))
-                         (let ((ch (read-char stream)))
-                           (if (char= ch #\@)
-                               (list 'unquote-splicing (read stream))
-                               (progn (unread-char ch stream)
-                                      (list 'unquote (read stream))))))
-                     nil *bard-readtable*)
-
-;;; ==============================
+;;; quasiquote
+;;; ---------------------------------------------------------------------
 
 (defun quasi-q (x)
   "Expand a quasiquote form into append, list, and cons calls."
@@ -114,5 +97,47 @@
          (list* 'list left (rest right)))
         (t (list 'cons left right))))
 
+(set-macro-character #\`
+  #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s)))
+  nil *bard-readtable*)
+
+(set-macro-character #\,
+                     #'(lambda (stream ignore)
+                         (declare (ignore ignore))
+                         (let ((ch (read-char stream)))
+                           (if (char= ch #\@)
+                               (list 'unquote-splicing (read stream))
+                               (progn (unread-char ch stream)
+                                      (list 'unquote (read stream))))))
+                     nil *bard-readtable*)
+
+
 (setf (get 'quasiquote 'bard-macro)
       #'quasi-q)
+
+;;; decimal numbers
+;;; ---------------------------------------------------------------------
+
+(set-dispatch-macro-character #\# #\d
+                              ;; In both Common Lisp and Bard,
+                              ;; #x, #o and #b are hexidecimal, octal, and binary,
+                              ;; e.g. #xff = #o377 = #b11111111 = 255
+                              ;; In Bard only, #d255 is decimal 255.
+                              #'(lambda (stream &rest ignore)
+                                  (declare (ignore ignore))
+                                  (let ((*read-base* 10)) (bard-read stream)))
+                              *bard-readtable*)
+
+;;; seqs
+;;; ---------------------------------------------------------------------
+
+(set-macro-character #\[
+                     (lambda (stream char)
+                       (declare (ignore char))
+                       (let ((elts (read-delimited-list #\] stream t)))
+                         ` (cl:list ,@elts)))
+                     nil
+                     *bard-readtable*)
+
+(set-macro-character #\] (get-macro-character #\)) t *bard-readtable*)
+(set-syntax-from-char #\] #\) *bard-readtable* *readtable*)

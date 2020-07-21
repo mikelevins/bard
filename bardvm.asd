@@ -6,6 +6,7 @@
   :license  "Specify license here"
   :version "0.5.1"
   :serial t
+  :depends-on (:fset)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
