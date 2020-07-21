@@ -135,9 +135,10 @@
                      (lambda (stream char)
                        (declare (ignore char))
                        (let ((elts (read-delimited-list #\] stream t)))
-                         ` (cl:list ,@elts)))
+                         (fset::convert 'fset:seq elts)))
                      nil
                      *bard-readtable*)
+
 
 (set-macro-character #\] (get-macro-character #\)) t *bard-readtable*)
 (set-syntax-from-char #\] #\) *bard-readtable* *readtable*)
