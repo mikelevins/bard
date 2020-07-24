@@ -13,8 +13,15 @@
 (defun eof-object? (x) (eq x eof))
 
 (defun bard-read (&optional (stream *standard-input*))
-  (let ((*readtable* *bard-readtable*))
-    (convert-numbers (read stream nil eof))))
+  (let* ((*readtable* *bard-readtable*)
+         (val (convert-numbers (read stream nil eof))))
+    (if (symbolp val)
+        (let ((nm (string-upcase (symbol-name val))))
+          (cond ((equal nm "NOTHING") nil)
+                ((equal nm "TRUE") t)
+                ((equal nm "FALSE") nil)
+                (t val)))
+        val)))
 
 (defun convert-numbers (x)
   "Replace symbols that look like Bard numbers with their values."

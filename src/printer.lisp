@@ -12,6 +12,12 @@
 (defmethod bard-write (thing &key (stream *standard-output*))
   (write thing :stream stream))
 
+(defmethod bard-write ((thing null) &key (stream *standard-output*))
+  (format stream "nothing"))
+
+(defmethod bard-write ((thing (eql t)) &key (stream *standard-output*))
+  (format stream "true"))
+
 (defmethod bard-write ((thing fset:seq) &key (stream *standard-output*))
   (format stream "[")
   (let ((count (fset:size thing)))
