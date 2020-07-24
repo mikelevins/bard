@@ -13,26 +13,23 @@
 (defun eof-object? (x) (eq x eof))
 
 (defun bard-read (&optional (stream *standard-input*))
-  (let* ((*readtable* *bard-readtable*)
-         (val (convert-numbers (read stream nil eof))))
-    (if (symbolp val)
-        (let ((nm (string-upcase (symbol-name val))))
-          (cond ((equal nm "NOTHING") nil)
-                ((equal nm "TRUE") t)
-                ((equal nm "FALSE") nil)
-                (t val)))
-        val)))
+  (let* ((*readtable* *bard-readtable*))
+    (convert-to-bard (read stream nil eof))))
 
-(defun convert-numbers (x)
-  "Replace symbols that look like Bard numbers with their values."
-  ;; Don't copy structure, make changes in place.
+(defun bard-read-from-string (s)
+  (with-input-from-string (in s)
+    (bard-read in)))
+
+(defun convert-to-bard (x)
   (typecase x
-    (cons   (setf (car x) (convert-numbers (car x)))
-            (setf (cdr x) (convert-numbers (cdr x)))
+    (cons   (setf (car x) (convert-to-bard (car x)))
+            (setf (cdr x) (convert-to-bard (cdr x)))
 	    x) ; *** Bug fix, gat, 11/9/92
-    (symbol (or (convert-number x) x))
+    (symbol (or (convert-named-constant x)
+                (convert-number x)
+                x))
     (vector (dotimes (i (length x))
-              (setf (aref x i) (convert-numbers (aref x i))))
+              (setf (aref x i) (convert-to-bard (aref x i))))
 	    x) ; *** Bug fix, gat, 11/9/92
     (t x)))
 
@@ -46,6 +43,13 @@
             (im (read-from-string str nil nil :start pos :end end)))
         (when (and (numberp re) (numberp im))
           (complex re im))))))
+
+(defun convert-named-constant (val)
+  (let ((nm (string-upcase (symbol-name val))))
+    (cond ((equal nm "NOTHING") nil)
+          ((equal nm "TRUE") t)
+          ((equal nm "FALSE") nil)
+          (t val))))
 
 (defun sign-p (char) (find char "+-"))
 
