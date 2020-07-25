@@ -43,7 +43,7 @@
   (let ((p (in-env-p var env)))
     (if p
         (gen 'LSET (first p) (second p) ";" var)
-        (if (assoc var *primitive-fns*)
+        (if (assoc var *primitive-methods*)
             (error "Can't alter the constant ~a" var)
             (gen 'GSET var)))))
 

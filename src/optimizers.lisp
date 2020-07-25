@@ -44,9 +44,9 @@
   "Get the assembly language optimizer for this opcode."
   (gethash opcode *optimizers*))
 
-(defun put-optimizer (opcode fn)
+(defun put-optimizer (opcode method)
   "Store an assembly language optimizer for this opcode."
-  (setf (gethash opcode *optimizers*) fn))
+  (setf (gethash opcode *optimizers*) method))
 
 
 (defmacro def-optimizer (opcodes args &body body)

@@ -16,7 +16,7 @@
                                      (:file "globals")
                                      (:file "auxfns")
                                      (:file "macros")
-                                     (:file "fn")
+                                     (:file "method")
                                      (:file "printer")
                                      (:file "prims")
                                      (:file "gen")

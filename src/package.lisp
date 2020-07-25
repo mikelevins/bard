@@ -7,7 +7,8 @@
 ;;;; ---------------------------------------------------------------------
 
 (defpackage #:bardvm
-  (:use #:cl))
+  (:use #:cl)
+  (:shadow #:method))
 
 
 (defpackage #:bard

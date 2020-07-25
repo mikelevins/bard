@@ -2,27 +2,27 @@
 ;;;; ---------------------------------------------------------------------
 ;;;; bardvm
 ;;;; A VM implementation based on Norvig's Scheme compiler from PAIP
-;;;; fn.lisp
-;;;; representing bard functions
+;;;; method.lisp
+;;;; representing bard methods
 ;;;; ---------------------------------------------------------------------
 
 (in-package :bardvm)
 
 ;;;; ---------------------------------------------------------------------
-;;;; fn structure
+;;;; method structure
 ;;;; ---------------------------------------------------------------------
 
-(defstruct (fn (:print-function print-fn))
+(defstruct (method (:print-function print-method))
   code (env nil) (name nil) (args nil))
 
-(defun print-fn (fn &optional (stream *standard-output*) depth)
+(defun print-method (method &optional (stream *standard-output*) depth)
   (declare (ignore depth))
-  (if (fn-name fn)
-      (format stream "#<method ~S>" (fn-name fn))
+  (if (method-name method)
+      (format stream "#<method ~S>" (method-name method))
       (format stream "#<an anonymous method>")))
 
-(defun name! (fn name)
-  "Set the name field of fn, if it is an un-named fn."
-  (when (and (fn-p fn) (null (fn-name fn)))
-    (setf (fn-name fn) name))
+(defun name! (method name)
+  "Set the name field of method, if it is an un-named method."
+  (when (and (method-p method) (null (method-name method)))
+    (setf (method-name method) name))
   name)

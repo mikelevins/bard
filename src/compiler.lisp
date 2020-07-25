@@ -47,7 +47,7 @@
                           env val? more?))
          ((METHOD ^) (when val?
                        (let ((f (comp-method (second x) (rest2 x) env)))
-                         (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+                         (seq (gen 'METHOD f) (unless more? (gen 'RETURN))))))
          (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
 ;;; ==============================
@@ -162,7 +162,7 @@
 
 (defun comp-method (args body env)
   "Compile a method form into a closure with compiled code."
-  (new-fn :env env :args args
+  (new-method :env env :args args
           :code (seq (gen-args args 0)
                      (comp-begin body
                                  (cons (make-true-list args) env)
@@ -175,9 +175,9 @@
         (t (cons (first dotted-list)
                  (make-true-list (rest dotted-list))))))
 
-(defun new-fn (&key code env name args)
+(defun new-method (&key code env name args)
   "Build a new function."
-  (assemble (make-fn :env env :name name :args args
+  (assemble (make-method :env env :name name :args args
                      :code (optimize code))))
 
 
@@ -196,14 +196,14 @@
 
 ;;; ==============================
 
-(defun assemble (fn)
+(defun assemble (method)
   "Turn a list of instructions into a vector."
   (multiple-value-bind (length labels)
-      (asm-first-pass (fn-code fn))
-    (setf (fn-code fn)
-          (asm-second-pass (fn-code fn)
+      (asm-first-pass (method-code method))
+    (setf (method-code method)
+          (asm-second-pass (method-code method)
                            length labels))
-    fn))
+    method))
 
 (defun asm-first-pass (code)
   "Return the labels and the total code length."
@@ -230,27 +230,27 @@
 
 ;;; ==============================
 
-(defun show-fn (fn &optional (stream *standard-output*) (indent 2))
+(defun show-method (method &optional (stream *standard-output*) (indent 2))
   "Print all the instructions in a function.
   If the argument is not a function, just princ it,
   but in a column at least 8 spaces wide."
   ;; This version handles code that has been assembled into a vector
-  (if (not (fn-p fn))
-      (format stream "~8a" fn)
+  (if (not (method-p method))
+      (format stream "~8a" method)
       (progn
         (fresh-line)
-        (dotimes (i (length (fn-code fn)))
-          (let ((instr (elt (fn-code fn) i)))
+        (dotimes (i (length (method-code method)))
+          (let ((instr (elt (method-code method) i)))
             (if (label-p instr)
                 (format stream "~a:" instr)
                 (progn
                   (format stream "~VT~2d: " indent i)
                   (dolist (arg instr)
-                    (show-fn arg stream (+ indent 8)))
+                    (show-method arg stream (+ indent 8)))
                   (fresh-line))))))))
 
 (defun comp-show (x)
   "Compile an expression and show the resulting code"
-   (show-fn (compiler x))
+   (show-method (compiler x))
   (values))
 

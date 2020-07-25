@@ -27,7 +27,7 @@
 (defun display (x) (princ x))
 (defun newline () (terpri))
 
-(defparameter *primitive-fns*
+(defparameter *primitive-methods*
   '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
     (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)(/= 2 /= nil nil) (= 2 = nil nil)
     (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
@@ -44,7 +44,7 @@
   "F is a primitive if it is in the table, and is not shadowed
   by something in the environment, and has the right number of args."
   (and (not (in-env-p f env))
-       (find f *primitive-fns*
+       (find f *primitive-methods*
              :test #'(lambda (f prim)
                        (and (eq f (prim-symbol prim))
                             (= n-args (prim-n-args prim)))))))
