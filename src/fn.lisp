@@ -17,7 +17,9 @@
 
 (defun print-fn (fn &optional (stream *standard-output*) depth)
   (declare (ignore depth))
-  (format stream "{~a}" (or (fn-name fn) '??)))
+  (if (fn-name fn)
+      (format stream "#<method ~S>" (fn-name fn))
+      (format stream "#<an anonymous method>")))
 
 (defun name! (fn name)
   "Set the name field of fn, if it is an un-named fn."
