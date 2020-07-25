@@ -8,7 +8,7 @@
 
 (defpackage #:bardvm
   (:use #:cl)
-  (:shadow #:method))
+  (:shadow #:make-method #:method #:optimize))
 
 
 (defpackage #:bard
