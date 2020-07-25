@@ -1,0 +1,2 @@
+(begin (display "Hello from bard")
+       (newline))

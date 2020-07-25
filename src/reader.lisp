@@ -9,7 +9,7 @@
 (in-package :bardvm)
 
 
-(defparameter eof "EoF")
+(defparameter eof :|EoF|)
 (defun eof-object? (x) (eq x eof))
 
 (defun %%read (&optional (stream *standard-input*))

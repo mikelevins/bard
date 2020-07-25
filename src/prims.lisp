@@ -38,7 +38,8 @@
     (list 1 %%list1 true nil) (list 2 %%list2 true nil) (list 3 %%list3 true nil)
     (read 0 %%read nil t) (eof-object? 1 eof-object? nil) ;***
     (write 1 %%write nil t) (display 1 %%display nil t)
-    (newline 0 %%newline nil t) (compiler 1 compiler t nil)
+    (newline 0 %%newline nil t)
+    (compiler 1 compiler t nil)
     (name! 2 name! true t) (random 1 random true nil)))
 
 (defun primitive-p (f env n-args)

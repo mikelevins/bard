@@ -133,8 +133,7 @@
   (if (typep (vm-method vm) 'method)
       (progn
         (catch :halt
-          (loop (step-vm vm)))
-        (top (vm-stack vm)))
+          (loop (step-vm vm))))
       (progn (warn "No method loaded")
              vm)))
 
