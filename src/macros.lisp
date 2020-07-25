@@ -28,38 +28,17 @@
 
 ;; ;;; ==============================
 
-(def-bard-macro let (bindings &rest body)
-  `((method ,(mapcar #'first bindings) . ,body)
-    . ,(mapcar #'second bindings)))
-
-(def-bard-macro bind (bindings &rest body)
-  (if (null bindings)
-      `(begin . ,body)
-      `(let (,(first bindings))
-         (bind ,(rest bindings) . ,body))))
-
 (def-bard-macro and (&rest args)
   (cond ((null args) 'T)
         ((length=1 args) (first args))
         (t `(if ,(first args)
                 (and . ,(rest args))))))
 
-(def-bard-macro or (&rest args)
-  (cond ((null args) 'nil)
-        ((length=1 args) (first args))
-        (t (let ((var (gensym)))
-             `(let ((,var ,(first args)))
-                (if ,var ,var (or . ,(rest args))))))))
-
-(def-bard-macro cond (&rest clauses)
-  (cond ((null clauses) nil)
-        ((length=1 (first clauses))
-         `(or ,(first clauses) (cond .,(rest clauses))))
-        ((starts-with (first clauses) 'else)
-         `(begin .,(rest (first clauses))))
-        (t `(if ,(first (first clauses))
-                (begin .,(rest (first clauses)))
-                (cond .,(rest clauses))))))
+(def-bard-macro bind (bindings &rest body)
+  (if (null bindings)
+      `(begin . ,body)
+      `(let (,(first bindings))
+         (bind ,(rest bindings) . ,body))))
 
 (def-bard-macro case (key &rest clauses)
   (let ((key-val (gensym "KEY")))
@@ -72,6 +51,16 @@
                           .,(rest clause))))
                 clauses)))))
 
+(def-bard-macro cond (&rest clauses)
+  (cond ((null clauses) nil)
+        ((length=1 (first clauses))
+         `(or ,(first clauses) (cond .,(rest clauses))))
+        ((starts-with (first clauses) 'else)
+         `(begin .,(rest (first clauses))))
+        (t `(if ,(first (first clauses))
+                (begin .,(rest (first clauses)))
+                (cond .,(rest clauses))))))
+
 (def-bard-macro define (name &rest body)
   (if (atom name)
       `(name! (set! ,name . ,body) ',name)
@@ -79,7 +68,18 @@
          `(define ,(first name)
             (method ,(rest name) . ,body)))))
 
+(def-bard-macro let (bindings &rest body)
+  `((method ,(mapcar #'first bindings) . ,body)
+    . ,(mapcar #'second bindings)))
+
 (def-bard-macro letrec (bindings &rest body)
   `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
      .,body))
+
+(def-bard-macro or (&rest args)
+  (cond ((null args) 'nil)
+        ((length=1 args) (first args))
+        (t (let ((var (gensym)))
+             `(let ((,var ,(first args)))
+                (if ,var ,var (or . ,(rest args))))))))
