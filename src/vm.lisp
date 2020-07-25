@@ -101,7 +101,7 @@
           (push (funcall (opcode instr)) stack))
 
          ;; Unary operations:
-         ((BARD-WRITE CAR CDR CADR COMPILER DISPLAY FIRST-ELEMENT LIST1 NOT RANDOM REST-ELEMENTS)
+         ((BARD-WRITE CAR CDR CADR COMPILER DISPLAY %%FIRST LIST1 NOT RANDOM %%REST)
           (push (funcall (opcode instr) (pop stack)) stack))
 
          ;; Binary operations:

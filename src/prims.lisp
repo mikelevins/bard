@@ -15,11 +15,11 @@
 (defstruct (prim (:type list))
   symbol n-args opcode always side-effects)
 
-(defmethod first-element ((s sequence)) (elt s 0))
-(defmethod first-element ((s fset:wb-seq)) (fset:@ s 0))
+(defmethod %%first ((s sequence)) (elt s 0))
+(defmethod %%first ((s fset:wb-seq)) (fset:@ s 0))
 
-(defmethod rest-elements ((s sequence)) (subseq s 1))
-(defmethod rest-elements ((s fset:wb-seq)) (fset:subseq s 1))
+(defmethod %%rest ((s sequence)) (subseq s 1))
+(defmethod %%rest ((s fset:wb-seq)) (fset:subseq s 1))
 
 (defun list1 (x) (list x))
 (defun list2 (x y) (list x y))
@@ -29,11 +29,13 @@
 
 (defparameter *primitive-methods*
   '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
-    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)(/= 2 /= nil nil) (= 2 = nil nil)
+    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)
+    (/= 2 /= nil nil) (= 2 = nil nil)
     (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
-    (not 1 not nil nil) (null? 1 not nil nil)(cons 2 cons true nil)
+    (not 1 not nil nil) (null? 1 not nil nil)
+    (cons 2 cons true nil)
     (car 1 car nil nil) (cdr 1 cdr nil nil) (cadr 1 cadr nil nil)
-    (first 1 first-element nil nil)(rest 1 rest-elements nil nil)
+    (first 1 %%first nil nil)(rest 1 %%rest nil nil)
     (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)
     (read 0 bard-read nil t) (eof-object? 1 eof-object? nil) ;***
     (write 1 bard-write nil t) (display 1 display nil t)
