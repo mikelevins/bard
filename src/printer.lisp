@@ -9,6 +9,52 @@
 (in-package :bardvm)
 
 
+;;; display
+;;; ---------------------------------------------------------------------
+
+(defmethod %%display (thing &optional (stream *standard-output*))
+  (format stream "~A" thing))
+
+(defmethod %%display ((thing null) &optional (stream *standard-output*))
+  (format stream "()"))
+
+(defmethod %%display ((thing (eql t)) &optional (stream *standard-output*))
+  (format stream "true"))
+
+(defmethod %%display ((thing string) &optional (stream *standard-output*))
+  (format stream "~A" thing))
+
+(defmethod %%display ((thing fset:seq) &optional (stream *standard-output*))
+  (format stream "[")
+  (let ((count (fset:size thing)))
+    (when (> count 0)
+      (%%display (fset:@ thing 0))
+      (when (> count 1)
+        (loop for i from 1 below count
+           do (progn (format stream " ")
+                     (%%display (fset:@ thing i) stream))))))
+  (format stream "]"))
+
+(defmethod %%display ((thing fset:map) &optional (stream *standard-output*))
+  (format stream "{")
+  (let* ((keys (fset:convert 'cl:list (fset:domain thing)))
+         (count (length keys)))
+    (when (> count 0)
+      (%%display (elt keys 0) stream)
+      (format stream " ")
+      (%%display (fset:@ thing (elt keys 0)) stream)
+      (when (> count 1)
+        (loop for i from 1 below count
+           do (let ((key (elt keys i)))
+                (format stream " ")
+                (%%display key stream)
+                (format stream " ")
+                (%%display (fset:@ thing key) stream))))))
+  (format stream "}"))
+
+;;; write
+;;; ---------------------------------------------------------------------
+
 (defmethod %%write (thing &key (stream *standard-output*))
   (write thing :stream stream))
 

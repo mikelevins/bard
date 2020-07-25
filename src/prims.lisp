@@ -24,7 +24,6 @@
 (defun %%list1 (x) (list x))
 (defun %%list2 (x y) (list x y))
 (defun %%list3 (x y z) (list x y z))
-(defun %%display (x) (princ x))
 (defun %%newline () (terpri))
 
 (defparameter *primitive-methods*
