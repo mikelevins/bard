@@ -79,9 +79,6 @@
          `(define ,(first name)
             (method ,(rest name) . ,body)))))
 
-(def-bard-macro delay (computation)
-  `(method () ,computation))
-
 (def-bard-macro letrec (bindings &rest body)
   `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)

@@ -45,9 +45,9 @@
          (IF     (arg-count x 2 3)
                  (comp-if (second x) (third x) (fourth x)
                           env val? more?))
-         (METHOD (when val?
-                   (let ((f (comp-method (second x) (rest2 x) env)))
-                     (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+         ((METHOD ^) (when val?
+                       (let ((f (comp-method (second x) (rest2 x) env)))
+                         (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
          (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
 ;;; ==============================
