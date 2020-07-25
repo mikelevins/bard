@@ -12,13 +12,13 @@
 (defparameter eof "EoF")
 (defun eof-object? (x) (eq x eof))
 
-(defun bard-read (&optional (stream *standard-input*))
+(defun %%read (&optional (stream *standard-input*))
   (let* ((*readtable* *bard-readtable*))
     (convert-to-bard (read stream nil eof))))
 
-(defun bard-read-from-string (s)
+(defun %%read-from-string (s)
   (with-input-from-string (in s)
-    (bard-read in)))
+    (%%read in)))
 
 (defun convert-to-bard (x)
   (typecase x
@@ -94,7 +94,7 @@
         (t (list 'cons left right))))
 
 (set-macro-character #\`
-  #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s)))
+  #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (%%read s)))
   nil *bard-readtable*)
 
 (set-macro-character #\,
@@ -121,7 +121,7 @@
                               ;; In Bard only, #d255 is decimal 255.
                               #'(lambda (stream &rest ignore)
                                   (declare (ignore ignore))
-                                  (let ((*read-base* 10)) (bard-read stream)))
+                                  (let ((*read-base* 10)) (%%read stream)))
                               *bard-readtable*)
 
 ;;; seqs

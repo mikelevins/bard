@@ -44,7 +44,3 @@
   (init-bard-comp)
   (machine (compiler bard-top-level)))
 
-(defun comp-go (exp)
-  "Compile and execute the expression."
-  (machine (compiler `(exit ,exp))))
-
