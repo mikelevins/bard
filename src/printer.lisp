@@ -13,7 +13,7 @@
   (write thing :stream stream))
 
 (defmethod bard-write ((thing null) &key (stream *standard-output*))
-  (format stream "nothing"))
+  (format stream "()"))
 
 (defmethod bard-write ((thing (eql t)) &key (stream *standard-output*))
   (format stream "true"))
