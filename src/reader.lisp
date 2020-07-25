@@ -57,18 +57,6 @@
 ;;; built-in reader macros
 ;;; ---------------------------------------------------------------------
 
-;;; true and false
-;;; ---------------------------------------------------------------------
-
-(set-dispatch-macro-character #\# #\t
-  #'(lambda (&rest ignore)(declare (ignore ignore)) t)
-  *bard-readtable*)
-
-(set-dispatch-macro-character #\# #\f
-  #'(lambda (&rest ignore)(declare (ignore ignore)) nil)
-  *bard-readtable*)
-
-
 ;;; quasiquote
 ;;; ---------------------------------------------------------------------
 
