@@ -30,13 +30,13 @@
 
 (def-bard-macro let (bindings &rest body)
   `((method ,(mapcar #'first bindings) . ,body)
-    .,(mapcar #'second bindings)))
+    . ,(mapcar #'second bindings)))
 
-(def-bard-macro let* (bindings &rest body)
+(def-bard-macro bind (bindings &rest body)
   (if (null bindings)
-      `(begin .,body)
+      `(begin . ,body)
       `(let (,(first bindings))
-         (let* ,(rest bindings) . ,body))))
+         (bind ,(rest bindings) . ,body))))
 
 (def-bard-macro and (&rest args)
   (cond ((null args) 'T)
