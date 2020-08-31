@@ -24,8 +24,24 @@
 (defun %%list1 (x) (list x))
 (defun %%list2 (x y) (list x y))
 (defun %%list3 (x y z) (list x y z))
+
+;;; bard map makes a <map>
+;;; the name of bard's version of mapcar is each
+(defun map (&rest args)
+  (fset:convert 'fset:wb-map
+                (loop for tail on args by #'cddr
+                   collect (cons (first tail)
+                                 (second tail)))))
+(defun %%map0 ()(fset:wb-map))
+
 (defun %%newline () (terpri))
 
+;;; prim: (prim-name n-args opcode-name always side-effects?)
+;;; n-args is the number of args require to compile as a primitive;
+;;;        if the actual number of args is different then we compile
+;;;        as a call out to the Lisp function named in opcode-name
+;;; always is true if the return value is always non-nil, false
+;;;        if it's always nil, and nil otherwise
 (defparameter *primitive-methods*
   '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
     (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)
@@ -33,6 +49,7 @@
     (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
     (not 1 not nil nil) (null? 1 not nil nil)
     (cons 2 cons true nil)
+    (map 0 %%map0 true nil)
     (car 1 car nil nil) (cdr 1 cdr nil nil) (cadr 1 cadr nil nil)
     (first 1 %%first nil nil)(rest 1 %%rest nil nil)
     (list 1 %%list1 true nil) (list 2 %%list2 true nil) (list 3 %%list3 true nil)

@@ -102,7 +102,7 @@
                   (vm-stack vm)))
 
     ;; Nullary operations:
-    ((%%READ %%NEWLINE) ; *** fix, gat, 11/9/92
+    ((%%READ %%NEWLINE %%MAP0) ; *** fix, gat, 11/9/92
      (push (funcall (opcode (vm-instr vm))) (vm-stack vm)))
 
     ;; Unary operations:

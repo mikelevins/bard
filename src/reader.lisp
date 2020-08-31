@@ -24,13 +24,15 @@
   (typecase x
     (cons   (setf (car x) (convert-to-bard (car x)))
             (setf (cdr x) (convert-to-bard (cdr x)))
-	    x) ; *** Bug fix, gat, 11/9/92
+	    x)
     (symbol (or (convert-named-constant x)
                 (convert-number x)
                 x))
     (vector (dotimes (i (length x))
               (setf (aref x i) (convert-to-bard (aref x i))))
-	    x) ; *** Bug fix, gat, 11/9/92
+	    x)
+    (fset:map (fset:image (lambda (k v)(values (convert-to-bard x) (convert-to-bard y)))
+                          x))
     (t x)))
 
 (defun convert-number (symbol)
@@ -131,7 +133,7 @@
                      (lambda (stream char)
                        (declare (ignore char))
                        (let ((elts (read-delimited-list #\] stream t)))
-                         (fset::convert 'fset:seq elts)))
+                         `(bardvm::list ,@elts)))
                      nil
                      *bard-readtable*)
 
@@ -147,9 +149,9 @@
                        (declare (ignore char))
                        (let* ((elts (read-delimited-list #\} stream t))
                               (pairs (loop for tail on elts by #'cddr
-                                        collect (cons (car tail)
-                                                      (cadr tail)))))
-                         (fset::convert 'fset:map pairs)))
+                                        appending (list (car tail)
+                                                        (cadr tail)))))
+                         `(bardvm::map ,@pairs)))
                      nil
                      *bard-readtable*)
 
