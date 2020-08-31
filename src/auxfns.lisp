@@ -18,11 +18,6 @@
   (dolist (pkg '(excl common-lisp common-lisp-user))
     (setf (excl:package-definition-lock (find-package pkg)) nil))
 
-  ;; Don't warn if a function is defined in multiple files --
-  ;; this happens often since we refine several programs.
-  #+Lispworks
-  (setq *PACKAGES-FOR-WARN-ON-REDEFINITION* nil)
-
   #+LCL
    (compiler-options :warnings nil)
   #+sbcl

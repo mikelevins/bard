@@ -20,6 +20,8 @@
   (with-input-from-string (in s)
     (%%read in)))
 
+
+;;; make sure structured values are converted to proper bard representation
 (defun convert-to-bard (x)
   (typecase x
     (cons   (setf (car x) (convert-to-bard (car x)))
@@ -126,7 +128,7 @@
                                   (let ((*read-base* 10)) (%%read stream)))
                               *bard-readtable*)
 
-;;; seqs
+;;; list literals
 ;;; ---------------------------------------------------------------------
 
 (set-macro-character #\[
@@ -141,7 +143,7 @@
 (set-macro-character #\] (get-macro-character #\)) t *bard-readtable*)
 (set-syntax-from-char #\] #\) *bard-readtable* *readtable*)
 
-;;; maps
+;;; map literals
 ;;; ---------------------------------------------------------------------
 
 (set-macro-character #\{

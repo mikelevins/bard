@@ -133,10 +133,10 @@
   (if (typep (vm-method vm) 'method)
       (progn
         (catch :halt
-          (loop (step-vm vm))))
+          (loop (step-vm vm)))
+        vm)
       (progn (warn "No method loaded")
              vm)))
-
 
 (defmethod machine ((m method))
   (let ((vm (make-instance 'vm)))

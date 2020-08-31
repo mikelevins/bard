@@ -17,17 +17,18 @@
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'name! #'name!)
-  (set-global-var! 'exit
-                   (new-method :name 'exit :args '(val) :code '((HALT))))
+  (let ((exitfn (new-method :name 'exit :args '(val) :code '((HALT)))))
+    (set-global-var! 'exit exitfn)
+    (set-global-var! 'quit exitfn))
   (set-global-var! 'call/cc
                    (new-method :name 'call/cc :args '(f)
-                           :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-                                   (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
+                               :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+                                       (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
   (dolist (prim *primitive-methods*)
     (setf (get (prim-symbol prim) 'global-val)
           (new-method :env nil :name (prim-symbol prim)
-                  :code (seq (gen 'PRIM (prim-symbol prim))
-                             (gen 'RETURN))))))
+                      :code (seq (gen 'PRIM (prim-symbol prim))
+                                 (gen 'RETURN))))))
 
 ;;; ==============================
 
