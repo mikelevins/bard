@@ -25,7 +25,7 @@
   (format stream "~A" thing))
 
 (defmethod %%display ((thing fset:seq) &optional (stream *standard-output*))
-  (format stream "[")
+  (format stream "#seq[")
   (let ((count (fset:size thing)))
     (when (> count 0)
       (%%display (fset:@ thing 0))
@@ -65,7 +65,7 @@
   (format stream "true"))
 
 (defmethod %%write ((thing fset:seq) &key (stream *standard-output*))
-  (format stream "[")
+  (format stream "#seq[")
   (let ((count (fset:size thing)))
     (when (> count 0)
       (%%write (fset:@ thing 0) :stream stream)
