@@ -24,6 +24,17 @@
 (defmethod %%display ((thing string) &optional (stream *standard-output*))
   (format stream "~A" thing))
 
+(defmethod %%display ((thing cl:list) &optional (stream *standard-output*))
+  (format stream "(")
+  (let ((count (length thing)))
+    (when (> count 0)
+      (%%display (elt thing 0))
+      (when (> count 1)
+        (loop for i from 1 below count
+           do (progn (format stream " ")
+                     (%%display (elt thing i) stream))))))
+  (format stream ")"))
+
 (defmethod %%display ((thing fset:seq) &optional (stream *standard-output*))
   (format stream "#seq[")
   (let ((count (fset:size thing)))
@@ -63,6 +74,17 @@
 
 (defmethod %%write ((thing (eql t)) &key (stream *standard-output*))
   (format stream "true"))
+
+(defmethod %%write ((thing cl:list) &key (stream *standard-output*))
+  (format stream "(")
+  (let ((count (length thing)))
+    (when (> count 0)
+      (%%write (elt thing 0) :stream stream)
+      (when (> count 1)
+        (loop for i from 1 below count
+           do (progn (format stream " ")
+                     (%%write (elt thing i) :stream stream))))))
+  (format stream ")"))
 
 (defmethod %%write ((thing fset:seq) &key (stream *standard-output*))
   (format stream "#seq[")

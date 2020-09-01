@@ -26,7 +26,9 @@
   "Compile the expression x into a list of instructions"
     (cond
       ((member x '(t nil)) (comp-const x val? more?))
-      ((symbolp x) (comp-var x env val? more?))
+      ((symbolp x) (if (keywordp x)
+                       (comp-const x val? more?)
+                       (comp-var x env val? more?)))
       ((atom x) (comp-const x val? more?))
       ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
       ((case (first x)
