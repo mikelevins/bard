@@ -92,7 +92,6 @@
 
 ;;; ==============================
 
-
 (defun comp-if (pred then else env val? more?)
   "Compile a conditional (IF) expression."
   (cond
@@ -181,11 +180,9 @@
   (assemble (make-method :env env :name name :args args
                      :code (optimize code))))
 
-
 ;;;; ---------------------------------------------------------------------
 ;;;; from paip compile3.lisp
 ;;;; ---------------------------------------------------------------------
-
 
 (defun opcode (instr) (if (label-p instr) :label (first instr)))
 (defun args (instr) (if (listp instr) (rest instr)))
