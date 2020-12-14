@@ -1,36 +1,15 @@
-# ----------------------------------------
-# Gambit
-# ----------------------------------------
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+  GAMBIT_HOME=/usr/local/Gambit
+endif
+ifeq ($(UNAME_S),Linux)
+  GAMBIT_HOME=/usr/local/Gambit
+endif
 
-GSC=/usr/local/bin/gsc
-GAMBIT_HOME=/usr/local
-
-# ----------------------------------------
-# Mac
-# ----------------------------------------
-
-BUILD_DIR=./build
-LIBRARY=Bard
-EXECUTABLE=bard
-
-ARCH=x86_64
-TOOLS_ROOT=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
-SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
-SYSLIBROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
-
-CC=${TOOLS_ROOT}/usr/bin/clang
-
-LIBTOOL=${TOOLS_ROOT}/usr/bin/libtool
-
-CFLAGS_LIB=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.11 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include -D___LIBRARY
-LDFLAGS_LIB=-static -arch_only ${ARCH} -syslibroot ${SYSLIBROOT} -framework Cocoa -o ${BUILD_DIR}/${LIBRARY}
-
-CFLAGS_MAIN=-arch ${ARCH} -x objective-c -isysroot ${SYSROOT} -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-sign-compare -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -fasm-blocks -mmacosx-version-min=10.11 -g -Wno-conversion -Wno-sign-conversion -I${GAMBIT_HOME}/include
-LDFLAGS_MAIN=-arch ${ARCH} -isysroot ${SYSROOT} -mmacosx-version-min=10.11 -framework Cocoa -o ${BUILD_DIR}/${EXECUTABLE} -L${GAMBIT_HOME}/lib -lgambit
-
-# ----------------------------------------
-# Bard Common files
-# ----------------------------------------
+GSC=${GAMBIT_HOME}/bin/gsc
+GSC_INC=${GAMBIT_HOME}/include
+GSC_LIB=${GAMBIT_HOME}/lib
+GCC = gcc
 
 SCHEME_SOURCES= \
          src/version.scm \
@@ -74,7 +53,8 @@ SCHEME_SOURCES= \
          src/protocol-streaming.scm \
          src/protocol-text-processing.scm \
          src/protocol-typing.scm \
-         src/init.scm
+         src/init.scm \
+         src/bard.scm 
 
 
 C_SOURCES= \
@@ -120,6 +100,7 @@ C_SOURCES= \
          src/protocol-text-processing.c \
          src/protocol-typing.c \
          src/init.c \
+         src/bard.c 
 
 
 
@@ -165,79 +146,31 @@ OBJECTS= \
          protocol-streaming.o \
          protocol-text-processing.o \
          protocol-typing.o \
-         init.o
+         init.o \
+         src/bard.o
 
+exe:
+	${GSC} -f -o bard -exe ${SCHEME_SOURCES} src/main.scm
 
-
-# ----------------------------------------
-# Inputs to the Bard library
-# ----------------------------------------
-
-LIB_SCHEME_SOURCES= \
-         c_api/bard_api.scm \
-         c_api/bard_c_api.scm \
-         src/bard.scm 
-
-LIB_C_SOURCES= \
-         c_api/bard_api.c \
-         c_api/bard_c_api.c \
-         src/bard.c \
-         src/bard_.c 
-
-LIB_OBJECTS= \
-         bard_api.o \
-         bard.o \
-         bard_.o 
-
-# ----------------------------------------
-# Inputs to the Bard executable
-# ----------------------------------------
-
-MAIN_SCHEME_SOURCES= \
-         src/bard.scm \
-         src/main.scm
-
-MAIN_C_SOURCES= \
-         src/bard.c \
-         src/main.c \
-         src/main_.c
-
-# ----------------------------------------
-# make rules
-# ----------------------------------------
-
-BUILD_DIR=builds/mac
-EXECUTABLE=bard
-LIBRARY=libBard.a
-INSTALL_PATH=~/bin
-
-all: main
-
-install: 
-	cp ${BUILD_DIR}/$(EXECUTABLE) ${INSTALL_PATH}/bard
 
 clean:
+	rm -f bard
 	rm -f ${C_SOURCES}
-	rm -f ${MAIN_C_SOURCES}
-	rm -f ${LIB_C_SOURCES}
-	rm -rf ${BUILD_DIR}
-
-# -------------------
-# Bard Library
-
-mac_lib: 
-	${GSC} -link ${SCHEME_SOURCES} ${LIB_SCHEME_SOURCES}
-	${CC} ${CFLAGS_LIB} -c ${C_SOURCES} ${LIB_C_SOURCES}
-	${LIBTOOL} ${LDFLAGS_LIB} ${OBJECTS} ${LIB_OBJECTS}
-
-# -------------------
-# Bard Executable
+	rm -f ${OBJS}
+	rm -f src/*.o
+	rm -f src/*.o1
+	rm -f src/*.o2
+	rm -f src/*.o
+	rm -f src/*.o1
+	rm -f src/*.o2
+	rm -f *.o
+	rm -f *.o1
+	rm -f *.o2
+	rm -f *~
 
 
-main: 
-	mkdir -p ${BUILD_DIR}
-	${GSC} -link ${SCHEME_SOURCES} ${MAIN_SCHEME_SOURCES}
-	${CC} ${CFLAGS_MAIN} ${LDFLAGS_MAIN} ${C_SOURCES} ${MAIN_C_SOURCES}
+obj: compile_scheme
+	${GSC} -obj -cc-options ${CFLAGS} ${C_SOURCES}
 
-
-
+compile_scheme:
+	${GSC} -link ${SCHEME_SOURCES}
