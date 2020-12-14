@@ -16,10 +16,10 @@
 
 ;;;----------------------------------------------------------------------------
 
-;;; Representation of readtables.
+;;; Representation of readtables from the Gambit sources
 
 (define-type readtable
-  id: bebee95d-0da2-401d-a33a-c1afc75b9e43
+  id: B1E5C9EE-B4F9-4D3C-AACD-FE12D696101F
   type-exhibitor: macro-type-readtable
   constructor: macro-make-readtable
   implementer: implement-type-readtable
@@ -62,9 +62,14 @@
   (six-type?                      unprintable: read-write:)
   (r6rs-compatible-read?          unprintable: read-write:)
   (r6rs-compatible-write?         unprintable: read-write:)
+  (r7rs-compatible-read?          unprintable: read-write:)
+  (r7rs-compatible-write?         unprintable: read-write:)
   (here-strings-allowed?          unprintable: read-write:)
-  (comment-handler                unprintable: read-write:) ; new field in latest gambit sources
+  (dot-at-head-of-list-allowed?   unprintable: read-write:)
+  (comment-handler                unprintable: read-write:)
+  (foreign-write-handler-table    unprintable: read-write:)
 )
+
 ;;;---------------------------------------------------------------------
 ;;; the Bard readtable
 ;;;---------------------------------------------------------------------
