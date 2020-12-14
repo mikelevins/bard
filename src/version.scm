@@ -5,10 +5,10 @@
 ;;;; Project:       Bard
 ;;;; Purpose:       the Bard interpreter version string
 ;;;; Author:        mikel evins
-;;;; Copyright:     2012 by mikel evins
+;;;; Copyright:     2012-2020 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
 
-(define $bard-version-string "Bard version 0.3.9")
+(define $bard-version-string "Bard version 0.3.10")
 
