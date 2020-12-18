@@ -25,18 +25,30 @@ simple surface. This document records my progress toeard that goal.
 
 Bard 0.7 offers the following built-in datatypes:
 
-| Type name | Description                                           |
-|-----------+-------------------------------------------------------|
-| Null      | The type of ~nothing~.                                |
-| Boolean   | ~true~ or ~false~. ~nothing~ is also logically false. |
-|           |                                                       |
-|           |                                                       |
-|           |                                                       |
-|           |                                                       |
-|           |                                                       |
+| Type name | Description                                                                       |
+|-----------+-----------------------------------------------------------------------------------|
+| Null      | The type of ~nothing~.                                                            |
+| Boolean   | ~true~ or ~false~. ~nothing~ is also logically false.                             |
+| Number    | Any numeric value.                                                                |
+| Text      | A text string.                                                                    |
+| List      | A sequence of values.                                                             |
+| Map       | A mapping from keys to values.                                                    |
+| Operation | A value that can be applied to some number of argument forms to compute a result. |
+| Structure | A blueprint for constructing values.                                              |
 
+* Protocols, Types, Classes, and Structures
 
-* Classes and Structures
+A Bard *type* is either a *class* or a *structure*.
+
+A *structure* is a recipe for assembling data into a value. Bard defines a small set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
+
+Structures are concrete blueprints for constructing values.
+
+A *class*, on the other hand, is a collection of types that fulfill one or more roles in a *protocol*. A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for these inputs and outputs. Those abstract types are *classes*.
+
+In Bard, a class is just the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relatinship to any other type. A class need not have any instances at all.
+
+The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value.
 
 * Operations
 
