@@ -48,7 +48,24 @@ A *class*, on the other hand, is a collection of types that fulfill one or more 
 
 In Bard, a class is just the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relatinship to any other type. A class need not have any instances at all.
 
-The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value.
+The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value. If there's a method of a function specialized for a value, then the value's structure belongs to the corresponding class declared by the function's definition.
+
+For example, if I declare a function like this:
+
+#+BEGIN_SRC lisp
+  (function foo Bar -> Baz)
+#+END_SRC
+
+then I have implicitly created the function ~foo~ and the classes ~Bar~ and ~Baz~. If I now *specialize* ~foo~ for some input structure, like this:
+
+#+BEGIN_SRC lisp
+  (define method (foo bar)
+    with {bar (a <small-integer>)}
+    ...
+  )
+#+END_SRC
+
+then I have implicitly declared that ~<msall-integer>~ is a *member* of the ~Bar~ class.
 
 * Operations
 
