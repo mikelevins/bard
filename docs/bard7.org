@@ -65,7 +65,7 @@ then I have implicitly created the function ~foo~ and the classes ~Bar~ and ~Baz
   )
 #+END_SRC
 
-then I have implicitly declared that ~<msall-integer>~ is a *member* of the ~Bar~ class.
+then I have implicitly declared that ~<small-integer>~ is a *member* of the ~Bar~ class.
 
 * Operations
 
