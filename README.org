@@ -3,5 +3,15 @@
 #+OPTIONS: toc:nil
 #+OPTIONS: num:1
 #+OPTIONS: ^:nil
-#+TITLE: bard 0.7
+#+TITLE: README
+
+The bard 0.7 branch contains work in progress on a simplication of
+bard's surface language and a new implementation of a compiler and
+bytecode interpreter.
+
+The file ~docs/bard7.org~ contains work on the surface language.
+
+The directory ~vm~ contains work on the bard vm.
+
+The directory ~compiler~ contains work on the compiler.
 

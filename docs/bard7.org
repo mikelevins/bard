@@ -1,0 +1,7 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./css/asciidoctor.css" />
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="./css/styles.css" />
+#+OPTIONS: toc:nil
+#+OPTIONS: num:1
+#+OPTIONS: ^:nil
+#+TITLE: bard 0.7
+
