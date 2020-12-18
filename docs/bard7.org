@@ -5,3 +5,40 @@
 #+OPTIONS: ^:nil
 #+TITLE: bard 0.7
 
+bard 0.7 is the seventh major iteration of design and implementation
+of the Bard programming language. Bard is intended to be an
+old-fashioned Lisp in the sense that it fully embraces interactive
+programming and unrestricted malleability. This version of the
+implementation also shoots for the kind of easy portability of source
+and object code represented by old-fashioned Smalltalk environments,
+using a compiler to a platform-agnostic bytecode format and a portable virtual machine.
+
+Bard 0.7 also embraces more recent developments in
+programming-language design, including a functional-first language
+with immutability-first datatypes, protocol-oriented programming, and
+support for internet protocols and widely-used data formats.
+
+Finally, Bard is intended to be a small language with a relatively
+simple surface. This document records my progress toeard that goal.
+
+* Data
+
+Bard 0.7 offers the following built-in datatypes:
+
+| Type name | Description                                           |
+|-----------+-------------------------------------------------------|
+| Null      | The type of ~nothing~.                                |
+| Boolean   | ~true~ or ~false~. ~nothing~ is also logically false. |
+|           |                                                       |
+|           |                                                       |
+|           |                                                       |
+|           |                                                       |
+|           |                                                       |
+
+
+* Classes and Structures
+
+* Operations
+
+* The Bard Runtime
+
