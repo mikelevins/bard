@@ -1,0 +1,37 @@
+
+.src {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
+
+table colgroup col:nth-child(1) {
+    width: 20%;
+}
+table colgroup col:nth-child(2) {
+    width: 30%;
+}
+table colgroup col:nth-child(3) {
+    width: 50%;
+}
+
+table, th, td {
+    border: 1px solid lightgray;
+}
+
+th {
+    background: #dddddd;
+}
+
+tr:nth-child(odd) {
+    background: white;
+}
+
+tr:nth-child(even) {
+    background: #eeeeee;
+}
+
+.warning {
+    background-color: #eee;
+    margin: 2rem;
+    padding: 1rem;
+}
