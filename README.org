@@ -3,6 +3,5 @@
 #+OPTIONS: toc:nil
 #+OPTIONS: num:1
 #+OPTIONS: ^:nil
-#+TITLE: bard 0.6
-
+#+TITLE: bard 0.7
 
