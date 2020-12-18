@@ -78,7 +78,7 @@ then Bard finds the method that I defined above and applies it.
 An *operation* is a value that can be applied to some sequence of
 expressions to compute a result. There are four kinds of operations:
 
-- *special forms:* operations that are built into the Bard processor. Special forms may follow unique rules of evaluation.
+- *special forms:* *special forms* are built into the Bard system and may follow their own rules of evaluation.
 - *functions:* polymorphic operators. They evaluate their arguments, examine the results, and choose a *method* to apply to those values.
 - *methods:* monomorphic operators. A method executes a *body* of bard expressions to compute a result from the values of its parameters.
 - *macros:* a *macro* applies a *body* of bard expressions to the entire macro expression to compute a new form. The new form is then evaluated as if it had initially been called.
