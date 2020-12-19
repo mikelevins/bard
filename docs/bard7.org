@@ -37,6 +37,8 @@ Bard 0.7 offers the following built-in datatypes:
 | Operation | ~(function foo Bar -> Baz)~,               | A value that can be applied to some      |
 |           | ~(^ [x] (+ x 1))~                          | number of arguments to compute a result. |
 | Structure | ~(record <point> {:x <float> :y <float>})~ | A blueprint for constructing values.     |
+|           | ~(tuple <ostype> [<byte> {:exactly 4}])~   |                                          |
+|           | ~(enum <color> 'Red 'Green 'Blue)~         |                                          |
 
 * Protocols, Types, Classes, and Structures
 
