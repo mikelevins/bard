@@ -38,46 +38,47 @@ Bard 0.7 offers the following built-in datatypes:
 |           | ~(^ [x] (+ x 1))~                          | number of arguments to compute a result. |
 | Structure | ~(record <point> {:x <float> :y <float>})~ | A blueprint for constructing values.     |
 |           | ~(tuple <ostype> [<byte> {:exactly 4}])~   |                                          |
-|           | ~(enum <color> 'Red 'Green 'Blue)~         |                                          |
+|           | ~(enum <primary-color> 'Red 'Green 'Blue)~ |                                          |
 
-* Protocols, Types, Classes, and Structures
+* Types
 
-A Bard *type* is either a *class* or a *structure*.
+A Bard *type* is either a *structure* or a *class*. *Structures* are concrete blueprints for constructing values. *Classes* are named collections of types.
 
-A *structure* is a recipe for assembling data into a value. Bard defines a small set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
+A *structure* is a blueprint for assembling data into a value. Bard defines a set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
 
 A structure can be *instantiated*--that is, it can be used to create values. Values created from a structure are said to be *instances* of that structure, and they belong to the *type* that the structure represents.
 
-A *class*, on the other hand, is a named collection of types. Most classes are defined to fulfill one or more roles in a *protocol*. 
+A *class* is an abstract type, a name for a collection of other types. It does not specify any internal structure or any taxonomic relationship to any other type. A class might be empty, with no members and no instances.
 
-A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for those inputs and outputs. The abstract types thus defined are *classes*.
+Most classes are defined to fulfill one or more roles in a *protocol*. 
 
-In Bard, a class is simply the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relationship to any other type. A class need not have any instances at all.
+A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare classes for those inputs and outputs. Until other types are made members of those classes, they are empty.
 
-The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value. If there's a method of a function specialized for a value, then the value's structure belongs to the corresponding class declared by the function's definition.
+The most common way to make a type into an member of a class is by *specializing* a protocol function. If a function has a method that is specialized for a type on some parameter, then that type becomes a member of that parameter's class.
 
-For example, if I define a function like this:
+For example, suppose I define a function like this:
 
 #+BEGIN_SRC lisp
   (function foo Bar -> Baz)
 #+END_SRC
 
-then I have implicitly created the function ~foo~ and the classes ~Bar~ and ~Baz~. If I now *specialize* ~foo~ for some input structure, like this:
+~foo~ is now a function that takes one argument of type ~Bar~ and returns one value of type ~Baz~. ~Bar~ and ~Baz~ are now classes. If these names were never used before in another function or class definition then they are empty--they have no members and no instances.
+
+I can make the structure ~<small-integer>~ into a member of the class ~Bar~ by writing a method that specializes ~foo~ on it:
 
 #+BEGIN_SRC lisp
   (define method (foo bar)
     with {bar (a <small-integer>)}
-    ...
-  )
+    ...)
 #+END_SRC
 
-then I have implicitly declared that ~<small-integer>~ is a *member* of the ~Bar~ class. If I now call ~foo~ with an instance of ~<small-integer>~, like so:
+~<small-integer>~ is now a member of the ~Bar~ class. If I call ~foo~ with an instance of ~<small-integer>~, like so:
 
 #+BEGIN_SRC lisp
   (foo 15)
 #+END_SRC
 
-then Bard finds the method that I defined above and applies it.
+then Bard finds my method and applies it.
 
 * Operations
 
