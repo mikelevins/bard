@@ -25,16 +25,18 @@ simple surface. This document records my progress toward that goal.
 
 Bard 0.7 offers the following built-in datatypes:
 
-| Type name | Examples                                       | Description                                                                  |
-|-----------+------------------------------------------------+------------------------------------------------------------------------------|
-| Null      | ~nothing~                                      | The type of ~nothing~.                                                       |
-| Boolean   | ~true~, ~false~                                | True and false. ~nothing~ is also logically false.                           |
-| Number    | ~0~, ~1~, ~-2~, ~3/4~, ~5.6~                   | Any numeric value.                                                           |
-| Text      | ~""~, ~"Some text"~                            | A text string.                                                               |
-| List      | ~[1 2 3]~,~("one" "two" "three")~              | A sequence of values.                                                        |
-| Map       | ~{}~, ~{:name "Fred" :color "Orange"}~         | A mapping from keys to values.                                               |
-| Operation | ~(function foo Bar -> Baz)~, ~(^ [x] (+ x 1))~ | A value that can be applied to some number of arguments to compute a result. |
-| Structure | ~(record <point> {:x <float> :y <float>})~     | A blueprint for constructing values.                                         |
+| Type name | Examples                                   | Description                              |
+|-----------+--------------------------------------------+------------------------------------------|
+| Null      | ~nothing~                                  | The type of ~nothing~.                   |
+| Boolean   | ~true~, ~false~                            | True and false.                          |
+|           |                                            | ~nothing~ is also logically false.       |
+| Number    | ~0~, ~1~, ~-2~, ~3/4~, ~5.6~               | Any numeric value.                       |
+| Text      | ~""~, ~"Some text"~                        | A text string.                           |
+| List      | ~[1 2 3]~,~("one" "two" "three")~          | A sequence of values.                    |
+| Map       | ~{}~, ~{:name "Fred" :color "Orange"}~     | A mapping from keys to values.           |
+| Operation | ~(function foo Bar -> Baz)~,               | A value that can be applied to some      |
+|           | ~(^ [x] (+ x 1))~                          | number of arguments to compute a result. |
+| Structure | ~(record <point> {:x <float> :y <float>})~ | A blueprint for constructing values.     |
 
 * Protocols, Types, Classes, and Structures
 
