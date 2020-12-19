@@ -42,9 +42,11 @@ A Bard *type* is either a *class* or a *structure*.
 
 A *structure* is a recipe for assembling data into a value. Bard defines a small set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
 
-A structure can be *instantiated*--that is, it can be used to create values. Values created from a structure are said to be *instances* of that structure, and the belong to the *type* that the structure represents.
+A structure can be *instantiated*--that is, it can be used to create values. Values created from a structure are said to be *instances* of that structure, and they belong to the *type* that the structure represents.
 
-A *class*, on the other hand, is a collection of types that fulfill one or more roles in a *protocol*. A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for these inputs and outputs. Those abstract types are *classes*.
+A *class*, on the other hand, is a named collection of types. Most classes are defined to fulfill one or more roles in a *protocol*. 
+
+A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for those inputs and outputs. The abstract types are *classes*.
 
 In Bard, a class is just the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relatinship to any other type. A class need not have any instances at all.
 
