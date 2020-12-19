@@ -126,12 +126,39 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 | ~:type~, ~:Family~                     | ~<keyword>~ | Names that always evaluate to themselves       |
 | ~@file:///tmp/~,~@https://barcode.net~ | ~<uri>~     | URIs                                           |
 
-
 *** Lists
-*** Text strings
+
+Lists are sequences of values, addressable by index. ~List~ is a class, not a structure, and its members include several different structures that represent sequences of values. Instances of ~List~ participate in the ~Listing~ protocol.
+
+| Examples | Structure  | Description               |
+|----------+------------+---------------------------|
+| (...)    | ~<cons>~   | Singly-linked lists       |
+| [...]    | ~<vector>~ | One-dimensional arrays    |
+| "..."    | ~<string>~ | See "Text Strings", below |
+
+
+*** Text Strings
+
+Text strings are Lists of characters. They participate in the ~Listing~ protocol and so all List operations work on them, but they also participate in the ~TextProcessing~ protocol, which adds numerous operations specialized for handling text.
+
+Like ~List~, ~Text~ is a class, not a structure, and there may be several different structures that implement it.
+
+| Examples | Structure  | Description                                                  |
+|----------+------------+--------------------------------------------------------------|
+| "..."    | ~<string>~ | ~<string>~ is just one possible structure representing Text. |
+
+
 *** Characters
+
+Characters are the atomic elements of text strings. The class ~Character~ comprises the structure used to represent them.
+
 *** Maps
+
+Maps are data structures that associate *keys* with *values*. The ~Map~ class comprises several structures that map keys to values with different storage and performance characteristics.
+
 *** Functions and Methods
+
+
 
 ** Naming Conventions
 *** Constants
@@ -166,5 +193,5 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 *** Serializing
 *** Streaming
 *** Tapping
-*** Text-Processing
+*** TextProcessing
 *** Typing
