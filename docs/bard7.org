@@ -52,10 +52,10 @@ In Bard, a class is simply the name of a role in one or more protocol functions.
 
 The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value. If there's a method of a function specialized for a value, then the value's structure belongs to the corresponding class declared by the function's definition.
 
-For example, if I declare a function like this:
+For example, if I define a function like this:
 
 #+BEGIN_SRC lisp
-  (define function foo Bar -> Baz)
+  (function foo Bar -> Baz)
 #+END_SRC
 
 then I have implicitly created the function ~foo~ and the classes ~Bar~ and ~Baz~. If I now *specialize* ~foo~ for some input structure, like this:
@@ -173,14 +173,23 @@ Some maps are mutable; others are immutable.
 
 Functions are operations that select methods to apply based on an examination of the values of their arguments. You can create a function using the ~function~ special form, but until you add methods to it, it cannot actually compute anything.
 
+Following is an expression that creates a named function and its input and output classes:
+
 #+BEGIN_SRC lisp
   (function foo Bar -> Baz)
 #+END_SRC
 
-The ~function~ special form declares a named function and some number of input and output classes.
-
 *** Methods
 
+The special form named ~^~ ("caret" or "lambda") constructs a *method*, also known as a *monomophic function*. A method is a procedure that can be applied to some sequence of values to compute a result.
+
+The most common use of methods is as the code that a specialized function actually executes when it matches the attributes of some set of inputs, but you can also construct and apply methods directly.
+
+Following is an expression that creates a method that square its input:
+
+#+BEGIN_SRC lisp
+  (^ (x) (* x x))
+#+END_SRC
 
 
 ** Naming Conventions
