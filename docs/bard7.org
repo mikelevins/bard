@@ -115,15 +115,22 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 ** Packages
 ** Defining Protocols and Operations
+** Defining Structures
 ** Assignment
 ** Flow of Control
-** Equality and Comparison
-** Numbers
-** Names
-** Lists
-** Text Strings
-** Characters
-** Streams
-** Maps
-** Conditions
-** Functions
+** Built-in Protocols
+*** Addressing
+*** Comparing
+*** Converting
+*** Creating
+*** Listing
+*** Macros
+*** Mapping
+*** Pairing
+*** Printing
+*** Reading
+*** Serializing
+*** Streaming
+*** Tapping
+*** Text-Processing
+*** Typing
