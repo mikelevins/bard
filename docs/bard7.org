@@ -185,12 +185,11 @@ The special form named ~^~ ("caret" or "lambda") constructs a *method*, also kno
 
 The most common use of methods is as the code that a specialized function actually executes when it matches the attributes of some set of inputs, but you can also construct and apply methods directly.
 
-Following is an expression that creates a method that square its input:
+Following is an expression that creates a method that squares its input:
 
 #+BEGIN_SRC lisp
-  (^ (x) (* x x))
+  (^ [x] (* x x))
 #+END_SRC
-
 
 ** Naming Conventions
 *** Constants
