@@ -87,4 +87,43 @@ expressions to compute a result. There are four kinds of operations:
 
 Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code, in the form of S-expressions to a bytecode format called *bardo*. It may in the future also support compiling bardo to native machine code.
 
+* Lexical Syntax
 
+** Literal Values
+*** Named Constants
+*** Numbers
+*** Names
+*** Lists
+*** Text strings
+*** Characters
+*** Maps
+*** Functions and Methods
+
+** Naming Conventions
+*** Constants
+*** Special Variables
+*** Classes
+*** Structures
+*** Protocols
+
+** Operations
+*** Function calls
+*** Syntax Forms
+    A *syntax form* is a special form whose evaluation rules give it a special syntax, different from the normal function-call syntax.
+*** Returning multiple values
+*** Binding variables
+
+** Packages
+** Defining Protocols and Operations
+** Assignment
+** Flow of Control
+** Equality and Comparison
+** Numbers
+** Names
+** Lists
+** Text Strings
+** Characters
+** Streams
+** Maps
+** Conditions
+** Functions
