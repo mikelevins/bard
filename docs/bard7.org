@@ -15,7 +15,7 @@ using a compiler to a platform-agnostic bytecode format and a portable virtual m
 
 Bard 0.7 also embraces more recent developments in
 programming-language design, including a functional-first language
-with immutability-first datatypes, protocol-oriented programming, and
+with immutable-first datatypes, protocol-oriented programming, and
 support for internet protocols and widely-used data formats.
 
 Finally, Bard is intended to be a small language with a relatively
