@@ -91,6 +91,18 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 ** Literal Values
 *** Named Constants
+
+*Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. N of them are defined by the Bard language:
+
+| Name      | Description                     |
+|-----------+---------------------------------|
+| nothing   | The empty list, set, or map.    |
+| true      | The Boolean true value.         |
+| false     | The Boolean false value.        |
+| undefined | The absence of any useful value |
+|           |                                 |
+
+
 *** Numbers
 *** Names
 *** Lists
