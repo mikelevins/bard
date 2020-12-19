@@ -19,7 +19,7 @@ with immutable-first datatypes, protocol-oriented programming, and
 support for internet protocols and widely-used data formats.
 
 Finally, Bard is intended to be a small language with a relatively
-simple surface. This document records my progress toeard that goal.
+simple surface. This document records my progress toward that goal.
 
 * Data
 
@@ -41,8 +41,6 @@ Bard 0.7 offers the following built-in datatypes:
 A Bard *type* is either a *class* or a *structure*.
 
 A *structure* is a recipe for assembling data into a value. Bard defines a small set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
-
-Structures are concrete blueprints for constructing values.
 
 A *class*, on the other hand, is a collection of types that fulfill one or more roles in a *protocol*. A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for these inputs and outputs. Those abstract types are *classes*.
 
