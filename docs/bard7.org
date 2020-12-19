@@ -106,16 +106,27 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 *** Numbers
 
-Numbers are numeric values including integers, ratios, decimal numbers, and bytes. Bard 0.7 defines several built in numeric structures.
+*Numbers* are numeric values including integers, ratios, decimal numbers, and bytes. Bard 0.7 defines several built in numeric structures.
 
 | Values              | Structure       | Description                                                     |
 |---------------------+-----------------+-----------------------------------------------------------------|
 | 0, 100, -2          | <small-integer> | Integers that can be conveniently represented by a machine word |
 | 9999999999999999999 | <big-integer>   | Unlimited-precision integers                                    |
-|                     |                 |                                                                 |
-
+| 2/3                 | <ratio>         | Fractional number represented by ratios of integers             |
+| 0.1                 | <float>         | Decimal numbers represented as floating-point values            |
+| #<byte>3            | <byte>          | 8-bit bytes                                                     |
 
 *** Names
+
+*Names* are values that Bard uses to name elements of the language such as functions, variables, and special forms, or to represent certain kinds of name-like data, such as files and network resources. There are three kinds of names:
+
+| Examples                               | Structure   | Description                                    |
+|----------------------------------------+-------------+------------------------------------------------|
+| ~foo~, ~Bar~, ~<symbol>~               | ~<symbol>~  | Names used for variables, functions, and so on |
+| ~:type~, ~:Family~                     | ~<keyword>~ | Names that always evaluate to themselves       |
+| ~@file:///tmp/~,~@https://barcode.net~ | ~<uri>~     | URIs                                           |
+
+
 *** Lists
 *** Text strings
 *** Characters
