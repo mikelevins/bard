@@ -211,18 +211,48 @@ Following is an expression that creates a method that squares its input:
 ** Assignment
 ** Flow of Control
 ** Built-in Protocols
+
 *** Addressing
+Operations on resource names and identifiers.
+
 *** Comparing
+Testing values for equality, equivalence, and sort order.
+
 *** Converting
+Constructing values of one type that are in some sense equivalent to values of another type. Alternatively, copying values from one type to another.
+
 *** Creating
+Constructing values from structures.
+
 *** Listing
+Operations on sequences of values.
+
 *** Macros
+Macros defined by Bard.
+
 *** Mapping
+Operations on mappings from keys to values.
+
 *** Pairing
+Operations on paired values.
+
 *** Printing
+Printing output.
+
 *** Reading
+Reading input.
+
 *** Serializing
+Converting values to a form that can be transported and stored outside the bard runtime, and converting values in such forms back into live Bard data in the runtime.
+
 *** Streaming
+Operations on objects that produce or consume values.
+
 *** Tapping
+Operations that convert values to streams.
+
 *** TextProcessing
+Operations on text strings.
+
 *** Typing
+Operations on types and operations on values that produce types.
