@@ -85,5 +85,6 @@ expressions to compute a result. There are four kinds of operations:
 
 * The Bard Runtime
 
+Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code, in the form of S-expressions to a bytecode format called *bardo*. It may in the future also support compiling bardo to native machine code.
 
 
