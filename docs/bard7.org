@@ -197,7 +197,7 @@ Following is an expression that creates a method that squares its input:
 ** Constants
 ** Special Variables
 
-#+NAME: Examples of special variables
+#+CAPTION: Examples of special variables
 #+BEGIN_SRC lisp
 *window*
 *process-id*
