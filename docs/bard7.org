@@ -196,6 +196,14 @@ Following is an expression that creates a method that squares its input:
 * Naming Conventions
 ** Constants
 ** Special Variables
+
+#+NAME Examples of special variables
+#+BEGIN_SRC lisp
+*window*
+*process-id*
+*epoch*
+#+END_SRC
+
    A *special variable* is a variable that is defined in all lexical contexts, in every package where the variable's name is visible. Informally, you can think of special variables as global variables, though, strictly speaking, they're not necessarily global. A special variable's name isn't necessary lexically visible in all packages, and in packages where the name isn't visible, the value isn't accessible.
 
 In addition, a special variable's value is unique to each thread of execution. If you spawn a new thread in which a special variable is visible then the new thread can change the special variable's value without affecting the value seen by other threads.
