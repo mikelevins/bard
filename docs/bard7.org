@@ -80,10 +80,10 @@ then Bard finds the method that I defined above and applies it.
 An *operation* is a value that can be applied to some sequence of
 expressions to compute a result. There are four kinds of operations:
 
-- *special forms:* *Special forms* are built into the Bard system and may follow their own rules of evaluation.
-- *functions:* A *function* is a polymorphic operator that evaluates its arguments, examines the results, and chooses a *method* to apply to those values.
-- *methods:* A *method* is a monomorphic operator that applies a body of bard expressions to its input parameters to compute a result. Methods are commonly applied by functions, but may also be referenced and applied directly.
-- *macros:* A *macro* is an *rexpression rewriter*. When you evaluate a macro expression, the entire expression is passed to the body of Bard code given by the macro's definition. That body of Bard code operates on the expression to compute a new expression. Bard then evaluates that new expression as if it had been the expression that was originally called. Bard programmers may use macros to define syntax extensions to Bard.
+- *special forms* are built into the Bard system and may follow their own rules of evaluation.
+- *functions* are polymorphic operators that evaluate their arguments, examine the results, and choose a *method* to apply to the values.
+- *methods* are monomorphic operators that apply bard expressions to their input parameters to compute results. Methods are commonly applied by functions, but may also be referenced and applied directly.
+- *macros* are operations that rewrite calling expressions before applying them. When you apply a macro, the code in its definition rewrites the entire expression, and then evaluates that transformed expression. You can use macros to add new syntax to Bard.
 
 * The Bard Runtime
 
