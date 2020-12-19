@@ -19,7 +19,7 @@
 ;;; Representation of readtables from the Gambit sources
 
 (define-type readtable
-  id: B1E5C9EE-B4F9-4D3C-AACD-FE12D696101F
+  id: bebee95d-0da2-401d-a33a-c1afc75b9e43
   type-exhibitor: macro-type-readtable
   constructor: macro-make-readtable
   implementer: implement-type-readtable
