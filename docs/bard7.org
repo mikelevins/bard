@@ -194,10 +194,21 @@ Following is an expression that creates a method that squares its input:
 
 
 * Naming Conventions
+
+Bard uses some naming conventions that are not strictly enforced by the compiler, but which are strongly encouraged for the sake of clarity.
+
 ** Constants
+
+#+BEGIN_SRC lisp
++Pi+
++C+
++fine-structure-constant+
+#+END_SRC
+
+*Constants* are read-only variables.
+
 ** Special Variables
 
-#+CAPTION: Examples of special variables
 #+BEGIN_SRC lisp
 *window*
 *process-id*
@@ -211,10 +222,47 @@ In addition, a special variable's value is unique to each thread of execution. I
 Finally, *binding forms* like ~bind~ can create bindings that *shadow* a special variable. When you *shadow* a special variable, you've created a local binding whose value may be different from the value in the enclosing environment. That new binding doesn't change the value that the special variable has in the enclosing environment; instead, it creates a new variable with the same name, defined only in the local environment.
 
 ** Classes
+
+#+BEGIN_SRC lisp
+List
+Map
+Stream
+#+END_SRC
+
 ** Structures
+
+#+BEGIN_SRC lisp
+<character>
+<cons>
+<null>
+<small-integer>
+#+END_SRC
+
 ** Predicates
+
+#+BEGIN_SRC lisp
+empty?
+even?
+number?
+#+END_SRC
+
 ** Accessors
+
+#+BEGIN_SRC lisp
+.active?
+.name
+.width
+#+END_SRC
+
 ** Mutators
+
+#+BEGIN_SRC lisp
+replace!
+reverse!
+set!
+.set-name!
+#+END_SRC
+
 * Structures
 ** Records
 ** Tuples
