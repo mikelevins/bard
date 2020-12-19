@@ -46,9 +46,9 @@ A structure can be *instantiated*--that is, it can be used to create values. Val
 
 A *class*, on the other hand, is a named collection of types. Most classes are defined to fulfill one or more roles in a *protocol*. 
 
-A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for those inputs and outputs. The abstract types are *classes*.
+A *protocol* is a defined set of *operations* and *variables*. Operations accept input values and produce output values. A protocol can declare abstract types for those inputs and outputs. The abstract types thus defined are *classes*.
 
-In Bard, a class is just the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relatinship to any other type. A class need not have any instances at all.
+In Bard, a class is simply the name of a role in one or more protocol functions. It does not specify any internal structure or any taxonomic relationship to any other type. A class need not have any instances at all.
 
 The most common way to make a value into an instance of a class is by *specializing* a protocol function to operate on that value. If there's a method of a function specialized for a value, then the value's structure belongs to the corresponding class declared by the function's definition.
 
