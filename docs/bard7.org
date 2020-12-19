@@ -108,7 +108,7 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 *Numbers* are numeric values including integers, ratios, decimal numbers, and bytes. Bard 0.7 defines several built in numeric structures.
 
-| Values              | Structure       | Description                                                     |
+| Values              | Structure       | Notes                                                           |
 |---------------------+-----------------+-----------------------------------------------------------------|
 | 0, 100, -2          | <small-integer> | Integers that can be conveniently represented by a machine word |
 | 9999999999999999999 | <big-integer>   | Unlimited-precision integers                                    |
@@ -120,7 +120,7 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 *Names* are values that Bard uses to name elements of the language such as functions, variables, and special forms, or to represent certain kinds of name-like data, such as files and network resources. There are three kinds of names:
 
-| Examples                               | Structure   | Description                                    |
+| Examples                               | Structure   | Notes                                          |
 |----------------------------------------+-------------+------------------------------------------------|
 | ~foo~, ~Bar~, ~<symbol>~               | ~<symbol>~  | Names used for variables, functions, and so on |
 | ~:type~, ~:Family~                     | ~<keyword>~ | Names that always evaluate to themselves       |
@@ -130,7 +130,9 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 Lists are sequences of values, addressable by index. ~List~ is a class, not a structure, and its members include several different structures that represent sequences of values. Instances of ~List~ participate in the ~Listing~ protocol.
 
-| Examples | Structure  | Description               |
+Some lists are mutable; others are immutable.
+
+| Examples | Structure  | Notes                     |
 |----------+------------+---------------------------|
 | (...)    | ~<cons>~   | Singly-linked lists       |
 | [...]    | ~<vector>~ | One-dimensional arrays    |
@@ -143,7 +145,7 @@ Text strings are Lists of characters. They participate in the ~Listing~ protocol
 
 Like ~List~, ~Text~ is a class, not a structure, and there may be several different structures that implement it.
 
-| Examples | Structure  | Description                                                  |
+| Examples | Structure  | Notes                                                        |
 |----------+------------+--------------------------------------------------------------|
 | "..."    | ~<string>~ | ~<string>~ is just one possible structure representing Text. |
 
@@ -152,9 +154,20 @@ Like ~List~, ~Text~ is a class, not a structure, and there may be several differ
 
 Characters are the atomic elements of text strings. The class ~Character~ comprises the structure used to represent them.
 
+| Examples                | Structure     | Notes                                                                    |
+|-------------------------+---------------+--------------------------------------------------------------------------|
+| ~#\A~, ~#\z~, ~#\space~ | ~<character>~ | A Bard implementation may support several different Character structures |
+
 *** Maps
 
 Maps are data structures that associate *keys* with *values*. The ~Map~ class comprises several structures that map keys to values with different storage and performance characteristics.
+
+Some maps are mutable; others are immutable.
+
+| Examples                       | Structure  | Notes                                                     |
+|--------------------------------+------------+-----------------------------------------------------------|
+| ~{}~, ~{:name "Fred" :age 35}~ | ~<wb-map>~ | Bard supports several mutable and immutable types of maps |
+
 
 *** Functions and Methods
 
