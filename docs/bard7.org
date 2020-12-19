@@ -83,18 +83,18 @@ expressions to compute a result. There are four kinds of operations:
 - *special forms* are built into the Bard system and may follow their own rules of evaluation.
 - *functions* are polymorphic operators that evaluate their arguments, examine the results, and choose a *method* to apply to the values.
 - *methods* are monomorphic operators that apply bard expressions to their input parameters to compute results. Methods are commonly applied by functions, but may also be referenced and applied directly.
-- *macros* are operations that rewrite calling expressions before applying them. When you apply a macro, the code in its definition rewrites the entire expression, and then evaluates that transformed expression. You can use macros to add new syntax to Bard.
+- *macros* are operations that rewrite calling expressions before applying them. When you apply a macro, the code in its definition rewrites the entire expression, and then evaluates the transformed expression. You can use macros to add new syntax to Bard.
 
 * The Bard Runtime
 
-Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code, in the form of S-expressions to a bytecode format called *bardo*. It may in the future also support compiling bardo to native machine code.
+Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code in the form of S-expressions to a bytecode format called *bardo*. It may in the future also support compiling bardo to native machine code.
 
 * Lexical Syntax
 
 ** Literal Values
 *** Named Constants
 
-*Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. N of them are defined by the Bard language:
+*Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. 4 of them are defined by the Bard language:
 
 | Name      | Description                     |
 |-----------+---------------------------------|
@@ -104,8 +104,17 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 | undefined | The absence of any useful value |
 |           |                                 |
 
-
 *** Numbers
+
+Numbers are numeric values including integers, ratios, decimal numbers, and bytes. Bard 0.7 defines several built in numeric structures.
+
+| Values              | Structure       | Description                                                     |
+|---------------------+-----------------+-----------------------------------------------------------------|
+| 0, 100, -2          | <small-integer> | Integers that can be conveniently represented by a machine word |
+| 9999999999999999999 | <big-integer>   | Unlimited-precision integers                                    |
+|                     |                 |                                                                 |
+
+
 *** Names
 *** Lists
 *** Text strings
