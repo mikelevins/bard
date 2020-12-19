@@ -55,7 +55,7 @@ The most common way to make a value into an instance of a class is by *specializ
 For example, if I declare a function like this:
 
 #+BEGIN_SRC lisp
-  (function foo Bar -> Baz)
+  (define function foo Bar -> Baz)
 #+END_SRC
 
 then I have implicitly created the function ~foo~ and the classes ~Bar~ and ~Baz~. If I now *specialize* ~foo~ for some input structure, like this:
@@ -169,7 +169,17 @@ Some maps are mutable; others are immutable.
 | ~{}~, ~{:name "Fred" :age 35}~ | ~<wb-map>~ | Bard supports several mutable and immutable types of maps |
 
 
-*** Functions and Methods
+*** Functions 
+
+Functions are operations that select methods to apply based on an examination of the values of their arguments. You can create a function using the ~function~ special form, but until you add methods to it, it cannot actually compute anything.
+
+#+BEGIN_SRC lisp
+  (function foo Bar -> Baz)
+#+END_SRC
+
+The ~function~ special form declares a named function and some number of input and output classes.
+
+*** Methods
 
 
 
