@@ -58,7 +58,7 @@ The most common way to make a type into an member of a class is by *specializing
 
 For example, suppose I define a function like this:
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
   (function foo Bar -> Baz)
 #+END_SRC
 
@@ -66,7 +66,7 @@ For example, suppose I define a function like this:
 
 I can make the structure ~<small-integer>~ into a member of the class ~Bar~ by writing a method that specializes ~foo~ on it:
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
   (define method (foo bar)
     with {bar <small-integer>}
     ...)
@@ -74,7 +74,7 @@ I can make the structure ~<small-integer>~ into a member of the class ~Bar~ by w
 
 ~<small-integer>~ is now a member of the ~Bar~ class. If I call ~foo~ with an instance of ~<small-integer>~, like so:
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
   (foo 15)
 #+END_SRC
 
@@ -176,7 +176,7 @@ Functions are operations that select methods to apply based on an examination of
 
 Following is an expression that creates a named function and its input and output classes:
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
   (function foo Bar -> Baz)
 #+END_SRC
 
@@ -188,7 +188,7 @@ The most common use of methods is as the code that a specialized function actual
 
 Following is an expression that creates a method that squares its input:
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
   (^ [x] (* x x))
 #+END_SRC
 
@@ -199,7 +199,7 @@ Bard uses some naming conventions that are not strictly enforced by the compiler
 
 ** Constants
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 +Pi+
 +C+
 +fine-structure-constant+
@@ -209,7 +209,7 @@ Bard uses some naming conventions that are not strictly enforced by the compiler
 
 ** Special Variables
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 *window*
 *process-id*
 *epoch*
@@ -223,7 +223,7 @@ Finally, *binding forms* like ~bind~ can create bindings that *shadow* a special
 
 ** Classes
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 List
 Map
 Stream
@@ -231,7 +231,7 @@ Stream
 
 ** Structures
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 <character>
 <cons>
 <null>
@@ -240,7 +240,7 @@ Stream
 
 ** Predicates
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 empty?
 even?
 number?
@@ -248,7 +248,7 @@ number?
 
 ** Accessors
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 .active?
 .name
 .width
@@ -256,7 +256,7 @@ number?
 
 ** Mutators
 
-#+BEGIN_SRC lisp
+#+BEGIN_SRC
 replace!
 reverse!
 set!
