@@ -68,7 +68,7 @@ I can make the structure ~<small-integer>~ into a member of the class ~Bar~ by w
 
 #+BEGIN_SRC lisp
   (define method (foo bar)
-    with {bar (a <small-integer>)}
+    with {bar <small-integer>}
     ...)
 #+END_SRC
 
