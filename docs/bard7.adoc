@@ -88,6 +88,21 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 == Lexical Syntax
 
+Bard's lexical syntax provides ways to write literal values of most of its built-in datatypes. In most cases, the simplext lexical syntax for a datatype is *nonspecific*; that is, it's defined to return an instance of a particular *class*, but not of any specific *structure*.
+
+Writing the lexical syntax for a given datatype yields an instance of the *default structure* for that type. For example, the default structure for the `List` type is `<cons>`, so writing `(1 2 3)` returns a `<cons>`. You can specify that you want some particular structure using the function `as`:
+
+....
+(as <vector> '(1 2 3))
+....
+
+Bard provides a shorthand for `as`:
+
+....
+#<vector> '(1 2 3)
+....
+
+
 === Named Constants
 
 *Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. 4 of them are defined by the Bard language:
