@@ -1,0 +1,62 @@
+= bard 0.7 bytecodes
+mikel evins
+:toc: preamble
+:toclevels: 1
+
+This document describes the Bard 0.7 bytecodes.
+
+[cols=".<1m,.^1m,.>4",options="header",]
+|===
+|Opcode | Value | Description
+|LVAR   |       |
+|LSET   |       |
+|GVAR   |       |
+|GSET   |       |
+|POP    |       |
+|CONST  |       |
+|JUMP   |       |
+|FJUMP  |       |
+|TJUMP  |       |
+|SAVE   |       |
+|RETURN |       |
+|CALL   |       |
+|ARGS   |       |
+|ARGS.  |       |
+|FUNC   |       |
+|PRIM   |       |
+|SETCC  |       |
+|CC     |       |
+|READ   |       |
+|CAR    |       |
+|CDR    |       |
+|CADR   |       |
+|NOT    |       |
+|LIST1  |       |
+|COMP   |       |
+|DISP   |       |
+|WRITE  |       |
+|RAND   |       |
+|+      |       |
+|-      |       |
+|*      |       |
+|/      |       |
+|<      |       |
+|>      |       |
+|<=     |       |
+|>=     |       |
+|!=     |       |
+|=      |       |
+|CONS   |       |
+|LIST2  |       |
+|SETNM  |       |
+|EQ     |       |
+|EQL    |       |
+|EQUAL  |       |
+|LIST3  |       |
+|TRUE   |       |
+|FALSE  |       |
+|NIL    |       |
+|UNDEF  |       |
+|HALT   |       |
+|===    
+        
