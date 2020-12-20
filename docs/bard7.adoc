@@ -1,64 +1,3 @@
-== Table of Contents
-
-[arabic]
-. link:#orgff9a1e9[Data]
-. link:#orgce52287[Types]
-. link:#org2396046[Operations]
-. link:#org7441645[The Bard Runtime]
-. link:#orgd58338a[Lexical Syntax]
-* link:#org8795410[Named Constants]
-* link:#org82fc39f[Numbers]
-* link:#orge37b267[Names]
-* link:#orgaf46b7a[Lists]
-* link:#org99fa0fb[Text Strings]
-* link:#org562a9ee[Characters]
-* link:#orgd34fa11[Maps]
-* link:#org510cff0[Functions]
-* link:#orgc69b5ca[Methods]
-. link:#orgeff1929[Naming Conventions]
-* link:#orgb5d197f[Constants]
-* link:#org70d4664[Special Variables]
-* link:#orgd1d1ae5[Classes]
-* link:#org5706c15[Structures]
-* link:#org51f56b9[Predicates]
-* link:#org7ab025a[Accessors]
-* link:#org5951909[Mutators]
-. link:#orgdc80583[Structures]
-* link:#org4ce18ed[Records]
-* link:#org9af57bb[Tuples]
-* link:#orgf36e290[Enumerations]
-. link:#org4b5b056[Protocols]
-. link:#org746e1dc[Operations]
-* link:#org0d76889[Special Forms]
-* link:#orgedd531a[Syntax Forms]
-* link:#org5ad810f[Functions]
-* link:#org6c02663[Methods]
-* link:#org7028408[Macros]
-. link:#org215f276[Function calls]
-. link:#orgc2a2a2c[Returning multiple values]
-. link:#org1dcde7d[Binding variables]
-. link:#orgfc33c88[Packages]
-. link:#org6c75af3[Defining Protocols and Operations]
-. link:#org4d3c14c[Defining Structures]
-. link:#org3ce6bab[Assignment]
-. link:#orgaf73974[Flow of Control]
-. link:#org9050cf5[Built-in Protocols]
-* link:#org50e7e0a[Addressing]
-* link:#org8fbae11[Comparing]
-* link:#org2e0ffcf[Converting]
-* link:#org1fd7481[Creating]
-* link:#org82a1799[Listing]
-* link:#orge116aea[Macros]
-* link:#org6e1927b[Mapping]
-* link:#org1f5b887[Pairing]
-* link:#org380fd19[Printing]
-* link:#org26714f2[Reading]
-* link:#orgbb4ee4a[Serializing]
-* link:#org441e649[Streaming]
-* link:#org0634527[Tapping]
-* link:#org3cc8fb0[TextProcessing]
-* link:#org6484921[Typing]
-
 bard 0.7 is the seventh major iteration of design and implementation of
 the Bard programming language. Bard is intended to be an old-fashioned
 Lisp in the sense that it fully embraces interactive programming and
@@ -79,83 +18,36 @@ simple surface. This document records my progress toward that goal.
 
 Bard 0.7 offers the following built-in datatypes:
 
-Type name
+[cols=",,",options="header",]
+|===
+|Type name |Examples |Description
+|Null |`nothing` |The type of `nothing`.
 
-Examples
+|Boolean |`true`, `false` |True and false.
 
-Description
+| | |`nothing` is also logically false.
 
-Null
+|Number |`0`, `1`, `-2`, `3/4`, `5.6` |Any numeric value.
 
-`nothing`
+|Text | |A text string.
 
-The type of `nothing`.
+|List |`[1 2 3]`, `( "one" "two" "three" )` |A sequence of values.
 
-Boolean
+|Map |`{}`, `{:name "Fred" :color "Orange"}` |A mapping from keys to
+values.
 
-`true`, `false`
+|Operation |`(function foo Bar -> Baz)`, |A value that can be applied to
+some
 
-True and false.
+| |`(^ [x] (+ x 1))` |number of arguments to compute a result.
 
- 
+|Structure |`(record <point> {:x <float> :y <float>})` |A blueprint for
+constructing values.
 
- 
+| |`(tuple <ostype> [<byte> {:exactly 4}])` |
 
-`nothing` is also logically false.
-
-Number
-
-`0`, `1`, `-2`, `3/4`, `5.6`
-
-Any numeric value.
-
-Text
-
- 
-
-A text string.
-
-List
-
-`[1 2 3]`, `( "one" "two" "three" )`
-
-A sequence of values.
-
-Map
-
-`{}`, `{:name "Fred" :color "Orange"}`
-
-A mapping from keys to values.
-
-Operation
-
-`(function foo Bar -> Baz)`,
-
-A value that can be applied to some
-
- 
-
-`(^ [x] (+ x 1))`
-
-number of arguments to compute a result.
-
-Structure
-
-`(record <point> {:x <float> :y <float>})`
-
-A blueprint for constructing values.
-
- 
-
-`(tuple <ostype> [<byte> {:exactly 4}])`
-
- 
-
- 
-
-`(enum <primary-color> 'Red 'Green 'Blue)`
-
- 
+| |`(enum <primary-color> 'Red 'Green 'Blue)` |
+|===
 
 == Types
 
@@ -189,7 +81,7 @@ members of those classes, they are empty.
 The most common way to make a type into an member of a class is by
 *specializing* a protocol function. If a function has a method that is
 specialized for a type on some parameter, then that type becomes a
-member of that parameter’s class.
+member of that parameter's class.
 
 For example, suppose I define a function like this:
 
@@ -252,29 +144,15 @@ compiling bardo to native machine code.
 and that always refer to the same value. 4 of them are defined by the
 Bard language:
 
-Name
-
-Description
-
-nothing
-
-The empty list, set, or map.
-
-true
-
-The Boolean true value.
-
-false
-
-The Boolean false value.
-
-undefined
-
-The absence of any useful value
-
- 
-
- 
+[cols=",",options="header",]
+|===
+|Name |Description
+|nothing |The empty list, set, or map.
+|true |The Boolean true value.
+|false |The Boolean false value.
+|undefined |The absence of any useful value
+| |
+|===
 
 === Numbers
 
@@ -282,31 +160,20 @@ The absence of any useful value
 numbers, and bytes. Bard 0.7 defines several built in numeric
 structures.
 
-Values
+[cols=",,",options="header",]
+|===
+|Values |Structure |Notes
+|0, 100, -2 |<small-integer> |Integers that can be conveniently
+represented by a machine word
 
-Structure
+|9999999999999999999 |<big-integer> |Unlimited-precision integers
 
-Notes
+|2/3 |<ratio> |Fractional number represented by ratios of integers
 
-0, 100, -2
+|0.1 |<float> |Decimal numbers represented as floating-point values
 
-Integers that can be conveniently represented by a machine word
-
-9999999999999999999
-
-Unlimited-precision integers
-
-2/3
-
-Fractional number represented by ratios of integers
-
-0.1
-
-Decimal numbers represented as floating-point values
-
-#3
-
-8-bit bytes
+|#<byte>3 |<byte> |8-bit bytes
+|===
 
 === Names
 
@@ -315,29 +182,17 @@ as functions, variables, and special forms, or to represent certain
 kinds of name-like data, such as files and network resources. There are
 three kinds of names:
 
-Examples
+[cols=",,",options="header",]
+|===
+|Examples |Structure |Notes
+|`foo`, `Bar`, `<symbol>` |`<symbol>` |Names used for variables,
+functions, and so on
 
-Structure
+|`:type`, `:Family` |`<keyword>` |Names that always evaluate to
+themselves
 
-Notes
-
-`foo`, `Bar`, `<symbol>`
-
-`<symbol>`
-
-Names used for variables, functions, and so on
-
-`:type`, `:Family`
-
-`<keyword>`
-
-Names that always evaluate to themselves
-
-`@file:///tmp/`,~@https://barcode.net~
-
-`<uri>`
-
-URIs
+|`@file:///tmp/`,~@https://barcode.net~ |`<uri>` |URIs
+|===
 
 === Lists
 
@@ -348,29 +203,13 @@ the `Listing` protocol.
 
 Some lists are mutable; others are immutable.
 
-Examples
-
-Structure
-
-Notes
-
-(…)
-
-`<cons>`
-
-Singly-linked lists
-
-[…]
-
-`<vector>`
-
-One-dimensional arrays
-
-``…''
-
-`<string>`
-
-See ``Text Strings'', below
+[cols=",,",options="header",]
+|===
+|Examples |Structure |Notes
+|(…) |`<cons>` |Singly-linked lists
+|[…] |`<vector>` |One-dimensional arrays
+|"…" |`<string>` |See "Text Strings", below
+|===
 
 === Text Strings
 
@@ -382,34 +221,24 @@ operations specialized for handling text.
 Like `List`, `Text` is a class, not a structure, and there may be
 several different structures that implement it.
 
-Examples
-
-Structure
-
-Notes
-
-``…''
-
-`<string>`
-
-`<string>` is just one possible structure representing Text.
+[cols=",,",options="header",]
+|===
+|Examples |Structure |Notes
+|"…" |`<string>` |`<string>` is just one possible structure representing
+Text.
+|===
 
 === Characters
 
 Characters are the atomic elements of text strings. The class
 `Character` comprises the structure used to represent them.
 
-Examples
-
-Structure
-
-Notes
-
-`#\A`, `#\z`, `#\space`
-
-`<character>`
-
-A Bard implementation may support several different Character structures
+[cols=",,",options="header",]
+|===
+|Examples |Structure |Notes
+|`#\A`, `#\z`, `#\space` |`<character>` |A Bard implementation may
+support several different Character structures
+|===
 
 === Maps
 
@@ -419,17 +248,12 @@ different storage and performance characteristics.
 
 Some maps are mutable; others are immutable.
 
-Examples
-
-Structure
-
-Notes
-
-`{}`, `{:name "Fred" :age 35}`
-
-`<wb-map>`
-
-Bard supports several mutable and immutable types of maps
+[cols=",,",options="header",]
+|===
+|Examples |Structure |Notes
+|`{}`, `{:name "Fred" :age 35}` |`<wb-map>` |Bard supports several
+mutable and immutable types of maps
+|===
 
 === Functions
 
@@ -447,9 +271,9 @@ and output classes:
 
 === Methods
 
-The special form named `^` (``caret'' or ``lambda'') constructs a
-*method*, also known as a *monomophic function*. A method is a procedure
-that can be applied to some sequence of values to compute a result.
+The special form named `^` ("caret" or "lambda") constructs a *method*,
+also known as a *monomophic function*. A method is a procedure that can
+be applied to some sequence of values to compute a result.
 
 The most common use of methods is as the code that a specialized
 function actually executes when it matches the attributes of some set of
@@ -485,21 +309,21 @@ compiler, but which are strongly encouraged for the sake of clarity.
 ....
 
 A *special variable* is a variable that is defined in all lexical
-contexts, in every package where the variable’s name is visible.
+contexts, in every package where the variable's name is visible.
 Informally, you can think of special variables as global variables,
-though, strictly speaking, they’re not necessarily global. A special
-variable’s name isn’t necessary lexically visible in all packages, and
-in packages where the name isn’t visible, the value isn’t accessible.
+though, strictly speaking, they're not necessarily global. A special
+variable's name isn't necessary lexically visible in all packages, and
+in packages where the name isn't visible, the value isn't accessible.
 
-In addition, a special variable’s value is unique to each thread of
+In addition, a special variable's value is unique to each thread of
 execution. If you spawn a new thread in which a special variable is
-visible then the new thread can change the special variable’s value
+visible then the new thread can change the special variable's value
 without affecting the value seen by other threads.
 
 Finally, *binding forms* like `bind` can create bindings that *shadow* a
-special variable. When you *shadow* a special variable, you’ve created a
+special variable. When you *shadow* a special variable, you've created a
 local binding whose value may be different from the value in the
-enclosing environment. That new binding doesn’t change the value that
+enclosing environment. That new binding doesn't change the value that
 the special variable has in the enclosing environment; instead, it
 creates a new variable with the same name, defined only in the local
 environment.
