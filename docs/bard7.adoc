@@ -102,10 +102,17 @@ Bard provides a shorthand for `as`:
 #<vector> '(1 2 3)
 ....
 
+Alternatively, you could simply call the `vector` constructor:
+
+....
+(vector 1 2 3)
+....
+
+The shorthand syntax comes in handy when you want to contruct a value with a more complicate expression, and you want to specify the structure of the final result. 
 
 === Named Constants
 
-*Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. 4 of them are defined by the Bard language:
+*Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. Four of them are defined by the Bard language:
 
 [cols="m,",options="header",]
 |===
@@ -119,7 +126,7 @@ Bard provides a shorthand for `as`:
 
 === Numbers
 
-*Numbers* are numeric values including integers, ratios, decimal numbers, and bytes. Bard 0.7 defines several built in numeric structures.
+*Numbers* are numeric values including integers, ratios, and decimal numbers. Bard 0.7 defines several built in numeric structures.
 
 [cols="m,m,",options="header",]
 |===
@@ -137,9 +144,9 @@ Bard provides a shorthand for `as`:
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|`foo`, `Bar`, `<symbol>` |`<symbol>` |Names used for variables, functions, and so on
-|`:type`, `:Family` |`<keyword>` |Names that always evaluate to themselves
-|`@file:///tmp/`,`@https://barcode.net` |`<uri>` |URIs
+|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on
+|:type, :Family |<keyword> |Names that always evaluate to themselves
+|@file:///tmp/,@https://barcode.net |<uri> |URIs
 |===
 
 === Lists
@@ -151,10 +158,10 @@ Some lists are mutable; others are immutable.
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|(…) |`<cons>` |Singly-linked lists
-|[…] |`<vector>` |One-dimensional arrays
-|"…" |`<string>` |See "Text Strings", below
-|#[0 1 255] |`<bytes>` | Sequences of octets
+|(…) |<cons> |Singly-linked lists
+|[…] |<vector> |One-dimensional arrays
+|"…" |<string> |See "Text Strings", below
+|#[0 1 255] |<bytes> | Sequences of octets
 |===
 
 === Text Strings
@@ -166,7 +173,7 @@ Like `List`, `Text` is a class, not a structure, and there may be several differ
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|"…" |`<string>` |`<string>` is just one possible structure representing
+|"…" |<string> |<string> is just one possible structure representing
 Text.
 |===
 
@@ -177,7 +184,7 @@ Characters are the atomic elements of text strings. The class `Character` compri
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|`#\A`, `#\z`, `#\space` |`<character>` |A Bard implementation may
+|#\A, #\z, #\space |<character> |A Bard implementation may
 support several different Character structures
 |===
 
@@ -190,7 +197,7 @@ Some maps are mutable; others are immutable.
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|`{}`, `{:name "Fred" :age 35}` |`<wb-map>` |Bard supports several
+|{}, {:name "Fred" :age 35} |<wb-map> |Bard supports several
 mutable and immutable types of maps
 |===
 
