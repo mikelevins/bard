@@ -151,7 +151,7 @@ The shorthand syntax comes in handy when you want to contruct a value with a mor
 
 === Lists
 
-Lists are sequences of values, addressable by index. `List` is a class, not a structure, and its members include several different structures that represent sequences of values. Instances of `List` participate in the `Listing` protocol.
+Lists are sequences of values that are addressable by index. `List` is a class, not a structure, and its members include several different structures that represent sequences of values. Instances of `List` participate in the `Listing` protocol.
 
 Some lists are mutable; others are immutable.
 
@@ -173,7 +173,7 @@ Like `List`, `Text` is a class, not a structure, and there may be several differ
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|"…" |<string> |<string> is just one possible structure representing
+|"…" |<string> |`<string>` is just one possible structure representing
 Text.
 |===
 
@@ -185,7 +185,7 @@ Characters are the atomic elements of text strings. The class `Character` compri
 |===
 |Examples |Structure |Notes
 |#\A, #\z, #\space |<character> |A Bard implementation may
-support several different Character structures
+support several different `Character` structures
 |===
 
 === Maps
@@ -197,7 +197,7 @@ Some maps are mutable; others are immutable.
 [cols="m,m,",options="header",]
 |===
 |Examples |Structure |Notes
-|{}, {:name "Fred" :age 35} |<wb-map> |Bard supports several
+|{}, {:name "Fred" :age 35} |<dict> |Bard supports several
 mutable and immutable types of maps
 |===
 
