@@ -3,7 +3,7 @@ mikel evins
 :toc: preamble
 :toclevels: 1
 
-This document describes the Bard 0.7 bytecodes.
+This document describes the Bard 0.7 bytecodes. This instruction set is modeled on Norvig's Scheme from https://github.com/norvig/paip-lisp[Paradigms of Artificial Intelligence Programming].
 
 [cols=".<1m,.^1m,.>4",options="header",]
 |===
