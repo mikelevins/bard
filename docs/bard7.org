@@ -3,7 +3,6 @@
 #+OPTIONS: toc:2
 #+OPTIONS: num:1
 #+OPTIONS: ^:nil
-#+PROPERTY: header-args :exports code
 #+TITLE: bard 0.7
 
 bard 0.7 is the seventh major iteration of design and implementation
@@ -32,7 +31,7 @@ Bard 0.7 offers the following built-in datatypes:
 | Boolean   | ~true~, ~false~                            | True and false.                          |
 |           |                                            | ~nothing~ is also logically false.       |
 | Number    | ~0~, ~1~, ~-2~, ~3/4~, ~5.6~               | Any numeric value.                       |
-| Text      | "","Some text"                             | A text string.                           |
+| Text      |                          | A text string.                           |
 | List      | ~[1 2 3]~, ~( "one" "two" "three" )~       | A sequence of values.                    |
 | Map       | ~{}~, ~{:name "Fred" :color "Orange"}~     | A mapping from keys to values.           |
 | Operation | ~(function foo Bar -> Baz)~,               | A value that can be applied to some      |
