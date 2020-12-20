@@ -113,7 +113,6 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 |9999999999999999999 |<big-integer> |Unlimited-precision integers
 |2/3 |<ratio> |Fractional number represented by ratios of integers
 |0.1 |<float> |Decimal numbers represented as floating-point values
-|#<byte>3 |<byte> |8-bit bytes
 |===
 
 === Names
@@ -140,6 +139,7 @@ Some lists are mutable; others are immutable.
 |(…) |`<cons>` |Singly-linked lists
 |[…] |`<vector>` |One-dimensional arrays
 |"…" |`<string>` |See "Text Strings", below
+|#[0 1 255] |`<bytes>` | Sequences of octets
 |===
 
 === Text Strings
