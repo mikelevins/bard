@@ -8,55 +8,55 @@ This document describes the Bard 0.7 bytecodes.
 [cols=".<1m,.^1m,.>4",options="header",]
 |===
 |Opcode | Value | Description
-|LVAR   |       |
-|LSET   |       |
-|GVAR   |       |
-|GSET   |       |
-|POP    |       |
-|CONST  |       |
-|JUMP   |       |
-|FJUMP  |       |
-|TJUMP  |       |
-|SAVE   |       |
-|RETURN |       |
-|CALL   |       |
-|ARGS   |       |
-|ARGS.  |       |
-|FUNC   |       |
-|PRIM   |       |
-|SETCC  |       |
-|CC     |       |
-|READ   |       |
-|CAR    |       |
-|CDR    |       |
-|CADR   |       |
-|NOT    |       |
-|LIST1  |       |
-|COMP   |       |
-|DISP   |       |
-|WRITE  |       |
-|RAND   |       |
-|+      |       |
-|-      |       |
-|*      |       |
-|/      |       |
-|<      |       |
-|>      |       |
-|<=     |       |
-|>=     |       |
-|!=     |       |
-|=      |       |
-|CONS   |       |
-|LIST2  |       |
-|SETNM  |       |
-|EQ     |       |
-|EQL    |       |
-|EQUAL  |       |
-|LIST3  |       |
-|TRUE   |       |
-|FALSE  |       |
-|NIL    |       |
-|UNDEF  |       |
-|HALT   |       |
+|NIL    | 0     |
+|TRUE   | 1     |
+|FALSE  | 2     |
+|UNDEF  | 3     |
+|HALT   | 4     |
+|LVAR   | 5     |
+|LSET   | 6     |
+|GVAR   | 7     |
+|GSET   | 8     |
+|POP    | 9     |
+|CONST  | 10    |
+|JUMP   | 11    |
+|FJUMP  | 12    |
+|TJUMP  | 13    |
+|SAVE   | 14    |
+|RETURN | 15    |
+|CALL   | 16    |
+|ARGS   | 17    |
+|ARGS.  | 18    |
+|FUNC   | 19    |
+|PRIM   | 20    |
+|SETCC  | 21    |
+|CC     | 22    |
+|READ   | 23    |
+|CAR    | 24    |
+|CDR    | 25    |
+|CADR   | 26    |
+|NOT    | 27    |
+|LIST1  | 28    |
+|COMP   | 29    |
+|DISP   | 30    |
+|WRITE  | 31    |
+|RAND   | 32    |
+|+      | 33    |
+|-      | 34    |
+|*      | 35    |
+|/      | 36    |
+|<      | 37    |
+|>      | 38    |
+|<=     | 39    |
+|>=     | 40    |
+|!=     | 41    |
+|=      | 42    |
+|CONS   | 43    |
+|LIST2  | 44    |
+|SETNM  | 45    |
+|EQ     | 46    |
+|EQL    | 47    |
+|EQUAL  | 48    |
+|LIST3  | 49    |
 |===    
         
