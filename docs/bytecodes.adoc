@@ -16,17 +16,17 @@ This document describes the Bard 0.7 bytecodes.
 |ONE    | 5     | Push `1` onto the stack
 |-ONE   | 6     | Push `-1` onto the stack
 |TWO    | 7     | Push `2` onto the stack
-|HALT   | 8     |
-|LVAR   | 9     |
-|LSET   | 10    |
-|GVAR   | 11    |
-|GSET   | 12    |
-|POP    | 13    |
-|CONST  | 14    |
-|JUMP   | 15    |
-|FJUMP  | 16    |
-|TJUMP  | 17    |
-|SAVE   | 18    |
+|HALT   | 8     | Stop execution
+|LVAR   | 9     | Fetch a local variable value and push it
+|LSET   | 10    | Pop the stack and store the value in a local variable
+|GVAR   | 11    | Fetch a global variable value and push it
+|GSET   | 12    | Pop the stack and store the value in a global variable
+|POP    | 13    | Pop the stack and discard the value
+|CONST  | 14    | Push a constant value onto the stack
+|JUMP   | 15    | Set the PC to an index
+|FJUMP  | 16    | Pop the stack. If the value is false, set the PC to an index
+|TJUMP  | 17    | Pop the stack. If the value is true, set the PC to an index
+|SAVE   | 18    | 
 |RETURN | 19    |
 |CALL   | 20    |
 |ARGS   | 21    |
