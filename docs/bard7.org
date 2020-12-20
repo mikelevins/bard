@@ -3,6 +3,7 @@
 #+OPTIONS: toc:2
 #+OPTIONS: num:1
 #+OPTIONS: ^:nil
+#+PROPERTY: header-args :exports code
 #+TITLE: bard 0.7
 
 bard 0.7 is the seventh major iteration of design and implementation
