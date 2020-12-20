@@ -1,3 +1,8 @@
+= bard 0.7
+mikel evins
+:toc: preamble
+:toclevels: 1
+
 bard 0.7 is the seventh major iteration of design and implementation of
 the Bard programming language. Bard is intended to be an old-fashioned
 Lisp in the sense that it fully embraces interactive programming and
