@@ -8,55 +8,59 @@ This document describes the Bard 0.7 bytecodes.
 [cols=".<1m,.^1m,.>4",options="header",]
 |===
 |Opcode | Value | Description
-|NIL    | 0     |
-|TRUE   | 1     |
-|FALSE  | 2     |
-|UNDEF  | 3     |
-|HALT   | 4     |
-|LVAR   | 5     |
-|LSET   | 6     |
-|GVAR   | 7     |
-|GSET   | 8     |
-|POP    | 9     |
-|CONST  | 10    |
-|JUMP   | 11    |
-|FJUMP  | 12    |
-|TJUMP  | 13    |
-|SAVE   | 14    |
-|RETURN | 15    |
-|CALL   | 16    |
-|ARGS   | 17    |
-|ARGS.  | 18    |
-|FUNC   | 19    |
-|PRIM   | 20    |
-|SETCC  | 21    |
-|CC     | 22    |
-|READ   | 23    |
-|CAR    | 24    |
-|CDR    | 25    |
-|CADR   | 26    |
-|NOT    | 27    |
-|LIST1  | 28    |
-|COMP   | 29    |
-|DISP   | 30    |
-|WRITE  | 31    |
-|RAND   | 32    |
-|+      | 33    |
-|-      | 34    |
-|*      | 35    |
-|/      | 36    |
-|<      | 37    |
-|>      | 38    |
-|<=     | 39    |
-|>=     | 40    |
-|!=     | 41    |
-|=      | 42    |
-|CONS   | 43    |
-|LIST2  | 44    |
-|SETNM  | 45    |
-|EQ     | 46    |
-|EQL    | 47    |
-|EQUAL  | 48    |
-|LIST3  | 49    |
+|NIL    | 0     | Push `nothing` onto the stack
+|TRUE   | 1     | Push `true` onto the stack 
+|FALSE  | 2     | Push `false` onto the stack
+|UNDEF  | 3     | Push `undefined` onto the stack
+|ZERO   | 4     | Push `0` onto the stack
+|ONE    | 5     | Push `1` onto the stack
+|-ONE   | 6     | Push `-1` onto the stack
+|TWO    | 7     | Push `2` onto the stack
+|HALT   | 8     |
+|LVAR   | 9     |
+|LSET   | 10    |
+|GVAR   | 11    |
+|GSET   | 12    |
+|POP    | 13    |
+|CONST  | 14    |
+|JUMP   | 15    |
+|FJUMP  | 16    |
+|TJUMP  | 17    |
+|SAVE   | 18    |
+|RETURN | 19    |
+|CALL   | 20    |
+|ARGS   | 21    |
+|ARGS.  | 22    |
+|FUNC   | 23    |
+|PRIM   | 24    |
+|SETCC  | 25    |
+|CC     | 26    |
+|READ   | 27    |
+|CAR    | 28    |
+|CDR    | 29    |
+|CADR   | 30    |
+|NOT    | 31    |
+|LIST1  | 32    |
+|COMP   | 33    |
+|DISP   | 34    |
+|WRITE  | 35    |
+|RAND   | 36    |
+|+      | 37    |
+|-      | 38    |
+|*      | 39    |
+|/      | 40    |
+|<      | 41    |
+|>      | 42    |
+|<=     | 43    |
+|>=     | 44    |
+|!=     | 45    |
+|=      | 46    |
+|CONS   | 47    |
+|LIST2  | 48    |
+|SETNM  | 49    |
+|EQ     | 50    |
+|EQL    | 52    |
+|EQUAL  | 52    |
+|LIST3  | 53    |
 |===    
         
