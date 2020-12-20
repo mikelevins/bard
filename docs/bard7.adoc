@@ -92,7 +92,7 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It supports compi
 
 *Named constants* are *names* that are defined in all lexical contexts, and that always refer to the same value. 4 of them are defined by the Bard language:
 
-[cols=",",options="header",]
+[cols="m,",options="header",]
 |===
 |Name      |Description
 |nothing   |The empty list, set, or map.
