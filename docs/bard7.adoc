@@ -3,11 +3,15 @@ mikel evins
 :toc: preamble
 :toclevels: 1
 
-bard 0.7 is the seventh major iteration of design and implementation of the Bard programming language. Bard is intended to be an old-fashioned Lisp in the sense that it fully embraces interactive programming and unrestricted malleability. This version of the implementation also shoots for the kind of easy portability of source and object code represented by old-fashioned Smalltalk environments, using a compiler to a platform-agnostic bytecode format and a portable virtual machine.
+bard 0.7 is the seventh major iteration of design and implementation of the Bard programming language.
+
+Bard is intended to be an old-fashioned Lisp in the sense that it fully embraces interactive programming and unrestricted malleability. This version of the implementation also shoots for the kind of easy portability of source and object code represented by old-fashioned Smalltalk environments, using a compiler to a platform-agnostic bytecode format and a portable virtual machine.
 
 Bard 0.7 also embraces more recent developments in programming-language design, including a functional-first language with immutable-first datatypes, protocol-oriented programming, and support for internet protocols and widely-used data formats.
 
-Finally, Bard is intended to be a small language with a relatively simple surface. This document records my progress toward these goals.
+Finally, Bard is intended to be a small language with a relatively simple surface.
+
+This document records my progress toward these goals.
 
 == Data
 
@@ -18,15 +22,15 @@ Bard 0.7 offers the following built-in basic datatypes:
 |Type name |Examples                                 |Description
 |Anything  | 1, true, "hello"                        |Every possible value.
 |Undefined |undefined                                |No useful value.
-|Null      |nothing                                  |The type of `nothing`.
-|Boolean   |true, false                              |True and false. nothing` is also logically false.
+|Null      |nothing                                  |The empty collection.
+|Boolean   |true, false                              |True and false. `nothing` is also logically false.
 |Number    |0, 1, -2, 3/4, 5.6                       |Any numeric value.
 |Text      | "", "Some text"                         |Text strings.
 |List      |[1 2 3]                                  |A sequence of values.
-|          |( "one" "two" "three" )                  |
-|Map       |{:name "Fred" :color "Orange"}           | A mapping from keys to values.
-|Operation |(function foo Bar -> Baz)                |A value that can be applied to some number of arguments to compute a result.
-|          |(^ [x] (+ x 1))                          |
+|          |(+ 1 2 3)                                |Written this way, a List is treated as a function call
+|Map       |{:name "Fred" :color "Orange"}           |A mapping from keys to values.
+|Function  |(function foo Bar -> Baz)                |A polymorphic operator
+|Method    |(^ [x] (+ x 1))                          |A monomorphic operator
 |Structure |(record <point> {:x <float> :y <float>}) |A blueprint for constructing values.
 |          |(tuple <ostype> [<byte> {:exactly 4}])   |
 |          |(enum <primary-color> 'Red 'Green 'Blue) |
@@ -36,15 +40,15 @@ Bard 0.7 offers the following built-in basic datatypes:
 
 A Bard *type* is either a *structure* or a *class*. *Structures* are concrete blueprints for constructing values. *Classes* are named collections of types.
 
-A *structure* describes the structure of a family of values and the data that populate them. Bard defines a set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operations* that you can use to define your own structures.
+A *structure* describes the structure of a family of values and the data that populate them. Bard defines a set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operators* that you can use to define your own structures.
 
 A structure can be *instantiated*–that is, it can be used to create values. Values created from a structure are said to be *instances* of that structure, and they belong to the *type* that the structure represents.
 
-A *class* is an abstract type, a name for a collection of other types.  It does not specify any internal structure or any taxonomic relationship to any other type. A class might be empty, with no members and no instances.
+A *class* is an abstract type, a name for a collection of other types.  It does not specify any internal structure or any taxonomic relationship to any other type. A class might be *empty*, with no members and no instances.
 
 Most classes are defined to fulfill one or more roles in a *protocol*.
 
-A *protocol* is a defined set of *operations* and *variables*.  Operations accept input values and produce output values. A protocol can declare classes for those inputs and outputs. Until other types are made members of those classes, they are empty.
+A *protocol* is a named set of *operators* and *variables*.  Operators accept input values and produce output values. A protocol can declare classes for those inputs and outputs. Until other types are made members of those classes, the classes are empty.
 
 The most common way to make a type into an member of a class is by *specializing* a protocol function. If a function has a method that is specialized for a type on some parameter, then that type becomes a member of that parameter's class.
 
@@ -64,8 +68,11 @@ I can make the structure `<small-integer>` into a member of the class `Bar` by w
   ...)
 ....
 
-`<small-integer>` is now a member of the `Bar` class. If I call `foo`
-with an instance of `<small-integer>`, like so:
+The `with` clause applies a *constraint* to the argument `bar`: its value must be an instance of `<small-integer>`.
+
+To be more precise: `<small-integer>` is the constraint that `bar` must satisfy. If the constraint is a type, then the value of `bar` must be an instance of that type in order for this method to match the function call. Other constraints are also possible. For example, the constraint `(exactly 101)` means that `bar` has to be equal to 101, and the integer 101 (and only the integer 101) becomes a member of the `Bar` class.
+
+`<small-integer>` is now a member of the `Bar` class. If I call `foo` with an instance of `<small-integer>`, like so:
 
 ....
 (foo 15)
@@ -73,42 +80,56 @@ with an instance of `<small-integer>`, like so:
 
 then Bard finds my method and applies it.
 
-== Operations
+== Operators
 
-An *operation* is a value that can be applied to some sequence of expressions to compute a result. There are four kinds of operations:
+An *operator* is a value that can be applied to some sequence of expressions to compute a result. There are four kinds of operators:
 
-* *special forms* are built into the Bard system and may follow their own rules of evaluation.
-* *functions* are polymorphic operators that evaluate their arguments, examine the results, and choose a *method* to apply to the values.
+* *special forms* are built into the Bard system. Each special form can follow its own rules of evaluation.
+* *functions* are polymorphic operators that evaluate their arguments, examine the results, and choose a *method* to apply according to the matching rules given by `define method` forms.
 * *methods* are monomorphic operators that apply bard expressions to their input parameters to compute results. Methods are commonly applied by functions, but may also be referenced and applied directly.
-* *macros* are operations that rewrite calling expressions before applying them. When you apply a macro, the code in its definition rewrites the entire expression, and then evaluates the transformed expression. You can use macros to add new syntax to Bard.
+* *macros* are rewrite rules. When you call a macro, the rule given by the macro's definition rewrites the call into a new expression and then evaluates that. Macros are generally used to add new syntax to Bard.
 
 == The Bard Runtime
 
-Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code in the form of S-expressions to a bytecode format called *bardo*. It may in the future also support compiling bardo to native machine code.
+Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code in the form of S-expressions to a bytecode format called *bardo*.
+
+I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
 
 == Lexical Syntax
 
-Bard's lexical syntax provides ways to write literal values of most of its built-in datatypes. In most cases, the simplext lexical syntax for a datatype is *nonspecific*; that is, it's defined to return an instance of a particular *class*, but not of any specific *structure*.
+Bard's lexical syntax provides ways to write literal values of most of its built-in datatypes. For example:
 
-Writing the lexical syntax for a given datatype yields an instance of the *default structure* for that type. For example, the default structure for the `List` type is `<cons>`, so writing `(1 2 3)` returns a `<cons>`. You can specify that you want some particular structure using the function `as`:
+[cols="1m,1m,4",options="header",]
+|===
+|Syntax    | Class |Description
+|nothing   | Null  |The empty collection
+|3.1415926 | Float |A floating-point number
+|[1 2 3]   | List  |A list of integers
+|===
+
+The table gives the *class* of each value, but not the *structure*. When you write the lexical syntax for a value, Bard constructs and returns an instance of the *default structure* for that type. For example, the default structure for the `List` type is `<cons>`, so writing `[1 2 3]` returns a `<cons>`.
+
+What if you want a different structure? You can write:
 
 ....
-(as <vector> '(1 2 3))
+#:<vector> '(1 2 3)
 ....
 
-Bard provides a shorthand for `as`:
+which tells Bard you want it to return a `vector` instead. The syntax `#:<vector>` is shorthand for
 
 ....
-#<vector> '(1 2 3)
+(as <vector> [1 2 3])
 ....
 
-Alternatively, you could simply call the `vector` constructor:
+Bard may rewrite this expression as a direct call to the `vector` constructor:
 
 ....
 (vector 1 2 3)
 ....
 
-The shorthand syntax comes in handy when you want to contruct a value with a more complicate expression, and you want to specify the structure of the final result. 
+Alternatively, you can of course also call the constructor yourself.
+
+When you write a literal value, Bard constructs an instance of the default structure for the expression's class. If you want to ensure that the value belongs to some specific structure, then you must say so explicitly, as in the example above.
 
 === Named Constants
 
@@ -121,7 +142,6 @@ The shorthand syntax comes in handy when you want to contruct a value with a mor
 |true      |The Boolean true value.
 |false     |The Boolean false value.
 |undefined |The absence of any useful value
-|          |
 |===
 
 === Numbers
@@ -139,71 +159,62 @@ The shorthand syntax comes in handy when you want to contruct a value with a mor
 
 === Names
 
-*Names* are values that Bard uses to name elements of the language such as functions, variables, and special forms, or to represent certain kinds of name-like data, such as files and network resources. There are three kinds of names:
+*Names* are values that Bard uses to label elements of the language like functions, variables, and special forms, or to represent certain kinds of name-like data, such as files and network resources. There are three kinds of names:
 
-[cols="m,m,",options="header",]
+[cols="1,1m,1m,4",options="header",]
 |===
-|Examples |Structure |Notes
-|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on
-|:type, :Family |<keyword> |Names that always evaluate to themselves
-|@file:///tmp/,@https://barcode.net |<uri> |URIs
+|Kind |Examples |Structure |Notes
+|Symbol|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on
+|Keyword|:type, :Family |<keyword> |Names that always evaluate to themselves
+|URI|@"file:///tmp/",@"https://barcode.net" |<uri> |Universal Resource Identifiers and URLs
 |===
 
 === Lists
 
-Lists are sequences of values that are addressable by index. `List` is a class, not a structure, and its members include several different structures that represent sequences of values. Instances of `List` participate in the `Listing` protocol.
+Lists are sequences of values that are addressable by index. `List` is a class, not a structure, and its members include several different structures that represent sequences of values. The `Listing` protocol provides numerous operators that work on Lists.
 
-Some lists are mutable; others are immutable.
+Some List structures are mutable; others are immutable.
 
-[cols="m,m,",options="header",]
+[cols="m,",options="header",]
 |===
-|Examples |Structure |Notes
-|(…) |<cons> |Singly-linked lists
-|[…] |<vector> |One-dimensional arrays
-|"…" |<string> |See "Text Strings", below
-|#[0 1 255] |<bytes> | Sequences of octets
+|Examples  |Notes
+|[1 2 3]  | A List of integers
+|[[1 2 3]["one" "two" "three"]]  | A List of Lists
+|"A list of Characters"  | Text strings are also Lists (see "Text Strings," below)
 |===
 
 === Text Strings
 
-Text strings are Lists of characters. They participate in the `Listing` protocol and so all List operations work on them, but they also participate in the `TextProcessing` protocol, which adds numerous operations specialized for handling text.
+Text strings, like `"Hello"`, are Lists of Characters. All of the operators of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many operators specialized for handling text.
 
 Like `List`, `Text` is a class, not a structure, and there may be several different structures that implement it.
 
-[cols="m,m,",options="header",]
-|===
-|Examples |Structure |Notes
-|"…" |<string> |`<string>` is just one possible structure representing
-Text.
-|===
-
 === Characters
 
-Characters are the atomic elements of text strings. The class `Character` comprises the structure used to represent them.
+Characters are the atomic elements of text strings. The class `Character` comprises the structures used to represent them.
 
-[cols="m,m,",options="header",]
+[cols="1m,3",options="header",]
 |===
-|Examples |Structure |Notes
-|#\A, #\z, #\space |<character> |A Bard implementation may
-support several different `Character` structures
+|Examples  |Notes
+|#\A, #\z, #\space  |Bard supports several different `Character` structures
 |===
 
 === Maps
 
-Maps are data structures that associate *keys* with *values*. The `Map` class comprises several structures that map keys to values with different storage and performance characteristics.
+Maps are data structures that associate *keys* with *values*. The `Map` class comprises several such structures with different storage and performance characteristics.
 
 Some maps are mutable; others are immutable.
 
-[cols="m,m,",options="header",]
+[cols="2m,3",options="header",]
 |===
-|Examples |Structure |Notes
-|{}, {:name "Fred" :age 35} |<dict> |Bard supports several
+|Examples |Notes
+|{}, {:name "Fred" :age 35} |Bard supports several
 mutable and immutable types of maps
 |===
 
 === Functions
 
-Functions are operations that select methods to apply based on an examination of the values of their arguments. You can create a function using the `function` special form, but until you add methods to it, it cannot actually compute anything.
+Functions are operators that select methods to apply based on an examination of the values of their arguments. You can create a function using the `function` special form, but until you add *methods* to it, it cannot actually compute anything.
 
 Following is an expression that creates a named function and its input and output classes:
 
@@ -215,12 +226,40 @@ Following is an expression that creates a named function and its input and outpu
 
 The special form named `^` ("caret" or "lambda") constructs a *method*, also known as a *monomophic function*. A method is a procedure that can be applied to some sequence of values to compute a result.
 
-The most common use of methods is as the code that a specialized function actually executes when it matches the attributes of some set of inputs, but you can also construct and apply methods directly.
-
 Following is an expression that creates a method that squares its input:
 
 ....
 (^ [x] (* x x))
+....
+
+
+Although you can construct methods this way and use them directly, the most common way to create and use them is with the special form `define method`:
+
+....
+(define method (add x y)
+  with {x <small-integer> y <small-integer>}
+  (+ x y))
+....
+
+`define method` creates a method and adds it to the named function, along with a matching rule that specifies the requirements that the function's arguments must meet in order for the method to apply to them. In this example, the defined method applies only when `x` and `y` are both instances of `<small-integer>`.
+
+We can add another method to the same function, matching a different structure:
+
+....
+(define method (add x y)
+  with {x <string> y <string>}
+  (cat x y))
+....
+
+While the `<small-integer>` version of `add` uses the addition operator on its arguments, the `<string>` version instead uses `cat`, which concatenates the strings.
+
+You may match any structures you like, and Bard also supports constraints other than type constraints. For example:
+
+....
+(define method (add x y)
+  with {x (exactly 4)
+        y (exactly 2)}
+  (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ....
 
 == Naming Conventions
@@ -303,7 +342,7 @@ set!
 
 == Protocols
 
-== Operations
+== Operators
 
 === Special Forms
 
@@ -325,7 +364,7 @@ A *syntax form* is just a special form whose evaluation rules give it a special 
 
 == Packages
 
-== Defining Protocols and Operations
+== Defining Protocols and Operators
 
 == Defining Structures
 
