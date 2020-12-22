@@ -32,15 +32,15 @@ This document describes the Bard 0.7 bytecodes. This instruction set is modeled 
 |ARGS   | 21    | Collect args from the stack and push the array of args
 |ARGS.  | 22    | Collect args + rest args from the stack and push the array of args
 |FUNC   | 23    | Create a function and push it
-|PRIM   | 24    | Pop a primitive, collect its args from the stack, call it, and push the result
-|SETCC  | 25    | Pop a continuation from the stack and use it to reset the VM
-|CC     | 26    | Create a continuation and push it on the stack
-|READ   | 27    | Read bard expressions from a stream
-|CAR    | 28    | Push the left element of a <cons>
-|CDR    | 29    | Push the right element of a <cons>
-|CADR   | 30    | Push the left element of the right element of a <cons>
-|NOT    | 31    | Pop the stack and push its logical negation
-|LIST1  | 32    | Pop the stack, wrap the value in a <cons>, and push it
+|METH   | 24    | Create a method and push it
+|PRIM   | 25    | Pop a primitive, collect its args from the stack, call it, and push the result
+|SETCC  | 26    | Pop a continuation from the stack and use it to reset the VM
+|CC     | 27    | Create a continuation and push it on the stack
+|READ   | 28    | Read bard expressions from a stream
+|CAR    | 29    | Push the left element of a <cons>
+|CDR    | 30    | Push the right element of a <cons>
+|CADR   | 31    | Push the left element of the right element of a <cons>
+|NOT    | 32    | Pop the stack and push its logical negation
 |COMP   | 33    | Compile an expression and push the result
 |DISP   | 34    | Pop the stack and write the display representation to a stream
 |WRITE  | 35    | Pop the stack and write the string-serialized representation to a stream
@@ -55,12 +55,13 @@ This document describes the Bard 0.7 bytecodes. This instruction set is modeled 
 |>=     | 44    | Pop two values and push whether the first is greater than or equal to the second
 |!=     | 45    | Pop two values and push whether the first is unequal to the second
 |=      | 46    | Pop two values and push whether the first is equal to the second
-|CONS   | 47    | Pop x and y and push (cons x y)
-|LIST2  | 48    | Pop x and y and push (list x y)
-|SETNM  | 49    | Pop a name and a named object and replace the object's name with the popped name
-|EQ     | 50    | Pop two values and push whether they are identical
-|EQL    | 52    | Pop two values and push whether they are identical or numerically equal
-|EQUAL  | 52    | Pop two values and push whether they are equal
+|EQ     | 47    | Pop two values and push whether they are identical
+|EQL    | 48    | Pop two values and push whether they are identical or numerically equal
+|EQUAL  | 49    | Pop two values and push whether they are equal
+|CONS   | 50    | Pop x and y and push (cons x y)
+|LIST1  | 52    | Pop the stack, wrap the value in a <cons>, and push it
+|LIST2  | 52    | Pop x and y and push (list x y)
 |LIST3  | 53    | Pop x, y and z and push (list x y z)
+|SETNM  | 54    | Pop a name and a named object and replace the object's name with the popped name
 |===    
         

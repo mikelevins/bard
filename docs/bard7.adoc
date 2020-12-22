@@ -290,7 +290,21 @@ In addition, a special variable's value is unique to each thread of execution. I
 
 Finally, *binding forms* like `bind` can create bindings that *shadow* a special variable. When you *shadow* a special variable, you've created a local binding whose value may be different from the value in the enclosing environment. That new binding doesn't change the value that the special variable has in the enclosing environment; instead, it creates a new variable with the same name, defined only in the local environment.
 
+=== Protocols
+
+A *protocol* is named catalog of related operators and variables. Conceptually, a protocols is a collection of tools for carrying out some activity. The convention is to choose a name that describes the activity: `*Listing*`, for example, or `*Ordering*`.
+
+....
+Listing
+Mapping
+Streaming
+....
+
 === Classes
+
+A *class* is a named collection of *types*. Types, remember, may be either structures or classes, so classes may be members of other classes.
+
+The convention is to name a class with a capitalized noun. The noun should reflect the way the type is intended to be used.
 
 ....
 List
@@ -299,6 +313,10 @@ Stream
 ....
 
 === Structures
+
+A *structure* is a concrete description of how values are combined to form a new type of value. Structures are the only types that may be directly instantiated; classes may have instances only indirectly, by virtue of including structures as members; no classes have direct instances.
+
+For structures, the convention is to name them with nouns that describe their concrete representation, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
 
 ....
 <character>
@@ -309,6 +327,10 @@ Stream
 
 === Predicates
 
+*Predicates* are functions and methods of one argument that return true or false.
+
+The convention is to end the name of predicates with question marks ("?").
+
 ....
 empty?
 even?
@@ -317,6 +339,10 @@ number?
 
 === Accessors
 
+An *accessor* is a function that returns the value of a slot in an object. If a slot is *mutable* then the accessor may also be used to replace the value.
+
+The convention is to start the name of an accessor with a dot (".").
+
 ....
 .active?
 .name
@@ -324,6 +350,10 @@ number?
 ....
 
 === Mutators
+
+A *mutator* is a function that destructively modifies the value in a slot, replacing the old value with a new one, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
+
+The convention is to end the names of mutators with exclamation points ("!").
 
 ....
 replace!
@@ -334,6 +364,14 @@ set!
 
 == Structures
 
+A *structure* is a concrete representation of how to assemble a value from simpler values. There are three kinds of structures:
+
+- *records* are structures made of named slots.
+- *tuples* are structure made of sequences of elements that may be fetched by index
+- *enumerations* are structures defined as one or more named values, optionally with one or more data parameters associated with the names.
+
+This section describes how to define and instantiate structures, and how to operate on them.
+
 === Records
 
 === Tuples
@@ -341,6 +379,8 @@ set!
 === Enumerations
 
 == Protocols
+
+
 
 == Operators
 
