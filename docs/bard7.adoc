@@ -1,7 +1,7 @@
 = bard 0.7
 mikel evins
 :toc: preamble
-:toclevels: 1
+:toclevels: 2
 
 bard 0.7 is the seventh major iteration of design and implementation of the Bard programming language.
 
@@ -450,7 +450,45 @@ There are four different kinds of operations, each with a different purpose and 
 === Macros
 
 == Operations
-(Function and method calls, macro calls, and execution of special forms.)
+
+An *operation* is an expression that calls an *operator*.
+
+For example:
+
+....
+(+ 2 3 4)
+
+(bind [(x 1)
+       (y 2)]
+ (* x y))
+
+(set! (.x pt) 100)
+....
+
+Bard expresses operations as Lists whose first elements are operators, and whose remaining elements are the operators' arguments. Argument expressions may themselves be operations.
+
+Different types of operators have different rules of evaluation for argument expressions. *Functions* and *methods* evaluate argument expressions before passing them to the operator.
+
+A *macro* expression passes the whole expression to the rule given by the macro's definition; that rule rewrites the expression before it's evaluated, and the rule determines whether and how the arguments are evaluated.
+
+*Special forms* are built into the Bard runtime, and each one has its own rules of evaluation.
+
+For example:
+
+....
+(def x (+ 2 3))
+....
+
+`def` defines a special variable. It evaluates its second argument, but not its first. The above example creates a special variable named `x` whose initial value is `5`.
+
+....
+(if nothing
+  (/ 1 0)
+  (print "No worries!"))
+....
+
+`if` evaluates its first argument. If the value is true then it evaluates its second argument; if not, it evaluates its third argument. In the above example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
+
 
 == Returning multiple values
 
