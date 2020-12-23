@@ -183,9 +183,45 @@ Some List structures are mutable; others are immutable.
 |"A list of Characters"  | Text strings are also Lists (see "Text Strings," below)
 |===
 
+Bard normally prints a list using parentheses rather than square brackets. We can see this when we enter lists at the Bard prompt:
+
+....
+> [1 2 3]
+(1 2 3)
+....
+
+Both ways of writing Lists are correct; the difference between then is that when Bard reads a List written in parentheses, it interprets it as a function call.
+
+....
+> (1 2 3)
+ERROR: 1 is not an operator!
+....
+
+You can tell Bard not to evaluate a List in parentheses using a *quote*:
+
+....
+> '(1 2 3)
+(1 2 3)
+....
+
+...or you can use square brackets as a shorthand for the List constructor.
+
+....
+[1 2 3]
+....
+
+means the same thing as
+
+....
+(list 1 2 3)
+....
+
+
 === Text Strings
 
 Text strings, like `"Hello"`, are Lists of Characters. All of the operators of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many operators specialized for handling text.
+
+Note that this does not mean that strings are implemented inefficiently as singly-linked-lists or some such data structure. Remember that `Text` and `List` are classes, not structures. Saying that a text string is a list of characters simply means that the structure that represents it supports the `Listing` protocol; it doesn't specify anything about its representation.
 
 Like `List`, `Text` is a class, not a structure, and there may be several different structures that implement it.
 
@@ -214,26 +250,33 @@ mutable and immutable types of maps
 
 === Functions
 
-Functions are operators that select methods to apply based on an examination of the values of their arguments. You can create a function using the `function` special form, but until you add *methods* to it, it cannot actually compute anything.
+Functions are polymorphic operators examine their inputs, match them to methods, and apply the methods to the inputs.
 
-Following is an expression that creates a named function and its input and output classes:
+Following is an expression that creates a named function:
 
 ....
 (function foo Bar -> Baz)
 ....
 
+Besides saying that `foo` is a function, this expression also says that `Bar` and `Baz` are classes whose members can be inputs and outputs of `foo`.
+
+Defining a function doesn't say how it works or what values is accepts or produces. It only defines some abstract function and classes that may be given concrete meaning by *specializing* the function.
+
+*Specializing* a function means defining a *method* that applies to some concrete set of input values. The next section describes specialization in more detail.
+
 === Methods
 
-The special form named `^` ("caret" or "lambda") constructs a *method*, also known as a *monomophic function*. A method is a procedure that can be applied to some sequence of values to compute a result.
+The special form named `^` ("caret" or "lambda") constructs a *method*, also known as a *monomorphic function*. A method is a procedure that can be applied to some sequence of values to compute a result. Unlike functions, methods do not examine their inputs before choosing the code to apply to them. A method simply applies its body to its arguments.
 
-Following is an expression that creates a method that squares its input:
+Following is an expression that creates a method:
 
 ....
 (^ [x] (* x x))
 ....
 
+This nameless method accepts one parameter, called `x`, and multiples it by itself.
 
-Although you can construct methods this way and use them directly, the most common way to create and use them is with the special form `define method`:
+Although you can construct methods this way and use them directly, the most common way to create and use them is by using the special form `define method` to *specialize* a function:
 
 ....
 (define method (add x y)
@@ -241,7 +284,9 @@ Although you can construct methods this way and use them directly, the most comm
   (+ x y))
 ....
 
-`define method` creates a method and adds it to the named function, along with a matching rule that specifies the requirements that the function's arguments must meet in order for the method to apply to them. In this example, the defined method applies only when `x` and `y` are both instances of `<small-integer>`.
+This example *specializes* the function `add`, meaning that it specifies a set of input parameters and a method that applies to them. This definition says that `add` accepts two arguments, and they must be nstances of the structure `<small-integer>`. If we pass arguments of any other number or type then this method is not applied.
+
+`define method` creates a method and adds it to the named function--creating the function as well, if it doesn't already exist. It also adds the rule that defines the requirements that the arguments must meet in order for the method to apply to them. 
 
 We can add another method to the same function, matching a different structure:
 
@@ -251,9 +296,11 @@ We can add another method to the same function, matching a different structure:
   (cat x y))
 ....
 
-While the `<small-integer>` version of `add` uses the addition operator on its arguments, the `<string>` version instead uses `cat`, which concatenates the strings.
+The `<small-integer>` version of `add` uses the addition operator on its arguments, and the `<string>` version instead uses `cat`, which concatenates the strings.
 
-You may match any structures you like, and Bard also supports constraints other than type constraints. For example:
+We can add more methods, matching any structures we like in any combination. The defined methods will be called when we pass parameters of the required types.
+
+We can also specify other matching rules. For example, the following method matches only when the parameters are exactly 4 and 2:
 
 ....
 (define method (add x y)
@@ -262,11 +309,19 @@ You may match any structures you like, and Bard also supports constraints other 
   (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ....
 
+The `with` clause defines the matching rule for the parameters. If it's a map, as in these examples, then the keys are parameter names and the values are tests that the parameters must satisfy. If the tests are just types, then the rule is satisfied when the value passed for each parameter belongs to the corresponding type.
+
+`(exactly x)` is a test that returns true when a parameter is equal to `x`.
+
+Other matching rules are also supported.
+
 == Naming Conventions
 
 Bard uses some naming conventions that are not strictly enforced by the compiler, but which are strongly encouraged for the sake of clarity.
 
 === Constants
+
+Constants are read-only variables. By convention, their names start and end with `+`.
 
 ....
 +Pi+
@@ -278,21 +333,17 @@ Bard uses some naming conventions that are not strictly enforced by the compiler
 
 === Special Variables
 
+*Special variable* are global variables--more or less. By convention, their names start and end with `*`.
+
 ....
 *window*
 *process-id*
 *epoch*
 ....
 
-A *special variable* is a variable that is defined in all lexical contexts, in every package where the variable's name is visible.  Informally, you can think of special variables as global variables, though, strictly speaking, they're not necessarily global. A special variable's name isn't necessary lexically visible in all packages, and in packages where the name isn't visible, the value isn't accessible.
-
-In addition, a special variable's value is unique to each thread of execution. If you spawn a new thread in which a special variable is visible then the new thread can change the special variable's value without affecting the value seen by other threads.
-
-Finally, *binding forms* like `bind` can create bindings that *shadow* a special variable. When you *shadow* a special variable, you've created a local binding whose value may be different from the value in the enclosing environment. That new binding doesn't change the value that the special variable has in the enclosing environment; instead, it creates a new variable with the same name, defined only in the local environment.
-
 === Protocols
 
-A *protocol* is named catalog of related operators and variables. Conceptually, a protocols is a collection of tools for carrying out some activity. The convention is to choose a name that describes the activity: `*Listing*`, for example, or `*Ordering*`.
+A *protocol* is named collection of related operators and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
 
 ....
 Listing
@@ -304,7 +355,7 @@ Streaming
 
 A *class* is a named collection of *types*. Types, remember, may be either structures or classes, so classes may be members of other classes.
 
-The convention is to name a class with a capitalized noun. The noun should reflect the way the type is intended to be used.
+The convention is to name a class with a capitalized noun. The noun should reflect the role the type is intended to fill.
 
 ....
 List
@@ -314,9 +365,9 @@ Stream
 
 === Structures
 
-A *structure* is a concrete description of how values are combined to form a new type of value. Structures are the only types that may be directly instantiated; classes may have instances only indirectly, by virtue of including structures as members; no classes have direct instances.
+A *structure* is a concrete description of how values are combined to form a new type of value. Structures may be directly instantiated by allocating space to hold their constituent values and filling in the space with data. Classes can't be instantiated in this way. Because a class is just a name for a set of other types, it can be instantiated only indirectly. The only way to make an instance of a class is to make an instance of one of it member structures.
 
-For structures, the convention is to name them with nouns that describe their concrete representation, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
+For structures, the convention is to name them with nouns that describe their concrete representations, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
 
 ....
 <character>
@@ -327,9 +378,9 @@ For structures, the convention is to name them with nouns that describe their co
 
 === Predicates
 
-*Predicates* are functions and methods of one argument that return true or false.
+*Predicates* are operators of one argument that return true or false.
 
-The convention is to end the name of predicates with question marks ("?").
+The convention is to end the names of predicates with question marks ("?").
 
 ....
 empty?
@@ -339,7 +390,7 @@ number?
 
 === Accessors
 
-An *accessor* is a function that returns the value of a slot in an object. If a slot is *mutable* then the accessor may also be used to replace the value.
+An *accessor* is an operator that returns the value of a field in a value. If a slot is *mutable* then the accessor may also be used with the `set!` special form to replace the value.
 
 The convention is to start the name of an accessor with a dot (".").
 
@@ -351,7 +402,7 @@ The convention is to start the name of an accessor with a dot (".").
 
 === Mutators
 
-A *mutator* is a function that destructively modifies the value in a slot, replacing the old value with a new one, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
+A *mutator* is an operator that destructively modifies the value in a slot, replacing the old value with a new one, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
 
 The convention is to end the names of mutators with exclamation points ("!").
 
@@ -364,10 +415,10 @@ set!
 
 == Structures
 
-A *structure* is a concrete representation of how to assemble a value from simpler values. There are three kinds of structures:
+There are three kinds of structures:
 
 - *records* are structures made of named slots.
-- *tuples* are structure made of sequences of elements that may be fetched by index
+- *tuples* are structures made of sequences of elements identified by indexes.
 - *enumerations* are structures defined as one or more named values, optionally with one or more data parameters associated with the names.
 
 This section describes how to define and instantiate structures, and how to operate on them.
@@ -380,15 +431,17 @@ This section describes how to define and instantiate structures, and how to oper
 
 == Protocols
 
+Protocols define collections of related operators and variables designed to support particular activities. Examples of Bard protocols include `Comparing`, `Converting`, `Creating`, `Listing`, `Mapping`, `Printing`, `TextProcessing`, and so on.
 
+Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
 
 == Operators
 
+Operators are values that tell Bard to eecute computations when they appear in the first position of a `List` expression written with parentheses. Such expressions are called *operations*.
+
+There are four different kinds of operations, each with a different purpose and a different evaluation rule.
+
 === Special Forms
-
-=== Syntax Forms
-
-A *syntax form* is just a special form whose evaluation rules give it a special syntax, different from the normal function-call syntax.
 
 === Functions
 
@@ -396,7 +449,8 @@ A *syntax form* is just a special form whose evaluation rules give it a special 
 
 === Macros
 
-== Function calls
+== Operations
+(Function and method calls, macro calls, and execution of special forms.)
 
 == Returning multiple values
 
@@ -411,6 +465,8 @@ A *syntax form* is just a special form whose evaluation rules give it a special 
 == Assignment
 
 == Flow of Control
+
+== Conditions
 
 == Built-in Protocols
 
@@ -461,6 +517,10 @@ Converting values to a form that can be transported and stored outside the bard 
 === Streaming
 
 Operations on objects that produce or consume values.
+
+=== System
+
+Tools for configuring, maintaining, and controlling Bard itself.
 
 === Tapping
 
