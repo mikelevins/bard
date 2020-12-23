@@ -490,9 +490,90 @@ For example:
 `if` evaluates its first argument. If the value is true then it evaluates its second argument; if not, it evaluates its third argument. In the above example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
 
 
+== Variables
+
+As we saw in the previous section, the special form `def` defines *special variables*:
+
+....
+(def x (+ 2 3))
+....
+
+This example creates a *special variable* named `x` and gives it the value `5`.
+
+A *special variable* is a name that stands for a value. Any Bard code in a program can get and set that value of a special variable.
+
+It's generally not a good practice to make variables accessible everywhere. The more places a variable is referenced, the more places its value might be changed, and the more places you have to check when keeping track of the code that reads and writes it.
+
+A *lexical variable* is a variable that is accessible only in a certain bounded body of code, called its *lexical environment*. Most variables should be lexical rather than special variables, because they're easier and safer to manage that way.
+
+Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
+
+=== The `bind` special form
+
+The `bind` special form creates lexical variables. For example:
+
+....
+> (bind [(x 2)]
+    (+ x 1))
+3
+....
+
+In this example, `bind` creates a lexical variable named `x` and binds it to `2`. The body of the `bind` form then refers to that variable in the expression `(+ x 1)`, returning the sum.
+
+`bind` can create more than one variable:
+
+....
+> (bind [(x 2)
+         (y (+ x 1))]
+    (+ x y))
+5
+....
+
+Variables that appear later in the sequence of bindings can refer to those that appear earlier, as this example shows.
+
+=== Parameter bindings
+
+*Parameter bindings* are created when an operation is called with arguments.
+
+Consider a simple method that returns the greater of two numbers:
+
+....
+(^ [x y] (max x y))
+....
+
+This method creates the lexical variables `x` and `y`. In the body of the method, `x` and `y` take on the values of the two arguments passed to the method.
+
+Let's capture the method in a special variable and call it:
+
+....
+> (def bigger (^ [x y] (max x y)))
+(^ [x y] (max x y))
+> (bigger 2 3)
+3
+....
+
+When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
+
 == Returning multiple values
 
-== Binding variables
+The special form `values` returns multiple values:
+
+....
+> (values 1 2 3)
+1
+2
+3
+....
+
+The `bind` special form can bind variables to the multiple values returned by `values`:
+
+....
+> (bind [(x y z (values 1 2 3))]
+    (* x y z))
+6
+....
+
+If there are more variables than returned values, then the variables are bound to the returned values in order, and the extra variables are bound to `nothing`. If there are more values than variables, the extra values are ignored.
 
 == Packages
 
