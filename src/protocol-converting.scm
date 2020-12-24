@@ -92,9 +92,9 @@
 ;;; as <url>
 ;;; ---------------------------------------------------------------------
 
-(define-primitive-method as ((%singleton List) <string>) 
+(define-primitive-method as ((%singleton <url>) <string>) 
   (lambda (type thing)
-    (error (str "tell mikel to get off his butt and implement the URL parser"))))  
+    (error (str "tell mikel to get off his butt and implement the URL parser"))))
 
 
 

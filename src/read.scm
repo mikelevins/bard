@@ -19,6 +19,7 @@
 ;;; Representation of readtables from the Gambit sources
 
 (##include "~~lib/_gambit#.scm")
+(##include "~~lib/_io#.scm")
 
 ;;;---------------------------------------------------------------------
 ;;; the Bard readtable
@@ -28,7 +29,7 @@
   (let ((rt (##make-standard-readtable)))
     (readtable-keywords-allowed?-set rt #t)
     (macro-readtable-bracket-keyword-set! rt 'list)
-    (macro-readtable-brace-keyword-set! rt 'table)
+    (macro-readtable-brace-keyword-set! rt 'dict)
     rt))
 
 (define +bard-readtable+ (bard:make-readtable))
@@ -37,11 +38,23 @@
 ;;; the reader
 ;;; ----------------------------------------------------------------------
 
+
+;;; redefine Gambit's #: reader
+(define (%bard-read-sharp-colon re next start-pos)
+  (begin
+    (macro-read-next-char-or-eof re) ;; skip char after #\#
+    (let ((type-identifier (##read-datum-or-label-or-none re))
+          (expr (bard:read (macro-readenv-port re))))
+      `(as ,type-identifier ,expr))))
+
+(##readtable-char-sharp-handler-set! +bard-readtable+ #\: %bard-read-sharp-colon)
+(macro-readtable-keywords-allowed?-set! +bard-readtable+ 'prefix)
+
 (define (%read-cons val)
   (cond
    ((null? val) '())
    ((eq? 'list (car val)) (cons 'list (%read-cons (cdr val))))
-   ((eq? 'table (car val)) (cons 'table (%read-cons (cdr val))))
+   ((eq? 'dict (car val)) (cons 'dict (%read-cons (cdr val))))
    (else (let ((items val))
            (if (null? items)
                '()
