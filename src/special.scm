@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          special.scm
 ;;;; Project:       Bard
@@ -61,6 +60,16 @@
 (%defspecial 'begin
              (lambda (expr env) 
                (%eval-sequence (cdr expr) env)))
+
+
+;;; bind
+;;; ----------------------------------------------------------------------
+
+(%defspecial 'bind
+             (lambda (expr env)
+               (let ((bindings (list-ref expr 1))
+                     (body (drop 2 expr)))
+                 (%eval-sequence body (%add-let-bindings env bindings)))))
 
 ;;; cond
 ;;; ----------------------------------------------------------------------
@@ -316,24 +325,6 @@
         (%defglobal pname protocol))
     protocol))
 
-;;; record
-
-(define (%eval-define-record expr env)
-  (let* ((record-name (list-ref expr 2))
-         (slot-specs (drop 3 expr))
-         (schema (make-record record-name slot-specs)))
-    (%defglobal record-name schema)
-    schema))
-
-;;; tuple
-
-(define (%eval-define-tuple expr env)
-  (let* ((tuple-name (list-ref expr 2))
-         (slot-specs (drop 3 expr))
-         (schema (make-tuple tuple-name slot-specs)))
-    (%defglobal tuple-name schema)
-    schema))
-
 ;;; define
 
 (%defspecial 'define
@@ -344,9 +335,7 @@
                   ((eq? 'macro kind)(%eval-define-macro expr env))
                   ((eq? 'method kind)(%eval-define-method expr env))
                   ((eq? 'protocol kind)(%eval-define-protocol expr env))
-                  ((eq? 'record kind)(%eval-define-record expr env))
                   ((eq? 'variable kind)(%eval-define-variable expr env))
-                  ((eq? 'tuple kind)(%eval-define-tuple expr env))
                   (else (error (str "Unrecognized definition type: " kind)))))))
 
 
@@ -410,15 +399,6 @@
                      (if alt?
                          (%eval (list-ref expr 3) env)
                          '())))))
-
-;;; let
-;;; ----------------------------------------------------------------------
-
-(%defspecial 'let 
-             (lambda (expr env)
-               (let ((bindings (list-ref expr 1))
-                     (body (drop 2 expr)))
-                 (%eval-sequence body (%add-let-bindings env bindings)))))
 
 
 ;;; loop

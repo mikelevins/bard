@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocol-mapping.scm
 ;;;; Project:       Bard
@@ -24,18 +23,17 @@
 ;;; treated as a Table. Several types are represented as concrete
 ;;; associations between explicit keys and values, and supporting the
 ;;; Mapping protocol for these values is simple and straightforward.
-;;; Besides schemas like <alist-table> that are specifically designed 
+;;; Besides structures like <alist-table> that are specifically designed 
 ;;; as representations of tables, records can also be straightforwardly
 ;;; treated as tables.
 ;;;
-;;; The schemas that are represented as ordered sequences are only
+;;; The structures that are represented as ordered sequences are only
 ;;; slightly more complicated: their implementations of Mapping
 ;;; functions treat indexes into the sequence as if they were keys in
-;;; a table. This treatment also extends to tuples. It also extends
-;;; partially to types like generators and input streams; they support
-;;; parts of the Listing protocol, and the same technique of treating
-;;; indexes as keys works for those types for which indexes can be
-;;; computed.
+;;; a table. This treatment also extends partially to types like
+;;; generators and input streams; they support parts of the Listing
+;;; protocol, and the same technique of treating indexes as keys works
+;;; for those types for which indexes can be computed.
 ;;;
 ;;; Mapping support in Bard's remaining types is less straightfoward.
 ;;; For types that are not obviously tables or lists, Bard adopts a

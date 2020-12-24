@@ -95,11 +95,6 @@
       protocol)))
 
 
-;;; <record>
-
-(define-primitive-method make (<record>) 
-  (lambda (type . args)(instantiate-record type args)))
-
 ;;; <string>
 
 (define-primitive-method make ((%singleton <string>)) 
@@ -118,16 +113,6 @@
   (lambda (type . args)
     (let ((name (getf name: args default: (symbol->string (gensym)))))
       (string->symbol name))))
-
-;;; Table
-
-(define-primitive-method make ((%singleton Table)) 
-  %bard-make-alist-table)
-
-;;; <tuple>
-
-(define-primitive-method make (<tuple>) 
-  (lambda (type . args)(instantiate-tuple type args)))
 
 ;;; <vector>
 

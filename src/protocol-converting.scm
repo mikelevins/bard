@@ -23,8 +23,6 @@
    ((pair? x) x)
    ((string? x) (string->list x))
    ((alist-table-instance? x)(alist-table-instance-slots x))
-   ((record-instance? x)(record-instance-slots x))
-   ((tuple-instance? x)(vector->list (tuple-instance-slots x)))
    (else: (error (str "Can't convert " (%as-string x) " to a List")))))
 
 (define-protocol-function Converting as

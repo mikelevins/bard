@@ -1,9 +1,8 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          value-to-schema.scm
+;;;; Name:          value-to-bard-structure.scm
 ;;;; Project:       Bard
-;;;; Purpose:       recovering the schema that represent's a value's type
+;;;; Purpose:       recovering the bard-structure that represent's a value's type
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
@@ -13,21 +12,18 @@
 ;;; getting bard types for values
 ;;; =====================================================================
 
-(define (%value->schema val)
-  (if (schema? val)
+(define (%value->structure val)
+  (if (bard-structure? val)
       (cond 
-       ((primitive-schema? val) <primitive-schema>)
-       ((structure-schema? val) <structure-schema>)
-       ((base-schema? val) <base-schema>)
-       ((record-schema? val) <record>)
-       ((tuple-schema? val) <tuple>)
-       ((union-schema? val) <union>)
-       (else: (error (str "Unrecognized schema type: " val))))
-      (if (schema-instance? val)
-          (instance-schema val)
+       ((primitive-structure? val) <primitive-structure>)
+       ((structure-bard-structure? val) <structure-structure>)
+       ((base-bard-structure? val) <base-structure>)
+       (else: (error (str "Unrecognized structure type: " val))))
+      (if (bard-structure-instance? val)
+          (instance-bard-structure val)
           (if (##structure? val)
-              (%structure->schema (##structure-type val))
-              (%tag->schema (%tag val))))))
+              (%structure->bard-structure (##structure-type val))
+              (%tag->bard-structure (%tag val))))))
 
 
 

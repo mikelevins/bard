@@ -1,23 +1,19 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-url.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <url>
+;;;; Purpose:       bard-structure <url>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2012 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <url>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-url (%next-bard-type-number))
-(define <url> (make-base-schema '<url> tags:$bard-url))
+(define <url> (make-base-bard-structure '<url> tags:$bard-url))
 
 
 ;;; constructor

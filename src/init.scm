@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          toplevel.scm
 ;;;; Project:       Bard
@@ -28,17 +27,17 @@
   ;;; types
   ;;; =====================================================================
   
-  ;;; schemas
+  ;;; structures
 
   (%defglobal '<alist-table>         <alist-table>)
-  (%defglobal '<base-schema>         <base-schema>)
+  (%defglobal '<base-structure>         <base-structure>)
   (%defglobal '<bignum>              <bignum>)
   (%defglobal '<boolean>             <boolean>)
   (%defglobal '<character>           <character>)
   (%defglobal '<class>               <class>)
   (%defglobal '<fixnum>              <fixnum>)
   (%defglobal '<flonum>              <flonum>)
-  (%defglobal '<foreign-schema>      <foreign-schema>)
+  (%defglobal '<foreign-structure>   <foreign-structure>)
   (%defglobal '<function>            <function>)
   (%defglobal '<generator>           <generator>)
   (%defglobal '<interpreted-method>  <interpreted-method>)
@@ -47,17 +46,14 @@
   (%defglobal '<null>                <null>)
   (%defglobal '<pair>                <pair>)
   (%defglobal '<primitive-procedure> <primitive-procedure>)
-  (%defglobal '<primitive-schema>    <primitive-schema>)
+  (%defglobal '<primitive-structure> <primitive-structure>)
   (%defglobal '<primitive>           <primitive>)
   (%defglobal '<protocol>            <protocol>)
   (%defglobal '<ratnum>              <ratnum>)
-  (%defglobal '<record>              <record>)
   (%defglobal '<string>              <string>)
-  (%defglobal '<structure-schema>    <structure-schema>)
+  (%defglobal '<structure-structure> <structure-structure>)
   (%defglobal '<symbol>              <symbol>)
-  (%defglobal '<tuple>               <tuple>)
   (%defglobal '<undefined>           <undefined>)
-  (%defglobal '<union>               <union>)
   (%defglobal '<url>                 <url>)
   (%defglobal '<vector>              <vector>)
 
@@ -88,7 +84,7 @@
   (%defglobal 'Pair         Pair)
   (%defglobal 'Protocol     Protocol)
   (%defglobal 'Ratio        Ratio)
-  (%defglobal 'Schema       Schema)
+  (%defglobal 'Structure    Structure)
   (%defglobal 'Stream       Stream)
   (%defglobal 'Symbol       Symbol)
   (%defglobal 'Table        Table)

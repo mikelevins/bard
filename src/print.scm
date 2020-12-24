@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          print.scm
 ;;;; Project:       Bard
@@ -50,32 +49,8 @@
 ;;; specialized printing
 ;;; ---------------------------------------------------------------------
 
-(define (%record->string x)
-  (let* ((schema (instance-schema x))
-         (schema-name (schema-name schema)))
-    (str "#" schema-name "{" (alist-slots->string (record-instance-slots x)) "}")))
-
-(define (%tuple->string x)
-  (with-output-to-string
-    '() 
-    (lambda ()
-      (let* ((schema (instance-schema x))
-             (schema-name (schema-name schema)))
-        (display "#")
-        (display schema-name)
-        (display "(")
-        (let* ((slots (tuple-instance-slots x))
-               (slot-count (vector-length slots)))
-          (let loop ((i 0))
-            (if (< i slot-count)
-                (let ((item (vector-ref slots i)))
-                  (if (not (zero? i)) (display " "))
-                  (display (%as-string item))
-                  (loop (+ i 1))))))
-        (display ")")))))
-
-(define (%schema->string x)
-  (str (schema-name x)))
+(define (%bard-structure->string x)
+  (str (bard-structure-name x)))
 
 ;;; ---------------------------------------------------------------------
 ;;; general printing
@@ -83,9 +58,7 @@
 
 (define (%as-string x)
   (cond
-   ((schema? x)(%schema->string x))
-   ((record-instance? x)(%record->string x))
-   ((tuple-instance? x)(%tuple->string x))
+   ((bard-structure? x)(%bard-structure->string x))
    (else: (let ((printer (get-printer-function (%tag x))))
             (if printer
                 (printer x)
@@ -102,28 +75,28 @@
 ;;; ---------------------------------------------------------------------
 
 (define-printer-function (%tag #!void) (constantly ""))
-(define-printer-function (schema-tag <undefined>) (constantly "undefined"))
-(define-printer-function (schema-tag <null>) (constantly "nothing"))
-(define-printer-function (schema-tag <boolean>) (lambda (b)(if b "true" "false")))
-(define-printer-function (schema-tag <character>) object->string)
-(define-printer-function (schema-tag <fixnum>) object->string)
-(define-printer-function (schema-tag <bignum>) object->string)
-(define-printer-function (schema-tag <flonum>) object->string)
-(define-printer-function (schema-tag <ratnum>) object->string)
-(define-printer-function (schema-tag <string>) object->string)
-(define-printer-function (schema-tag <symbol>) object->string)
-(define-printer-function (schema-tag <keyword>) object->string)
-(define-printer-function (schema-tag <vector>) object->string)
+(define-printer-function (bard-structure-tag <undefined>) (constantly "undefined"))
+(define-printer-function (bard-structure-tag <null>) (constantly "nothing"))
+(define-printer-function (bard-structure-tag <boolean>) (lambda (b)(if b "true" "false")))
+(define-printer-function (bard-structure-tag <character>) object->string)
+(define-printer-function (bard-structure-tag <fixnum>) object->string)
+(define-printer-function (bard-structure-tag <bignum>) object->string)
+(define-printer-function (bard-structure-tag <flonum>) object->string)
+(define-printer-function (bard-structure-tag <ratnum>) object->string)
+(define-printer-function (bard-structure-tag <string>) object->string)
+(define-printer-function (bard-structure-tag <symbol>) object->string)
+(define-printer-function (bard-structure-tag <keyword>) object->string)
+(define-printer-function (bard-structure-tag <vector>) object->string)
 
 
-(define-printer-function (schema-tag <primitive-procedure>) 
+(define-printer-function (bard-structure-tag <primitive-procedure>) 
   (lambda (x)(string-append "#<primitive-procedure " (object->string (object->serial-number x)) ">")))
 
-(define-printer-function (schema-tag <alist-table>) 
+(define-printer-function (bard-structure-tag <alist-table>) 
   (lambda (tbl)
     (str "{" (alist-slots->string (alist-table-slots tbl)) "}")))
 
-(define-printer-function (schema-tag <pair>) 
+(define-printer-function (bard-structure-tag <pair>) 
   (lambda (ls)
     (with-output-to-string
       '() 
@@ -153,10 +126,10 @@
                        sigs))))
     (string-join "" `("(function " ,sigstr ")"))))
 
-(define-printer-function (schema-tag <function>) 
+(define-printer-function (bard-structure-tag <function>) 
   (lambda (fn)(function->string fn name: (function-instance-name fn))))
 
-(define-printer-function (schema-tag <interpreted-method>) 
+(define-printer-function (bard-structure-tag <interpreted-method>) 
   (lambda (m)
     (with-output-to-string
       '() 
@@ -185,20 +158,20 @@
                   (display body))
                 (display ")"))))))))
 
-(define-printer-function (schema-tag <primitive>) 
+(define-printer-function (bard-structure-tag <primitive>) 
   (lambda (pr)
     (let ((nm (primitive-name pr)))
       (if  nm
            (string-append "#<primitive " (object->string nm) ">")
            (string-append "#<an-anonymous-primitive " (object->string (object->serial-number pr)) ">")))))
 
-(define-printer-function (schema-tag <generator>) 
+(define-printer-function (bard-structure-tag <generator>) 
   (lambda (gen)(string-append "#<generator " (object->string (object->serial-number gen)) ">")))
 
-(define-printer-function (schema-tag <class>) 
+(define-printer-function (bard-structure-tag <class>) 
   (lambda (class)(object->string (class-name class))))
 
-(define-printer-function (schema-tag <protocol>) 
+(define-printer-function (bard-structure-tag <protocol>) 
   (lambda (p)
     (with-output-to-string
       '()
@@ -218,23 +191,20 @@
                     fnames))
         (display ")")))))
 
-(define-printer-function (schema-tag <singleton>) 
+(define-printer-function (bard-structure-tag <singleton>) 
   (lambda (s)
     (with-output-to-string
         '()
         (lambda ()(display (str "(singleton " (singleton-value s) ")"))))))
 
-(define-printer-function (schema-tag <record>) 
-  (lambda (rec)(object->string (schema-name rec))))
-
-(define-printer-function (schema-tag <iostream>) 
+(define-printer-function (bard-structure-tag <iostream>) 
   (lambda (s)
     (cond
      ((and (input-port? s)(output-port? s)) (str "#<iostream " (object->string s) ">"))
      ((input-port? s) (str "#<input-stream " (object->string (object->serial-number s)) ">"))
      ((output-port? s) (str "#<output-stream " (object->string (object->serial-number s)) ">")))))
 
-(define-printer-function (schema-tag <url>) 
+(define-printer-function (bard-structure-tag <url>) 
   (lambda (url)
     (str "#<url>\""
          (url-scheme url) "://"

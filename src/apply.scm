@@ -28,8 +28,6 @@
                     (string-ref op args)
                     '()))
    ((alist-table-instance? op)(alist-table-get op args))
-   ((record-instance? op)(record-ref op args))
-   ((tuple-instance? op)(tuple-ref op args))
    (else (error (str "not an applicable object: " op "; args: " args)))))
 
 (define %funcall (lambda (fn . args)(%apply fn args)))

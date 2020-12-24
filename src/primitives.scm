@@ -1,7 +1,6 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          prims.scm
+;;;; Name:          primitivess.scm
 ;;;; Project:       Bard
 ;;;; Purpose:       primitive procedures, defined in Scheme, but bound to
 ;;;;                Bard variables in the initial environment
@@ -382,8 +381,6 @@
    ((pair? tbl)(%bard-list-put-key tbl key val))
    ((string? tbl)(list->string (%bard-list-put-key (string->list tbl) key val)))
    ((alist-table-instance? tbl)(alist-table-put tbl key val))
-   ((record-instance? tbl) (record-put tbl key val))
-   ((tuple-instance? tbl)(tuple-put tbl key val))
    (else (%make-alist-table `((,key . ,val)(value: . ,tbl))))))
 
 (define prim:put

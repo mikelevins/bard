@@ -30,15 +30,9 @@
 (define-type bard-structure extender: define-bard-structure name tag)
 (define-type bard-structure-instance extender: define-instance (bard-structure instance-bard-structure))
 
-(define-bard-structure primitive-bard-structure)
+(define-bard-structure primitive-structure)
 (define-bard-structure structure-bard-structure prototype)
 (define-bard-structure base-bard-structure)
-(define-bard-structure record-bard-structure slots)
-(define-instance record-instance slots)
-(define-bard-structure tuple-bard-structure slot-count slot-type)
-(define-instance tuple-instance slots)
-(define-bard-structure union-bard-structure)
-(define-instance union-instance variants)
 
 (define-bard-structure foreign-bard-structure type-name)
 
@@ -206,7 +200,7 @@
 ;;; tag operations (##type and ##subtype), then look up the
 ;;; bard-structure in the registry.
 
-(define (%register-primitive-bard-structure! sc tag)
+(define (%register-primitive-structure! sc tag)
   (table-set! +tag->bard-structure-registry+ tag sc))
 
 (define (%tag->bard-structure tag)

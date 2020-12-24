@@ -48,7 +48,7 @@
   (let* ((sing (%existing-singleton val))
          (found (if sing (%singleton-tree-ref mtree sing) #f)))
     (or found
-        (let* ((tp (%value->bard-structure val))
+        (let* ((tp (%value->structure val))
                (found (%singleton-tree-ref mtree tp)))
           (or found
               (%singleton-tree-ref mtree Anything))))))

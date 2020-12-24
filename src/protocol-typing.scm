@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          protocol-typing.scm
 ;;;; Project:       Bard
@@ -162,5 +161,5 @@
   signatures: (list (signature (Anything) #f (Type))))
 
 (define-primitive-method type (Anything) 
-  (lambda (x)(%value->schema x)))
+  (lambda (x)(%value->structure x)))
 
