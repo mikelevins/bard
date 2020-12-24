@@ -31,3 +31,10 @@
    (else (error (str "not an applicable object: " op "; args: " args)))))
 
 (define %funcall (lambda (fn . args)(%apply fn args)))
+
+;;; (%eval (bard:read-from-string "(define method (foo x) (* x x))") (%null-environment))
+;;; (%eval (bard:read-from-string "(foo 3)") (%null-environment))
+;;; (%eval (bard:read-from-string "(define method (foo x) :with ((x <string>)) (pair x x))") (%null-environment))
+;;; (%eval (bard:read-from-string "(foo 3)") (%null-environment))
+;;; (%eval '(foo 3) (%null-environment))
+;;; (define $with (%eval (bard:read-from-string ":with") (%null-environment)))

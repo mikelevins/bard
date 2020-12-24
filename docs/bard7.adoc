@@ -64,7 +64,7 @@ I can make the structure `<small-integer>` into a member of the class `Bar` by w
 
 ....
 (define method (foo bar)
-  with {:bar <small-integer>}
+  :with {:bar <small-integer>}
   ...)
 ....
 
@@ -280,7 +280,7 @@ Although you can construct methods this way and use them directly, the most comm
 
 ....
 (define method (add x y)
-  with {:x <small-integer> :y <small-integer>}
+  :with {:x <small-integer> :y <small-integer>}
   (+ x y))
 ....
 
@@ -292,7 +292,7 @@ We can add another method to the same function, matching a different structure:
 
 ....
 (define method (add x y)
-  with {:x <string> :y <string>}
+  :with {:x <string> :y <string>}
   (cat x y))
 ....
 
@@ -304,7 +304,7 @@ We can also specify other matching rules. For example, the following method matc
 
 ....
 (define method (add x y)
-  with {:x (exactly 4)
+  :with {:x (exactly 4)
         :y (exactly 2)}
   (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ....
