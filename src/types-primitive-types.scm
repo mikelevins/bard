@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-primitive-types.scm
 ;;;; Project:       Bard
@@ -10,76 +9,76 @@
 ;;;; ***********************************************************************
 
 ;;; ---------------------------------------------------------------------
-;;; built-in schema types
+;;; built-in bard-structure types
 ;;; ---------------------------------------------------------------------
-;;; runtime values that represent the types of built-in schemas.
-;;; these are not the types of schema-instaces; these are the types of
+;;; runtime values that represent the types of built-in bard-structures.
+;;; these are not the types of bard-structure-instances; these are the types of
 ;;; their types. For example, a point may be an instance of
 ;;; <point>. What is <point> an instance of? The answer is <record>
-;;; (or some other of the primitive schemas defined below).
-;;; What about these types? For example, what is <primitive-schema>
+;;; (or some other of the primitive bard-structures defined below).
+;;; What about these types? For example, what is <primitive-structure>
 ;;; an instance of? It is an instance of itself: it is itself a
-;;; primitive schema.
+;;; primitive bard-structure.
 
-(define tags:$primitive-schema (%next-bard-type-number))
-(define tags:$structure-schema (%next-bard-type-number))
-(define tags:$base-schema (%next-bard-type-number))
-(define tags:$record-schema (%next-bard-type-number))
-(define tags:$tuple-schema (%next-bard-type-number))
-(define tags:$union-schema (%next-bard-type-number))
-(define tags:$foreign-schema (%next-bard-type-number))
+(define tags:$primitive-bard-structure (%next-bard-type-number))
+(define tags:$structure-bard-structure (%next-bard-type-number))
+(define tags:$base-bard-structure (%next-bard-type-number))
+(define tags:$record-bard-structure (%next-bard-type-number))
+(define tags:$tuple-bard-structure (%next-bard-type-number))
+(define tags:$union-bard-structure (%next-bard-type-number))
+(define tags:$foreign-bard-structure (%next-bard-type-number))
 
-(define <primitive-schema> (make-primitive-schema '<primitive-schema> tags:$primitive-schema))
-(%register-primitive-schema! <primitive-schema> tags:$primitive-schema)
-(define <structure-schema> (make-primitive-schema '<structure-schema> tags:$structure-schema))
-(%register-primitive-schema! <structure-schema> tags:$structure-schema)
-(define <base-schema> (make-primitive-schema '<base-schema> tags:$base-schema))
-(%register-primitive-schema! <base-schema> tags:$base-schema)
-(define <record> (make-primitive-schema '<record> tags:$record-schema))
-(%register-primitive-schema! <record> tags:$record-schema)
-(define <tuple> (make-primitive-schema '<tuple> tags:$tuple-schema))
-(%register-primitive-schema! <tuple> tags:$tuple-schema)
-(define <union> (make-primitive-schema '<union> tags:$union-schema))
-(%register-primitive-schema! <union> tags:$union-schema)
-(define <foreign-schema> (make-primitive-schema '<foreign-schema> tags:$foreign-schema))
-(%register-primitive-schema! <foreign-schema> tags:$foreign-schema)
+(define <primitive-structure> (make-primitive-bard-structure '<primitive-structure> tags:$primitive-bard-structure))
+(%register-primitive-bard-structure! <primitive-structure> tags:$primitive-bard-structure)
+(define <structure-structure> (make-primitive-bard-structure '<structure-structure> tags:$structure-bard-structure))
+(%register-primitive-bard-structure! <structure-structure> tags:$structure-bard-structure)
+(define <base-structure> (make-primitive-bard-structure '<base-structure> tags:$base-bard-structure))
+(%register-primitive-bard-structure! <base-structure> tags:$base-bard-structure)
+(define <record> (make-primitive-bard-structure '<record> tags:$record-bard-structure))
+(%register-primitive-bard-structure! <record> tags:$record-bard-structure)
+(define <tuple> (make-primitive-bard-structure '<tuple> tags:$tuple-bard-structure))
+(%register-primitive-bard-structure! <tuple> tags:$tuple-bard-structure)
+(define <union> (make-primitive-bard-structure '<union> tags:$union-bard-structure))
+(%register-primitive-bard-structure! <union> tags:$union-bard-structure)
+(define <foreign-structure> (make-primitive-bard-structure '<foreign-structure> tags:$foreign-bard-structure))
+(%register-primitive-bard-structure! <foreign-structure> tags:$foreign-bard-structure)
 
 ;;; =====================================================================
-;;; schema definitions
+;;; bard-structure definitions
 ;;; =====================================================================
 
 ;;; ---------------------------------------------------------------------
-;;; primitive schemas
+;;; primitive bard-structures
 ;;; ---------------------------------------------------------------------
 
-(define <undefined> (make-primitive-schema '<undefined> tags:$undefined))
-(%register-primitive-schema! <undefined> tags:$undefined)
-(define <null> (make-primitive-schema '<null> tags:$null))
-(%register-primitive-schema! <null> tags:$null)
-(define <character> (make-primitive-schema '<character> tags:$character))
-(%register-primitive-schema! <character> tags:$character)
-(define <boolean> (make-primitive-schema '<boolean> tags:$boolean))
-(%register-primitive-schema! <boolean> tags:$boolean)
-(define <symbol> (make-primitive-schema '<symbol> tags:$symbol))
-(%register-primitive-schema! <symbol> tags:$symbol)
-(define <keyword> (make-primitive-schema '<keyword> tags:$keyword))
-(%register-primitive-schema! <keyword> tags:$keyword)
-(define <flonum> (make-primitive-schema '<flonum> tags:$flonum))
-(%register-primitive-schema! <flonum> tags:$flonum)
-(define <ratnum> (make-primitive-schema '<ratnum> tags:$ratnum))
-(%register-primitive-schema! <ratnum> tags:$ratnum)
-(define <fixnum> (make-primitive-schema '<fixnum> tags:$fixnum))
-(%register-primitive-schema! <fixnum> tags:$fixnum)
-(define <bignum> (make-primitive-schema '<bignum> tags:$bignum))
-(%register-primitive-schema! <bignum> tags:$bignum)
-(define <primitive-procedure> (make-primitive-schema '<primitive-procedure> tags:$procedure))
-(%register-primitive-schema! <primitive-procedure> tags:$procedure)
-(define <string> (make-primitive-schema '<string> tags:$string))
-(%register-primitive-schema! <string> tags:$string)
-(define <vector> (make-primitive-schema '<vector> tags:$vector))
-(%register-primitive-schema! <vector> tags:$vector)
-(define <pair> (make-primitive-schema '<pair> tags:$pair))
-(%register-primitive-schema! <pair> tags:$pair)
+(define <undefined> (make-primitive-bard-structure '<undefined> tags:$undefined))
+(%register-primitive-bard-structure! <undefined> tags:$undefined)
+(define <null> (make-primitive-bard-structure '<null> tags:$null))
+(%register-primitive-bard-structure! <null> tags:$null)
+(define <character> (make-primitive-bard-structure '<character> tags:$character))
+(%register-primitive-bard-structure! <character> tags:$character)
+(define <boolean> (make-primitive-bard-structure '<boolean> tags:$boolean))
+(%register-primitive-bard-structure! <boolean> tags:$boolean)
+(define <symbol> (make-primitive-bard-structure '<symbol> tags:$symbol))
+(%register-primitive-bard-structure! <symbol> tags:$symbol)
+(define <keyword> (make-primitive-bard-structure '<keyword> tags:$keyword))
+(%register-primitive-bard-structure! <keyword> tags:$keyword)
+(define <flonum> (make-primitive-bard-structure '<flonum> tags:$flonum))
+(%register-primitive-bard-structure! <flonum> tags:$flonum)
+(define <ratnum> (make-primitive-bard-structure '<ratnum> tags:$ratnum))
+(%register-primitive-bard-structure! <ratnum> tags:$ratnum)
+(define <fixnum> (make-primitive-bard-structure '<fixnum> tags:$fixnum))
+(%register-primitive-bard-structure! <fixnum> tags:$fixnum)
+(define <bignum> (make-primitive-bard-structure '<bignum> tags:$bignum))
+(%register-primitive-bard-structure! <bignum> tags:$bignum)
+(define <primitive-procedure> (make-primitive-bard-structure '<primitive-procedure> tags:$procedure))
+(%register-primitive-bard-structure! <primitive-procedure> tags:$procedure)
+(define <string> (make-primitive-bard-structure '<string> tags:$string))
+(%register-primitive-bard-structure! <string> tags:$string)
+(define <vector> (make-primitive-bard-structure '<vector> tags:$vector))
+(%register-primitive-bard-structure! <vector> tags:$vector)
+(define <pair> (make-primitive-bard-structure '<pair> tags:$pair))
+(%register-primitive-bard-structure! <pair> tags:$pair)
 
 (define (%undefined? x)(eqv? x #!unbound))
 (define (%defined? x)(not (%undefined? x)))

@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-classes.scm
 ;;;; Project:       Bard
@@ -9,16 +8,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
-
 ;;; ----------------------------------------------------------------------
 ;;; classes
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-class (%next-bard-type-number))
-(define <class> (make-base-schema '<class> tags:$bard-class))
+(define <class> (make-base-bard-structure '<class> tags:$bard-class))
 
 
 ;;; constructor
@@ -55,7 +50,7 @@
 (define Pair (%make-class 'Pair))
 (define Protocol (%make-class 'Protocol))
 (define Ratio (%make-class 'Ratio))
-(define Schema (%make-class 'Schema))
+(define Structure (%make-class 'Structure))
 (define Stream (%make-class 'Stream))
 (define Symbol (%make-class 'Symbol))
 (define Table (%make-class 'Table))

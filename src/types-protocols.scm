@@ -1,5 +1,4 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-base.scm
 ;;;; Project:       Bard
@@ -9,15 +8,12 @@
 ;;;;
 ;;;; ***********************************************************************
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <protocol>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-protocol (%next-bard-type-number))
-(define <protocol> (make-base-schema '<protocol> tags:$bard-protocol))
+(define <protocol> (make-base-bard-structure '<protocol> tags:$bard-protocol))
 
 ;;; constructor
 
@@ -39,7 +35,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; protocol registry
 ;;; ----------------------------------------------------------------------
-;;; used to enable us to tell which schemas belong to which classes,
+;;; used to enable us to tell which bard-structures belong to which classes,
 ;;; and also for documentation purposes
 
 (define +protocols+ (make-table test: eq?))
