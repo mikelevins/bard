@@ -435,6 +435,8 @@ Protocols define collections of related operators and variables designed to supp
 
 Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
 
+This section describes how to define and use protocols.
+
 == Operators
 
 Operators are values that tell Bard to eecute computations when they appear in the first position of a `List` expression written with parentheses. Such expressions are called *operations*.
@@ -442,6 +444,8 @@ Operators are values that tell Bard to eecute computations when they appear in t
 There are four different kinds of operations, each with a different purpose and a different evaluation rule.
 
 === Special Forms
+
+User cannot define special forms.
 
 === Functions
 
@@ -501,6 +505,14 @@ As we saw in the previous section, the special form `def` defines *special varia
 This example creates a *special variable* named `x` and gives it the value `5`.
 
 A *special variable* is a name that stands for a value. Any Bard code in a program can get and set that value of a special variable.
+
+=== Definitions
+
+`def`
+`define`
+
+
+=== Lexical variables
 
 It's generally not a good practice to make variables accessible everywhere. The more places a variable is referenced, the more places its value might be changed, and the more places you have to check when keeping track of the code that reads and writes it.
 
@@ -577,9 +589,42 @@ If there are more variables than returned values, then the variables are bound t
 
 == Packages
 
-== Defining Protocols and Operators
+Named objects in Bard are named by *symbols*. Symbols exist in *packages*. A *package* is a namespace containing a collection of symbols. 
 
-== Defining Structures
+A *fully-qualified symbol* is a symbol written with the name of the package that it belongs to, for example:
+
+....
+bard.core:bind
+bard.core:define
+bard.user:foo
+....
+
+=== Keywords
+
+A special case is the `bard.keyword` package. In a fully-qualified name, the name of the `bard.keyword` package may be omitted.
+
+In other words, writing
+
+....
+:foo
+....
+
+is exactly the same as writing
+
+....
+bard.keyword:foo
+....
+
+Symbols in the `bard.keyword` package are treateed specially: they always evaluate to themselves.
+
+=== `\*package*`
+
+Bard defines a special variable, `bard.core:*package*`, whose value is the *current package*. The *current package* is the package used to look up symbols whose names are not fully qualified.
+
+For example, if `\*package*` is currently the package named `bard.core`, then `bind` is automatically interpreted to mean `bard.core:bind`.
+
+Bard defines a `Packaging` protocol that provides a set of operators and variables for working with packages.
+
 
 == Assignment
 
@@ -616,6 +661,10 @@ Macros defined by Bard.
 === Mapping
 
 Operations on mappings from keys to values.
+
+=== Packaging
+
+Operations on packages (namespaces).
 
 === Pairing
 
