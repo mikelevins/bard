@@ -236,7 +236,7 @@
   (%defglobal 'put prim:put)
   (%defglobal 'put-key bard:put-key)
   (%defglobal 'vals bard:vals)
-  (%defglobal 'table prim:table)
+  (%defglobal 'dict prim:table)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Ordering
