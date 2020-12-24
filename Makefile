@@ -28,11 +28,9 @@ SCHEME_SOURCES= \
          src/types-primitive.scm \
          src/types-singleton.scm \
          src/types-generator.scm \
-         src/types-structure-schemas.scm \
-         src/types-records.scm \
-         src/types-tuples.scm \
+         src/types-structure-structures.scm \
          src/types-url.scm \
-         src/value-to-schema.scm \
+         src/value-to-structure.scm \
          src/env.scm \
          src/primitives.scm \
          src/read.scm \
@@ -74,11 +72,9 @@ C_SOURCES= \
          src/types-primitive.c \
          src/types-singleton.c \
          src/types-generator.c \
-         src/types-structure-schemas.c \
-         src/types-records.c \
-         src/types-tuples.c \
+         src/types-structure-structures.c \
          src/types-url.c \
-         src/value-to-schema.c \
+         src/value-to-structure.c \
          src/env.c \
          src/primitives.c \
          src/read.c \
@@ -121,11 +117,9 @@ OBJECTS= \
          types-primitive.o \
          types-singleton.o \
          types-generator.o \
-         types-structure-schemas.o \
-         types-records.o \
-         types-tuples.o \
+         types-structure-structures.o \
          types-url.o \
-         value-to-schema.o \
+         value-to-structure.o \
          env.o \
          primitives.o \
          read.o \
