@@ -1,9 +1,8 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-interpreted-method.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <interpreted-method>
+;;;; Purpose:       bard-structure <interpreted-method>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
@@ -11,15 +10,12 @@
 
 (declare (standard-bindings))
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <interpreted-method>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-interpreted-method (%next-bard-type-number))
-(define <interpreted-method> (make-base-schema '<interpreted-method> tags:$bard-interpreted-method))
+(define <interpreted-method> (make-base-bard-structure '<interpreted-method> tags:$bard-interpreted-method))
 
 ;;; constructor
 

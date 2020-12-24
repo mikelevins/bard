@@ -1,23 +1,19 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-primitive.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <primitive>
+;;;; Purpose:       bard-structure <primitive>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <primitive>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-primitive (%next-bard-type-number))
-(define <primitive> (make-base-schema '<primitive> tags:$bard-primitive))
+(define <primitive> (make-base-bard-structure '<primitive> tags:$bard-primitive))
 
 ;;; constructor
 

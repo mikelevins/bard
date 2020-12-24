@@ -1,9 +1,8 @@
 ;;;; ***********************************************************************
-;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          types-function.scm
 ;;;; Project:       Bard
-;;;; Purpose:       schema <function>
+;;;; Purpose:       bard-structure <function>
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2013 by mikel evins
 ;;;;
@@ -11,15 +10,12 @@
 
 (declare (standard-bindings))
 
-;;; =====================================================================
-;;; base schemas
-;;; =====================================================================
 ;;; ----------------------------------------------------------------------
 ;;; <function>
 ;;; ----------------------------------------------------------------------
 
 (define tags:$bard-function (%next-bard-type-number))
-(define <function> (make-base-schema '<function> tags:$bard-function))
+(define <function> (make-base-bard-structure '<function> tags:$bard-function))
 
 ;;; constructor
 
@@ -52,7 +48,7 @@
   (let* ((sing (%existing-singleton val))
          (found (if sing (%singleton-tree-ref mtree sing) #f)))
     (or found
-        (let* ((tp (%value->schema val))
+        (let* ((tp (%value->bard-structure val))
                (found (%singleton-tree-ref mtree tp)))
           (or found
               (%singleton-tree-ref mtree Anything))))))
