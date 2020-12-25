@@ -3,52 +3,71 @@ mikel evins
 :toc: preamble
 :toclevels: 2
 
-bard 0.7 is the seventh major iteration of design and implementation of the Bard programming language.
+bard 0.7 is the seventh major iteration of the Bard programming language. Bard is a programming language designed mainly to make me happy.
 
-Bard is intended to be an old-fashioned Lisp in the sense that it fully embraces interactive programming and unrestricted malleability. This version of the implementation also shoots for the kind of easy portability of source and object code represented by old-fashioned Smalltalk environments, using a compiler to a platform-agnostic bytecode format and a portable virtual machine.
+Bard is meant to be an old-fashioned Lisp: it fully embraces interactive programming and unrestricted malleability.
 
-Bard 0.7 also embraces more recent developments in programming-language design, including a functional-first language with immutable-first datatypes, protocol-oriented programming, and support for internet protocols and widely-used data formats.
+This version also shoots for the kind of easy portability of source and object code that old-fashioned Smalltalk environments have. It compiles to platform-agnostic bytecode that runs on a portable virtual machine.
 
-Finally, Bard is intended to be a small language with a relatively simple surface.
+Bard is a functional-first language with immutable-first datatypes, protocol-oriented programming, and support for internet protocols and widely-used data formats.
+
+Finally, Bard is intended to be a small language with a fairly simple surface.
 
 This document records my progress toward these goals.
 
 == Data
 
-Bard 0.7 offers the following built-in basic datatypes:
+The following basic datatypes are built into Bard:
 
 [cols=".<1m,.^3m,.>3",options="header",]
 |===
-|Type name |Examples                                 |Description
-|Anything  | 1, true, "hello"                        |Every possible value.
-|Undefined |undefined                                |No useful value.
-|Null      |nothing                                  |The empty collection.
-|Boolean   |true, false                              |True and false. `nothing` is also logically false.
-|Number    |0, 1, -2, 3/4, 5.6                       |Any numeric value.
-|Text      | "", "Some text"                         |Text strings.
-|List      |[1 2 3]                                  |A sequence of values.
-|          |(+ 1 2 3)                                |Written this way, a List is treated as a function call
-|Map       |{:name "Fred" :color "Orange"}           |A mapping from keys to values.
-|Function  |(function foo Bar -> Baz)                |A polymorphic operator
-|Method    |(^ [x] (+ x 1))                          |A monomorphic operator
-|Structure |(record <point> {:x <float> :y <float>}) |A blueprint for constructing values.
-|          |(tuple <ostype> [<byte> {:exactly 4}])   |
-|          |(enum <primary-color> 'Red 'Green 'Blue) |
+|Type name |Examples                                   |Description
+|Anything  | 1, true, "hello"                          |Every possible value.
+|Undefined |undefined                                  |No useful value.
+|Null      |nothing                                    |The empty collection.
+|Boolean   |true, false                                |True and false. `nothing` is also logically false.
+|Name      |<string>, List, :with, @"file:///tmp/db"   |The names of various elements of the language
+|Number    |0, 1, -2, 3/4, 5.6                         |Any numeric value.
+|Text      | "", "Some text"                           |Text strings.
+|List      |[1 2 3]                                    |A sequence of values.
+|          |(+ 1 2 3)                                  |When a List is written this way, Bard treats it as a function call.
+|Map       |{:name "Fred" :color "Orange"}             |A mapping from keys to values.
+|Function  |(function foo Bar -> Baz)                  |A polymorphic procedure
+|Method    |(^ [x] (+ x 1))                            |A monomorphic procedure
+|Structure |(record <point> {:x <double-float> :y <double-float>})   |A blueprint for constructing values.
+|          |(tuple <ostype> [<byte> {:exactly 4}])     |
+|          |(enum <primary-color> 'Red 'Green 'Blue)   |
+|Stream    | \*standard-input* \*standard-output*      |A source or sink for values.
+|Package   | bard.core, bard.user                      |A Bard namespace
 |===
+
+== Mutability
+
+All of the basic built-in data types provide *immutable* implementations. Many of them also provide *mutable* implementations, but in general, good Bard style calls for the use of *immutable* structures unless thre's a compelling reason to use a mutable variant.
+
+*Mutable* structures are those that can be destructively updated--in other words, structures whose members you can change after they're created. *Immutable* structures don't support such updates. If you want an immutable structure with different contents then you must make a new instance.
+
+There's often a performance penalty for using immutable structures, but it's often worth it. Because you can't change the contents of an immutable structure after it's created, it's immune to bugs caused by problems with concurrent updates.
+
+Bard provides mutable structures for those cases where mutability is really needed, but it's an *immutability first* language: it encourages the use of immutable structures whenever it's practical.
 
 == Types
 
-A Bard *type* is either a *structure* or a *class*. *Structures* are concrete blueprints for constructing values. *Classes* are named collections of types.
+A Bard *type* is either a *structure* or a *class*.
 
-A *structure* describes the structure of a family of values and the data that populate them. Bard defines a set of *built-in structures*, including concrete representations of all the types listed in the previous section. It also defines a set of *operators* that you can use to define your own structures.
+*Structures* are concrete blueprints for constructing values.
+
+*Classes* are named collections of types.
+
+A *structure* describes the layout of a family of values and the data that populate them. Bard defines a set of *built-in structures*, including concrete representations of all the types listed in the "Data" section. It also defines a set of *procedures* that you can use to define your own structures.
 
 A structure can be *instantiated*–that is, it can be used to create values. Values created from a structure are said to be *instances* of that structure, and they belong to the *type* that the structure represents.
 
-A *class* is an abstract type, a name for a collection of other types.  It does not specify any internal structure or any taxonomic relationship to any other type. A class might be *empty*, with no members and no instances.
+A *class* is an abstract type, a named collection of other types.  It does not specify any internal structure or any taxonomic relationship to any other type. A class might even be *empty*, with no members and no instances.
 
 Most classes are defined to fulfill one or more roles in a *protocol*.
 
-A *protocol* is a named set of *operators* and *variables*.  Operators accept input values and produce output values. A protocol can declare classes for those inputs and outputs. Until other types are made members of those classes, the classes are empty.
+A *protocol* is a named set of *procedures* and *variables*.  Procedures accept input values and produce output values, and protocols can declare the types of those inputs and outputs. Most often, protocols declare them as classes, so that the set of concrete types that the procedures accept and return can easily be extended.
 
 The most common way to make a type into an member of a class is by *specializing* a protocol function. If a function has a method that is specialized for a type on some parameter, then that type becomes a member of that parameter's class.
 
@@ -58,7 +77,9 @@ For example, suppose I define a function like this:
 (function foo Bar -> Baz)
 ....
 
-`foo` is now a function that takes one argument of type `Bar` and returns one value of type `Baz`. `Bar` and `Baz` are now classes. If these names were never used before in another function or class definition then they are empty–they have no members and no instances.
+`foo` is a function that takes one argument of type `Bar` and returns one value of type `Baz`. This function definition implicitly defines `Bar` and `Baz` as classes.
+
+If these names were never used before in another function or class definition then `Bar` and `Baz` are *empty classes*–they have no members and no instances.
 
 I can make the structure `<small-integer>` into a member of the class `Bar` by writing a method that specializes `foo` on it:
 
@@ -68,36 +89,36 @@ I can make the structure `<small-integer>` into a member of the class `Bar` by w
   ...)
 ....
 
-The `with` clause applies a *constraint* to the argument `bar`: its value must be an instance of `<small-integer>`.
+`define method` gives a definition for the function `(function foo Bar -> Baz)` in which the parameter `bar` fills the role of the input class `Bar`.
 
-To be more precise: `<small-integer>` is the constraint that `bar` must satisfy. If the constraint is a type, then the value of `bar` must be an instance of that type in order for this method to match the function call. Other constraints are also possible. For example, the constraint `(exactly 101)` means that `bar` has to be equal to 101, and the integer 101 (and only the integer 101) becomes a member of the `Bar` class.
+The `:with` clause declares that `bar` must be an instance of `<small-integer>`, which implies that `<small-integer>` must be treated as a member of class `Bar`.
 
-`<small-integer>` is now a member of the `Bar` class. If I call `foo` with an instance of `<small-integer>`, like so:
+To be more precise: `<small-integer>` is a constraint that `bar` must satisfy. If the constraint is a type, then the value of `bar` must be an instance of that type.
+
+Because `foo` takes one argument of class `Bar`, and this method definition requires that argument to be an instance of `<small-integer>`, `<small-integer>` is now a member of the `Bar` class.
+
+If I call `foo` with an instance of `<small-integer>`, like so:
 
 ....
 (foo 15)
 ....
 
-then Bard finds my method and applies it.
+Bard finds my method and applies it.
 
-== Operators
+Other constraints are possible. Consider this method definition, for example:
 
-An *operator* is a value that can be applied to some sequence of expressions to compute a result. There are four kinds of operators:
+....
+(define method (foo bar)
+  :with {:bar (exactly 101)}
+  ...)
+....
 
-* *special forms* are built into the Bard system. Each special form can follow its own rules of evaluation.
-* *functions* are polymorphic operators that evaluate their arguments, examine the results, and choose a *method* to apply according to the matching rules given by `define method` forms.
-* *methods* are monomorphic operators that apply bard expressions to their input parameters to compute results. Methods are commonly applied by functions, but may also be referenced and applied directly.
-* *macros* are rewrite rules. When you call a macro, the rule given by the macro's definition rewrites the call into a new expression and then evaluates that. Macros are generally used to add new syntax to Bard.
+The constraint `(exactly 101)` means that `bar` has to be equal to 101. With this method definition, the integer 101 (and only the integer 101, not other numbers) becomes a member of the `Bar` class.
 
-== The Bard Runtime
 
-Bard 0.7 is a virtual machine that executes portable bytecode. It supports compiling Bard source code in the form of S-expressions to a bytecode format called *bardo*.
+== Literal Values
 
-I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
-
-== Lexical Syntax
-
-Bard's lexical syntax provides ways to write literal values of most of its built-in datatypes. For example:
+Bard provides literal syntax for its most commonly-used datatypes. For example, here are examples of a few of the most commonly-used types:
 
 [cols="1m,1m,4",options="header",]
 |===
@@ -107,29 +128,58 @@ Bard's lexical syntax provides ways to write literal values of most of its built
 |[1 2 3]   | List  |A list of integers
 |===
 
-The table gives the *class* of each value, but not the *structure*. When you write the lexical syntax for a value, Bard constructs and returns an instance of the *default structure* for that type. For example, the default structure for the `List` type is `<cons>`, so writing `[1 2 3]` returns a `<cons>`.
+The table gives the *class* of each value, but not the *structure*. That's because Bard doesn't specify a structure for each literal syntax; only a class. When you write a data literal, Bard constructs an instance of the *default structure* for the syntax.
+
+For example, the default structure for the `List` type is `<cons>`, so writing `[1 2 3]` returns a `<cons>`.
 
 What if you want a different structure? You can write:
 
 ....
-#:<vector> '(1 2 3)
+#:<vector> [1 2 3]
 ....
 
-which tells Bard you want it to return a `vector` instead. The syntax `#:<vector>` is shorthand for
+which tells Bard you want it to return a `vector` instead. The syntax `#:<vector>` is in effect shorthand for
 
 ....
 (as <vector> [1 2 3])
 ....
 
-Bard may rewrite this expression as a direct call to the `vector` constructor:
+but Bard may rewrite the expression to avoid constructing and then converting the value. For example, Bard may rewrite this example as a direct call to the `vector` constructor:
 
 ....
 (vector 1 2 3)
 ....
 
-Alternatively, you can of course also call the constructor yourself.
+(You could of course call the constructor directly yourself.)
 
-When you write a literal value, Bard constructs an instance of the default structure for the expression's class. If you want to ensure that the value belongs to some specific structure, then you must say so explicitly, as in the example above.
+=== Default Structures
+
+For each literal data syntax there is a *default structure* defined by the implementation. The *default structure* is the structure that Bard uses to construct instances from literal expressions if you don't specify some other structure.
+
+In some cases, the default structure depends on the value represented by the syntax. For example, both `1` and `99999999999999999999` are of type `Integer`, but the second one is too large to be represented by a `<small-integer>`, which is the default structure for integers of lesser magnitude. Bard uses `<big-integer>` as the value for the greater number.
+
+Similarly, the default structure for `Name` is `<symbol>`, unless the
+syntax of the literal indicates `<keyword>` or `<uri>`.
+
+The default structures defined by Bard are as follows:
+
+[cols=".<1m,.^3m",options="header",]
+|===
+|Type name |Examples                                 
+|Undefined |<undefined>
+|Null      |<null>
+|Boolean   |<bool>
+|Integer   |<small-integer>, <big-integer>
+|Decimal   |<double-float>
+|Rational  |<ratio>
+|Name      |<symbol>, <keyword>, <uri>
+|Text      |<string>
+|List      |<cons>
+|Map       |<dict>
+|Function  |<function>
+|Method    |<bytecode-method>
+|===
+
 
 === Named Constants
 
@@ -154,7 +204,7 @@ When you write a literal value, Bard constructs an instance of the default struc
 |0, 100, -2 |<small-integer> |Integers that can be conveniently represented by a machine word
 |9999999999999999999 |<big-integer> |Unlimited-precision integers
 |2/3 |<ratio> |Fractional number represented by ratios of integers
-|0.1 |<float> |Decimal numbers represented as floating-point values
+|0.1 |<double-float> |Decimal numbers represented as floating-point values
 |===
 
 === Names
@@ -164,14 +214,14 @@ When you write a literal value, Bard constructs an instance of the default struc
 [cols="1,1m,1m,4",options="header",]
 |===
 |Kind |Examples |Structure |Notes
-|Symbol|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on
-|Keyword|:type, :Family |<keyword> |Names that always evaluate to themselves
-|URI|@"file:///tmp/",@"https://barcode.net" |<uri> |Universal Resource Identifiers and URLs
+|Symbol|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on. Symbols are contained in packages.
+|Keyword|:type, :Family |<keyword> |Names that always evaluate to themselves. Keywords are contained in the `bard.keyword` package.
+|URI|@"file:///tmp/",@"https://barcode.net" |<uri> |Universal Resource Identifiers and URLs, URIs are contained in the `bard.uri` package.
 |===
 
 === Lists
 
-Lists are sequences of values that are addressable by index. `List` is a class, not a structure, and its members include several different structures that represent sequences of values. The `Listing` protocol provides numerous operators that work on Lists.
+Lists are sequences of values that are addressable by index. There are several structures that provide different implementations of the `List` class with different performance characteristics. The `Listing` protocol provides numerous procedures that work on Lists.
 
 Some List structures are mutable; others are immutable.
 
@@ -194,7 +244,7 @@ Both ways of writing Lists are correct; the difference between then is that when
 
 ....
 > (1 2 3)
-ERROR: 1 is not an operator!
+ERROR: 1 is not a procedure!
 ....
 
 You can tell Bard not to evaluate a List in parentheses using a *quote*:
@@ -219,7 +269,7 @@ means the same thing as
 
 === Text Strings
 
-Text strings, like `"Hello"`, are Lists of Characters. All of the operators of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many operators specialized for handling text.
+Text strings, like `"Hello"`, are Lists of Characters. All of the procedures of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many procedures specialized for handling text.
 
 Note that this does not mean that strings are implemented inefficiently as singly-linked-lists or some such data structure. Remember that `Text` and `List` are classes, not structures. Saying that a text string is a list of characters simply means that the structure that represents it supports the `Listing` protocol; it doesn't specify anything about its representation.
 
@@ -250,7 +300,17 @@ mutable and immutable types of maps
 
 === Functions
 
-Functions are polymorphic operators examine their inputs, match them to methods, and apply the methods to the inputs.
+Functions are polymorphic procedures examine their inputs, match them to methods, and apply the methods to the inputs.
+
+Following is an expression that a named:
+
+....
+(function Bar -> Baz)
+....
+
+This unnamed function accepts an input of type `Bar` and returns an output of type `Baz`.
+
+Although it's possible to capture and use an unnamed function like this, it's much more common to name a function when you construct it. Naming it creates a *special variable* whose value is the function, which makes it much easier to extend the function by adding methods to it.
 
 Following is an expression that creates a named function:
 
@@ -274,7 +334,7 @@ Following is an expression that creates a method:
 (^ [x] (* x x))
 ....
 
-This nameless method accepts one parameter, called `x`, and multiples it by itself.
+This nameless method accepts one parameter, called `x`, and multiplies it by itself.
 
 Although you can construct methods this way and use them directly, the most common way to create and use them is by using the special form `define method` to *specialize* a function:
 
@@ -296,16 +356,16 @@ We can add another method to the same function, matching a different structure:
   (cat x y))
 ....
 
-The `<small-integer>` version of `add` uses the addition operator on its arguments, and the `<string>` version instead uses `cat`, which concatenates the strings.
+The `<small-integer>` version of `add` uses the addition procedure on its arguments, and the `<string>` version instead uses `cat`, which concatenates the strings.
 
-We can add more methods, matching any structures we like in any combination. The defined methods will be called when we pass parameters of the required types.
+We can add more methods, matching any structures we like in any combination. The defined methods will be called when we pass parameters that match the constraints.
 
 We can also specify other matching rules. For example, the following method matches only when the parameters are exactly 4 and 2:
 
 ....
 (define method (add x y)
   :with {:x (exactly 4)
-        :y (exactly 2)}
+         :y (exactly 2)}
   (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ....
 
@@ -315,147 +375,10 @@ The `with` clause defines the matching rule for the parameters. If it's a map, a
 
 Other matching rules are also supported.
 
-== Naming Conventions
-
-Bard uses some naming conventions that are not strictly enforced by the compiler, but which are strongly encouraged for the sake of clarity.
-
-=== Constants
-
-Constants are read-only variables. By convention, their names start and end with `+`.
-
-....
-+Pi+
-+C+
-+fine-structure-constant+
-....
-
-*Constants* are read-only variables.
-
-=== Special Variables
-
-*Special variable* are global variables--more or less. By convention, their names start and end with `*`.
-
-....
-*window*
-*process-id*
-*epoch*
-....
-
-=== Protocols
-
-A *protocol* is named collection of related operators and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
-
-....
-Listing
-Mapping
-Streaming
-....
-
-=== Classes
-
-A *class* is a named collection of *types*. Types, remember, may be either structures or classes, so classes may be members of other classes.
-
-The convention is to name a class with a capitalized noun. The noun should reflect the role the type is intended to fill.
-
-....
-List
-Map
-Stream
-....
-
-=== Structures
-
-A *structure* is a concrete description of how values are combined to form a new type of value. Structures may be directly instantiated by allocating space to hold their constituent values and filling in the space with data. Classes can't be instantiated in this way. Because a class is just a name for a set of other types, it can be instantiated only indirectly. The only way to make an instance of a class is to make an instance of one of it member structures.
-
-For structures, the convention is to name them with nouns that describe their concrete representations, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
-
-....
-<character>
-<cons>
-<null>
-<small-integer>
-....
-
-=== Predicates
-
-*Predicates* are operators of one argument that return true or false.
-
-The convention is to end the names of predicates with question marks ("?").
-
-....
-empty?
-even?
-number?
-....
-
-=== Accessors
-
-An *accessor* is an operator that returns the value of a field in a value. If a slot is *mutable* then the accessor may also be used with the `set!` special form to replace the value.
-
-The convention is to start the name of an accessor with a dot (".").
-
-....
-.active?
-.name
-.width
-....
-
-=== Mutators
-
-A *mutator* is an operator that destructively modifies the value in a slot, replacing the old value with a new one, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
-
-The convention is to end the names of mutators with exclamation points ("!").
-
-....
-replace!
-reverse!
-set!
-.set-name!
-....
-
-== Structures
-
-There are three kinds of structures:
-
-- *records* are structures made of named slots.
-- *tuples* are structures made of sequences of elements identified by indexes.
-- *enumerations* are structures defined as one or more named values, optionally with one or more data parameters associated with the names.
-
-This section describes how to define and instantiate structures, and how to operate on them.
-
-=== Records
-
-=== Tuples
-
-=== Enumerations
-
-== Protocols
-
-Protocols define collections of related operators and variables designed to support particular activities. Examples of Bard protocols include `Comparing`, `Converting`, `Creating`, `Listing`, `Mapping`, `Printing`, `TextProcessing`, and so on.
-
-Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
-
-This section describes how to define and use protocols.
-
-== Operators
-
-Operators are values that tell Bard to eecute computations when they appear in the first position of a `List` expression written with parentheses. Such expressions are called *operations*.
-
-There are four different kinds of operations, each with a different purpose and a different evaluation rule.
-
-=== Special Forms
-
-User cannot define special forms.
-
-=== Functions
-
-=== Methods
-
-=== Macros
 
 == Operations
 
-An *operation* is an expression that calls an *operator*.
+An *operation* is an expression that calls a *procedure*.
 
 For example:
 
@@ -469,9 +392,9 @@ For example:
 (set! (.x pt) 100)
 ....
 
-Bard expresses operations as Lists whose first elements are operators, and whose remaining elements are the operators' arguments. Argument expressions may themselves be operations.
+Bard expresses operations as Lists whose first elements are procedures, and whose remaining elements are the procedures' arguments. Argument expressions may themselves be operations.
 
-Different types of operators have different rules of evaluation for argument expressions. *Functions* and *methods* evaluate argument expressions before passing them to the operator.
+Different types of procedures have different rules of evaluation for argument expressions. *Functions* and *methods* evaluate argument expressions before passing them to the procedure.
 
 A *macro* expression passes the whole expression to the rule given by the macro's definition; that rule rewrites the expression before it's evaluated, and the rule determines whether and how the arguments are evaluated.
 
@@ -493,7 +416,6 @@ For example:
 
 `if` evaluates its first argument. If the value is true then it evaluates its second argument; if not, it evaluates its third argument. In the above example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
 
-
 == Variables
 
 As we saw in the previous section, the special form `def` defines *special variables*:
@@ -507,6 +429,8 @@ This example creates a *special variable* named `x` and gives it the value `5`.
 A *special variable* is a name that stands for a value. Any Bard code in a program can get and set that value of a special variable.
 
 === Definitions
+
+*Definitions* are procedures that create special variables.
 
 `def`
 `define`
@@ -545,7 +469,7 @@ Variables that appear later in the sequence of bindings can refer to those that 
 
 === Parameter bindings
 
-*Parameter bindings* are created when an operation is called with arguments.
+*Parameter bindings* are lexical variables that are created when an operation is called with arguments.
 
 Consider a simple method that returns the greater of two numbers:
 
@@ -565,6 +489,160 @@ Let's capture the method in a special variable and call it:
 ....
 
 When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
+
+== The Bard Runtime
+
+Bard 0.7 is a virtual machine that executes portable bytecode. It compiles the Bard source language, which is made up of *s-expressions*, to bytecode, and executes the bytecode on the virtual machine. Bard bytecode, called *bardo*, is independent of any particular hardware platform, and the virtual machine is designed to be easy to port. It's written in Gambit Scheme and can be compiled for any platform that Gambit can target.
+
+I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
+
+== Naming Conventions
+
+Bard uses some naming conventions that are not strictly enforced by the compiler, but which are strongly encouraged for the sake of clarity.
+
+=== Constants
+
+Constants are read-only variables. By convention, their names start and end with `+`.
+
+....
++Pi+
++C+
++fine-structure-constant+
+....
+
+*Constants* are read-only variables.
+
+=== Special Variables
+
+*Special variable* are global variables--more or less. By convention, their names start and end with `*`.
+
+....
+*window*
+*process-id*
+*epoch*
+....
+
+=== Protocols
+
+A *protocol* is named collection of related procedures and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
+
+....
+Listing
+Mapping
+Streaming
+....
+
+=== Classes
+
+A *class* is a named collection of *types*. Types, remember, may be either structures or classes, so classes may in principle be members of other classes, though it's more common for members of classes to be structures.
+
+The convention is to name a class with a capitalized noun. The noun should reflect the role the type is intended to fill.
+
+....
+List
+Map
+Stream
+....
+
+=== Structures
+
+A *structure* is a concrete description of how values are arranged to form a new type of value. Structures may be directly instantiated by allocating space to hold their constituent values and filling in the space with data.
+
+By contrast, classes can't be instantiated in this way. Because a class is just a name for a set of other types, it can be instantiated only indirectly. The only way to make an instance of a class is to make an instance of one of it member structures.
+
+For structures, the convention is to name them with nouns that describe their concrete representations, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
+
+....
+<character>
+<cons>
+<null>
+<small-integer>
+....
+
+=== Predicates
+
+*Predicates* are procedures of one argument that return true or false.
+
+The convention is to end the names of predicates with question marks ("?").
+
+....
+empty?
+even?
+number?
+....
+
+=== Accessors
+
+An *accessor* is a procedure that returns the value of a field in a value. Bard creates accessors automatically when you define structures, but you can customize their names if you wish.
+
+If a slot is *mutable* then the accessor may also be used with the `set!` special form to replace its value.
+
+The convention is to start the name of an accessor with a dot (".").
+
+....
+.active?
+.name
+.width
+....
+
+=== Mutators
+
+A *mutator* is a procedure that replacing the value in a slot, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
+
+The convention is to end the names of mutators with exclamation points ("!").
+
+....
+replace!
+reverse!
+set!
+.set-name!
+....
+
+== Structures
+
+There are three kinds of structures:
+
+- *records* are structures made of named slots.
+- *tuples* are structures made of sequences of elements identified by indexes.
+- *enumerations* are structures defined as one or more named values, optionally with one or more data parameters associated with the names.
+
+You may optionally specify type constraints on the elements of structures.
+
+This section describes how to define and instantiate structures, and how to operate on them.
+
+=== Records
+
+=== Tuples
+
+=== Enumerations
+
+== Protocols
+
+Protocols define collections of related procedures and variables designed to support particular activities. Examples of Bard protocols include `Comparing`, `Converting`, `Creating`, `Listing`, `Mapping`, `Printing`, `TextProcessing`, and so on. You can think of a protocol as a collection of tools suited for some chosen purpose, and the naming convention reflects that usage.
+
+Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
+
+This section describes how to define and use protocols. The "Built-in Protocols" section below describes the protocols that Bard provides out of the box.
+
+== Procedures
+
+A *procedure* is a value that can be applied to some sequence of expressions to compute a result. Bard offers four types of procedures:
+
+* *special forms* are procedures that are built into Bard. Each special form can follow its own rules of evaluation.
+* *functions* are *polymorphic procedures:* a function examines the values of its arguments and chooses a suitable *method* to apply according to its *dispatch rule*.
+* *methods* are *monomorphic procedures:* a method applies the expressions in the body of its definition to the values of its arguments, and returns the result.
+* *macros* are rewrite rules. A macro definition is a procedure that accepts an expression and rewrites it to another expression. When execute a macro expression the whole expression is passed to the code in thee macro's definition. That code rewrites the macro call, then evaluates the rewritten expression. Writing macors is a way to extend the syntax of the language.
+
+=== Special Forms
+
+Users cannot define special forms.
+
+=== Functions
+
+=== Methods
+
+=== Macros
+
 
 == Returning multiple values
 
@@ -623,7 +701,7 @@ Bard defines a special variable, `bard.core:*package*`, whose value is the *curr
 
 For example, if `\*package*` is currently the package named `bard.core`, then `bind` is automatically interpreted to mean `bard.core:bind`.
 
-Bard defines a `Packaging` protocol that provides a set of operators and variables for working with packages.
+Bard defines a `Packaging` protocol that provides a set of procedures and variables for working with packages.
 
 
 == Assignment
