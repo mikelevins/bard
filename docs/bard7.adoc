@@ -15,6 +15,13 @@ Finally, Bard is intended to be a small language with a fairly simple surface.
 
 This document records my progress toward these goals.
 
+
+== The Bard Runtime
+
+Bard 0.7 is a virtual machine that executes portable bytecode. It compiles the Bard source language, which is made up of *s-expressions*, to bytecode, and executes the bytecode on the virtual machine. Bard bytecode, called *bardo*, is independent of any particular hardware platform, and the virtual machine is designed to be easy to port. It's written in Gambit Scheme and can be compiled for any platform that Gambit can target.
+
+I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
+
 == Data
 
 The following basic datatypes are built into Bard:
@@ -43,13 +50,15 @@ The following basic datatypes are built into Bard:
 
 == Mutability
 
-All of the basic built-in data types provide *immutable* implementations. Many of them also provide *mutable* implementations, but in general, good Bard style calls for the use of *immutable* structures unless thre's a compelling reason to use a mutable variant.
+All of the basic built-in data types provide *immutable* implementations. Many of them also provide *mutable* implementations, but in general, good Bard style calls for the use of *immutable* structures unless there's a compelling reason to use a mutable variant.
 
 *Mutable* structures are those that can be destructively updated--in other words, structures whose members you can change after they're created. *Immutable* structures don't support such updates. If you want an immutable structure with different contents then you must make a new instance.
 
 There's often a performance penalty for using immutable structures, but it's often worth it. Because you can't change the contents of an immutable structure after it's created, it's immune to bugs caused by problems with concurrent updates.
 
-Bard provides mutable structures for those cases where mutability is really needed, but it's an *immutability first* language: it encourages the use of immutable structures whenever it's practical.
+In many cases the performance penalty for using immutable structures is less than you might expect, because new structures can share structure with existing ones, and because there are algorithms with good amortized complexity for creating updated copies of structures.
+
+Still, Bard provides mutable structures for those cases where mutability is really needed. Nevertheless, it's an *immutability first* language: it encourages the use of immutable structures whenever they are practical.
 
 == Types
 
@@ -118,19 +127,11 @@ The constraint `(exactly 101)` means that `bar` has to be equal to 101. With thi
 
 == Literal Values
 
-Bard provides literal syntax for its most commonly-used datatypes. For example, here are examples of a few of the most commonly-used types:
+Bard provides literal syntax for its most commonly-used datatypes. Most of the examples in the "Data" section are literal expressions for the listed types.
 
-[cols="1m,1m,4",options="header",]
-|===
-|Syntax    | Class |Description
-|nothing   | Null  |The empty collection
-|3.1415926 | Float |A floating-point number
-|[1 2 3]   | List  |A list of integers
-|===
+The table gives the *class* of each value, but not the *structure*. That's because Bard doesn't specify a required structure for each literal syntax; only a class. When you write a data literal, Bard constructs an instance of the *default structure* for the syntax. The next sections explains default structures in greater detail.
 
-The table gives the *class* of each value, but not the *structure*. That's because Bard doesn't specify a structure for each literal syntax; only a class. When you write a data literal, Bard constructs an instance of the *default structure* for the syntax.
-
-For example, the default structure for the `List` type is `<cons>`, so writing `[1 2 3]` returns a `<cons>`.
+The default structure for the `List` type is `<cons>`, so writing `[1 2 3]` returns a `<cons>`.
 
 What if you want a different structure? You can write:
 
@@ -144,7 +145,7 @@ which tells Bard you want it to return a `vector` instead. The syntax `#:<vector
 (as <vector> [1 2 3])
 ....
 
-but Bard may rewrite the expression to avoid constructing and then converting the value. For example, Bard may rewrite this example as a direct call to the `vector` constructor:
+That expression says to construct a `List` from the default structure, then convert it to the desired output, but Bard may rewrite the expression to avoid constructing and then converting the value. For example, Bard may rewrite this example as a direct call to the `vector` constructor:
 
 ....
 (vector 1 2 3)
@@ -154,12 +155,7 @@ but Bard may rewrite the expression to avoid constructing and then converting th
 
 === Default Structures
 
-For each literal data syntax there is a *default structure* defined by the implementation. The *default structure* is the structure that Bard uses to construct instances from literal expressions if you don't specify some other structure.
-
-In some cases, the default structure depends on the value represented by the syntax. For example, both `1` and `99999999999999999999` are of type `Integer`, but the second one is too large to be represented by a `<small-integer>`, which is the default structure for integers of lesser magnitude. Bard uses `<big-integer>` as the value for the greater number.
-
-Similarly, the default structure for `Name` is `<symbol>`, unless the
-syntax of the literal indicates `<keyword>` or `<uri>`.
+For each literal data syntax there is a *default structure* defined by the implementation. The *default structure* is the structure that Bard uses to construct instances from literal expressions if you don't specify a different one.
 
 The default structures defined by Bard are as follows:
 
@@ -180,6 +176,12 @@ The default structures defined by Bard are as follows:
 |Method    |<bytecode-method>
 |===
 
+In some of these cases more than one default structure is listed. That's because in some cases the default structure depends on the value represented by the syntax.
+
+For example, both `1` and `99999999999999999999` are of type `Integer`, but the second one is too large to be represented by a `<small-integer>`, which is the default structure for integers of lesser magnitude. Bard uses `<big-integer>` as the value for the greater number.
+
+Similarly, the default structure for `Name` is `<symbol>`, unless the
+syntax of the literal indicates `<keyword>` or `<uri>`.
 
 === Named Constants
 
@@ -489,12 +491,6 @@ Let's capture the method in a special variable and call it:
 ....
 
 When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
-
-== The Bard Runtime
-
-Bard 0.7 is a virtual machine that executes portable bytecode. It compiles the Bard source language, which is made up of *s-expressions*, to bytecode, and executes the bytecode on the virtual machine. Bard bytecode, called *bardo*, is independent of any particular hardware platform, and the virtual machine is designed to be easy to port. It's written in Gambit Scheme and can be compiled for any platform that Gambit can target.
-
-I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
 
 == Naming Conventions
 
