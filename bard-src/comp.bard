@@ -1,0 +1,22 @@
+;;; bard 0.7 compiler in bard
+
+(define method (gen op & args)
+  [(pair op args)])
+
+(define method (in-env? sym env)
+  (if (empty? env)
+      nothing
+      (bind ((frame (first env)))
+            (if (= (left frame) sym)
+                frame
+                (in-env? sym (rest env))))))
+
+(define method (gen-var var env)
+  (bind ((p (in-env? var env)))
+        (if p
+            (gen 'LVAR var ";" var)
+            (gen 'GVAR var))))
+
+(define method (comp x env)
+  (cond ((symbol? x)(gen-var x env))
+        (else [:unrecognized x])))
