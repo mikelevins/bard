@@ -7,11 +7,11 @@ bard 0.7 is the seventh major iteration of the Bard programming language. Bard i
 
 Bard is meant to be an old-fashioned Lisp: it fully embraces interactive programming and unrestricted malleability.
 
-This version also shoots for the kind of easy portability of source and object code that old-fashioned Smalltalk environments have. It compiles to platform-agnostic bytecode that runs on a portable virtual machine.
+Version 0.7 also shoots for the kind of easy portability of source and object code that old-fashioned Smalltalk environments have. It compiles to platform-agnostic bytecode that runs on a portable virtual machine.
 
 Bard is a functional-first language with immutable-first datatypes, protocol-oriented programming, and support for internet protocols and widely-used data formats.
 
-Finally, Bard is intended to be a small language with a fairly simple surface.
+Finally, Bard is intended to be a small language, no more complicated than necessary.
 
 This document records my progress toward these goals.
 
@@ -24,18 +24,20 @@ I plan to eventually support compiling bardo to native code, and to support exec
 
 == What Bard Looks Like
 
-Bard is a Lisp. Everything in Bard is an expression, and function calls are written as lists. Following is a short function that reads nonempty lines from a file:
+Bard is a Lisp. Everything in Bard is an expression, and function calls are written as lists.
+
+ Here's a short function that reads nonempty lines from a file:
 
 ....
 (define method (read-samples path)
-  :with {path <uri>}
+  :where {path <uri>}
   (filter (complement empty?)
           (tap :lines path)))
 ....
 
 == Interactive Programming
 
-Bard is an *interactive* language. It's designed to work by prompting you for expressions, which you type in at the prompt. Bard reads and evaluates the expressions you type, performs whatever computation they require, and prints the resulting values.
+Bard is an *interactive* language. It's designed to work by prompting you for expressions. You type expressions at the prompt, Bard reads and evaluates the expressions, performs whatever computation they require, and prints the resulting values.
 
 ....
 bard.user> "Hello!"
@@ -48,13 +50,13 @@ bard.user> (bard.time:now)
 #<bard.time:timestamp> "2020-12-26T04:31:01.985510Z"
 ....
 
-Bard embraces an old-fashioned idea of Lisp programming in which the whole language is inspectable and malleable, all language and system features are available from the interactive prompt, and the assumption is that you'll write programs by starting the Bard system and altering it interactively as it runs.
+Bard embraces an old-fashioned idea of Lisp programming in which the whole language is inspectable and malleable, all language and system features are available from the interactive prompt, and the assumption is that you'll write programs by starting the Bard system and changing it interactively, one expression at a time, until it becomes the program you want.
 
 == Named Constants
 
-The sumplest expressions you can enter at the bard prompt are values, and the simplest values are *named constants*.
+The simplest expressions you can enter at the Bard prompt are values, and the simplest values to enter are the *named constants*.
 
-Four of them are defined by the Bard language:
+There are four of them:
 
 [cols="1m, 3",options="header",]
 |===
@@ -67,13 +69,13 @@ Four of them are defined by the Bard language:
 
 == Literals
 
-Next to the four named constants, the simplest expressions are *literals*. A *literal* is an expression that represents a value. Bard offers the following types of literals:
+After the four named constants, the simplest expressions are *literals*. A *literal* is an expression that represents a value. Bard offers the following types of literals:
 
 [cols=".<1m,.^3m,.>3",options="header",]
 |===
 |Type      |Examples                                   |Description
 |Symbol    |method, bind, List                         |The names of functions, variables, and so on
-|Keyword   |:with, :name, :if-exists                   |Keys in records and similar uses
+|Keyword   |:where, :name, :if-exists                   |Keys in records and similar uses
 |URI       |@"file:///tmp/db", @"https://bardcode.net" |Files and network resources
 |Number    |0, 1, -2, 3/4, 5.6                         |Numeric value.
 |Text      | "", "Some text"                           |Text strings.
@@ -82,6 +84,159 @@ Next to the four named constants, the simplest expressions are *literals*. A *li
 |Function  |(function foo Bar -> Baz)                  |A polymorphic procedure
 |Method    |(^ [x] (+ x 1))                            |A monomorphic procedure
 |===
+
+You can create most of these kinds of values by typing them at the prompt.
+
+....
+bard.user> 41/19
+41/19
+
+bard.user> "Hello, world!"
+"Hello, world!"
+
+bard.user> [1 2 3 4 5]
+[1 2 3 4 5]
+....
+
+=== Symbols
+
+Symbols are a special case. They're used to name *variables*--that is, names that stand for values. If you type in a symbol that happens to be the name of a variable, then Bard returns the value of that variable.
+
+....
+bard.user> List
+List
+
+bard.user> *package*
+bard.user
+....
+
+If you type in a symbol that has not been defined as a variable, then Bard tells you that its value is undefined.
+
+....
+bard.user> not-a-variable
+undefined
+....
+
+If you want to refer to a symbol itself, and not to the value it stands for, you must tell Bard not to evaluate it. You can do that by *quoting* it.
+
+....
+bard.user> 'not-a-variable
+not-a-variable
+....
+
+The quote tells Bard, "Don't evaluate this expression. Just return the expression itself."
+
+Besides symbols, there are two other kinds of names: Keywords and URIs. When you refer to a keyword or a URI, its value is always itself. The only names that require special treatment are symbols.
+
+== Variables
+
+*Variables* are *names* that stand for *values*. For example, the named constants are variables.
+
+Variables may be *mutable* or *immutable*. You can change the value of a *mutable* variable, but not that of an *immutable* one. The named constants are immutable variables.
+
+A variable may be *special* or *lexical*.
+
+A *special variable*'s name refers to the same variable no matter where it's referenced. If a piece of code in one procedure changes a special variable, then the code in all other procedures see the new value.
+
+By contrast, the name of a *lexical variable* refers to the same variable only in the *lexical scope* where it's created. The same name can refer to a completely different variable in a different procedure, and setting the value of one has no effect on the value of the other.
+
+=== Special Variables
+
+You can create a special variable using a *defining form*, like `def`:
+
+....
+bard.user> (def *x* 1000)
+*x*
+
+bard.user> *x*
+1000
+....
+
+You can change the value of `*x*` by *assigning* a new one to it:
+
+....
+bard.user> (set! *x* 1001)
+1001
+
+bard.user> *x*
+1001
+....
+
+Besides `def`, there are several other defining forms that can create special variables.
+
+=== Lexical Variables
+
+You can create exical variables using *binding forms*. The most commonly-used binding form is `bind`:
+
+....
+bard.user> (bind [(x 10)]
+             (+ x 1))
+11
+....
+
+
+
+=== Definitions
+
+*Definitions* are procedures that create special variables.
+
+`def`
+`define`
+
+
+=== Lexical variables
+
+It's generally not a good practice to make variables accessible everywhere. The more places a variable is referenced, the more places its value might be changed, and the more places you have to check when keeping track of the code that reads and writes it.
+
+A *lexical variable* is a variable that is accessible only in a certain bounded body of code, called its *lexical environment*. Most variables should be lexical rather than special variables, because they're easier and safer to manage that way.
+
+Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
+
+=== The `bind` special form
+
+The `bind` special form creates lexical variables. For example:
+
+....
+> (bind [(x 2)]
+    (+ x 1))
+3
+....
+
+In this example, `bind` creates a lexical variable named `x` and binds it to `2`. The body of the `bind` form then refers to that variable in the expression `(+ x 1)`, returning the sum.
+
+`bind` can create more than one variable:
+
+....
+> (bind [(x 2)
+         (y (+ x 1))]
+    (+ x y))
+5
+....
+
+Variables that appear later in the sequence of bindings can refer to those that appear earlier, as this example shows.
+
+=== Parameter bindings
+
+*Parameter bindings* are lexical variables that are created when an operation is called with arguments.
+
+Consider a simple method that returns the greater of two numbers:
+
+....
+(^ [x y] (max x y))
+....
+
+This method creates the lexical variables `x` and `y`. In the body of the method, `x` and `y` take on the values of the two arguments passed to the method.
+
+Let's capture the method in a special variable and call it:
+
+....
+> (def bigger (^ [x y] (max x y)))
+(^ [x y] (max x y))
+> (bigger 2 3)
+3
+....
+
+When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
 
 == Types
 
@@ -146,35 +301,6 @@ For example, both `1` and `99999999999999999999` are of type `Integer`, but the 
 
 Similarly, the default structure for `Name` is `<symbol>`, unless the
 syntax of the literal indicates `<keyword>` or `<uri>`.
-
-=== Type Annotations
-
-What if you write a `List`, but you want an instance of `<vector>`, not an instance of `<cons>`?
-
-One solution is to convert the constructed value to the structure you want:
-
-....
-bard.user> (def v (as <vector> [1 2 3 4]))
-(1 2 3 4)
-
-bard.user> (type v)
-<vector>
-....
-
-Bard provides a kind of shorthand for this conversion, called a *type annotation*. Using a type annotation, the above example
-looks like this:
-
-....
-bard.user> (def v #<vector> [1 2 3 4])
-(1 2 3 4)
-
-bard.user> (type v)
-<vector>
-....
-
-Type annotations can in some cases be more readable than wrapping an a piece of code in an `as` expression.
-
-Another way to construct instances of a specific structure is to call the *constructor functions* for those structures. The "Structures" section describes constructors in more detail.
 
 === Mutability
 
@@ -313,33 +439,29 @@ mutable and immutable types of maps
 
 === Functions
 
-Functions are polymorphic procedures examine their inputs, match them to methods, and apply the methods to the inputs.
-
-Following is an expression that a named:
+Functions are polymorphic procedures that examine their inputs, match them to methods, and apply the methods to the inputs.
 
 ....
-(function Bar -> Baz)
+bard.user> (def foo (function Bar -> Baz))
 ....
 
-This unnamed function accepts an input of type `Bar` and returns an output of type `Baz`.
-
-Although it's possible to capture and use an unnamed function like this, it's much more common to name a function when you construct it. Naming it creates a *special variable* whose value is the function, which makes it much easier to extend the function by adding methods to it.
-
-Following is an expression that creates a named function:
+You can also write the above definition like this:
 
 ....
-(function foo Bar -> Baz)
+bard.user> (define function (foo Bar -> Baz))
 ....
 
-Besides saying that `foo` is a function, this expression also says that `Bar` and `Baz` are classes whose members can be inputs and outputs of `foo`.
+The second form stands out a bit more in a file full of code, but explicit function definitions like this are somewhat uncommon because both `define method` and `define protocol` forms define functions implicitly, and they're much more commonly used.
 
-Defining a function doesn't say how it works or what values is accepts or produces. It only defines some abstract function and classes that may be given concrete meaning by *specializing* the function.
+Besides saying that `foo` is a function, the above expressions also say that `Bar` and `Baz` are classes whose members can be inputs and outputs of `foo`.
+
+Defining a function doesn't say how it works or what values it accepts or produces. It only defines some abstract function and classes that may be given concrete meaning by *specializing* the function.
 
 *Specializing* a function means defining a *method* that applies to some concrete set of input values. The next section describes specialization in more detail.
 
 === Methods
 
-The special form named `^` ("caret" or "lambda") constructs a *method*, also known as a *monomorphic function*. A method is a procedure that can be applied to some sequence of values to compute a result. Unlike functions, methods do not examine their inputs before choosing the code to apply to them. A method simply applies its body to its arguments.
+The special form named `^` ("caret" or "lambda") constructs a *method*. A method is a procedure that can be applied to some sequence of values to compute a result. Unlike functions, methods do not examine their inputs before choosing the code to apply to them. A method simply applies its body to its arguments.
 
 Following is an expression that creates a method:
 
@@ -353,23 +475,25 @@ Although you can construct methods this way and use them directly, the most comm
 
 ....
 (define method (add x y)
-  :with {:x <small-integer> :y <small-integer>}
+  :where {:x <small-integer>
+         :y <small-integer>}
   (+ x y))
 ....
 
-This example *specializes* the function `add`, meaning that it specifies a set of input parameters and a method that applies to them. This definition says that `add` accepts two arguments, and they must be nstances of the structure `<small-integer>`. If we pass arguments of any other number or type then this method is not applied.
-
 `define method` creates a method and adds it to the named function--creating the function as well, if it doesn't already exist. It also adds the rule that defines the requirements that the arguments must meet in order for the method to apply to them. 
 
-We can add another method to the same function, matching a different structure:
+This definition says that `add` accepts two arguments, and they must be instances of the structure `<small-integer>`. If we pass arguments of any other number or type then this method is not applied.
+
+We can add another method to the same function, matching a different set of structures:
 
 ....
 (define method (add x y)
-  :with {:x <string> :y <string>}
+  :where {:x <string>
+         :y <string>}
   (cat x y))
 ....
 
-The `<small-integer>` version of `add` uses the addition procedure on its arguments, and the `<string>` version instead uses `cat`, which concatenates the strings.
+The `<small-integer>` version of `add` uses the addition procedure on its arguments. The `<string>` version instead uses `cat`, which concatenates the strings.
 
 We can add more methods, matching any structures we like in any combination. The defined methods will be called when we pass parameters that match the constraints.
 
@@ -377,14 +501,14 @@ We can also specify other matching rules. For example, the following method matc
 
 ....
 (define method (add x y)
-  :with {:x (exactly 4)
+  :where {:x (exactly 4)
          :y (exactly 2)}
   (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ....
 
 The `with` clause defines the matching rule for the parameters. If it's a map, as in these examples, then the keys are parameter names and the values are tests that the parameters must satisfy. If the tests are just types, then the rule is satisfied when the value passed for each parameter belongs to the corresponding type.
 
-`(exactly x)` is a test that returns true when a parameter is equal to `x`.
+`(exactly x)`, on the other hand,  is a test that returns true when a parameter is equal to `x`, so this method is matched only when `x` is `4` and `y` is `2`.
 
 Other matching rules are also supported.
 
@@ -393,7 +517,7 @@ Other matching rules are also supported.
 
 An *operation* is an expression that calls a *procedure*.
 
-For example:
+Here are a few examples of operations:
 
 ....
 (+ 2 3 4)
@@ -405,7 +529,7 @@ For example:
 (set! (.x pt) 100)
 ....
 
-Bard expresses operations as Lists whose first elements are procedures, and whose remaining elements are the procedures' arguments. Argument expressions may themselves be operations.
+Bard expresses an operation as a List whose first element is a procedure, and whose remaining elements are the procedures' arguments. Argument expressions may themselves be operations.
 
 Different types of procedures have different rules of evaluation for argument expressions. *Functions* and *methods* evaluate argument expressions before passing them to the procedure.
 
@@ -419,7 +543,7 @@ For example:
 (def x (+ 2 3))
 ....
 
-`def` defines a special variable. It evaluates its second argument, but not its first. The above example creates a special variable named `x` whose initial value is `5`.
+`def` defines a *special variable*. It evaluates its second argument, but not its first. The above example creates a special variable named `x` whose initial value is `5`.
 
 ....
 (if nothing
@@ -428,80 +552,6 @@ For example:
 ....
 
 `if` evaluates its first argument. If the value is true then it evaluates its second argument; if not, it evaluates its third argument. In the above example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
-
-== Variables
-
-As we saw in the previous section, the special form `def` defines *special variables*:
-
-....
-(def x (+ 2 3))
-....
-
-This example creates a *special variable* named `x` and gives it the value `5`.
-
-A *special variable* is a name that stands for a value. Any Bard code in a program can get and set that value of a special variable.
-
-=== Definitions
-
-*Definitions* are procedures that create special variables.
-
-`def`
-`define`
-
-
-=== Lexical variables
-
-It's generally not a good practice to make variables accessible everywhere. The more places a variable is referenced, the more places its value might be changed, and the more places you have to check when keeping track of the code that reads and writes it.
-
-A *lexical variable* is a variable that is accessible only in a certain bounded body of code, called its *lexical environment*. Most variables should be lexical rather than special variables, because they're easier and safer to manage that way.
-
-Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
-
-=== The `bind` special form
-
-The `bind` special form creates lexical variables. For example:
-
-....
-> (bind [(x 2)]
-    (+ x 1))
-3
-....
-
-In this example, `bind` creates a lexical variable named `x` and binds it to `2`. The body of the `bind` form then refers to that variable in the expression `(+ x 1)`, returning the sum.
-
-`bind` can create more than one variable:
-
-....
-> (bind [(x 2)
-         (y (+ x 1))]
-    (+ x y))
-5
-....
-
-Variables that appear later in the sequence of bindings can refer to those that appear earlier, as this example shows.
-
-=== Parameter bindings
-
-*Parameter bindings* are lexical variables that are created when an operation is called with arguments.
-
-Consider a simple method that returns the greater of two numbers:
-
-....
-(^ [x y] (max x y))
-....
-
-This method creates the lexical variables `x` and `y`. In the body of the method, `x` and `y` take on the values of the two arguments passed to the method.
-
-Let's capture the method in a special variable and call it:
-
-....
-> (def bigger (^ [x y] (max x y)))
-(^ [x y] (max x y))
-> (bigger 2 3)
-3
-....
-
-When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
 
 == Naming Conventions
 
