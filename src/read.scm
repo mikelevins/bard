@@ -26,7 +26,6 @@
 
 (define (bard:make-readtable)
   (let ((rt (##make-standard-readtable)))
-    (readtable-keywords-allowed?-set rt #t)
     (macro-readtable-bracket-keyword-set! rt 'vector)
     (macro-readtable-brace-keyword-set! rt 'dict)
     rt))
@@ -57,7 +56,8 @@
 
 (##readtable-char-class-set! +bard-readtable+ #\@ #t %bard-read-uri)
 (##readtable-char-sharp-handler-set! +bard-readtable+ #\: %bard-read-sharp-colon)
-(macro-readtable-keywords-allowed?-set! +bard-readtable+ 'prefix)
+(macro-readtable-keywords-allowed?-set! +bard-readtable+ #t) ; keyword:
+;;(macro-readtable-keywords-allowed?-set! +bard-readtable+ 'prefix) ; :keyword
 
 (define (%read-cons val)
   (cond
