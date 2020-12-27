@@ -26,8 +26,10 @@
 
 (define (bard:make-readtable)
   (let ((rt (##make-standard-readtable)))
-    (macro-readtable-bracket-keyword-set! rt 'vector)
+    ;;(macro-readtable-bracket-keyword-set! rt 'vector)
     (macro-readtable-brace-keyword-set! rt 'dict)
+    ;; make gambit read [] as a vector, not a list
+    (macro-readtable-r6rs-compatible-read?-set! rt #f)
     rt))
 
 (define +bard-readtable+ (bard:make-readtable))
@@ -37,7 +39,6 @@
 ;;; ----------------------------------------------------------------------
 
 
-;;; redefine Gambit's #: reader
 (define (%bard-read-uri re c)
   (let ((start-pos (##readenv-current-filepos re)))
     (macro-read-next-char-or-eof re) ;; skip #\@
