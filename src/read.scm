@@ -27,7 +27,7 @@
 (define (bard:make-readtable)
   (let ((rt (##make-standard-readtable)))
     (readtable-keywords-allowed?-set rt #t)
-    (macro-readtable-bracket-keyword-set! rt 'list)
+    (macro-readtable-bracket-keyword-set! rt 'vector)
     (macro-readtable-brace-keyword-set! rt 'dict)
     rt))
 
