@@ -21,35 +21,38 @@
   (display $bard-version-string)
   (newline)
   (%init-bard)
-  (let loop ()
-    (newline)
-    (newline)
-    (display *bard-prompt*)
-    (let ((rep (lambda ()
-                 (let* ((expr (bard:read)))
-                   (if (or (eq? expr quit:)
-                           (eq? expr q:))
-                       (begin
-                         (newline)
-                         (display "Bard terminated")
-                         (newline))
-                       (if (eq? expr #!eof)
-                           (loop)
-                           (call-with-values (lambda ()(%eval expr (%null-environment)))
-                             (lambda vals
-                               (for-each (lambda (val)
-                                           (if (%defined? val)
-                                               (begin
-                                                 (display (%as-string val))
-                                                 (newline))))
-                                         vals)
-                               (loop)))))))))
-      (if debug
-          (rep)
-          (let ((error-handler (lambda (err)
-                                 (display-error err)
-                                 (loop))))
-            (with-exception-catcher error-handler rep))))))
+  (call/cc
+   (lambda (exit-bard)
+     (let loop ()
+       (newline)
+       (newline)
+       (display *bard-prompt*)
+       (let ((rep (lambda ()
+                    (let* ((expr (bard:read)))
+                      (if (or (eq? expr quit:)
+                              (eq? expr q:))
+                          (begin
+                            (newline)
+                            (display "Quitting bard...")
+                            (newline)
+                            (exit-bard))
+                          (if (eq? expr #!eof)
+                              (loop)
+                              (call-with-values (lambda ()(%eval expr (%null-environment)))
+                                (lambda vals
+                                  (for-each (lambda (val)
+                                              (if (%defined? val)
+                                                  (begin
+                                                    (display (%as-string val))
+                                                    (newline))))
+                                            vals)
+                                  (loop)))))))))
+         (if debug
+             (rep)
+             (let ((error-handler (lambda (err)
+                                    (display-error err)
+                                    (loop))))
+               (with-exception-catcher error-handler rep))))))))
 
 
 

@@ -18,16 +18,8 @@
 
 ;;; constructor
 
-(define (%make-url #!key (scheme "file")(username #f)(password #f) (domain "") (port #f) (path "/") (query ""))
-  (make-url-instance <url> scheme username password domain port path query))
+(define (%make-url url-string)
+  (make-url-instance <url> url-string))
 
-;;; accessors
-
-(define url-username url-instance-username)
-(define url-password url-instance-password)
-(define url-domain url-instance-domain)
-(define url-path url-instance-path)
-(define url-port url-instance-port)
-(define url-query url-instance-query)
-(define url-scheme url-instance-scheme)
-
+(define (url s)
+  (%make-url s))

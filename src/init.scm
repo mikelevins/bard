@@ -119,12 +119,7 @@
 ;;; Protocol: Addressing
 ;;; ---------------------------------------------------------------------
 
-  (%defglobal 'url bard:url)
-  (%defglobal 'url-domain bard:url-domain)
-  (%defglobal 'url-path bard:url-path)
-  (%defglobal 'url-port bard:url-port)
-  (%defglobal 'url-query bard:url-query)
-  (%defglobal 'url-scheme bard:url-scheme)
+  (%defglobal 'uri prim:uri)
 
 ;;; ---------------------------------------------------------------------
 ;;; Protocol: Applying
@@ -225,6 +220,7 @@
 ;;; protocol: Mapping
 ;;; ---------------------------------------------------------------------
 
+  (%defglobal 'dict prim:table)
   (%defglobal 'get prim:get)
   (%defglobal 'get-key bard:get-key)
   (%defglobal 'keys bard:keys)
@@ -232,7 +228,12 @@
   (%defglobal 'put prim:put)
   (%defglobal 'put-key bard:put-key)
   (%defglobal 'vals bard:vals)
-  (%defglobal 'dict prim:table)
+
+;;; ---------------------------------------------------------------------
+;;; protocol: Naming
+;;; ---------------------------------------------------------------------
+
+  (%defglobal 'uri prim:uri)
 
 ;;; ---------------------------------------------------------------------
 ;;; protocol: Ordering

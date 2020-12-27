@@ -66,7 +66,7 @@
 
 (define-instance url-instance 
   constructor: make-url-instance
-  scheme username password domain port path query)
+  string)
 
 ;;; ---------------------------------------------------------------------
 ;;; gambit type tags

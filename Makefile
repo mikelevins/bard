@@ -40,7 +40,6 @@ SCHEME_SOURCES= \
          src/apply.scm \
          src/eval.scm \
          src/error.scm \
-         src/protocol-addressing.scm \
          src/protocol-comparing.scm \
          src/protocol-converting.scm \
          src/protocol-creating.scm \
@@ -84,7 +83,6 @@ C_SOURCES= \
          src/apply.c \
          src/eval.c \
          src/error.c \
-         src/protocol-addressing.c \
          src/protocol-comparing.c \
          src/protocol-converting.c \
          src/protocol-creating.c \
@@ -129,7 +127,6 @@ OBJECTS= \
          apply.o \
          eval.o \
          error.o \
-         protocol-addressing.o \
          protocol-comparing.o \
          protocol-converting.o \
          protocol-creating.o \

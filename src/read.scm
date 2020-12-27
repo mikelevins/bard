@@ -39,6 +39,15 @@
 
 
 ;;; redefine Gambit's #: reader
+(define (%bard-read-uri re c)
+  (let ((start-pos (##readenv-current-filepos re)))
+    (macro-read-next-char-or-eof re) ;; skip #\@
+    (macro-read-next-char-or-eof re) ;; skip #\"
+    (macro-readenv-filepos-set! re start-pos) ;; set pos to start of datum
+    (let ((str (##build-escaped-string-up-to re #\")))
+      (macro-readenv-wrap re `(uri ,str)))))
+
+;;; redefine Gambit's #: reader
 (define (%bard-read-sharp-colon re next start-pos)
   (begin
     (macro-read-next-char-or-eof re) ;; skip char after #\#
@@ -46,6 +55,7 @@
           (expr (bard:read (macro-readenv-port re))))
       `(as ,type-identifier ,expr))))
 
+(##readtable-char-class-set! +bard-readtable+ #\@ #t %bard-read-uri)
 (##readtable-char-sharp-handler-set! +bard-readtable+ #\: %bard-read-sharp-colon)
 (macro-readtable-keywords-allowed?-set! +bard-readtable+ 'prefix)
 
