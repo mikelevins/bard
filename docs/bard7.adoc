@@ -134,7 +134,7 @@ Symbols belong to the class `Name`. Besides symbols, there are two other kinds o
 
 == Variables
 
-*Variables* are *names* that stand for *values*. For example, the named constants are variables.
+*Variables* are *names* that stand for *values*. For example, the named constants are (read-only) variables.
 
 Variables may be *mutable* or *immutable*. You can change the value of a *mutable* variable, but not that of an *immutable* one. The named constants are immutable variables.
 
@@ -142,7 +142,7 @@ A variable may be *special* or *lexical*.
 
 A *special variable*'s name refers to the same variable no matter where it's referenced. If a piece of code in one procedure changes a special variable, then the code in all other procedures see the new value.
 
-By contrast, the name of a *lexical variable* refers to the same variable only in the *lexical scope* where it's created. The same name can refer to a completely different variable in a different procedure, and setting the value of one has no effect on the value of the other.
+By contrast, the name of a *lexical variable* refers to the same variable only in the *lexical scope* where it's created. The same name can refer to a completely different variable in a different scope (for example, in a different procedure), and setting the value of one has no effect on the value of the other.
 
 === Special Variables
 
@@ -170,29 +170,9 @@ Besides `def`, there are several other defining forms that can create special va
 
 === Lexical Variables
 
-You can create exical variables using *binding forms*. The most commonly-used binding form is `bind`:
-
-....
-bard.user> (bind [(x 10)]
-             (+ x 1))
-11
-....
-
-
-
-=== Definitions
-
-*Definitions* are procedures that create special variables.
-
-`def`
-`define`
-
-
-=== Lexical variables
-
 It's generally not a good practice to make variables accessible everywhere. The more places a variable is referenced, the more places its value might be changed, and the more places you have to check when keeping track of the code that reads and writes it.
 
-A *lexical variable* is a variable that is accessible only in a certain bounded body of code, called its *lexical environment*. Most variables should be lexical rather than special variables, because they're easier and safer to manage that way.
+A *lexical variable* is a variable that is accessible only in a certain bounded body of code, called its *lexical environment*. Most variables should be lexical rather than special variables, because they're easier and safer to manage.
 
 Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
 
@@ -221,7 +201,7 @@ Variables that appear later in the sequence of bindings can refer to those that 
 
 === Parameter bindings
 
-*Parameter bindings* are lexical variables that are created when an operation is called with arguments.
+*Parameter bindings* are lexical variables that are created when an operator is called with arguments.
 
 Consider a simple method that returns the greater of two numbers:
 
