@@ -22,24 +22,26 @@ Bard 0.7 is a virtual machine that executes portable bytecode. It compiles the B
 
 I plan to eventually support compiling bardo to native code, and to support execution of both bytecode and native code in the same runtime.
 
+It's designed to support saving an image of its working memory to a file, and loading such images from files, so that the whole dynamic state of the running environment can be easily saved and restored. Moreover, the serialization format is intended to be portable: an image saved by one bard process on one host should be loadable on another Bard process on another host.
+
 == What Bard Looks Like
 
 Bard is a Lisp. Everything in Bard is an expression, and function calls are written as lists.
 
- Here's a short function that reads nonempty lines from a file:
+Here's a short function that reads nonempty lines from a file:
 
-....
+----
 (define method (read-samples path)
   :where {path <uri>}
   (filter (complement empty?)
           (tap :lines path)))
-....
+----
 
 == Interactive Programming
 
 Bard is an *interactive* language. It's designed to work by prompting you for expressions. You type expressions at the prompt, Bard reads and evaluates the expressions, performs whatever computation they require, and prints the resulting values.
 
-....
+----
 bard.user> "Hello!"
 "Hello!"
 
@@ -48,13 +50,13 @@ bard.user> (* 2 3)
 
 bard.user> (bard.time:now)
 #<bard.time:timestamp> "2020-12-26T04:31:01.985510Z"
-....
+----
 
 Bard embraces an old-fashioned idea of Lisp programming in which the whole language is inspectable and malleable, all language and system features are available from the interactive prompt, and the assumption is that you'll write programs by starting the Bard system and changing it interactively, one expression at a time, until it becomes the program you want.
 
 == Named Constants
 
-The simplest expressions you can enter at the Bard prompt are values, and the simplest values to enter are the *named constants*.
+The simplest expressions you can enter at the Bard prompt are values, and the simplest values you can enter are the *named constants*.
 
 There are four of them:
 
@@ -74,15 +76,15 @@ After the four named constants, the simplest expressions are *literals*. A *lite
 [cols=".<1m,.^3m,.>3",options="header",]
 |===
 |Type      |Examples                                   |Description
-|Symbol    |method, bind, List                         |The names of functions, variables, and so on
-|Keyword   |:where, :name, :if-exists                   |Keys in records and similar uses
-|URI       |@"file:///tmp/db", @"https://bardcode.net" |Files and network resources
-|Number    |0, 1, -2, 3/4, 5.6                         |Numeric value.
+|Symbol    |method, bind, List                         |The names of functions, variables, and so on. Bard names are case-sensitive, so `Name` is not the same as `name`.
+|Keyword   |:where, :name, :if-exists                  |Keys in records and similar uses. Keywords are symbols that always evaluate to themselves.
+|URI       |@"file:///tmp/db", @"https://bardcode.net" |Files and network resources.
+|Number    |0, 1, -2, 3/4, 5.6                         |Numeric values.
 |Text      | "", "Some text"                           |Text strings.
-|List      |[1 2 3]                                    |A sequence of values.
-|Map       |{:name "Fred" :color "Orange"}             |A mapping from keys to values.
-|Function  |(function foo Bar -> Baz)                  |A polymorphic procedure
-|Method    |(^ [x] (+ x 1))                            |A monomorphic procedure
+|List      |[1 2 3]                                    |Sequences of values.
+|Map       |{:name "Fred" :color "Orange"}             |Mappings from keys to values.
+|Function  |(function foo Bar -> Baz)                  |Polymorphic procedures--that is, procedures whose definitions depend on the arguments to them.
+|Method    |(^ [x] (+ x 1))                            |Monomorphic procedures--that is, procedures whose definition is independent of their arguments.
 |===
 
 You can create most of these kinds of values by typing them at the prompt.
@@ -96,6 +98,8 @@ bard.user> "Hello, world!"
 
 bard.user> [1 2 3 4 5]
 [1 2 3 4 5]
+
+bard.user> (^ [x y] (exponent x y))
 ....
 
 === Symbols
@@ -110,14 +114,14 @@ bard.user> *package*
 bard.user
 ....
 
-If you type in a symbol that has not been defined as a variable, then Bard tells you that its value is undefined.
+If you type in a symbol that is not the name of a variable, then Bard tells you that its value is undefined.
 
 ....
 bard.user> not-a-variable
 undefined
 ....
 
-If you want to refer to a symbol itself, and not to the value it stands for, you must tell Bard not to evaluate it. You can do that by *quoting* it.
+If you want to refer to the symbol itself, and not to the value it stands for, you must tell Bard not to evaluate it. You can do that by *quoting* it.
 
 ....
 bard.user> 'not-a-variable
@@ -126,7 +130,7 @@ not-a-variable
 
 The quote tells Bard, "Don't evaluate this expression. Just return the expression itself."
 
-Besides symbols, there are two other kinds of names: Keywords and URIs. When you refer to a keyword or a URI, its value is always itself. The only names that require special treatment are symbols.
+Symbols belong to the class `Name`. Besides symbols, there are two other kinds of Names: *Keywords* and *URIs*. Unlike symbols, keywords and URIs cannot be used as variable names, so you don't need to quote them. The value of a keyword or a URI is always itself.
 
 == Variables
 
