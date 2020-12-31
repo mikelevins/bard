@@ -543,7 +543,7 @@ Now what does the function look like?
 bard.user> add
 (function add [Integer Integer]
               [Text Text]
-	          [(exactly 4)(exactly 2)])
+	      [(exactly 4)(exactly 2)])
 ----
 
 Other matching rules are also supported.
