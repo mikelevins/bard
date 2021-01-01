@@ -787,23 +787,7 @@ bard.core:define
 bard.user:foo
 ----
 
-=== Keywords
-
-A special case is the `bard.keyword` package. In a fully-qualified name, the name of the `bard.keyword` package may be omitted.
-
-In other words, writing
-
-----
-foo:
-----
-
-is exactly the same as writing
-
-----
-bard.keyword:foo
-----
-
-Symbols in the `bard.keyword` package are treated specially: they always evaluate to themselves.
+Symbols are the only names that are collected in packages. Keywords and URIs don't need to be (and can't be) qualified with a package name.
 
 === `\*package*`
 
