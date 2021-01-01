@@ -696,13 +696,11 @@ set!
 
 == Structures
 
-There are three kinds of structures:
+There are three kinds of structures. All three have component fields known as *slots*. All slots may optionally restrict their values by type, and may be either mutable or immutable. Structure slots are immutable by default.
 
-- *records* are structures made of named slots.
-- *tuples* are structures made of sequences of elements identified by indexes.
-- *enumerations* are structures defined as one or more named values, optionally with one or more data parameters associated with the names.
-
-You may optionally specify type constraints on the elements of structures.
+- *records* are structures whose slots are identified by names.
+- *tuples* are structures whose slots are identified by indexes.
+- *enumerations* are structures that consist of one or more named alternatives. Each named alternative may optionally have an associated value slot.
 
 This section describes how to define and instantiate structures, and how to operate on them.
 
