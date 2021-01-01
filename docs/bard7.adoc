@@ -844,6 +844,31 @@ bard.user> (bind ([a b c & z (values 1 2 3 4 5 6)])
 
 == Assignment
 
+Bard is an immutable-first language, meaning that it discourages the use of mutable variables and structures. It doesn't forbid them, however. You can create variables and structures that allow destructive mutation; you just have to explicitly say that's what you want.
+
+Mutable variables and structures permit you to change the values that they store. You can use the special form `set!` to perform those changes.
+
+`*set* _place_ _new_value_`
+
+`set` replaces the value in `_place_` with `_new_value_`.
+
+`_place_` is an expression that identifies a container that holds a value. The most common and obvious kind of place is a variable.
+
+----
+bard.user> (define variable x 1)
+x
+
+bard.user> (set! x 101)
+101
+
+bard.user> x
+101
+----
+
+Variables aren't the only places that can be updated, though. `set!` can operate on other kinds of expressions that denote places. One example is a mutable accessor.
+
+
+
 == Flow of Control
 
 == Conditions
