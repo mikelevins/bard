@@ -48,7 +48,7 @@ bard.user> "Hello!"
 bard.user> (* 2 3)
 6
 
-bard.user> (bard.time:now)
+bard.user> (bard.core.Time:now)
 #<bard.time:timestamp> "2020-12-26T04:31:01.985510Z"
 ----
 
@@ -110,9 +110,6 @@ Symbols are a special case. They're used to name *variables*--that is, names tha
 ----
 bard.user> List
 List
-
-bard.user> *package*
-bard.user
 ----
 
 If you type in a symbol that is not the name of a variable, then Bard tells you that its value is undefined.
@@ -184,7 +181,7 @@ A *lexical variable* is a variable that is accessible only in a certain bounded 
 
 Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
 
-=== The `bind` special form
+=== The `bind` Special Form
 
 The `bind` special form creates lexical variables. For example:
 
@@ -207,7 +204,7 @@ bard.user> (bind ([x 2]
 
 Variables that appear later in the sequence of bindings can refer to those that appear earlier, as this example shows.
 
-=== Parameter bindings
+=== Parameter Bindings
 
 *Parameter bindings* are lexical variables that are created when a procedure is called with arguments.
 
@@ -241,7 +238,7 @@ All Bard values have *types*. A Bard *type* is either a *structure* or a *class*
 
 Structures are concrete descriptions of data that you can use to construct data. Classes are not; they are named collections of other types--both structures and other classes. The main way that Bard code uses classes is to name the roles of inputs to functions.
 
-For example, the `List` protocol defines these functions:
+For example, the `Listing` protocol defines these functions:
 
 ----
 (function add-first [Anything List])
@@ -525,7 +522,8 @@ We can see the effect of the change by looking at the function itself:
 
 ----
 bard.user> add
-(function add [Integer Integer] [Text Text])
+(function add [Integer Integer]
+              [Text Text])
 ----
 
 The `<small-integer>` version of `add` uses the addition procedure on its arguments. The `<string>` version instead uses `cat`, which concatenates the strings.
@@ -543,7 +541,7 @@ We can also specify other matching rules. For example, the following method matc
 
 The `with` clause defines the matching rule for the parameters. If it's a map, as in these examples, then the keys are parameter names and the values are tests that the parameters must satisfy. If the tests are just types, then the rule is satisfied when the value passed for each parameter belongs to the corresponding type.
 
-`(exactly x)`, on the other hand,  is a test that returns true when a parameter is equal to `x`, so this method is matched only when `x` is `4` and `y` is `2`.
+`(exactly P)`, on the other hand,  is a test that returns true when a parameter is equal to `P`, so this method is matched only when `x` is `4` and `y` is `2`.
 
 Now what does the function look like?
 
@@ -559,7 +557,7 @@ Other matching rules are also supported.
 
 == Operations
 
-An *operation* is an expression that calls a *procedure*.
+An *operation* is an expression that executes a *procedure*.
 
 Here are a few examples of operations:
 
@@ -582,11 +580,11 @@ There are four types of procedures:
 . *macros*
 . *special forms*
 
-Different types of procedures have different rules of evaluation. A *Function* or *method* evaluates all argument expressions, then passes the values to the procedure.
+Different kinds of procedures have different rules of evaluation. A *Function* or *method* evaluates all argument expressions, then passes the values to the procedure. A function then applies its matching rule to the values to determine what method to apply. A method simply passes the argument values to the code given by the method's body.
 
-A *macro* is a rule for rewriting an expression. You give the rule when you define the macro. When it's called, it passes the whole expression to the rule, and the rule rewrites the expression before it's evaluated. The rule determines whether and how the arguments expressions are evaluated.
+A *macro* is a rule for rewriting an expression, called a *macroform*. You create the rewrite rule when you define the macro. When the macro is called, the whole macroform is passed to the rewrite rule, which rewrites it, then passes it on to Bard's evaluator. The rewrite rule determines whether and how the argument expressions are evaluated.
 
-*Special forms* are built into the Bard runtime. Each one has its own rule for evaluating arguments, defined in the code that implements the special form. For example, `if` evaluates its first argument. If the result is true then it evaluates its second argument; if not, it evaluates the third.
+*Special forms* are built into the Bard runtime. Each one has its own rule for evaluating arguments, defined in the code that implements the special form. For example, The `if` special form evaluates its first argument. If the result is true then it evaluates its second argument; if not, it evaluates the third.
 
 ----
 (if nothing
@@ -594,7 +592,7 @@ A *macro* is a rule for rewriting an expression. You give the rule when you defi
   (print "No worries!"))
 ----
 
-In this example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
+In this example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, the expression instead prints "No worries!". The division by zero is never evaluated.
 
 == Naming Conventions
 
@@ -626,13 +624,17 @@ Lispers sometimes call these asterisks "ear muffs".
 
 === Protocols
 
-A *protocol* is a named collection of related procedures and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
+Protocols follow a naming pattern similar to *reverse DNS naming*. Following are a few protocol names defined by Bard:
 
 ----
-Listing
-Mapping
-Streaming
+bard.core.Listing
+bard.core.Mapping
+bard.core.Streaming
 ----
+
+Protocol names generally follow a convention of describing the activity the protocol supports, and the name of the activity is usually expressing in the form of a gerund--a verb form ending in "-ing". Bard doesn't follow this rule strictly, though. `bard.core.Time` and `bard.core.System` are two standard protocols that break it.
+
+The "Protocols" section, below, describes protocols and how to create and use them in greater detail.
 
 === Classes
 
@@ -712,11 +714,72 @@ This section describes how to define and instantiate structures, and how to oper
 
 == Protocols
 
+Bard is organized into *protocols*. A *protocol* is a named collection of symbols. Each symbol refers to a procedure or other value.
+
 Protocols define collections of related procedures and variables designed to support particular activities. Examples of Bard protocols include `Comparing`, `Converting`, `Creating`, `Listing`, `Mapping`, `Printing`, `TextProcessing`, and so on. You can think of a protocol as a collection of tools suited for some chosen purpose, and the naming convention reflects that usage.
 
 Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
 
-This section describes how to define and use protocols. The "Built-in Protocols" section below describes the protocols that Bard provides out of the box.
+Protocol names follow a format similar to *reverse DNS naming*, intended to help authors of new protocols avoid collisions with other authors' work. For example, the full names of the protocols listed above are:
+
+- `bard.core.Comparing`
+- `bard.core.Converting`
+- `bard.core.Creating`
+- `bard.core.Listing`
+- `bard.core.Mapping`
+- `bard.core.Printing`
+- `bard.core.TextProcessing`
+
+Bard protocols support importing the names from other protocols, and when you import a name you can rename it within the importing environment. It's common practice to give protocols shorter, more convenient aliases when working with them, so, for example, `bard.core.Listing` becomes just `Listing` in code that makes use of it.
+
+Similarly, we most often refer to the `bard.core` family of protocols by the last elements of their names, for readability. When you see a mention of, for example, "the `System` protocol," you may assume we mean the `bard.core.System` protocol.
+
+This section describes how to define and use protocols. The "Built-in Protocols" section below describes the predefined protocols that Bard provides out of the box.
+
+=== `\*protocol*` and `bard.user`
+
+Bard defines a special variable named `bard.core.System:*protocol*`. Its value is a protocol.
+
+If you enter a symbol at the Bard repl without giving the name of its protocol, Bard automatically assumes that the symbol belongs to the protocol referred to by `bard.core.System:*protocol*`.
+
+When the repl starts up, the value of `bard.core.System:*protocol*` is normally `bard.user`. `bard.user` is a protocol provided for the convenient of a repl user. It imports all of the standard protocols defined by the Bard system.
+
+These conventions mean that, for example, you don't have to write
+
+----
+bard.user> (bard.core.Math:+ 2 3)
+----
+
+in order to add two numbers. You can write
+
+----
+bard.user> (+ 2 3)
+----
+
+Bard automatically looks up the symbol `+` in the protocol `bard.user`.
+
+As you may have guessed, the Bard prompt shows the name of the protocol that is the current value of `*protocol*`.
+
+=== Protocols in Source Files
+
+What about in source files?
+
+Bard can't rely on the repl's current protocol when reading source files. Instead, it looks for an `import` expression to define the value of `\*protocol*` when reading a file.
+
+An `import` expression looks something like this:
+
+----
+(import bard.core.Time as: Time)
+----
+
+The section "Importing Protocols", below, describes importing in greater detail.
+
+When Bard opens a file for reading, it binds `\*protocol*` to `bard.user` until it encounters the first `import` expression.
+
+=== Defining Protocols
+=== Exporting Names
+=== Importing Protocols
+==== Renaming Symbols
 
 == Procedures
 
@@ -732,6 +795,10 @@ A *procedure* is a value that can be applied to some sequence of expressions to 
 Users cannot define special forms.
 
 === Functions
+==== Defining functions
+==== Type Matching
+==== Value Matching
+==== Predicate Matching
 
 === Methods
 
@@ -774,29 +841,6 @@ bard.user> (bind ([a b c & z (values 1 2 3 4 5 6)])
              z)
 [4 5 6]
 ----
-
-== Packages
-
-Named objects in Bard are named by *symbols*. Symbols exist in *packages*. A *package* is a namespace containing a collection of symbols. 
-
-A *fully-qualified symbol* is a symbol written with the name of the package that it belongs to, for example:
-
-----
-bard.core:bind
-bard.core:define
-bard.user:foo
-----
-
-Symbols are the only names that are collected in packages. Keywords and URIs don't need to be (and can't be) qualified with a package name.
-
-=== `\*package*`
-
-Bard defines a special variable, `bard.core:*package*`, whose value is the *current package*. The *current package* is the package used to look up symbols whose names are not fully qualified.
-
-For example, if `\*package*` is currently the package named `bard.core`, then `bind` is automatically interpreted to mean `bard.core:bind`.
-
-Bard defines a `Packaging` protocol that provides a set of procedures and variables for working with packages.
-
 
 == Assignment
 
