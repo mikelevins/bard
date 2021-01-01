@@ -700,7 +700,7 @@ There are three kinds of structures. All three have component fields known as *s
 
 - *records* are structures whose slots are identified by names.
 - *tuples* are structures whose slots are identified by indexes.
-- *enumerations* are structures that consist of one or more named alternatives. Each named alternative may optionally have an associated value slot.
+- *enumerations* are structures that consist of one or more named alternatives. Each named alternative may optionally have an associated value slot, and the value slot may be any Bard value type, including another structure.
 
 This section describes how to define and instantiate structures, and how to operate on them.
 
