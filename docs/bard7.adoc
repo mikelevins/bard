@@ -100,6 +100,7 @@ bard.user> [1 2 3 4 5]
 [1 2 3 4 5]
 
 bard.user> (^ [x y] (exponent x y))
+(^ [x y] (exponent x y))
 ----
 
 === Symbols
@@ -140,9 +141,15 @@ Variables may be *mutable* or *immutable*. You can change the value of a *mutabl
 
 A variable may be *special* or *lexical*.
 
-A *special variable*'s name refers to the same variable no matter where it's referenced. If a piece of code in one procedure changes a special variable, then the code in all other procedures see the new value.
+*Special variables* have *global scope*. A special variable refers to the same value everywhere in a program. When one procedure changes the value of a special variable, all of the other procedures see the new value.
 
-By contrast, the name of a *lexical variable* refers to the same variable only in the *lexical scope* where it's created. The same name can refer to a completely different variable in a different scope (for example, in a different procedure), and setting the value of one has no effect on the value of the other.
+*Lexical variables* have *local scope*. They are created within *binding forms* (like the `bind` special form, or the body of a procedure). Lexical variables in two different scopes are completely separate from one another, even if they have the same name. Changing one of them has no effect on the other.
+
+There are two situations that break the rule of global scope for special variables.
+
+First, if you create a lexical variable with the same name as a special variable, then the special variable is hidden, or *shadowed*, in that scope. Code that refers to the variable's name is referring to the lexical shadow variable, not to the special variable that it shadows.
+
+Second, if you spawn a new thread, Bard creates a new virtual machine that inherits all of the special variables of the old one, but the inherited specials are copies, not the originals. They start with the same values as the specials in the parent thread, but changing the values in one thread has no effect on the variables in the other.
 
 === Special Variables
 
@@ -182,8 +189,8 @@ Bard offers several ways of creating lexical variables. The two most basic are t
 The `bind` special form creates lexical variables. For example:
 
 ----
-> (bind [(x 2)]
-    (+ x 1))
+bard.user> (bind ([x 2])
+             (+ x 1))
 3
 ----
 
@@ -192,9 +199,9 @@ In this example, `bind` creates a lexical variable named `x` and binds it to `2`
 `bind` can create more than one variable:
 
 ----
-> (bind [(x 2)
-         (y (+ x 1))]
-    (+ x y))
+bard.user> (bind ([x 2]
+                  [y (+ x 1)])
+             (+ x y))
 5
 ----
 
@@ -202,7 +209,7 @@ Variables that appear later in the sequence of bindings can refer to those that 
 
 === Parameter bindings
 
-*Parameter bindings* are lexical variables that are created when an operator is called with arguments.
+*Parameter bindings* are lexical variables that are created when a procedure is called with arguments.
 
 Consider a simple method that returns the greater of two numbers:
 
@@ -217,6 +224,7 @@ Let's capture the method in a special variable and call it:
 ----
 > (def bigger (^ [x y] (max x y)))
 (^ [x y] (max x y))
+
 > (bigger 2 3)
 3
 ----
@@ -422,7 +430,7 @@ Quote wins.
 
 === Text Strings
 
-Text strings, like `"Hello"`, are Lists of Characters. All of the procedures of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many procedures specialized for handling text.
+Text strings like `"Hello"`, are lists of characters. All of the procedures of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many procedures specialized for handling text.
 
 Note that this does not mean that strings are implemented inefficiently as singly-linked-lists or some such data structure. Remember that `Text` and `List` are classes, not structures. Saying that a text string is a list of characters simply means that the structure that represents it supports the `Listing` protocol; it doesn't imply anything about its representation, except that it can support the functions of the `Listing` protocol.
 
@@ -459,7 +467,7 @@ Functions are polymorphic procedures that examine their inputs, match them to me
 bard.user> (function foo [Bar])
 ----
 
-Besides saying that `foo` is a function, the above expressions also say that `Bar` is a class whose members can be inputs of `foo`.
+Besides saying that `foo` is a function, the above expression also says that `Bar` is a class whose members can be inputs of `foo`.
 
 Defining a function doesn't say how it works or what values it accepts or produces. It only defines some abstract function and classes that may be given concrete meaning by *specializing* the function.
 
@@ -543,7 +551,7 @@ Now what does the function look like?
 bard.user> add
 (function add [Integer Integer]
               [Text Text]
-	      [(exactly 4)(exactly 2)])
+              [(exactly 4)(exactly 2)])
 ----
 
 Other matching rules are also supported.
@@ -558,28 +566,27 @@ Here are a few examples of operations:
 ----
 (+ 2 3 4)
 
-(bind [(x 1)
-       (y 2)]
+(bind ([x 1]
+       [y 2])
  (* x y))
 
 (set! (.x pt) 100)
 ----
 
-Bard expresses an operation as a List whose first element is a procedure, and whose remaining elements are the procedures' arguments. Argument expressions may themselves be operations.
+Bard expresses an operation as a list whose first element is a procedure, and whose remaining elements are the procedures' arguments. Argument expressions may themselves be operations.
 
-Different types of procedures have different rules of evaluation for argument expressions. *Functions* and *methods* evaluate argument expressions before passing them to the procedure.
+There are four types of procedures:
 
-A *macro* expression passes the whole expression to the rule given by the macro's definition; that rule rewrites the expression before it's evaluated, and the rule determines whether and how the arguments are evaluated.
+. *functions*
+. *methods*
+. *macros*
+. *special forms*
 
-*Special forms* are built into the Bard runtime, and each one has its own rules of evaluation.
+Different types of procedures have different rules of evaluation. A *Function* or *method* evaluates all argument expressions, then passes the values to the procedure.
 
-For example:
+A *macro* is a rule for rewriting an expression. You give the rule when you define the macro. When it's called, it passes the whole expression to the rule, and the rule rewrites the expression before it's evaluated. The rule determines whether and how the arguments expressions are evaluated.
 
-----
-(def x (+ 2 3))
-----
-
-`def` defines a *special variable*. It evaluates its second argument, but not its first. The above example creates a special variable named `x` whose initial value is `5`.
+*Special forms* are built into the Bard runtime. Each one has its own rule for evaluating arguments, defined in the code that implements the special form. For example, `if` evaluates its first argument. If the result is true then it evaluates its second argument; if not, it evaluates the third.
 
 ----
 (if nothing
@@ -587,7 +594,7 @@ For example:
   (print "No worries!"))
 ----
 
-`if` evaluates its first argument. If the value is true then it evaluates its second argument; if not, it evaluates its third argument. In the above example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
+In this example, if `nothing` were true then the expression would signal a divide-by-zero error. Because it's not, it instead prints "No worries!". The division by zero is never evaluated.
 
 == Naming Conventions
 
@@ -607,7 +614,7 @@ Constants are read-only variables. By convention, their names start and end with
 
 === Special Variables
 
-*Special variable* are global variables--more or less. By convention, their names start and end with `*`.
+By convention, the names of special variables start and end with asterisks.
 
 ----
 *window*
@@ -615,9 +622,11 @@ Constants are read-only variables. By convention, their names start and end with
 *epoch*
 ----
 
+Lispers sometimes call these asterisks "ear muffs".
+
 === Protocols
 
-A *protocol* is named collection of related procedures and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
+A *protocol* is a named collection of related procedures and variables. You can think of a protocol as a set of tools for carrying out some activity. The convention is to choose a name that describes the activity, and to capitalize the name: `*Listing*`, for example, or `*Ordering*`.
 
 ----
 Listing
@@ -627,9 +636,7 @@ Streaming
 
 === Classes
 
-A *class* is a named collection of *types*. Types, remember, may be either structures or classes, so classes may in principle be members of other classes, though it's more common for members of classes to be structures.
-
-The convention is to name a class with a capitalized noun. The noun should reflect the role the type is intended to fill.
+A *class* is a named collection of *types*. The convention is to name a class with a capitalized noun. The noun should reflect the role the type is intended to fill.
 
 ----
 List
@@ -639,11 +646,7 @@ Stream
 
 === Structures
 
-A *structure* is a concrete description of how values are arranged to form a new type of value. Structures may be directly instantiated by allocating space to hold their constituent values and filling in the space with data.
-
-By contrast, classes can't be instantiated in this way. Because a class is just a name for a set of other types, it can be instantiated only indirectly. The only way to make an instance of a class is to make an instance of one of it member structures.
-
-For structures, the convention is to name them with nouns that describe their concrete representations, spell the nouns in lower case, and enclose the name in angle brackets ("<>").
+A *structure* is a concrete description of how values are constructed. Structures are named with nouns that name or describe their concrete representations, spelled in lower case, and enclosed in angle brackets ("<>").
 
 ----
 <character>
@@ -666,7 +669,7 @@ number?
 
 === Accessors
 
-An *accessor* is a procedure that returns the value of a field in a value. Bard creates accessors automatically when you define structures, but you can customize their names if you wish.
+An *accessor* is a procedure that returns the value of a field in a structure. Bard creates accessors automatically when you define structures, but you can customize their names if you wish.
 
 If a slot is *mutable* then the accessor may also be used with the `set!` special form to replace its value.
 
@@ -680,7 +683,7 @@ The convention is to start the name of an accessor with a dot (".").
 
 === Mutators
 
-A *mutator* is a procedure that replacing the value in a slot, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place).
+A *mutator* is a procedure that replaces the value in a slot, or that destructively rearranges the data in an object (for example, a sort that rearranges the the contents of an array in-place is a mutator).
 
 The convention is to end the names of mutators with exclamation points ("!").
 
@@ -742,7 +745,7 @@ Users cannot define special forms.
 The special form `values` returns multiple values:
 
 ----
-> (values 1 2 3)
+bard.user> (values 1 2 3)
 1
 2
 3
@@ -751,8 +754,8 @@ The special form `values` returns multiple values:
 The `bind` special form can bind variables to the multiple values returned by `values`:
 
 ----
-> (bind [(x y z (values 1 2 3))]
-    (* x y z))
+bard.user> (bind ((x y z (values 1 2 3)))
+             (* x y z))
 6
 ----
 
