@@ -725,7 +725,7 @@ A *procedure* is a value that can be applied to some sequence of expressions to 
 * *special forms* are procedures that are built into Bard. Each special form can follow its own rules of evaluation.
 * *functions* are *polymorphic procedures:* a function examines the values of its arguments and chooses a suitable *method* to apply according to its *dispatch rule*.
 * *methods* are *monomorphic procedures:* a method applies the expressions in the body of its definition to the values of its arguments, and returns the result.
-* *macros* are rewrite rules. A macro definition is a procedure that accepts an expression and rewrites it to another expression. When execute a macro expression the whole expression is passed to the code in thee macro's definition. That code rewrites the macro call, then evaluates the rewritten expression. Writing macors is a way to extend the syntax of the language.
+* *macros* are rewrite rules. A macro definition is a procedure that accepts an expression and rewrites it to another expression. When execute a macro expression the whole expression is passed to the code in the macro's definition. That code rewrites the macro expression, then evaluates the rewritten version. Writing macros is a way to extend the syntax of the language.
 
 === Special Forms
 
