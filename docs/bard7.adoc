@@ -290,7 +290,7 @@ For example:
 bard.user> (def x (vector 1 2 3 4))
 (1 2 3 4)
 
-bard.user> (type x)
+qbard.user> (type x)
 <vector>
 
 bard.user> (instance? x <vector>)
@@ -320,7 +320,7 @@ The default structures defined by Bard are as follows:
 |Boolean   |<bool>
 |Integer   |<small-integer>, <big-integer>
 |Decimal   |<double-float>
-|Rational  |<ratio>
+|Ratio	   |<ratio>
 |Name      |<symbol>, <keyword>, <uri>
 |Text      |<string>
 |List      |<cons>
