@@ -266,7 +266,13 @@ For example, imagine that we want to use a structure named `<foo-structure>` wit
   ...)
 ----
 
-This method definition defines `<small-integer>` as a member of the class `Anything`, and `<foo-structure>` as a member of the class `List`. If you now apply `add-first` to a `<small-integer>` instance and a `<foo-structure>` instance, Bard will call the method defined above.
+This method definition says that `thing` is required to be an instance of `<small-integer>` and `struct` is required to be an instance of `<foo-structure>`. The definition of the function `add-first` says that its first argument is required to be an instance of `Anything` (all Bard values are instances of `Anything`), and its second argument is required to be an instance of `List`.
+
+That means that an instance of `<foo-structure>` has to be an instance of `List`, which in turn means that `<foo-structure>` must be a member of the class `List`.
+
+So this method definition defines `<foo-structure>` as a member of `List`.
+
+If you now apply `add-first` to a `<small-integer>` instance and a `<foo-structure>` instance, Bard will call the method defined above.
 
 Bard gives you tools for defining your own structures and classes.
 
