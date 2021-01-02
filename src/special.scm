@@ -139,27 +139,26 @@
                 #f))))
 
 ;;; processing type constraints
-;;;
+;;; 
 ;;; (define method (foo x y z)
-;;;   with: ((y <fixnum>)(z (exactly 1)))
+;;;   where: {y: <fixnum>)
+;;;           z: (equals 1))}
 ;;;   ...)
 ;;;
-;;; there are three kinds of constrant, represented here by x, y, and
-;;; z. x is unconstrained; we interpret it as if it were (x Anything).
-;;; y is constrained to be of type <fixnum>. The type constraint (in
-;;; this case, <fixnum>) is evaluated when executing define method to
-;;; obtain a reference to a type object. Arguments passed as y will
-;;; match only values whose type is <fixnum>. z is constrained to be
-;;; of type (exactly 1); a value (singleton 1) is created when define
-;;; method is executed, and arguments passed in z will match only if
-;;; they are equal to the singleton-value of that singleton.
+;;; TODO: not yet implemented; still processes old syntax from bard 0.3
+;;; UPDATE: with: is now changed to where:
 ;;;
-
-;;; the computed types are returned in the order that the formal
-;;; arguments appear in the function prototype, regardless of the
-;;; order of constraints in the constraint expression; so, if
-;;; the function prototype is (foo x y z), as above, the types 
-;;; are returned as (Anything <fixnum> (singleton 1))
+;;; to make this work, here's what I need to do:
+;;; TODO:
+;;; - change the reader to turn {...} into a syntax object that
+;;;   I can process appropriately, considering whether it's in the
+;;;   where: clause of a define method
+;;; - convert keywords in the {} to lexical variable names
+;;; - evaluate the values for the keys to use as matching tests
+;;; - implement apply for types to mean:
+;;;   (<type> thing) -> Boolean (true if thing is an instance of <type>)
+;;; - implement instance? for classes to mean true if Bard can find
+;;;   a function that specializes an input class on the value's structure
 
 (define (%parse-type-constraints formals constraints env)
   (let loop ((params formals)
@@ -185,7 +184,7 @@
          (with-arg? (let ((tl (drop 3 expr)))
                       (if (null? tl)
                           #f
-                          (if (eq? with: (car tl))
+                          (if (eq? where: (car tl))
                               (cadr tl)
                               #f))))
          (constraints (if with-arg?
