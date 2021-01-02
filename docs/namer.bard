@@ -12,7 +12,7 @@
 	  ends: <vector>}
   (bind ([prefix (leave (1- chunk-size) start)]
 	 [matcher (cut prefix-match? prefix _)]
-	 [trimmer (cut suseq _ (1- chunk-size))]
+	 [trimmer (cut subseq _ (1- chunk-size))]
 	 [matching-parts (filter matcher parts)]
 	 [matching-ends (filter matcher ends)])
     (if (and matching-ends
