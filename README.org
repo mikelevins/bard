@@ -5,13 +5,19 @@
 #+OPTIONS: ^:nil
 #+TITLE: README
 
-The bard 0.7 branch contains work in progress on a simplication of
-bard's surface language and a new implementation of a compiler and
-bytecode interpreter.
+Bard is a small, high-level, general-purpose programming lnaguage.
 
-The file ~docs/bard7.org~ contains work on the surface language.
+It's interactive, dynamic, and impreuly functional. It's designed to support changing a program interactively while it runs.
 
-The directory ~vm~ contains work on the bard vm.
+It provides support for concurrent and distributed programs, and encourages the use of immutable data.
+
+The current work-in-progress version is 0.7. Its code is in an intermediate state of conversion from the Bard 0.3 implementation to simplify the surface language and support new language and runtime features.
+
+The file docs/bard7.adoc is a work in progress that documents the intended Bard 0.7 language. The implementation doesn't match it yet, and the document itself is not yet done.
+
+The directory ~vm~ contains work in progress on the bard vm.
 
 The directory ~compiler~ contains work on the compiler.
 
+
+For a description of the Bard 0.7 language, see docs/bard7.adoc.
