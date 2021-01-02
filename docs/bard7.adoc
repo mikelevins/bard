@@ -516,7 +516,7 @@ If the named function doesn't exist, then `define method` creates it.
 
 But wait; we're supposed to be *specializing* the function. What classes does it specialize if there's no existing `function` definition? When it creates the function, what definition does it use?
 
-Bard infers that the function definition. It finds the most specific existing class that already has `<small-integer>` as a member and uses that class for the definition:
+Bard infers the function from the method definition. It finds the most specific existing class that already has `<small-integer>` as a member and uses that class for the definition:
 
 ----
 bard.user> (function add [Integer Integer])
