@@ -947,6 +947,8 @@ Conditions are values that represent computations that may be *suspended* and *r
 
 == Built-in Protocols
 
+All of Bard is organized into protocols. This section is a reference to the standard protocols that are defined by the Bard language.
+
 === Actors
 
 Constructing and communicating with autonomous Bard processes.
