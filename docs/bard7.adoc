@@ -562,7 +562,7 @@ We can also specify other matching rules. For example, the following method matc
   (print "You have discovered the answer to life, the universe, and everything: 42!"))
 ----
 
-The `with` clause defines the matching rule for the parameters. If it's a map, as in these examples, then the keys are parameter names and the values are tests that the parameters must satisfy. If a test is just a type then the rule is satisfied when the value passed for the parameter belongs to the type.
+The `where` clause defines the matching rule for the parameters. If it's a map, as in these examples, then the keys are parameter names and the values are tests that the parameters must satisfy. If a test is just a type then the rule is satisfied when the value passed for the parameter belongs to the type.
 
 `(equals P)`, on the other hand,  is a test that returns true when a parameter is equal to `P`, so this method is matched only when `x` is `4` and `y` is `2`.
 
