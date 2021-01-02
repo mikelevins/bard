@@ -533,7 +533,7 @@ We can add another method to the same function, matching a different set of stru
   (cat x y))
 ----
 
-Bard must now account for the fact that `x` and `y` might be either `<small-integer>` or `<string>`. Because the new structures are not members of `Integer` then it adds another function definition:
+Bard must now account for the fact that `x` and `y` might be either `<small-integer>` or `<string>`. Because the new structures are not members of `Integer` it adds another function definition:
 
 ----
 bard.user> (function add [Text Text])
