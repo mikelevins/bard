@@ -412,7 +412,7 @@ Bard complains that the element in the procedure position isn't a procedure. If 
 [1 2 3]
 ----
 
-There's another way to construct that list; you can write it in parentheses, but tell Bard not to evaluate it by *quoting* it:
+There's another way to construct that list; you can write it in parentheses, but tell Bard not to evaluate it. To tell Bard not to evaluate an expression, you *quote* it:
 
 ----
 > '(1 2 3)
