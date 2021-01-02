@@ -18,3 +18,5 @@ The directory `compiler` contains work on the compiler.
 
 
 For a description of the Bard 0.7 language, see https://github.com/mikelevins/bard/blob/master/docs/bard7.adoc[docs/bard7.adoc].
+
+For an example for a small but complete Bard program, see https://github.com/mikelevins/bard/blob/master/docs/namer.bard[docs/namer.bard].
