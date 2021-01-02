@@ -522,6 +522,12 @@ Bard infers the function from the method definition. It finds the most specific 
 bard.user> (function add [Integer Integer])
 ----
 
+If it can't identify a most-specific class, then it declares that the function accepts only the structures on thiwhc it's specialized, like this:
+
+----
+bard.user> (function add [<small-integer> <small-integer>])
+----
+
 The method definition says that `add` accepts two arguments, and they must be instances of the structure `<small-integer>`. If we pass arguments that don't fit this description then this method is not applied.
 
 We can add another method to the same function, matching a different set of structures:
