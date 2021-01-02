@@ -1,6 +1,8 @@
 = README
 
-Bard is a small, high-level, general-purpose programming lnaguage.
+Bard is a small, high-level, general-purpose programming language.
+
+It's a Lisp.
 
 It's interactive, dynamic, and impurely functional. It's designed to support changing a program interactively while it runs.
 
