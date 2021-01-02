@@ -8,11 +8,11 @@ It provides support for concurrent and distributed programs, and encourages the 
 
 The current work-in-progress version is 0.7. Its code is in an intermediate state of conversion from the Bard 0.3 implementation to simplify the surface language and support new language and runtime features.
 
-The file link:docs/bard7.adoc is a work in progress that documents the intended Bard 0.7 language. The implementation doesn't match it yet, and the document itself is not yet done.
+The file https://github.com/mikelevins/bard/blob/master/docs/bard7.adoc is a work in progress that documents the intended Bard 0.7 language. The implementation doesn't match it yet, and the document itself is not yet done.
 
 The directory `vm` contains work in progress on the bard vm.
 
 The directory `compiler` contains work on the compiler.
 
 
-For a description of the Bard 0.7 language, see link:docs/bard7.adoc.
+For a description of the Bard 0.7 language, see https://github.com/mikelevins/bard/blob/master/docs/bard7.adoc.
