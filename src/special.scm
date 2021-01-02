@@ -64,6 +64,14 @@
 
 ;;; bind
 ;;; ----------------------------------------------------------------------
+;;; TODO: update to correctly handle the syntax
+;;;   (bind ([foo ...]
+;;;          [bar ...]
+;;;          ...)
+;;;      body-forms)
+;;; Need the reader to read [...] as some syntax object that can be correctly
+;;; converted to a list of bindings when in a bind form, and converted to
+;;; (list ...) otherwise
 
 (%defspecial 'bind
              (lambda (expr env)
