@@ -734,7 +734,7 @@ set!
 .set-name!
 ----
 
-Mutators are not strictly necessary. If a slot is declared `mutable` then you can update it using `set`.
+Mutators are not strictly necessary. If a slot is declared `mutable` then you can update it using `set!`.
 
 Note that, like accessors and for the same reasons, mutators are functions, not methods.
 
