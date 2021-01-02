@@ -433,7 +433,7 @@ Now look what happens if we write it in quoted parentheses instead:
 [1 [+ 1 1] 3]
 ----
 
-Why the difference? The quote tells Bard not to evaluate anything in the quoted expression, so it doesn't evaluate the subexpression `(+ 1 1)`; it just returns it unchanged. By contrast, brackets tell Bard to construct a list of the values of all of the subexpressions in the brackets--it tells Bard to evaluate all of the subexpressions.
+Why the difference? The quote tells Bard not to evaluate anything in the quoted expression, so it doesn't evaluate the subexpression `(+ 1 1)`; it just returns it unchanged. By contrast, brackets tell Bard to construct a list of the values of all of the subexpressions in the brackets--it means you want to evaluate all of the subexpressions.
 
 What if you quote brackets? 
 
