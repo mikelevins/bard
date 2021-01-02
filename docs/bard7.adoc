@@ -516,13 +516,7 @@ If the named function doesn't exist, then `define method` creates it.
 
 But wait; we're supposed to be *specializing* the function. What classes does it specialize if there's no existing `function` definition? When it creates the function, what definition does it use?
 
-Bard infers the function from the method definition. It finds the most specific existing class that already has `<small-integer>` as a member and uses that class for the definition:
-
-----
-bard.user> (function add [Integer Integer])
-----
-
-If it can't identify a most-specific class, then it declares that the function accepts only the structures on which it's specialized, like this:
+Bard infers the function from the method definition, defining it with the input types give in the method definition, as if we had typed in the following expression:
 
 ----
 bard.user> (function add [<small-integer> <small-integer>])
@@ -539,18 +533,18 @@ We can add another method to the same function, matching a different set of stru
   (cat x y))
 ----
 
-Bard must now account for the fact that `x` and `y` might be either `<small-integer>` or `<string>`. Because the new structures are not members of `Integer` it adds another function definition:
+Bard must now account for the fact that `x` and `y` might be either `<small-integer>` or `<string>`. It adds another function definition for `add`:
 
 ----
-bard.user> (function add [Text Text])
+bard.user> (function add [<string> <string>])
 ----
 
 We can see the effect of the change by looking at the function itself:
 
 ----
 bard.user> add
-(function add [Integer Integer]
-              [Text Text])
+(function add [<small-integer> <small-integer>]
+              [<string> <string>])
 ----
 
 The function takes on a new tuple of types for each specialization we define.
@@ -576,13 +570,26 @@ Now what does the function look like?
 
 ----
 bard.user> add
-(function add [Integer Integer]
-              [Text Text]
+(function add [<small-integer> <small-integer>]
+              [<string> <string]
               [(equals 4)(equals 2)])
 ----
 
 Other matching rules are also supported.
 
+When designing protocols it's often useful to define functions with abstract classes for input types. When we build up functions incrementally by specializing them on one set of types after another, we can instead end up with function like `add`, whose input specificatons are several tuples of structures, instead of a single tuple of classes.
+
+Such functions over sets of ad hoc structures work without any problems, but we may sometimes want to tidy them up some. If we wanted to have a single generic set of input types for `add`, we might add a definition like this:
+
+----
+bard.user> (function add [Addend Addend])
+WARNING: Defining a new class: Addend on function: add
+Add structures <small-integer>, <string>, (equals 4) and (equals 2) as members of Addend? [Y/n] y
+
+(function add [Addend Addend])
+----
+
+The `System` protocol offers several tools for managing functions, protocols, classes, and structures.
 
 == Operations
 
