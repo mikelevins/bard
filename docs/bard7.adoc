@@ -787,17 +787,15 @@ As you may have guessed, the Bard prompt shows the name of the protocol that is 
 
 What about in source files?
 
-Bard can't rely on the repl's current protocol when reading source files. Instead, it looks for an `import` expression to define the value of `\*protocol*` when reading a file.
+Bard can't rely on the repl's current protocol when reading source files. Instead, it looks for an `in` expression to define the value of `\*protocol*` when reading a file.
 
-An `import` expression looks something like this:
+An `in` expression looks something like this:
 
 ----
-(import bard.core.Time as: Time)
+(in net.example.MyProtocol)
 ----
 
-The section "Importing Protocols", below, describes importing in greater detail.
-
-When Bard opens a file for reading, it binds `\*protocol*` to `bard.user` until it encounters the first `import` expression.
+When Bard opens a file for reading, it binds `\*protocol*` to `bard.user` until it encounters the first `in` expression.
 
 === Defining Protocols
 === Exporting Names
