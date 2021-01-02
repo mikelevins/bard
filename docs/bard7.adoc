@@ -448,7 +448,7 @@ Quote says, "Don't evaluate this expression, just return the expression itself."
 
 Text strings like `"Hello"`, are lists of characters. All of the procedures of the `Listing` protocol work on them, but they also participate in the `TextProcessing` protocol, which adds many procedures specialized for handling text.
 
-That doesn't mean that strings are implemented inefficiently as singly-linked-lists or some such data structure. Remember that `Text` and `List` are classes, not structures. Saying that a text string is a list of characters simply means that the structure that represents it supports the `Listing` protocol; it doesn't imply anything about its representation, except that it can support the functions of the `Listing` protocol.
+That doesn't mean that strings are implemented inefficiently as singly-linked-lists or some such data structure. Remember that `Text` and `List` are classes, not structures. Saying that a text string is a list simply means that the structure that represents it supports the `Listing` protocol; it doesn't imply anything about its representation, except that it can support the functions of the `Listing` protocol.
 
 Like `List`, `Text` is a class, not a structure, and there can be several different structures that implement it.
 
