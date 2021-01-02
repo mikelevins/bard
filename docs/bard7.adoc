@@ -938,9 +938,12 @@ The expression `(.score fred)` is a *place*; Bard knows how to update it.
 == Flow of Control
 === Conditionals: `if`, `cond`, `case`, `when`, `unless`
 === Blocks: `block` and `return-from`
+=== Loops
 === Exits: `with-exit`
 
 == Conditions
+
+Conditions are values that represent computations that may be *suspended* and *resumed*. Their most common use is to represent *error conditions*. Bard conditions and their associated procedures provides ways to signal and respond to errors, suspend computation, examine the dynamic state of the system during a suspended computation, and resume execution either interactively or under program control.
 
 == Built-in Protocols
 
