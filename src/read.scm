@@ -10,6 +10,25 @@
 
 (declare (standard-bindings))
 
+;;;----------------------------------------------------------------------------
+;;; TODO
+;;;----------------------------------------------------------------------------
+;;; - update to correctly handle the syntax
+;;;   (bind ([foo ...]
+;;;          [bar ...]
+;;;          ...)
+;;;      body-forms)
+;;; Need the reader to read [...] as some syntax object that can be correctly
+;;; converted to:
+;;;   (1) a list of bindings when in a bind form
+;;;   (2) a list of lambda parameters when in a (^ [...] ...) form
+;;;   (3) (list ...) otherwise
+;;;
+;;; - change the reader to turn {...} into a syntax object that
+;;;   I can process appropriately, considering whether it's in the
+;;;   where: clause of a define method
+
+
 ;;;; extracted from Gambit's lib/_io#.scm so it can be used and modified
 ;;;; without the large overhead of including all of gambit#.scm
 
