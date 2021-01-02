@@ -370,9 +370,9 @@ Bard provides mutable variables and structures for cases where they're really ne
 [cols="1,1m,1m,4",options="header",]
 |===
 |Type |Examples |Structure |Notes
-|Symbol|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on. Symbols are contained in packages.
-|Keyword|type:, Family: |<keyword> |Names that always evaluate to themselves. Keywords are contained in the `bard.keyword` package.
-|URI|@"file:///tmp/",@"https://barcode.net" |<uri> |Universal Resource Identifiers and URLs, URIs are contained in the `bard.uri` package.
+|Symbol|foo, Bar, <symbol> |<symbol> |Names used for variables, functions, and so on. Symbols are contained in *protocols*.
+|Keyword|type:, Family: |<keyword> |Names that always evaluate to themselves.
+|URI|@"file:///tmp/",@"https://barcode.net" |<uri> |Universal Resource Identifiers and URLs.
 |===
 
 === Lists
