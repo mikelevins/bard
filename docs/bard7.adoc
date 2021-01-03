@@ -158,7 +158,7 @@ bard.user> *x*
 1000
 ----
 
-You can change the value of `*x*` by *assigning* a new one to it:
+`def` is shorthand for `define variable` which creates a *mutable* special variable: you can change the value of `*x*` by *assigning* a new one to it:
 
 ----
 bard.user> (set! *x* 1001)
@@ -169,6 +169,21 @@ bard.user> *x*
 ----
 
 Besides `def`, there are several other defining forms that can create special variables.
+
+`define constant` creates an *immutable* special variable:
+
+----
+bard.user> (define constant +x+ 1000)
++x+
+
+bard.user> +x+
+1000
+
+bard.user> (set! +x+ 1001)
+ERROR: can't change the value of a constant!
+Temporarily override the immutability of constant +x+? [Y/n]
+----
+
 
 There are two situations that break the rules of global scope for special variables.
 
@@ -188,9 +203,9 @@ It's generally better to use lexical variables rather than special variables whe
 
 Bard offers several ways of creating lexical variables. The two most basic are the `bind` special form and *parameter bindings*.
 
-=== The `bind` Special Form
+=== `bind` and `var`
 
-The `bind` special form creates lexical variables. For example:
+The `bind` special form creates immutable lexical variables. For example:
 
 ----
 bard.user> (bind ([x 2])
@@ -210,6 +225,8 @@ bard.user> (bind ([x 2]
 ----
 
 Variables that appear later in the sequence of bindings can refer to those that appear earlier, as this example shows.
+
+The variables created by `bind` are immutable. If you want to create mutable lexical variables you can instead use `var`, which works exactly the same way as `bind` except that the variables it creates are mutable.
 
 === Parameter Bindings
 
