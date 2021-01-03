@@ -594,7 +594,7 @@ bard.user> add
 
 Other matching rules are also supported.
 
-When designing protocols it's often useful to define functions with abstract classes for input types. When we build up functions incrementally by specializing them on one set of types after another, we can instead end up with function like `add`, whose input specificatons are several tuples of structures, instead of a single tuple of classes.
+When designing protocols it's often useful to define functions with abstract classes for input types. When we build up functions incrementally by specializing them on one set of types after another, we can instead end up with function like `add`, whose input specifications are several tuples of structures, instead of a single tuple of classes.
 
 Such functions over sets of ad hoc structures work without any problems, but we may sometimes want to tidy them up some. If we wanted to have a single generic set of input types for `add`, we might add a definition like this:
 
