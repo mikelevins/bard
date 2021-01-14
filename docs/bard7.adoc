@@ -48,7 +48,7 @@ bard.user> "Hello!"
 bard.user> (* 2 3)
 6
 
-bard.user> (bard.core.Time:now)
+bard.user> (bard.time:now)
 #<bard.time:timestamp> "2020-12-26T04:31:01.985510Z"
 ----
 
