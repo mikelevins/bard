@@ -138,7 +138,7 @@ Symbols belong to the class `Name`. Besides symbols, there are two other kinds o
 
 Variables may be *mutable* or *immutable*. You can change the value of a *mutable* variable, but not that of an *immutable* one. The named constants are immutable variables.
 
-In the interactive development environment you can tell Bard to let you change the value of an immutable variable. When the goal of safety by default conflicts with the goal of unrestricted malleability, Bard offers an escape hatch: you can tell it to suspend the rules temporarily, to allow you to inspect something that is technically hidden, or to change something that is technically immutable.
+In the interactive development environment you can tell Bard to let you change the value of an immutable variable. When the goal of safety by default conflicts with the goal of unrestricted malleability, Bard offers an escape hatch: you can tell it to suspend the rules temporarily, to allow you to inspect something that is technically hidden, or to change something that is technically immutable. This escape hatch reflects Bard's focus on interactive programming: you can always change everything in Bard. You may just have to jump through an extra hoop to change things that are risky to change.
 
 A variable may be *special* or *lexical*.
 
@@ -250,6 +250,18 @@ Let's capture the method in a special variable and call it:
 ----
 
 When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
+== Protocols
+
+Bard is organized into *protocols*. A *protocol* is a named collection of symbols. Each symbol refers to a procedure or other value.
+
+
+=== `\*protocol*` and `bard.user`
+=== Protocols in Source Files
+=== Defining Protocols
+=== Exporting Names
+=== Importing Protocols
+==== Renaming Symbols
+
 
 == Types
 
@@ -769,73 +781,6 @@ This section describes how to define and instantiate structures, and how to oper
 === Tuples
 
 === Enumerations
-
-== Protocols
-
-Bard is organized into *protocols*. A *protocol* is a named collection of symbols. Each symbol refers to a procedure or other value.
-
-Protocols define collections of related procedures and variables designed to support particular activities. Examples of Bard protocols include `Comparing`, `Converting`, `Creating`, `Listing`, `Mapping`, `Printing`, `TextProcessing`, and so on. You can think of a protocol as a collection of tools suited for some chosen purpose, and the naming convention reflects that usage.
-
-Most Protocols are named with the suffix `-ing`, but not all are. `Macros` and `System` are two protocols that break this stylistic rule.
-
-Protocol names follow a format similar to *reverse DNS naming*, intended to help authors of new protocols avoid collisions with other authors' work. For example, the full names of the protocols listed above are:
-
-- `bard.core.Comparing`
-- `bard.core.Converting`
-- `bard.core.Creating`
-- `bard.core.Listing`
-- `bard.core.Mapping`
-- `bard.core.Printing`
-- `bard.core.TextProcessing`
-
-Bard protocols support importing the names from other protocols, and when you import a name you can rename it within the importing environment. It's common practice to give protocols shorter, more convenient aliases when working with them, so, for example, `bard.core.Listing` becomes just `Listing` in code that makes use of it.
-
-Similarly, we most often omit `bard.core` when referring to that family of protocols, for readability. When you see a mention of, for example, "the `System` protocol," you may assume we mean the `bard.core.System` protocol.
-
-This section describes how to define and use protocols. The "Built-in Protocols" section below describes the predefined protocols that Bard provides out of the box.
-
-=== `\*protocol*` and `bard.user`
-
-Bard defines a special variable named `bard.core.System:*protocol*`. Its value is a protocol.
-
-If you enter a symbol at the Bard repl without giving the name of its protocol, Bard automatically assumes that the symbol belongs to the protocol referred to by `bard.core.System:*protocol*`.
-
-When the repl starts up, the value of `bard.core.System:*protocol*` is normally `bard.user`. `bard.user` is a protocol provided for the convenience of repl users. It imports all of the standard protocols defined by the Bard system.
-
-These conventions mean that, for example, you don't have to write
-
-----
-bard.user> (bard.core.Math:+ 2 3)
-----
-
-in order to add two numbers. You can write
-
-----
-bard.user> (+ 2 3)
-----
-
-Bard automatically looks up the symbol `+` in the protocol `bard.user`, and because `bard.user` imports all the symbols in `bard.core.Math`, your code just works.
-
-As you may have guessed, the Bard prompt shows the name of the protocol that is the current value of `\*protocol*`.
-
-=== Protocols in Source Files
-
-What about in source files?
-
-Bard can't rely on the repl's current protocol when reading source files. Instead, it looks for an `in` expression to define the value of `\*protocol*` when reading a file.
-
-An `in` expression looks something like this:
-
-----
-(in net.example.MyProtocol)
-----
-
-When Bard opens a file for reading, it binds `\*protocol*` to `bard.user` until it encounters the first `in` expression.
-
-=== Defining Protocols
-=== Exporting Names
-=== Importing Protocols
-==== Renaming Symbols
 
 == Procedures
 
