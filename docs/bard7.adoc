@@ -83,7 +83,6 @@ After the four named constants, the simplest expressions are *literals*. A *lite
 |Text      | "", "Some text"                           |Text strings.
 |List      |[1 2 3]                                    |Sequences of values.
 |Map       |{name: "Fred" color: "Orange"}             |Mappings from keys to values.
-|Function  |(function foo [Bar])                  |Polymorphic procedures--that is, procedures whose definitions depend on the arguments to them.
 |Method    |(^ [x] (+ x 1))                            |Monomorphic procedures--that is, procedures whose definition is independent of their arguments.
 |===
 
