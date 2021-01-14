@@ -266,7 +266,8 @@ For example, this is a part of the definition of the `bard.core.lists` protocol:
     by (function [PositiveInteger List])
     cat (function [List List])
     count (function [Anything List & {test equal?}])
-  ...})
+    ...
+  })
 ----
 
 A protocol 
