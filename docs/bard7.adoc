@@ -128,7 +128,7 @@ bard.user> 'not-a-variable
 not-a-variable
 ----
 
-The quote tells Bard, "Don't evaluate this expression. Just return the expression itself."
+The quote tells Bard, "Don't evaluate this expression and return the value. Just return the expression itself."
 
 Symbols belong to the class `Name`. Besides symbols, there are two other kinds of Names: *Keywords* and *URIs*. Unlike symbols, keywords and URIs cannot be used as variable names, so you don't need to quote them. The value of a keyword or a URI is always itself.
 
