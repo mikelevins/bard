@@ -250,6 +250,7 @@ Let's capture the method in a special variable and call it:
 ----
 
 When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is bound to the value `3`. The method evaluates its body with the variables bound to those values and returns the greater number.
+
 == Protocols
 
 Bard is organized into *protocols*. A *protocol* is a named collection of symbols. Each symbol refers to a procedure or other value.
