@@ -134,7 +134,7 @@ Symbols belong to the class `Name`. Besides symbols, there are two other kinds o
 
 == Variables
 
-*Variables* are *names* that stand for *values*. For example, the named constants are (read-only) variables.
+*Variables* are *names* that stand for *values*. For example, the named constants are variables.
 
 Variables may be *mutable* or *immutable*. You can change the value of a *mutable* variable, but not that of an *immutable* one. The named constants are immutable variables.
 
