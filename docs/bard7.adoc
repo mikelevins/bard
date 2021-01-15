@@ -277,7 +277,10 @@ bard.system
 bard.taps
 bard.text
 bard.types
+bard.user
 ----
+
+A protocol defines a set of symbols that name some combination of variables, functions, methods, macros, and special forms.
 
 For example, this is a part of the `bard.lists` protocol:
 
@@ -1069,3 +1072,7 @@ Operations on text strings.
 === Types
 
 Operations on types and operations on values that produce types.
+
+=== User
+
+A convenience for users of the Bard repl. The User protocol imports all of the other built-in Bard protocols and exposes their definitions conveniently in the repl.
