@@ -255,6 +255,29 @@ When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is boun
 
 Bard is organized into *protocols*. A *protocol* is a named collection of symbols that name procedures and variables. A protocol defines a set of related procedures that together implement some purposeful activity.
 
+Following are some of the built-in Bard protocols:
+
+----
+bard.actors
+bard.addressing
+bard.comparing
+bard.converting
+bard.creating
+bard.lists
+bard.macros
+bard.maps
+bard.math
+bard.pairs
+bard.printing
+bard.protocols
+bard.reading
+bard.serializing
+bard.streams
+bard.taps
+bard.text
+bard.types
+----
+
 For example, this is a part of the `bard.lists` protocol:
 
 ----
@@ -988,7 +1011,7 @@ Constructing and copying values.
 
 ==== `make`
 
-=== Listing
+=== Lists
 
 Operations on sequences of values.
 
@@ -998,7 +1021,7 @@ Macros defined by Bard.
 
 ==== `define macro`
 
-=== Mapping
+=== Maps
 
 Operations on mappings from keys to values.
 
@@ -1006,7 +1029,7 @@ Operations on mappings from keys to values.
 
 Mathematical procedures and variables.
 
-=== Pairing
+=== Pairs
 
 Operations on paired values.
 
@@ -1026,7 +1049,7 @@ Reading Bard values.
 
 Converting values to a form that can be transported and stored outside the bard runtime, and converting values in such forms back into live Bard data in the runtime.
 
-=== Streaming
+=== Streams
 
 Operations on objects that produce or consume values.
 
@@ -1034,14 +1057,14 @@ Operations on objects that produce or consume values.
 
 Tools for configuring, maintaining, and controlling Bard itself.
 
-=== Tapping
+=== Taps
 
 Operations that construct streams.
 
-=== TextProcessing
+=== Text
 
 Operations on text strings.
 
-=== Typing
+=== Types
 
 Operations on types and operations on values that produce types.
