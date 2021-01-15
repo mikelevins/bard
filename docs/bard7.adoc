@@ -273,6 +273,7 @@ bard.protocols
 bard.reading
 bard.serializing
 bard.streams
+bard.system
 bard.taps
 bard.text
 bard.types
