@@ -271,15 +271,15 @@ For example, this is a part of the `bard.core.lists` protocol:
 
 The ellipses ("...") indicate that there are additional entries in the protocol that are not shown here.
 
-Each entry shown here is a *function*. A *function* is a procedure that can run different code depending on the arguments you pass to it.
-
-Let's consider the function `any`:
+Each entry shown here is a *function*. Let's take a closer look at one of them:
 
 ----
 any (function [List])
 ----
 
-This entry says that `any` is a function that accepts a single argument of class `List`.
+This entry says that `any` is a *function* that accepts a single argument of *class* `List`. So what's a *function* and what's a *class*?
+
+A *function* is a procedure that inspects its arguments and, based on what it finds, decides what code to run. This decision-making process is called *dispatching*. Bard functions dispatch on all of their *required arguments*. When dispatching, a function can consider the types of its arguments, or their exact values, or the results of certain other tests that you can provide when defining *methods* on the function.
 
 === `\*protocol*` and `bard.user`
 === Protocols in Source Files
