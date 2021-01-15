@@ -260,12 +260,12 @@ For example, this is a part of the `bard.lists` protocol:
 ----
 (protocol bard.lists
   { ...
-    add-first (function [Anything List])
-    add-last (function [Anything List])
-    any (function [List])
-    by (function [PositiveInteger List])
-    cat (function [List List])
-    count (function [Anything List & {test equal?}])
+    add-first (function Anything List)
+    add-last (function Anything List)
+    any (function List)
+    by (function PositiveInteger List)
+    cat (function List List)
+    count (function Anything List & {test equal?})
     ... })
 ----
 
@@ -274,7 +274,7 @@ The ellipses ("...") indicate that there are additional entries in the protocol 
 Each entry shown here is a *function*. Let's take a closer look at one of them:
 
 ----
-any (function [List])
+any (function List)
 ----
 
 This entry says that `any` is a *function* that accepts a single argument of *class* `List`. In fact, it's a function that returns a randomly-chosen element of its `List` argument.
