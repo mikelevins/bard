@@ -255,10 +255,10 @@ When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is boun
 
 Bard is organized into *protocols*. A *protocol* is a named collection of symbols that name procedures and variables. A protocol defines a set of related procedures that together implement some purposeful activity.
 
-For example, this is a part of the `bard.core.lists` protocol:
+For example, this is a part of the `bard.lists` protocol:
 
 ----
-(protocol bard.core.lists
+(protocol bard.lists
   { ...
     add-first (function [Anything List])
     add-last (function [Anything List])
@@ -277,9 +277,30 @@ Each entry shown here is a *function*. Let's take a closer look at one of them:
 any (function [List])
 ----
 
-This entry says that `any` is a *function* that accepts a single argument of *class* `List`. So what's a *function* and what's a *class*?
+This entry says that `any` is a *function* that accepts a single argument of *class* `List`. In fact, it's a function that returns a randomly-chosen element of its `List` argument.
 
-A *function* is a procedure that inspects its arguments and, based on what it finds, decides what code to run. This decision-making process is called *dispatching*. Bard functions dispatch on all of their *required arguments*. When dispatching, a function can consider the types of its arguments, or their exact values, or the results of certain other tests that you can provide when defining *methods* on the function.
+So what's a *function* and what's a *class*?
+
+A *function* is a procedure that inspects its arguments and, based on what it finds, decides what code to run. The code that ends up running is a type of procedure called a *method*.
+
+This decision-making process is called *dispatching*. Bard functions dispatch on all of their *required arguments*. When dispatching, a function can consider the types of its arguments, or their exact values, or the results of certain other tests that you can provide when defining *methods* on the function.
+
+What about *classes*? A *class* is a named collection of *structures*. Together, classes and structures comprise Bard's *types*. Classes are abstract types that represent the roles of values in protocols. Structures are concrete descrpitions of how values are constructed.
+
+`List`, for example, is a class. It's the collection of values that represent ordered sequences of values in the `bard.lists` protocol.
+
+`<vector>`, on the other hand, is a structure. It's a concrete representation of a sequence of values as an array of references.
+
+`<vector>` is a *member* of `List`--that is, the `bard.lists` protocol defines methods that *specialize* functions from the `bard.lists` so that they work if you pass a `<vector>` as the `List` argument.
+
+For example, a method for `any` is defined for arguments of type `<vector>`. It returns any random element of the `<vector>` passed to it. Its definition could look something like this:
+
+
+----
+(define method (any v)
+  where: {v <vector>}
+  (element v (random (length v))))
+----
 
 === `\*protocol*` and `bard.user`
 === Protocols in Source Files
