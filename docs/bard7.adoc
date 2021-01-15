@@ -255,7 +255,7 @@ When we apply `bigger` to 2 and 3, `x` is bound to the value `2` and `y` is boun
 
 Bard is organized into *protocols*. A *protocol* is a named collection of symbols that name procedures and variables. A protocol defines a set of related procedures that together implement some purposeful activity.
 
-For example, this is a part of the definition of the `bard.core.lists` protocol:
+For example, this is a part of the `bard.core.lists` protocol:
 
 ----
 (protocol bard.core.lists
