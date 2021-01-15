@@ -259,15 +259,13 @@ For example, this is a part of the `bard.core.lists` protocol:
 
 ----
 (protocol bard.core.lists
-  {
-    add-first (function [Anything List])
+  { add-first (function [Anything List])
     add-last (function [Anything List])
     any (function [List])
     by (function [PositiveInteger List])
     cat (function [List List])
     count (function [Anything List & {test equal?}])
-    ...
-  })
+    ... })
 ----
 
 A protocol 
