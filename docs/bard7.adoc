@@ -318,7 +318,7 @@ What about *classes*? A *class* is a named collection of *structures*. Together,
 
 *Structures* are concrete descriptions of how values are constructed.
 
-`List`, for example, is a class. It's the collection of values that represent ordered sequences of values in the `bard.lists` protocol.
+`List`, for example, is a class. It's defined by the `bard.lists` protocol, and its members are structures that represent ordered sequences of values in the protocol.
 
 `<vector>`, on the other hand, is a structure. It's a concrete representation of a sequence of values as an array of references.
 
