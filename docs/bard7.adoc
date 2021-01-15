@@ -259,7 +259,8 @@ For example, this is a part of the `bard.core.lists` protocol:
 
 ----
 (protocol bard.core.lists
-  { add-first (function [Anything List])
+  { ...
+    add-first (function [Anything List])
     add-last (function [Anything List])
     any (function [List])
     by (function [PositiveInteger List])
@@ -268,7 +269,17 @@ For example, this is a part of the `bard.core.lists` protocol:
     ... })
 ----
 
-A protocol 
+The ellipses ("...") indicate that there are additional entries in the protocol that are not shown here.
+
+Each entry shown here is a *function*. A *function* is a procedure that can run different code depending on the arguments you pass to it.
+
+Let's consider the function `any`:
+
+----
+any (function [List])
+----
+
+This entry says that `any` is a function that accepts a single argument of class `List`.
 
 === `\*protocol*` and `bard.user`
 === Protocols in Source Files
