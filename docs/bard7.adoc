@@ -332,7 +332,7 @@ For example, a method for `any` might be defined like this:
   (element v (random (length v))))
 ----
 
-Besides defining what happens if you pass a `<vector>` to `any`, this definition also implicitly asserts that `<vector>` is a member of the class `List`: `any` takes an argument of type `List`, and there's a method for the case where that argument is a `<vector>`, so `<vector>` is therefore a member if `List`.
+Besides defining what happens if you pass a `<vector>` to `any`, this definition also asserts that `<vector>` is a member of the class `List`: `any` takes an argument of type `List`, and there's a method for the case where that argument is a `<vector>`, so `<vector>` is a member f `List`.
 
 === `\*protocol*` and `bard.user`
 === Protocols in Source Files
