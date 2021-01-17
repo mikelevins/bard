@@ -44,7 +44,7 @@ Bard is intended to be an interactive language. It's designed to be convenient f
 |===
 |Examples                       |Type      |Description
 |100, 2/3, 12.34, #xFF, #b1011  |Number    |Numeric values
-|Blue                           |Symbol    |Keys in records and similar uses. Keywords are symbols that always evaluate to themselves
+|Blue                           |Symbol    |Names of language elements like types, variables, and functions
 |Foo:                           |Keyword   |Keys in records and similar uses. Keywords are symbols that always evaluate to themselves
 |@"http://barcode.net"          |URI       |File names and other resource identifiers
 |[1 2 3]                        |List      |Sequences of values
