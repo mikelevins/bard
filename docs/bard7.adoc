@@ -79,7 +79,11 @@ bard> (define protocol CartesianPoints
         y-coordinate (function CartesianPoint)
         distance (function CartesianPoint CartesianPoint)})
 CartesianPoints
+----
 
+Defining the protocol `CartesianPoints` also implicitly defines the functions `x-coordinate`, `y-coordinate`, and `distance`, and the class `CartesianPoint`.
+
+----
 bard> (functions CartesianPoints)
 [[x-coordinate . (function CartesianPoint)]
  [y-coordinate . (function CartesianPoint)]
@@ -92,7 +96,11 @@ bard> (define method (x-coordinate p)
        where: {p: <2d-point>}
        (.x p))
 x-coordinate
+----
 
+Defining the method `x-coordinate` on the structure `<2d-point>` implicitly makes `<2d-point>` a member of `CartesianPoint`.
+
+----
 bard> (def $p (make <2d-point> x: 100 y: 200))
 
 bard> (.x $p)
