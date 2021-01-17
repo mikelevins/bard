@@ -65,6 +65,10 @@ Bard is intended to be an interactive language. It's designed to be convenient f
 (define <the-integer-5> (equals 5)) ; singleton type
 ----
 
+=== Classes
+
+*Classes* are named collections of types. See the next section ("Protocols") for examples of how classes are defined and used.
+
 == Protocols
 
 === Defining Protocols
