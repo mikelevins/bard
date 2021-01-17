@@ -62,7 +62,7 @@ Bard is intended to be an interactive language. It's designed to be convenient f
 (define <boolean> (enumeration false true))
 (define <point> (record {x: Integer y: Integer}))
 (define <ostype> (tuple element-type: <byte> count: 4))
-(define <the-integer-5> (equals 5))
+(define <the-integer-5> (equals 5)) ; singleton type
 ----
 
 == Protocols
