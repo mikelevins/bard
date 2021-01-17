@@ -1,7 +1,7 @@
 = bard 0.7
 mikel evins
 :toc: preamble
-:toclevels: 2
+:toclevels: 3
 
 bard 0.7 is the seventh major iteration of the Bard programming language. 
 
@@ -17,15 +17,57 @@ This document records my progress toward these goals.
 
 == Overview
 
-Bard is a Lisp; that is, it's a programming language in the long tradition of Lisp, and shares many features with older Lisps.
+Bard is a Lisp; that is, it's a programming language in the long tradition of Lisp, and it shares many features with older Lisps.
 
-It's not a version of Common Lisp or Scheme or Clojure, or of any Lisp that came before it. Its design is influenced by many of those preceding Lisps, but it's not intended to be a version or dialect of any of them.
+It's not a version of Common Lisp or Scheme or Clojure, or of any Lisp that came before it, though. Its design is influenced by many of those preceding Lisps, but it's not intended to be a version or dialect of any of them.
 
-Bard is intended to be an interactive language. It's designed to be convenient for a programmer who prefers to work by starting up an interactive environment and teaching it, expression by expression, how to be a program. It has other characteristics that reflect things I've learned and appreciated from previous Lisps, and from other languages, especially functional languages. Its overriding rule, though, is to work well and comfortably as an interactive programming environment.
+Bard is intended to be an interactive language. It's designed to be convenient for a programmer who prefers to work by starting up an interactive environment and teaching it, expression by expression, how to be a program. It has other characteristics that reflect things I've learned and appreciated from previous Lisps, and from other languages, especially functional languages.
 
-== Values
+Its overriding rule, though, is to work well and comfortably as an interactive programming environment. That goal influences its design in several ways. For example, it's not possible to truly hide data, nor to make variables and fields truly immutable, because doing either of those things defeats the programmer's ability to inspect and change absolutely everything while the program runs.
+
+=== Basic Concepts
+
+Bard is organized around two basic conecpts: *values* and *protocols*.
+
+*Values* are the data in Bard programs. Each value is an *instance* of a *structure*. A *structure* is a concrete description of how to construct a family of values.
+
+*Protocols* are named collections of *variables*, *procedures*, and *classes*. A *variable* is a name for a value. A *procedure* is an executable value that can be *called* with a sequence of *parameters* to compute a *result*. *Classes* are named sets of structures. Protocols define classes, using them to declare which values may be parameters to their procedures.
+
+=== What does it look like?
+
+Bard is a Lisp. Everything in Bard is an expression. Procedure calls are written as lists.
+
+Here's a short method definition that reads nonempty lines from a file:
+
+----
+(define method (read-samples path)
+  where: {path <uri>}
+  (filter (complement empty?)
+          (tap lines: path)))
+----
+
+
+
+=== The repl
+
+Bard is an *interactive* language. It's designed to support a style of programming in which you start a Bard process and teach it, expression by expression, how to be the program you want.
+
+The *repl* is the *read-eval-print loop*, an interactive process that *reads* expressions that you give it, *evaluates* them to compute results, and *prints* the results. It's the primary way of controlling and interactive with Bard. Everything Bard is able to do can be done by evaluating expressions in the repl.
+
+A typical interaction with the Bard repl might look something like this:
+
+----
+bard> (* 3 3)
+9
+----
+
+=== Lexical Syntax
+
+Bard's *lexical syntax* is the set of rules for writing expressions. This section describes those rules.
 
 === Named Constants
+
+The *named constants* are four special *names* that always refer to the same set of values in every scope and context.
 
 [cols="1m, 3",options="header",]
 .The named constants
@@ -37,7 +79,141 @@ Bard is intended to be an interactive language. It's designed to be convenient f
 |false     |The Boolean false value.
 |===
 
+=== Keywords
+
+There is another set of names that always refer to the same value: *keywords*. A *keyword* is a name whose value is always itself. You can think of keywords as constant literal names. A keyword always ends in a colon (':').
+
+Following are a few examples:
+
+----
+name:
+age:
+enabled:
+Address:
+----
+
+=== Names
+
+Keywords and the named constants are examples of *names*. A *name* is a sequence of text characters that Bard reads as a single value of class `Name`. Three structures are members of class `Name`: `<keyword>`, `<symbol>`, and `<uri>`.
+
+[horizontal]
+`<keyword>`:: A name ending in ':'; a keyword always refers to itself
+`<symbol>`:: A name used to label Bard language features like variables, protocols, functions, and so on
+`<uri>`:: A name used to identify files and other system resources
+
+Following are a few examples of the three kinds of names.
+
+[cols="1m, 3m",options="header",]
+|===
+|Structure |Examples
+|<keyword> | age: Address: where:
+|<symbol> | define if System <structure>
+|<uri> | @"file:///tmp/" @"http://bardcode.net"
+|===
+
+
+=== Numbers
+=== Strings
+=== Characters
+=== Lists
+
+Bard is a Lisp, which suggests that lists are important in the language. After all, the name "LISP" is an acronym for "LISt Processing". Indeed, lists are important data structures in Bard.
+
+You can write a literal list in Bard using brackets:
+
+----
+bard> [1 2 3]
+[1 2 3]
+----
+
+A list can contain elements of any type.
+
+----
+bard> [1 two: "Three"]
+[1 two: "Three"]
+----
+
+Lists can contain other lists.
+
+----
+bard> [1 [2 3] [4 [5 6]] 7]
+[1 [2 3] [4 [5 6]] 7]
+----
+
+=== Special Kinds of Lists
+
+Besides the literal lists we've just seen, there are three other special kinds of lists on Bard: *maps*, *text strings*, and *operations*.
+
+=== Maps
+
+A *map* represents a finite map from keys to values. In other languages, this kind of structure is often called a *dictionary* or a *table*, or a *hash*. Bard supports efficient representations of maps, but they all also support the `Lists` protocol, so they're also lists. You can treat a map as a list of pairs. The `left` value of each pair is a key; the `right` is the corresponding value.
+
+[cols="1m",]
+.Examples of maps
+|===
+|{}
+|{x: 100 y: 200}
+|{Name: "Fred" Hometown: "Bedrock"}
+|===
+
+=== Text Strings
+
+A text string is a sequence of text characters. The class `Text` and its members, such as `<string>`, support a rich `TextProcessing` protocol, but they also support the `Lists` protocol so, again, they're also lists.
+
+[cols="1m",]
+.Examples of text strings
+|===
+|""
+|"Hello, World!"
+|===
+
+=== Operations
+
+Syntactically speaking, an *operation* is a list written with parentheses instead of brackets.
+
+[cols="1m",]
+.Examples of operations
+|===
+|()
+|(bard.time:now)
+|(+ 2 3)
+|(if nothing "Something" "Not anything")
+|===
+
+Bard doesn't just construct and return the list given by an operation. It treats the operation as a procedure call. It uses the first element of the list to identify the procedure, and passes the remaining elements to the procedure as parameters.
+
+There are four kinds of procedures in Bard, each with its own rules for evaluating parameters and computing results.
+
+[cols="1m, 3",options="header",]
+.Types of procedures
+|===
+|Name      |Description
+|method |A simple procedure that evaluates its arguments, binds the values to local variables, and runs the code from its definition
+|function |A *polymorphic* procedure that examines its argument list to determine what method to call, then passes the arguments to the selected method
+|macro |A rule that rewrites the macro expression according to the rule given in its definition, then evaluates the transformed expression
+|special form |A procedure defined by the Bard implementation that follows its own rules for evaluating its arguments and computing its results.
+|===
+
+Bard users can define their own procedures of all types except special forms.
+
+=== Comments
+
+The semicolon (';') signifies the beginning of a comment in Bard. The next line break ends the comment.
+
+The character sequence `\#|` signifies the start of a block comment that continues until Bard encounters the sequence `|#`.
+
+Bard treats comments like whitespace when evaluating expressions, but it remembers them when compiling or evaluating files.
+
+=== Quote and Unquote
+
+
+
+
+== Values
+
 === Literal values
+
+*Literals* are special forms of syntax that Bard converts into values of a specific type.
 
 [cols=".<3m,.^1m,.>4",options="header",]
 .Literal values
@@ -54,94 +230,58 @@ Bard is intended to be an interactive language. It's designed to be convenient f
 |(^ [x] (* x x))                |Method    |Basic procedures
 |===
 
+=== Constructors and Default Structures
+
 == Types
 
 === Structures
 
-----
-(define <boolean> (enumeration false true))
-(define <point> (record {x: Integer y: Integer}))
-(define <ostype> (tuple element-type: <byte> count: 4))
-(define <the-integer-5> (equals 5)) ; singleton type
-----
+*Structures* are concrete descriptions of how to arrange data to form values. Bard's convention is to write the names of structures as lowercase nouns that are enclosed in angle brackets.
 
-=== Classes
+There are four basic types of structure:
 
-*Classes* are named collections of types. See the next section ("Protocols") for examples of how classes are defined and used.
+[cols="1, 4",]
+|===
+|enumeration |An explicit set of alternative values
+|record   |A structure with named fields called *slots*
+|tuple      |A structure with indexed slots, all of the same type
+|singleton     |A type with exactly one value
+|===
 
-== Protocols
 
-=== Defining Protocols
+Following are examples of defining each of the four basic types of structure:
+[cols="1, 4m",]
+|===
+|enumeration |(define <simple-color> (enumeration 'Red 'Green 'Blue))
+|record |(define <point> (record {x: Integer y: Integer}))
+|tuple |(define <pair> (tuple element-type: Anything count: 2))
+|singleton |(define <five> (equals 5))
+|===
 
-----
-bard> (define protocol CartesianPoints
-       {x-coordinate (function CartesianPoint)
-        y-coordinate (function CartesianPoint)
-        distance (function CartesianPoint CartesianPoint)})
-CartesianPoints
-----
 
-Defining the protocol `CartesianPoints` also implicitly defines the functions `x-coordinate`, `y-coordinate`, and `distance`, and the class `CartesianPoint`.
+== Names, Namespaces, and Variables
 
-----
-bard> (functions CartesianPoints)
-[[x-coordinate . (function CartesianPoint)]
- [y-coordinate . (function CartesianPoint)]
- [distance . (function CartesianPoint CartesianPoint)]]
+== Protocols, Functions, and Classes
 
-bard> (define <2d-point> (record {x: Integer y: Integer}))
-<point>
+== Control Structures
 
-bard> (define method (x-coordinate p)
-       where: {p: <2d-point>}
-       (.x p))
-x-coordinate
-----
+== Conditions
 
-Defining the method `x-coordinate` on the structure `<2d-point>` implicitly makes `<2d-point>` a member of `CartesianPoint`.
+== Built-in Protocols
 
-----
-bard> (def $p (make <2d-point> x: 100 y: 200))
-
-bard> (.x $p)
-100
-
-bard> (instance? $p <2d-point>)
-true
-
-bard> (instance? $p CartesianPoint)
-true
-
-bard> (represents? <2d-point> CartesianPoint)
-[[x-coordinate . (function CartesianPoint)]]
-
-bard> (represents? <string> CartesianPoint)
-nothing
-
-bard> (type CartesianPoint)
-<class>
-
-bard> (type <2d-point>)
-<record>
-
-bard> (type <the-integer-5>)
-<singleton>
-----
-
-=== Built-in Protocols
+Bard provides a predefined set of built-in protocols. The entire language is organized into these protocols.
 
 [cols=".<1m,.^3m",options="header",]
 .Built-in protocols
 |===
 |Name      |Description
-| Bard | System and runtime operations
 | Comparing | Equality and comparison
 | Converting | Constructing values of one type from values of another
-| Creating | Constructing values
-| Generators | Converting expressions and procedures to streams
+| Constructing | Creating values
+| Generators | Procedures that may be called repeatedly to return values one after another
 | Iteration | Repeating computations and traversing structures
 | Lists | Ordered sequences of values
-| Macros | Macros defined by Bard and tools for defining macros
+| Macros | Procedures that rewrite expressions and generate code
 | Maps | Finite maps from keys to values
 | Math | Arithmetic and other mathematical operations
 | Messaging | Sending and receiving data across processes
@@ -154,7 +294,8 @@ bard> (type <the-integer-5>)
 | Reading | Consuming and parsing data from streams and files
 | Serializing | Converting Bard values to and from external data formats
 | Streams | Values that produce or consume sequences of other values
-| Taps | Converting values to streams
+| System | System and runtime operations
+| Taps | Converting values to generators
 | Text | Text-processing tools
 | Types | Operations on Bard types
 |===
