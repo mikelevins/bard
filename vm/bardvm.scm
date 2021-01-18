@@ -9,5 +9,7 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define-structure vm fn code pc env stack nargs instr)
+
 (define (%init-bardvm)
   #f)
