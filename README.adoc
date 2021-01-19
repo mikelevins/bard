@@ -10,13 +10,13 @@ It provides support for concurrent and distributed programs, and encourages the 
 
 The current work-in-progress version is 0.7. Its code is in an intermediate state of conversion from the Bard 0.3 implementation to simplify the surface language and support new language and runtime features.
 
-The file https://github.com/mikelevins/bard/blob/master/docs/bard7.adoc[docs/bard7.adoc] is a work in progress that documents the intended Bard 0.7 language. The implementation doesn't match it yet, and the document itself is not yet done.
+After some extensive thinking, I'm currently redesigning Bard 0.7 along the following lines:
 
-The directory `vm` contains work in progress on the bard vm.
+Earlier experiments have shown me that I can build the Bard object system using the CLOS MOP. I can also go the other way, but if I start with the MOP and build the Bard object system with it, then I have the MOP available to me, and it also makes it easy and convenient to build other object models. A nice example is the way that Clozure Common Lisp uses CLOS to seamlessly subsume the Objective-C object model on macOS.
 
-The directory `compiler` contains work on the compiler.
+Going the other way doesn't have the same advantage. I can indeed start with the Bard object model and build something like the MOP with it, but the Bard object model doesn't give me extra leverage for building and subsuming other object models the way that the MOP does.
 
+It therefore makes sense to me to start with the MOP (or a slimmed down version of it like Closette or TinyCLOS), and build Bard on it.
 
-For a description of the Bard 0.7 language, see https://github.com/mikelevins/bard/blob/master/docs/bard7.adoc[docs/bard7.adoc].
+I'm in the planning stages.
 
-For an example of a small but complete Bard program, see https://github.com/mikelevins/bard/blob/master/docs/namer.bard[docs/namer.bard].
