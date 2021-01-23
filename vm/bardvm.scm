@@ -9,6 +9,10 @@
 ;;;;
 ;;;; ***********************************************************************
 
+(define-structure fn code env name args)
+
+(define-structure ret-addr fn pc env)
+
 (define-structure vm fn code pc env stack nargs instr)
 
 (define *vm* #f)
@@ -114,9 +118,9 @@
                                   #f)
                               (loop)))
             ((= _SAVE opc) (begin (vm-stack-push! vm
-                                                  (make-ret-addr pc: (arg1 (vm-instr vm))
-                                                                 fn: (vm-fn vm)
-                                                                 env: (vm-env vm)))
+                                                  (make-ret-addr (vm-fn vm)
+                                                                 (arg1 (vm-instr vm))
+                                                                 (vm-env vm)))
                                   (loop)))
             ((= _RETURN opc) (let ((val (vm-stack-pop! vm))
                                    (ret (vm-stack-pop! vm)))
