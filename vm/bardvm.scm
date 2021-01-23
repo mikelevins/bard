@@ -11,5 +11,9 @@
 
 (define-structure bardvm fn code pc env stack nargs instr)
 
-(define (%init-bardvm)
-  #f)
+(define *bardvm*)
+
+(define (%init-bardvm #!key (fn #f)(code '())(pc 0)(env '())(stack '())(nargs 0)(instr #f))
+  (set! *bardvm* (make-bardvm fn code pc env stack nargs instr)))
+
+;;; (%init-bardvm env: '((x . 5)))
