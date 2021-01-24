@@ -1,6 +1,6 @@
 = bard 0.7
 
-== Literal Constants
+== Named Constants
 
 `undefined`:: No useful value
 `nothing`:: An empty list, map, or stream
@@ -39,11 +39,13 @@
 [horizontal]
 `Comparing`:: Operations that compare identity, equivalence, or sort order
 `Conditions`:: Values and operations that represent and handle exceptional occurrences
+`Constructing`:: `make`, `initialize`, and other procedures and variables used in creating values
+`Converting`:: `as` and other procedures and variables used to construct values of one type from values of another
 `Control`:: Extended control structures
 `Functions`:: Operations on functions and methods
 `Lists`:: Creating and operating on ordered sequences of values
 `Macro`:: Defining and using *macros*, and several built-in macros
-`Map`:: Creating and operating on finite maps from keys to values
+`Maps`:: Creating and operating on finite maps from keys to values
 `Math`:: Numbers and mathematical operations
 `Messaging`:: Communication between local and remote Bard processes
 `Names`:: Creating and operating on *names* including *symbols*, *keywords*, and *uris*
