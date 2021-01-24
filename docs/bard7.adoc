@@ -55,3 +55,20 @@
 `Text`:: Creating and operating on text strings and text characters
 `Types`:: Operations on types
 
+== Syntax
+
+=== Lexical Notation
+
+[horizontal]
+`[...]`:: Brackets delimit lists. Expressions between the brackets are the elements of the list.
+`(...)`:: Brackets delimit *operations*. An *operation* is a list that denotes a procedure call.
+`{...}`:: Braces delimit maps. Expressions between the braces are the alternating keys and values of the map.
+`Foo`:: A sequence of alphanumeric characters that does note denote a number is a *symbol*. Bard uses symbols to sstand for variables, procedure names, types, and other names in Bard exressions.
+`Bar:`:: A symbol that ends in a colon (':') is a *keyword*. A keyword is a constant that always stands for itself. Common uses of keywords are as keys in maps, or to label arguments in functions.
+`1.23`:: Bard provides convenient syntax for several types of numbers, including integers, ratios, and floating-point numbers.
+`"A text string"`:: Double quotes delimit text strings.
+`#\A`:: 'Hash-sign-backslash' denotes a text character. The intended character is denoted by a name. In the case of printable characters, the name of the character is the character itself.
+`#U+0020`:: 'Hash-sign-U-+' denotes a text character. The character is given in standard Unicode hexadecimal notation.
+`;`:: A semicolon denotes the start of a line comment. Bard ignores comments. A line comment ends at the next line break in the text.
+`\#|...|#`:: 'Hash-pipe' denotes the start of a block comment. The comment ends at the next 'Pipe-hash'.
+`'`:: A quote tells Bard not to evaluate the next expression it encounters, but instead to return the expression unchanged.
