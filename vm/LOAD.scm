@@ -20,9 +20,13 @@
 (define $bardvm-files
   (paths $bardvm-root 
          "version.scm"
+         "env.scm"
+         "opcodes.scm"
+         "instr.scm"
+         "method.scm"
          "read.scm"
-         "repl.scm"
          "bardvm.scm"
+         "repl.scm"
          ))
 
 
