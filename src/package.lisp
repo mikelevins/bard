@@ -6,8 +6,10 @@
 (DEFPACKAGE :bard.internal
   (:USE :CL)
   (:EXPORT
+   #:^
    #:begin
    #:bind
+   #:call
    #:define
    #:set!))
 

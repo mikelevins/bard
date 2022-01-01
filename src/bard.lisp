@@ -6,6 +6,12 @@
 ;;; toplevel special forms
 ;;; ---------------------------------------------------------------------
 
+(DEFMACRO ^ (&REST forms)
+  `(LAMBDA ,@forms))
+
+(DEFMACRO call (fn &REST args)
+  `(FUNCALL ,fn ,@args))
+
 (DEFMACRO begin (&REST forms)
   `(PROGN ,@forms))
 
