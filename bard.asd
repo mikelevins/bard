@@ -9,6 +9,6 @@
   :COMPONENTS ((:MODULE "src"
                 :SERIAL t
                 :COMPONENTS ((:FILE "package")
-                             (:FILE "bard")))))
+                             (:FILE "special")))))
 
 ;;; (ASDF:LOAD-SYSTEM :bard)

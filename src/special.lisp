@@ -1,4 +1,5 @@
 ;;;; bard.lisp
+;;;; special forms
 
 (IN-PACKAGE :bard.internal)
 
@@ -16,11 +17,14 @@
 (DEFMACRO ^ (&REST forms)
   `(LAMBDA ,@forms))
 
-(DEFMACRO begin (&REST forms)
-  `(PROGN ,@forms))
+(DEFMACRO and (&REST args)
+  `(AND ,@args))
 
 (DEFMACRO apply (fn arg &REST args)
   `(APPLY ,fn ,arg (LIST ,@args)))
+
+(DEFMACRO begin (&REST forms)
+  `(PROGN ,@forms))
 
 (DEFMACRO bind (bindings &BODY body)
   (IF (NULL bindings)
@@ -51,6 +55,12 @@
 
 (DEFMACRO method (&REST forms)
   `(LAMBDA ,@forms))
+
+(DEFMACRO not (arg)
+  `(NOT ,arg))
+
+(DEFMACRO or (&REST args)
+  `(OR ,@args))
 
 (DEFMACRO set! (place val)
   `(SETF ,place ,val))

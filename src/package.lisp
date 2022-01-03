@@ -7,6 +7,7 @@
   (:USE :CL)
   (:EXPORT
    #:^
+   #:and
    #:apply
    #:begin
    #:bind
@@ -16,6 +17,8 @@
    #:function
    #:if
    #:method
+   #:not
+   #:or
    #:set!
    #:true
    #:unless
