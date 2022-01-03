@@ -7,12 +7,15 @@
   (:USE :CL)
   (:EXPORT
    #:^
+   #:apply
    #:begin
    #:bind
    #:call
    #:define
    #:false
+   #:function
    #:if
+   #:method
    #:set!
    #:true
    #:unless

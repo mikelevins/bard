@@ -19,6 +19,9 @@
 (DEFMACRO begin (&REST forms)
   `(PROGN ,@forms))
 
+(DEFMACRO apply (fn arg &REST args)
+  `(APPLY ,fn ,arg (LIST ,@args)))
+
 (DEFMACRO bind (bindings &BODY body)
   (IF (NULL bindings)
       `(PROGN ,@body)
@@ -33,11 +36,21 @@
 (DEFMACRO call (fn &REST args)
   `(FUNCALL ,fn ,@args))
 
-(DEFMACRO define (name val)
-  `(DEFPARAMETER ,name ,val))
+(DEFMACRO define (name &REST args)
+  (IF (= 1 (LENGTH args))
+      `(DEFPARAMETER ,name ,(FIRST args))
+      (ERROR "Definition syntax error: ~S" `(define ,name ,@args))))
+
+(DEFMACRO function (prototype &REST body)
+  (LET* ((fname (FIRST prototype))
+         (args (REST prototype)))
+    `(DEFMETHOD ,fname ,args ,@body)))
 
 (DEFMACRO if (test &REST rest)
   `(IF ,test ,@rest))
+
+(DEFMACRO method (&REST forms)
+  `(LAMBDA ,@forms))
 
 (DEFMACRO set! (place val)
   `(SETF ,place ,val))
