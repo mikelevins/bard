@@ -11,7 +11,14 @@
    #:bind
    #:call
    #:define
-   #:set!))
+   #:false
+   #:if
+   #:set!
+   #:true
+   #:unless
+   #:when))
 
 (DEFPACKAGE :bard
   (:USE :CL :bard.internal))
+
+
