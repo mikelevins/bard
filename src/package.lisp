@@ -1,8 +1,5 @@
 ;;;; package.lisp
 
-(EVAL-WHEN (:COMPILE-TOPLEVEL :LOAD-TOPLEVEL :EXECUTE)
-  (SETF (READTABLE-CASE *READTABLE*) :PRESERVE))
-
 (DEFPACKAGE :bard.internal
   (:USE :CL)
   (:EXPORT
@@ -16,7 +13,6 @@
    #:false
    #:function
    #:if
-   #:method
    #:not
    #:or
    #:set!

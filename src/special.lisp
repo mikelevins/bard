@@ -53,9 +53,6 @@
 (DEFMACRO if (test &REST rest)
   `(IF ,test ,@rest))
 
-(DEFMACRO method (&REST forms)
-  `(LAMBDA ,@forms))
-
 (DEFMACRO not (arg)
   `(NOT ,arg))
 
