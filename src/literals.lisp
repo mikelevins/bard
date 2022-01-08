@@ -3,15 +3,15 @@
 
 (IN-PACKAGE :bard.internal)
 
-;;; vectors
+;;; lists
 ;;; ---------------------------------------------------------------------
-;;; enables us to write literal vectors like [1 2 3 [4 5] 6]
+;;; enables us to write literal lists like [1 2 3 [4 5] 6]
 
 (SET-MACRO-CHARACTER #\[
                      (^ (stream char)
                        (DECLARE (IGNORE char))
                        (LET ((elts (READ-DELIMITED-LIST #\] stream T)))
-                         ` (CL:VECTOR ,@elts))))
+                         ` (CL:LIST ,@elts))))
 
 (SET-MACRO-CHARACTER #\] (GET-MACRO-CHARACTER #\)))
 
