@@ -112,7 +112,7 @@
                    :entries (REMOVE-IF (^ (entry)(MEMBER (CAR entry) keys :TEST (OR test (key-test dict))))
                                        (entries dict)))))
 
-;;; (setf $d (dict 'equal :a 1 :b 2 :c 3 :d 4))
+;;; (SETF $d (dict 'EQUAL :a 1 :b 2 :c 3 :d 4))
 ;;; (select-keys $d '(:a :c))
 ;;; (select-complement-keys $d '(:a :c))
 
@@ -125,61 +125,60 @@
 ;;;------------------------------------------------------------------------------------------
 ;;; a mutable dict class that stores entries in an alist
 
-#|
-(defclass mutable-dict (dict)())
+(DEFCLASS mutable-dict (dict)())
 
 ;;; mutable dicts
 
-(defun mutable-dict (key-test &rest contents)
-  (let ((entries (loop for tail on contents by #'cddr
-                    collect (cons (first tail)(second tail)))))
-    (make-instance 'mutable-dict :key-test key-test :entries entries)))
+(DEFUN mutable-dict (key-test &REST contents)
+  (LET ((entries (LOOP FOR tail ON contents BY #'CDDR
+                    COLLECT (CONS (FIRST tail)(SECOND tail)))))
+    (MAKE-INSTANCE 'mutable-dict :key-test key-test :entries entries)))
 
-(defmethod mutable-dict? (thing) nil)
-(defmethod mutable-dict? ((dict mutable-dict)) t)
+(DEFMETHOD mutable-dict? (thing) NIL)
+(DEFMETHOD mutable-dict? ((dict mutable-dict)) T)
 
-(defmethod merge-into! ((left mutable-dict) (right dict))
-  (let ((key-test (key-test left)))
-    (loop for entry in (entries right)
-       do (let ((found-entry (assoc (car entry) (entries left) :test key-test)))
-            (if found-entry
-                (setf (cdr found-entry) (cdr entry))
-                (setf (entries left)
-                      (cons (cons (car entry)(cdr entry))
+(DEFMETHOD merge-into! ((left mutable-dict) (right dict))
+  (LET ((key-test (key-test left)))
+    (LOOP FOR entry IN (entries right)
+       DO (LET ((found-entry (ASSOC (CAR entry) (entries left) :TEST key-test)))
+            (IF found-entry
+                (SETF (CDR found-entry) (CDR entry))
+                (SETF (entries left)
+                      (CONS (CONS (CAR entry)(CDR entry))
                             (entries left))))))
     left))
 
-(defmethod remove-key! ((dict mutable-dict) key &key test &allow-other-keys)
-  (let ((found-entry (assoc key (entries dict) :test (key-test dict))))
-    (when found-entry
-      (let ((new-entries (remove key (entries dict) :test (key-test dict) :key 'car)))
-        (setf (entries dict) new-entries)))
+(DEFMETHOD remove-key! ((dict mutable-dict) key &KEY test &ALLOW-OTHER-KEYS)
+  (LET ((found-entry (ASSOC key (entries dict) :TEST (key-test dict))))
+    (WHEN found-entry
+      (LET ((new-entries (REMOVE key (entries dict) :TEST (key-test dict) :KEY 'CAR)))
+        (SETF (entries dict) new-entries)))
     dict))
 
-(defmethod set-key! ((dict mutable-dict) key value &key test &allow-other-keys)
-  (let ((already-entry (assoc key (entries dict) :test (or test (key-test dict)))))
-    (if already-entry
-        (setf (cdr already-entry) value)
-        (setf (entries dict)
-              (cons (cons key value)
+(DEFMETHOD set-key! ((dict mutable-dict) key value &KEY test &allow-other-keys)
+  (LET ((already-entry (ASSOC key (entries dict) :TEST (OR test (key-test dict)))))
+    (IF already-entry
+        (SETF (CDR already-entry) value)
+        (SETF (entries dict)
+              (CONS (CONS key value)
                     (entries dict))))
     dict))
-|#
-;;; (setf $dict1 (dict 'equal "name" "Fred" "age" 35))
+
+;;; (SETF $dict1 (dict 'EQUAL "name" "Fred" "age" 35))
 ;;; (all-keys $dict1)
 ;;; (all-values $dict1)
 ;;; (contains-key? $dict1 "names")
-;;; (contains-value? $dict1 "fred")
-;;; (setf $dict2 (copy-dict $dict1))
+;;; (contains-value? $dict1 "Fred")
+;;; (SETF $dict2 (copy-dict $dict1))
 ;;; (get-key $dict2 "name")
-;;; (get-key $dict2 "shape" :none)
-;;; (setf $dict3 (merge-dicts $dict1 (dict 'equal "name" "Barney")))
-;;; (setf $dict4 (put-key $dict1 "color" "orange"))
+;;; (get-key $dict2 "shape" :default :none)
+;;; (SETF $dict3 (merge-dicts $dict1 (dict 'equal "name" "Barney")))
+;;; (SETF $dict4 (put-key $dict1 "color" "orange"))
 ;;; (remove-key $dict4 "age")
-;;; (select-keys $dict4 (list "age" "color" "shape"))
-;;; (setf $dict5 (mutable-dict 'equal "name" "Fred" "age" 35))
+;;; (select-keys $dict4 (LIST "age" "color" "shape"))
+;;; (SETF $dict5 (mutable-dict 'EQUAL "name" "Fred" "age" 35))
 ;;; (all-keys $dict5)
-;;; (merge-into! $dict5 (dict 'equal "name" "Barney" "size" "small"))
+;;; (merge-into! $dict5 (dict 'EQUAL "name" "Barney" "size" "small"))
 ;;; (set-key! $dict5 "size" "little")
 ;;; (set-key! $dict5 "color" "brown")
 ;;; (remove-key! $dict5 "size")
