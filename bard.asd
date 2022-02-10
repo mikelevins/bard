@@ -1,19 +1,16 @@
 ;;;; bard.asd
 
-(EVAL-WHEN (:COMPILE-TOPLEVEL :LOAD-TOPLEVEL :EXECUTE)
-  (SETF (READTABLE-CASE *READTABLE*) :PRESERVE))
+(asdf:defsystem :bard
+  :description "bard 0.7"
+  :author "mikel evins <mikel@evins.net>"
+  :license  "specify license here"
+  :version "0.7.0"
+  :serial t
+  :components ((:module "src"
+                :serial t
+                :components ((:file "package")
+                             (:file "special")
+                             (:file "dict")
+                             (:file "literals")))))
 
-(ASDF:DEFSYSTEM :bard
-  :DESCRIPTION "Describe bard here"
-  :AUTHOR "Your Name <your.name@example.com>"
-  :LICENSE  "Specify license here"
-  :VERSION "0.0.1"
-  :SERIAL t
-  :COMPONENTS ((:MODULE "src"
-                :SERIAL t
-                :COMPONENTS ((:FILE "package")
-                             (:FILE "special")
-                             (:FILE "dict")
-                             (:FILE "literals")))))
-
-;;; (ASDF:LOAD-SYSTEM :bard)
+;;; (asdf:load-system :bard)
