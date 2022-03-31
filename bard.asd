@@ -6,6 +6,7 @@
   :license  "specify license here"
   :version "0.7.0"
   :serial t
+  :depends-on (:named-readtables)
   :components ((:module "src"
                 :serial t
                 :components ((:file "package")

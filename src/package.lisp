@@ -1,7 +1,7 @@
 ;;;; package.lisp
 
 (defpackage :bard.internal
-  (:use :cl)
+  (:use :cl :editor-hints.named-readtables)
   (:shadow))
 
 (defpackage :bard

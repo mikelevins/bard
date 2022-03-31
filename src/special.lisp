@@ -1,14 +1,15 @@
 ;;;; bard.lisp
 ;;;; special forms
 
-(IN-PACKAGE :bard.internal)
+(in-package :bard.internal)
+(in-readtable :modern)
 
 ;;; ---------------------------------------------------------------------
 ;;; special symbols
 ;;; ---------------------------------------------------------------------
 
 (DEFINE-SYMBOL-MACRO true T)
-(DEFINE-SYMBOL-MACRO false NIL)
+(DEFINE-SYMBOL-MACRO false ())
 
 ;;; ---------------------------------------------------------------------
 ;;; toplevel special forms
@@ -37,7 +38,10 @@
 (DEFMACRO define (name &REST args)
   (IF (= 1 (LENGTH args))
       `(DEFPARAMETER ,name ,(FIRST args))
-      (ERROR "Definition syntax error: ~S" `(define ,name ,@args))))
+      (ERROR "definition syntax error: ~s" `(define ,name ,@args))))
+
+(DEFMACRO if (test conseq &OPTIONAL (alt NIL))
+  `(IF ,test ,conseq ,alt))
 
 (DEFMACRO set! (place val)
   `(SETF ,place ,val))
