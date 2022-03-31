@@ -51,13 +51,14 @@
                  :key-test (key-test dict)
                  :entries (COPY-TREE (entries dict))))
 
+
+(DEFUN dict (key-test &REST contents)
+  (LET ((entries (LOOP FOR tail ON contents BY #'CDDR
+                    COLLECT (CONS (FIRST tail)(SECOND tail)))))
+    (MAKE-INSTANCE 'dict :key-test key-test :entries entries)))
+
 ;;; !!! Case conversion needed below
 #|
-
-(defun dict (key-test &rest contents)
-  (let ((entries (loop for tail on contents by #'cddr
-                    collect (cons (first tail)(second tail)))))
-    (make-instance 'dict :key-test key-test :entries entries)))
 
 (defmethod dict? (thing) nil)
 (defmethod dict? ((thing dict)) t)
