@@ -25,31 +25,34 @@
             (FORMAT stream " ~s ~s" (CAR entry)(CDR entry))))
     (FORMAT stream "}")))
 
+;;; common dict protocol
+
+(DEFMETHOD all-keys ((dict dict) &KEY &ALLOW-OTHER-KEYS)
+  (MAPCAR 'CAR (entries dict)))
+
+(DEFMETHOD all-values ((dict dict) &KEY &ALLOW-OTHER-KEYS)
+  (MAPCAR 'CDR (entries dict)))
+
+
+(DEFMETHOD contains-key? ((dict dict) key)
+  (IF (ASSOC key (entries dict) :TEST (key-test dict))
+      T
+      NIL))
+
+
+(DEFMETHOD contains-value? ((dict dict) value &KEY (test 'EQUAL))
+  (AND (FIND-IF (^ (e)(call test value (CDR e)))
+                (entries dict))
+       T))
+
+
+(DEFMETHOD copy-dict ((dict dict))
+  (MAKE-INSTANCE 'dict
+                 :key-test (key-test dict)
+                 :entries (COPY-TREE (entries dict))))
+
 ;;; !!! Case conversion needed below
 #|
-
-
-;;; common dict protocol
-(defmethod all-keys ((dict dict) &key &allow-other-keys)
-  (mapcar 'car (entries dict)))
-
-(defmethod all-values ((dict dict) &key &allow-other-keys)
-  (mapcar 'cdr (entries dict)))
-
-(defmethod contains-key? ((dict dict) key)
-  (if (assoc key (entries dict) :test (key-test dict))
-      t
-      nil))
-
-(defmethod contains-value? ((dict dict) value &key (test 'equal))
-  (and (find-if (^ (e)(call test value (cdr e)))
-                (entries dict))
-       t))
-
-(defmethod copy-dict ((dict dict))
-  (make-instance 'dict
-                 :key-test (key-test dict)
-                 :entries (copy-tree (entries dict))))
 
 (defun dict (key-test &rest contents)
   (let ((entries (loop for tail on contents by #'cddr
