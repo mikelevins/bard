@@ -1,28 +1,33 @@
 ;;;; dict.lisp
 ;;;; literal syntax for dictionary structures
 
-(in-package :bard.internal)
+(IN-PACKAGE :BARD.INTERNAL)
+(IN-READTABLE :MODERN)
 
 ;;;------------------------------------------------------------------------------------------
 ;;; class dict
 ;;;------------------------------------------------------------------------------------------
 ;;; an immutable dict class that stores entries in an alist
 
-(defclass dict ()
-  ((key-test :accessor key-test :initform 'equal :initarg :key-test)
-   (entries :accessor entries :initform nil :initarg :entries)))
+(DEFCLASS dict ()
+  ((key-test :ACCESSOR key-test :INITFORM 'EQUAL :INITARG :key-test)
+   (entries :ACCESSOR entries :INITFORM NIL :INITARG :entries)))
 
-(defmethod print-object ((dict dict) stream)
-  (let* ((entries (entries dict))
-         (first-entry (first entries))
-         (rest-entries (rest entries)))
-    (format stream "{")
-    (when first-entry
-      (format stream "~s ~s" (car first-entry)(cdr first-entry)))
-    (loop for entry in rest-entries
-       do (let ((*print-pretty* nil))
-            (format stream " ~s ~s" (car entry)(cdr entry))))
-    (format stream "}")))
+(DEFMETHOD PRINT-OBJECT ((dict dict) stream)
+  (LET* ((entries (entries dict))
+         (first-entry (FIRST entries))
+         (rest-entries (REST entries)))
+    (FORMAT stream "{")
+    (WHEN first-entry
+      (FORMAT stream "~s ~s" (CAR first-entry)(CDR first-entry)))
+    (LOOP FOR entry IN rest-entries
+       DO (LET ((*PRINT-PRETTY* NIL))
+            (FORMAT stream " ~s ~s" (CAR entry)(CDR entry))))
+    (FORMAT stream "}")))
+
+;;; !!! Case conversion needed below
+#|
+
 
 ;;; common dict protocol
 (defmethod all-keys ((dict dict) &key &allow-other-keys)
@@ -163,6 +168,9 @@
               (cons (cons key value)
                     (entries dict))))
     dict))
+
+|#
+
 
 ;;; (setf $dict1 (dict 'equal "name" "fred" "age" 35))
 ;;; (all-keys $dict1)

@@ -1,10 +1,10 @@
 ;;;; package.lisp
 
-(defpackage :bard.internal
-  (:use :cl :editor-hints.named-readtables)
-  (:shadow))
+(DEFPACKAGE :BARD.INTERNAL
+  (:USE :CL :EDITOR-HINTS.NAMED-READTABLES)
+  (:SHADOW))
 
-(defpackage :bard
-  (:use :cl :bard.internal))
+(DEFPACKAGE :BARD
+  (:USE :CL :BARD.INTERNAL))
 
 
