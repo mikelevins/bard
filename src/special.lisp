@@ -1,7 +1,7 @@
 ;;;; bard.lisp
 ;;;; special forms
 
-(IN-PACKAGE :bard.internal)
+(IN-PACKAGE :BARD.INTERNAL)
 (IN-READTABLE :MODERN)
 
 ;;; ---------------------------------------------------------------------

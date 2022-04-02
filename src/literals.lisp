@@ -1,7 +1,7 @@
 ;;;; bard.lisp
 ;;;; literal syntax for data structures
 
-(IN-PACKAGE :bard.internal)
+(IN-PACKAGE :BARD.INTERNAL)
 (IN-READTABLE :MODERN)
 
 ;;; lists

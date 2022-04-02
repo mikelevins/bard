@@ -12,7 +12,7 @@
                 :COMPONENTS ((:FILE "package")
                              (:FILE "special")
                              (:FILE "dict")
-                             ;;(:FILE "literals")
+                             (:FILE "literals")
                              ))))
 
 ;;; (ASDF:LOAD-SYSTEM :bard)
