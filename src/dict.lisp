@@ -134,16 +134,17 @@
                    :key-test test
                    :entries new-entries)))
 
-;;; converting case below
-#|
-
-;;; (setf $d (dict 'equal :a 1 :b 2 :c 3 :d 4))
+;;; (SETF $d (dict 'EQUAL :a 1 :b 2 :c 3 :d 4))
 ;;; (select-keys $d '(:a :c))
 ;;; (select-complement-keys $d '(:a :c))
 
 ;;; immutable dicts
-(defmethod immutable-dict? (thing) nil)
-(defmethod immutable-dict? ((thing dict)) t) 
+(DEFMETHOD immutable-dict? (thing) NIL)
+(DEFMETHOD immutable-dict? ((thing dict)) T) 
+
+;;; converting case below
+#|
+
 
 ;;;------------------------------------------------------------------------------------------
 ;;; class mutable-dict

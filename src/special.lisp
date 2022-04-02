@@ -1,8 +1,8 @@
 ;;;; bard.lisp
 ;;;; special forms
 
-(in-package :bard.internal)
-(in-readtable :modern)
+(IN-PACKAGE :bard.internal)
+(IN-READTABLE :MODERN)
 
 ;;; ---------------------------------------------------------------------
 ;;; special symbols
