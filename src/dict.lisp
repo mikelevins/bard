@@ -158,4 +158,5 @@
 ;;; (set! $dict5 (put-key $dict4 :shape "square"))
 ;;; (remove-key $dict5 :age)
 ;;; (select-keys $dict5 (LIST :name :age))
-;; (select-complement-keys $dict5 (LIST :name :age))
+;;; (select-complement-keys $dict5 (LIST :name :age))
+;;; (immutable-dict? $dict5)
