@@ -4,6 +4,7 @@
 (IN-PACKAGE :BARD.INTERNAL)
 (IN-READTABLE :MODERN)
 
+
 ;;;------------------------------------------------------------------------------------------
 ;;; class dict
 ;;;------------------------------------------------------------------------------------------
@@ -57,69 +58,84 @@
                     COLLECT (CONS (FIRST tail)(SECOND tail)))))
     (MAKE-INSTANCE 'dict :key-test key-test :entries entries)))
 
-;;; !!! Case conversion needed below
-#|
 
-(defmethod dict? (thing) nil)
-(defmethod dict? ((thing dict)) t)
 
-(defmethod empty? ((dict dict) &key &allow-other-keys)
-  (null (entries dict)))
+(DEFMETHOD dict? (thing) NIL)
+(DEFMETHOD dict? ((thing dict)) T)
 
-(defmethod get-key ((dict dict) key &key (default nil))
-  (let ((entry (assoc key (entries dict) :test (key-test dict))))
-    (if entry
-        (cdr entry)
+
+(DEFMETHOD empty? ((dict dict) &KEY &ALLOW-OTHER-KEYS)
+  (NULL (entries dict)))
+
+(DEFMETHOD get-key ((dict dict) key &KEY (default NIL))
+  (LET ((entry (ASSOC key (entries dict) :TEST (key-test dict))))
+    (IF entry
+        (CDR entry)
         default)))
 
-(defmethod merge-dicts ((left dict) (right dict))
-  (let* ((key-test (key-test left))
+(DEFMETHOD merge-dicts ((left dict) (right dict))
+  (LET* ((key-test (key-test left))
          (left-entries (entries left))
          (right-entries (entries right))
-         (new-entries (copy-tree left-entries)))
-    (loop for e in right-entries
-       do (let ((already-entry (assoc (car e) new-entries :test key-test)))
-            (if already-entry
-                (setf (cdr already-entry)
-                      (cdr e))
-                (setf new-entries
-                      (cons (cons (car e)
-                                  (cdr e))
+         (new-entries (COPY-TREE left-entries)))
+    (LOOP FOR e IN right-entries
+       DO (LET ((already-entry (ASSOC (CAR e) new-entries :TEST key-test)))
+            (IF already-entry
+                (SETF (CDR already-entry)
+                      (CDR e))
+                (SETF new-entries
+                      (CONS (CONS (CAR e)
+                                  (CDR e))
                             new-entries)))))
-    (make-instance 'dict :key-test key-test :entries new-entries)))
+    (MAKE-INSTANCE 'dict :key-test key-test :entries new-entries)))
 
-(defmethod put-key ((dict dict) key value &key (test 'equal) (default nil))
-  (let* ((already-entry (assoc key (entries dict) :test (key-test dict)))
-         (new-entry (cons key value))
-         (new-entries (if already-entry
-                          (remove key (entries dict) :test (key-test dict) :key 'car)
+(DEFMETHOD put-key ((dict dict) key value &KEY (test 'EQUAL) (default NIL))
+  (LET* ((already-entry (ASSOC key (entries dict) :TEST (key-test dict)))
+         (new-entry (CONS key value))
+         (new-entries (IF already-entry
+                          (REMOVE key (entries dict) :TEST (key-test dict) :KEY 'CAR)
                           (entries dict))))
-    (make-instance 'dict
+    (MAKE-INSTANCE 'dict
           :key-test (key-test dict)
-          :entries (cons new-entry new-entries))))
+          :entries (CONS new-entry new-entries))))
 
-(defmethod remove-key ((dict dict) key &key test &allow-other-keys)
-  (let* ((found-entry (assoc key (entries dict) :test (key-test dict)))
-         (new-entries (if found-entry
-                          (remove key (entries dict) :test (key-test dict) :key 'car)
+(DEFMETHOD remove-key ((dict dict) key &KEY test &ALLOW-OTHER-KEYS)
+  (LET* ((found-entry (ASSOC key (entries dict) :TEST (key-test dict)))
+         (new-entries (IF found-entry
+                          (REMOVE key (entries dict) :TEST (key-test dict) :KEY 'CAR)
                           (entries dict))))
-    (make-instance 'dict
+    (MAKE-INSTANCE 'dict
           :key-test (key-test dict)
           :entries new-entries)))
 
-(defmethod select-keys ((dict dict) keys &key test &allow-other-keys)
-  (let ((key-test (key-test dict)))
-    (make-instance 'dict
-          :key-test key-test
-          :entries (remove-if-not (^ (entry)(member (car entry) keys :test (or test (key-test dict))))
-                                  (entries dict)))))
 
-(defmethod select-complement-keys ((dict dict) keys &key test &allow-other-keys)
-  (let ((key-test (key-test dict)))
-    (make-instance 'dict
-                   :key-test key-test
-                   :entries (remove-if (^ (entry)(member (car entry) keys :test (or test (key-test dict))))
-                                       (entries dict)))))
+(DEFMETHOD select-keys ((dict dict) keys &KEY test &ALLOW-OTHER-KEYS)
+  (LET* ((key-test (key-test dict))
+         (old-entries (entries dict))
+         (new-entries (REMOVE-IF-NOT (LAMBDA (entry)(MEMBER (CAR entry) keys :TEST key-test))
+                                     old-entries)))
+    (MAKE-INSTANCE 'dict
+                   :key-test test
+                   :entries new-entries)))
+
+#+NIL (define $fred
+          (MAKE-INSTANCE 'dict
+                         :key-test 'EQUAL
+                         :entries '((:name . "Fred")(:age . 35)(:shape . :square)
+                                    (:color . :orange))))
+
+
+(DEFMETHOD select-complement-keys ((dict dict) keys &KEY test &ALLOW-OTHER-KEYS)
+  (LET* ((key-test (key-test dict))
+         (old-entries (entries dict))
+         (new-entries (REMOVE-IF (LAMBDA (entry)(MEMBER (CAR entry) keys :TEST key-test))
+                                 old-entries)))
+    (MAKE-INSTANCE 'dict
+                   :key-test test
+                   :entries new-entries)))
+
+;;; converting case below
+#|
 
 ;;; (setf $d (dict 'equal :a 1 :b 2 :c 3 :d 4))
 ;;; (select-keys $d '(:a :c))
@@ -173,6 +189,7 @@
                     (entries dict))))
     dict))
 
+;;; done converting case
 |#
 
 

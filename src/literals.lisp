@@ -2,6 +2,7 @@
 ;;;; literal syntax for data structures
 
 (IN-PACKAGE :bard.internal)
+(IN-READTABLE :MODERN)
 
 ;;; lists
 ;;; ---------------------------------------------------------------------
