@@ -1,5 +1,9 @@
 ;;;; bard.asd
 
+(REQUIRE :ASDF)
+
+#+ECL (EXT:INSTALL-BYTECODES-COMPILER)
+
 (ASDF:DEFSYSTEM :bard
   :DESCRIPTION "bard 0.7"
   :AUTHOR "mikel evins <mikel@evins.net>"
