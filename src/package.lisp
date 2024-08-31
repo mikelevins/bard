@@ -1,10 +1,17 @@
-;;;; package.lisp
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          package.lisp
+;;;; Project:       the bard programming language
+;;;; Purpose:       package definitions
+;;;; Author:        mikel evins
+;;;; Copyright:     2024 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
-(DEFPACKAGE :BARD.INTERNAL
-  (:USE :CL :EDITOR-HINTS.NAMED-READTABLES)
-  (:SHADOW))
+(in-package :cl-user)
 
-(DEFPACKAGE :BARD
-  (:USE :CL :BARD.INTERNAL))
+(defpackage :bard.internal
+  (:use :cl)
+  (:shadow cl:read-from-string))
 
 

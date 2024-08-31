@@ -1,22 +1,28 @@
-;;;; bard.asd
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          bard.asd
+;;;; Project:       the bard programming language
+;;;; Purpose:       system definition
+;;;; Author:        mikel evins
+;;;; Copyright:     2024 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
-(REQUIRE :ASDF)
+(in-package :cl-user)
 
-#+ECL (EXT:INSTALL-BYTECODES-COMPILER)
+(require :asdf)
 
-(ASDF:DEFSYSTEM :bard
-  :DESCRIPTION "bard 0.7"
-  :AUTHOR "mikel evins <mikel@evins.net>"
-  :LICENSE  "specify license here"
-  :VERSION "0.7.0"
-  :SERIAL t
-  :DEPENDS-ON (:NAMED-READTABLES)
-  :COMPONENTS ((:MODULE "src"
-                :SERIAL T
-                :COMPONENTS ((:FILE "package")
-                             (:FILE "special")
-                             (:FILE "dict")
-                             (:FILE "literals")
-                             ))))
+(asdf:defsystem :bard
+  :description "bard 0.7"
+  :author "mikel evins <mikel@evins.net>"
+  :license  "specify license here"
+  :version (:read-file-form "version.lisp")
+  :serial t
+  :depends-on ()
+  :components ((:module "src"
+                        :serial t
+                        :components ((:file "package")
+                                     (:file "base-data")
+                                     (:file "reader")))))
 
-;;; (ASDF:LOAD-SYSTEM :bard)
+;;; (asdf:load-system :bard)
