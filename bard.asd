@@ -18,11 +18,12 @@
   :license  "specify license here"
   :version (:read-file-form "version.lisp")
   :serial t
-  :depends-on ()
+  :depends-on (eclector)
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
                                      (:file "base-data")
-                                     (:file "reader")))))
+                                     (:file "reader")
+                                     (:file "printer")))))
 
 ;;; (asdf:load-system :bard)
