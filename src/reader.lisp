@@ -8,23 +8,27 @@
 ;;;;
 ;;;; ***********************************************************************
 
-(in-package :bard.internal)
+(in-package :bard)
 
 ;;; ---------------------------------------------------------------------
 ;;; ABOUT
 ;;; ---------------------------------------------------------------------
 ;;; the bard reader converts text to bard data representations.
 
-(defmethod read-from-string ((str string) &optional (eof-error-p t) eof-value
-                             &key (start 0) end preserve-whitespace)
-  (eclector.reader:read-from-string str eof-error-p eof-value
-                                    :start start
-                                    :end end
-                                    :preserve-whitespace preserve-whitespace))
 
-#+nil (bard.internal::read-from-string "")
-#+nil (read-from-string "Foo")
-#+nil (read-from-string "(cons :Foo Bar)")
-#+nil (read-from-string "Foo:Bar")
-#+nil (read-from-string "::")
-#+nil (describe (read-from-string "Foo"))
+(defparameter *bard-readtable*
+  (let ((rt (copy-readtable cl:*readtable*)))
+    (setf (readtable-case rt) :preserve)
+    rt))
+
+#+nil (describe *bard-readtable*)
+#+nil (let ((*readtable* *bard-readtable*))
+        (read-from-string "Foo"))
+#+nil (let ((*readtable* *bard-readtable*))
+        (read-from-string "(cons :Foo Bar)"))
+#+nil (let ((*readtable* *bard-readtable*))
+        (read-from-string "Foo:Bar"))
+#+nil (let ((*readtable* *bard-readtable*))
+        (read-from-string "::"))
+#+nil (let ((*readtable* *bard-readtable*))
+        (describe (read-from-string "Foo")))

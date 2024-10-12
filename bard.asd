@@ -18,7 +18,7 @@
   :license  "specify license here"
   :version (:read-file-form "version.lisp")
   :serial t
-  :depends-on (:eclector)
+  :depends-on ()
   :components ((:module "src"
                         :serial t
                         :components ((:file "package")
