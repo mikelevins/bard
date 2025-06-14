@@ -10,6 +10,11 @@
 
 (in-package :bard)
 
+;;; conditions
+
+(define-condition exitvm (condition)
+  ((vm :initarg vm :reader vm)))
+
 ;;; Instructions
 
 (defstruct (instr (:type vector))
@@ -70,15 +75,23 @@
    (nargs :accessor vm-nargs :initform 0)
    (instr :accessor vm-instr :initform nil)))
 
+(defmethod stepvm ((vm vm))
+  (with-slots (code pc env stack nargs instr) vm
+    (progn (setf instr (elt code pc))
+           (incf pc)
+           (let ((bc (instr-bytecode instr)))
+             (cond ((eql HALT bc)(signal 'exitvm)))
+             (cond ((eql CONST bc)(push (first (instr-args instr))
+                                        stack)))))))
+
 (defmethod runvm ((vm vm))
   (with-slots (code pc env stack nargs instr) vm
-    (loop
-      (setf instr (elt code pc))
-      (incf pc)
-      (let ((bc (instr-bytecode instr)))
-        (cond ((eql HALT bc)(return-from runvm (top stack))))))))
+    (handler-case (loop (stepvm vm))
+      (exitvm (c) (top stack)))))
 
 #+repl (defparameter $vm (make-instance 'vm))
 #+repl (describe $vm)
-#+repl (setf (vm-code $vm) (vector (instr HALT 0)))
 #+repl (runvm $vm)
+#+repl (stepvm $vm)
+#+repl (setf (vm-code $vm) (vector (instr HALT 0)))
+#+repl (setf (vm-code $vm) (vector (instr CONST 1 5)(instr HALT 0)))
