@@ -24,6 +24,7 @@
                         :components ((:file "package")
                                      (:file "base-data")
                                      (:file "reader")
-                                     (:file "printer")))))
+                                     (:file "printer")
+                                     (:file "vm")))))
 
 #+repl (asdf:load-system :bard)
