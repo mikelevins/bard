@@ -19,11 +19,10 @@
 
 (defstruct (instr (:type vector))
   (bytecode 0)
-  (nargs 0)
   (args nil))
 
-(defun instr (bc nargs &rest args)
-  (make-instr :bytecode bc :nargs nargs :args args))
+(defun instr (bc &rest args)
+  (make-instr :bytecode bc :args args))
 
 (defmacro defbytecode (name bytecode)
   `(progn (defparameter ,name ,bytecode)
@@ -94,4 +93,4 @@
 #+repl (runvm $vm)
 #+repl (stepvm $vm)
 #+repl (setf (vm-code $vm) (vector (instr HALT 0)))
-#+repl (setf (vm-code $vm) (vector (instr CONST 1 5)(instr HALT 0)))
+#+repl (setf (vm-code $vm) (vector (instr CONST 5)(instr HALT)))
