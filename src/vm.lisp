@@ -17,16 +17,23 @@
 
 ;;; Instructions
 
-(defstruct (instr (:type vector))
+(defmethod print-object ((instr instr) stream)
+  (format stream "[~S ~{~S ~}]"
+          (bytecode->opcode (instr-bytecode instr))
+          (instr-args instr)))
+
+(defstruct (instr)
   (bytecode 0)
   (args nil))
 
 (defun instr (bc &rest args)
   (make-instr :bytecode bc :args args))
 
+#+repl (instr HALT)
+
 (defmacro defbytecode (name bytecode)
   `(progn (defparameter ,name ,bytecode)
-          (defmethod bytecode->opcode ((b (eql ,bytecode))) ,name)))
+          (defmethod bytecode->opcode ((b (eql ,bytecode))) ',name)))
 
 (defbytecode HALT 0) ; (bytecode->opcode HALT)
 (defbytecode LVAR 1) ; (bytecode->opcode LVAR)
@@ -47,7 +54,6 @@
 (defbytecode PRIM 16)
 (defbytecode SETCC 17)
 (defbytecode CC 18)
-
 
 ;;; functions
 
