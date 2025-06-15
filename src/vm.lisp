@@ -100,8 +100,12 @@
     (progn (setf instr (elt code pc))
            (incf pc)
            (let ((bc (instr-bytecode instr)))
-             ;; nullary ops
+             ;; machine control
              (cond ((eql HALT bc)(signal 'exitvm)))
+             ;; branching
+             (cond ((eql JUMP bc)(setf pc (first (instr-args instr)))))
+             (cond ((eql FJUMP bc)(when (null (pop stack))(setf pc (first (instr-args instr))))))
+             (cond ((eql TJUMP bc)(when (pop stack)(setf pc (first (instr-args instr))))))
              ;; constant ops
              (cond ((eql VNIL bc)(push nil stack)))             
              (cond ((eql VT bc)(push t stack)))             
@@ -140,3 +144,4 @@
 #+repl (vmload $vm (vector (instr TWO)(instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 2)(instr CONST 3)(instr ADD)(instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 5)(instr CONST 2)(instr SUB)(instr HALT)))
+#+repl (vmload $vm (vector (instr VNIL)(instr FJUMP 3)(instr CONST 101)(instr HALT)))
