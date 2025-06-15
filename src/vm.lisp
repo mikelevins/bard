@@ -57,6 +57,7 @@
 (defbytecode SETCC 19)
 (defbytecode CC 20)
 (defbytecode ADD 21)
+(defbytecode SUB 22)
 
 ;;; functions
 
@@ -83,17 +84,30 @@
    (nargs :accessor vm-nargs :initform 0)
    (instr :accessor vm-instr :initform nil)))
 
+(defmethod vmload ((vm vm)(code vector))
+  (setf (vm-code vm) code
+        (vm-pc vm) 0))
+
 (defmethod stepvm ((vm vm))
   (with-slots (code pc env stack nargs instr) vm
     (progn (setf instr (elt code pc))
            (incf pc)
            (let ((bc (instr-bytecode instr)))
+             ;; nullary ops
              (cond ((eql HALT bc)(signal 'exitvm)))
+             ;; unary ops
              (cond ((eql CONST bc)(push (first (instr-args instr))
                                         stack)))
-             (cond ((eql ADD bc)(let ((arg1 (pop stack))
-                                      (arg2 (pop stack)))
-                                  (push (+ arg1 arg2)
+             ;; binary ops
+             (cond ((eql ADD bc)(let ((args nil))
+                                  (push (pop stack) args)
+                                  (push (pop stack) args)
+                                  (push (apply '+ args)
+                                        stack))))
+             (cond ((eql SUB bc)(let ((args nil))
+                                  (push (pop stack) args)
+                                  (push (pop stack) args)
+                                  (push (apply '- args)
                                         stack))))))))
 
 (defmethod runvm ((vm vm))
@@ -105,6 +119,7 @@
 #+repl (describe $vm)
 #+repl (runvm $vm)
 #+repl (stepvm $vm)
-#+repl (setf (vm-code $vm) (vector (instr HALT 0)))
-#+repl (setf (vm-code $vm) (vector (instr CONST 5)(instr HALT)))
-#+repl (setf (vm-code $vm) (vector (instr CONST 2)(instr CONST 3)(instr ADD)(instr HALT)))
+#+repl (vmload $vm (vector (instr HALT 0)))
+#+repl (vmload $vm (vector (instr CONST 5)(instr HALT)))
+#+repl (vmload $vm (vector (instr CONST 2)(instr CONST 3)(instr ADD)(instr HALT)))
+#+repl (vmload $vm (vector (instr CONST 5)(instr CONST 2)(instr SUB)(instr HALT)))
