@@ -56,8 +56,12 @@
 (defbytecode PRIM 18)
 (defbytecode SETCC 19)
 (defbytecode CC 20)
-(defbytecode ADD 21)
-(defbytecode SUB 22)
+(defbytecode -ONE 21)
+(defbytecode ZERO 22)
+(defbytecode ONE 23)
+(defbytecode TWO 22)
+(defbytecode ADD 23)
+(defbytecode SUB 24)
 
 ;;; functions
 
@@ -84,9 +88,12 @@
    (nargs :accessor vm-nargs :initform 0)
    (instr :accessor vm-instr :initform nil)))
 
+(defmethod vmreset ((vm vm))
+  (setf (vm-pc vm) 0))
+
 (defmethod vmload ((vm vm)(code vector))
-  (setf (vm-code vm) code
-        (vm-pc vm) 0))
+  (setf (vm-code vm) code)
+  (vmreset vm))
 
 (defmethod stepvm ((vm vm))
   (with-slots (code pc env stack nargs instr) vm
@@ -95,6 +102,13 @@
            (let ((bc (instr-bytecode instr)))
              ;; nullary ops
              (cond ((eql HALT bc)(signal 'exitvm)))
+             ;; constant ops
+             (cond ((eql VNIL bc)(push nil stack)))             
+             (cond ((eql VT bc)(push t stack)))             
+             (cond ((eql -ONE bc)(push -1 stack)))             
+             (cond ((eql ZERO bc)(push 0 stack)))             
+             (cond ((eql ONE bc)(push 1 stack)))             
+             (cond ((eql TWO bc)(push 2 stack)))             
              ;; unary ops
              (cond ((eql CONST bc)(push (first (instr-args instr))
                                         stack)))
@@ -119,7 +133,10 @@
 #+repl (describe $vm)
 #+repl (runvm $vm)
 #+repl (stepvm $vm)
-#+repl (vmload $vm (vector (instr HALT 0)))
+#+repl (vmreset $vm)
+#+repl (vmload $vm (vector (instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 5)(instr HALT)))
+#+repl (vmload $vm (vector (instr -ONE)(instr HALT)))
+#+repl (vmload $vm (vector (instr TWO)(instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 2)(instr CONST 3)(instr ADD)(instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 5)(instr CONST 2)(instr SUB)(instr HALT)))
