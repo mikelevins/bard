@@ -45,8 +45,8 @@
 (defbytecode VT 3) 
 (defbytecode LREF 4) 
 (defbytecode LSET 5)
-(defbytecode GREF 6)
-(defbytecode GSET 7)
+(defbytecode NSREF 6)
+(defbytecode NSSET 7)
 (defbytecode VPOP 8)
 (defbytecode CONST 9)
 (defbytecode JUMP 10)
@@ -102,7 +102,6 @@
    (nargs :accessor vm-nargs :initform 0)
    (instr :accessor vm-instr :initform nil)))
 
-
 (defmethod vm-show-globals ((vm vm) &key (stream *standard-output*))
   (let ((globals (vm-globals vm)))
     (format stream "~%globals:")
@@ -143,8 +142,8 @@
              (cond ((eql VPOP bc)(pop stack)))
              (cond ((eql VPRINTLN bc)(format t "~%~S" (pop stack))))
              ;; globals
-             (cond ((eql GREF bc)(push (vm-gref vm (pop stack)) stack)))
-             (cond ((eql GSET bc)(let ((args nil))
+             (cond ((eql NSREF bc)(push (vm-gref vm (pop stack)) stack)))
+             (cond ((eql NSSET bc)(let ((args nil))
                                    (push (pop stack) args)
                                    (push (pop stack) args)
                                    (apply 'vm-gset! vm args))))
@@ -212,26 +211,28 @@
 #+repl (vmload $vm (vector (instr CONST 2)(instr CONST 3)(instr ADD)(instr HALT)))
 #+repl (vmload $vm (vector (instr CONST 5)(instr CONST 2)(instr SUB)(instr HALT)))
 #+repl (vmload $vm (vector (instr VNIL)(instr FJUMP 3)(instr CONST 101)(instr HALT)))
+;;; count down from some number
 #+repl (vmload $vm (vector (instr CONST 'X)   ; 0
-                           (instr CONST 10000)  ; 1
-                           (instr GSET)       ; 2
+                           (instr CONST 20000)  ; 1
+                           (instr NSSET)       ; 2
                            (instr CONST 'X)   ; 3
-                           (instr GREF)       ; 4
+                           (instr NSREF)       ; 4
                            (instr ZERO)       ; 5
                            (instr VEQL)       ; 6
                            (instr TJUMP 18)   ; 7
                            (instr CONST 'X)   ; 8
-                           (instr GREF)       ; 9                           
+                           (instr NSREF)       ; 9                           
                            (instr VPRINTLN)   ; 10                           
                            (instr VPOP)       ; 11
                            (instr CONST 'X)   ; 12
                            (instr CONST 'X)   ; 13
-                           (instr GREF)       ; 14
+                           (instr NSREF)       ; 14
                            (instr DEC1)       ; 15
-                           (instr GSET)       ; 16
+                           (instr NSSET)       ; 16
                            (instr JUMP 3)     ; 17
                            (instr HALT)))
 
 #+repl (defparameter $vm (make-instance 'vm))
 #+repl (time (runvm $vm))
-#+repl (time (loop for i from 10000 above 0 do (format t "~%~S" i)))
+#+repl (time (loop for i from 20000 above 0 do (format t "~%~S" i)))
+
