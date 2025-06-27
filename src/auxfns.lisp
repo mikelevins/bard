@@ -5,8 +5,8 @@
 ;;;; Purpose:       auxiliary functions
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2025 by mikel evins
-:;;; Code from Paradigms of AI Programming
-:;;; Copyright (c) 1991 Peter Norvig
+;;;; Code from Paradigms of AI Programming
+;;;; Copyright (c) 1991 Peter Norvig
 ;;;;
 ;;;; ***********************************************************************
 

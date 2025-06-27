@@ -6,29 +6,6 @@
 
 (in-package :bard)
 
-#+superseded
-(defun interp (x &optional env)
-  "Interpret (evaluate) the expression x in the environment env."
-  (cond
-    ((symbolp x) (get-var x env))
-    ((atom x) x)
-    ((case (first x)
-       (QUOTE  (second x))
-       (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
-                              (rest x))))
-       (SET!   (set-var! (second x) (interp (third x) env) env))
-       (IF     (if (interp (second x) env)
-                   (interp (third x) env)
-                   (interp (fourth x) env)))
-       (LAMBDA (let ((parms (second x))
-                     (code (maybe-add 'begin (rest2 x))))
-                 #'(lambda (&rest args)
-                     (interp code (extend-env parms args env)))))
-       (t      ;; a procedure application
-               (apply (interp (first x) env)
-                      (mapcar #'(lambda (v) (interp v env))
-                              (rest x))))))))
-
 (defun set-var! (var val env)
   "Set a variable to a value, in the given or global environment."
   (if (assoc var env)
