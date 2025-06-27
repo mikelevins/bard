@@ -5,7 +5,7 @@
 
 (in-package :bard)
 
-;;;; File compopt.lisp:  Optimizers for Scheme compiler (compile3.lisp).
+;;;; File compopt.lisp:  Optimizers for Bard compiler (compile3.lisp).
 
 (def-optimizer (:LABEL) (instr code all-code)
   ;; ... L ... => ... ... ;if no reference to L

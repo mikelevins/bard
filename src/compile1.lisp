@@ -2,7 +2,7 @@
 ;;; Code from Paradigms of Artificial Intelligence Programming
 ;;; Copyright (c) 1991 Peter Norvig
 
-;;;; File compile1.lisp: Simplest version of Scheme compiler
+;;;; File compile1.lisp: Simplest version of Bard compiler
 
 
 (in-package :bard)
@@ -12,7 +12,7 @@
   (cond
     ((symbolp x) (gen-var x env))
     ((atom x) (gen 'CONST x))
-    ((scheme-macro (first x)) (comp (scheme-macro-expand x) env))
+    ((bard-macro (first x)) (comp (bard-macro-expand x) env))
     ((case (first x)
        (QUOTE  (gen 'CONST (second x)))
        (BEGIN  (comp-begin (rest x) env))
@@ -56,7 +56,7 @@
   (assert (and (listp args) (every #'symbolp args)) ()
           "Lambda arglist must be a list of symbols, not ~a" args)
   ;; For now, no &rest parameters.
-  ;; The next version will support Scheme's version of &rest
+  ;; The next version will support Bard's version of &rest
   (make-fn
     :env env :args args
     :code (seq (gen 'ARGS (length args))
@@ -109,10 +109,10 @@
 
 ;;; ==============================
 
-(def-scheme-macro define (name &rest body)
+(def-bard-macro define (name &rest body)
   (if (atom name)
       `(name! (set! ,name . ,body) ',name)
-      (scheme-macro-expand
+      (bard-macro-expand
          `(define ,(first name)
             (lambda ,(rest name) . ,body)))))
 
@@ -122,7 +122,7 @@
     (setf (fn-name fn) name))
   name)
 
-;; This should also go in init-scheme-interp:
+;; This should also go in init-bard-interp:
 (set-global-var! 'name! #'name!)
 
 (defun print-fn (fn &optional (stream *standard-output*) depth)

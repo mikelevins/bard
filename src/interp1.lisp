@@ -2,7 +2,7 @@
 ;;; Code from Paradigms of Artificial Intelligence Programming
 ;;; Copyright (c) 1991 Peter Norvig
 
-;;; File interp1.lisp: simple Scheme interpreter, including macros.
+;;; File interp1.lisp: simple Bard interpreter, including macros.
 
 (in-package :bard)
 
@@ -49,38 +49,38 @@
   (let* ((default "unbound")
          (val (get var 'global-val default)))
     (if (eq val default)
-        (error "Unbound scheme variable: ~a" var)
+        (error "Unbound bard variable: ~a" var)
         val)))
 
 (defun extend-env (vars vals env)
   "Add some variables and values to an environment."
   (nconc (mapcar #'list vars vals) env))
 
-(defparameter *scheme-procs*
+(defparameter *bard-procs*
   '(+ - * / = < > <= >= cons car cdr not append list read member
     (null? null) (eq? eq) (equal? equal) (eqv? eql)
     (write prin1) (display princ) (newline terpri)))
 
-(defun init-scheme-interp ()
-  "Initialize the scheme interpreter with some global variables."
-  ;; Define Scheme procedures as CL functions:
-  (mapc #'init-scheme-proc *scheme-procs*)
+(defun init-bard-interp ()
+  "Initialize the bard interpreter with some global variables."
+  ;; Define Bard procedures as CL functions:
+  (mapc #'init-bard-proc *bard-procs*)
   ;; Define the boolean `constants'. Unfortunately, this won't
   ;; stop someone from saying: (set! t nil)
   (set-global-var! t t)
   (set-global-var! nil nil))
 
-(defun init-scheme-proc (f)
-  "Define a Scheme procedure as a corresponding CL function."
+(defun init-bard-proc (f)
+  "Define a Bard procedure as a corresponding CL function."
   (if (listp f)
       (set-global-var! (first f) (symbol-function (second f)))
       (set-global-var! f (symbol-function f))))
 
-(defun scheme (&optional x)
-  "A Scheme read-eval-print loop (using interp)"
+(defun bard (&optional x)
+  "A Bard read-eval-print loop (using interp)"
   ;; Modified by norvig Jun 11 96 to handle optional argument
   ;; instead of always going into a loop.
-  (init-scheme-interp)
+  (init-bard-interp)
   (if x
       (interp x nil)
     (loop (format t "~&==> ")
@@ -94,8 +94,8 @@
   (cond
     ((symbolp x) (get-var x env))
     ((atom x) x)
-    ((scheme-macro (first x))              ;***
-     (interp (scheme-macro-expand x) env)) ;***
+    ((bard-macro (first x))              ;***
+     (interp (bard-macro-expand x) env)) ;***
     ((case (first x)
        (QUOTE  (second x))
        (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
@@ -115,47 +115,47 @@
 
 ;;; ==============================
 
-(defun scheme-macro (symbol)
-  (and (symbolp symbol) (get symbol 'scheme-macro)))
+(defun bard-macro (symbol)
+  (and (symbolp symbol) (get symbol 'bard-macro)))
 
-(defmacro def-scheme-macro (name parmlist &body body)
-  "Define a Scheme macro."
-  `(setf (get ',name 'scheme-macro)
+(defmacro def-bard-macro (name parmlist &body body)
+  "Define a Bard macro."
+  `(setf (get ',name 'bard-macro)
          #'(lambda ,parmlist .,body)))
 
-(defun scheme-macro-expand (x)
-  "Macro-expand this Scheme expression."
-  (if (and (listp x) (scheme-macro (first x)))
-      (scheme-macro-expand
-        (apply (scheme-macro (first x)) (rest x)))
+(defun bard-macro-expand (x)
+  "Macro-expand this Bard expression."
+  (if (and (listp x) (bard-macro (first x)))
+      (bard-macro-expand
+        (apply (bard-macro (first x)) (rest x)))
       x))
 
 ;;; ==============================
 
-(def-scheme-macro let (bindings &rest body)
+(def-bard-macro let (bindings &rest body)
   `((lambda ,(mapcar #'first bindings) . ,body)
     .,(mapcar #'second bindings)))
 
-(def-scheme-macro let* (bindings &rest body)
+(def-bard-macro let* (bindings &rest body)
   (if (null bindings)
       `(begin .,body)
       `(let (,(first bindings))
          (let* ,(rest bindings) . ,body))))
 
-(def-scheme-macro and (&rest args)
+(def-bard-macro and (&rest args)
   (cond ((null args) 'T)
         ((length=1 args) (first args))
         (t `(if ,(first args)
                 (and . ,(rest args))))))
 
-(def-scheme-macro or (&rest args)
+(def-bard-macro or (&rest args)
   (cond ((null args) 'nil)
         ((length=1 args) (first args))
         (t (let ((var (gensym)))
              `(let ((,var ,(first args)))
                 (if ,var ,var (or . ,(rest args))))))))
 
-(def-scheme-macro cond (&rest clauses)
+(def-bard-macro cond (&rest clauses)
   (cond ((null clauses) nil)
         ((length=1 (first clauses))
          `(or ,(first clauses) (cond .,(rest clauses))))
@@ -165,7 +165,7 @@
                 (begin .,(rest (first clauses)))
                 (cond .,(rest clauses))))))
 
-(def-scheme-macro case (key &rest clauses)
+(def-bard-macro case (key &rest clauses)
   (let ((key-val (gensym "KEY")))
     `(let ((,key-val ,key))
        (cond ,@(mapcar
@@ -176,16 +176,16 @@
                           .,(rest clause))))
                 clauses)))))
 
-(def-scheme-macro define (name &rest body)
+(def-bard-macro define (name &rest body)
   (if (atom name)
       `(begin (set! ,name . ,body) ',name)
       `(define ,(first name)
          (lambda ,(rest name) . ,body))))
 
-(def-scheme-macro delay (computation)
+(def-bard-macro delay (computation)
   `(lambda () ,computation))
 
-(def-scheme-macro letrec (bindings &rest body)
+(def-bard-macro letrec (bindings &rest body)
   `(let ,(mapcar #'(lambda (v) (list (first v) nil)) bindings)
      ,@(mapcar #'(lambda (v) `(set! .,v)) bindings)
      .,body))

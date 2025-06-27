@@ -2,7 +2,7 @@
 ;;; Code from Paradigms of Artificial Intelligence Programming
 ;;; Copyright (c) 1991 Peter Norvig
 
-;;;; File compile3.lisp: Scheme compiler with assembler
+;;;; File compile3.lisp: Bard compiler with assembler
 ;;;; and peephole optimizer.  Also the abstract machine simulator.
 ;;;; After loading this file, load the optimizers in compopt.lisp.
 
@@ -166,7 +166,7 @@
                        stack))
 
          ;; Nullary operations:
-         ((SCHEME-READ NEWLINE) ; *** fix, gat, 11/9/92
+         ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
           (push (funcall (opcode instr)) stack))
 
          ;; Unary operations:
@@ -193,8 +193,8 @@
          ((HALT) (RETURN (top stack)))
          (otherwise (error "Unknown opcode: ~a" instr))))))
 
-(defun init-scheme-comp ()
-  "Initialize values (including call/cc) for the Scheme compiler."
+(defun init-bard-comp ()
+  "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'exit
     (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
@@ -209,18 +209,18 @@
 
 ;;; ==============================
 
-(defparameter scheme-top-level
-  '(begin (define (scheme)
+(defparameter bard-top-level
+  '(begin (define (bard)
             (newline)
             (display "=> ")
             (write ((compiler (read))))
-            (scheme))
-          (scheme)))
+            (bard))
+          (bard)))
 
-(defun scheme ()
-  "A compiled Scheme read-eval-print loop"
-  (init-scheme-comp)
-  (machine (compiler scheme-top-level)))
+(defun bard ()
+  "A compiled Bard read-eval-print loop"
+  (init-bard-comp)
+  (machine (compiler bard-top-level)))
 
 (defun comp-go (exp)
   "Compile and execute the expression."
@@ -286,35 +286,35 @@
 
 (defparameter eof "EoF")
 (defun eof-object? (x) (eq x eof))
-(defvar *scheme-readtable* (copy-readtable))
+(defvar *bard-readtable* (copy-readtable))
 
 #+superseded
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
+(defun bard-read (&optional (stream *standard-input*))
+  (let ((*readtable* *bard-readtable*))
     (read stream nil eof)))
 
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t
   #'(lambda (&rest ignore) t)
-  *scheme-readtable*)
+  *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\f
   #'(lambda (&rest ignore) nil)
-  *scheme-readtable*)
+  *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\d
-  ;; In both Common Lisp and Scheme,
+  ;; In both Common Lisp and Bard,
   ;; #x, #o and #b are hexidecimal, octal, and binary,
   ;; e.g. #xff = #o377 = #b11111111 = 255
-  ;; In Scheme only, #d255 is decimal 255.
+  ;; In Bard only, #d255 is decimal 255.
   #'(lambda (stream &rest ignore)
-      (let ((*read-base* 10)) (scheme-read stream)))
-  *scheme-readtable*)
+      (let ((*read-base* 10)) (bard-read stream)))
+  *bard-readtable*)
 
 (set-macro-character #\`
-  #'(lambda (s ignore) (list 'quasiquote (scheme-read s)))
-  nil *scheme-readtable*)
+  #'(lambda (s ignore) (list 'quasiquote (bard-read s)))
+  nil *bard-readtable*)
 
 (set-macro-character #\,
    #'(lambda (stream ignore)
@@ -323,7 +323,7 @@
              (list 'unquote-splicing (read stream))
              (progn (unread-char ch stream)
                     (list 'unquote (read stream))))))
-   nil *scheme-readtable*)
+   nil *bard-readtable*)
 
 ;;; ==============================
 
@@ -334,7 +334,7 @@
     (not 1 not) (null? 1 not)
     (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
     (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
-    (read 0 scheme-read nil t) (eof-object? 1 eof-object?) ;***
+    (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
     (write 1 write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t)
     (name! 2 name! true t) (random 1 random true nil)))
@@ -342,7 +342,7 @@
 
 ;;; ==============================
 
-;(setf (scheme-macro 'quasiquote) 'quasi-q)
+;(setf (bard-macro 'quasiquote) 'quasi-q)
 
 (defun quasi-q (x)
   "Expand a quasiquote form into append, list, and cons calls."
@@ -379,12 +379,12 @@
 
 ;;; ==============================
 
-(defun scheme-read (&optional (stream *standard-input*))
-  (let ((*readtable* *scheme-readtable*))
+(defun bard-read (&optional (stream *standard-input*))
+  (let ((*readtable* *bard-readtable*))
     (convert-numbers (read stream nil eof))))
 
 (defun convert-numbers (x)
-  "Replace symbols that look like Scheme numbers with their values."
+  "Replace symbols that look like Bard numbers with their values."
   ;; Don't copy structure, make changes in place.
   (typecase x
     (cons   (setf (car x) (convert-numbers (car x)))

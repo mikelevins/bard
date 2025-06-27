@@ -2,7 +2,7 @@
 ;;; Code from Paradigms of Artificial Intelligence Programming
 ;;; Copyright (c) 1991 Peter Norvig
 
-;;;; File compile2.lisp: Scheme compiler with tail recursion
+;;;; File compile2.lisp: Bard compiler with tail recursion
 ;;;; and some optimizations and primitive instructions.
 
 
@@ -14,7 +14,7 @@
       ((member x '(t nil)) (comp-const x val? more?))
       ((symbolp x) (comp-var x env val? more?))
       ((atom x) (comp-const x val? more?))
-      ((scheme-macro (first x)) (comp (scheme-macro-expand x) env val? more?))
+      ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
       ((case (first x)
          (QUOTE  (arg-count x 1)
                  (comp-const (second x) val? more?))
@@ -192,7 +192,7 @@
 
 ;;; ==============================
 
-(defun init-scheme-comp ()
+(defun init-bard-comp ()
   "Initialize the primitive functions."
   (dolist (prim *primitive-fns*)
      (setf (get (prim-symbol prim) 'global-val)
