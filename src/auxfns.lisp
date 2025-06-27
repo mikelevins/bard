@@ -1,11 +1,14 @@
-;;; -*- Mode: Lisp; Syntax: Common-Lisp -*-
-;;; Code from Paradigms of AI Programming
-;;; Copyright (c) 1991 Peter Norvig
-
-;;; File auxfns.lisp: Auxiliary functions used by all other programs
-;;; Load this file before running any other programs.
-
-;;;; Implementation-Specific Details
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          auxfns.lisp
+;;;; Project:       the bard programming lnaguage
+;;;; Purpose:       auxiliary functions
+;;;; Author:        mikel evins
+;;;; Copyright:     2025 by mikel evins
+:;;; Code from Paradigms of AI Programming
+:;;; Copyright (c) 1991 Peter Norvig
+;;;;
+;;;; ***********************************************************************
 
 (in-package :bard)
 
