@@ -80,15 +80,15 @@
       (set-global-var! (first f) (symbol-function (second f)))
       (set-global-var! f (symbol-function f))))
 
-(defun bard (&optional x)
+(defun bard-interp (&optional x)
   "A Bard read-eval-print loop (using interp)"
   ;; Modified by norvig Jun 11 96 to handle optional argument
   ;; instead of always going into a loop.
   (init-bard-interp)
   (if x
       (interp x nil)
-    (loop (format t "~&==> ")
-      (print (interp (read) nil)))))
+      (loop (format t "~&==> ")
+            (print (interp (read) nil)))))
 
 ;;;; The following version handles macros:
 

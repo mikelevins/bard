@@ -499,7 +499,7 @@
 (defparameter bard-top-level
   '(begin (define (bard)
            (newline)
-           (display "=> ")
+           (display "bard> ")
            (write ((compiler (read))))
            (bard))
     (bard)))

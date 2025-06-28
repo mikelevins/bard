@@ -12,7 +12,7 @@
 
 (in-package :bard)
 
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   #+sbcl
   (progn
     (sb-ext:unlock-package '#:common-lisp)
@@ -20,7 +20,7 @@
 
 ;;;; Macros (formerly in auxmacs.lisp: that file no longer needed)
 
-(eval-when (load eval compile)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (defmacro once-only (variables &rest body)
     "Returns the code built by BODY.  If any of VARIABLES
   might have side effects, they are evaluated once and stored
