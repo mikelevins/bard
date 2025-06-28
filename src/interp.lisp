@@ -13,6 +13,25 @@
 
 (in-package :bard)
 
+;;; ==============================
+
+(defun bard-macro (symbol)
+  (and (symbolp symbol) (get symbol 'bard-macro)))
+
+(defmacro def-bard-macro (name parmlist &body body)
+  "Define a Bard macro."
+  `(setf (get ',name 'bard-macro)
+         #'(lambda ,parmlist .,body)))
+
+(defun bard-macro-expand (x)
+  "Macro-expand this Bard expression."
+  (if (and (listp x) (bard-macro (first x)))
+      (bard-macro-expand
+        (apply (bard-macro (first x)) (rest x)))
+      x))
+
+;;; ==============================
+
 (defun set-var! (var val env)
   "Set a variable to a value, in the given or global environment."
   (if (assoc var env)
@@ -52,7 +71,8 @@
   ;; Define the boolean `constants'. Unfortunately, this won't
   ;; stop someone from saying: (set! t nil)
   (set-global-var! t t)
-  (set-global-var! nil nil))
+  (set-global-var! nil nil)
+  (set-global-var! 'name! #'name!))
 
 (defun init-bard-proc (f)
   "Define a Bard procedure as a corresponding CL function."
@@ -97,22 +117,6 @@
                       (mapcar #'(lambda (v) (interp v env))
                               (rest x))))))))
 
-;;; ==============================
-
-(defun bard-macro (symbol)
-  (and (symbolp symbol) (get symbol 'bard-macro)))
-
-(defmacro def-bard-macro (name parmlist &body body)
-  "Define a Bard macro."
-  `(setf (get ',name 'bard-macro)
-         #'(lambda ,parmlist .,body)))
-
-(defun bard-macro-expand (x)
-  "Macro-expand this Bard expression."
-  (if (and (listp x) (bard-macro (first x)))
-      (bard-macro-expand
-        (apply (bard-macro (first x)) (rest x)))
-      x))
 
 ;;; ==============================
 

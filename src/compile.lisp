@@ -32,7 +32,7 @@
 
 (defun comp-show (x)
   "Compile an expression and show the resulting code"
-   (show-fn (compiler x))
+  (show-fn (compiler x))
   (values))
 
 ;;; ==============================
@@ -49,8 +49,6 @@
   "Generate a label (a symbol of the form Lnnn)"
   (intern (format nil "~a~d" label (incf *label-num*))))
 
-;;; ==============================
-
 (defun gen-var (var env)
   "Generate an instruction to reference a variable's value."
   (let ((p (in-env-p var env)))
@@ -64,7 +62,7 @@
   (if (atom name)
       `(name! (set! ,name . ,body) ',name)
       (bard-macro-expand
-         `(define ,(first name)
+       `(define ,(first name)
             (lambda ,(rest name) . ,body)))))
 
 (defun name! (fn name)
@@ -72,9 +70,6 @@
   (when (and (fn-p fn) (null (fn-name fn)))
     (setf (fn-name fn) name))
   name)
-
-;; This should also go in init-bard-interp:
-(set-global-var! 'name! #'name!)
 
 (defun print-fn (fn &optional (stream *standard-output*) depth)
   (declare (ignore depth))
@@ -92,30 +87,30 @@
 
 (defun comp (x env val? more?)
   "Compile the expression x into a list of instructions"
-    (cond
-      ((member x '(t nil)) (comp-const x val? more?))
-      ((symbolp x) (comp-var x env val? more?))
-      ((atom x) (comp-const x val? more?))
-      ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
-      ((case (first x)
-         (QUOTE  (arg-count x 1)
-                 (comp-const (second x) val? more?))
-         (BEGIN  (comp-begin (rest x) env val? more?))
-         (SET!   (arg-count x 2)
-                 (assert (symbolp (second x)) (x)
-                         "Only symbols can be set!, not ~a in ~a"
-                         (second x) x)
-                 (seq (comp (third x) env t t)
-                      (gen-set (second x) env)
-                      (if (not val?) (gen 'POP))
-                      (unless more? (gen 'RETURN))))
-         (IF     (arg-count x 2 3)
-                 (comp-if (second x) (third x) (fourth x)
-                          env val? more?))
-         (LAMBDA (when val?
-                   (let ((f (comp-lambda (second x) (rest2 x) env)))
-                     (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
-         (t      (comp-funcall (first x) (rest x) env val? more?))))))
+  (cond
+    ((member x '(t nil)) (comp-const x val? more?))
+    ((symbolp x) (comp-var x env val? more?))
+    ((atom x) (comp-const x val? more?))
+    ((bard-macro (first x)) (comp (bard-macro-expand x) env val? more?))
+    ((case (first x)
+       (QUOTE  (arg-count x 1)
+        (comp-const (second x) val? more?))
+       (BEGIN  (comp-begin (rest x) env val? more?))
+       (SET!   (arg-count x 2)
+        (assert (symbolp (second x)) (x)
+                "Only symbols can be set!, not ~a in ~a"
+                (second x) x)
+        (seq (comp (third x) env t t)
+             (gen-set (second x) env)
+             (if (not val?) (gen 'POP))
+             (unless more? (gen 'RETURN))))
+       (IF     (arg-count x 2 3)
+               (comp-if (second x) (third x) (fourth x)
+                        env val? more?))
+       (LAMBDA (when val?
+                 (let ((f (comp-lambda (second x) (rest2 x) env)))
+                   (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
+       (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
 ;;; ==============================
 
@@ -123,9 +118,9 @@
   "Report an error if form has wrong number of args."
   (let ((n-args (length (rest form))))
     (assert (<= min n-args max) (form)
-      "Wrong number of arguments for ~a in ~a:
+            "Wrong number of arguments for ~a in ~a:
        ~d supplied, ~d~@[ to ~d~] expected"
-      (first form) form n-args min (if (/= min max) max))))
+            (first form) form n-args min (if (/= min max) max))))
 
 ;;; ==============================
 
@@ -185,7 +180,7 @@
               (seq pcode (gen 'FJUMP L1) tcode (list L1)
                    (unless more? (gen 'RETURN)))))
            (t             ; (if p x y) ==> p (FJUMP L1) x L1: y
-                          ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
+                                        ; or p (FJUMP L1) x (JUMP L2) L1: y L2:
             (let ((L1 (gen-label))
                   (L2 (if more? (gen-label))))
               (seq pcode (gen 'FJUMP L1) tcode
@@ -389,125 +384,125 @@
          (n-args 0)
          (instr nil))
     (loop
-       (setf instr (elt code pc))
-       (incf pc)
-       (case (opcode instr)
+     (setf instr (elt code pc))
+     (incf pc)
+     (case (opcode instr)
 
-         ;; Variable/stack manipulation instructions:
-         (LVAR   (push (elt (elt env (arg1 instr)) (arg2 instr))
-                       stack))
-         (LSET   (setf (elt (elt env (arg1 instr)) (arg2 instr))
-                       (top stack)))
-         (GVAR   (push (get (arg1 instr) 'global-val) stack))
-         (GSET   (setf (get (arg1 instr) 'global-val) (top stack)))
-         (POP    (pop stack))
-         (CONST  (push (arg1 instr) stack))
+       ;; Variable/stack manipulation instructions:
+       (LVAR   (push (elt (elt env (arg1 instr)) (arg2 instr))
+                     stack))
+       (LSET   (setf (elt (elt env (arg1 instr)) (arg2 instr))
+                     (top stack)))
+       (GVAR   (push (get (arg1 instr) 'global-val) stack))
+       (GSET   (setf (get (arg1 instr) 'global-val) (top stack)))
+       (POP    (pop stack))
+       (CONST  (push (arg1 instr) stack))
 
-         ;; Branching instructions:
-         (JUMP   (setf pc (arg1 instr)))
-         (FJUMP  (if (null (pop stack)) (setf pc (arg1 instr))))
-         (TJUMP  (if (pop stack) (setf pc (arg1 instr))))
+       ;; Branching instructions:
+       (JUMP   (setf pc (arg1 instr)))
+       (FJUMP  (if (null (pop stack)) (setf pc (arg1 instr))))
+       (TJUMP  (if (pop stack) (setf pc (arg1 instr))))
 
-         ;; Function call/return instructions:
-         (SAVE   (push (make-ret-addr :pc (arg1 instr)
-                                      :fn f :env env)
-                       stack))
-         (RETURN ;; return value is top of stack; ret-addr is second
-          (setf f (ret-addr-fn (second stack))
-                code (fn-code f)
-                env (ret-addr-env (second stack))
-                pc (ret-addr-pc (second stack)))
-          ;; Get rid of the ret-addr, but keep the value
-          (setf stack (cons (first stack) (rest2 stack))))
-         (CALLJ  (pop env)                 ; discard the top frame
-                 (setf f  (pop stack)
-                       code (fn-code f)
-                       env (fn-env f)
-                       pc 0
-                       n-args (arg1 instr)))
-         (ARGS   (assert (= n-args (arg1 instr)) ()
-                         "Wrong number of arguments:~
+       ;; Function call/return instructions:
+       (SAVE   (push (make-ret-addr :pc (arg1 instr)
+                                    :fn f :env env)
+                     stack))
+       (RETURN ;; return value is top of stack; ret-addr is second
+         (setf f (ret-addr-fn (second stack))
+               code (fn-code f)
+               env (ret-addr-env (second stack))
+               pc (ret-addr-pc (second stack)))
+         ;; Get rid of the ret-addr, but keep the value
+         (setf stack (cons (first stack) (rest2 stack))))
+       (CALLJ  (pop env)                 ; discard the top frame
+        (setf f  (pop stack)
+              code (fn-code f)
+              env (fn-env f)
+              pc 0
+              n-args (arg1 instr)))
+       (ARGS   (assert (= n-args (arg1 instr)) ()
+                       "Wrong number of arguments:~
                          ~d expected, ~d supplied"
-                         (arg1 instr) n-args)
-                 (push (make-array (arg1 instr)) env)
-                 (loop for i from (- n-args 1) downto 0 do
-                       (setf (elt (first env) i) (pop stack))))
-         (ARGS.  (assert (>= n-args (arg1 instr)) ()
-                         "Wrong number of arguments:~
+                       (arg1 instr) n-args)
+        (push (make-array (arg1 instr)) env)
+        (loop for i from (- n-args 1) downto 0 do
+          (setf (elt (first env) i) (pop stack))))
+       (ARGS.  (assert (>= n-args (arg1 instr)) ()
+                       "Wrong number of arguments:~
                          ~d or more expected, ~d supplied"
-                         (arg1 instr) n-args)
-                 (push (make-array (+ 1 (arg1 instr))) env)
-                 (loop repeat (- n-args (arg1 instr)) do
-                       (push (pop stack) (elt (first env) (arg1 instr))))
-                 (loop for i from (- (arg1 instr) 1) downto 0 do
-                       (setf (elt (first env) i) (pop stack))))
-         (FN     (push (make-fn :code (fn-code (arg1 instr))
-                                :env env) stack))
-         (PRIM   (push (apply (arg1 instr)
-                              (loop with args = nil repeat n-args
-                                    do (push (pop stack) args)
-                                    finally (return args)))
-                       stack))
+                       (arg1 instr) n-args)
+        (push (make-array (+ 1 (arg1 instr))) env)
+        (loop repeat (- n-args (arg1 instr)) do
+          (push (pop stack) (elt (first env) (arg1 instr))))
+        (loop for i from (- (arg1 instr) 1) downto 0 do
+          (setf (elt (first env) i) (pop stack))))
+       (FN     (push (make-fn :code (fn-code (arg1 instr))
+                              :env env) stack))
+       (PRIM   (push (apply (arg1 instr)
+                            (loop with args = nil repeat n-args
+                                  do (push (pop stack) args)
+                                  finally (return args)))
+                     stack))
 
-         ;; Continuation instructions:
-         (SET-CC (setf stack (top stack)))
-         (CC     (push (make-fn
-                         :env (list (vector stack))
-                         :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
-                                 (LVAR 0 0) (RETURN)))
-                       stack))
+       ;; Continuation instructions:
+       (SET-CC (setf stack (top stack)))
+       (CC     (push (make-fn
+                      :env (list (vector stack))
+                      :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
+                              (LVAR 0 0) (RETURN)))
+                     stack))
 
-         ;; Nullary operations:
-         ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
-          (push (funcall (opcode instr)) stack))
+       ;; Nullary operations:
+       ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
+        (push (funcall (opcode instr)) stack))
 
-         ;; Unary operations:
-         ((CAR CDR CADR EOF-OBJECT? NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
-          (push (funcall (opcode instr) (pop stack)) stack))
+       ;; Unary operations:
+       ((CAR CDR CADR EOF-OBJECT? NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
+        (push (funcall (opcode instr) (pop stack)) stack))
 
-         ;; Binary operations:
-         ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
-          (setf stack (cons (funcall (opcode instr) (second stack)
-                                     (first stack))
-                            (rest2 stack))))
+       ;; Binary operations:
+       ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
+        (setf stack (cons (funcall (opcode instr) (second stack)
+                                   (first stack))
+                          (rest2 stack))))
 
-         ;; Ternary operations:
-         (LIST3
-          (setf stack (cons (funcall (opcode instr) (third stack)
-                                     (second stack) (first stack))
-                            (rest3 stack))))
+       ;; Ternary operations:
+       (LIST3
+        (setf stack (cons (funcall (opcode instr) (third stack)
+                                   (second stack) (first stack))
+                          (rest3 stack))))
 
-         ;; Constants:
-         ((T NIL -1 0 1 2)
-          (push (opcode instr) stack))
+       ;; Constants:
+       ((T NIL -1 0 1 2)
+        (push (opcode instr) stack))
 
-         ;; Other:
-         ((HALT) (RETURN (top stack)))
-         (otherwise (error "Unknown opcode: ~a" instr))))))
+       ;; Other:
+       ((HALT) (RETURN (top stack)))
+       (otherwise (error "Unknown opcode: ~a" instr))))))
 
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'exit
-    (new-fn :name 'exit :args '(val) :code '((HALT))))
+                   (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
-    (new-fn :name 'call/cc :args '(f)
-            :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
-		    (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
+                   (new-fn :name 'call/cc :args '(f)
+                           :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
+		                   (CALLJ 1)))) ; *** Bug fix, gat, 11/9/92
   (dolist (prim *primitive-fns*)
-     (setf (get (prim-symbol prim) 'global-val)
-           (new-fn :env nil :name (prim-symbol prim)
-                   :code (seq (gen 'PRIM (prim-symbol prim))
-                              (gen 'RETURN))))))
+    (setf (get (prim-symbol prim) 'global-val)
+          (new-fn :env nil :name (prim-symbol prim)
+                  :code (seq (gen 'PRIM (prim-symbol prim))
+                             (gen 'RETURN))))))
 
 ;;; ==============================
 
 (defparameter bard-top-level
   '(begin (define (bard)
-            (newline)
-            (display "=> ")
-            (write ((compiler (read))))
-            (bard))
-          (bard)))
+           (newline)
+           (display "=> ")
+           (write ((compiler (read))))
+           (bard))
+    (bard)))
 
 (defun bard ()
   "A compiled Bard read-eval-print loop"
@@ -528,8 +523,8 @@
   (let ((any-change nil))
     ;; Optimize each tail
     (loop for code-tail on code do
-          (setf any-change (or (optimize-1 code-tail code)
-                               any-change)))
+      (setf any-change (or (optimize-1 code-tail code)
+                           any-change)))
     ;; If any changes were made, call optimize again
     (if any-change
         (optimize code)
@@ -583,12 +578,12 @@
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t
-  #'(lambda (&rest ignore)(declare (ignore ignore)) t)
-  *bard-readtable*)
+                              #'(lambda (&rest ignore)(declare (ignore ignore)) t)
+                              *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\f
-  #'(lambda (&rest ignore)(declare (ignore ignore)) nil)
-  *bard-readtable*)
+                              #'(lambda (&rest ignore)(declare (ignore ignore)) nil)
+                              *bard-readtable*)
 
 (set-dispatch-macro-character #\# #\d
                               ;; In both Common Lisp and Bard,
@@ -601,8 +596,8 @@
                               *bard-readtable*)
 
 (set-macro-character #\`
-  #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s)))
-  nil *bard-readtable*)
+                     #'(lambda (s ignore)(declare (ignore ignore)) (list 'quasiquote (bard-read s)))
+                     nil *bard-readtable*)
 
 (set-macro-character #\,
                      #'(lambda (stream ignore)
@@ -631,7 +626,7 @@
 
 ;;; ==============================
 
-;(setf (bard-macro 'quasiquote) 'quasi-q)
+                                        ;(setf (bard-macro 'quasiquote) 'quasi-q)
 
 (defun quasi-q (x)
   "Expand a quasiquote form into append, list, and cons calls."
@@ -677,12 +672,12 @@
   ;; Don't copy structure, make changes in place.
   (typecase x
     (cons   (setf (car x) (convert-numbers (car x)))
-            (setf (cdr x) (convert-numbers (cdr x)))
-	    x) ; *** Bug fix, gat, 11/9/92
+     (setf (cdr x) (convert-numbers (cdr x)))
+     x) ; *** Bug fix, gat, 11/9/92
     (symbol (or (convert-number x) x))
     (vector (dotimes (i (length x))
               (setf (aref x i) (convert-numbers (aref x i))))
-	    x) ; *** Bug fix, gat, 11/9/92
+     x) ; *** Bug fix, gat, 11/9/92
     (t x)))
 
 (defun convert-number (symbol)
@@ -728,8 +723,8 @@
   ;; (JUMP L1) ... L1 (JUMP L2) ==> (JUMP L2)  ... L1 (JUMP L2)
   (when (and (is instr 'JUMP)
              (is (target instr code) '(JUMP RETURN))
-    (setf (first code) (copy-list (target instr code)))
-    t)))
+             (setf (first code) (copy-list (target instr code)))
+             t)))
 
 (def-optimizer (TJUMP FJUMP) (instr code all-code)
   (declare (ignore all-code))
@@ -762,7 +757,7 @@
      t)
     (TJUMP ;; (NIL) (TJUMP L) ... => ...
      (setf (first code) (third code)
-             (rest code) (rest3 code))
+           (rest code) (rest3 code))
      t)
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
