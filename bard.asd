@@ -27,6 +27,7 @@
                                      (:file "compile1")
                                      (:file "compile2")
                                      (:file "compile3")
-                                     (:file "compopt")))))
+                                     (:file "compopt")
+                                     (:file "machine")))))
 
 #+repl (asdf:load-system :bard)
