@@ -1,8 +1,15 @@
-;;; -*- Mode: Lisp; Syntax: Common-Lisp; -*-
-;;; Code from Paradigms of Artificial Intelligence Programming
-;;; Copyright (c) 1991 Peter Norvig
-
-;;; File interp1.lisp: simple Bard interpreter, including macros.
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          interp.lisp
+;;;; Project:       the bard programming lnaguage
+;;;; Purpose:       bard interpreter
+;;;; Author:        mikel evins
+;;;; Copyright:     2025 by mikel evins
+;;;; Code from Paradigms of AI Programming
+;;;; Copyright (c) 1991 Peter Norvig
+;;;  File: interp1.lisp: simple Bard interpreter, including macros.
+;;;;
+;;;; ***********************************************************************
 
 (in-package :bard)
 

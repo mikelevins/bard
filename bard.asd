@@ -23,11 +23,9 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "auxfns")
-                                     (:file "interp1")
-                                     (:file "compile1")
-                                     (:file "compile2")
-                                     (:file "compile3")
-                                     (:file "compopt")
-                                     (:file "machine")))))
+                                     (:file "interp")
+                                     (:file "compile")
+                                     (:file "machine")
+                                     ))))
 
 #+repl (asdf:load-system :bard)
