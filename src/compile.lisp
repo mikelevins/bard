@@ -80,24 +80,6 @@
   (declare (ignore depth))
   (format stream "{~a}" (or (fn-name fn) '??)))
 
-(defun show-fn (fn &optional (stream *standard-output*) (depth 0))
-  "Print all the instructions in a function.
-  If the argument is not a function, just princ it,
-  but in a column at least 8 spaces wide."
-  (if (not (fn-p fn))
-      (format stream "~8a" fn)
-      (progn
-        (fresh-line)
-        (incf depth 8)
-        (dolist (instr (fn-code fn))
-          (if (label-p instr)
-              (format stream "~a:" instr)
-              (progn
-                (format stream "~VT" depth)
-                (dolist (arg instr)
-                  (show-fn arg stream depth))
-                (fresh-line)))))))
-
 (defun label-p (x) "Is x a label?" (atom x))
 
 (defun in-env-p (symbol env)
@@ -317,14 +299,6 @@
   (assemble (make-fn :env env :name name :args args
                      :code (optimize code))))
 
-;;; ==============================
-
-#+superseded
-(defun optimize (code) code)
-
-#+superseded
-(defun assemble (fn) fn)
-
 
 ;;; compile3.lisp
 
@@ -375,7 +349,6 @@
 
 ;;; ==============================
 
-#+superseded
 (defun show-fn (fn &optional (stream *standard-output*) (indent 2))
   "Print all the instructions in a function.
   If the argument is not a function, just princ it,
