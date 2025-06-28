@@ -580,11 +580,6 @@
 (defun eof-object? (x) (eq x eof))
 (defvar *bard-readtable* (copy-readtable))
 
-#+superseded
-(defun bard-read (&optional (stream *standard-input*))
-  (let ((*readtable* *bard-readtable*))
-    (read stream nil eof)))
-
 ;;; ==============================
 
 (set-dispatch-macro-character #\# #\t
