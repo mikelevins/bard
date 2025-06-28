@@ -18,67 +18,10 @@
 (defstruct (prim (:type list))
   symbol n-args opcode always side-effects)
 
-#+superseded
-(defun comp (x env)
-  "Compile the expression x into a list of instructions"
-  (cond
-    ((symbolp x) (gen-var x env))
-    ((atom x) (gen 'CONST x))
-    ((bard-macro (first x)) (comp (bard-macro-expand x) env))
-    ((case (first x)
-       (QUOTE  (gen 'CONST (second x)))
-       (BEGIN  (comp-begin (rest x) env))
-       (SET!   (seq (comp (third x) env) (gen-set (second x) env)))
-       (IF     (comp-if (second x) (third x) (fourth x) env))
-       (LAMBDA (gen 'FN (comp-lambda (second x) (rest (rest x)) env)))
-       ;; Procedure application:
-       ;; Compile args, then fn, then the call
-       (t      (seq (mappend #'(lambda (y) (comp y env)) (rest x))
-                    (comp (first x) env)
-                              (gen 'call (length (rest x)))))))))
-
-;;; ==============================
-
-#+superseded
-(defun comp-begin (exps env)
-  "Compile a sequence of expressions, popping all but the last."
-  (cond ((null exps) (gen 'CONST nil))
-        ((length=1 exps) (comp (first exps) env))
-        (t (seq (comp (first exps) env)
-                (gen 'POP)
-                (comp-begin (rest exps) env)))))
-
-;;; ==============================
-
-#+superseded
-(defun comp-if (pred then else env)
-  "Compile a conditional expression."
-  (let ((L1 (gen-label))
-        (L2 (gen-label)))
-    (seq (comp pred env) (gen 'FJUMP L1)
-         (comp then env) (gen 'JUMP L2)
-         (list L1) (comp else env)
-         (list L2))))
-
 ;;; ==============================
 
 (defstruct (fn (:print-function print-fn))
   code (env nil) (name nil) (args nil))
-
-#+superseded
-(defun comp-lambda (args body env)
-  "Compile a lambda form into a closure with compiled code."
-  (assert (and (listp args) (every #'symbolp args)) ()
-          "Lambda arglist must be a list of symbols, not ~a" args)
-  ;; For now, no &rest parameters.
-  ;; The next version will support Bard's version of &rest
-  (make-fn
-    :env env :args args
-    :code (seq (gen 'ARGS (length args))
-               (comp-begin body (cons args env))
-               (gen 'RETURN))))
-
-;;; ==============================
 
 (defvar *label-num* 0)
 
