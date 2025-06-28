@@ -58,13 +58,6 @@
         (gen 'LVAR (first p) (second p) ";" var)
         (gen 'GVAR var))))
 
-(defun gen-set (var env)
-  "Generate an instruction to set a variable to top-of-stack."
-  (let ((p (in-env-p var env)))
-    (if p
-        (gen 'LSET (first p) (second p) ";" var)
-        (gen 'GSET var))))
-
 ;;; ==============================
 
 (def-bard-macro define (name &rest body)
@@ -285,7 +278,6 @@
 
 ;;; ==============================
 
-#+superseded
 (defun gen-set (var env)
   "Generate an instruction to set a variable to top-of-stack."
   (let ((p (in-env-p var env)))
@@ -294,17 +286,6 @@
         (if (assoc var *primitive-fns*)
             (error "Can't alter the constant ~a" var)
             (gen 'GSET var)))))
-
-;;; ==============================
-
-#+superseded
-(defun init-bard-comp ()
-  "Initialize the primitive functions."
-  (dolist (prim *primitive-fns*)
-     (setf (get (prim-symbol prim) 'global-val)
-           (new-fn :env nil :name (prim-symbol prim)
-                   :code (seq (gen 'PRIM (prim-symbol prim))
-                              (gen 'RETURN))))))
 
 ;;; ==============================
 
