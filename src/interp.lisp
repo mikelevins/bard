@@ -59,65 +59,6 @@
   "Add some variables and values to an environment."
   (nconc (mapcar #'list vars vals) env))
 
-(defparameter *bard-procs*
-  '(+ - * / = < > <= >= cons car cdr not append list read member
-    (null? null) (eq? eq) (equal? equal) (eqv? eql)
-    (write prin1) (display princ) (newline terpri)))
-
-(defun init-bard-interp ()
-  "Initialize the bard interpreter with some global variables."
-  ;; Define Bard procedures as CL functions:
-  (mapc #'init-bard-proc *bard-procs*)
-  ;; Define the boolean `constants'. Unfortunately, this won't
-  ;; stop someone from saying: (set! t nil)
-  (set-global-var! t t)
-  (set-global-var! nil nil)
-  (set-global-var! 'name! #'name!))
-
-(defun init-bard-proc (f)
-  "Define a Bard procedure as a corresponding CL function."
-  (if (listp f)
-      (set-global-var! (first f) (symbol-function (second f)))
-      (set-global-var! f (symbol-function f))))
-
-(defun bard-interp (&optional x)
-  "A Bard read-eval-print loop (using interp)"
-  ;; Modified by norvig Jun 11 96 to handle optional argument
-  ;; instead of always going into a loop.
-  (init-bard-interp)
-  (if x
-      (interp x nil)
-      (loop (format t "~&==> ")
-            (print (interp (read) nil)))))
-
-;;;; The following version handles macros:
-
-(defun interp (x &optional env)
-  "Interpret (evaluate) the expression x in the environment env.
-  This version handles macros."
-  (cond
-    ((symbolp x) (get-var x env))
-    ((atom x) x)
-    ((bard-macro (first x))              ;***
-     (interp (bard-macro-expand x) env)) ;***
-    ((case (first x)
-       (QUOTE  (second x))
-       (BEGIN  (last1 (mapcar #'(lambda (y) (interp y env))
-                              (rest x))))
-       (SET!   (set-var! (second x) (interp (third x) env) env))
-       (IF     (if (interp (second x) env)
-                   (interp (third x) env)
-                   (interp (fourth x) env)))
-       (LAMBDA (let ((parms (second x))
-                     (code (maybe-add 'begin (rest2 x))))
-                 #'(lambda (&rest args)
-                     (interp code (extend-env parms args env)))))
-       (t      ;; a procedure application
-               (apply (interp (first x) env)
-                      (mapcar #'(lambda (v) (interp v env))
-                              (rest x))))))))
-
-
 ;;; ==============================
 
 (def-bard-macro let (bindings &rest body)
