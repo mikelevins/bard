@@ -26,9 +26,9 @@
 (defvar *label-num* 0)
 
 (defun compiler (x)
-  "Compile an expression as if it were in a parameterless lambda."
+  "Compile an expression as if it were in a parameterless FN."
   (setf *label-num* 0)
-  (comp-lambda '() (list x) nil))
+  (comp-fn '() (list x) nil))
 
 (defun comp-show (x)
   "Compile an expression and show the resulting code"
@@ -63,7 +63,7 @@
       `(name! (set! ,name . ,body) ',name)
       (bard-macro-expand
        `(define ,(first name)
-            (lambda ,(rest name) . ,body)))))
+            (fn ,(rest name) . ,body)))))
 
 (defun name! (fn name)
   "Set the name field of fn, if it is an un-named fn."
@@ -107,8 +107,10 @@
        (IF     (arg-count x 2 3)
                (comp-if (second x) (third x) (fourth x)
                         env val? more?))
-       (LAMBDA (when val?
-                 (let ((f (comp-lambda (second x) (rest2 x) env)))
+       ;; FN creates a simple function
+       ;; TODO: add GF to create a generic function
+       (FN (when val?
+                 (let ((f (comp-fn (second x) (rest2 x) env)))
                    (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
@@ -202,8 +204,8 @@
                 (gen (prim-opcode prim))
                 (unless val? (gen 'POP))
                 (unless more? (gen 'RETURN)))))
-      ((and (starts-with f 'lambda) (null (second f)))
-       ;; ((lambda () body)) => (begin body)
+      ((and (starts-with f 'FN) (null (second f)))
+       ;; ((fn () body)) => (begin body)
        (assert (null args) () "Too many arguments supplied")
        (comp-begin (rest2 f) env val? more?))
       (more? ; Need to save the continuation point
@@ -266,8 +268,8 @@
 
 ;;; ==============================
 
-(defun comp-lambda (args body env)
-  "Compile a lambda form into a closure with compiled code."
+(defun comp-fn (args body env)
+  "Compile a FN form into a closure with compiled code."
   (new-fn :env env :args args
           :code (seq (gen-args args 0)
                      (comp-begin body

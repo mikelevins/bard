@@ -1,6 +1,4 @@
 
-(in-package :bard)
-
 (bardvm)
 ((lambda (x)(+ 1 x)) 100)
 (define (add1 x)(+ x 1))
