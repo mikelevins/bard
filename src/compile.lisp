@@ -47,13 +47,6 @@
 
 ;;; ==============================
 
-(def-bard-macro define (name &rest body)
-  (if (atom name)
-      `(name! (set! ,name . ,body) ',name)
-      (bard-macro-expand
-       `(define ,(first name)
-            (fn ,(rest name) . ,body)))))
-
 (defun name! (fn name)
   "Set the name field of fn, if it is an un-named fn."
   (when (and (fn-p fn) (null (fn-name fn)))
@@ -216,18 +209,6 @@
 ;;; trailing NIL fields made explicit, because some Lisp's will give
 ;;; an error (rather than NIL), when asked to find the prim-side-effects
 ;;; of a three-element list.
-
-(defparameter *primitive-fns*
-  '((+ 2 + true nil) (- 2 - true nil) (* 2 * true nil) (/ 2 / true nil)
-    (< 2 < nil nil) (> 2 > nil nil) (<= 2 <= nil nil) (>= 2 >= nil nil)
-    (/= 2 /= nil nil) (= 2 = nil nil)
-    (eq? 2 eq nil nil) (equal? 2 equal nil nil) (eqv? 2 eql nil nil)
-    (not 1 not nil nil) (null? 1 not nil nil) (cons 2 cons true nil)
-    (car 1 car nil nil) (cdr 1 cdr nil nil)  (cadr 1 cadr nil nil)
-    (list 1 list1 true nil) (list 2 list2 true nil) (list 3 list3 true nil)
-    (read 0 read nil t) (write 1 write nil t) (display 1 display nil t)
-    (newline 0 newline nil t) (compiler 1 compiler t nil)
-    (name! 2 name! true t) (random 1 random true nil)))
 
 (defun primitive-p (f env n-args)
   "F is a primitive if it is in the table, and is not shadowed
