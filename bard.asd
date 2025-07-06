@@ -28,7 +28,9 @@
                                      (:file "bard-macros")
                                      (:file "prim")
                                      (:file "fn")
+                                     (:file "optimize")
                                      (:file "compile")
+                                     (:file "optimizers")
                                      (:file "machine")
                                      ))))
 
