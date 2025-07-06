@@ -11,15 +11,15 @@
 (in-package :bard)
 
 
-(def-bard-macro let (bindings &rest body)
+(def-bard-macro %let (bindings &rest body)
   `((FN ,(mapcar #'first bindings) . ,body)
     .,(mapcar #'second bindings)))
 
-(def-bard-macro let* (bindings &rest body)
+(def-bard-macro let (bindings &rest body)
   (if (null bindings)
       `(begin .,body)
-      `(let (,(first bindings))
-         (let* ,(rest bindings) . ,body))))
+      `(%let (,(first bindings))
+         (let ,(rest bindings) . ,body))))
 
 (def-bard-macro and (&rest args)
   (cond ((null args) 'T)
