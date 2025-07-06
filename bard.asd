@@ -26,6 +26,8 @@
                                      (:file "macro")
                                      (:file "env")
                                      (:file "bard-macros")
+                                     (:file "prim")
+                                     (:file "fn")
                                      (:file "compile")
                                      (:file "machine")
                                      ))))

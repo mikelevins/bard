@@ -12,17 +12,6 @@
 
 (in-package :bard)
 
-;;; compile1.lisp
-
-
-(defstruct (prim (:type list))
-  symbol n-args opcode always side-effects)
-
-;;; ==============================
-
-(defstruct (fn (:print-function print-fn))
-  code (env nil) (name nil) (args nil))
-
 (defvar *label-num* 0)
 
 (defun compiler (x)
