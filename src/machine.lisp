@@ -125,7 +125,7 @@
 
 (defparameter *default-bardvm* (make-instance 'vm))
 
-(defun bardvm ()
+(defun bard ()
   (init-bard-comp)
   (runvm *default-bardvm* (compiler bard-top-level)))
 
