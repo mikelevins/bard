@@ -129,4 +129,4 @@
   (init-bard-comp)
   (runvm *default-bardvm* (compiler bard-top-level)))
 
-#+repl (bardvm)
+#+repl (bard)
