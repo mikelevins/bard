@@ -13,5 +13,5 @@
                 :serial t
                 :components ((:file "package")
                              (:file "vm")
-                             (:file "bard")))))
+                             (:file "monitor")))))
 

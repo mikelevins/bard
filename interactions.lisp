@@ -4,3 +4,4 @@
 
 (in-package :bard)
 
+(start-monitor)
