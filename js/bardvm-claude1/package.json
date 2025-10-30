@@ -1,0 +1,27 @@
+{
+  "name": "bardvm-claude1",
+  "version": "0.1.0",
+  "description": "JavaScript implementation of Norvig's Scheme VM from PAIP for the Bard programming language",
+  "main": "vm.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test-runner-node.js tests/*.json",
+    "test:worker": "node test-runner-node.js --worker tests/*.json",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "bard",
+    "vm",
+    "virtual-machine",
+    "bytecode",
+    "norvig",
+    "paip",
+    "scheme",
+    "lisp"
+  ],
+  "author": "Mikel Evins",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

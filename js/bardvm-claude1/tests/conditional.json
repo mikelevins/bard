@@ -1,0 +1,16 @@
+{
+  "name": "conditional",
+  "description": "Test if expression: (if (< 3 5) 100 200) = 100",
+  "code": [
+    ["ARGS", 0],
+    ["CONST", 3],
+    ["CONST", 5],
+    ["<"],
+    ["FJUMP", 6],
+    ["CONST", 100],
+    ["RETURN"],
+    ["CONST", 200],
+    ["RETURN"]
+  ],
+  "expected": 100
+}
