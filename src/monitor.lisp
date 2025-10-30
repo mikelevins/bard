@@ -33,7 +33,7 @@
   (format t "  (save-state NAME FILENAME)          Save VM to file~%")
   |#
   (format t "  (list)                              List all VMs~%")
-  (format t "  (compile EXPR)                      Compile Scheme expr~%")
+  (format t "  (compile EXPR)                      Compile bard expression~%")
   (format t "  (decompile NAME)                    Decompile VM code~%")
   (format t "  (help)                              This help~%")
   (format t "  (quit)                              Exit monitor~%")
