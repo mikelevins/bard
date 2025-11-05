@@ -1,17 +1,36 @@
-;;;; ============================================================================
-;;;; ASDF System Definition for Bard
-;;;; ============================================================================
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          bard.asd
+;;;; Project:       the bard programming language
+;;;; Purpose:       system definition
+;;;; Author:        mikel evins
+;;;; Copyright:     2024 by mikel evins
+;;;;
+;;;; ***********************************************************************
 
-(defsystem "bard"
-  :description "A Common Lisp Virtual Machine for the Bard programming language"
+(in-package :cl-user)
+
+(require :asdf)
+
+(asdf:defsystem :bard
+  :description "bard 0.9"
+  :author "mikel evins <mikel@evins.net>"
+  :license  "Apache 2.0"
   :version (:read-file-form "version.lisp")
-  :author "mikel evins (mikel@evins.net)"
-  :license "MIT"
-  :depends-on ()
   :serial t
+  :depends-on ()
   :components ((:module "src"
-                :serial t
-                :components ((:file "package")
-                             (:file "vm")
-                             (:file "monitor")))))
+                        :serial t
+                        :components ((:file "package")
+                                     (:file "auxfns")
+                                     (:file "macro")
+                                     (:file "env")
+                                     (:file "bard-macros")
+                                     (:file "prim")
+                                     (:file "fn")
+                                     (:file "compile")
+                                     (:file "machine")
+                                     ))))
+
+#+repl (asdf:load-system :bard)
 
