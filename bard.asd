@@ -4,7 +4,7 @@
 ;;;; Project:       the bard programming language
 ;;;; Purpose:       system definition
 ;;;; Author:        mikel evins
-;;;; Copyright:     2024 by mikel evins
+;;;; Copyright:     2024-2025 by mikel evins
 ;;;;
 ;;;; ***********************************************************************
 

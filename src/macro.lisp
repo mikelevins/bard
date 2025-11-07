@@ -13,7 +13,6 @@
 
 (in-package :bard)
 
-
 (defun bard-macro (symbol)
   (and (symbolp symbol) (get symbol 'bard-macro)))
 

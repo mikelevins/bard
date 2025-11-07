@@ -26,8 +26,10 @@
 (defun set-global-var! (var val)
   (setf (get var 'global-val) val))
 
+(defvar +unbound+ (make-symbol "+UNBOUND+"))
+
 (defun get-global-var (var)
-  (let* ((default "unbound")
+  (let* ((default +unbound+)
          (val (get var 'global-val default)))
     (if (eq val default)
         (error "Unbound bard variable: ~a" var)
