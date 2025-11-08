@@ -1,7 +1,7 @@
 ;;;; ***********************************************************************
 ;;;;
 ;;;; Name:          bard-macros.lisp
-;;;; Project:       the bard programming lnaguage
+;;;; Project:       the bard programming language
 ;;;; Purpose:       define bard macros
 ;;;; Author:        mikel evins
 ;;;; Copyright:     2025 by mikel evins
