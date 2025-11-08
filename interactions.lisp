@@ -2,12 +2,19 @@
 
 (asdf:load-system :bard)
 
+(in-package :bard)
+
+;;; ---------------------------------------------------------------------
+;;; compiling expressions
+;;; ---------------------------------------------------------------------
+
+(setf $code1 (compiler '(2 3 4)))
+(setf $code2 (compiler '(begin (display "some text")(newline) (* 3 4))))
 
 ;;; ---------------------------------------------------------------------
 ;;; testing with bard repl:
 ;;; ---------------------------------------------------------------------
 
-(in-package :bard)
 (bard)
 
 ;;; bard expressions

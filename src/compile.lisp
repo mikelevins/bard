@@ -53,9 +53,16 @@
     (setf (fn-name fn) name))
   name)
 
+;; (defun print-fn (fn &optional (stream *standard-output*) depth)
+;;   (declare (ignore depth))
+;;   (format stream "{~a}" (or (fn-name fn) '??)))
+
 (defun print-fn (fn &optional (stream *standard-output*) depth)
   (declare (ignore depth))
-  (format stream "{~a}" (or (fn-name fn) '??)))
+  (print-unreadable-object (fn stream :type t :identity nil)
+    (format stream "{name: ~a code: ~s}"
+            (or (fn-name fn) '??)
+            (fn-code fn))))
 
 (defun label-p (x) "Is x a label?" (atom x))
 
