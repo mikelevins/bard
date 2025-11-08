@@ -356,6 +356,8 @@
 
 (defun init-bard-comp ()
   "Initialize values (including call/cc) for the Bard compiler."
+  (set-global-var! 'true t)
+  (set-global-var! 'false nil)
   (set-global-var! 'exit
                    (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
@@ -481,16 +483,16 @@
 ;;; ==============================
 
 (defparameter *primitive-fns*
-  '((+ 2 + true) (- 2 - true) (* 2 * true) (/ 2 / true)
+  '((+ 2 + t) (- 2 - t) (* 2 * t) (/ 2 / t)
     (< 2 <) (> 2 >) (<= 2 <=) (>= 2 >=) (/= 2 /=) (= 2 =)
     (eq? 2 eq) (equal? 2 equal) (eqv? 2 eql)
     (not 1 not) (null? 1 not)
-    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons true)
-    (list 1 list1 true) (list 2 list2 true) (list 3 list3 true)
+    (car 1 car) (cdr 1 cdr)  (cadr 1 cadr) (cons 2 cons t)
+    (list 1 list1 t) (list 2 list2 t) (list 3 list3 t)
     (read 0 bard-read nil t) (eof-object? 1 eof-object?) ;***
     (write 1 write nil t) (display 1 display nil t)
     (newline 0 newline nil t) (compiler 1 compiler t)
-    (name! 2 name! true t) (random 1 random true nil)))
+    (name! 2 name! t t) (random 1 random t nil)))
 
 
 ;;; ==============================

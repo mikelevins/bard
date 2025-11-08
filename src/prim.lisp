@@ -13,4 +13,4 @@
 (in-package :bard)
 
 (defstruct (prim (:type list))
-  symbol n-args opcode always side-effects)
+  symbol n-args opcode always-true? side-effects)
