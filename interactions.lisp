@@ -59,3 +59,6 @@
 (define mul (fn (x y)(* x y)))
 
 (define div /)
+
+;; should return 4
+(+ 1 (call/cc (fn (k) (+ 2 (k 3)))))

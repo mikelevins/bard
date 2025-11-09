@@ -360,8 +360,8 @@
   "Initialize values (including call/cc) for the Bard compiler."
   (set-global-var! 'true t)
   (set-global-var! 'false nil)
-  (set-global-var! 'exit
-                   (new-fn :name 'exit :args '(val) :code '((HALT))))
+  (set-global-var! 'quit (new-fn :name 'quit :args '(val) :code '((HALT))))
+  (set-global-var! 'exit (new-fn :name 'exit :args '(val) :code '((HALT))))
   (set-global-var! 'call/cc
                    (new-fn :name 'call/cc :args '(f)
                            :code '((ARGS 1) (CC) (LVAR 0 0 ";" f)
