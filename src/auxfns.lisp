@@ -18,10 +18,6 @@
     (sb-ext:unlock-package '#:common-lisp)
     (sb-ext:unlock-package '#:common-lisp-user)))
 
-(defun starts-with (list x)
-  "Is x a list whose first element is x?"
-  (and (consp list) (eql (first list) x)))
-
 ;;; ---------------------------------------------------------------------
 ;;; Auxiliary Functions
 ;;; ---------------------------------------------------------------------

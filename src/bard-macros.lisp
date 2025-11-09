@@ -38,7 +38,7 @@
   (cond ((null clauses) nil)
         ((length=1 (first clauses))
          `(or ,(first clauses) (cond .,(rest clauses))))
-        ((starts-with (first clauses) 'else)
+        ((starts-with? (first clauses) 'else)
          `(begin .,(rest (first clauses))))
         (t `(if ,(first (first clauses))
                 (begin .,(rest (first clauses)))
@@ -49,7 +49,7 @@
     `(let ((,key-val ,key))
        (cond ,@(mapcar
                 #'(lambda (clause)
-                    (if (starts-with clause 'else)
+                    (if (starts-with? clause 'else)
                         clause
                         `((member ,key-val ',(first clause))
                           .,(rest clause))))

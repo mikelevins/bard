@@ -70,7 +70,7 @@
                        (exit (begin (newline)
                                     (display "called exit")
                                     (newline)
-                                    nothing))
+                                    count))
                        (begin (newline)
                               (set! count (+ 1 count))
                               (display count)))
