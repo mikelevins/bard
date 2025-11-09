@@ -62,3 +62,18 @@
 
 ;; should return 4
 (+ 1 (call/cc (fn (k) (+ 2 (k 3)))))
+
+;; should count to 10 then exit using the captured continuation
+(call/cc (fn (exit)
+             (let ((count 0))
+               (define (testloop)
+                   (if (>= count 10)
+                       (exit (begin (newline)
+                                    (display "called exit")
+                                    (newline)
+                                    nothing))
+                       (begin (newline)
+                              (set! count (+ 1 count))
+                              (display count)))
+                 (testloop))
+               (testloop))))
