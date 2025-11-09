@@ -133,10 +133,12 @@
 
 (defun comp-const (x val? more?)
   "Compile a constant expression."
-  (if val? (seq (if (member x '(t nil -1 0 1 2))
-                    (gen x)
-                    (gen 'CONST x))
-                (unless more? (gen 'RETURN)))))
+  (if val?
+      (seq (if (member x '(t nil -1 0 1 2))
+               (gen x)
+               (gen 'CONST x))
+           (unless more? (gen 'RETURN)))
+      nil))
 
 (defun comp-var (x env val? more?)
   "Compile a variable reference."

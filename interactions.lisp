@@ -8,7 +8,8 @@
 ;;; compiling expressions
 ;;; ---------------------------------------------------------------------
 
-(setf $code1 (compiler '(2 3 4)))
+(comp-show 3)
+(comp-show '(2 3 4))
 (setf $code2 (compiler '(begin (display "some text")(newline) (* 3 4))))
 
 ;;; ---------------------------------------------------------------------
