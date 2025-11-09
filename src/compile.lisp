@@ -615,7 +615,7 @@
      t)
     (FJUMP ;; (T) (FJUMP L) ... => ...
      (setf (first code) (third code)
-           (rest code) (rest3 code))
+           (rest code) (drop 3 code))
      t)
     (TJUMP ;; (T) (TJUMP L) ... => (JUMP L) ...
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))
@@ -630,7 +630,7 @@
      t)
     (TJUMP ;; (NIL) (TJUMP L) ... => ...
      (setf (first code) (third code)
-           (rest code) (rest3 code))
+           (rest code) (drop 3 code))
      t)
     (FJUMP ;; (NIL) (FJUMP L) ==> (JUMP L)
      (setf (first code) (gen1 'JUMP (arg1 (next-instr code))))

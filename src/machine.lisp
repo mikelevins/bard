@@ -113,7 +113,7 @@
         (LIST3
          (setf stack (cons (funcall (opcode instr) (third stack)
                                     (second stack) (first stack))
-                           (rest3 stack))))
+                           (drop 3 stack))))
 
         ;; Constants:
         ((T NIL -1 0 1 2)

@@ -56,9 +56,5 @@
   "Is x a list of length 1?"
   (and (consp x) (null (cdr x))))
 
-(defun rest3 (list)
-  "The rest of a list after the first THREE elements."
-  (cdddr list))
-
 
 
