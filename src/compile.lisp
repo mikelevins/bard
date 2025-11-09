@@ -99,7 +99,7 @@
        ;; FN creates a simple function
        ;; TODO: add GF to create a generic function
        (FN (when val?
-                 (let ((f (comp-fn (second x) (rest2 x) env)))
+                 (let ((f (comp-fn (second x) (drop 2 x) env)))
                    (seq (gen 'FN f) (unless more? (gen 'RETURN))))))
        (t      (comp-funcall (first x) (rest x) env val? more?))))))
 
@@ -198,7 +198,7 @@
       ((and (starts-with f 'FN) (null (second f)))
        ;; ((fn () body)) => (begin body)
        (assert (null args) () "Too many arguments supplied")
-       (comp-begin (rest2 f) env val? more?))
+       (comp-begin (drop 2 f) env val? more?))
       (more? ; Need to save the continuation point
        (let ((k (gen-label 'k)))
          (seq (gen 'SAVE k)
@@ -509,10 +509,10 @@
     ((atom x)
      (if (constantp x) x (list 'quote x)))
     ((starts-with x 'unquote)
-     (assert (and (rest x) (null (rest2 x))))
+     (assert (and (rest x) (null (drop 2 x))))
      (second x))
     ((starts-with x 'quasiquote)
-     (assert (and (rest x) (null (rest2 x))))
+     (assert (and (rest x) (null (drop 2 x))))
      (quasi-q (quasi-q (second x))))
     ((starts-with (first x) 'unquote-splicing)
      (if (null (rest x))
@@ -576,7 +576,7 @@
   ;; ... L ... => ... ... ;if no reference to L
   (when (not (find instr all-code :key #'arg1))
     (setf (first code) (second code)
-          (rest code) (rest2 code))
+          (rest code) (drop 2 code))
     t))
 
 (def-optimizer (GSET LSET) (instr code all-code)
@@ -611,7 +611,7 @@
   (case (opcode (second code))
     (NOT ;; (T) (NOT) ==> NIL
      (setf (first code) (gen1 'NIL)
-           (rest code) (rest2 code))
+           (rest code) (drop 2 code))
      t)
     (FJUMP ;; (T) (FJUMP L) ... => ...
      (setf (first code) (third code)
@@ -626,7 +626,7 @@
   (case (opcode (second code))
     (NOT ;; (NIL) (NOT) ==> T
      (setf (first code) (gen1 'T)
-           (rest code) (rest2 code))
+           (rest code) (drop 2 code))
      t)
     (TJUMP ;; (NIL) (TJUMP L) ... => ...
      (setf (first code) (third code)

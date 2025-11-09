@@ -56,7 +56,7 @@
                 env (ret-addr-env (second stack))
                 pc (ret-addr-pc (second stack)))
           ;; Get rid of the ret-addr, but keep the value
-          (setf stack (cons (first stack) (rest2 stack))))
+          (setf stack (cons (first stack) (drop 2 stack))))
         (CALLJ  (pop env)                 ; discard the top frame
          (setf fn  (pop stack)
                code (fn-code fn)
@@ -107,7 +107,7 @@
         ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
          (setf stack (cons (funcall (opcode instr) (second stack)
                                     (first stack))
-                           (rest2 stack))))
+                           (drop 2 stack))))
 
         ;; Ternary operations:
         (LIST3
