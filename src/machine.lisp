@@ -11,7 +11,8 @@
 (in-package :bard)
 
 (defclass vm ()
-  ((code :accessor code :initform nil :initarg :code)
+  ((fn :accessor fn :initform nil :initarg :fn)
+   (code :accessor code :initform nil :initarg :code)
    (pc :accessor pc :initform 0 :initarg :pc)
    (env :accessor env :initform nil :initarg :env)
    (stack :accessor stack :initform nil :initarg :stack)
@@ -20,15 +21,15 @@
    (halted? :accessor halted? :initform t :initarg :halted)))
 
 (defmethod vm-load ((vm vm)(fn fn))
-  (with-slots (code pc env stack n-args instr halted?) vm
-    (setf code (fn-code fn)
-          pc 0
-          env nil
-          stack nil
-          n-args 0
-          instr nil
-          halted? nil)
-    vm))
+  (setf (fn vm) fn
+        (code vm) (fn-code fn)
+        (pc vm) 0
+        (env vm) nil
+        (stack vm) nil
+        (n-args vm) 0
+        (instr vm) nil
+        (halted? vm) nil)
+  vm)
 
 (defmethod runvm ((vm vm)(fn fn))
   (vm-load vm fn)
@@ -59,19 +60,19 @@
 
             ;; Function call/return instructions:
             (SAVE   (push (make-ret-addr :pc (arg1 (instr vm))
-                                         :fn fn :env (env vm))
+                                         :fn (fn vm) :env (env vm))
                           (stack vm)))
             (RETURN ;; return value is top of stack; ret-addr is second
-              (setf fn (ret-addr-fn (second (stack vm)))
-                    (code vm) (fn-code fn)
+              (setf (fn vm) (ret-addr-fn (second (stack vm)))
+                    (code vm) (fn-code (fn vm))
                     (env vm) (ret-addr-env (second (stack vm)))
                     (pc vm) (ret-addr-pc (second (stack vm))))
               ;; Get rid of the ret-addr, but keep the value
               (setf (stack vm) (cons (first (stack vm)) (drop 2 (stack vm)))))
             (CALLJ  (pop (env vm))                 ; discard the top frame
-             (setf fn  (pop (stack vm))
-                   (code vm) (fn-code fn)
-                   (env vm) (fn-env fn)
+             (setf (fn vm)  (pop (stack vm))
+                   (code vm) (fn-code (fn vm))
+                   (env vm) (fn-env (fn vm))
                    (pc vm) 0
                    (n-args vm) (arg1 (instr vm))))
             (ARGS   (assert (= (n-args vm) (arg1 (instr vm))) ()
@@ -91,7 +92,8 @@
              (loop for i from (- (arg1 (instr vm)) 1) downto 0 do
                (setf (elt (first (env vm)) i) (pop (stack vm)))))
             (FN     (push (make-fn :code (fn-code (arg1 (instr vm)))
-                                   :env (env vm)) (stack vm)))
+                                   :env (env vm))
+                          (stack vm)))
             (PRIM   (push (apply (arg1 (instr vm))
                                  (loop with args = nil repeat (n-args vm)
                                        do (push (pop (stack vm)) args)
