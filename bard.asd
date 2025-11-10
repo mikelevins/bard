@@ -23,7 +23,6 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "utilities")
-                                     (:file "auxfns")
                                      (:file "macro")
                                      (:file "env")
                                      (:file "bard-macros")
