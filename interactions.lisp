@@ -34,15 +34,14 @@
 (set! $x 1)
 
 (define (add1 x)(+ x 1))
-
-(add1 3)
+(set! $x (add1 $x))
 
 
 (let ((x 10)
       (y 12))
   (+ x y))
 
-(let ((x 10)
+(let ((x 13)
       (y 12))
   (newline)
   (if (> x y)

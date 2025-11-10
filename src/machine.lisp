@@ -32,108 +32,107 @@
 
 (defmethod runvm ((vm vm)(fn fn))
   (vm-load vm fn)
-  (with-slots (code pc env stack n-args instr halted?) vm
-    (loop
-      (if halted?
-          ;; stop the vm
-          (return (top stack))
-          ;; step the vm
-          (progn
-            (setf instr (elt code pc))
-            (incf pc)
-            (case (opcode instr)
+  (loop
+    (if (halted? vm)
+        ;; stop the vm
+        (return (top (stack vm)))
+        ;; step the vm
+        (progn
+          (setf (instr vm) (elt (code vm) (pc vm)))
+          (incf (pc vm))
+          (case (opcode (instr vm))
 
-              ;; Variable/stack manipulation instructions:
-              (LVAR   (push (elt (elt env (arg1 instr)) (arg2 instr))
-                            stack))
-              (LSET   (setf (elt (elt env (arg1 instr)) (arg2 instr))
-                            (top stack)))
-              (GVAR   (push (get (arg1 instr) 'global-val) stack))
-              (GSET   (setf (get (arg1 instr) 'global-val) (top stack)))
-              (POP    (pop stack))
-              (CONST  (push (arg1 instr) stack))
+            ;; Variable/stack manipulation instructions:
+            (LVAR   (push (elt (elt (env vm) (arg1 (instr vm))) (arg2 (instr vm)))
+                          (stack vm)))
+            (LSET   (setf (elt (elt (env vm) (arg1 (instr vm))) (arg2 (instr vm)))
+                          (top (stack vm))))
+            (GVAR   (push (get (arg1 (instr vm)) 'global-val) (stack vm)))
+            (GSET   (setf (get (arg1 (instr vm)) 'global-val) (top (stack vm))))
+            (POP    (pop (stack vm)))
+            (CONST  (push (arg1 (instr vm)) (stack vm)))
 
-              ;; Branching instructions:
-              (JUMP   (setf pc (arg1 instr)))
-              (FJUMP  (if (null (pop stack)) (setf pc (arg1 instr))))
-              (TJUMP  (if (pop stack) (setf pc (arg1 instr))))
+            ;; Branching instructions:
+            (JUMP   (setf (pc vm) (arg1 (instr vm))))
+            (FJUMP  (if (null (pop (stack vm))) (setf (pc vm) (arg1 (instr vm)))))
+            (TJUMP  (if (pop (stack vm)) (setf (pc vm) (arg1 (instr vm)))))
 
-              ;; Function call/return instructions:
-              (SAVE   (push (make-ret-addr :pc (arg1 instr)
-                                           :fn fn :env env)
-                            stack))
-              (RETURN ;; return value is top of stack; ret-addr is second
-                (setf fn (ret-addr-fn (second stack))
-                      code (fn-code fn)
-                      env (ret-addr-env (second stack))
-                      pc (ret-addr-pc (second stack)))
-                ;; Get rid of the ret-addr, but keep the value
-                (setf stack (cons (first stack) (drop 2 stack))))
-              (CALLJ  (pop env)                 ; discard the top frame
-               (setf fn  (pop stack)
-                     code (fn-code fn)
-                     env (fn-env fn)
-                     pc 0
-                     n-args (arg1 instr)))
-              (ARGS   (assert (= n-args (arg1 instr)) ()
-                              "Wrong number of arguments:~
+            ;; Function call/return instructions:
+            (SAVE   (push (make-ret-addr :pc (arg1 (instr vm))
+                                         :fn fn :env (env vm))
+                          (stack vm)))
+            (RETURN ;; return value is top of stack; ret-addr is second
+              (setf fn (ret-addr-fn (second (stack vm)))
+                    (code vm) (fn-code fn)
+                    (env vm) (ret-addr-env (second (stack vm)))
+                    (pc vm) (ret-addr-pc (second (stack vm))))
+              ;; Get rid of the ret-addr, but keep the value
+              (setf (stack vm) (cons (first (stack vm)) (drop 2 (stack vm)))))
+            (CALLJ  (pop (env vm))                 ; discard the top frame
+             (setf fn  (pop (stack vm))
+                   (code vm) (fn-code fn)
+                   (env vm) (fn-env fn)
+                   (pc vm) 0
+                   (n-args vm) (arg1 (instr vm))))
+            (ARGS   (assert (= (n-args vm) (arg1 (instr vm))) ()
+                            "Wrong number of arguments:~
                          ~d expected, ~d supplied"
-                              (arg1 instr) n-args)
-               (push (make-array (arg1 instr)) env)
-               (loop for i from (- n-args 1) downto 0 do
-                 (setf (elt (first env) i) (pop stack))))
-              (ARGS.  (assert (>= n-args (arg1 instr)) ()
-                              "Wrong number of arguments:~
+                            (arg1 (instr vm)) (n-args vm))
+             (push (make-array (arg1 (instr vm))) (env vm))
+             (loop for i from (- (n-args vm) 1) downto 0 do
+               (setf (elt (first (env vm)) i) (pop (stack vm)))))
+            (ARGS.  (assert (>= (n-args vm) (arg1 (instr vm))) ()
+                            "Wrong number of arguments:~
                          ~d or more expected, ~d supplied"
-                              (arg1 instr) n-args)
-               (push (make-array (+ 1 (arg1 instr))) env)
-               (loop repeat (- n-args (arg1 instr)) do
-                 (push (pop stack) (elt (first env) (arg1 instr))))
-               (loop for i from (- (arg1 instr) 1) downto 0 do
-                 (setf (elt (first env) i) (pop stack))))
-              (FN     (push (make-fn :code (fn-code (arg1 instr))
-                                     :env env) stack))
-              (PRIM   (push (apply (arg1 instr)
-                                   (loop with args = nil repeat n-args
-                                         do (push (pop stack) args)
-                                         finally (return args)))
-                            stack))
+                            (arg1 (instr vm)) (n-args vm))
+             (push (make-array (+ 1 (arg1 (instr vm)))) (env vm))
+             (loop repeat (- (n-args vm) (arg1 (instr vm))) do
+               (push (pop (stack vm)) (elt (first (env vm)) (arg1 (instr vm)))))
+             (loop for i from (- (arg1 (instr vm)) 1) downto 0 do
+               (setf (elt (first (env vm)) i) (pop (stack vm)))))
+            (FN     (push (make-fn :code (fn-code (arg1 (instr vm)))
+                                   :env (env vm)) (stack vm)))
+            (PRIM   (push (apply (arg1 (instr vm))
+                                 (loop with args = nil repeat (n-args vm)
+                                       do (push (pop (stack vm)) args)
+                                       finally (return args)))
+                          (stack vm)))
 
-              ;; Continuation instructions:
-              (SET-CC (setf stack (top stack)))
-              (CC     (push (make-fn
-                             :env (list (vector stack))
-                             :code '((ARGS 1) (LVAR 1 0 ";" stack) (SET-CC)
-                                     (LVAR 0 0) (RETURN)))
-                            stack))
+            ;; Continuation instructions:
+            (SET-CC (setf (stack vm) (top (stack vm))))
+            (CC     (push (make-fn
+                           :env (list (vector (stack vm)))
+                           :code '((ARGS 1) (LVAR 1 0 ";" (stack vm)) (SET-CC)
+                                   (LVAR 0 0) (RETURN)))
+                          (stack vm)))
 
-              ;; Nullary operations:
-              ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
-               (push (funcall (opcode instr)) stack))
+            ;; Nullary operations:
+            ((BARD-READ NEWLINE) ; *** fix, gat, 11/9/92
+             (push (funcall (opcode (instr vm))) (stack vm)))
 
-              ;; Unary operations:
-              ((CAR CDR CADR EOF-OBJECT? NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
-               (push (funcall (opcode instr) (pop stack)) stack))
+            ;; Unary operations:
+            ((CAR CDR CADR EOF-OBJECT? NOT LIST1 COMPILER DISPLAY WRITE RANDOM)
+             (push (funcall (opcode (instr vm)) (pop (stack vm))) (stack vm)))
 
-              ;; Binary operations:
-              ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
-               (setf stack (cons (funcall (opcode instr) (second stack)
-                                          (first stack))
-                                 (drop 2 stack))))
+            ;; Binary operations:
+            ((+ - * / < > <= >= /= = CONS LIST2 NAME! EQ EQUAL EQL)
+             (setf (stack vm) (cons (funcall (opcode (instr vm)) (second (stack vm))
+                                             (first (stack vm)))
+                                    (drop 2 (stack vm)))))
 
-              ;; Ternary operations:
-              (LIST3
-               (setf stack (cons (funcall (opcode instr) (third stack)
-                                          (second stack) (first stack))
-                                 (drop 3 stack))))
+            ;; Ternary operations:
+            (LIST3
+             (setf (stack vm) (cons (funcall (opcode (instr vm)) (third (stack vm))
+                                             (second (stack vm)) (first (stack vm)))
+                                    (drop 3 (stack vm)))))
 
-              ;; Constants:
-              ((T NIL -1 0 1 2)
-               (push (opcode instr) stack))
+            ;; Constants:
+            ((T NIL -1 0 1 2)
+             (push (opcode (instr vm)) (stack vm)))
 
-              ;; Other:
-              ((HALT) (setf halted? t))
-              (otherwise (error "Unknown opcode: ~a" instr))))))))
+            ;; Other:
+            ((HALT) (setf (halted? vm) t))
+            (otherwise (error "Unknown opcode: ~a" (instr vm))))))))
 
 (defparameter *default-bardvm* (make-instance 'vm))
 
