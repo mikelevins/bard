@@ -499,8 +499,6 @@
 
 ;;; ==============================
 
-                                        ;(setf (bard-macro 'quasiquote) 'quasi-q)
-
 (defun quasi-q (x)
   "Expand a quasiquote form into append, list, and cons calls."
   (cond
@@ -565,10 +563,6 @@
           (complex re im))))))
 
 (defun sign-p (char) (find char "+-"))
-
-
-;;; compopt.lisp
-
 
 ;;;; File compopt.lisp:  Optimizers for Bard compiler (compile3.lisp).
 

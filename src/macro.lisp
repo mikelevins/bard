@@ -14,7 +14,8 @@
 (in-package :bard)
 
 (defun bard-macro (symbol)
-  (and (symbolp symbol) (get symbol 'bard-macro)))
+  (and (symbolp symbol)
+       (get symbol 'bard-macro)))
 
 (defmacro def-bard-macro (name parmlist &body body)
   "Define a Bard macro."
