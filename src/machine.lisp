@@ -19,7 +19,7 @@
    (instr :accessor instr :initform nil :initarg :instr)
    (halted? :accessor halted? :initform t :initarg :halted)))
 
-(defmethod runvm ((vm vm)(fn fn))
+(defmethod vm-load ((vm vm)(fn fn))
   (with-slots (code pc env stack n-args instr halted?) vm
     (setf code (fn-code fn)
           pc 0
@@ -28,6 +28,11 @@
           n-args 0
           instr nil
           halted? nil)
+    vm))
+
+(defmethod runvm ((vm vm)(fn fn))
+  (vm-load vm fn)
+  (with-slots (code pc env stack n-args instr halted?) vm
     (loop
       (if halted?
           ;; stop the vm
