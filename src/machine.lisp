@@ -20,7 +20,7 @@
    (instr :accessor instr :initform nil :initarg :instr)
    (halted? :accessor halted? :initform t :initarg :halted)))
 
-(defmethod vm-load ((vm vm)(fn fn))
+(defmethod vmload ((vm vm)(fn fn))
   (setf (fn vm) fn
         (code vm) (fn-code fn)
         (pc vm) 0
@@ -131,7 +131,7 @@
       (otherwise (error "Unknown opcode: ~a" (instr vm))))))
 
 (defmethod runvm ((vm vm)(fn fn))
-  (vm-load vm fn)
+  (vmload vm fn)
   (loop
     (if (halted? vm)
         ;; stop the vm
