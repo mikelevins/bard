@@ -25,6 +25,7 @@
                                      (:file "utilities")
                                      (:file "macro")
                                      (:file "env")
+                                     (:file "opcodes")
                                      (:file "bard-macros")
                                      (:file "prim")
                                      (:file "fn")
