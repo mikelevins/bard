@@ -23,12 +23,13 @@
 ;;;    6  the lexical chain              done
 ;;;    7  tail calls                     done
 ;;;    8  multiple values                done
-;;;    9  threads                        pending
+;;;    9  threads                        done
 ;;;   10  the dynamic environment        pending
 ;;;   11  the error hook                 pending
 ;;;
-;;; Unimplemented instructions signal rather than misbehave, so the
-;;; ladder is visible from a backtrace.
+;;; Stages 10 and 11 add no instructions: the dynamic environment
+;;; changes what op_GLOBAL does, and the error hook changes how failure
+;;; is reported.
 
 ;;; ---------------------------------------------------------------------
 ;;; errors
@@ -178,12 +179,58 @@ and return the parent."
     (frame-push frame values)))
 
 ;;; ---------------------------------------------------------------------
+;;; threads
+;;; ---------------------------------------------------------------------
+;;; A thread is a frame you kept. Switching is storing the current frame
+;;; into one thread and loading another's; nothing is saved or restored,
+;;; because there is nothing outside the frame to save.
+;;;
+;;; The rotation is round-robin over a list. Anything smarter belongs
+;;; above the machine and will replace this.
+
+(defvar *threads* '()
+  "The threads the machine is rotating among.")
+
+(defvar *current-thread* nil)
+
+(defun next-runnable ()
+  "The next thread in rotation that has not finished, or NIL if none has
+work left."
+  (let* ((all *threads*)
+         (n (length all))
+         (start (or (position *current-thread* all) 0)))
+    (loop for i from 1 to n
+          for thread = (nth (mod (+ start i) n) all)
+          unless (eq (thread-status thread) :finished)
+            do (return thread))))
+
+(defun spawn (fn)
+  "Make a thread over FN and add it to the rotation."
+  (let ((thread (make-thread (make-frame fn :parent nil))))
+    (setf *threads* (append *threads* (list thread)))
+    thread))
+
+(defun finish-current-thread (values)
+  "Record VALUES as the current thread's result, and return the next
+runnable thread -- or NIL if that was the last one."
+  (setf (thread-result *current-thread*) values
+        (thread-status *current-thread*) :finished)
+  (next-runnable))
+
+;;; ---------------------------------------------------------------------
 ;;; the loop
 ;;; ---------------------------------------------------------------------
 
 (defun run (frame)
-  "Step FRAME until a op_RETURN into a nil parent ends the computation.
-Returns the delivered values as a list."
+  "Run FRAME as a thread, rotating among any threads it spawns, until
+none has work left. Returns FRAME's own delivered values."
+  (let* ((thread (make-thread frame))
+         (*threads* (list thread))
+         (*current-thread* thread))
+    (%run frame)
+    (thread-result thread)))
+
+(defun %run (frame)
   (loop
     (let* ((code (fn-code (frame-fn frame)))
            (ins (code-instructions code))
@@ -249,9 +296,22 @@ Returns the delivered values as a list."
          (receive-all frame))
 
         (op_RETURN
-         (if (frame-parent frame)
-             (setf frame (deliver-values frame a))
-             (return (pop-values frame a))))
+         (cond ((frame-parent frame)
+                (setf frame (deliver-values frame a)))
+               (t
+                ;; No parent: this thread is finished. Hand the machine
+                ;; to whoever is left.
+                (let ((next (finish-current-thread (pop-values frame a))))
+                  (unless next (return))
+                  (setf *current-thread* next
+                        frame (thread-frame next))))))
+
+        (op_YIELD
+         (setf (thread-frame *current-thread*) frame)
+         (let ((next (next-runnable)))
+           (when next
+             (setf *current-thread* next
+                   frame (thread-frame next)))))
 
         (op_TAILCALL
          ;; The callee is reached exactly as op_CALL reaches it. What differs
@@ -269,16 +329,23 @@ Returns the delivered values as a list."
                     (let ((count (frame-pop caller)))
                       (if (frame-parent caller)
                           (setf frame (deliver-values caller count))
-                          (return (pop-values caller count)))))
+                          (let ((next (finish-current-thread
+                                       (pop-values caller count))))
+                            (unless next (return))
+                            (setf *current-thread* next
+                                  frame (thread-frame next))))))
                    (t
                     ;; A fresh frame. Inheriting our parent is what makes
                     ;; the call a tail call.
                     (setf (frame-parent next) (frame-parent caller)
                           frame next))))))
 
-        ;; ----- not yet implemented -----
+        ;; Every instruction is implemented, so reaching here means the
+        ;; opcode word is not one -- corrupt code, or a code object built
+        ;; by something that does not agree with this machine.
         (t
-         (bard-error frame pc "~A is not implemented yet." (opcode-name op)))))))
+         (bard-error frame pc "~A is not an instruction." (opcode-name op))))))
+  (values))
 
 (defun run-code (code)
   "Run CODE as a whole computation and return its values as a list."

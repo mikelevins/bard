@@ -419,6 +419,67 @@ this one -- for n of 10, 1000, and 100000 alike. Constant, not merely
 bounded.")
 
 ;;; ---------------------------------------------------------------------
+;;; assembly -- threads
+;;; ---------------------------------------------------------------------
+
+(defparameter +lap-fn-logger+
+  '((op_LOCAL 1 0)                      ; tag, from the frame make-logger
+    (op_GLOBAL log)                     ; was running in
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+    (op_YIELD)                          ; hand the machine to the other
+
+    (op_LOCAL 1 0)
+    (op_GLOBAL log)
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+    (op_YIELD)
+
+    (op_LOCAL 1 0)
+    (op_GLOBAL log)
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+    (op_RETURN 0))
+  "(fn () (dotimes (i 3) (push tag log) (yield)))
+
+Unrolled: a loop would need a counter, and the point here is the
+interleaving, not the arithmetic.")
+
+(defparameter +code-logger+
+  (bard:assemble +lap-fn-logger+ :name "logger" :arity 0))
+
+(defparameter +lap-fn-make-logger+
+  `((op_CLOSE ,+code-logger+)           ; captures this frame, where tag lives
+    (op_RETURN 1))
+  "(fn (tag) (fn () ...))")
+
+(defparameter +code-make-logger+
+  (bard:assemble +lap-fn-make-logger+ :name "make-logger" :arity 1))
+
+(defparameter +lap-two-threads+
+  `((op_CONST a)
+    (op_CLOSE ,+code-make-logger+)
+    (op_CALL 1) (op_RECV 1)
+    (op_GLOBAL _spawn)
+    (op_CALL 1) (op_RECV 0)
+
+    (op_CONST b)
+    (op_CLOSE ,+code-make-logger+)
+    (op_CALL 1) (op_RECV 1)
+    (op_GLOBAL _spawn)
+    (op_CALL 1) (op_RECV 0)
+
+    (op_RETURN 0))                      ; this thread is done; the two
+  "Two logger threads, spawned and left to alternate.
+
+Each yields between entries, so the log interleaves. The tags come from
+closures over separate make-logger frames, so the threads share the log
+and nothing else.")
+
+;;; ---------------------------------------------------------------------
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
@@ -431,11 +492,6 @@ bounded.")
   done
     (op_RETURN 1))
   "One instruction of each operand kind, for the disassembler.")
-
-(defparameter +lap-yield-pending+
-  '((op_YIELD)                             ; needs stage 9
-    (op_RETURN 0))
-  "Switching threads. Not implemented yet.")
 
 ;;; ---------------------------------------------------------------------
 ;;; stage 2 -- the loop, op_CONST, op_RETURN
@@ -600,6 +656,27 @@ a chain a hundred thousand frames long."
 #+repl (run-program +lap-tailcall-deep+)                ; => (DONE)
 
 ;;; ---------------------------------------------------------------------
+;;; stage 9 -- threads
+;;; ---------------------------------------------------------------------
+
+(test |2.9 two threads alternate|
+  "op_YIELD hands the machine to the next thread in rotation. A thread is
+a frame you kept, so the switch is an assignment."
+  (set-global 'log nil)
+  (run-program +lap-two-threads+)
+  (is (equal '(b a b a b a)
+             (bard:binding-value (bard:global-binding 'log)))))
+
+#+repl (run! '|2.9 two threads alternate|)  ; => T
+
+(test |a lone thread yields to itself|
+  "op_YIELD with nothing else runnable is a no-op, so a program need not
+know how many threads exist."
+  (is (equal '(42) (run-program '((op_YIELD) (op_CONST 42) (op_YIELD) (op_RETURN 1))))))
+
+#+repl (run! '|a lone thread yields to itself|)  ; => T
+
+;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
 ;;; ---------------------------------------------------------------------
 
@@ -625,11 +702,13 @@ a chain a hundred thousand frames long."
 #+repl (run! '|the assembler rejects malformed input|)  ; => T
 
 ;;; ---------------------------------------------------------------------
-;;; stages 6 through 11 -- not yet implemented
+;;; the instruction set is complete
 ;;; ---------------------------------------------------------------------
 
-(test |unimplemented instructions signal rather than misbehave|
-  "The ladder should be visible from a backtrace."
-  (signals bard:bard-error (run-program +lap-yield-pending+)))
+(test |every instruction is implemented|
+  "Fifteen, and nothing left pending at the machine level. Stage 10
+changes what op_GLOBAL does; stage 11 changes how failure is reported.
+Neither adds an instruction."
+  (is (= 15 (length bard::*opcode-specs*))))
 
-#+repl (run! '|unimplemented instructions signal rather than misbehave|)  ; => T
+#+repl (run! '|every instruction is implemented|)  ; => T

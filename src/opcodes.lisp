@@ -203,7 +203,9 @@ further locals needs exactly that many."
                   ;; A compiler computes FRAME-SIZE as N-LOCALS plus the
                   ;; maximum operand depth. There is no compiler yet, so
                   ;; this is a generous stand-in -- a placeholder, not a
-                  ;; design decision.
+                  ;; design decision. Nothing checks for overflow: a
+                  ;; program deep enough to exceed it fails as a host
+                  ;; array error rather than a machine one.
                   :frame-size (or frame-size (+ n-locals 32))))))
 
 ;;; ---------------------------------------------------------------------

@@ -226,6 +226,7 @@ its own symbols eventually.")
                    (:print-object print-thread))
   (frame nil)
   (status :ready)
+  (result '())
   (dynenv '()))
 
 (defun print-thread (th stream)
