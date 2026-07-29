@@ -33,7 +33,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; errors
 ;;; ---------------------------------------------------------------------
-
 ;;; Stage 11 replaces this with a hook that is called before anything
 ;;; unwinds, and that can resume at the faulting instruction. Until
 ;;; then it carries the two things that hook will need: the frame, and
@@ -77,26 +76,25 @@ rendered and the operand stack shown.")
 ;;; ---------------------------------------------------------------------
 ;;; calling
 ;;; ---------------------------------------------------------------------
-
 ;;; CALL asks the callee's descriptor for a handler rather than assuming
 ;;; a bytecode function. That one indirection is what will later let
 ;;; generic functions, foreign functions, and native-compiled functions
 ;;; all be reached by this instruction.
 ;;;
-;;; A handler takes (callee nargs frame pc) and returns the frame to
+;;; A handler takes (callee n-args frame pc) and returns the frame to
 ;;; continue in. A primitive stays in the caller's frame; a bytecode
 ;;; function returns a fresh one. PC is the faulting instruction -- the
 ;;; CALL itself, not the instruction after it -- because a handler that
 ;;; signals must report where the fault was, per P5.
 
-(defun call-primitive (callee nargs frame pc)
+(defun call-primitive (callee n-args frame pc)
   (let ((arity (primitive-arity callee)))
-    (unless (= nargs arity)
+    (unless (= n-args arity)
       (bard-error frame pc
                   "~A takes ~D argument~:P, called with ~D."
-                  (primitive-name callee) arity nargs))
-    (let ((args (make-list nargs)))
-      (loop for i from (1- nargs) downto 0
+                  (primitive-name callee) arity n-args))
+    (let ((args (make-list n-args)))
+      (loop for i from (1- n-args) downto 0
             do (setf (nth i args) (frame-pop frame)))
       ;; Primitives deliver a count like everything else. That
       ;; uniformity is what lets a receiver follow any call without
@@ -105,19 +103,19 @@ rendered and the operand stack shown.")
       (frame-push frame 1)))
   frame)
 
-(defun call-fn (callee nargs frame pc)
+(defun call-fn (callee n-args frame pc)
   "Allocating the frame is what calling means."
   (let* ((code (fn-code callee))
          (arity (code-arity code)))
-    (unless (= nargs arity)
+    (unless (= n-args arity)
       (bard-error frame pc
                   "~A takes ~D argument~:P, called with ~D."
-                  (or (code-name code) "anonymous") arity nargs))
+                  (or (code-name code) "anonymous") arity n-args))
     (let* ((new (make-frame callee :parent frame))
            (slots (frame-slots new)))
       ;; Arguments were pushed left to right, so popping delivers them
       ;; last first. Filling downward puts the first argument in slot 0.
-      (loop for i from (1- nargs) downto 0
+      (loop for i from (1- n-args) downto 0
             do (setf (svref slots i) (frame-pop frame)))
       new)))
 
@@ -160,57 +158,57 @@ Returns the delivered values as a list."
       ;; faulting instruction and is what the error hook will need.
       (when *trace* (trace-instruction frame pc))
       (setf (frame-pc frame) (1+ pc))
-      (cond
+      (case op
         ;; ----- values -----
-        ((= op +op-const+)
+        (#.+op-const+
          (frame-push frame (svref (code-constants code) a)))
 
-        ((= op +op-local+)
+        (#.+op-local+
          (unless (zerop a)
            (bard-error frame pc "The lexical chain is not implemented yet."))
          (frame-push frame (svref (frame-slots frame) b)))
 
-        ((= op +op-close+)
+        (#.+op-close+
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
 
-        ((= op +op-global+)
+        (#.+op-global+
          (let ((binding (svref (code-constants code) a)))
-           (unless (binding-boundp binding)
+           (unless (binding-bound? binding)
              (bard-error frame pc "~A is unbound." (binding-name binding)))
            (frame-push frame (binding-value binding))))
 
         ;; ----- stores -----
-        ((= op +op-set-global+)
+        (#.+op-set-global+
          (let ((binding (svref (code-constants code) a)))
            (setf (binding-value binding) (frame-top frame)
-                 (binding-boundp binding) t)))
+                 (binding-bound? binding) t)))
 
-        ((= op +op-drop+)
+        (#.+op-drop+
          (frame-pop frame))
 
         ;; ----- control -----
-        ((= op +op-goto+)
+        (#.+op-goto+
          (setf (frame-pc frame) a))
 
-        ((= op +op-branch-false+)
+        (#.+op-branch-false+
          (when (null (frame-pop frame))
            (setf (frame-pc frame) a)))
 
         ;; ----- calling -----
-        ((= op +op-call+)
+        (#.+op-call+
          (let* ((callee (frame-pop frame))
                 (handler (descriptor-call-handler (descriptor-of callee))))
            (unless handler
              (bard-error frame pc "~S is not applicable." callee))
            (setf frame (funcall handler callee a frame pc))))
 
-        ((= op +op-recv+)
+        (#.+op-recv+
          (receive frame a))
 
-        ((= op +op-recv-all+)
+        (#.+op-recv-all+
          (receive-all frame))
 
-        ((= op +op-return+)
+        (#.+op-return+
          (let ((values '())
                (parent (frame-parent frame)))
            (dotimes (i a) (push (frame-pop frame) values))

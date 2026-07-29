@@ -143,7 +143,7 @@ resume. Until then it must at least report the instruction that faulted
   (flet ((classify (n)
            (let ((binding (bard:global-binding 'n)))
              (setf (bard:binding-value binding) n
-                   (bard:binding-boundp binding) t))
+                   (bard:binding-bound? binding) t))
            (run-1 '((global n) (const 3) (global <) (call 2) (recv 1)
                     (branch-false big)
                     (const "small") (goto done)

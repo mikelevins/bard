@@ -46,8 +46,8 @@
    #:binding
    #:binding-name
    #:binding-value
-   #:binding-boundp
-   #:binding-dynamic-p
+   #:binding-bound?
+   #:binding-dynamic?
    #:global-binding
    #:*globals*
    ;; primitives

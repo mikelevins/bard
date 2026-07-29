@@ -29,7 +29,7 @@
   (let ((binding (global-binding name))
         (primitive (make-primitive name arity function)))
     (setf (binding-value binding) primitive
-          (binding-boundp binding) t)
+          (binding-bound? binding) t)
     primitive))
 
 (defmacro define-primitive (name (&rest args) &body body)
@@ -90,7 +90,7 @@
         do (let ((binding (global-binding name))
                  (source (global-binding primitive)))
              (setf (binding-value binding) (binding-value source)
-                   (binding-boundp binding) t)))
+                   (binding-bound? binding) t)))
   (values))
 
 (install-scaffolding)

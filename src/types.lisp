@@ -19,7 +19,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; nothing
 ;;; ---------------------------------------------------------------------
-
 ;;; NOTHING is false, the empty list, and the empty collection. For the
 ;;; bootstrap it is CL's NIL, which already plays all three roles.
 
@@ -29,7 +28,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; descriptors
 ;;; ---------------------------------------------------------------------
-
 ;;; Every value carries a descriptor, and the machine never interprets
 ;;; one. It stores, copies, and compares them, and it asks a descriptor
 ;;; for its CALL-HANDLER when CALL needs to apply something.
@@ -80,7 +78,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; code
 ;;; ---------------------------------------------------------------------
-
 ;;; Instructions are fixed-width: a flat fixnum array with a stride of
 ;;; three -- opcode, arg1, arg2 -- so decoding is three array reads and
 ;;; no branching. Because an instruction word is a fixnum, operands that
@@ -110,7 +107,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; functions
 ;;; ---------------------------------------------------------------------
-
 ;;; A closure is code plus the frame it was created in. Because
 ;;; environments and frames are the same representation, the lexical
 ;;; chain is CAPTURED-FRAME links and needs nothing of its own.
@@ -127,7 +123,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; frames
 ;;; ---------------------------------------------------------------------
-
 ;;; The frame is the computation. PARENT is the continuation; SLOTS
 ;;; holds locals in the low positions and the operand stack above them,
 ;;; with SP marking the top of the operand area.
@@ -180,7 +175,6 @@
 ;;; ---------------------------------------------------------------------
 ;;; bindings
 ;;; ---------------------------------------------------------------------
-
 ;;; A global name resolves to a binding, never directly to a value. That
 ;;; indirection is why a redefinition takes effect in code compiled
 ;;; before it. The unbound state is distinct from a NOTHING value: it is
@@ -190,12 +184,12 @@
                     (:print-object print-binding))
   (name nil)
   (value *nothing*)
-  (boundp nil)
-  (dynamic-p nil))
+  (bound? nil :type boolean)
+  (dynamic? nil :type boolean))
 
 (defun print-binding (b stream)
   (print-unreadable-object (b stream :type t)
-    (format stream "~A~:[ unbound~;~]" (binding-name b) (binding-boundp b))))
+    (format stream "~A~:[ unbound~;~]" (binding-name b) (binding-bound? b))))
 
 (defvar *globals* (make-hash-table :test #'equal)
   "Maps a name to its binding. Keyed by name string rather than by
@@ -212,7 +206,6 @@ its own symbols eventually.")
 ;;; ---------------------------------------------------------------------
 ;;; primitives
 ;;; ---------------------------------------------------------------------
-
 ;;; Primitives are monomorphic, fixed-arity, and named with a leading
 ;;; underscore so they stay out of the language's namespace. All
 ;;; polymorphism lives above the machine.
@@ -230,7 +223,6 @@ its own symbols eventually.")
 ;;; ---------------------------------------------------------------------
 ;;; threads
 ;;; ---------------------------------------------------------------------
-
 ;;; A thread is a frame and a status -- barely a new thing. DYNENV holds
 ;;; this thread's dynamic rebindings and is almost always empty.
 
