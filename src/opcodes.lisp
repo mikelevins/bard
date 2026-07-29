@@ -230,3 +230,6 @@ further locals needs exactly that many."
   (values))
 
 #+repl (disassemble (assemble '((CONST 42) (RETURN 1)) :name "answer"))
+       ; prints: answer  arity 0  locals 0  frame 32
+       ;            0: CONST 42
+       ;            1: RETURN 1

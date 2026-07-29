@@ -49,5 +49,5 @@
 ;;; The runtime system depends on nothing. Tests are isolated in
 ;;; bard/test so that loading bard does not pull in fiveam.
 
-#+repl (asdf:load-system :bard)
-#+repl (asdf:test-system :bard)
+#+repl (asdf:load-system :bard) ; => T
+#+repl (asdf:test-system :bard) ; => T

@@ -95,5 +95,5 @@
 
 (install-scaffolding)
 
-#+repl (install-scaffolding)
-#+repl (binding-value (global-binding '+))
+#+repl (install-scaffolding)                ; => no values
+#+repl (binding-value (global-binding '+))  ; => #<PRIMITIVE _FIXNUM-ADD/2>

@@ -52,8 +52,8 @@
   "Run the whole ladder. Returns T if everything passes."
   (run! 'bard-tests))
 
-#+repl (run-tests)
-#+repl (asdf:test-system :bard)
+#+repl (run-tests)              ; => T when the whole ladder passes
+#+repl (asdf:test-system :bard) ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; helpers
@@ -92,9 +92,12 @@
     (RETURN 3))                         ; all three, bottom first
   "(values 1 2 3)")
 
-#+repl (run-program +lap-const+)
+#+repl (run-program +lap-const+)        ; => (42)
+#+repl (run-program +lap-return-three+) ; => (1 2 3)
 #+repl (bard:disassemble (bard:assemble +lap-return-three+ :name "three"))
+       ; prints the listing; returns no values
 #+repl (let ((bard:*trace* t)) (run-program +lap-const+))
+       ; => (42), with each instruction traced to *trace-output*
 
 ;;; ---------------------------------------------------------------------
 ;;; assembly -- primitive calls and receivers
@@ -233,7 +236,7 @@ at 1, not the CALL at 2.")
 (defparameter +code-sub+ (bard:assemble +lap-fn-sub+ :name "sub" :arity 2))
 (defparameter +code-pair+ (bard:assemble +lap-fn-pair+ :name "pair" :arity 2))
 
-#+repl (bard:disassemble +code-square+)
+#+repl (bard:disassemble +code-square+) ; prints the listing
 
 (defparameter +lap-call-fn+
   `((CONST 7)
@@ -294,6 +297,67 @@ at 1, not the CALL at 2.")
   "A call whose argument count does not match the callee's code object.")
 
 ;;; ---------------------------------------------------------------------
+;;; assembly -- the lexical chain
+;;; ---------------------------------------------------------------------
+
+(defparameter +lap-set-local+
+  '((LOCAL 0 0)                         ; x
+    (CONST 1)
+    (GLOBAL +)
+    (CALL 2)
+    (RECV 1)
+    (SET-LOCAL 0 0)                     ; x := x+1; does not pop
+    (DROP)                              ; ...so discard the value here
+    (LOCAL 0 0)                         ; read x back out of the slot
+    (RETURN 1))
+  "(fn (x) (set! x (+ x 1)) x)")
+
+(defparameter +code-set-local+
+  (bard:assemble +lap-set-local+ :name "inc" :arity 1))
+
+(defparameter +lap-fn-bump+
+  '((LOCAL 1 0)                         ; n -- one level out, in the frame
+    (CONST 1)                           ; make-counter was running in
+    (GLOBAL +)
+    (CALL 2)
+    (RECV 1)
+    (SET-LOCAL 1 0)                     ; n := n+1, and leave it as the result
+    (RETURN 1))
+  "(fn () (set! n (+ n 1)))")
+
+(defparameter +code-bump+
+  (bard:assemble +lap-fn-bump+ :name "bump" :arity 0))
+
+(defparameter +lap-fn-make-counter+
+  `((CLOSE ,+code-bump+)                ; captures this frame, where n lives
+    (RETURN 1))
+  "(fn (n) (fn () (set! n (+ n 1))))")
+
+(defparameter +code-make-counter+
+  (bard:assemble +lap-fn-make-counter+ :name "make-counter" :arity 1))
+
+(defparameter +lap-counters-independent+
+  `((CONST 10)
+    (CLOSE ,+code-make-counter+)
+    (CALL 1) (RECV 1)
+    (SET-GLOBAL c1) (DROP)              ; one counter, starting at 10
+
+    (CONST 100)
+    (CLOSE ,+code-make-counter+)
+    (CALL 1) (RECV 1)
+    (SET-GLOBAL c2) (DROP)              ; another, starting at 100
+
+    (GLOBAL c1) (CALL 0) (RECV 1)       ; 11
+    (GLOBAL c1) (CALL 0) (RECV 1)       ; 12
+    (GLOBAL c2) (CALL 0) (RECV 1)       ; 101 -- c1 is undisturbed
+    (GLOBAL c1) (CALL 0) (RECV 1)       ; 13
+    (RETURN 4))
+  "Two counters from two calls to make-counter.
+
+Their variables are separate because the two frames were separate
+computations, not because of any closure machinery.")
+
+;;; ---------------------------------------------------------------------
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
@@ -306,11 +370,6 @@ at 1, not the CALL at 2.")
   done
     (RETURN 1))
   "One instruction of each operand kind, for the disassembler.")
-
-(defparameter +lap-local-up-pending+
-  '((LOCAL 1 0)                         ; up = 1 needs stage 6
-    (RETURN 1))
-  "Reaching an enclosing frame. Not implemented yet.")
 
 (defparameter +lap-yield-pending+
   '((YIELD)                             ; needs stage 9
@@ -327,7 +386,7 @@ at 1, not the CALL at 2.")
   (is (equal '() (run-program +lap-return-none+)))
   (is (equal '(1 2 3) (run-program +lap-return-three+))))
 
-#+repl (run! '|2.1 a constant|)
+#+repl (run! '|2.1 a constant|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; stage 3 -- bindings, primitive calls, receivers
@@ -338,7 +397,7 @@ at 1, not the CALL at 2.")
   (is (= 5 (run-1 +lap-call-primitive+)))
   (is (= 6 (run-1 +lap-call-primitive-direct+))))
 
-#+repl (run! '|2.2 calling a primitive|)
+#+repl (run! '|2.2 calling a primitive|)  ; => T
 
 (test |redefinition reaches compiled code|
   "A binding is read at run time, so rebinding + changes what this
@@ -354,7 +413,7 @@ already-assembled code calls. This is the whole point of P2."
            (is (= -1 (first (bard:run-code code)))))
       (setf (bard:binding-value binding) saved))))
 
-#+repl (run! '|redefinition reaches compiled code|)
+#+repl (run! '|redefinition reaches compiled code|)  ; => T
 
 (test |receivers reconcile producer and consumer|
   "One call, four receivers."
@@ -363,14 +422,14 @@ already-assembled code calls. This is the whole point of P2."
   (is (equal '(5 nil) (run-program +lap-recv-two-padded+)))
   (is (equal '((5)) (run-program +lap-recv-all+))))
 
-#+repl (run! '|receivers reconcile producer and consumer|)
+#+repl (run! '|receivers reconcile producer and consumer|)  ; => T
 
 (test |2.4 sequencing and definition|
   "SET-GLOBAL and DROP. Defining something is an ordinary instruction,
 not a special mode."
   (is (= 30 (run-1 +lap-set-global-sequence+))))
 
-#+repl (run! '|2.4 sequencing and definition|)
+#+repl (run! '|2.4 sequencing and definition|)  ; => T
 
 (test |an unbound global is an error carrying its faulting pc|
   (let ((signalled nil))
@@ -381,7 +440,7 @@ not a special mode."
         (is (not (null (bard:bard-error-frame e))))))
     (is (eq t signalled))))
 
-#+repl (run! '|an unbound global is an error carrying its faulting pc|)
+#+repl (run! '|an unbound global is an error carrying its faulting pc|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; stage 4 -- control
@@ -394,7 +453,7 @@ not a special mode."
     (is (string= "big" (classify 7)))
     (is (string= "big" (classify 3)))))
 
-#+repl (run! '|2.3 a conditional|)
+#+repl (run! '|2.3 a conditional|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; stage 5 -- frames and calls
@@ -404,7 +463,7 @@ not a special mode."
   "CLOSE, LOCAL, CALL's function branch, and RETURN into a real parent."
   (is (equal '(49) (run-program +lap-call-fn+))))
 
-#+repl (run! '|2.5 a function|)
+#+repl (run! '|2.5 a function|)  ; => T
 
 (test |arguments arrive in order|
   "The first argument lands in slot 0. Verified with subtraction, since
@@ -412,13 +471,13 @@ squaring would be identical either way."
   (is (equal '(7) (run-program +lap-call-fn-arg-order+)))
   (is (equal '(-7) (run-program +lap-call-fn-arg-order-reversed+))))
 
-#+repl (run! '|arguments arrive in order|)
+#+repl (run! '|arguments arrive in order|)  ; => T
 
 (test |calls nest|
   "Each call links a parent; each return restores it."
   (is (equal '(49) (run-program +lap-call-fn-nested+))))
 
-#+repl (run! '|calls nest|)
+#+repl (run! '|calls nest|)  ; => T
 
 (test |a bytecode function delivers multiple values|
   "Same callee, three receivers."
@@ -426,7 +485,7 @@ squaring would be identical either way."
   (is (equal '(10) (run-program +lap-recv-one-from-fn+)))
   (is (equal '((10 3)) (run-program +lap-recv-all-from-fn+))))
 
-#+repl (run! '|a bytecode function delivers multiple values|)
+#+repl (run! '|a bytecode function delivers multiple values|)  ; => T
 
 (test |arity is checked against the code object|
   "The error names the CALL that faulted, not the instruction after it --
@@ -438,7 +497,27 @@ the same P5 property as an unbound global."
         (is (= 2 (bard:bard-error-pc e)))))
     (is (eq t signalled))))
 
-#+repl (run! '|arity is checked against the code object|)
+#+repl (run! '|arity is checked against the code object|)  ; => T
+
+;;; ---------------------------------------------------------------------
+;;; stage 6 -- the lexical chain
+;;; ---------------------------------------------------------------------
+
+(test |2.6 a closure over a mutable variable|
+  "Two counters made from two calls increment independently. Nothing in
+the machine arranges that; the two frames were already separate
+computations."
+  (is (equal '(11 12 101 13) (run-program +lap-counters-independent+))))
+
+#+repl (run! '|2.6 a closure over a mutable variable|)  ; => T
+#+repl (run-program +lap-counters-independent+)         ; => (11 12 101 13)
+
+(test |SET-LOCAL writes the slot and leaves its value|
+  "Reading the local back afterwards shows the write landed."
+  (is (equal '(8)
+             (run-program `((CONST 7) (CLOSE ,+code-set-local+) (CALL 1) (RECV 1) (RETURN 1))))))
+
+#+repl (run! '|SET-LOCAL writes the slot and leaves its value|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
@@ -452,8 +531,9 @@ the same P5 property as an unbound global."
     (dolist (want '("CONST 42" "GLOBAL +" "CALL 2" "RECV 1" "GOTO 5" "RETURN 1" "sample"))
       (is (search want text)))))
 
-#+repl (run! '|disassembly names every opcode and renders every operand|)
+#+repl (run! '|disassembly names every opcode and renders every operand|)  ; => T
 #+repl (bard:disassemble (bard:assemble +lap-operand-kinds-listing+ :name "sample"))
+       ; prints the listing
 
 (test |the assembler rejects malformed input|
   (signals error (bard:assemble '((CONST))))
@@ -461,7 +541,7 @@ the same P5 property as an unbound global."
   (signals error (bard:assemble '((GOTO nowhere))))
   (signals error (bard:assemble '((RETURN 0)) :arity 2 :n-locals 1)))
 
-#+repl (run! '|the assembler rejects malformed input|)
+#+repl (run! '|the assembler rejects malformed input|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; stages 6 through 11 -- not yet implemented
@@ -469,7 +549,6 @@ the same P5 property as an unbound global."
 
 (test |unimplemented instructions signal rather than misbehave|
   "The ladder should be visible from a backtrace."
-  (signals bard:bard-error (run-program +lap-local-up-pending+ :n-locals 1))
   (signals bard:bard-error (run-program +lap-yield-pending+)))
 
-#+repl (run! '|unimplemented instructions signal rather than misbehave|)
+#+repl (run! '|unimplemented instructions signal rather than misbehave|)  ; => T

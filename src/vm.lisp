@@ -20,7 +20,7 @@
 ;;;   3  bindings, primitive calls, receivers               done
 ;;;   4  control                                            done
 ;;;   5  frames and calls                                   done
-;;;   6  the lexical chain                                  pending
+;;;   6  the lexical chain                                  done
 ;;;   7  tail calls                                         pending
 ;;;   8  multiple values (RETURN n, RECV k, RECV-ALL)       done
 ;;;   9  threads                                            pending
@@ -123,6 +123,25 @@ rendered and the operand stack shown.")
       (descriptor-call-handler *fn-descriptor*) #'call-fn)
 
 ;;; ---------------------------------------------------------------------
+;;; the lexical chain
+;;; ---------------------------------------------------------------------
+;;; A closure captures the frame it was created in, so environments and
+;;; frames are one representation and the lexical chain is a walk along
+;;; CAPTURED-FRAME links. UP counts those links: 0 is the current frame,
+;;; 1 the frame its function was created in, and so on.
+
+(declaim (inline lexical-frame))
+
+(defun lexical-frame (frame up pc)
+  "The frame UP levels outward along the lexical chain."
+  (let ((f frame))
+    (dotimes (i up f)
+      (let ((next (fn-captured-frame (frame-fn f))))
+        (unless next
+          (bard-error frame pc "Lexical level ~D reaches past the chain." up))
+        (setf f next)))))
+
+;;; ---------------------------------------------------------------------
 ;;; receivers
 ;;; ---------------------------------------------------------------------
 
@@ -164,9 +183,7 @@ Returns the delivered values as a list."
          (frame-push frame (svref (code-constants code) a)))
 
         (LOCAL
-         (unless (zerop a)
-           (bard-error frame pc "The lexical chain is not implemented yet."))
-         (frame-push frame (svref (frame-slots frame) b)))
+         (frame-push frame (svref (frame-slots (lexical-frame frame a pc)) b)))
 
         (CLOSE
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
@@ -178,6 +195,10 @@ Returns the delivered values as a list."
            (frame-push frame (binding-value binding))))
 
         ;; ----- stores -----
+        (SET-LOCAL
+         (setf (svref (frame-slots (lexical-frame frame a pc)) b)
+               (frame-top frame)))      ; does not pop
+
         (SET-GLOBAL
          (let ((binding (svref (code-constants code) a)))
            (setf (binding-value binding) (frame-top frame)
@@ -227,5 +248,6 @@ Returns the delivered values as a list."
   "Run CODE as a whole computation and return its values as a list."
   (run (make-frame (make-fn code) :parent nil)))
 
-#+repl (run-code (assemble '((CONST 42) (RETURN 1)) :name "answer"))
+#+repl (run-code (assemble '((CONST 42) (RETURN 1)) :name "answer")) ; => (42)
 #+repl (let ((*trace* t)) (run-code (assemble '((CONST 42) (RETURN 1)))))
+       ; => (42), with each instruction traced
