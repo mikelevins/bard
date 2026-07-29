@@ -25,6 +25,23 @@
 ;;;
 ;;; Every test is individually runnable from the repl by evaluating the
 ;;; #+repl form beside it.
+;;;
+;;; Naming: +lap-<instruction>-<case>[-<manner>]+
+;;;
+;;; The prefix names the instruction under test, so the corpus groups by
+;;; machine feature and a grep for +lap-call- finds everything exercising
+;;; calls. The optional suffix says how the test works: -error for a
+;;; program that faults deliberately, -listing for one that is
+;;; disassembled rather than run, -pending for one that asserts an
+;;; unimplemented stage still signals. A +lap-fn-...+ is a callee used by
+;;; other programs rather than a program in its own right, and
+;;; +code-...+ is its assembled form.
+;;;
+;;; The name says what is tested; the docstring says what it computes.
+;;;
+;;; These are +constants+ by intention and never rebound, but they are
+;;; DEFPARAMETER rather than DEFCONSTANT: DEFCONSTANT on a list re-signals
+;;; on every reload, because the new value is not EQL to the old.
 
 (def-suite bard-tests
   :description "The kernel conformance ladder.")
@@ -59,31 +76,31 @@
 ;;; assembly -- values and returns
 ;;; ---------------------------------------------------------------------
 
-(defparameter *constant*
+(defparameter +lap-const+
   '((CONST 42)
     (RETURN 1))
   "42")
 
-(defparameter *no-values*
+(defparameter +lap-return-none+
   '((RETURN 0))
   "A computation that delivers nothing at all.")
 
-(defparameter *three-values*
+(defparameter +lap-return-three+
   '((CONST 1)
     (CONST 2)
     (CONST 3)
     (RETURN 3))                         ; all three, bottom first
   "(values 1 2 3)")
 
-#+repl (run-program *constant*)
-#+repl (bard:disassemble (bard:assemble *three-values* :name "three"))
-#+repl (let ((bard:*trace* t)) (run-program *constant*))
+#+repl (run-program +lap-const+)
+#+repl (bard:disassemble (bard:assemble +lap-return-three+ :name "three"))
+#+repl (let ((bard:*trace* t)) (run-program +lap-const+))
 
 ;;; ---------------------------------------------------------------------
 ;;; assembly -- primitive calls and receivers
 ;;; ---------------------------------------------------------------------
 
-(defparameter *add*
+(defparameter +lap-call-primitive+
   '((CONST 2)
     (CONST 3)
     (GLOBAL +)                          ; read at run time, not baked
@@ -92,7 +109,7 @@
     (RETURN 1))
   "(+ 2 3)")
 
-(defparameter *multiply*
+(defparameter +lap-call-primitive-direct+
   '((CONST 2)
     (CONST 3)
     (GLOBAL _fixnum-mul)                ; the primitive itself, not the operator
@@ -104,25 +121,25 @@
 ;;; The same call received four ways. What a call produces and what its
 ;;; caller wants are independent; the receiver is where they meet.
 
-(defparameter *add-want-one*
+(defparameter +lap-recv-one+
   '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
     (RECV 1)
     (RETURN 1))
   "(+ 2 3), wanting one value")
 
-(defparameter *add-want-none*
+(defparameter +lap-recv-none+
   '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
     (RECV 0)                            ; discards what the call returned
     (RETURN 0))
   "(+ 2 3) for effect")
 
-(defparameter *add-want-two*
+(defparameter +lap-recv-two-padded+
   '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
     (RECV 2)                            ; one arrives; one is padded with nothing
     (RETURN 2))
   "(+ 2 3), wanting two values")
 
-(defparameter *add-want-all*
+(defparameter +lap-recv-all+
   '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
     (RECV-ALL)                          ; collects into a single list
     (RETURN 1))
@@ -132,7 +149,7 @@
 ;;; assembly -- definition and sequencing
 ;;; ---------------------------------------------------------------------
 
-(defparameter *define-and-add*
+(defparameter +lap-set-global-sequence+
   '((CONST 10)
     (SET-GLOBAL x)                      ; SET-GLOBAL does not pop
     (DROP)                              ; ...so the value is dropped here
@@ -150,7 +167,7 @@
 DROP and RECV 0 are not interchangeable: DROP removes a value already on
 the stack, RECV 0 discards what a call returned.")
 
-(defparameter *call-undefined*
+(defparameter +lap-global-unbound-error+
   '((CONST 7)
     (GLOBAL bar)                        ; unbound -- faults here, at pc 1
     (CALL 1)
@@ -166,7 +183,7 @@ at 1, not the CALL at 2.")
 ;;; assembly -- control
 ;;; ---------------------------------------------------------------------
 
-(defparameter *classify*
+(defparameter +lap-branch-false-both-arms+
   '((GLOBAL n)
     (CONST 3)
     (GLOBAL <)
@@ -188,7 +205,7 @@ at 1, not the CALL at 2.")
 ;;; None of these has a prologue. CALL has already placed the arguments
 ;;; in the low slots, because building the frame is the call.
 
-(defparameter *square*
+(defparameter +lap-fn-square+
   '((LOCAL 0 0)                         ; x
     (LOCAL 0 0)                         ; x again
     (GLOBAL _fixnum-mul)
@@ -197,7 +214,7 @@ at 1, not the CALL at 2.")
     (RETURN 1))
   "(fn (x) (* x x))")
 
-(defparameter *sub*
+(defparameter +lap-fn-sub+
   '((LOCAL 0 0)                         ; a -- the first argument, slot 0
     (LOCAL 0 1)                         ; b
     (GLOBAL _fixnum-sub)                ; asymmetric on purpose: a symmetric
@@ -206,71 +223,71 @@ at 1, not the CALL at 2.")
     (RETURN 1))
   "(fn (a b) (- a b))")
 
-(defparameter *pair*
+(defparameter +lap-fn-pair+
   '((LOCAL 0 0)
     (LOCAL 0 1)
     (RETURN 2))                         ; a bytecode function, two values
   "(fn (a b) (values a b))")
 
-(defparameter *square-code* (bard:assemble *square* :name "square" :arity 1))
-(defparameter *sub-code* (bard:assemble *sub* :name "sub" :arity 2))
-(defparameter *pair-code* (bard:assemble *pair* :name "pair" :arity 2))
+(defparameter +code-square+ (bard:assemble +lap-fn-square+ :name "square" :arity 1))
+(defparameter +code-sub+ (bard:assemble +lap-fn-sub+ :name "sub" :arity 2))
+(defparameter +code-pair+ (bard:assemble +lap-fn-pair+ :name "pair" :arity 2))
 
-#+repl (bard:disassemble *square-code*)
+#+repl (bard:disassemble +code-square+)
 
-(defparameter *call-square*
+(defparameter +lap-call-fn+
   `((CONST 7)
-    (CLOSE ,*square-code*)              ; captures the current frame
+    (CLOSE ,+code-square+)              ; captures the current frame
     (CALL 1)
     (RECV 1)
     (RETURN 1))
   "((fn (x) (* x x)) 7)")
 
-(defparameter *sub-10-3*
+(defparameter +lap-call-fn-arg-order+
   `((CONST 10)
     (CONST 3)
-    (CLOSE ,*sub-code*)
+    (CLOSE ,+code-sub+)
     (CALL 2)
     (RECV 1)
     (RETURN 1))
   "(- 10 3), which must be 7 and not -7")
 
-(defparameter *sub-3-10*
+(defparameter +lap-call-fn-arg-order-reversed+
   `((CONST 3)
     (CONST 10)
-    (CLOSE ,*sub-code*)
+    (CLOSE ,+code-sub+)
     (CALL 2)
     (RECV 1)
     (RETURN 1))
   "(- 3 10)")
 
-(defparameter *nested*
+(defparameter +lap-call-fn-nested+
   `((CONST 10)
     (CONST 3)
-    (CLOSE ,*sub-code*)
+    (CLOSE ,+code-sub+)
     (CALL 2)
     (RECV 1)                            ; 7 stays on the stack as the
-    (CLOSE ,*square-code*)              ; argument to the next call
+    (CLOSE ,+code-square+)              ; argument to the next call
     (CALL 1)
     (RECV 1)
     (RETURN 1))
   "(square (sub 10 3))")
 
-(defparameter *pair-want-two*
-  `((CONST 10) (CONST 3) (CLOSE ,*pair-code*) (CALL 2) (RECV 2) (RETURN 2))
+(defparameter +lap-recv-two-from-fn+
+  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV 2) (RETURN 2))
   "Both values of a two-value function.")
 
-(defparameter *pair-want-one*
-  `((CONST 10) (CONST 3) (CLOSE ,*pair-code*) (CALL 2) (RECV 1) (RETURN 1))
+(defparameter +lap-recv-one-from-fn+
+  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV 1) (RETURN 1))
   "The first value only; the second is discarded.")
 
-(defparameter *pair-want-all*
-  `((CONST 10) (CONST 3) (CLOSE ,*pair-code*) (CALL 2) (RECV-ALL) (RETURN 1))
+(defparameter +lap-recv-all-from-fn+
+  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV-ALL) (RETURN 1))
   "Both values, as a list.")
 
-(defparameter *wrong-arity*
+(defparameter +lap-call-fn-arity-error+
   `((CONST 1)
-    (CLOSE ,*sub-code*)                 ; sub takes two
+    (CLOSE ,+code-sub+)                 ; sub takes two
     (CALL 1)                            ; ...called with one; faults at pc 2
     (RECV 1)
     (RETURN 1))
@@ -280,7 +297,7 @@ at 1, not the CALL at 2.")
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
-(defparameter *every-operand-kind*
+(defparameter +lap-operand-kinds-listing+
   '((CONST 42)                          ; :const   -- renders the value
     (GLOBAL +)                          ; :binding -- renders the name
     (CALL 2)                            ; :count
@@ -290,12 +307,12 @@ at 1, not the CALL at 2.")
     (RETURN 1))
   "One instruction of each operand kind, for the disassembler.")
 
-(defparameter *lexical-chain*
+(defparameter +lap-local-up-pending+
   '((LOCAL 1 0)                         ; up = 1 needs stage 6
     (RETURN 1))
   "Reaching an enclosing frame. Not implemented yet.")
 
-(defparameter *yield*
+(defparameter +lap-yield-pending+
   '((YIELD)                             ; needs stage 9
     (RETURN 0))
   "Switching threads. Not implemented yet.")
@@ -306,9 +323,9 @@ at 1, not the CALL at 2.")
 
 (test |2.1 a constant|
   "CONST, RETURN, and thread termination."
-  (is (equal '(42) (run-program *constant*)))
-  (is (equal '() (run-program *no-values*)))
-  (is (equal '(1 2 3) (run-program *three-values*))))
+  (is (equal '(42) (run-program +lap-const+)))
+  (is (equal '() (run-program +lap-return-none+)))
+  (is (equal '(1 2 3) (run-program +lap-return-three+))))
 
 #+repl (run! '|2.1 a constant|)
 
@@ -318,15 +335,15 @@ at 1, not the CALL at 2.")
 
 (test |2.2 calling a primitive|
   "GLOBAL, CALL's descriptor branch, and a receiver."
-  (is (= 5 (run-1 *add*)))
-  (is (= 6 (run-1 *multiply*))))
+  (is (= 5 (run-1 +lap-call-primitive+)))
+  (is (= 6 (run-1 +lap-call-primitive-direct+))))
 
 #+repl (run! '|2.2 calling a primitive|)
 
 (test |redefinition reaches compiled code|
   "A binding is read at run time, so rebinding + changes what this
 already-assembled code calls. This is the whole point of P2."
-  (let* ((code (bard:assemble *add*))
+  (let* ((code (bard:assemble +lap-call-primitive+))
          (binding (bard:global-binding '+))
          (saved (bard:binding-value binding)))
     (unwind-protect
@@ -341,23 +358,23 @@ already-assembled code calls. This is the whole point of P2."
 
 (test |receivers reconcile producer and consumer|
   "One call, four receivers."
-  (is (= 5 (run-1 *add-want-one*)))
-  (is (equal '() (run-program *add-want-none*)))
-  (is (equal '(5 nil) (run-program *add-want-two*)))
-  (is (equal '((5)) (run-program *add-want-all*))))
+  (is (= 5 (run-1 +lap-recv-one+)))
+  (is (equal '() (run-program +lap-recv-none+)))
+  (is (equal '(5 nil) (run-program +lap-recv-two-padded+)))
+  (is (equal '((5)) (run-program +lap-recv-all+))))
 
 #+repl (run! '|receivers reconcile producer and consumer|)
 
 (test |2.4 sequencing and definition|
   "SET-GLOBAL and DROP. Defining something is an ordinary instruction,
 not a special mode."
-  (is (= 30 (run-1 *define-and-add*))))
+  (is (= 30 (run-1 +lap-set-global-sequence+))))
 
 #+repl (run! '|2.4 sequencing and definition|)
 
 (test |an unbound global is an error carrying its faulting pc|
   (let ((signalled nil))
-    (handler-case (run-program *call-undefined*)
+    (handler-case (run-program +lap-global-unbound-error+)
       (bard:bard-error (e)
         (setf signalled t)
         (is (= 1 (bard:bard-error-pc e)))
@@ -372,7 +389,7 @@ not a special mode."
 
 (test |2.3 a conditional|
   "GOTO and BRANCH-FALSE, with labels resolved by the assembler."
-  (flet ((classify (n) (set-global 'n n) (run-1 *classify*)))
+  (flet ((classify (n) (set-global 'n n) (run-1 +lap-branch-false-both-arms+)))
     (is (string= "small" (classify 1)))
     (is (string= "big" (classify 7)))
     (is (string= "big" (classify 3)))))
@@ -385,29 +402,29 @@ not a special mode."
 
 (test |2.5 a function|
   "CLOSE, LOCAL, CALL's function branch, and RETURN into a real parent."
-  (is (equal '(49) (run-program *call-square*))))
+  (is (equal '(49) (run-program +lap-call-fn+))))
 
 #+repl (run! '|2.5 a function|)
 
 (test |arguments arrive in order|
   "The first argument lands in slot 0. Verified with subtraction, since
 squaring would be identical either way."
-  (is (equal '(7) (run-program *sub-10-3*)))
-  (is (equal '(-7) (run-program *sub-3-10*))))
+  (is (equal '(7) (run-program +lap-call-fn-arg-order+)))
+  (is (equal '(-7) (run-program +lap-call-fn-arg-order-reversed+))))
 
 #+repl (run! '|arguments arrive in order|)
 
 (test |calls nest|
   "Each call links a parent; each return restores it."
-  (is (equal '(49) (run-program *nested*))))
+  (is (equal '(49) (run-program +lap-call-fn-nested+))))
 
 #+repl (run! '|calls nest|)
 
 (test |a bytecode function delivers multiple values|
   "Same callee, three receivers."
-  (is (equal '(10 3) (run-program *pair-want-two*)))
-  (is (equal '(10) (run-program *pair-want-one*)))
-  (is (equal '((10 3)) (run-program *pair-want-all*))))
+  (is (equal '(10 3) (run-program +lap-recv-two-from-fn+)))
+  (is (equal '(10) (run-program +lap-recv-one-from-fn+)))
+  (is (equal '((10 3)) (run-program +lap-recv-all-from-fn+))))
 
 #+repl (run! '|a bytecode function delivers multiple values|)
 
@@ -415,7 +432,7 @@ squaring would be identical either way."
   "The error names the CALL that faulted, not the instruction after it --
 the same P5 property as an unbound global."
   (let ((signalled nil))
-    (handler-case (run-program *wrong-arity*)
+    (handler-case (run-program +lap-call-fn-arity-error+)
       (bard:bard-error (e)
         (setf signalled t)
         (is (= 2 (bard:bard-error-pc e)))))
@@ -430,13 +447,13 @@ the same P5 property as an unbound global."
 (test |disassembly names every opcode and renders every operand|
   "You should never have to look up what a number means."
   (let ((text (with-output-to-string (s)
-                (bard:disassemble (bard:assemble *every-operand-kind* :name "sample")
+                (bard:disassemble (bard:assemble +lap-operand-kinds-listing+ :name "sample")
                                   :stream s))))
     (dolist (want '("CONST 42" "GLOBAL +" "CALL 2" "RECV 1" "GOTO 5" "RETURN 1" "sample"))
       (is (search want text)))))
 
 #+repl (run! '|disassembly names every opcode and renders every operand|)
-#+repl (bard:disassemble (bard:assemble *every-operand-kind* :name "sample"))
+#+repl (bard:disassemble (bard:assemble +lap-operand-kinds-listing+ :name "sample"))
 
 (test |the assembler rejects malformed input|
   (signals error (bard:assemble '((CONST))))
@@ -452,7 +469,7 @@ the same P5 property as an unbound global."
 
 (test |unimplemented instructions signal rather than misbehave|
   "The ladder should be visible from a backtrace."
-  (signals bard:bard-error (run-program *lexical-chain* :n-locals 1))
-  (signals bard:bard-error (run-program *yield*)))
+  (signals bard:bard-error (run-program +lap-local-up-pending+ :n-locals 1))
+  (signals bard:bard-error (run-program +lap-yield-pending+)))
 
 #+repl (run! '|unimplemented instructions signal rather than misbehave|)
