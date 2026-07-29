@@ -184,13 +184,100 @@ resume. Until then it must at least report the instruction that faulted
 
 #+repl (run! '|the assembler rejects wrong operand counts|)
 
+
+;;; ---------------------------------------------------------------------
+;;; stage 5 -- frames and calls
+;;; ---------------------------------------------------------------------
+
+(defparameter *square*
+  (bard:assemble '((local 0 0) (local 0 0) (global _fixnum-mul) (call 2) (recv 1) (return 1))
+                 :name "square" :arity 1)
+  "(fn (x) (* x x)) -- note that it has no prologue. CALL already put
+the argument in slot 0, because building the frame is the call.")
+
+(defparameter *sub*
+  (bard:assemble '((local 0 0) (local 0 1) (global _fixnum-sub) (call 2) (recv 1) (return 1))
+                 :name "sub" :arity 2)
+  "Asymmetric on purpose: a symmetric operator would not catch swapped
+argument order.")
+
+(defparameter *pair*
+  (bard:assemble '((local 0 0) (local 0 1) (return 2))
+                 :name "pair" :arity 2)
+  "Returns both of its arguments, to exercise a bytecode function
+delivering more than one value.")
+
+(test |2.5 a function|
+  "CLOSE, LOCAL, CALL's function branch, and RETURN into a real parent."
+  (is (equal '(49)
+             (bard:run-code
+              (bard:assemble `((const 7) (close ,*square*) (call 1) (recv 1) (return 1)))))))
+
+#+repl (run! '|2.5 a function|)
+
+(test |arguments arrive in order|
+  "The first argument lands in slot 0. Verified with subtraction, since
+squaring would be identical either way."
+  (is (equal '(7) (bard:run-code
+                   (bard:assemble `((const 10) (const 3) (close ,*sub*) (call 2) (recv 1) (return 1))))))
+  (is (equal '(-7) (bard:run-code
+                    (bard:assemble `((const 3) (const 10) (close ,*sub*) (call 2) (recv 1) (return 1)))))))
+
+#+repl (run! '|arguments arrive in order|)
+
+(test |calls nest|
+  "(square (sub 10 3)) -- each call links a parent and each return
+restores it."
+  (is (equal '(49)
+             (bard:run-code
+              (bard:assemble `((const 10) (const 3) (close ,*sub*) (call 2) (recv 1)
+                               (close ,*square*) (call 1) (recv 1) (return 1)))))))
+
+#+repl (run! '|calls nest|)
+
+(test |a bytecode function delivers multiple values|
+  "Same callee, three receivers. What a call produces and what a caller
+wants are independent."
+  (flet ((call-pair (receiver)
+           (bard:run-code
+            (bard:assemble `((const 10) (const 3) (close ,*pair*) (call 2)
+                             ,receiver (return ,(if (eq (first receiver) 'recv)
+                                                    (second receiver)
+                                                    1)))))))
+    (is (equal '(10 3) (call-pair '(recv 2))))
+    (is (equal '(10) (call-pair '(recv 1))))
+    (is (equal '((10 3)) (call-pair '(recv-all))))))
+
+#+repl (run! '|a bytecode function delivers multiple values|)
+
+(test |arity is checked against the code object|
+  "And the error names the CALL that faulted, not the instruction after
+it -- the same P5 property as an unbound global."
+  (let ((signalled nil))
+    (handler-case
+        (bard:run-code (bard:assemble `((const 1) (close ,*sub*) (call 1) (recv 1) (return 1))))
+      (bard:bard-error (e)
+        (setf signalled t)
+        (is (= 2 (bard:bard-error-pc e)))))
+    (is (eq t signalled))))
+
+#+repl (run! '|arity is checked against the code object|)
+
+(test |the assembler rejects fewer locals than arguments|
+  (signals error (bard:assemble '((return 0)) :arity 2 :n-locals 1)))
+
+#+repl (run! '|the assembler rejects fewer locals than arguments|)
+
 ;;; ---------------------------------------------------------------------
 ;;; stages 5 through 11 -- not yet implemented
 ;;; ---------------------------------------------------------------------
 
 (test |unimplemented instructions signal rather than misbehave|
-  "The ladder should be visible from a backtrace."
+  "The ladder should be visible from a backtrace. LOCAL with a nonzero
+level needs the lexical chain, which is stage 6."
   (signals bard:bard-error
-    (bard:run-code (bard:assemble '((local 0 0) (return 1))))))
+    (bard:run-code (bard:assemble '((local 1 0) (return 1)) :n-locals 1)))
+  (signals bard:bard-error
+    (bard:run-code (bard:assemble '((yield) (return 0))))))
 
 #+repl (run! '|unimplemented instructions signal rather than misbehave|)

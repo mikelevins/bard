@@ -106,8 +106,14 @@ the assembler from caring which package a program was typed in.")
 ;;;               else (const "big")
 ;;;               done (return 1)))
 
-(defun assemble (forms &key name (arity 0) (n-locals 0) frame-size)
-  "Assemble FORMS into a code object."
+(defun assemble (forms &key name (arity 0) (n-locals nil) frame-size)
+  "Assemble FORMS into a code object. N-LOCALS defaults to ARITY, since
+CALL places the arguments in the low slots and a function with no
+further locals needs exactly that many."
+  (setf n-locals (or n-locals arity))
+  (when (< n-locals arity)
+    (error "~A declares ~D local~:P but takes ~D argument~:P."
+           (or name "anonymous") n-locals arity))
   (let ((labels (make-hash-table :test #'eq))
         (constants (make-array 0 :adjustable t :fill-pointer t))
         (instructions '())
@@ -155,6 +161,10 @@ the assembler from caring which package a program was typed in.")
                   :constants (coerce constants 'simple-vector)
                   :arity arity
                   :n-locals n-locals
+                  ;; A compiler computes FRAME-SIZE as N-LOCALS plus the
+                  ;; maximum operand depth. There is no compiler yet, so
+                  ;; this is a generous stand-in -- a placeholder, not a
+                  ;; design decision.
                   :frame-size (or frame-size (+ n-locals 32))))))
 
 ;;; ---------------------------------------------------------------------

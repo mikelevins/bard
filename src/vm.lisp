@@ -19,7 +19,7 @@
 ;;;   2  the loop, CONST, RETURN                            done
 ;;;   3  bindings, primitive calls, receivers               done
 ;;;   4  control                                            done
-;;;   5  frames and calls                                   pending
+;;;   5  frames and calls                                   done
 ;;;   6  the lexical chain                                  pending
 ;;;   7  tail calls                                         pending
 ;;;   8  multiple values (RETURN n, RECV k, RECV-ALL)       done
@@ -83,13 +83,16 @@ rendered and the operand stack shown.")
 ;;; generic functions, foreign functions, and native-compiled functions
 ;;; all be reached by this instruction.
 ;;;
-;;; A handler takes (callee nargs frame) and returns the frame to
-;;; continue in. A primitive stays in the caller's frame.
+;;; A handler takes (callee nargs frame pc) and returns the frame to
+;;; continue in. A primitive stays in the caller's frame; a bytecode
+;;; function returns a fresh one. PC is the faulting instruction -- the
+;;; CALL itself, not the instruction after it -- because a handler that
+;;; signals must report where the fault was, per P5.
 
-(defun call-primitive (callee nargs frame)
+(defun call-primitive (callee nargs frame pc)
   (let ((arity (primitive-arity callee)))
     (unless (= nargs arity)
-      (bard-error frame (frame-pc frame)
+      (bard-error frame pc
                   "~A takes ~D argument~:P, called with ~D."
                   (primitive-name callee) arity nargs))
     (let ((args (make-list nargs)))
@@ -102,7 +105,24 @@ rendered and the operand stack shown.")
       (frame-push frame 1)))
   frame)
 
-(setf (descriptor-call-handler *primitive-descriptor*) #'call-primitive)
+(defun call-fn (callee nargs frame pc)
+  "Allocating the frame is what calling means."
+  (let* ((code (fn-code callee))
+         (arity (code-arity code)))
+    (unless (= nargs arity)
+      (bard-error frame pc
+                  "~A takes ~D argument~:P, called with ~D."
+                  (or (code-name code) "anonymous") arity nargs))
+    (let* ((new (make-frame callee :parent frame))
+           (slots (frame-slots new)))
+      ;; Arguments were pushed left to right, so popping delivers them
+      ;; last first. Filling downward puts the first argument in slot 0.
+      (loop for i from (1- nargs) downto 0
+            do (setf (svref slots i) (frame-pop frame)))
+      new)))
+
+(setf (descriptor-call-handler *primitive-descriptor*) #'call-primitive
+      (descriptor-call-handler *fn-descriptor*) #'call-fn)
 
 ;;; ---------------------------------------------------------------------
 ;;; receivers
@@ -145,6 +165,14 @@ Returns the delivered values as a list."
         ((= op +op-const+)
          (frame-push frame (svref (code-constants code) a)))
 
+        ((= op +op-local+)
+         (unless (zerop a)
+           (bard-error frame pc "The lexical chain is not implemented yet."))
+         (frame-push frame (svref (frame-slots frame) b)))
+
+        ((= op +op-close+)
+         (frame-push frame (make-fn (svref (code-constants code) a) frame)))
+
         ((= op +op-global+)
          (let ((binding (svref (code-constants code) a)))
            (unless (binding-boundp binding)
@@ -174,7 +202,7 @@ Returns the delivered values as a list."
                 (handler (descriptor-call-handler (descriptor-of callee))))
            (unless handler
              (bard-error frame pc "~S is not applicable." callee))
-           (setf frame (funcall handler callee a frame))))
+           (setf frame (funcall handler callee a frame pc))))
 
         ((= op +op-recv+)
          (receive frame a))
