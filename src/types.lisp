@@ -29,12 +29,9 @@
 ;;; descriptors
 ;;; ---------------------------------------------------------------------
 ;;; Every value carries a descriptor, and the machine never interprets
-;;; one. It stores, copies, and compares them, and it asks a descriptor
-;;; for its CALL-HANDLER when CALL needs to apply something.
-;;;
-;;; A CALL-HANDLER takes (callee nargs frame) and returns the frame to
-;;; continue in -- the same frame for a primitive, a fresh one for a
-;;; bytecode function.
+;;; one. It stores, copies, and compares them, and asks one for its
+;;; CALL-HANDLER when op_CALL needs to apply something. See "The handler
+;;; contract" in doc/kernel-tutorial.md.
 
 (defstruct (descriptor (:constructor make-descriptor (name &key call-handler))
                        (:print-object print-descriptor))
@@ -79,13 +76,12 @@
 ;;; code
 ;;; ---------------------------------------------------------------------
 ;;; Instructions are fixed-width: a flat fixnum array with a stride of
-;;; three -- opcode, arg1, arg2 -- so decoding is three array reads and
-;;; no branching. Because an instruction word is a fixnum, operands that
-;;; denote values (CONST, GLOBAL, CLOSE) are indices into CONSTANTS.
+;;; three -- opcode, arg1, arg2. Because an instruction word is a fixnum,
+;;; operands that denote values are indices into CONSTANTS.
 ;;;
 ;;; FRAME-SIZE is N-LOCALS plus the maximum operand depth, so allocating
-;;; a frame is adding a known constant. A compiler computes it; the
-;;; assembler currently takes it as a parameter.
+;;; a frame is adding a known constant. A compiler computes it; until
+;;; there is one the assembler takes it as a parameter.
 
 (defstruct (code (:constructor %make-code)
                  (:print-object print-code))

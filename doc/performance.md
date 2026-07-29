@@ -50,11 +50,11 @@ correlations. That is the lever. **The whole strategy is to give the predictor
 enough context to distinguish situations it can actually predict.**
 
 Bytecode streams are far from random. Real sequences have strong local
-structure: a `op_LOCAL` is usually followed by another `op_LOCAL` or a `op_GLOBAL`; a
-`op_GLOBAL` naming a function is usually followed by a `op_CALL`; the arithmetic
-pattern in our own examples is `op_LOCAL op_LOCAL op_GLOBAL op_CALL`, over and over. That
-regularity is predictable *if the predictor can tell which handler it is jumping
-from*.
+structure: an `op_LOCAL` is usually followed by another `op_LOCAL` or by an
+`op_GLOBAL`; an `op_GLOBAL` naming a function is usually followed by an
+`op_CALL`; the arithmetic pattern in our own examples is
+`op_LOCAL op_LOCAL op_GLOBAL op_CALL op_RECV`, over and over. That regularity is
+predictable *if the predictor can tell which handler it is jumping from*.
 
 ### 1.2 Tactic 1 — Threaded dispatch (do this from the start)
 

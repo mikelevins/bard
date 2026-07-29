@@ -406,6 +406,72 @@ this program is unrecoverable no matter what you add afterward.
 
 ---
 
+## Conventions and contracts
+
+Three things an implementer needs that are not visible in the instruction set.
+
+### Instruction names carry an `op_` sentinel
+
+`op_CONST`, `op_SET-GLOBAL`. The sentinel puts instructions in a namespace of
+their own so that none can collide with a symbol of the host language. In Common
+Lisp `RETURN` and `CLOSE` did collide, and a host `return` inside the machine's
+own loop was once mistaken for the instruction of the same name — identical to
+the compiler, misleading to a reader.
+
+The sentinel is lowercase so it recedes and the instruction name is what the eye
+lands on. The underscore separates it visibly from names that themselves contain
+hyphens. Both survive transliteration to any target language, where a port
+converts the remaining hyphens to underscores as it would for any name.
+
+Enforce this rather than remember it: refuse to load if an instruction lacks the
+sentinel or shadows a host symbol.
+
+### Dispatch resolves names at compile time, not read time
+
+The inner loop dispatches on a fixnum opcode, and a jump table wants literal
+integers as its keys. Writing those integers directly would defeat the point of
+naming instructions. Reaching for read-time evaluation to compute them resolves
+the names in whatever namespace happens to be current when the form is *read*,
+fails outright where read-time evaluation is disabled, and makes the file
+unreadable unless its dependencies are already loaded — turning a compile-order
+problem into a read-order problem.
+
+Resolve the names at macroexpansion time instead, looking them up by string so
+the namespace a clause was written in does not matter, and signalling a real
+error on a misspelling rather than silently emitting a clause that can never
+fire.
+
+### The handler contract
+
+`op_CALL` asks the callee's descriptor for a handler rather than assuming a
+bytecode function (property P3). A handler takes the callee, the argument count,
+the frame, and the faulting pc, and returns the frame the machine should continue
+stepping. That return value carries more than it appears to, and both `op_CALL`
+and `op_TAILCALL` depend on it:
+
+```
+a NEW frame      the callee is a computation of its own. It will run, and
+                 eventually op_RETURN into whatever frame it was given as its
+                 parent. Its values arrive there later.
+
+the SAME frame   the callee ran to completion in place. It has already pushed
+                 its values and their count onto that frame's operand area.
+                 Nothing arrives later.
+```
+
+Nothing else distinguishes the two cases, deliberately. `op_TAILCALL` has to tell
+them apart: it abandons the caller's frame, so a callee that would have returned
+there must be re-pointed at the caller's parent, while a callee that has already
+delivered its values in place needs those values forwarded instead.
+
+`op_TAILCALL` asks the returned frame rather than testing the callee's type. That
+is why a new kind of applicable — a generic function, a foreign function, native
+code — behaves correctly by honouring this contract rather than by being added to
+a list of special cases. It is what P3 buys, and it is bought only for as long as
+new handlers keep to it.
+
+---
+
 ## Part 3 — Constructing the kernel
 
 Eleven stages. Each ends with a program from Part 2 running, so you always know

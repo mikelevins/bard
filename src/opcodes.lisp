@@ -65,18 +65,9 @@
       (when (nth-value 1 (find-symbol name :common-lisp))
         (error "Instruction ~A collides with a Common Lisp symbol." name)))))
 
-;;; Instruction names carry an op_ sentinel. It puts them in a namespace
-;;; of their own, so no instruction can ever collide with a Common Lisp
-;;; symbol -- RETURN and CLOSE did, and a CL RETURN inside the machine's
-;;; own loop was once mistaken for the instruction of the same name.
-;;;
-;;; The sentinel is lowercase so it recedes and the instruction name is
-;;; what the eye lands on; the underscore separates it visibly from names
-;;; that themselves contain hyphens. Both survive transliteration to any
-;;; target language, where a port converts the remaining hyphens to
-;;; underscores as it would for any Lisp name.
-;;;
-;;; Enforced rather than remembered:
+;;; Instruction names carry an op_ sentinel so that none can collide with
+;;; a Common Lisp symbol. See "Instruction names carry an op_ sentinel" in
+;;; doc/kernel-tutorial.md. Enforced here rather than remembered:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (dolist (spec *opcode-specs*)
@@ -121,20 +112,12 @@ disassembly to read back the way it was written."
 ;;; ---------------------------------------------------------------------
 ;;; dispatching
 ;;; ---------------------------------------------------------------------
-;;; The machine's inner loop dispatches on a fixnum opcode. CASE compiles
-;;; that to a jump table, but CASE does not evaluate its keys, so writing
-;;; it directly would mean either bare integers -- which defeats the point
-;;; of naming instructions -- or #. read-time evaluation.
-;;;
-;;; #. is avoided deliberately. It resolves symbols in whatever package
-;;; is current when the form is READ, which has bitten this project
-;;; before; it fails outright if *read-eval* is nil; and it makes a file
-;;; unreadable unless its dependencies are already loaded, turning a
-;;; compile-order problem into a read-order problem.
-;;;
-;;; This macro does the same job at macroexpansion time instead, looking
-;;; instruction names up by string so the package a clause was typed in
-;;; does not matter, and signalling a real error on a misspelled name.
+;;; Dispatch wants a jump table, which wants literal integers as keys.
+;;; This resolves instruction names to those integers at macroexpansion
+;;; time, by string, so the package a clause was written in does not
+;;; matter and a misspelling is an error rather than a clause that never
+;;; fires. See "Dispatch resolves names at compile time, not read time" in
+;;; doc/kernel-tutorial.md.
 
 (defmacro dispatch-on-opcode (op &body clauses)
   "Dispatch on OP by instruction name. Each clause is (NAME . BODY), or

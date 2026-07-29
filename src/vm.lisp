@@ -15,17 +15,17 @@
 ;;;
 ;;; Stages implemented so far (doc/kernel-tutorial.md part 3):
 ;;;
-;;;   1  representations                                    done
-;;;   2  the loop, op_CONST, op_RETURN                            done
-;;;   3  bindings, primitive calls, receivers               done
-;;;   4  control                                            done
-;;;   5  frames and calls                                   done
-;;;   6  the lexical chain                                  done
-;;;   7  tail calls                                         pending
-;;;   8  multiple values (op_RETURN n, op_RECV k, op_RECV-ALL)       done
-;;;   9  threads                                            pending
-;;;  10  the dynamic environment                            pending
-;;;  11  the error hook                                     pending
+;;;    1  representations                done
+;;;    2  the loop, op_CONST, op_RETURN  done
+;;;    3  bindings, calls, receivers     done
+;;;    4  control                        done
+;;;    5  frames and calls               done
+;;;    6  the lexical chain              done
+;;;    7  tail calls                     done
+;;;    8  multiple values                done
+;;;    9  threads                        pending
+;;;   10  the dynamic environment        pending
+;;;   11  the error hook                 pending
 ;;;
 ;;; Unimplemented instructions signal rather than misbehave, so the
 ;;; ladder is visible from a backtrace.
@@ -76,43 +76,13 @@ rendered and the operand stack shown.")
 ;;; ---------------------------------------------------------------------
 ;;; calling
 ;;; ---------------------------------------------------------------------
-;;; op_CALL asks the callee's descriptor for a handler rather than assuming
-;;; a bytecode function. That one indirection is what will later let
-;;; generic functions, foreign functions, and native-compiled functions
-;;; all be reached by this instruction.
-;;;
-;;; THE HANDLER CONTRACT
-;;;
 ;;; A handler takes (callee n-args frame pc) and returns the frame the
-;;; machine should continue stepping. That return value carries more
-;;; information than it looks like it does, and both op_CALL and
-;;; op_TAILCALL depend on it:
+;;; machine should continue stepping. Whether that is a new frame or the
+;;; one it was given is the whole of the contract, and op_TAILCALL keys
+;;; on it. See "The handler contract" in doc/kernel-tutorial.md.
 ;;;
-;;;   a NEW frame     the callee is a computation of its own. It will
-;;;                   run, and eventually op_RETURN into whatever frame
-;;;                   it was given as its parent. Its values arrive
-;;;                   there later.
-;;;
-;;;   the SAME frame  the callee ran to completion in place. It has
-;;;                   already pushed its values and their count onto
-;;;                   this frame's operand area. Nothing arrives later.
-;;;
-;;; Nothing else distinguishes the two cases, deliberately. op_TAILCALL
-;;; has to tell them apart: it abandons the caller's frame, so a callee
-;;; that would have returned there must be re-pointed at the caller's
-;;; parent, while a callee that already delivered its values in place
-;;; needs those values forwarded instead.
-;;;
-;;; op_TAILCALL asks the returned frame rather than testing the callee's
-;;; type. That is why a new kind of applicable -- a generic function, a
-;;; foreign function, native code -- behaves correctly by honouring this
-;;; contract rather than by being added to a list of special cases. It is
-;;; what property P3 buys, and it is only bought for as long as new
-;;; handlers keep to it.
-;;;
-;;; PC is the faulting instruction -- the op_CALL itself, not the one
-;;; after it -- because a handler that signals must report where the
-;;; fault was, per P5.
+;;; PC is the faulting instruction, not the one after it, so a handler
+;;; that signals reports where the fault was.
 
 (defun call-primitive (callee n-args frame pc)
   (let ((arity (primitive-arity callee)))
