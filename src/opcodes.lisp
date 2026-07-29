@@ -90,6 +90,33 @@ the assembler from caring which package a program was typed in.")
       (error "No such instruction: ~S" name)))
 
 ;;; ---------------------------------------------------------------------
+;;; dispatching
+;;; ---------------------------------------------------------------------
+;;; The machine's inner loop dispatches on a fixnum opcode. CASE compiles
+;;; that to a jump table, but CASE does not evaluate its keys, so writing
+;;; it directly would mean either bare integers -- which defeats the point
+;;; of naming instructions -- or #. read-time evaluation.
+;;;
+;;; #. is avoided deliberately. It resolves symbols in whatever package
+;;; is current when the form is READ, which has bitten this project
+;;; before; it fails outright if *read-eval* is nil; and it makes a file
+;;; unreadable unless its dependencies are already loaded, turning a
+;;; compile-order problem into a read-order problem.
+;;;
+;;; This macro does the same job at macroexpansion time instead, looking
+;;; instruction names up by string so the package a clause was typed in
+;;; does not matter, and signalling a real error on a misspelled name.
+
+(defmacro dispatch-on-opcode (op &body clauses)
+  "Dispatch on OP by instruction name. Each clause is (NAME . BODY), or
+(T . BODY) for the fallback. Expands to CASE with numeric keys."
+  `(case ,op
+     ,@(loop for (key . body) in clauses
+             collect (if (eq key t)
+                         `(t ,@body)
+                         `(,(opcode-number key) ,@body)))))
+
+;;; ---------------------------------------------------------------------
 ;;; the assembler
 ;;; ---------------------------------------------------------------------
 

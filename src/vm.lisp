@@ -158,57 +158,57 @@ Returns the delivered values as a list."
       ;; faulting instruction and is what the error hook will need.
       (when *trace* (trace-instruction frame pc))
       (setf (frame-pc frame) (1+ pc))
-      (case op
+      (dispatch-on-opcode op
         ;; ----- values -----
-        (#.+op-const+
+        (const
          (frame-push frame (svref (code-constants code) a)))
 
-        (#.+op-local+
+        (local
          (unless (zerop a)
            (bard-error frame pc "The lexical chain is not implemented yet."))
          (frame-push frame (svref (frame-slots frame) b)))
 
-        (#.+op-close+
+        (close
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
 
-        (#.+op-global+
+        (global
          (let ((binding (svref (code-constants code) a)))
            (unless (binding-bound? binding)
              (bard-error frame pc "~A is unbound." (binding-name binding)))
            (frame-push frame (binding-value binding))))
 
         ;; ----- stores -----
-        (#.+op-set-global+
+        (set-global
          (let ((binding (svref (code-constants code) a)))
            (setf (binding-value binding) (frame-top frame)
                  (binding-bound? binding) t)))
 
-        (#.+op-drop+
+        (drop
          (frame-pop frame))
 
         ;; ----- control -----
-        (#.+op-goto+
+        (goto
          (setf (frame-pc frame) a))
 
-        (#.+op-branch-false+
+        (branch-false
          (when (null (frame-pop frame))
            (setf (frame-pc frame) a)))
 
         ;; ----- calling -----
-        (#.+op-call+
+        (call
          (let* ((callee (frame-pop frame))
                 (handler (descriptor-call-handler (descriptor-of callee))))
            (unless handler
              (bard-error frame pc "~S is not applicable." callee))
            (setf frame (funcall handler callee a frame pc))))
 
-        (#.+op-recv+
+        (recv
          (receive frame a))
 
-        (#.+op-recv-all+
+        (recv-all
          (receive-all frame))
 
-        (#.+op-return+
+        (return
          (let ((values '())
                (parent (frame-parent frame)))
            (dotimes (i a) (push (frame-pop frame) values))
