@@ -358,6 +358,67 @@ Their variables are separate because the two frames were separate
 computations, not because of any closure machinery.")
 
 ;;; ---------------------------------------------------------------------
+;;; assembly -- tail calls
+;;; ---------------------------------------------------------------------
+
+(defparameter +lap-tailcall+
+  `((CONST 7)
+    (CLOSE ,+code-square+)
+    (TAILCALL 1))                       ; nothing follows, deliberately
+  "square, tail-called.
+
+Nothing follows the TAILCALL, so this only works if the callee returns
+past this frame to its parent. Were TAILCALL to link a parent the way
+CALL does, square would return here -- to a pc past the end of the
+code.")
+
+(defparameter +lap-tailcall-primitive+
+  `((CONST 2)
+    (CONST 3)
+    (GLOBAL +)
+    (TAILCALL 2))
+  "(+ 2 3) in tail position.
+
+A primitive has no frame of its own; its values are delivered where this
+frame's return would have gone.")
+
+(defparameter +lap-fn-countdown+
+  '((LOCAL 0 0)
+    (CONST 0)
+    (GLOBAL =)
+    (CALL 2)
+    (RECV 1)
+    (BRANCH-FALSE recur)
+    (CONST done)
+    (RETURN 1)
+  recur
+    (LOCAL 0 0)
+    (CONST 1)
+    (GLOBAL -)
+    (CALL 2)
+    (RECV 1)
+    (GLOBAL countdown)
+    (TAILCALL 1))                       ; no receiver: it does not return here
+  "(fn (n) (if (= n 0) 'done (countdown (- n 1))))")
+
+(defparameter +code-countdown+
+  (bard:assemble +lap-fn-countdown+ :name "countdown" :arity 1))
+
+(defparameter +lap-tailcall-deep+
+  `((CLOSE ,+code-countdown+)
+    (SET-GLOBAL countdown) (DROP)
+    (CONST 100000)
+    (GLOBAL countdown)
+    (CALL 1)
+    (RECV 1)
+    (RETURN 1))
+  "A hundred thousand tail calls.
+
+Measured: the deepest parent chain reached is 2 -- countdown's frame and
+this one -- for n of 10, 1000, and 100000 alike. Constant, not merely
+bounded.")
+
+;;; ---------------------------------------------------------------------
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
@@ -518,6 +579,25 @@ computations."
              (run-program `((CONST 7) (CLOSE ,+code-set-local+) (CALL 1) (RECV 1) (RETURN 1))))))
 
 #+repl (run! '|SET-LOCAL writes the slot and leaves its value|)  ; => T
+
+;;; ---------------------------------------------------------------------
+;;; stage 7 -- tail calls
+;;; ---------------------------------------------------------------------
+
+(test |2.7 a tail call does not return to its caller|
+  "The caller's frame is abandoned, so the callee returns past it."
+  (is (equal '(49) (run-program +lap-tailcall+)))
+  (is (equal '(5) (run-program +lap-tailcall-primitive+))))
+
+#+repl (run! '|2.7 a tail call does not return to its caller|)  ; => T
+
+(test |tail recursion runs in constant space|
+  "A hundred thousand deep. If TAILCALL linked a parent, this would build
+a chain a hundred thousand frames long."
+  (is (equal '(done) (run-program +lap-tailcall-deep+))))
+
+#+repl (run! '|tail recursion runs in constant space|)  ; => T
+#+repl (run-program +lap-tailcall-deep+)                ; => (DONE)
 
 ;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler

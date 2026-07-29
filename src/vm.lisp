@@ -142,6 +142,28 @@ rendered and the operand stack shown.")
         (setf f next)))))
 
 ;;; ---------------------------------------------------------------------
+;;; delivering values
+;;; ---------------------------------------------------------------------
+;;; Both RETURN and a tail call to a primitive have to hand values, with
+;;; their count, from one frame to its parent. Factored out so the two
+;;; agree by construction.
+
+(defun pop-values (frame n)
+  "Pop the top N values of FRAME and return them as a list, bottom first."
+  (let ((values '()))
+    (dotimes (i n values)
+      (push (frame-pop frame) values))))
+
+(defun deliver-values (frame n)
+  "Move the top N values of FRAME into its parent, followed by the count,
+and return the parent."
+  (let ((values (pop-values frame n))
+        (parent (frame-parent frame)))
+    (dolist (v values) (frame-push parent v))
+    (frame-push parent n)
+    parent))
+
+;;; ---------------------------------------------------------------------
 ;;; receivers
 ;;; ---------------------------------------------------------------------
 
@@ -230,15 +252,32 @@ Returns the delivered values as a list."
          (receive-all frame))
 
         (RETURN
-         (let ((values '())
-               (parent (frame-parent frame)))
-           (dotimes (i a) (push (frame-pop frame) values))
-           (cond ((null parent)
-                  (RETURN values))
-                 (t
-                  (dolist (v values) (frame-push parent v))
-                  (frame-push parent a)
-                  (setf frame parent)))))
+         (if (frame-parent frame)
+             (setf frame (deliver-values frame a))
+             (return (pop-values frame a))))
+
+        (TAILCALL
+         ;; The callee is reached exactly as CALL reaches it. What differs
+         ;; is what becomes of this frame afterwards: it is abandoned, so
+         ;; the callee returns to our parent rather than to us.
+         (let* ((callee (frame-pop frame))
+                (handler (descriptor-call-handler (descriptor-of callee)))
+                (caller frame))
+           (unless handler
+             (bard-error frame pc "~S is not applicable." callee))
+           (let ((next (funcall handler callee a caller pc)))
+             (cond ((eq next caller)
+                    ;; It ran in place -- a primitive. Its values are here
+                    ;; already, so forward them where our return would go.
+                    (let ((count (frame-pop caller)))
+                      (if (frame-parent caller)
+                          (setf frame (deliver-values caller count))
+                          (return (pop-values caller count)))))
+                   (t
+                    ;; A fresh frame. Inheriting our parent is what makes
+                    ;; the call a tail call.
+                    (setf (frame-parent next) (frame-parent caller)
+                          frame next))))))
 
         ;; ----- not yet implemented -----
         (t
