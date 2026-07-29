@@ -36,21 +36,21 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *opcode-specs*
-  '((const       :const)
-    (local       :num :num)
-    (global      :binding)
-    (set-global  :binding)
-    (set-local   :num :num)
-    (drop)
-    (goto        :label)
-    (branch-false :label)
-    (close       :code)
-    (call        :count)
-    (tailcall    :count)
-    (return      :count)
-    (recv        :count)
-    (recv-all)
-    (yield))
+  '((CONST       :const)
+    (LOCAL       :num :num)
+    (GLOBAL      :binding)
+    (SET-GLOBAL  :binding)
+    (SET-LOCAL   :num :num)
+    (DROP)
+    (GOTO        :label)
+    (BRANCH-FALSE :label)
+    (CLOSE       :code)
+    (CALL        :count)
+    (TAILCALL    :count)
+    (RETURN      :count)
+    (RECV        :count)
+    (RECV-ALL)
+    (YIELD))
     "Each entry is (NAME . OPERAND-KINDS), in opcode order."))
 
 (macrolet ((define-opcodes ()
@@ -125,13 +125,13 @@ the assembler from caring which package a program was typed in.")
 ;;; as what they mean -- a literal value, a global's name, a label --
 ;;; and the assembler interns them into the constants vector.
 ;;;
-;;;   (assemble '((const 42) (return 1)))
+;;;   (assemble '((CONST 42) (RETURN 1)))
 ;;;
-;;;   (assemble '((global n) (const 3) (global <) (call 2) (recv 1)
-;;;               (branch-false else)
-;;;               (const "small") (goto done)
-;;;               else (const "big")
-;;;               done (return 1)))
+;;;   (assemble '((GLOBAL n) (CONST 3) (GLOBAL <) (CALL 2) (RECV 1)
+;;;               (BRANCH-FALSE else)
+;;;               (CONST "small") (GOTO done)
+;;;               else (CONST "big")
+;;;               done (RETURN 1)))
 
 (defun assemble (forms &key name (arity 0) (n-locals nil) frame-size)
   "Assemble FORMS into a code object. N-LOCALS defaults to ARITY, since
@@ -229,4 +229,4 @@ further locals needs exactly that many."
     (format stream "~4D: ~A~%" i (instruction-string code i)))
   (values))
 
-#+repl (disassemble (assemble '((const 42) (return 1)) :name "answer"))
+#+repl (disassemble (assemble '((CONST 42) (RETURN 1)) :name "answer"))

@@ -160,60 +160,60 @@ Returns the delivered values as a list."
       (setf (frame-pc frame) (1+ pc))
       (dispatch-on-opcode op
         ;; ----- values -----
-        (const
+        (CONST
          (frame-push frame (svref (code-constants code) a)))
 
-        (local
+        (LOCAL
          (unless (zerop a)
            (bard-error frame pc "The lexical chain is not implemented yet."))
          (frame-push frame (svref (frame-slots frame) b)))
 
-        (close
+        (CLOSE
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
 
-        (global
+        (GLOBAL
          (let ((binding (svref (code-constants code) a)))
            (unless (binding-bound? binding)
              (bard-error frame pc "~A is unbound." (binding-name binding)))
            (frame-push frame (binding-value binding))))
 
         ;; ----- stores -----
-        (set-global
+        (SET-GLOBAL
          (let ((binding (svref (code-constants code) a)))
            (setf (binding-value binding) (frame-top frame)
                  (binding-bound? binding) t)))
 
-        (drop
+        (DROP
          (frame-pop frame))
 
         ;; ----- control -----
-        (goto
+        (GOTO
          (setf (frame-pc frame) a))
 
-        (branch-false
+        (BRANCH-FALSE
          (when (null (frame-pop frame))
            (setf (frame-pc frame) a)))
 
         ;; ----- calling -----
-        (call
+        (CALL
          (let* ((callee (frame-pop frame))
                 (handler (descriptor-call-handler (descriptor-of callee))))
            (unless handler
              (bard-error frame pc "~S is not applicable." callee))
            (setf frame (funcall handler callee a frame pc))))
 
-        (recv
+        (RECV
          (receive frame a))
 
-        (recv-all
+        (RECV-ALL
          (receive-all frame))
 
-        (return
+        (RETURN
          (let ((values '())
                (parent (frame-parent frame)))
            (dotimes (i a) (push (frame-pop frame) values))
            (cond ((null parent)
-                  (return values))
+                  (RETURN values))
                  (t
                   (dolist (v values) (frame-push parent v))
                   (frame-push parent a)
@@ -227,5 +227,5 @@ Returns the delivered values as a list."
   "Run CODE as a whole computation and return its values as a list."
   (run (make-frame (make-fn code) :parent nil)))
 
-#+repl (run-code (assemble '((const 42) (return 1)) :name "answer"))
-#+repl (let ((*trace* t)) (run-code (assemble '((const 42) (return 1)))))
+#+repl (run-code (assemble '((CONST 42) (RETURN 1)) :name "answer"))
+#+repl (let ((*trace* t)) (run-code (assemble '((CONST 42) (RETURN 1)))))
