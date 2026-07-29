@@ -18,55 +18,55 @@ the current frame's `slots`, tracked by `sp`.
 
 ### Values
 
-**`CONST k`** — push constant `k`.
+**`op_CONST k`** — push constant `k`.
 The only instruction that produces a value from nothing; everything else consumes
 something.
 
-**`LOCAL up slot`** — push a value from the lexical chain.
+**`op_LOCAL up slot`** — push a value from the lexical chain.
 `up` counts levels outward: `0` is the current frame's own slots, `1` is
 `fn.captured-frame`, `2` is that frame's `fn.captured-frame`, and so on. Local
 variables and captured variables are read by the same instruction — a captured
 variable is just a larger `up`.
 
-**`GLOBAL b`** — push the value held in binding `b`.
+**`op_GLOBAL b`** — push the value held in binding `b`.
 Note what this does *not* do: it does not push a value the compiler knew. It
 reads a mutable cell at run time. That indirection is the entire reason a
 redefinition takes effect in code compiled before it.
 
-If `b.dynamic?` is set, `GLOBAL` first searches the current thread's `dynenv` for
+If `b.dynamic?` is set, `op_GLOBAL` first searches the current thread's `dynenv` for
 the innermost rebinding of `b`, falling through to the cell if there is none. The
 flag is false for nearly every binding, so the ordinary path costs one
 predictable branch on an object already in hand.
 
 ### Stores
 
-**`SET-GLOBAL b`** — store the top into binding `b`. **Does not pop.**
-This is definition and redefinition, as one instruction. It mirrors `GLOBAL` with
+**`op_SET-GLOBAL b`** — store the top into binding `b`. **Does not pop.**
+This is definition and redefinition, as one instruction. It mirrors `op_GLOBAL` with
 respect to `dynamic?`: a rebound dynamic binding is assigned in the `dynenv`, not
 in the cell.
 
-**`SET-LOCAL up slot`** — store the top into a lexical slot. **Does not pop.**
+**`op_SET-LOCAL up slot`** — store the top into a lexical slot. **Does not pop.**
 
 Both leave their value so an assignment can be used as an expression. For effect
-only, follow with `DROP`.
+only, follow with `op_DROP`.
 
-**`DROP`** — discard the top. Sequencing.
+**`op_DROP`** — discard the top. Sequencing.
 
 ### Control
 
-**`GOTO n`** — set `pc` to `n`.
+**`op_GOTO n`** — set `pc` to `n`.
 
-**`BRANCH-FALSE n`** — pop; if false, set `pc` to `n`.
+**`op_BRANCH-FALSE n`** — pop; if false, set `pc` to `n`.
 One conditional is enough; the compiler inverts the test when it wants the other
 sense.
 
 ### Functions
 
-**`CLOSE k`** — push a closure over code object `k`, capturing the **current
+**`op_CLOSE k`** — push a closure over code object `k`, capturing the **current
 frame**. That capture is what makes it a closure rather than a code pointer, and
 it is why frames and environments need only one representation.
 
-**`CALL n`** — push arguments left to right, then the callee, then `CALL n`.
+**`op_CALL n`** — push arguments left to right, then the callee, then `op_CALL n`.
 
 ```
 callee ← pop
@@ -86,29 +86,29 @@ building the computation. And the callee is *checked*, not assumed; that one
 branch is what later lets primitives, generic functions, foreign functions, and
 native-compiled functions all be reached by this instruction.
 
-**`TAILCALL n`** — identical, except the new frame's `parent` is the *caller's*
+**`op_TAILCALL n`** — identical, except the new frame's `parent` is the *caller's*
 parent. The caller's frame is simply abandoned, so a loop written as tail
 recursion runs in constant space.
 
-**`RETURN n`** — move the top `n` values of the current frame's operand area into
+**`op_RETURN n`** — move the top `n` values of the current frame's operand area into
 the parent's, then push `n` itself; set `current ← current.parent`. **If `parent`
 is nil the thread is finished** and those values are its result. There is no halt
 instruction because thread termination already is one.
 
-**`RECV k`** — pop the count; adjust the values beneath it to exactly `k`,
+**`op_RECV k`** — pop the count; adjust the values beneath it to exactly `k`,
 padding with `nothing` and discarding extras.
 
-**`RECV-ALL`** — pop the count; collect that many values into one list and push
+**`op_RECV-ALL`** — pop the count; collect that many values into one list and push
 it.
 
 **Every call site is followed by a receiver.** The caller cannot know statically
 how many values a callee produced, so the operand area's shape is unpredictable
-until a receiver fixes it. `RECV 1` is the overwhelmingly common case — a value
-used as an operand. `RECV 0` discards a call made for effect. `RECV j` receives a
-fixed multiple-value binding. `RECV-ALL` handles value lists and apply.
+until a receiver fixes it. `op_RECV 1` is the overwhelmingly common case — a value
+used as an operand. `op_RECV 0` discards a call made for effect. `op_RECV j` receives a
+fixed multiple-value binding. `op_RECV-ALL` handles value lists and apply.
 
 A tail call is the exception: it does not return to you, so *your* caller's
-receiver handles its values. A `TAILCALL` is never followed by anything.
+receiver handles its values. A `op_TAILCALL` is never followed by anything.
 
 The count rides on the operand stack rather than in a register, because a
 register would have to be saved and restored across every capture, thread switch,
@@ -116,7 +116,7 @@ and breakloop — the argument-count mistake in a new costume.
 
 ### Concurrency
 
-**`YIELD`** — hand the machine to another runnable thread.
+**`op_YIELD`** — hand the machine to another runnable thread.
 
 Because a thread's entire state is its current frame, a switch is: store the
 current frame into this thread, pick another, load its frame. Green threads are
@@ -128,31 +128,31 @@ own current frame. The instruction is the same either way.
 ## Part 2 — Programs
 
 Each is minimal and adds one thing. A program is the code of a function invoked
-with a nil parent, so its `RETURN` ends the thread and yields the result.
+with a nil parent, so its `op_RETURN` ends the thread and yields the result.
 
 ### 2.1 A constant
 
 ```
-0: CONST 42
-1: RETURN 1
+0: op_CONST 42
+1: op_RETURN 1
 ```
 
-`CONST`, `RETURN`, and thread termination.
+`op_CONST`, `op_RETURN`, and thread termination.
 
 ### 2.2 Calling a primitive — `(+ 2 3)`
 
 ```
-0: CONST 2
-1: CONST 3
-2: GLOBAL +
-3: CALL 2
-4: RECV 1
-5: RETURN 1
+0: op_CONST 2
+1: op_CONST 3
+2: op_GLOBAL +
+3: op_CALL 2
+4: op_RECV 1
+5: op_RETURN 1
 ```
 
-`GLOBAL`, `CALL`'s descriptor branch, and a receiver. The handler for a primitive
+`op_GLOBAL`, `op_CALL`'s descriptor branch, and a receiver. The handler for a primitive
 consumes its arguments, pushes its results and a count, and creates no frame —
-the call returns immediately. `RECV 1` then fixes the shape to one value.
+the call returns immediately. `op_RECV 1` then fixes the shape to one value.
 
 `+` arrived through a binding. Rebind it and this already-compiled code calls the
 new one. That is the point of P2.
@@ -166,70 +166,70 @@ them. All polymorphism lives above the kernel.
 ### 2.3 A conditional — `(if (< n 3) "small" "big")`
 
 ```
-0: GLOBAL n
-1: CONST 3
-2: GLOBAL <
-3: CALL 2
-4: RECV 1
-5: BRANCH-FALSE 8
-6: CONST "small"
-7: GOTO 9
-8: CONST "big"
-9: RETURN 1
+0: op_GLOBAL n
+1: op_CONST 3
+2: op_GLOBAL <
+3: op_CALL 2
+4: op_RECV 1
+5: op_BRANCH-FALSE 8
+6: op_CONST "small"
+7: op_GOTO 9
+8: op_CONST "big"
+9: op_RETURN 1
 ```
 
 ### 2.4 Sequencing — `(begin (set! x 10) (set! y 20) (+ x y))`
 
 ```
-0:  CONST 10
-1:  SET-GLOBAL x      ; 10 remains on the stack
-2:  DROP
-3:  CONST 20
-4:  SET-GLOBAL y
-5:  DROP
-6:  GLOBAL x
-7:  GLOBAL y
-8:  GLOBAL +
-9:  CALL 2
-10: RECV 1
-11: RETURN 1
+0:  op_CONST 10
+1:  op_SET-GLOBAL x      ; 10 remains on the stack
+2:  op_DROP
+3:  op_CONST 20
+4:  op_SET-GLOBAL y
+5:  op_DROP
+6:  op_GLOBAL x
+7:  op_GLOBAL y
+8:  op_GLOBAL +
+9:  op_CALL 2
+10: op_RECV 1
+11: op_RETURN 1
 ```
 
-The `SET-GLOBAL`/`DROP` pair is what a top-level definition compiles to. Defining
+The `op_SET-GLOBAL`/`op_DROP` pair is what a top-level definition compiles to. Defining
 something is an ordinary instruction, not a special mode.
 
-Note the two ways to discard: `DROP` removes a value already on the stack;
-`RECV 0` discards whatever a call returned. They are not interchangeable.
+Note the two ways to discard: `op_DROP` removes a value already on the stack;
+`op_RECV 0` discards whatever a call returned. They are not interchangeable.
 
 ### 2.5 A function — `((fn (x) (* x x)) 7)`
 
 Code object `SQUARE` — arity 1, n-locals 1:
 
 ```
-0: LOCAL 0 0
-1: LOCAL 0 0
-2: GLOBAL *
-3: CALL 2
-4: RECV 1
-5: RETURN 1
+0: op_LOCAL 0 0
+1: op_LOCAL 0 0
+2: op_GLOBAL *
+3: op_CALL 2
+4: op_RECV 1
+5: op_RETURN 1
 ```
 
 Main:
 
 ```
-0: CONST 7
-1: CLOSE SQUARE
-2: CALL 1
-3: RECV 1
-4: RETURN 1
+0: op_CONST 7
+1: op_CLOSE SQUARE
+2: op_CALL 1
+3: op_RECV 1
+4: op_RETURN 1
 ```
 
-`SQUARE` has no prologue. `CALL` already placed the argument in slot 0, because
+`SQUARE` has no prologue. `op_CALL` already placed the argument in slot 0, because
 building the frame is the call.
 
-Trace it once. `CALL 1` allocates a frame, moves `7` into slot 0, links `parent`
-to main's frame, and assigns `current`. `RETURN 1` moves `49` into main's operand
-area, pushes the count `1`, and restores `current`. `RECV 1` pops the count and
+Trace it once. `op_CALL 1` allocates a frame, moves `7` into slot 0, links `parent`
+to main's frame, and assigns `current`. `op_RETURN 1` moves `49` into main's operand
+area, pushes the count `1`, and restores `current`. `op_RECV 1` pops the count and
 leaves `49`.
 
 ### 2.6 A closure over a mutable variable — a counter
@@ -239,20 +239,20 @@ leaves `49`.
 `MAKE-COUNTER` — arity 1, n-locals 1:
 
 ```
-0: CLOSE BUMP
-1: RETURN 1
+0: op_CLOSE BUMP
+1: op_RETURN 1
 ```
 
 `BUMP` — arity 0, n-locals 0:
 
 ```
-0: LOCAL 1 0        ; n — one level out the lexical chain
-1: CONST 1
-2: GLOBAL +
-3: CALL 2
-4: RECV 1
-5: SET-LOCAL 1 0    ; n ← sum; sum remains
-6: RETURN 1
+0: op_LOCAL 1 0        ; n — one level out the lexical chain
+1: op_CONST 1
+2: op_GLOBAL +
+3: op_CALL 2
+4: op_RECV 1
+5: op_SET-LOCAL 1 0    ; n ← sum; sum remains
+6: op_RETURN 1
 ```
 
 `BUMP` reaches `n` at `up = 1` because `BUMP`'s function captured
@@ -265,26 +265,26 @@ already separate computations.
 `(fn (n) (if (= n 0) 'done (countdown (- n 1))))`
 
 ```
-0:  LOCAL 0 0
-1:  CONST 0
-2:  GLOBAL =
-3:  CALL 2
-4:  RECV 1
-5:  BRANCH-FALSE 8
-6:  CONST done
-7:  RETURN 1
-8:  LOCAL 0 0
-9:  CONST 1
-10: GLOBAL -
-11: CALL 2
-12: RECV 1
-13: GLOBAL countdown
-14: TAILCALL 1
+0:  op_LOCAL 0 0
+1:  op_CONST 0
+2:  op_GLOBAL =
+3:  op_CALL 2
+4:  op_RECV 1
+5:  op_BRANCH-FALSE 8
+6:  op_CONST done
+7:  op_RETURN 1
+8:  op_LOCAL 0 0
+9:  op_CONST 1
+10: op_GLOBAL -
+11: op_CALL 2
+12: op_RECV 1
+13: op_GLOBAL countdown
+14: op_TAILCALL 1
 ```
 
 Run it with a large `n` and watch the parent chain stay short.
 
-Note that `TAILCALL` at 14 is **not** followed by a receiver. It does not return
+Note that `op_TAILCALL` at 14 is **not** followed by a receiver. It does not return
 here; whatever it produces goes to our parent, and our caller's receiver handles
 it. That is also how a function returns exactly the values another call produced
 — tail-call it.
@@ -294,31 +294,31 @@ it. That is also how a function returns exactly the values another call produced
 A function returning two values. `DIVMOD` — arity 2, n-locals 2:
 
 ```
-0:  LOCAL 0 0
-1:  LOCAL 0 1
-2:  GLOBAL _fixnum-div
-3:  CALL 2
-4:  RECV 1
-5:  LOCAL 0 0
-6:  LOCAL 0 1
-7:  GLOBAL _fixnum-mod
-8:  CALL 2
-9:  RECV 1
-10: RETURN 2          ; quotient and remainder
+0:  op_LOCAL 0 0
+1:  op_LOCAL 0 1
+2:  op_GLOBAL _fixnum-div
+3:  op_CALL 2
+4:  op_RECV 1
+5:  op_LOCAL 0 0
+6:  op_LOCAL 0 1
+7:  op_GLOBAL _fixnum-mod
+8:  op_CALL 2
+9:  op_RECV 1
+10: op_RETURN 2          ; quotient and remainder
 ```
 
 Three callers, differing only in the receiver:
 
 ```
-    CONST 7                 CONST 7                 CONST 7
-    CONST 2                 CONST 2                 CONST 2
-    CLOSE DIVMOD            CLOSE DIVMOD            CLOSE DIVMOD
-    CALL 2                  CALL 2                  CALL 2
-    RECV 2                  RECV 1                  RECV-ALL
-    GLOBAL +                RETURN 1                RETURN 1
-    CALL 2
-    RECV 1
-    RETURN 1
+    op_CONST 7                 op_CONST 7                 op_CONST 7
+    op_CONST 2                 op_CONST 2                 op_CONST 2
+    op_CLOSE DIVMOD            op_CLOSE DIVMOD            op_CLOSE DIVMOD
+    op_CALL 2                  op_CALL 2                  op_CALL 2
+    op_RECV 2                  op_RECV 1                  op_RECV-ALL
+    op_GLOBAL +                op_RETURN 1                op_RETURN 1
+    op_CALL 2
+    op_RECV 1
+    op_RETURN 1
 ```
 
 The first wants both and adds them, giving `4`. The second wants one and the
@@ -334,18 +334,18 @@ reconciled. That is the whole of the multiple-value protocol.
 `PING` — arity 0:
 
 ```
-0: CONST "ping"
-1: GLOBAL print
-2: CALL 1
-3: RECV 0
-4: YIELD
-5: GOTO 0
+0: op_CONST "ping"
+1: op_GLOBAL print
+2: op_CALL 1
+3: op_RECV 0
+4: op_YIELD
+5: op_GOTO 0
 ```
 
 `PONG` is the same with `"pong"`. Create two threads over these and run the
 scheduler; they alternate.
 
-Notice how little `YIELD` needed: each thread is a frame, so switching is
+Notice how little `op_YIELD` needed: each thread is a frame, so switching is
 assigning a pointer. Nothing was saved or restored, because there is nothing
 outside the frame to save.
 
@@ -354,22 +354,22 @@ outside the frame to save.
 Assume `*out*` is a binding whose `dynamic?` flag is set. `REPORT` — arity 0:
 
 ```
-0: GLOBAL *out*     ; dynamic? set → searches the thread's dynenv first
-1: RETURN 1
+0: op_GLOBAL *out*     ; dynamic? set → searches the thread's dynenv first
+1: op_RETURN 1
 ```
 
 A caller that rebinds it:
 
 ```
-0: CONST <binding *out*>    ; bindings are values; the compiler has this one
-1: CONST "log.txt"
-2: GLOBAL _push-rebinding
-3: CALL 2
-4: RECV 0
-5: CLOSE REPORT
-6: CALL 0
-7: RECV 1
-8: RETURN 1
+0: op_CONST <binding *out*>    ; bindings are values; the compiler has this one
+1: op_CONST "log.txt"
+2: op_GLOBAL _push-rebinding
+3: op_CALL 2
+4: op_RECV 0
+5: op_CLOSE REPORT
+6: op_CALL 0
+7: op_RECV 1
+8: op_RETURN 1
 ```
 
 `REPORT` sees `"log.txt"` even though the cell still holds whatever it held
@@ -385,14 +385,14 @@ All fifteen instructions have now appeared.
 ### 2.11 The one that matters — calling something undefined
 
 ```
-0: CONST 7
-1: GLOBAL bar        ; bar has no value
-2: CALL 1
-3: RECV 1
-4: RETURN 1
+0: op_CONST 7
+1: op_GLOBAL bar        ; bar has no value
+2: op_CALL 1
+3: op_RECV 1
+4: op_RETURN 1
 ```
 
-`GLOBAL` finds an unbound binding while `pc` is 1. Under P4 the machine does
+`op_GLOBAL` finds an unbound binding while `pc` is 1. Under P4 the machine does
 **not** unwind: it calls the error hook with the current frame exactly as it is.
 Under P5 the hook can see that the faulting instruction was at 1, not 2.
 
@@ -423,20 +423,20 @@ Three details that later stages assume and that are painful to retrofit:
   allocation is what makes a frame a single capturable object.
 - A **thread** has a `dynenv` field. Empty for now.
 
-### Stage 2 — The loop, `CONST`, `RETURN`
+### Stage 2 — The loop, `op_CONST`, `op_RETURN`
 
 Write the dispatch loop: fetch `code[pc]`, **save the fetched `pc`**, increment,
 dispatch. Saving the pre-increment `pc` is P5 and costs one variable. Do it now;
 every later stage assumes it exists.
 
-Implement `CONST`, and `RETURN n` for the nil-parent case that ends the thread.
+Implement `op_CONST`, and `op_RETURN n` for the nil-parent case that ends the thread.
 
 → **2.1 runs.**
 
 ### Stage 3 — Bindings, primitive calls, receivers
 
-Implement `GLOBAL`, `SET-GLOBAL`, `DROP`, `RECV k`, and only the *descriptor*
-branch of `CALL`: if the callee is a primitive, consume its arguments, push its
+Implement `op_GLOBAL`, `op_SET-GLOBAL`, `op_DROP`, `op_RECV k`, and only the *descriptor*
+branch of `op_CALL`: if the callee is a primitive, consume its arguments, push its
 result and a count of 1. Install `_fixnum-add`, `_fixnum-sub`, `_fixnum-mul`,
 `_fixnum-lt`, `_fixnum-eq`, and bind `+`, `-`, `*`, `<`, `=` to them for now.
 
@@ -450,14 +450,14 @@ it looks.
 
 ### Stage 4 — Control
 
-Implement `GOTO` and `BRANCH-FALSE`.
+Implement `op_GOTO` and `op_BRANCH-FALSE`.
 
 → **2.3 runs.**
 
 ### Stage 5 — Frames and calls
 
-Implement `CLOSE`, `LOCAL` with `up = 0`, and `CALL`'s function branch: arity
-check, frame allocation, argument move, parent link, switch. Extend `RETURN n` to
+Implement `op_CLOSE`, `op_LOCAL` with `up = 0`, and `op_CALL`'s function branch: arity
+check, frame allocation, argument move, parent link, switch. Extend `op_RETURN n` to
 the non-nil-parent case. This is the largest stage; everything before it was
 preparation.
 
@@ -465,20 +465,20 @@ preparation.
 
 ### Stage 6 — The lexical chain
 
-Implement `SET-LOCAL`, and `LOCAL` with `up > 0` walking `fn.captured-frame`.
+Implement `op_SET-LOCAL`, and `op_LOCAL` with `up > 0` walking `fn.captured-frame`.
 
 → **2.6 runs.**
 
 ### Stage 7 — Tail calls
 
-Implement `TAILCALL`. Test with a countdown large enough that the non-tail
+Implement `op_TAILCALL`. Test with a countdown large enough that the non-tail
 version would exhaust memory.
 
 → **2.7 runs.**
 
 ### Stage 8 — Multiple values
 
-`RETURN n` for `n ≠ 1`, `RECV k` for `k ≠ 1`, and `RECV-ALL`. Most of this
+`op_RETURN n` for `n ≠ 1`, `op_RECV k` for `k ≠ 1`, and `op_RECV-ALL`. Most of this
 already works if Stages 2 and 3 were written generally rather than special-cased
 to one value; if they were not, this is where you find out.
 
@@ -486,7 +486,7 @@ to one value; if they were not, this is where you find out.
 
 ### Stage 9 — Threads
 
-Add `YIELD` and two primitives: make a thread over a function, and run the
+Add `op_YIELD` and two primitives: make a thread over a function, and run the
 scheduler. Round-robin over a list is enough; anything smarter belongs above the
 kernel.
 
@@ -494,7 +494,7 @@ kernel.
 
 ### Stage 10 — The dynamic environment
 
-Make `GLOBAL` and `SET-GLOBAL` consult `dynamic?` and search the thread's
+Make `op_GLOBAL` and `op_SET-GLOBAL` consult `dynamic?` and search the thread's
 `dynenv`. Add primitives to push and pop rebindings.
 
 → **2.10 runs.**

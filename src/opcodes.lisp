@@ -36,30 +36,55 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *opcode-specs*
-  '((CONST       :const)
-    (LOCAL       :num :num)
-    (GLOBAL      :binding)
-    (SET-GLOBAL  :binding)
-    (SET-LOCAL   :num :num)
-    (DROP)
-    (GOTO        :label)
-    (BRANCH-FALSE :label)
-    (CLOSE       :code)
-    (CALL        :count)
-    (TAILCALL    :count)
-    (RETURN      :count)
-    (RECV        :count)
-    (RECV-ALL)
-    (YIELD))
+  '((op_CONST        :const)
+    (op_LOCAL         :num :num)
+    (op_GLOBAL        :binding)
+    (op_SET-GLOBAL    :binding)
+    (op_SET-LOCAL     :num :num)
+    (op_DROP)
+    (op_GOTO          :label)
+    (op_BRANCH-FALSE  :label)
+    (op_CLOSE         :code)
+    (op_CALL          :count)
+    (op_TAILCALL      :count)
+    (op_RETURN        :count)
+    (op_RECV          :count)
+    (op_RECV-ALL)
+    (op_YIELD))
     "Each entry is (NAME . OPERAND-KINDS), in opcode order."))
 
-(macrolet ((define-opcodes ()
-             `(progn
-                ,@(loop for spec in (symbol-value '*opcode-specs*)
-                        for i from 0
-                        collect `(defconstant ,(intern (format nil "+OP-~A+" (first spec)))
-                                   ,i)))))
-  (define-opcodes))
+;;; Instruction names must not be Common Lisp symbols. op_RETURN was op_RETURN and
+;;; op_CLOSE was op_CLOSE until a CL op_RETURN inside the machine's own loop was
+;;; mistaken for the instruction of the same name -- identical to Lisp,
+;;; misleading to a reader. The rule is enforced here rather than
+;;; remembered.
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (dolist (spec *opcode-specs*)
+    (let ((name (string (first spec))))
+      (when (nth-value 1 (find-symbol name :common-lisp))
+        (error "Instruction ~A collides with a Common Lisp symbol." name)))))
+
+;;; Instruction names carry an op_ sentinel. It puts them in a namespace
+;;; of their own, so no instruction can ever collide with a Common Lisp
+;;; symbol -- RETURN and CLOSE did, and a CL RETURN inside the machine's
+;;; own loop was once mistaken for the instruction of the same name.
+;;;
+;;; The sentinel is lowercase so it recedes and the instruction name is
+;;; what the eye lands on; the underscore separates it visibly from names
+;;; that themselves contain hyphens. Both survive transliteration to any
+;;; target language, where a port converts the remaining hyphens to
+;;; underscores as it would for any Lisp name.
+;;;
+;;; Enforced rather than remembered:
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (dolist (spec *opcode-specs*)
+    (let ((name (string (first spec))))
+      (unless (eql 0 (search "OP_" name))
+        (error "Instruction ~A lacks the op_ sentinel." name))
+      (when (nth-value 1 (find-symbol name :common-lisp))
+        (error "Instruction ~A collides with a Common Lisp symbol." name)))))
 
 (defparameter *opcode-names*
   (coerce (mapcar #'first *opcode-specs*) 'simple-vector)
@@ -80,9 +105,13 @@ same. Bard will have its own symbols eventually; until then this keeps
 the assembler from caring which package a program was typed in.")
 
 (defun opcode-name (op)
-  "The human-readable name of opcode number OP."
+  "The name of opcode number OP, written as it appears in source: a
+lowercase op_ sentinel and an uppercase instruction name. The reader
+upcases the whole symbol, so the sentinel has to be restored here for
+disassembly to read back the way it was written."
   (if (and (integerp op) (< -1 op (length *opcode-names*)))
-      (svref *opcode-names* op)
+      (let ((name (symbol-name (svref *opcode-names* op))))
+        (concatenate 'string "op_" (subseq name 3)))
       (format nil "?~A" op)))
 
 (defun opcode-number (name)
@@ -125,17 +154,17 @@ the assembler from caring which package a program was typed in.")
 ;;; as what they mean -- a literal value, a global's name, a label --
 ;;; and the assembler interns them into the constants vector.
 ;;;
-;;;   (assemble '((CONST 42) (RETURN 1)))
+;;;   (assemble '((op_CONST 42) (op_RETURN 1)))
 ;;;
-;;;   (assemble '((GLOBAL n) (CONST 3) (GLOBAL <) (CALL 2) (RECV 1)
-;;;               (BRANCH-FALSE else)
-;;;               (CONST "small") (GOTO done)
-;;;               else (CONST "big")
-;;;               done (RETURN 1)))
+;;;   (assemble '((op_GLOBAL n) (op_CONST 3) (op_GLOBAL <) (op_CALL 2) (op_RECV 1)
+;;;               (op_BRANCH-FALSE else)
+;;;               (op_CONST "small") (op_GOTO done)
+;;;               else (op_CONST "big")
+;;;               done (op_RETURN 1)))
 
 (defun assemble (forms &key name (arity 0) (n-locals nil) frame-size)
   "Assemble FORMS into a code object. N-LOCALS defaults to ARITY, since
-CALL places the arguments in the low slots and a function with no
+op_CALL places the arguments in the low slots and a function with no
 further locals needs exactly that many."
   (setf n-locals (or n-locals arity))
   (when (< n-locals arity)
@@ -229,7 +258,7 @@ further locals needs exactly that many."
     (format stream "~4D: ~A~%" i (instruction-string code i)))
   (values))
 
-#+repl (disassemble (assemble '((CONST 42) (RETURN 1)) :name "answer"))
+#+repl (disassemble (assemble '((op_CONST 42) (op_RETURN 1)) :name "answer"))
        ; prints: answer  arity 0  locals 0  frame 32
-       ;            0: CONST 42
-       ;            1: RETURN 1
+       ;            0: op_CONST 42
+       ;            1: op_RETURN 1

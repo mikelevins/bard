@@ -104,48 +104,48 @@ Fifteen.
 
 | | |
 |---|---|
-| `CONST k` | push constant `k` |
-| `LOCAL up slot` | push `slot`, `up` levels out along the lexical chain |
-| `GLOBAL b` | push the value in binding `b` |
+| `op_CONST k` | push constant `k` |
+| `op_LOCAL up slot` | push `slot`, `up` levels out along the lexical chain |
+| `op_GLOBAL b` | push the value in binding `b` |
 
 ### Stores
 
 | | |
 |---|---|
-| `SET-GLOBAL b` | store the top into binding `b`; does not pop |
-| `SET-LOCAL up slot` | store the top into a lexical slot; does not pop |
-| `DROP` | discard the top |
+| `op_SET-GLOBAL b` | store the top into binding `b`; does not pop |
+| `op_SET-LOCAL up slot` | store the top into a lexical slot; does not pop |
+| `op_DROP` | discard the top |
 
 ### Control
 
 | | |
 |---|---|
-| `GOTO n` | `pc ← n` |
-| `BRANCH-FALSE n` | pop; if false, `pc ← n` |
+| `op_GOTO n` | `pc ← n` |
+| `op_BRANCH-FALSE n` | pop; if false, `pc ← n` |
 
 ### Functions
 
 | | |
 |---|---|
-| `CLOSE k` | push a closure over code `k`, capturing the current frame |
-| `CALL n` | call with `n` arguments |
-| `TAILCALL n` | as `CALL`, without linking a new parent |
-| `RETURN n` | return `n` values into `parent`; if `parent` is nil, the thread ends |
-| `RECV k` | receive a return: adjust the delivered values to exactly `k` |
-| `RECV-ALL` | receive a return: collect all delivered values into one list |
+| `op_CLOSE k` | push a closure over code `k`, capturing the current frame |
+| `op_CALL n` | call with `n` arguments |
+| `op_TAILCALL n` | as `op_CALL`, without linking a new parent |
+| `op_RETURN n` | return `n` values into `parent`; if `parent` is nil, the thread ends |
+| `op_RECV k` | receive a return: adjust the delivered values to exactly `k` |
+| `op_RECV-ALL` | receive a return: collect all delivered values into one list |
 
 ### Concurrency
 
 | | |
 |---|---|
-| `YIELD` | switch the current frame to another runnable thread |
+| `op_YIELD` | switch the current frame to another runnable thread |
 
-### 3.1 What `CALL` does
+### 3.1 What `op_CALL` does
 
 It is the only instruction that does much:
 
 ```
-CALL n:
+op_CALL n:
     callee ← pop
     if callee is a function:
         check n against callee.arity
@@ -159,12 +159,12 @@ CALL n:
 
 Allocating the frame *is* what calling means, once a frame is the computation —
 so there is no separate argument instruction and no argument-count register.
-`TAILCALL` is identical except that the new frame's `parent` is the *caller's*
+`op_TAILCALL` is identical except that the new frame's `parent` is the *caller's*
 parent, so the caller's frame is abandoned.
 
 ### 3.2 Multiple values
 
-`RETURN n` moves the top `n` values of the current frame's operand area into the
+`op_RETURN n` moves the top `n` values of the current frame's operand area into the
 parent's, then pushes `n` itself. So after any return the parent sees `n` values
 with the count on top.
 
@@ -174,25 +174,25 @@ every breakloop — which is the argument-count mistake in a new costume. The
 frame already holds everything else; the count belongs there too.
 
 **Every call site is followed by a receiver**, because the caller cannot know
-statically how many values a callee produced. `RECV k` pops the count and adjusts
+statically how many values a callee produced. `op_RECV k` pops the count and adjusts
 what is beneath it to exactly `k` — padding with `nothing`, discarding extras.
-`RECV-ALL` pops the count and collects that many values into a single list.
+`op_RECV-ALL` pops the count and collects that many values into a single list.
 Two receivers cover every case a compiler encounters: `k = 1` for an operand,
 `k = 0` for a discarded statement, `k = j` for a fixed multiple-value binding,
-and `RECV-ALL` for value lists and apply.
+and `op_RECV-ALL` for value lists and apply.
 
 A static verifier can check that every call is followed by a receiver; without
 one, the operand area's shape is not predictable.
 
 **Pass-through is tail position.** A function that wants to return exactly the
-values some other call produced tail-calls it. That is why `RETURN` takes a
+values some other call produced tail-calls it. That is why `op_RETURN` takes a
 static count and needs no dynamic form.
 
 ### 3.3 The dynamic environment
 
-`GLOBAL b` reads `b`'s cell **unless** `b.dynamic?` is set, in which case it
+`op_GLOBAL b` reads `b`'s cell **unless** `b.dynamic?` is set, in which case it
 searches the current thread's `dynenv` for the innermost rebinding of `b` and
-falls through to the cell if there is none. `SET-GLOBAL` mirrors it.
+falls through to the cell if there is none. `op_SET-GLOBAL` mirrors it.
 
 The check is a flag test on an object already loaded, false for nearly every
 binding, so the fast path costs a predictable branch. Rebinding, unwinding, and
@@ -209,8 +209,8 @@ Rebindings are **per thread**. A spawned thread starts with an empty `dynenv`.
 |---|---|
 | Operand-stack, environment, argument-count registers | the frame holds them |
 | A separate argument instruction | allocating the frame is the call |
-| A direct primitive-application instruction | `CALL` dispatches on the descriptor |
-| A halt instruction | `RETURN` into a nil parent ends the thread |
+| A direct primitive-application instruction | `op_CALL` dispatches on the descriptor |
+| A halt instruction | `op_RETURN` into a nil parent ends the thread |
 | A return-count register | the count rides on the operand stack |
 | Continuation capture and restore instructions | a continuation *is* `parent`; both are primitives |
 
@@ -231,7 +231,7 @@ printing.
 value. *Keeps open:* redefinition while running, dependency tracking, dynamic
 variables, modules.
 
-**P3 — `CALL` dispatches on the callee's descriptor** rather than assuming a
+**P3 — `op_CALL` dispatches on the callee's descriptor** rather than assuming a
 bytecode function. *Keeps open:* generic functions, execution tiering, foreign
 functions, native-compiled functions, lazily recompiled stale functions.
 
@@ -268,14 +268,14 @@ target possible at the same time.
 |---|---|---|
 | Direct primitive application | one instruction | pure addition; the first thing to add |
 | Second conditional branch | one instruction | the compiler inverts the test |
-| Variadic arguments | a code-object flag | `CALL` already builds the frame |
+| Variadic arguments | a code-object flag | `op_CALL` already builds the frame |
 | Slot access instructions | two instructions | available as primitives; only speed |
 | Superinstructions, inline caches | production kernel only | see `performance.md` |
 | Object system, generic functions | library | P1, P3 |
 | Conditions, restarts, breakloop | library | P4, P5, frames as values |
 | Redefinition tracking | library | P2 |
 | Modules | library | P2 |
-| Scheduler, thread creation | library and primitives | `YIELD`, thread representation |
+| Scheduler, thread creation | library and primitives | `op_YIELD`, thread representation |
 | Native compilation, sealing, remote attach | separate work | P3, P6, P7 |
 
 ---

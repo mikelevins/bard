@@ -16,13 +16,13 @@
 ;;; Stages implemented so far (doc/kernel-tutorial.md part 3):
 ;;;
 ;;;   1  representations                                    done
-;;;   2  the loop, CONST, RETURN                            done
+;;;   2  the loop, op_CONST, op_RETURN                            done
 ;;;   3  bindings, primitive calls, receivers               done
 ;;;   4  control                                            done
 ;;;   5  frames and calls                                   done
 ;;;   6  the lexical chain                                  done
 ;;;   7  tail calls                                         pending
-;;;   8  multiple values (RETURN n, RECV k, RECV-ALL)       done
+;;;   8  multiple values (op_RETURN n, op_RECV k, op_RECV-ALL)       done
 ;;;   9  threads                                            pending
 ;;;  10  the dynamic environment                            pending
 ;;;  11  the error hook                                     pending
@@ -76,16 +76,43 @@ rendered and the operand stack shown.")
 ;;; ---------------------------------------------------------------------
 ;;; calling
 ;;; ---------------------------------------------------------------------
-;;; CALL asks the callee's descriptor for a handler rather than assuming
+;;; op_CALL asks the callee's descriptor for a handler rather than assuming
 ;;; a bytecode function. That one indirection is what will later let
 ;;; generic functions, foreign functions, and native-compiled functions
 ;;; all be reached by this instruction.
 ;;;
-;;; A handler takes (callee n-args frame pc) and returns the frame to
-;;; continue in. A primitive stays in the caller's frame; a bytecode
-;;; function returns a fresh one. PC is the faulting instruction -- the
-;;; CALL itself, not the instruction after it -- because a handler that
-;;; signals must report where the fault was, per P5.
+;;; THE HANDLER CONTRACT
+;;;
+;;; A handler takes (callee n-args frame pc) and returns the frame the
+;;; machine should continue stepping. That return value carries more
+;;; information than it looks like it does, and both op_CALL and
+;;; op_TAILCALL depend on it:
+;;;
+;;;   a NEW frame     the callee is a computation of its own. It will
+;;;                   run, and eventually op_RETURN into whatever frame
+;;;                   it was given as its parent. Its values arrive
+;;;                   there later.
+;;;
+;;;   the SAME frame  the callee ran to completion in place. It has
+;;;                   already pushed its values and their count onto
+;;;                   this frame's operand area. Nothing arrives later.
+;;;
+;;; Nothing else distinguishes the two cases, deliberately. op_TAILCALL
+;;; has to tell them apart: it abandons the caller's frame, so a callee
+;;; that would have returned there must be re-pointed at the caller's
+;;; parent, while a callee that already delivered its values in place
+;;; needs those values forwarded instead.
+;;;
+;;; op_TAILCALL asks the returned frame rather than testing the callee's
+;;; type. That is why a new kind of applicable -- a generic function, a
+;;; foreign function, native code -- behaves correctly by honouring this
+;;; contract rather than by being added to a list of special cases. It is
+;;; what property P3 buys, and it is only bought for as long as new
+;;; handlers keep to it.
+;;;
+;;; PC is the faulting instruction -- the op_CALL itself, not the one
+;;; after it -- because a handler that signals must report where the
+;;; fault was, per P5.
 
 (defun call-primitive (callee n-args frame pc)
   (let ((arity (primitive-arity callee)))
@@ -144,7 +171,7 @@ rendered and the operand stack shown.")
 ;;; ---------------------------------------------------------------------
 ;;; delivering values
 ;;; ---------------------------------------------------------------------
-;;; Both RETURN and a tail call to a primitive have to hand values, with
+;;; Both op_RETURN and a tail call to a primitive have to hand values, with
 ;;; their count, from one frame to its parent. Factored out so the two
 ;;; agree by construction.
 
@@ -185,7 +212,7 @@ and return the parent."
 ;;; ---------------------------------------------------------------------
 
 (defun run (frame)
-  "Step FRAME until a RETURN into a nil parent ends the computation.
+  "Step FRAME until a op_RETURN into a nil parent ends the computation.
 Returns the delivered values as a list."
   (loop
     (let* ((code (fn-code (frame-fn frame)))
@@ -201,63 +228,63 @@ Returns the delivered values as a list."
       (setf (frame-pc frame) (1+ pc))
       (dispatch-on-opcode op
         ;; ----- values -----
-        (CONST
+        (op_CONST
          (frame-push frame (svref (code-constants code) a)))
 
-        (LOCAL
+        (op_LOCAL
          (frame-push frame (svref (frame-slots (lexical-frame frame a pc)) b)))
 
-        (CLOSE
+        (op_CLOSE
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
 
-        (GLOBAL
+        (op_GLOBAL
          (let ((binding (svref (code-constants code) a)))
            (unless (binding-bound? binding)
              (bard-error frame pc "~A is unbound." (binding-name binding)))
            (frame-push frame (binding-value binding))))
 
         ;; ----- stores -----
-        (SET-LOCAL
+        (op_SET-LOCAL
          (setf (svref (frame-slots (lexical-frame frame a pc)) b)
                (frame-top frame)))      ; does not pop
 
-        (SET-GLOBAL
+        (op_SET-GLOBAL
          (let ((binding (svref (code-constants code) a)))
            (setf (binding-value binding) (frame-top frame)
                  (binding-bound? binding) t)))
 
-        (DROP
+        (op_DROP
          (frame-pop frame))
 
         ;; ----- control -----
-        (GOTO
+        (op_GOTO
          (setf (frame-pc frame) a))
 
-        (BRANCH-FALSE
+        (op_BRANCH-FALSE
          (when (null (frame-pop frame))
            (setf (frame-pc frame) a)))
 
         ;; ----- calling -----
-        (CALL
+        (op_CALL
          (let* ((callee (frame-pop frame))
                 (handler (descriptor-call-handler (descriptor-of callee))))
            (unless handler
              (bard-error frame pc "~S is not applicable." callee))
            (setf frame (funcall handler callee a frame pc))))
 
-        (RECV
+        (op_RECV
          (receive frame a))
 
-        (RECV-ALL
+        (op_RECV-ALL
          (receive-all frame))
 
-        (RETURN
+        (op_RETURN
          (if (frame-parent frame)
              (setf frame (deliver-values frame a))
              (return (pop-values frame a))))
 
-        (TAILCALL
-         ;; The callee is reached exactly as CALL reaches it. What differs
+        (op_TAILCALL
+         ;; The callee is reached exactly as op_CALL reaches it. What differs
          ;; is what becomes of this frame afterwards: it is abandoned, so
          ;; the callee returns to our parent rather than to us.
          (let* ((callee (frame-pop frame))
@@ -287,6 +314,6 @@ Returns the delivered values as a list."
   "Run CODE as a whole computation and return its values as a list."
   (run (make-frame (make-fn code) :parent nil)))
 
-#+repl (run-code (assemble '((CONST 42) (RETURN 1)) :name "answer")) ; => (42)
-#+repl (let ((*trace* t)) (run-code (assemble '((CONST 42) (RETURN 1)))))
+#+repl (run-code (assemble '((op_CONST 42) (op_RETURN 1)) :name "answer")) ; => (42)
+#+repl (let ((*trace* t)) (run-code (assemble '((op_CONST 42) (op_RETURN 1)))))
        ; => (42), with each instruction traced

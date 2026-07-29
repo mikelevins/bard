@@ -77,19 +77,19 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-const+
-  '((CONST 42)
-    (RETURN 1))
+  '((op_CONST 42)
+    (op_RETURN 1))
   "42")
 
 (defparameter +lap-return-none+
-  '((RETURN 0))
+  '((op_RETURN 0))
   "A computation that delivers nothing at all.")
 
 (defparameter +lap-return-three+
-  '((CONST 1)
-    (CONST 2)
-    (CONST 3)
-    (RETURN 3))                         ; all three, bottom first
+  '((op_CONST 1)
+    (op_CONST 2)
+    (op_CONST 3)
+    (op_RETURN 3))                         ; all three, bottom first
   "(values 1 2 3)")
 
 #+repl (run-program +lap-const+)        ; => (42)
@@ -104,48 +104,48 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-call-primitive+
-  '((CONST 2)
-    (CONST 3)
-    (GLOBAL +)                          ; read at run time, not baked
-    (CALL 2)
-    (RECV 1)                            ; a call delivers values and a count
-    (RETURN 1))
+  '((op_CONST 2)
+    (op_CONST 3)
+    (op_GLOBAL +)                          ; read at run time, not baked
+    (op_CALL 2)
+    (op_RECV 1)                            ; a call delivers values and a count
+    (op_RETURN 1))
   "(+ 2 3)")
 
 (defparameter +lap-call-primitive-direct+
-  '((CONST 2)
-    (CONST 3)
-    (GLOBAL _fixnum-mul)                ; the primitive itself, not the operator
-    (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  '((op_CONST 2)
+    (op_CONST 3)
+    (op_GLOBAL _fixnum-mul)                ; the primitive itself, not the operator
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(_fixnum-mul 2 3)")
 
 ;;; The same call received four ways. What a call produces and what its
 ;;; caller wants are independent; the receiver is where they meet.
 
 (defparameter +lap-recv-one+
-  '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  '((op_CONST 2) (op_CONST 3) (op_GLOBAL +) (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(+ 2 3), wanting one value")
 
 (defparameter +lap-recv-none+
-  '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
-    (RECV 0)                            ; discards what the call returned
-    (RETURN 0))
+  '((op_CONST 2) (op_CONST 3) (op_GLOBAL +) (op_CALL 2)
+    (op_RECV 0)                            ; discards what the call returned
+    (op_RETURN 0))
   "(+ 2 3) for effect")
 
 (defparameter +lap-recv-two-padded+
-  '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
-    (RECV 2)                            ; one arrives; one is padded with nothing
-    (RETURN 2))
+  '((op_CONST 2) (op_CONST 3) (op_GLOBAL +) (op_CALL 2)
+    (op_RECV 2)                            ; one arrives; one is padded with nothing
+    (op_RETURN 2))
   "(+ 2 3), wanting two values")
 
 (defparameter +lap-recv-all+
-  '((CONST 2) (CONST 3) (GLOBAL +) (CALL 2)
-    (RECV-ALL)                          ; collects into a single list
-    (RETURN 1))
+  '((op_CONST 2) (op_CONST 3) (op_GLOBAL +) (op_CALL 2)
+    (op_RECV-ALL)                          ; collects into a single list
+    (op_RETURN 1))
   "(multiple-value-list (+ 2 3))")
 
 ;;; ---------------------------------------------------------------------
@@ -153,83 +153,83 @@
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-set-global-sequence+
-  '((CONST 10)
-    (SET-GLOBAL x)                      ; SET-GLOBAL does not pop
-    (DROP)                              ; ...so the value is dropped here
-    (CONST 20)
-    (SET-GLOBAL y)
-    (DROP)
-    (GLOBAL x)
-    (GLOBAL y)
-    (GLOBAL +)
-    (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  '((op_CONST 10)
+    (op_SET-GLOBAL x)                      ; op_SET-GLOBAL does not pop
+    (op_DROP)                              ; ...so the value is dropped here
+    (op_CONST 20)
+    (op_SET-GLOBAL y)
+    (op_DROP)
+    (op_GLOBAL x)
+    (op_GLOBAL y)
+    (op_GLOBAL +)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(begin (set! x 10) (set! y 20) (+ x y))
 
-DROP and RECV 0 are not interchangeable: DROP removes a value already on
-the stack, RECV 0 discards what a call returned.")
+op_DROP and op_RECV 0 are not interchangeable: op_DROP removes a value already on
+the stack, op_RECV 0 discards what a call returned.")
 
 (defparameter +lap-global-unbound-error+
-  '((CONST 7)
-    (GLOBAL bar)                        ; unbound -- faults here, at pc 1
-    (CALL 1)
-    (RECV 1)
-    (RETURN 1))
+  '((op_CONST 7)
+    (op_GLOBAL bar)                        ; unbound -- faults here, at pc 1
+    (op_CALL 1)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(bar 7), where bar has no value.
 
 Stage 11 turns this into a hook that can define bar and resume. Until
-then it must at least report the instruction that faulted -- the GLOBAL
-at 1, not the CALL at 2.")
+then it must at least report the instruction that faulted -- the op_GLOBAL
+at 1, not the op_CALL at 2.")
 
 ;;; ---------------------------------------------------------------------
 ;;; assembly -- control
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-branch-false-both-arms+
-  '((GLOBAL n)
-    (CONST 3)
-    (GLOBAL <)
-    (CALL 2)
-    (RECV 1)
-    (BRANCH-FALSE big)                  ; the only conditional branch
-    (CONST "small")
-    (GOTO done)
+  '((op_GLOBAL n)
+    (op_CONST 3)
+    (op_GLOBAL <)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_BRANCH-FALSE big)                  ; the only conditional branch
+    (op_CONST "small")
+    (op_GOTO done)
   big
-    (CONST "big")
+    (op_CONST "big")
   done
-    (RETURN 1))
+    (op_RETURN 1))
   "(if (< n 3) \"small\" \"big\")")
 
 ;;; ---------------------------------------------------------------------
 ;;; assembly -- functions
 ;;; ---------------------------------------------------------------------
 
-;;; None of these has a prologue. CALL has already placed the arguments
+;;; None of these has a prologue. op_CALL has already placed the arguments
 ;;; in the low slots, because building the frame is the call.
 
 (defparameter +lap-fn-square+
-  '((LOCAL 0 0)                         ; x
-    (LOCAL 0 0)                         ; x again
-    (GLOBAL _fixnum-mul)
-    (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  '((op_LOCAL 0 0)                         ; x
+    (op_LOCAL 0 0)                         ; x again
+    (op_GLOBAL _fixnum-mul)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(fn (x) (* x x))")
 
 (defparameter +lap-fn-sub+
-  '((LOCAL 0 0)                         ; a -- the first argument, slot 0
-    (LOCAL 0 1)                         ; b
-    (GLOBAL _fixnum-sub)                ; asymmetric on purpose: a symmetric
-    (CALL 2)                            ; operator would not catch a swap
-    (RECV 1)
-    (RETURN 1))
+  '((op_LOCAL 0 0)                         ; a -- the first argument, slot 0
+    (op_LOCAL 0 1)                         ; b
+    (op_GLOBAL _fixnum-sub)                ; asymmetric on purpose: a symmetric
+    (op_CALL 2)                            ; operator would not catch a swap
+    (op_RECV 1)
+    (op_RETURN 1))
   "(fn (a b) (- a b))")
 
 (defparameter +lap-fn-pair+
-  '((LOCAL 0 0)
-    (LOCAL 0 1)
-    (RETURN 2))                         ; a bytecode function, two values
+  '((op_LOCAL 0 0)
+    (op_LOCAL 0 1)
+    (op_RETURN 2))                         ; a bytecode function, two values
   "(fn (a b) (values a b))")
 
 (defparameter +code-square+ (bard:assemble +lap-fn-square+ :name "square" :arity 1))
@@ -239,61 +239,61 @@ at 1, not the CALL at 2.")
 #+repl (bard:disassemble +code-square+) ; prints the listing
 
 (defparameter +lap-call-fn+
-  `((CONST 7)
-    (CLOSE ,+code-square+)              ; captures the current frame
-    (CALL 1)
-    (RECV 1)
-    (RETURN 1))
+  `((op_CONST 7)
+    (op_CLOSE ,+code-square+)              ; captures the current frame
+    (op_CALL 1)
+    (op_RECV 1)
+    (op_RETURN 1))
   "((fn (x) (* x x)) 7)")
 
 (defparameter +lap-call-fn-arg-order+
-  `((CONST 10)
-    (CONST 3)
-    (CLOSE ,+code-sub+)
-    (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  `((op_CONST 10)
+    (op_CONST 3)
+    (op_CLOSE ,+code-sub+)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(- 10 3), which must be 7 and not -7")
 
 (defparameter +lap-call-fn-arg-order-reversed+
-  `((CONST 3)
-    (CONST 10)
-    (CLOSE ,+code-sub+)
-    (CALL 2)
-    (RECV 1)
-    (RETURN 1))
+  `((op_CONST 3)
+    (op_CONST 10)
+    (op_CLOSE ,+code-sub+)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(- 3 10)")
 
 (defparameter +lap-call-fn-nested+
-  `((CONST 10)
-    (CONST 3)
-    (CLOSE ,+code-sub+)
-    (CALL 2)
-    (RECV 1)                            ; 7 stays on the stack as the
-    (CLOSE ,+code-square+)              ; argument to the next call
-    (CALL 1)
-    (RECV 1)
-    (RETURN 1))
+  `((op_CONST 10)
+    (op_CONST 3)
+    (op_CLOSE ,+code-sub+)
+    (op_CALL 2)
+    (op_RECV 1)                            ; 7 stays on the stack as the
+    (op_CLOSE ,+code-square+)              ; argument to the next call
+    (op_CALL 1)
+    (op_RECV 1)
+    (op_RETURN 1))
   "(square (sub 10 3))")
 
 (defparameter +lap-recv-two-from-fn+
-  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV 2) (RETURN 2))
+  `((op_CONST 10) (op_CONST 3) (op_CLOSE ,+code-pair+) (op_CALL 2) (op_RECV 2) (op_RETURN 2))
   "Both values of a two-value function.")
 
 (defparameter +lap-recv-one-from-fn+
-  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV 1) (RETURN 1))
+  `((op_CONST 10) (op_CONST 3) (op_CLOSE ,+code-pair+) (op_CALL 2) (op_RECV 1) (op_RETURN 1))
   "The first value only; the second is discarded.")
 
 (defparameter +lap-recv-all-from-fn+
-  `((CONST 10) (CONST 3) (CLOSE ,+code-pair+) (CALL 2) (RECV-ALL) (RETURN 1))
+  `((op_CONST 10) (op_CONST 3) (op_CLOSE ,+code-pair+) (op_CALL 2) (op_RECV-ALL) (op_RETURN 1))
   "Both values, as a list.")
 
 (defparameter +lap-call-fn-arity-error+
-  `((CONST 1)
-    (CLOSE ,+code-sub+)                 ; sub takes two
-    (CALL 1)                            ; ...called with one; faults at pc 2
-    (RECV 1)
-    (RETURN 1))
+  `((op_CONST 1)
+    (op_CLOSE ,+code-sub+)                 ; sub takes two
+    (op_CALL 1)                            ; ...called with one; faults at pc 2
+    (op_RECV 1)
+    (op_RETURN 1))
   "A call whose argument count does not match the callee's code object.")
 
 ;;; ---------------------------------------------------------------------
@@ -301,57 +301,57 @@ at 1, not the CALL at 2.")
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-set-local+
-  '((LOCAL 0 0)                         ; x
-    (CONST 1)
-    (GLOBAL +)
-    (CALL 2)
-    (RECV 1)
-    (SET-LOCAL 0 0)                     ; x := x+1; does not pop
-    (DROP)                              ; ...so discard the value here
-    (LOCAL 0 0)                         ; read x back out of the slot
-    (RETURN 1))
+  '((op_LOCAL 0 0)                         ; x
+    (op_CONST 1)
+    (op_GLOBAL +)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_SET-LOCAL 0 0)                     ; x := x+1; does not pop
+    (op_DROP)                              ; ...so discard the value here
+    (op_LOCAL 0 0)                         ; read x back out of the slot
+    (op_RETURN 1))
   "(fn (x) (set! x (+ x 1)) x)")
 
 (defparameter +code-set-local+
   (bard:assemble +lap-set-local+ :name "inc" :arity 1))
 
 (defparameter +lap-fn-bump+
-  '((LOCAL 1 0)                         ; n -- one level out, in the frame
-    (CONST 1)                           ; make-counter was running in
-    (GLOBAL +)
-    (CALL 2)
-    (RECV 1)
-    (SET-LOCAL 1 0)                     ; n := n+1, and leave it as the result
-    (RETURN 1))
+  '((op_LOCAL 1 0)                         ; n -- one level out, in the frame
+    (op_CONST 1)                           ; make-counter was running in
+    (op_GLOBAL +)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_SET-LOCAL 1 0)                     ; n := n+1, and leave it as the result
+    (op_RETURN 1))
   "(fn () (set! n (+ n 1)))")
 
 (defparameter +code-bump+
   (bard:assemble +lap-fn-bump+ :name "bump" :arity 0))
 
 (defparameter +lap-fn-make-counter+
-  `((CLOSE ,+code-bump+)                ; captures this frame, where n lives
-    (RETURN 1))
+  `((op_CLOSE ,+code-bump+)                ; captures this frame, where n lives
+    (op_RETURN 1))
   "(fn (n) (fn () (set! n (+ n 1))))")
 
 (defparameter +code-make-counter+
   (bard:assemble +lap-fn-make-counter+ :name "make-counter" :arity 1))
 
 (defparameter +lap-counters-independent+
-  `((CONST 10)
-    (CLOSE ,+code-make-counter+)
-    (CALL 1) (RECV 1)
-    (SET-GLOBAL c1) (DROP)              ; one counter, starting at 10
+  `((op_CONST 10)
+    (op_CLOSE ,+code-make-counter+)
+    (op_CALL 1) (op_RECV 1)
+    (op_SET-GLOBAL c1) (op_DROP)              ; one counter, starting at 10
 
-    (CONST 100)
-    (CLOSE ,+code-make-counter+)
-    (CALL 1) (RECV 1)
-    (SET-GLOBAL c2) (DROP)              ; another, starting at 100
+    (op_CONST 100)
+    (op_CLOSE ,+code-make-counter+)
+    (op_CALL 1) (op_RECV 1)
+    (op_SET-GLOBAL c2) (op_DROP)              ; another, starting at 100
 
-    (GLOBAL c1) (CALL 0) (RECV 1)       ; 11
-    (GLOBAL c1) (CALL 0) (RECV 1)       ; 12
-    (GLOBAL c2) (CALL 0) (RECV 1)       ; 101 -- c1 is undisturbed
-    (GLOBAL c1) (CALL 0) (RECV 1)       ; 13
-    (RETURN 4))
+    (op_GLOBAL c1) (op_CALL 0) (op_RECV 1)       ; 11
+    (op_GLOBAL c1) (op_CALL 0) (op_RECV 1)       ; 12
+    (op_GLOBAL c2) (op_CALL 0) (op_RECV 1)       ; 101 -- c1 is undisturbed
+    (op_GLOBAL c1) (op_CALL 0) (op_RECV 1)       ; 13
+    (op_RETURN 4))
   "Two counters from two calls to make-counter.
 
 Their variables are separate because the two frames were separate
@@ -362,56 +362,56 @@ computations, not because of any closure machinery.")
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-tailcall+
-  `((CONST 7)
-    (CLOSE ,+code-square+)
-    (TAILCALL 1))                       ; nothing follows, deliberately
+  `((op_CONST 7)
+    (op_CLOSE ,+code-square+)
+    (op_TAILCALL 1))                       ; nothing follows, deliberately
   "square, tail-called.
 
-Nothing follows the TAILCALL, so this only works if the callee returns
-past this frame to its parent. Were TAILCALL to link a parent the way
-CALL does, square would return here -- to a pc past the end of the
+Nothing follows the op_TAILCALL, so this only works if the callee returns
+past this frame to its parent. Were op_TAILCALL to link a parent the way
+op_CALL does, square would return here -- to a pc past the end of the
 code.")
 
 (defparameter +lap-tailcall-primitive+
-  `((CONST 2)
-    (CONST 3)
-    (GLOBAL +)
-    (TAILCALL 2))
+  `((op_CONST 2)
+    (op_CONST 3)
+    (op_GLOBAL +)
+    (op_TAILCALL 2))
   "(+ 2 3) in tail position.
 
 A primitive has no frame of its own; its values are delivered where this
 frame's return would have gone.")
 
 (defparameter +lap-fn-countdown+
-  '((LOCAL 0 0)
-    (CONST 0)
-    (GLOBAL =)
-    (CALL 2)
-    (RECV 1)
-    (BRANCH-FALSE recur)
-    (CONST done)
-    (RETURN 1)
+  '((op_LOCAL 0 0)
+    (op_CONST 0)
+    (op_GLOBAL =)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_BRANCH-FALSE recur)
+    (op_CONST done)
+    (op_RETURN 1)
   recur
-    (LOCAL 0 0)
-    (CONST 1)
-    (GLOBAL -)
-    (CALL 2)
-    (RECV 1)
-    (GLOBAL countdown)
-    (TAILCALL 1))                       ; no receiver: it does not return here
+    (op_LOCAL 0 0)
+    (op_CONST 1)
+    (op_GLOBAL -)
+    (op_CALL 2)
+    (op_RECV 1)
+    (op_GLOBAL countdown)
+    (op_TAILCALL 1))                       ; no receiver: it does not return here
   "(fn (n) (if (= n 0) 'done (countdown (- n 1))))")
 
 (defparameter +code-countdown+
   (bard:assemble +lap-fn-countdown+ :name "countdown" :arity 1))
 
 (defparameter +lap-tailcall-deep+
-  `((CLOSE ,+code-countdown+)
-    (SET-GLOBAL countdown) (DROP)
-    (CONST 100000)
-    (GLOBAL countdown)
-    (CALL 1)
-    (RECV 1)
-    (RETURN 1))
+  `((op_CLOSE ,+code-countdown+)
+    (op_SET-GLOBAL countdown) (op_DROP)
+    (op_CONST 100000)
+    (op_GLOBAL countdown)
+    (op_CALL 1)
+    (op_RECV 1)
+    (op_RETURN 1))
   "A hundred thousand tail calls.
 
 Measured: the deepest parent chain reached is 2 -- countdown's frame and
@@ -423,26 +423,26 @@ bounded.")
 ;;; ---------------------------------------------------------------------
 
 (defparameter +lap-operand-kinds-listing+
-  '((CONST 42)                          ; :const   -- renders the value
-    (GLOBAL +)                          ; :binding -- renders the name
-    (CALL 2)                            ; :count
-    (RECV 1)
-    (GOTO done)                         ; :label   -- renders the index
+  '((op_CONST 42)                          ; :const   -- renders the value
+    (op_GLOBAL +)                          ; :binding -- renders the name
+    (op_CALL 2)                            ; :count
+    (op_RECV 1)
+    (op_GOTO done)                         ; :label   -- renders the index
   done
-    (RETURN 1))
+    (op_RETURN 1))
   "One instruction of each operand kind, for the disassembler.")
 
 (defparameter +lap-yield-pending+
-  '((YIELD)                             ; needs stage 9
-    (RETURN 0))
+  '((op_YIELD)                             ; needs stage 9
+    (op_RETURN 0))
   "Switching threads. Not implemented yet.")
 
 ;;; ---------------------------------------------------------------------
-;;; stage 2 -- the loop, CONST, RETURN
+;;; stage 2 -- the loop, op_CONST, op_RETURN
 ;;; ---------------------------------------------------------------------
 
 (test |2.1 a constant|
-  "CONST, RETURN, and thread termination."
+  "op_CONST, op_RETURN, and thread termination."
   (is (equal '(42) (run-program +lap-const+)))
   (is (equal '() (run-program +lap-return-none+)))
   (is (equal '(1 2 3) (run-program +lap-return-three+))))
@@ -454,7 +454,7 @@ bounded.")
 ;;; ---------------------------------------------------------------------
 
 (test |2.2 calling a primitive|
-  "GLOBAL, CALL's descriptor branch, and a receiver."
+  "op_GLOBAL, op_CALL's descriptor branch, and a receiver."
   (is (= 5 (run-1 +lap-call-primitive+)))
   (is (= 6 (run-1 +lap-call-primitive-direct+))))
 
@@ -486,7 +486,7 @@ already-assembled code calls. This is the whole point of P2."
 #+repl (run! '|receivers reconcile producer and consumer|)  ; => T
 
 (test |2.4 sequencing and definition|
-  "SET-GLOBAL and DROP. Defining something is an ordinary instruction,
+  "op_SET-GLOBAL and op_DROP. Defining something is an ordinary instruction,
 not a special mode."
   (is (= 30 (run-1 +lap-set-global-sequence+))))
 
@@ -508,7 +508,7 @@ not a special mode."
 ;;; ---------------------------------------------------------------------
 
 (test |2.3 a conditional|
-  "GOTO and BRANCH-FALSE, with labels resolved by the assembler."
+  "op_GOTO and op_BRANCH-FALSE, with labels resolved by the assembler."
   (flet ((classify (n) (set-global 'n n) (run-1 +lap-branch-false-both-arms+)))
     (is (string= "small" (classify 1)))
     (is (string= "big" (classify 7)))
@@ -521,7 +521,7 @@ not a special mode."
 ;;; ---------------------------------------------------------------------
 
 (test |2.5 a function|
-  "CLOSE, LOCAL, CALL's function branch, and RETURN into a real parent."
+  "op_CLOSE, op_LOCAL, op_CALL's function branch, and op_RETURN into a real parent."
   (is (equal '(49) (run-program +lap-call-fn+))))
 
 #+repl (run! '|2.5 a function|)  ; => T
@@ -549,7 +549,7 @@ squaring would be identical either way."
 #+repl (run! '|a bytecode function delivers multiple values|)  ; => T
 
 (test |arity is checked against the code object|
-  "The error names the CALL that faulted, not the instruction after it --
+  "The error names the op_CALL that faulted, not the instruction after it --
 the same P5 property as an unbound global."
   (let ((signalled nil))
     (handler-case (run-program +lap-call-fn-arity-error+)
@@ -573,12 +573,12 @@ computations."
 #+repl (run! '|2.6 a closure over a mutable variable|)  ; => T
 #+repl (run-program +lap-counters-independent+)         ; => (11 12 101 13)
 
-(test |SET-LOCAL writes the slot and leaves its value|
+(test |op_SET-LOCAL writes the slot and leaves its value|
   "Reading the local back afterwards shows the write landed."
   (is (equal '(8)
-             (run-program `((CONST 7) (CLOSE ,+code-set-local+) (CALL 1) (RECV 1) (RETURN 1))))))
+             (run-program `((op_CONST 7) (op_CLOSE ,+code-set-local+) (op_CALL 1) (op_RECV 1) (op_RETURN 1))))))
 
-#+repl (run! '|SET-LOCAL writes the slot and leaves its value|)  ; => T
+#+repl (run! '|op_SET-LOCAL writes the slot and leaves its value|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; stage 7 -- tail calls
@@ -592,7 +592,7 @@ computations."
 #+repl (run! '|2.7 a tail call does not return to its caller|)  ; => T
 
 (test |tail recursion runs in constant space|
-  "A hundred thousand deep. If TAILCALL linked a parent, this would build
+  "A hundred thousand deep. If op_TAILCALL linked a parent, this would build
 a chain a hundred thousand frames long."
   (is (equal '(done) (run-program +lap-tailcall-deep+))))
 
@@ -608,7 +608,8 @@ a chain a hundred thousand frames long."
   (let ((text (with-output-to-string (s)
                 (bard:disassemble (bard:assemble +lap-operand-kinds-listing+ :name "sample")
                                   :stream s))))
-    (dolist (want '("CONST 42" "GLOBAL +" "CALL 2" "RECV 1" "GOTO 5" "RETURN 1" "sample"))
+    (dolist (want '("op_CONST 42" "op_GLOBAL +" "op_CALL 2" "op_RECV 1"
+                    "op_GOTO 5" "op_RETURN 1" "sample"))
       (is (search want text)))))
 
 #+repl (run! '|disassembly names every opcode and renders every operand|)  ; => T
@@ -616,10 +617,10 @@ a chain a hundred thousand frames long."
        ; prints the listing
 
 (test |the assembler rejects malformed input|
-  (signals error (bard:assemble '((CONST))))
-  (signals error (bard:assemble '((CONST 1 2))))
-  (signals error (bard:assemble '((GOTO nowhere))))
-  (signals error (bard:assemble '((RETURN 0)) :arity 2 :n-locals 1)))
+  (signals error (bard:assemble '((op_CONST))))
+  (signals error (bard:assemble '((op_CONST 1 2))))
+  (signals error (bard:assemble '((op_GOTO nowhere))))
+  (signals error (bard:assemble '((op_RETURN 0)) :arity 2 :n-locals 1)))
 
 #+repl (run! '|the assembler rejects malformed input|)  ; => T
 

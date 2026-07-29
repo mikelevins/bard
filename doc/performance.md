@@ -50,9 +50,9 @@ correlations. That is the lever. **The whole strategy is to give the predictor
 enough context to distinguish situations it can actually predict.**
 
 Bytecode streams are far from random. Real sequences have strong local
-structure: a `LOCAL` is usually followed by another `LOCAL` or a `GLOBAL`; a
-`GLOBAL` naming a function is usually followed by a `CALL`; the arithmetic
-pattern in our own examples is `LOCAL LOCAL GLOBAL CALL`, over and over. That
+structure: a `op_LOCAL` is usually followed by another `op_LOCAL` or a `op_GLOBAL`; a
+`op_GLOBAL` naming a function is usually followed by a `op_CALL`; the arithmetic
+pattern in our own examples is `op_LOCAL op_LOCAL op_GLOBAL op_CALL`, over and over. That
 regularity is predictable *if the predictor can tell which handler it is jumping
 from*.
 
@@ -63,7 +63,7 @@ copy of "fetch the next instruction and jump to its handler."
 
 ```
     /* switch dispatch: ONE indirect branch site */
-    for (;;) { switch (op(code[pc++])) { case CONST: ...; break; ... } }
+    for (;;) { switch (op(code[pc++])) { case op_CONST: ...; break; ... } }
 
     /* threaded dispatch: ONE SITE PER HANDLER */
     #define NEXT() goto *table[op(code[pc++])]
@@ -73,7 +73,7 @@ copy of "fetch the next instruction and jump to its handler."
 
 With one site, the predictor keeps one entry for "the interpreter's jump" and
 must guess the next opcode from global history alone. With fifteen sites, it
-effectively predicts *"given that I just ran `CONST`, what comes next?"* — which
+effectively predicts *"given that I just ran `op_CONST`, what comes next?"* — which
 is a question the bytecode's local structure actually answers.
 
 Cost: about twelve bytes per handler, ~180 bytes total. Take it at the start;
@@ -99,14 +99,14 @@ of work means less exposure.
 Two ways, in order of preference:
 
 **Make handlers do more.** The misprediction cost is amortized over the work per
-dispatch. `CALL` does a great deal and its dispatch is nearly free in relative
-terms; `DROP` does nothing and is nearly all dispatch. This is a standing
+dispatch. `op_CALL` does a great deal and its dispatch is nearly free in relative
+terms; `op_DROP` does nothing and is nearly all dispatch. This is a standing
 argument against splitting instructions finely for elegance — every split
 doubles the dispatch count on that path.
 
 **Superinstructions.** Fuse common sequences into single instructions:
-`CALL`+`RECV 1` (see §3), `LOCAL LOCAL`, `GLOBAL CALL`, the whole
-`LOCAL LOCAL GLOBAL CALL RECV 1` arithmetic idiom. Each fusion removes one to three dispatches.
+`op_CALL`+`op_RECV 1` (see §3), `op_LOCAL op_LOCAL`, `op_GLOBAL op_CALL`, the whole
+`op_LOCAL op_LOCAL op_GLOBAL op_CALL op_RECV 1` arithmetic idiom. Each fusion removes one to three dispatches.
 
 Subject to **R-b**: these are produced by a table in the production build, from
 measured frequency data, not chosen by taste and not added to the thirteen. The
@@ -126,7 +126,7 @@ variable-length scheme with escape cases.
 
 ### 1.5 Tactic 4 — Attack the data-dependent branches inside handlers
 
-Dispatch is not the only unpredictable branch. Our largest one is inside `CALL`:
+Dispatch is not the only unpredictable branch. Our largest one is inside `op_CALL`:
 
 > is the callee a bytecode function or something else?
 
@@ -165,7 +165,7 @@ Do not adopt any of the above on faith.
 1. Fixed-width encoding — free, decide now.
 2. Threaded dispatch — cheap, hard to retrofit, take it now.
 3. Build the benchmark set and record a baseline.
-4. Inline caching on `CALL`'s callee check — the largest single data-dependent
+4. Inline caching on `op_CALL`'s callee check — the largest single data-dependent
    branch in the machine.
 5. Superinstructions, from measured profiles, production kernel only.
 
@@ -221,7 +221,7 @@ proportion to *use* of a feature rather than to its *availability* is the right
 shape, and it is the same principle as §1's approach to dispatch.
 
 Detecting capture can be conservative: assume it whenever the frame chain is
-read by anything other than `RETURN`. The readers are the debugger, the
+read by anything other than `op_RETURN`. The readers are the debugger, the
 scheduler, and explicit capture — all already distinguished operations, not a new
 analysis.
 
@@ -281,7 +281,7 @@ thinking is not lost and does not have to be re-derived.
 |---|---|---|---|
 | **Overlapping argument placement** — arrange the callee's frame to begin where its arguments already sit, so they are never copied | ~20–30% of call cost | Frame header must move to the high end, or the caller must reserve header-sized padding, or headers go in a parallel region. Real complexity for a modest gain. | Demoted here from the adoption criteria on 2026-07-29 — it is an optimization, not a condition |
 | **Single-allocation frames** — header and slots in one vector rather than two objects | halves allocations per call | Less readable; but it is also the C layout, so it makes the port more direct | Strong candidate; measure first |
-| **`CALL` + `RECV 1` fusion** | one dispatch per call | Production kernel only | Highest-value superinstruction; see §1.3 |
+| **`op_CALL` + `op_RECV 1` fusion** | one dispatch per call | Production kernel only | Highest-value superinstruction; see §1.3 |
 | **Frame-header shrinking** — pack `pc` and `sp` into one word; derive `fn` from the code pointer | 1–2 stores per call | Encoding fiddliness | Cheap, unmeasured |
 | **Leaf-frame elision** — a call that makes no further calls and cannot be captured needs no frame of its own | large on leaf-heavy code | Requires knowing "cannot be captured" | Needs escape analysis |
 | **Compile-time escape analysis** | enables the two above | Needs a closed world, so it interacts with sealing | Long-term |

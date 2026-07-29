@@ -154,7 +154,7 @@ with a clean dynamic environment. `dynamic-wind` is the primitive; `dynamic-let`
 and a `defparameter` analogue are prelude.
 
 *Realized in the machine:* `kernel.md` §3.3 — a `dynamic?` flag on the binding, a
-`dynenv` on the thread, one branch in `GLOBAL`.
+`dynenv` on the thread, one branch in `op_GLOBAL`.
 
 **`set!` is a shape-dispatched special form**, Dylan/CL style. A bare symbol
 stores — to a lexical slot or a place, consulting the dynamic environment for
@@ -215,7 +215,7 @@ purpose: special forms are implemented specially by the compiler yet
 defined macro at expansion time and applying its expander, yet likewise
 *represented* as a kind of applicable.
 
-*Held since roughly Bard 0.3, and the machine now realizes it directly:* `CALL`
+*Held since roughly Bard 0.3, and the machine now realizes it directly:* `op_CALL`
 dispatches on the callee's descriptor rather than assuming a bytecode function,
 so anything can be made applicable by supplying a handler. `kernel.md` P3.
 
