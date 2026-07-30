@@ -73,6 +73,11 @@
    #:retry
    #:supply-value
    #:abort-thread
+   ;; compiling
+   #:compile-form
+   #:compile-method
+   #:eval-form
+   #:define-special-form
    ;; assembly and disassembly
    #:assemble
    #:disassemble

@@ -899,6 +899,62 @@ use is still there, which is what makes repair possible at all."
 #+repl (run! '|the frame is intact when the handler runs|)  ; => T
 
 ;;; ---------------------------------------------------------------------
+;;; the compiler
+;;; ---------------------------------------------------------------------
+;;; Source forms are short enough to read inside a test, so unlike
+;;; assembly they are not lifted to toplevel.
+
+(test |the compiler handles each special form|
+  (is (equal '(42) (bard:eval-form 42)))
+  (is (equal '(hello) (bard:eval-form ''hello)))
+  (is (equal '(5) (bard:eval-form '(+ 2 3))))
+  (is (equal '(small) (bard:eval-form '(if (< 1 2) 'small 'big))))
+  (is (equal '(big) (bard:eval-form '(if (< 5 2) 'small 'big))))
+  (is (equal '(30) (bard:eval-form '(begin (set! x 10) (set! y 20) (+ x y)))))
+  (is (equal '(49) (bard:eval-form '((method (n) (* n n)) 7)))))
+
+#+repl (run! '|the compiler handles each special form|)  ; => T
+
+(test |arguments and lexical scope|
+  "The first argument lands in slot 0, and an inner method reaches the
+enclosing frame."
+  (is (equal '(7) (bard:eval-form '((method (a b) (- a b)) 10 3))))
+  (is (equal '(-7) (bard:eval-form '((method (a b) (- a b)) 3 10))))
+  (is (equal '(5) (bard:eval-form '((method (n) ((method () n))) 5)))))
+
+#+repl (run! '|arguments and lexical scope|)  ; => T
+
+(test |the three contexts give the multiple-value semantics|
+  "Tail propagates, value truncates, effect discards -- with no rule
+beyond the contexts themselves."
+  (is (equal '(1 2 3) (bard:eval-form '(values 1 2 3))))
+  (is (equal '(11) (bard:eval-form '(+ (values 1 2 3) 10))))
+  (is (equal '(1 2) (bard:eval-form '(if (< 1 2) (values 1 2) (values 3 4)))))
+  (is (equal '(3 4) (bard:eval-form '(if (< 5 2) (values 1 2) (values 3 4)))))
+  (is (equal '(9) (bard:eval-form '(begin (values 1 2) 9)))))
+
+#+repl (run! '|the three contexts give the multiple-value semantics|)  ; => T
+
+(test |a call in tail position becomes a tail call|
+  "Not an optimization: op_TAILCALL is semantics, so the analysis has to
+happen at compile time."
+  (let ((inner (with-output-to-string (s)
+                 (bard:disassemble
+                  (bard:compile-method '(n) '((f n)) '() :name "tail") :stream s))))
+    (is (search "op_TAILCALL" inner))
+    (is (not (search "op_RECV" inner)))))
+
+#+repl (run! '|a call in tail position becomes a tail call|)  ; => T
+
+(test |frame size is computed rather than guessed|
+  "The assembler's generous default is gone once a compiler is present."
+  (let ((code (bard:compile-form '(+ 1 (+ 2 3)))))
+    (is (< (bard:code-frame-size code) 20))))
+
+#+repl (run! '|frame size is computed rather than guessed|)  ; => T
+#+repl (bard:disassemble (bard:compile-form '(if (< 1 2) 'small 'big) :name "classify"))
+
+;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
 ;;; ---------------------------------------------------------------------
 

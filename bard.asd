@@ -29,7 +29,8 @@
                              (:file "types")
                              (:file "opcodes")
                              (:file "vm")
-                             (:file "primitives"))))
+                             (:file "primitives")
+                             (:file "compile"))))
   :in-order-to ((asdf:test-op (asdf:test-op :bard/test))))
 
 (asdf:defsystem :bard/test
