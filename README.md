@@ -23,11 +23,16 @@ switching tools. Two properties, individually common and rarely found together:
 
 ## Status
 
-**Design settled; implementation restarting.**
+**The machine runs. The language above it is beginning.**
 
 Bard is being rebuilt on a new kernel design. The previous implementation is
 preserved and reachable — see *History* below — but it is not the basis for
 what comes next.
+
+Working today: the virtual machine, complete; an assembler and a disassembler; a
+compiler for the kernel language; macros; and a small prelude — `define`, `let`,
+`when`, `cond`, `and`, `or`, list handling — written in Bard itself. Two test
+suites, one in Lisp and one in Bard.
 
 The new kernel rests on one idea:
 
@@ -43,6 +48,10 @@ is deliberate: it is what makes Bard portable to every platform it targets
 without a per-platform reinterpretation of what the language means, and it is
 what lets the development tools travel as part of the portable payload rather
 than being rebuilt per host.
+
+The kernel language on top of it is six special forms — `quote`, `if`, `begin`,
+`set!`, `method`, `values` — plus application and macros. Everything else is
+written in Bard.
 
 Deliberately kept out of the kernel, and reachable from it: the object system and
 generic functions, conditions and restarts, the debugger, redefinition tracking,

@@ -76,8 +76,8 @@ A closure captures the frame it was created in, so **environments and frames are
 the same representation**. There are exactly two chains and both are obvious:
 `parent` is dynamic, `captured-frame` is lexical.
 
-**3. Code** — a vector of fixed-width instructions, plus `arity`, `n-locals`, and
-`frame-size`. Fixed width so decoding is a load and a shift, with no branch
+**3. Code** — a vector of fixed-width instructions, plus `arity`, `rest?`,
+`n-locals`, and `frame-size`. Fixed width so decoding is a load and a shift, with no branch
 before the dispatch branch. `frame-size` is `n-locals` plus the maximum operand
 depth, which the compiler knows — so allocating a frame is adding a constant.
 
@@ -148,7 +148,7 @@ It is the only instruction that does much:
 op_CALL n:
     callee ← pop
     if callee is a function:
-        check n against callee.arity
+        check n against callee.arity and callee.rest?
         allocate a frame of callee.code.frame-size
         move n operands into its low slots
         frame.fn ← callee;  frame.pc ← 0;  frame.parent ← current
@@ -158,7 +158,9 @@ op_CALL n:
 ```
 
 Allocating the frame *is* what calling means, once a frame is the computation —
-so there is no separate argument instruction and no argument-count register.
+so there is no separate argument instruction and no argument-count register. A
+callee declaring a rest parameter gets the extra arguments consed into the slot
+just past its required ones, which is the only place that convention lives.
 `op_TAILCALL` is identical except that the new frame's `parent` is the *caller's*
 parent, so the caller's frame is abandoned.
 
@@ -268,7 +270,6 @@ target possible at the same time.
 |---|---|---|
 | Direct primitive application | one instruction | pure addition; the first thing to add |
 | Second conditional branch | one instruction | the compiler inverts the test |
-| Variadic arguments | a code-object flag | `op_CALL` already builds the frame |
 | Slot access instructions | two instructions | available as primitives; only speed |
 | Superinstructions, inline caches | production kernel only | see `performance.md` |
 | Object system, generic functions | library | P1, P3 |

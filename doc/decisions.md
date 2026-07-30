@@ -324,7 +324,104 @@ Each with its natural home. These are open, not merely unwritten.
 
 ---
 
-## 9. Superseded by the current machine
+## 9. The kernel language
+
+The surface language the bootstrap compiler accepts. It is not chosen by taste:
+§2 says the core is the minimal subset sufficient to express the rest of Bard in
+Bard, and this is what that came to.
+
+### 9.1 Six special forms
+
+`quote`, `if`, `begin`, `set!`, `method`, `values` — and application. Nothing
+else is built in.
+
+**There is no `define` at this level.** `op_SET-GLOBAL` binds an unbound cell, so
+`set!` *is* definition, which §4 already implied by saying `set!` never refuses on
+shape grounds. The familiar `(define (f a b) ...)` is a macro over `set!` and
+`method`.
+
+**Continuation capture is not a special form**, though §7's inventory expects one.
+A continuation is a frame's `parent`, so capture and installation are primitives.
+That is the second thing the frame-as-computation idea absorbed rather than
+required, after `call/cc` as a foundational concept (§9 below).
+
+### 9.2 Three contexts
+
+Every form is compiled in one of three contexts, and the context decides what
+becomes of the values it produces:
+
+| context | a call gets | values |
+|---|---|---|
+| **tail** — the form's values are the method's values | `op_TAILCALL`, no receiver | **all** propagate |
+| **value** — the form's value is wanted | `op_RECV 1` | first only, padded with `nothing` |
+| **effect** — the value is discarded | `op_RECV 0` | discarded |
+
+That is the whole multiple-value surface, with no separate rule. It composes
+without special cases: both arms of an `if` in tail position are themselves tail,
+so `(if p (values 1 2) (values 3 4))` propagates two values either way, and the
+compiler needs to know nothing about `if` and `values` together.
+
+**The top level of a repl interaction is tail position**, which is why
+`(values 1 2 3)` typed at a prompt yields three values while
+`(+ (values 1 2 3) 10)` is 11.
+
+**Tail position is not an optimization.** `op_TAILCALL` is semantics, so the
+analysis is required from the first compiler rather than added to a later one.
+
+### 9.3 Variadic parameters use `&`
+
+`(method (a b & more) ...)` binds the remainder to `more`; `(method (& all) ...)`
+takes everything. A dotted list is deliberately not accepted: `&` is easier to
+see, and §3 said so before the compiler existed.
+
+### 9.4 Macros
+
+Unhygienic and `defmacro`-style, per §2. A macro is an ordinary method, compiled
+and **run on the machine at compile time**, whose result is compiled in its
+place. That is the first point at which the machine is used to build Bard rather
+than merely to run it.
+
+Quasiquote expands into ordinary list construction, after Norvig, so a template
+is nothing but code the compiler already understands.
+
+**No auto-gensym yet**, though §2 adopts it: it is a reader feature, and the
+bootstrap borrows the host's reader. A template that binds a name gensyms it
+explicitly for now.
+
+**D15's mitigation is not implemented either.** Free identifiers in a template are
+bare symbols rather than global references, so a macro that expands to a call to
+`list` will find a local `list` if the use site has one. Both this and
+auto-gensym want the same place — a reader — and should land together.
+
+### 9.5 Named values
+
+`nothing` and `true` are bound as globals, not special forms. `nothing` is false,
+the empty list, and the empty collection at once (§5).
+
+### 9.6 Known gaps
+
+Recorded so they are absent by choice rather than by oversight.
+
+- **`+return-headroom+`.** A call leaves its callee's values in the caller's
+  frame, and how many depends on the callee, which the compiler cannot know
+  without a closed world. Eight slots are reserved; a callee returning more
+  overruns the frame. This is the closed-world dependency sealing exists to
+  provide, surfacing early and in a small place.
+- **Nothing checks frame overflow.** A program deep enough to exceed its frame
+  fails as a host array error rather than a machine one.
+- **Two instructions have no surface form.** Nothing compiles to `op_YIELD` or
+  `op_RECV-ALL`, so a program cannot yet yield or collect multiple values into a
+  list.
+- **`_eq` on fixnums is host-dependent.** The Bard test suite relies on it for
+  small integers. A real equality protocol is prelude work.
+- **The operators are scaffolding.** `+`, `-`, `*`, `<`, `>`, `=`, and `print` are
+  bound directly to fixnum primitives so that programs can be written before the
+  prelude exists. Each is meant to become a polymorphic prelude function that
+  calls the primitive; none should survive.
+
+---
+
+## 10. Superseded by the current machine
 
 Recorded so the changes are deliberate rather than silent.
 
