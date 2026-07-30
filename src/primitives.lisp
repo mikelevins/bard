@@ -63,6 +63,26 @@
 (define-primitive _cdr (p) (if (consp p) (cdr p) *nothing*))
 
 ;;; ---------------------------------------------------------------------
+;;; dynamic variables
+;;; ---------------------------------------------------------------------
+;;; dynamic-let and a defparameter analogue are prelude, built over
+;;; these and over dynamic-wind so that a rebinding survives a non-local
+;;; exit. The machine supplies only the flag, the per-thread list, and
+;;; the branch that consults it.
+
+(define-primitive _dynamic! (binding)
+  (setf (binding-dynamic? binding) t)
+  binding)
+
+(define-primitive _push-rebinding! (binding value)
+  (push (cons binding value) (thread-dynenv *current-thread*))
+  value)
+
+(define-primitive _pop-rebinding! ()
+  (pop (thread-dynenv *current-thread*))
+  *nothing*)
+
+;;; ---------------------------------------------------------------------
 ;;; threads
 ;;; ---------------------------------------------------------------------
 

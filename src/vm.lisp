@@ -24,7 +24,7 @@
 ;;;    7  tail calls                     done
 ;;;    8  multiple values                done
 ;;;    9  threads                        done
-;;;   10  the dynamic environment        pending
+;;;   10  the dynamic environment        done
 ;;;   11  the error hook                 pending
 ;;;
 ;;; Stages 10 and 11 add no instructions: the dynamic environment
@@ -119,6 +119,38 @@ rendered and the operand stack shown.")
 
 (setf (descriptor-call-handler *primitive-descriptor*) #'call-primitive
       (descriptor-call-handler *fn-descriptor*) #'call-fn)
+
+;;; ---------------------------------------------------------------------
+;;; reading and assigning globals
+;;; ---------------------------------------------------------------------
+;;; Dynamic variables are opt-in: only a binding declared dynamic
+;;; consults the current thread's rebindings, and an ordinary one reads
+;;; and assigns its cell directly. The flag is false for nearly every
+;;; binding, so the ordinary path costs one test on an object already in
+;;; hand.
+;;;
+;;; Rebindings are per thread over a shared cell, and a spawned thread
+;;; starts with none.
+
+(defun binding-ref (binding frame pc)
+  "BINDING's value: its innermost rebinding in this thread if it is
+dynamic and has one, otherwise its cell."
+  (let ((entry (and (binding-dynamic? binding)
+                    (assoc binding (thread-dynenv *current-thread*)))))
+    (cond (entry (cdr entry))
+          ((binding-bound? binding) (binding-value binding))
+          (t (bard-error frame pc "~A is unbound." (binding-name binding))))))
+
+(defun binding-set! (binding value)
+  "Assign BINDING: its innermost rebinding if it has one, otherwise its
+cell."
+  (let ((entry (and (binding-dynamic? binding)
+                    (assoc binding (thread-dynenv *current-thread*)))))
+    (if entry
+        (setf (cdr entry) value)
+        (setf (binding-value binding) value
+              (binding-bound? binding) t))
+    value))
 
 ;;; ---------------------------------------------------------------------
 ;;; the lexical chain
@@ -255,10 +287,7 @@ none has work left. Returns FRAME's own delivered values."
          (frame-push frame (make-fn (svref (code-constants code) a) frame)))
 
         (op_GLOBAL
-         (let ((binding (svref (code-constants code) a)))
-           (unless (binding-bound? binding)
-             (bard-error frame pc "~A is unbound." (binding-name binding)))
-           (frame-push frame (binding-value binding))))
+         (frame-push frame (binding-ref (svref (code-constants code) a) frame pc)))
 
         ;; ----- stores -----
         (op_SET-LOCAL
@@ -266,9 +295,7 @@ none has work left. Returns FRAME's own delivered values."
                (frame-top frame)))      ; does not pop
 
         (op_SET-GLOBAL
-         (let ((binding (svref (code-constants code) a)))
-           (setf (binding-value binding) (frame-top frame)
-                 (binding-bound? binding) t)))
+         (binding-set! (svref (code-constants code) a) (frame-top frame)))
 
         (op_DROP
          (frame-pop frame))

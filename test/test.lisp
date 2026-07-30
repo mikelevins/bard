@@ -480,6 +480,90 @@ closures over separate make-logger frames, so the threads share the log
 and nothing else.")
 
 ;;; ---------------------------------------------------------------------
+;;; assembly -- the dynamic environment
+;;; ---------------------------------------------------------------------
+
+;;; A binding is an ordinary value, so a program names one with op_CONST
+;;; and hands it to a primitive. op_GLOBAL takes a binding operand
+;;; instead, which the assembler resolves for it.
+
+(defparameter +lap-fn-read-out+
+  '((op_GLOBAL *out*)
+    (op_RETURN 1))
+  "(fn () *out*) -- a callee, to show a rebinding reaches one.")
+
+(defparameter +code-read-out+
+  (bard:assemble +lap-fn-read-out+ :name "read-out" :arity 0))
+
+(defparameter +lap-dynamic-extent+
+  `((op_CONST ,(bard:global-binding '*out*))
+    (op_CONST rebound)
+    (op_GLOBAL _push-rebinding!)
+    (op_CALL 2) (op_RECV 0)
+
+    (op_CLOSE ,+code-read-out+)         ; the callee sees the rebinding
+    (op_CALL 0) (op_RECV 1)
+
+    (op_GLOBAL _pop-rebinding!)         ; and stops seeing it afterwards
+    (op_CALL 0) (op_RECV 0)
+
+    (op_CLOSE ,+code-read-out+)
+    (op_CALL 0) (op_RECV 1)
+    (op_RETURN 2))
+  "*out* read inside a rebinding and again after popping it.")
+
+(defparameter +lap-opt-in+
+  `((op_CONST ,(bard:global-binding 'plain))
+    (op_CONST ignored)
+    (op_GLOBAL _push-rebinding!)        ; plain was never declared dynamic,
+    (op_CALL 2) (op_RECV 0)             ; so op_GLOBAL never looks here
+    (op_GLOBAL plain)
+    (op_RETURN 1))
+  "A rebinding pushed for an undeclared binding is not consulted.")
+
+(defparameter +lap-fn-rebinder+
+  `((op_CONST ,(bard:global-binding '*out*))
+    (op_CONST a)
+    (op_GLOBAL _push-rebinding!)
+    (op_CALL 2) (op_RECV 0)
+    (op_YIELD)                          ; the other thread runs here
+
+    (op_GLOBAL *out*)                   ; still a, in this thread
+    (op_GLOBAL log)
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+
+    (op_GLOBAL _pop-rebinding!)
+    (op_CALL 0) (op_RECV 0)
+    (op_RETURN 0))
+  "Rebinds *out*, yields, then logs what it still sees.")
+
+(defparameter +code-rebinder+
+  (bard:assemble +lap-fn-rebinder+ :name "rebinder" :arity 0))
+
+(defparameter +lap-fn-reader+
+  '((op_GLOBAL *out*)                   ; the other thread's rebinding is
+    (op_GLOBAL log)                     ; not visible here
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+    (op_YIELD)
+    (op_RETURN 0))
+  "Logs what *out* looks like from a thread that rebound nothing.")
+
+(defparameter +code-reader+
+  (bard:assemble +lap-fn-reader+ :name "reader" :arity 0))
+
+(defparameter +lap-dynenv-is-per-thread+
+  `((op_CLOSE ,+code-rebinder+)
+    (op_GLOBAL _spawn) (op_CALL 1) (op_RECV 0)
+    (op_CLOSE ,+code-reader+)
+    (op_GLOBAL _spawn) (op_CALL 1) (op_RECV 0)
+    (op_RETURN 0))
+  "One thread rebinds *out*; the other must not see it.")
+
+;;; ---------------------------------------------------------------------
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
@@ -675,6 +759,39 @@ know how many threads exist."
   (is (equal '(42) (run-program '((op_YIELD) (op_CONST 42) (op_YIELD) (op_RETURN 1))))))
 
 #+repl (run! '|a lone thread yields to itself|)  ; => T
+
+;;; ---------------------------------------------------------------------
+;;; stage 10 -- the dynamic environment
+;;; ---------------------------------------------------------------------
+
+(defun declare-dynamic (name)
+  (setf (bard:binding-dynamic? (bard:global-binding name)) t))
+
+(test |2.10 a rebinding reaches a callee and ends when popped|
+  (declare-dynamic '*out*)
+  (set-global '*out* 'base)
+  (is (equal '(rebound base) (run-program +lap-dynamic-extent+))))
+
+#+repl (run! '|2.10 a rebinding reaches a callee and ends when popped|)  ; => T
+
+(test |dynamic variables are opt-in|
+  "An undeclared binding never consults the dynamic environment, so it
+costs one test and nothing else."
+  (set-global 'plain 'cell)
+  (is (eq 'cell (run-1 +lap-opt-in+))))
+
+#+repl (run! '|dynamic variables are opt-in|)  ; => T
+
+(test |the dynamic environment is per thread|
+  "A rebinding in one thread is invisible in another, which is what makes
+it per task rather than global."
+  (declare-dynamic '*out*)
+  (set-global '*out* 'base)
+  (set-global 'log nil)
+  (run-program +lap-dynenv-is-per-thread+)
+  (is (equal '(a base) (bard:binding-value (bard:global-binding 'log)))))
+
+#+repl (run! '|the dynamic environment is per thread|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
