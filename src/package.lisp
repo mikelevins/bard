@@ -56,6 +56,7 @@
    #:primitive-arity
    #:primitive-function
    #:install-primitive
+   #:install-value
    ;; threads
    #:thread
    #:thread-frame
@@ -77,6 +78,7 @@
    #:compile-form
    #:compile-method
    #:eval-form
+   #:load-bard-file
    #:define-special-form
    ;; assembly and disassembly
    #:assemble

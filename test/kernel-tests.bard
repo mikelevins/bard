@@ -1,0 +1,114 @@
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          kernel-tests.bard
+;;;; Project:       the bard programming language
+;;;; Purpose:       the kernel language, tested in itself
+;;;; Author:        mikel evins
+;;;; Copyright:     2026 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; Written in Bard, using only the six special forms the bootstrap
+;;; compiler knows: quote, if, begin, set!, method, values. No macros, so
+;;; no let and no define -- set! on a global is definition, and a method
+;;; applied immediately is the only local binding available.
+;;;
+;;; The Lisp suite runs this file and asserts that FAILURES ends at zero.
+
+(set! failures 0)
+
+;;; _eq is the host's identity. For fixnums that is host-dependent, and
+;;; it holds for the small ones used here. A real equality protocol is
+;;; prelude work.
+
+(set! check
+      (method (name got want)
+        (if (_eq got want)
+            (_print (_cons 'ok name))
+            (begin (set! failures (+ failures 1))
+                   (_print (_cons 'FAIL name))))))
+
+;;; ---------------------------------------------------------------------
+;;; arithmetic and application
+;;; ---------------------------------------------------------------------
+
+(check 'arithmetic (+ 2 3) 5)
+(check 'nesting (+ 1 (+ 2 3)) 6)
+(check 'argument-order (- 10 3) 7)
+(check 'argument-order-reversed (- 3 10) -7)
+
+;;; ---------------------------------------------------------------------
+;;; methods
+;;; ---------------------------------------------------------------------
+
+(set! square (method (n) (* n n)))
+(set! sub (method (a b) (- a b)))
+
+(check 'method-call (square 7) 49)
+(check 'method-arguments (sub 10 3) 7)
+(check 'method-nesting (square (sub 10 3)) 49)
+
+;;; ---------------------------------------------------------------------
+;;; conditionals
+;;; ---------------------------------------------------------------------
+
+(check 'conditional-true (if (< 1 2) 'yes 'no) 'yes)
+(check 'conditional-false (if (< 5 2) 'yes 'no) 'no)
+(check 'conditional-without-else (if (< 5 2) 'yes) nothing)
+
+;;; ---------------------------------------------------------------------
+;;; assignment
+;;; ---------------------------------------------------------------------
+
+(check 'global-assignment (begin (set! x 41) (set! x (+ x 1)) x) 42)
+(check 'assignment-returns-its-value (set! x 7) 7)
+
+;;; ---------------------------------------------------------------------
+;;; lexical scope
+;;; ---------------------------------------------------------------------
+
+(check 'closure-reads-enclosing ((method (n) ((method () n))) 5) 5)
+
+(set! make-counter
+      (method (n)
+        (method () (set! n (+ n 1)))))
+
+(set! c1 (make-counter 10))
+(set! c2 (make-counter 100))
+
+(check 'counter-increments (c1) 11)
+(check 'counter-again (c1) 12)
+(check 'counter-is-independent (c2) 101)
+(check 'first-counter-undisturbed (c1) 13)
+
+;;; ---------------------------------------------------------------------
+;;; multiple values
+;;; ---------------------------------------------------------------------
+
+;;; Value position truncates to the first, as Common Lisp does. Tail
+;;; position propagates all of them, which is what the Lisp suite checks
+;;; -- CHECK takes one argument, so it cannot see more than one here.
+
+(check 'values-truncate-in-value-position (+ (values 1 2 3) 10) 11)
+(check 'values-in-effect-position (begin (values 1 2) 9) 9)
+
+;;; ---------------------------------------------------------------------
+;;; tail calls
+;;; ---------------------------------------------------------------------
+
+;;; A hundred thousand deep. Without proper tail calls the parent chain
+;;; would grow to match.
+
+(set! countdown
+      (method (n)
+        (if (= n 0)
+            'done
+            (countdown (- n 1)))))
+
+(check 'tail-recursion (countdown 100000) 'done)
+
+;;; ---------------------------------------------------------------------
+;;; result
+;;; ---------------------------------------------------------------------
+
+(_print (_cons 'failures failures))

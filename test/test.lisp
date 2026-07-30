@@ -955,6 +955,22 @@ happen at compile time."
 #+repl (bard:disassemble (bard:compile-form '(if (< 1 2) 'small 'big) :name "classify"))
 
 ;;; ---------------------------------------------------------------------
+;;; the kernel language, tested in itself
+;;; ---------------------------------------------------------------------
+
+(test |the bard test suite passes|
+  "test/kernel-tests.bard is written in Bard and checks its own results.
+It reports a failure count, which must be zero. If this fails, run the
+file directly to see which check reported FAIL."
+  (bard:load-bard-file
+   (asdf:system-relative-pathname :bard "test/kernel-tests.bard"))
+  (is (eql 0 (bard:binding-value (bard:global-binding 'failures)))))
+
+#+repl (run! '|the bard test suite passes|)  ; => T
+#+repl (bard:load-bard-file
+        (asdf:system-relative-pathname :bard "test/kernel-tests.bard"))
+
+;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
 ;;; ---------------------------------------------------------------------
 

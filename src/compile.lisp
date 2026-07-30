@@ -249,6 +249,21 @@ its values are delivered."
   "Compile and run FORM, returning its values as a list."
   (run-code (compile-form form)))
 
+(defun load-bard-file (pathname)
+  "Read PATHNAME as Bard source and run each form in order. Returns the
+values of the last one.
+
+The bootstrap borrows the host's reader: Bard's surface is
+s-expressions, so this works, at the cost of the host's case rules,
+package semantics, and read syntax. The Bard reader is a later rung."
+  (with-open-file (stream pathname)
+    (let ((*package* (find-package :bard))
+          (result '()))
+      (loop for form = (read stream nil :eof)
+            until (eq form :eof)
+            do (setf result (eval-form form)))
+      result)))
+
 #+repl (bard:disassemble (compile-form '(if (< 1 2) "small" "big")))
 #+repl (eval-form '(+ 2 3))                       ; => (5)
 #+repl (eval-form '(values 1 2 3))                ; => (1 2 3)

@@ -37,6 +37,21 @@
   `(install-primitive ',name ,(length args) (lambda ,args ,@body)))
 
 ;;; ---------------------------------------------------------------------
+;;; named values
+;;; ---------------------------------------------------------------------
+;;; NOTHING is false, the empty list, and the empty collection at once.
+;;; These are permanent names for permanent values, not scaffolding.
+
+(defun install-value (name value)
+  (let ((binding (global-binding name)))
+    (setf (binding-value binding) value
+          (binding-bound? binding) t)
+    value))
+
+(install-value 'nothing *nothing*)
+(install-value 'true t)
+
+;;; ---------------------------------------------------------------------
 ;;; fixnum arithmetic
 ;;; ---------------------------------------------------------------------
 
