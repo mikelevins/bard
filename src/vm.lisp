@@ -122,16 +122,23 @@ rendered and the operand stack shown.")
 (defun call-fn (callee n-args frame pc)
   "Allocating the frame is what calling means."
   (let* ((code (fn-code callee))
-         (arity (code-arity code)))
-    (unless (= n-args arity)
+         (arity (code-arity code))
+         (rest? (code-rest? code)))
+    (unless (if rest? (>= n-args arity) (= n-args arity))
       (bard-error frame pc
-                  "~A takes ~D argument~:P, called with ~D."
-                  (or (code-name code) "anonymous") arity n-args))
+                  "~A takes ~D~:[~; or more~] argument~:P, called with ~D."
+                  (or (code-name code) "anonymous") arity rest? n-args))
     (let* ((new (make-frame callee :parent frame))
            (slots (frame-slots new)))
       ;; Arguments were pushed left to right, so popping delivers them
-      ;; last first. Filling downward puts the first argument in slot 0.
-      (loop for i from (1- n-args) downto 0
+      ;; last first. The extras come off first and cons up in order.
+      (when rest?
+        (let ((rest '()))
+          (dotimes (i (- n-args arity))
+            (push (frame-pop frame) rest))
+          (setf (svref slots arity) rest)))
+      ;; Filling downward puts the first argument in slot 0.
+      (loop for i from (1- arity) downto 0
             do (setf (svref slots i) (frame-pop frame)))
       new)))
 

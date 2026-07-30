@@ -36,6 +36,7 @@
    #:code-instructions
    #:code-constants
    #:code-arity
+   #:code-rest?
    #:code-n-locals
    #:code-frame-size
    #:fn
@@ -80,6 +81,8 @@
    #:eval-form
    #:load-bard-file
    #:define-special-form
+   #:*bard-readtable*
+   #:*macros*
    ;; assembly and disassembly
    #:assemble
    #:disassemble

@@ -105,6 +105,22 @@
   (spawn fn))
 
 ;;; ---------------------------------------------------------------------
+;;; lists and symbols
+;;; ---------------------------------------------------------------------
+
+(define-primitive _list1 (a) (list a))
+(define-primitive _append (a b) (append a b))
+(define-primitive _null? (x) (if (null x) t *nothing*))
+(define-primitive _pair? (x) (if (consp x) t *nothing*))
+(define-primitive _symbol? (x) (if (and x (symbolp x)) t *nothing*))
+
+(defvar *gensym-count* 0
+  "Not *gensym-counter*: that name is Common Lisp's.")
+
+(define-primitive _gensym (prefix)
+  (make-symbol (format nil "~A~D" prefix (incf *gensym-count*))))
+
+;;; ---------------------------------------------------------------------
 ;;; output
 ;;; ---------------------------------------------------------------------
 

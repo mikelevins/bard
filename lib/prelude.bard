@@ -1,0 +1,119 @@
+;;;; ***********************************************************************
+;;;;
+;;;; Name:          prelude.bard
+;;;; Project:       the bard programming language
+;;;; Purpose:       the beginnings of Bard written in Bard
+;;;; Author:        mikel evins
+;;;; Copyright:     2026 by mikel evins
+;;;;
+;;;; ***********************************************************************
+
+;;; Written in the six special forms plus defmacro. Order matters: a
+;;; macro's body is compiled when the macro is defined, so anything it
+;;; calls at expansion time has to exist already. That is why the list
+;;; helpers come first and are written with set! rather than define --
+;;; define is itself the first macro, and it needs them.
+;;;
+;;; Macros are unhygienic. A template that binds a name gensyms it
+;;; explicitly; there is no auto-gensym yet.
+
+;;; ---------------------------------------------------------------------
+;;; enough list handling to write macros with
+;;; ---------------------------------------------------------------------
+
+(set! cadr (method (x) (_car (_cdr x))))
+(set! cddr (method (x) (_cdr (_cdr x))))
+
+(set! map1
+      (method (f xs)
+        (if (_null? xs)
+            nothing
+            (_cons (f (_car xs)) (map1 f (_cdr xs))))))
+
+;;; ---------------------------------------------------------------------
+;;; definition
+;;; ---------------------------------------------------------------------
+
+;;; (define name value) and (define (name . args) . body). The second
+;;; shape is why this is a macro rather than a rename of set!.
+
+(defmacro define (head . body)
+  (if (_pair? head)
+      `(set! ,(_car head) (method ,(_cdr head) ,@body))
+      `(set! ,head ,(_car body))))
+
+;;; ---------------------------------------------------------------------
+;;; binding
+;;; ---------------------------------------------------------------------
+
+;;; An immediately applied method, so every let is a call. Correct and
+;;; slow; allocating the slots in the enclosing frame is a later
+;;; optimization.
+
+(defmacro let (bindings . body)
+  `((method ,(map1 _car bindings) ,@body)
+    ,@(map1 cadr bindings)))
+
+;;; ---------------------------------------------------------------------
+;;; conditionals
+;;; ---------------------------------------------------------------------
+
+(defmacro when (test . body)
+  `(if ,test (begin ,@body) nothing))
+
+(defmacro unless (test . body)
+  `(if ,test nothing (begin ,@body)))
+
+(defmacro not (x)
+  `(if ,x nothing true))
+
+(defmacro and args
+  (if (_null? args)
+      'true
+      (if (_null? (_cdr args))
+          (_car args)
+          `(if ,(_car args) (and ,@(_cdr args)) nothing))))
+
+;;; or has to name its test to avoid evaluating it twice, and the name
+;;; must not capture anything the caller wrote.
+
+(defmacro or args
+  (if (_null? args)
+      'nothing
+      (if (_null? (_cdr args))
+          (_car args)
+          (let ((tmp (_gensym "or")))
+            `(let ((,tmp ,(_car args)))
+               (if ,tmp ,tmp (or ,@(_cdr args))))))))
+
+(defmacro cond clauses
+  (if (_null? clauses)
+      'nothing
+      (let ((clause (_car clauses)))
+        (if (_eq (_car clause) 'else)
+            `(begin ,@(_cdr clause))
+            `(if ,(_car clause)
+                 (begin ,@(_cdr clause))
+                 (cond ,@(_cdr clauses)))))))
+
+;;; ---------------------------------------------------------------------
+;;; lists
+;;; ---------------------------------------------------------------------
+
+(define (caddr x) (_car (cddr x)))
+
+(define (length xs)
+  (if (_null? xs) 0 (+ 1 (length (_cdr xs)))))
+
+(define (reverse xs)
+  (let ((walk nothing))
+    (set! walk (method (xs acc)
+                 (if (_null? xs) acc (walk (_cdr xs) (_cons (_car xs) acc)))))
+    (walk xs nothing)))
+
+(define (list . xs) xs)
+
+(define (member? x xs)
+  (cond ((_null? xs) nothing)
+        ((_eq x (_car xs)) true)
+        (else (member? x (_cdr xs)))))

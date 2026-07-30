@@ -128,6 +128,8 @@ adjusts."
          (comp-variable form env context))
         ((atom form)
          (comp-constant form context))
+        ((macro-function-for (first form))
+         (comp (macroexpand-form form) env context))
         (t
          (let ((compiler (special-form-compiler (first form))))
            (if compiler
@@ -219,26 +221,104 @@ adjusts."
   (finish-value context))
 
 ;;; ---------------------------------------------------------------------
+;;; quasiquote
+;;; ---------------------------------------------------------------------
+;;; The reader turns ` , and ,@ into (quasiquote x), (unquote x), and
+;;; (unquote-splicing x) -- see *BARD-READTABLE*. This expands those into
+;;; ordinary list construction, after Norvig, so that a template is
+;;; nothing but code the compiler already understands.
+
+(defun quasi (form)
+  "Expand a quasiquoted FORM into Bard code that builds it."
+  (cond ((named-form-p form "UNQUOTE") (second form))
+        ((named-form-p form "UNQUOTE-SPLICING")
+         (error "~S is not inside a list." form))
+        ((atom form) (list 'quote form))
+        ((named-form-p (first form) "UNQUOTE-SPLICING")
+         (if (null (rest form))
+             (second (first form))
+             (list '_append (second (first form)) (quasi (rest form)))))
+        (t (list '_cons (quasi (first form)) (quasi (rest form))))))
+
+(defun named-form-p (form name)
+  (and (consp form)
+       (symbolp (first form))
+       (string= (string (first form)) name)))
+
+(define-special-form quasiquote (form env context)
+  (comp (quasi (second form)) env context))
+
+;;; ---------------------------------------------------------------------
+;;; macros
+;;; ---------------------------------------------------------------------
+;;; Unhygienic, defmacro-style: a macro is an ordinary method, compiled
+;;; and run on the machine, whose result is compiled in its place. The
+;;; expander runs during compilation, which is the first place the
+;;; machine is used to build Bard rather than merely to run it.
+
+(defparameter *macros* (make-hash-table :test #'equal)
+  "Name string to the method that expands it.")
+
+(defun macro-function-for (head)
+  (and (symbolp head) (gethash (string head) *macros*)))
+
+(defun macroexpand-form (form)
+  "Apply FORM's macro to its unevaluated arguments and return the result."
+  (let ((expander (macro-function-for (first form))))
+    (first (run (apply-frame expander (rest form))))))
+
+(defun apply-frame (fn arguments)
+  "A frame that applies FN to ARGUMENTS, with no parent, ready to run."
+  (let* ((frame (make-frame fn :parent nil))
+         (slots (frame-slots frame)))
+    (loop for argument in arguments
+          for i from 0
+          do (setf (svref slots i) argument))
+    frame))
+
+(define-special-form defmacro (form env context)
+  (destructuring-bind (name parameters &rest body) (rest form)
+    (setf (gethash (string name) *macros*)
+          (make-fn (compile-method parameters body '() :name (string name))))
+    (comp-constant name context)))
+
+;;; ---------------------------------------------------------------------
 ;;; entry points
 ;;; ---------------------------------------------------------------------
+
+(defun parse-parameters (parameters)
+  "Values: the required names, and the rest name or NIL.
+
+A symbol takes everything: (method args ...). A dotted list takes a
+fixed prefix and the remainder: (method (a b . more) ...)."
+  (cond ((symbolp parameters)
+         (if (null parameters)
+             (values '() nil)
+             (values '() parameters)))
+        (t (loop for tail = parameters then (cdr tail)
+                 while (consp tail)
+                 collect (car tail) into required
+                 finally (return (values required tail))))))
 
 (defun compile-method (parameters body env &key (name "method"))
   "Compile BODY as a method of PARAMETERS, closed over ENV. Returns a
 code object."
-  (let ((*code* '())
-        (*depth* 0)
-        (*max-depth* 0))
-    (let ((inner (cons parameters env)))
-      (if (null body)
-          (comp *nothing* inner :tail)
-          (loop for (this . more) on body
-                do (comp this inner (if more :effect :tail)))))
-    (let ((n-locals (length parameters)))
+  (multiple-value-bind (required rest) (parse-parameters parameters)
+    (let ((*code* '())
+          (*depth* 0)
+          (*max-depth* 0)
+          (slots (if rest (append required (list rest)) required)))
+      (let ((inner (cons slots env)))
+        (if (null body)
+            (comp *nothing* inner :tail)
+            (loop for (this . more) on body
+                  do (comp this inner (if more :effect :tail)))))
       (assemble (nreverse *code*)
                 :name name
-                :arity n-locals
-                :n-locals n-locals
-                :frame-size (+ n-locals *max-depth* +return-headroom+)))))
+                :arity (length required)
+                :rest? (and rest t)
+                :n-locals (length slots)
+                :frame-size (+ (length slots) *max-depth* +return-headroom+)))))
 
 (defun compile-form (form &key (name "toplevel"))
   "Compile FORM as a whole computation. Its context is tail, so all of
@@ -249,6 +329,26 @@ its values are delivered."
   "Compile and run FORM, returning its values as a list."
   (run-code (compile-form form)))
 
+(defparameter *bard-readtable*
+  (let ((table (copy-readtable nil)))
+    (set-macro-character
+     #\` (lambda (stream char)
+            (declare (ignore char))
+            (list 'quasiquote (read stream t nil t)))
+     nil table)
+    (set-macro-character
+     #\, (lambda (stream char)
+            (declare (ignore char))
+            (if (char= (peek-char nil stream) #\@)
+                (progn (read-char stream)
+                       (list 'unquote-splicing (read stream t nil t)))
+                (list 'unquote (read stream t nil t))))
+     nil table)
+    table)
+  "The host's reader, with ` and , producing forms the compiler can see
+rather than an implementation-specific structure. This is the whole of
+the Bard reader for now, and where auto-gensym will go.")
+
 (defun load-bard-file (pathname)
   "Read PATHNAME as Bard source and run each form in order. Returns the
 values of the last one.
@@ -258,6 +358,7 @@ s-expressions, so this works, at the cost of the host's case rules,
 package semantics, and read syntax. The Bard reader is a later rung."
   (with-open-file (stream pathname)
     (let ((*package* (find-package :bard))
+          (*readtable* *bard-readtable*)
           (result '()))
       (loop for form = (read stream nil :eof)
             until (eq form :eof)

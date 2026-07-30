@@ -145,12 +145,12 @@ disassembly to read back the way it was written."
 ;;;               else (op_CONST "big")
 ;;;               done (op_RETURN 1)))
 
-(defun assemble (forms &key name (arity 0) (n-locals nil) frame-size)
+(defun assemble (forms &key name (arity 0) rest? (n-locals nil) frame-size)
   "Assemble FORMS into a code object. N-LOCALS defaults to ARITY, since
 op_CALL places the arguments in the low slots and a function with no
 further locals needs exactly that many."
-  (setf n-locals (or n-locals arity))
-  (when (< n-locals arity)
+  (setf n-locals (or n-locals (+ arity (if rest? 1 0))))
+  (when (< n-locals (+ arity (if rest? 1 0)))
     (error "~A declares ~D local~:P but takes ~D argument~:P."
            (or name "anonymous") n-locals arity))
   (let ((labels (make-hash-table :test #'eq))
@@ -199,6 +199,7 @@ further locals needs exactly that many."
                   :instructions array
                   :constants (coerce constants 'simple-vector)
                   :arity arity
+                  :rest? rest?
                   :n-locals n-locals
                   ;; A compiler computes FRAME-SIZE as N-LOCALS plus the
                   ;; maximum operand depth. There is no compiler yet, so

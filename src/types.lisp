@@ -88,7 +88,8 @@
   (name nil)
   (instructions (make-array 0 :element-type 'fixnum) :type (simple-array fixnum (*)))
   (constants #() :type simple-vector)
-  (arity 0 :type fixnum)
+  (arity 0 :type fixnum)                ; required arguments
+  (rest? nil :type boolean)             ; and a rest list in slot ARITY
   (n-locals 0 :type fixnum)
   (frame-size 0 :type fixnum))
 
