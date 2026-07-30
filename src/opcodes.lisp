@@ -53,18 +53,6 @@
     (op_YIELD))
     "Each entry is (NAME . OPERAND-KINDS), in opcode order."))
 
-;;; Instruction names must not be Common Lisp symbols. op_RETURN was op_RETURN and
-;;; op_CLOSE was op_CLOSE until a CL op_RETURN inside the machine's own loop was
-;;; mistaken for the instruction of the same name -- identical to Lisp,
-;;; misleading to a reader. The rule is enforced here rather than
-;;; remembered.
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (dolist (spec *opcode-specs*)
-    (let ((name (string (first spec))))
-      (when (nth-value 1 (find-symbol name :common-lisp))
-        (error "Instruction ~A collides with a Common Lisp symbol." name)))))
-
 ;;; Instruction names carry an op_ sentinel so that none can collide with
 ;;; a Common Lisp symbol. See doc/decisions.md §10.1. Enforced here rather than remembered:
 
