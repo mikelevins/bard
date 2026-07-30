@@ -971,6 +971,37 @@ file directly to see which check reported FAIL."
         (asdf:system-relative-pathname :bard "test/kernel-tests.bard"))
 
 ;;; ---------------------------------------------------------------------
+;;; the prelude
+;;; ---------------------------------------------------------------------
+
+(test |the prelude loads and its macros work|
+  "lib/prelude.bard is Bard defining Bard: define, let, when, unless,
+and, or, cond, and some list handling, all in six special forms plus
+defmacro."
+  (bard:load-bard-file (asdf:system-relative-pathname :bard "lib/prelude.bard"))
+  (is (equal '(3) (bard:eval-form '(let ((a 1) (b 2)) (+ a b)))))
+  (is (equal '(yes) (bard:eval-form '(when (< 1 2) 'yes))))
+  (is (equal '(3) (bard:eval-form '(and 1 2 3))))
+  (is (equal '(7) (bard:eval-form '(or nothing nothing 7))))
+  (is (equal '(medium)
+             (bard:eval-form '(cond ((< 5 2) 'small) ((< 1 2) 'medium) (else 'big)))))
+  (is (equal '((3 2 1)) (bard:eval-form '(reverse (list 1 2 3)))))
+  (is (equal '(3628800)
+             (bard:eval-form '(begin (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+                                     (fact 10))))))
+
+#+repl (run! '|the prelude loads and its macros work|)  ; => T
+
+(test |a variadic method collects its extra arguments|
+  "& marks the rest parameter. This is checked separately because the
+macro-application path places arguments itself and once got it wrong."
+  (is (equal '((1 (2 3))) (bard:eval-form '((method (a & more) (list a more)) 1 2 3))))
+  (is (equal '((1 nil)) (bard:eval-form '((method (a & more) (list a more)) 1))))
+  (is (equal '((1 2 3)) (bard:eval-form '((method (& all) all) 1 2 3)))))
+
+#+repl (run! '|a variadic method collects its extra arguments|)  ; => T
+
+;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler
 ;;; ---------------------------------------------------------------------
 

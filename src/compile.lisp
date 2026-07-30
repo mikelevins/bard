@@ -268,12 +268,20 @@ adjusts."
     (first (run (apply-frame expander (rest form))))))
 
 (defun apply-frame (fn arguments)
-  "A frame that applies FN to ARGUMENTS, with no parent, ready to run."
-  (let* ((frame (make-frame fn :parent nil))
+  "A frame that applies FN to ARGUMENTS, with no parent, ready to run.
+
+Places arguments the way op_CALL does, rest list included. Getting this
+wrong is invisible until a variadic method is applied: the extra
+arguments land in slots of their own instead of in a list."
+  (let* ((code (fn-code fn))
+         (arity (code-arity code))
+         (frame (make-frame fn :parent nil))
          (slots (frame-slots frame)))
     (loop for argument in arguments
-          for i from 0
+          for i from 0 below arity
           do (setf (svref slots i) argument))
+    (when (code-rest? code)
+      (setf (svref slots arity) (nthcdr arity arguments)))
     frame))
 
 (define-special-form defmacro (form env context)
@@ -289,16 +297,19 @@ adjusts."
 (defun parse-parameters (parameters)
   "Values: the required names, and the rest name or NIL.
 
-A symbol takes everything: (method args ...). A dotted list takes a
-fixed prefix and the remainder: (method (a b . more) ...)."
-  (cond ((symbolp parameters)
-         (if (null parameters)
-             (values '() nil)
-             (values '() parameters)))
-        (t (loop for tail = parameters then (cdr tail)
-                 while (consp tail)
-                 collect (car tail) into required
-                 finally (return (values required tail))))))
+A & marks the rest parameter, which is the name after it:
+
+    (method (a b & more) ...)   two required, the remainder in MORE
+    (method (& args) ...)       everything in ARGS
+
+The dotted list a Scheme would write is deliberately not accepted: & is
+easier to see."
+  (let ((position (position "&" parameters :key #'string :test #'string=)))
+    (cond ((null position) (values parameters nil))
+          ((/= (length parameters) (+ position 2))
+           (error "A & takes exactly one name after it: ~S" parameters))
+          (t (values (subseq parameters 0 position)
+                     (nth (1+ position) parameters))))))
 
 (defun compile-method (parameters body env &key (name "method"))
   "Compile BODY as a method of PARAMETERS, closed over ENV. Returns a

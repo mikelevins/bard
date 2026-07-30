@@ -108,7 +108,7 @@ non-qualifying.
 | `_`-prefix | primitive / low-level, flat names only |
 | `?`-suffix | predicates |
 | ALL_CAPS | machine instructions |
-| `&` | variadic |
+| `&` | variadic: `(method (a b & rest) ...)`, `(method (& all) ...)` |
 | `:name` | keywords |
 | `datatype.slot` | monomorphic concrete-type accessor, public, underscore-free |
 

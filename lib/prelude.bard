@@ -34,10 +34,10 @@
 ;;; definition
 ;;; ---------------------------------------------------------------------
 
-;;; (define name value) and (define (name . args) . body). The second
+;;; (define name value) and (define (name & args) & body). The second
 ;;; shape is why this is a macro rather than a rename of set!.
 
-(defmacro define (head . body)
+(defmacro define (head & body)
   (if (_pair? head)
       `(set! ,(_car head) (method ,(_cdr head) ,@body))
       `(set! ,head ,(_car body))))
@@ -50,7 +50,7 @@
 ;;; slow; allocating the slots in the enclosing frame is a later
 ;;; optimization.
 
-(defmacro let (bindings . body)
+(defmacro let (bindings & body)
   `((method ,(map1 _car bindings) ,@body)
     ,@(map1 cadr bindings)))
 
@@ -58,16 +58,16 @@
 ;;; conditionals
 ;;; ---------------------------------------------------------------------
 
-(defmacro when (test . body)
+(defmacro when (test & body)
   `(if ,test (begin ,@body) nothing))
 
-(defmacro unless (test . body)
+(defmacro unless (test & body)
   `(if ,test nothing (begin ,@body)))
 
 (defmacro not (x)
   `(if ,x nothing true))
 
-(defmacro and args
+(defmacro and (& args)
   (if (_null? args)
       'true
       (if (_null? (_cdr args))
@@ -77,7 +77,7 @@
 ;;; or has to name its test to avoid evaluating it twice, and the name
 ;;; must not capture anything the caller wrote.
 
-(defmacro or args
+(defmacro or (& args)
   (if (_null? args)
       'nothing
       (if (_null? (_cdr args))
@@ -86,7 +86,7 @@
             `(let ((,tmp ,(_car args)))
                (if ,tmp ,tmp (or ,@(_cdr args))))))))
 
-(defmacro cond clauses
+(defmacro cond (& clauses)
   (if (_null? clauses)
       'nothing
       (let ((clause (_car clauses)))
@@ -111,7 +111,7 @@
                  (if (_null? xs) acc (walk (_cdr xs) (_cons (_car xs) acc)))))
     (walk xs nothing)))
 
-(define (list . xs) xs)
+(define (list & xs) xs)
 
 (define (member? x xs)
   (cond ((_null? xs) nothing)
