@@ -15,9 +15,9 @@
 
 (in-package :bard-test)
 
-;;; The tests are the programs from doc/kernel-tutorial.md part 2, in
-;;; order. Each stage of part 3 ends with one of them running, so a
-;;; failure tells you exactly which stage you are on.
+;;; The programs are in construction order: each stage of building the
+;;; machine ends with one of them running, so a failure tells you exactly
+;;; which stage you are on.
 ;;;
 ;;; The assembly programs are defined at toplevel and laid out as
 ;;; listings, so they read as source rather than as arguments buried

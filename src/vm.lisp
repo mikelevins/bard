@@ -13,7 +13,7 @@
 ;;; The machine steps a reified computation. A frame is that
 ;;; computation. See doc/kernel.md.
 ;;;
-;;; Stages implemented so far (doc/kernel-tutorial.md part 3):
+;;; Stages implemented so far (the construction ladder):
 ;;;
 ;;;    1  representations                done
 ;;;    2  the loop, op_CONST, op_RETURN  done
@@ -38,8 +38,7 @@
 ;;; Failure is reported without unwinding first: the condition is
 ;;; signalled with the frame and the faulting pc in hand, so a handler
 ;;; runs inside the environment where the fault happened and can repair
-;;; it. Three restarts say what to do next. See "Failure and resumption"
-;;; in doc/kernel-tutorial.md.
+;;; it. Three restarts say what to do next. See doc/decisions.md §10.4.
 ;;;
 ;;; The restarts are established only when a fault occurs, so the
 ;;; ordinary path pays nothing for them.
@@ -98,7 +97,7 @@ rendered and the operand stack shown.")
 ;;; A handler takes (callee n-args frame pc) and returns the frame the
 ;;; machine should continue stepping. Whether that is a new frame or the
 ;;; one it was given is the whole of the contract, and op_TAILCALL keys
-;;; on it. See "The handler contract" in doc/kernel-tutorial.md.
+;;; on it. See "The handler contract" in doc/decisions.md §10.3.
 ;;;
 ;;; PC is the faulting instruction, not the one after it, so a handler
 ;;; that signals reports where the fault was.

@@ -31,7 +31,7 @@
 ;;; Every value carries a descriptor, and the machine never interprets
 ;;; one. It stores, copies, and compares them, and asks one for its
 ;;; CALL-HANDLER when op_CALL needs to apply something. See "The handler
-;;; contract" in doc/kernel-tutorial.md.
+;;; contract" in doc/decisions.md.
 
 (defstruct (descriptor (:constructor make-descriptor (name &key call-handler))
                        (:print-object print-descriptor))

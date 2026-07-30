@@ -1,19 +1,18 @@
 # Bard documentation
 
-Five documents. What each is, and when to read it.
+Four documents. What each is, and when to read it.
 
 | | |
 |---|---|
 | [`vision.md`](vision.md) | What Bard is and what "good" means. Read once; consult when a design decision is genuinely undecided and you need a tiebreaker. |
 | [`kernel.md`](kernel.md) | The machine: 15 instructions, one register, seven representations, seven properties. **This is the document to hold in mind.** If something is not in it, you do not need it to write a working kernel from memory. |
-| [`kernel-tutorial.md`](kernel-tutorial.md) | What each instruction means, eleven worked programs, and an eleven-stage construction that doubles as a conformance ladder. Read when implementing or porting the machine. |
 | [`performance.md`](performance.md) | The two costs this design knowingly accepts, the strategies for reducing them, and a standing track of candidates. Consult; do not memorize. |
 | [`decisions.md`](decisions.md) | Adopted design decisions for the language above the machine, with rationale. Consult constantly while implementing. |
 
 ## Reading order
 
-Starting from nothing: `vision.md`, then `kernel.md`, then `kernel-tutorial.md`.
-That is enough to build a working machine.
+Starting from nothing: `vision.md`, then `kernel.md`, then `decisions.md` §10 for
+the contracts the machine must honour.
 
 Implementing the language on top of it: `decisions.md` becomes the working
 document, with `kernel.md` as the reference for what the machine guarantees.

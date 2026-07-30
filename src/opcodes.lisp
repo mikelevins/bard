@@ -66,8 +66,7 @@
         (error "Instruction ~A collides with a Common Lisp symbol." name)))))
 
 ;;; Instruction names carry an op_ sentinel so that none can collide with
-;;; a Common Lisp symbol. See "Instruction names carry an op_ sentinel" in
-;;; doc/kernel-tutorial.md. Enforced here rather than remembered:
+;;; a Common Lisp symbol. See doc/decisions.md §10.1. Enforced here rather than remembered:
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (dolist (spec *opcode-specs*)
@@ -116,8 +115,7 @@ disassembly to read back the way it was written."
 ;;; This resolves instruction names to those integers at macroexpansion
 ;;; time, by string, so the package a clause was written in does not
 ;;; matter and a misspelling is an error rather than a clause that never
-;;; fires. See "Dispatch resolves names at compile time, not read time" in
-;;; doc/kernel-tutorial.md.
+;;; fires. See doc/decisions.md §10.2.
 
 (defmacro dispatch-on-opcode (op &body clauses)
   "Dispatch on OP by instruction name. Each clause is (NAME . BODY), or

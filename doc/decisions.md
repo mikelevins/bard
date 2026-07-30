@@ -421,7 +421,103 @@ Recorded so they are absent by choice rather than by oversight.
 
 ---
 
-## 10. Superseded by the current machine
+## 10. Machine contracts
+
+Three things an implementer needs that are not visible in the instruction set.
+
+### 10.1 Instruction names carry an `op_` sentinel
+
+`op_CONST`, `op_SET-GLOBAL`. The sentinel puts instructions in a namespace of
+their own so that none can collide with a symbol of the host language. In Common
+Lisp `RETURN` and `CLOSE` did collide, and a host `return` inside the machine's
+own loop was once mistaken for the instruction of the same name — identical to
+the compiler, misleading to a reader.
+
+The sentinel is lowercase so it recedes and the instruction name is what the eye
+lands on. The underscore separates it visibly from names that themselves contain
+hyphens. Both survive transliteration to any target language, where a port
+converts the remaining hyphens to underscores as it would for any name.
+
+Enforce this rather than remember it: refuse to load if an instruction lacks the
+sentinel or shadows a host symbol.
+
+### 10.2 Dispatch resolves names at compile time, not read time
+
+The inner loop dispatches on a fixnum opcode, and a jump table wants literal
+integers as its keys. Writing those integers directly would defeat the point of
+naming instructions. Reaching for read-time evaluation to compute them resolves
+the names in whatever namespace happens to be current when the form is *read*,
+fails outright where read-time evaluation is disabled, and makes the file
+unreadable unless its dependencies are already loaded — turning a compile-order
+problem into a read-order problem.
+
+Resolve the names at macroexpansion time instead, looking them up by string so
+the namespace a clause was written in does not matter, and signalling a real
+error on a misspelling rather than silently emitting a clause that can never
+fire.
+
+### 10.4 Failure and resumption
+
+The machine reports a fault by signalling **without unwinding first**, with the
+frame and the faulting pc in hand (properties P4 and P5). A handler therefore
+runs inside the environment where the fault was discovered, and can see and
+repair it. Three restarts say what happens next:
+
+```
+retry           run the faulting instruction again, having repaired
+                whatever made it fail
+supply-value    push a value in place of the failed operation and carry
+                on at the next instruction
+abort-thread    abandon this thread; the others keep running
+```
+
+The restarts are established only when a fault occurs, so ordinary stepping pays
+nothing for them.
+
+That third power is what everything else was for. A program calls something
+undefined; the handler defines it and retries; the operand the call was about to
+use is still on the frame, so the call now succeeds. **A machine that signalled
+by unwinding to the host would have destroyed that frame before anyone could look
+at it, and no amount of later work would bring it back.**
+
+An implementation gets a usable breakloop before it has written one, provided the
+host's own debugger runs handlers before unwinding and offers established
+restarts. In Common Lisp it does: an unhandled fault drops you into the debugger
+with the frame reachable and `retry`, `supply-value`, and `abort-thread` on the
+menu.
+
+### 10.3 The handler contract
+
+`op_CALL` asks the callee's descriptor for a handler rather than assuming a
+bytecode function (property P3). A handler takes the callee, the argument count,
+the frame, and the faulting pc, and returns the frame the machine should continue
+stepping. That return value carries more than it appears to, and both `op_CALL`
+and `op_TAILCALL` depend on it:
+
+```
+a NEW frame      the callee is a computation of its own. It will run, and
+                 eventually op_RETURN into whatever frame it was given as its
+                 parent. Its values arrive there later.
+
+the SAME frame   the callee ran to completion in place. It has already pushed
+                 its values and their count onto that frame's operand area.
+                 Nothing arrives later.
+```
+
+Nothing else distinguishes the two cases, deliberately. `op_TAILCALL` has to tell
+them apart: it abandons the caller's frame, so a callee that would have returned
+there must be re-pointed at the caller's parent, while a callee that has already
+delivered its values in place needs those values forwarded instead.
+
+`op_TAILCALL` asks the returned frame rather than testing the callee's type. That
+is why a new kind of applicable — a generic function, a foreign function, native
+code — behaves correctly by honouring this contract rather than by being added to
+a list of special cases. It is what P3 buys, and it is bought only for as long as
+new handlers keep to it.
+
+---
+
+## 11. Superseded by the current machine
 
 Recorded so the changes are deliberate rather than silent.
 

@@ -3,8 +3,6 @@
 This is the whole thing to learn. If something is not in this file, you do not
 need it to write a working kernel from memory.
 
-- `kernel-tutorial.md` — what each instruction means, worked programs, staged
-  construction.
 - `performance.md` — strategies for the costs this design accepts. Consult, do
   not memorize.
 - `decisions.md` — adopted design decisions for the language above the machine.
