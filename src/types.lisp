@@ -125,7 +125,7 @@
 
 (defstruct (frame (:constructor %make-frame)
                   (:print-object print-frame))
-  (parent nil)
+  (parent nil)                          ; nil only at the bottom of a thread
   (fn nil)
   (pc 0 :type fixnum)
   (slots (make-array 0) :type simple-vector)

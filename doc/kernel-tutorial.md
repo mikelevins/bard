@@ -95,6 +95,13 @@ the parent's, then push `n` itself; set `current ← current.parent`. **If `pare
 is nil the thread is finished** and those values are its result. There is no halt
 instruction because thread termination already is one.
 
+A parent is nil only at the bottom of a thread's chain -- the frame the thread
+was started with. Every frame `op_CALL` builds gets the caller as its parent, so
+an ordinary return always has somewhere to go. The one case worth remembering is
+that `op_TAILCALL` hands the callee *the caller's* parent, so a tail call made
+from a thread's base frame gives the callee a nil parent, and that callee's
+return is what ends the thread.
+
 **`op_RECV k`** — pop the count; adjust the values beneath it to exactly `k`,
 padding with `nothing` and discarding extras.
 
