@@ -25,19 +25,24 @@
 ;;;    8  multiple values                done
 ;;;    9  threads                        done
 ;;;   10  the dynamic environment        done
-;;;   11  the error hook                 pending
+;;;   11  the error hook                 done
 ;;;
-;;; Stages 10 and 11 add no instructions: the dynamic environment
-;;; changes what op_GLOBAL does, and the error hook changes how failure
-;;; is reported.
+;;; The ladder is complete: fifteen instructions, one register, seven
+;;; representations. What is missing above it -- an object system,
+;;; conditions, a debugger, modules, a compiler -- is not yet written
+;;; rather than precluded.
 
 ;;; ---------------------------------------------------------------------
 ;;; errors
 ;;; ---------------------------------------------------------------------
-;;; Stage 11 replaces this with a hook that is called before anything
-;;; unwinds, and that can resume at the faulting instruction. Until
-;;; then it carries the two things that hook will need: the frame, and
-;;; the pc of the instruction that faulted -- not the one after it.
+;;; Failure is reported without unwinding first: the condition is
+;;; signalled with the frame and the faulting pc in hand, so a handler
+;;; runs inside the environment where the fault happened and can repair
+;;; it. Three restarts say what to do next. See "Failure and resumption"
+;;; in doc/kernel-tutorial.md.
+;;;
+;;; The restarts are established only when a fault occurs, so the
+;;; ordinary path pays nothing for them.
 
 (define-condition bard-error (simple-error)
   ((frame :initarg :frame :reader bard-error-frame :initform nil)
@@ -56,8 +61,21 @@
                                    (instruction-string code pc)))))))))
 
 (defun bard-error (frame pc format &rest args)
-  (error 'bard-error :frame frame :pc pc
-                     :format-control format :format-arguments args))
+  (restart-case
+      (error 'bard-error :frame frame :pc pc
+                         :format-control format :format-arguments args)
+    (retry ()
+      :report "Run the faulting instruction again."
+      (setf (frame-pc frame) pc)
+      (throw 'resume nil))
+    (supply-value (value)
+      :report "Use a value in place of the failed operation."
+      :interactive (lambda () (list (eval (read))))
+      (frame-push frame value)
+      (throw 'resume nil))
+    (abort-thread ()
+      :report "Abandon this thread."
+      (throw 'resume :abort-thread))))
 
 ;;; ---------------------------------------------------------------------
 ;;; tracing
@@ -264,18 +282,23 @@ none has work left. Returns FRAME's own delivered values."
 
 (defun %run (frame)
   (loop
-    (let* ((code (fn-code (frame-fn frame)))
-           (ins (code-instructions code))
-           (pc (frame-pc frame))
-           (base (* 3 pc))
-           (op (aref ins base))
-           (a (aref ins (+ base 1)))
-           (b (aref ins (+ base 2))))
-      ;; PC advances before the instruction runs, so PC above is the
-      ;; faulting instruction and is what the error hook will need.
-      (when *trace* (trace-instruction frame pc))
-      (setf (frame-pc frame) (1+ pc))
-      (dispatch-on-opcode op
+    ;; A fault throws here once a restart has said what to do. RETRY and
+    ;; SUPPLY-VALUE have already adjusted the frame, so stepping just
+    ;; continues from wherever they left it.
+    (let ((signal
+            (catch 'resume
+              (let* ((code (fn-code (frame-fn frame)))
+                     (ins (code-instructions code))
+                     (pc (frame-pc frame))
+                     (base (* 3 pc))
+                     (op (aref ins base))
+                     (a (aref ins (+ base 1)))
+                     (b (aref ins (+ base 2))))
+                ;; PC advances before the instruction runs, so PC above is
+                ;; the faulting instruction, which is what a handler needs.
+                (when *trace* (trace-instruction frame pc))
+                (setf (frame-pc frame) (1+ pc))
+                (dispatch-on-opcode op
         ;; ----- values -----
         (op_CONST
          (frame-push frame (svref (code-constants code) a)))
@@ -371,7 +394,13 @@ none has work left. Returns FRAME's own delivered values."
         ;; opcode word is not one -- corrupt code, or a code object built
         ;; by something that does not agree with this machine.
         (t
-         (bard-error frame pc "~A is not an instruction." (opcode-name op))))))
+         (bard-error frame pc "~A is not an instruction." (opcode-name op)))))
+              nil)))
+      (when (eq signal :abort-thread)
+        (let ((next (finish-current-thread '())))
+          (unless next (return))
+          (setf *current-thread* next
+                frame (thread-frame next))))))
   (values))
 
 (defun run-code (code)

@@ -564,6 +564,38 @@ and nothing else.")
   "One thread rebinds *out*; the other must not see it.")
 
 ;;; ---------------------------------------------------------------------
+;;; assembly -- failure
+;;; ---------------------------------------------------------------------
+
+(defparameter +lap-fn-faulter+
+  '((op_GLOBAL also-undefined)          ; faults; a handler abandons this
+    (op_RETURN 1))                      ; thread
+  "A thread that cannot finish.")
+
+(defparameter +code-faulter+
+  (bard:assemble +lap-fn-faulter+ :name "faulter" :arity 0))
+
+(defparameter +lap-fn-survivor+
+  '((op_CONST survivor)
+    (op_GLOBAL log)
+    (op_GLOBAL _cons)
+    (op_CALL 2) (op_RECV 1)
+    (op_SET-GLOBAL log) (op_DROP)
+    (op_RETURN 0))
+  "A thread that finishes normally after the other one dies.")
+
+(defparameter +code-survivor+
+  (bard:assemble +lap-fn-survivor+ :name "survivor" :arity 0))
+
+(defparameter +lap-faulting-thread+
+  `((op_CLOSE ,+code-faulter+)
+    (op_GLOBAL _spawn) (op_CALL 1) (op_RECV 0)
+    (op_CLOSE ,+code-survivor+)
+    (op_GLOBAL _spawn) (op_CALL 1) (op_RECV 0)
+    (op_RETURN 0))
+  "One thread faults and is abandoned; the other runs to completion.")
+
+;;; ---------------------------------------------------------------------
 ;;; assembly -- the disassembler, and pending stages
 ;;; ---------------------------------------------------------------------
 
@@ -792,6 +824,79 @@ it per task rather than global."
   (is (equal '(a base) (bard:binding-value (bard:global-binding 'log)))))
 
 #+repl (run! '|the dynamic environment is per thread|)  ; => T
+
+;;; ---------------------------------------------------------------------
+;;; stage 11 -- failure and resumption
+;;; ---------------------------------------------------------------------
+
+(test |2.11 define the missing function and resume|
+  "The essay's headline, in five instructions. bar has no value; the
+handler runs inside the environment where that was discovered, defines
+bar, and retries the instruction that faulted. The 7 is still on the
+operand stack, so the call then succeeds."
+  (let ((binding (bard:global-binding 'bar)))
+    (setf (bard:binding-value binding) nil
+          (bard:binding-bound? binding) nil)
+    (is (equal '(49)
+               (handler-bind
+                   ((bard:bard-error
+                      (lambda (c)
+                        (declare (ignore c))
+                        (setf (bard:binding-value binding)
+                              (bard:make-fn +code-square+)
+                              (bard:binding-bound? binding) t)
+                        (invoke-restart 'bard:retry))))
+                 (run-program +lap-global-unbound-error+))))))
+
+#+repl (run! '|2.11 define the missing function and resume|)  ; => T
+
+(test |a handler may supply a value instead|
+  "The failed operation is replaced rather than retried, and stepping
+resumes at the next instruction."
+  (let ((binding (bard:global-binding 'never-defined)))
+    (setf (bard:binding-value binding) nil
+          (bard:binding-bound? binding) nil)
+    (is (equal '(99)
+               (handler-bind
+                   ((bard:bard-error
+                      (lambda (c)
+                        (declare (ignore c))
+                        (invoke-restart 'bard:supply-value 99))))
+                 (run-program '((op_GLOBAL never-defined) (op_RETURN 1))))))))
+
+#+repl (run! '|a handler may supply a value instead|)  ; => T
+
+(test |a handler may abandon the thread|
+  "The other threads carry on."
+  (set-global 'log nil)
+  (let ((binding (bard:global-binding 'also-undefined)))
+    (setf (bard:binding-value binding) nil
+          (bard:binding-bound? binding) nil))
+  (handler-bind ((bard:bard-error
+                   (lambda (c)
+                     (declare (ignore c))
+                     (invoke-restart 'bard:abort-thread))))
+    (run-program +lap-faulting-thread+))
+  (is (equal '(survivor) (bard:binding-value (bard:global-binding 'log)))))
+
+#+repl (run! '|a handler may abandon the thread|)  ; => T
+
+(test |the frame is intact when the handler runs|
+  "Not unwound first: the operand the faulting instruction was about to
+use is still there, which is what makes repair possible at all."
+  (let ((binding (bard:global-binding 'bar))
+        (operands nil))
+    (setf (bard:binding-value binding) nil
+          (bard:binding-bound? binding) nil)
+    (handler-bind ((bard:bard-error
+                     (lambda (c)
+                       (setf operands (bard::frame-operands (bard:bard-error-frame c)))
+                       (invoke-restart 'bard:supply-value
+                                       (bard:make-fn +code-square+)))))
+      (run-program +lap-global-unbound-error+))
+    (is (equal '(7) operands))))
+
+#+repl (run! '|the frame is intact when the handler runs|)  ; => T
 
 ;;; ---------------------------------------------------------------------
 ;;; the assembler and disassembler

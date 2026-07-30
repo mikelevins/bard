@@ -448,6 +448,36 @@ the namespace a clause was written in does not matter, and signalling a real
 error on a misspelling rather than silently emitting a clause that can never
 fire.
 
+### Failure and resumption
+
+The machine reports a fault by signalling **without unwinding first**, with the
+frame and the faulting pc in hand (properties P4 and P5). A handler therefore
+runs inside the environment where the fault was discovered, and can see and
+repair it. Three restarts say what happens next:
+
+```
+retry           run the faulting instruction again, having repaired
+                whatever made it fail
+supply-value    push a value in place of the failed operation and carry
+                on at the next instruction
+abort-thread    abandon this thread; the others keep running
+```
+
+The restarts are established only when a fault occurs, so ordinary stepping pays
+nothing for them.
+
+That third power is what everything else was for. A program calls something
+undefined; the handler defines it and retries; the operand the call was about to
+use is still on the frame, so the call now succeeds. **A machine that signalled
+by unwinding to the host would have destroyed that frame before anyone could look
+at it, and no amount of later work would bring it back.**
+
+An implementation gets a usable breakloop before it has written one, provided the
+host's own debugger runs handlers before unwinding and offers established
+restarts. In Common Lisp it does: an unhandled fault drops you into the debugger
+with the frame reachable and `retry`, `supply-value`, and `abort-thread` on the
+menu.
+
 ### The handler contract
 
 `op_CALL` asks the callee's descriptor for a handler rather than assuming a

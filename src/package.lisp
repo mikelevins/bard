@@ -69,6 +69,10 @@
    #:bard-error
    #:bard-error-frame
    #:bard-error-pc
+   ;; restarts a handler may invoke
+   #:retry
+   #:supply-value
+   #:abort-thread
    ;; assembly and disassembly
    #:assemble
    #:disassemble
